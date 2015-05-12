@@ -1,0 +1,191 @@
+---
+title: "Simulation-based Inference for Epidemiological Dynamics"
+author: "Aaron A. King and Edward L. Ionides"
+date: "05/12/2015"
+output:
+  html_document:
+    theme: flatly
+    toc: yes
+bibliography: sbied.bib
+csl: ecology.csl
+
+---
+
+Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
+
+```{r opts,include=FALSE}
+library(knitr)
+prefix <- "pomps"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  out.width="\\linewidth",
+  dpi=300,
+  dev='png',
+  dev.args=list(bg='transparent')
+  )
+
+options(
+  keep.source=TRUE,
+  encoding="UTF-8"
+  )
+
+library(ggplot2)
+theme_set(theme_bw())
+```
+
+**Module description:**
+This module introduces statistical inference techniques and computational methods for dynamic models of epidemiological systems. The course will explore deterministic and stochastic formulations of epidemiological dynamics and develop inference methods appropriate for a range of models. Special emphasis will be on exact and approximate likelihood as the key elements in parameter estimation, hypothesis testing, and model selection. Specifically, the course will cover sequential Monte Carlo and synthetic likelihood techniques. Students will learn to implement these in R to carry out maximum likelihood and Bayesian inference. Knowledge of the material in Module 1 is assumed. Students new to R should complete a tutorial before the module.
+
+----------------------
+
+## Daily Schedule
+
+**Time** | **Daily Activity**
+-----------|------------
+8:00 am -- 8:30 am | Coffee (and Registration on Mondays)
+8:30 am -- 10:00 am | Class Session
+10:00 am -- 10:30 am | Break
+10:30 am -- 12:00 pm | Class Session
+12:00 pm -- 1:30 pm | Lunch Break (and Registration on Wednesdays)
+1:30 pm -- 3:00 pm | Class Session
+3:00 pm -- 3:30 pm | Break
+3:30 pm -- 5:00 pm | Class Session
+5:00 pm -- 6:00 pm | Participants’ and Instructors’ Reception (Mondays and Wednesdays)
+
+----------------------
+
+## Pre-SISMID timetable:
+* 1 July - Distribute background reading
+* 24 June - Distribute instructions on installation of R and packages, Rstudio, testing of SHLIB, tutorial for R newbies
+* 17 June - Finalize pomp 1.0.0 and submit to CRAN
+* Reading list
+  - background [@King2008,@Blake2014,@Camacho2011,@Lavine2013,@Laneri2010]
+  - JSS MS
+* website: http://kinglab.eeb.lsa.umich.edu/SBIED/
+* git repo
+
+----------------------
+
+## Wed. Jul 15
+
+### 1:30-3:00
+
+ Desiderata for modeling and inference methodology ("Noisy clockwork", Bjornstad & Grenfell): stochasticity; nonlinearity; partial observations; measurement error; mechanism; mechanistic inclusion of covariates.
+
+ This motivates the POMP model structure.  Comparison with other common model structures: ARIMA, LME, NLME, etc.
+
+ Computation exercise: playing with a simple POMP in pomp.  Example: boarding-school flu or Canadian rubella
+
+### 3:30-5:00
+
+ Classes of dynamic models of epidemiological interest, and their simulation algorithms.
+
+ Computation exercise: playing with an SIR simulation model in pomp.
+
+## Thu. Jul 16
+
+### 8:30-10:00
+
+ Reconstruction of states from noisy observations; particle filtering
+
+ Computation exercise: particle filtering for an SIR epidemic (boarding school data?)
+
+### 10:30-12:00
+
+ Principles of likelihood-based inference.  ML.  Likelihood ratio test, profile, AIC.  Likelihood surfaces, slices, profiles, MLE.  2D example via pfilter.  Visualization.  How to handle >2D?  
+
+### 1:30-3:00
+
+Iterated filtering to coerce a particle filter into carrying out maximization.
+
+ Computation exercise: IF2 for an SIR epidemic.
+
+ Practice of likelihood-based inference - profiles; mif likelihood vs pfilter likelihood; poor man's profile; building and exploring a database of search output; building and using ARMA and iid benchmarks; model selection methods.
+
+ Computation exercise: playing with these things for an SIR epidemic
+
+### 3:30-5:00
+
+ More diagnostic methods - probe matching; deterministic skeleton analysis;  constructing and interpreting residuals.
+
+ Computation exercise: playing with these things for an SIR epidemic
+
+## Fri. Jul 17
+
+### 8:30-10:00
+ 
+ Case study of building a model (He et al, JRSI, measles?). Emphasis on the surprising importance of how stochasticity is included in the model.
+ Noise on the rate of Markov chains.
+
+Case study (polio) (?)
+
+ Computation exercise: playing with a pomp object for an endemic disease;
+
+ [i think a format where we discuss a relevant paper for 45 mins and then the students get to spend 45 mins on some simple assigned tasks with the corresponding pomp objects would be interesting for the students. they'd feel they're making the transition to working on a research problem, and this sort of approach of modifying existing code matches how most people learn pomp when we get them working on projects. also, we could distribute the papers ahead of time and give more committed members of the audience a head start on the background]
+
+### 10:30-12:00
+
+ Case study of covariates and forecasting (Laneri et al, malaria, if we can use the data!). SDE driven by gamma noise.
+
+ Computation exercise: playing with these things on a pomp object;
+
+
+### 1:30-3:00
+ 
+ Case study of stochastic versus deterministic modeling (King et al, Ebola).
+
+ Computation exercise: playing with these things on a pomp object;
+
+### 3:30-5:00
+
+ Case study: Comparing rival hypotheses (King et al, 2008, cholera)
+
+ Computation exercise: playing with these things on a pomp object;
+ 
+----------------------
+ 
+## Other options on case studies:
+
+- Panel data (Romero Severson et al, sexual behavior)
+- Any other pomp paper for which we have access to the data & model
+
+Multi-processor computing isn't listed anywhere yet; it could arise naturally through the case studies
+
+
+----------------------
+
+## Alternative outline.
+
+1. Modeling & inference.  POMP models
+1. Simulation of dynamic POMP models: stochastic maps, Euler
+1. Simple example: single outbreak, coding up the model, simulation
+1. Inference: parameter estimation; full-information vs feature matching; principles of likelihood-based inference
+1. Likelihood for POMP models: the particle filter.  Theory.
+1. Particle filter in practice: computation of likelihood and likelihood surfaces; graphical display; slices and profiles; LR confidence intervals
+1. Maximization of likelihood using IF2.  Construction of profiles
+1. Inference: model selection
+1. Advanced model construction: SDE, Euler-multinomial, extrademographic stochasticity
+1. Case study: measles, cholera, malaria
+1. Advanced practicum: Ebola in West Africa 2014
+
+----------------------
+
+## References
