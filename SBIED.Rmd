@@ -77,7 +77,7 @@ This module introduces statistical inference techniques and computational method
 * 24 June - Distribute instructions on installation of R and packages, Rstudio, testing of SHLIB, tutorial for R newbies
 * 17 June - Finalize pomp 1.0.0 and submit to CRAN
 * Reading list
-  - background [@King2008,@Blake2014,@Camacho2011,@Lavine2013,@Laneri2010]
+  - background [@King2008; @Blake2014; @Camacho2011; @Lavine2013; @Laneri2010]
   - JSS MS
 * website: http://kinglab.eeb.lsa.umich.edu/SBIED/
 * git repo
