@@ -94,6 +94,26 @@ This module introduces statistical inference techniques and computational method
 
  Computation exercise: playing with a simple POMP in pomp.  Example: boarding-school flu or Canadian rubella
 
+#### Noisy Clockwork: Time Series Analysis of Population Fluctuations in Animals
+
+#### Six problems of [Bjornstad and Grenfell (Science, 2001)](http://dx.doi.org/10.1126/science.1062226)
+
+* Obstacles for _ecological_ modeling and inference via nonlinear mechanistic models:
+
+1. Combining measurement noise and process noise.
+
+2. Including covariates in mechanistically plausible ways.
+
+3. Continuous time models.
+
+4. Modeling and estimating interactions in coupled systems. 
+
+5. Dealing with unobserved variables.
+
+6. Modeling spatial-temporal dynamics.
+
+* The same issues arise for _epidemiological_ modeling and inference via nonlinear mechanistic models.
+
 ### 3:30-5:00
 
  Classes of dynamic models of epidemiological interest, and their simulation algorithms.
