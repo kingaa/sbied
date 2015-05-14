@@ -72,20 +72,20 @@ img {
 <li><a href="#daily-schedule">Daily Schedule</a></li>
 <li><a href="#pre-sismid-timetable">Pre-SISMID timetable:</a></li>
 <li><a href="#wed.-jul-15">Wed. Jul 15</a><ul>
-<li><a href="#section">1:30-3:00</a></li>
-<li><a href="#section-1">3:30-5:00</a></li>
+<li><a href="#session-1.-what-is-simulation-based-inference-for-epidemiological-dynamics">1:30-3:00 (Session 1). What is “Simulation-based Inference for Epidemiological Dynamics?”</a></li>
+<li><a href="#session-2">3:30-5:00 (Session 2)</a></li>
 </ul></li>
 <li><a href="#thu.-jul-16">Thu. Jul 16</a><ul>
-<li><a href="#section-2">8:30-10:00</a></li>
-<li><a href="#section-3">10:30-12:00</a></li>
-<li><a href="#section-4">1:30-3:00</a></li>
-<li><a href="#section-5">3:30-5:00</a></li>
+<li><a href="#session-3">8:30-10:00 (Session 3)</a></li>
+<li><a href="#session-4">10:30-12:00 (Session 4)</a></li>
+<li><a href="#session-5">1:30-3:00 (Session 5)</a></li>
+<li><a href="#session-6">3:30-5:00 (Session 6)</a></li>
 </ul></li>
 <li><a href="#fri.-jul-17">Fri. Jul 17</a><ul>
-<li><a href="#section-6">8:30-10:00</a></li>
-<li><a href="#section-7">10:30-12:00</a></li>
-<li><a href="#section-8">1:30-3:00</a></li>
-<li><a href="#section-9">3:30-5:00</a></li>
+<li><a href="#session-7">8:30-10:00 (Session 7)</a></li>
+<li><a href="#session-8">10:30-12:00 (Session 8)</a></li>
+<li><a href="#session-9">1:30-3:00 (Session 9)</a></li>
+<li><a href="#session-10">3:30-5:00 (Session 10)</a></li>
 </ul></li>
 <li><a href="#other-options-on-case-studies">Other options on case studies:</a></li>
 <li><a href="#alternative-outline.">Alternative outline.</a></li>
@@ -161,18 +161,57 @@ img {
 </div>
 <div id="wed.-jul-15" class="section level2">
 <h2>Wed. Jul 15</h2>
-<div id="section" class="section level3">
-<h3>1:30-3:00</h3>
-<p>Desiderata for modeling and inference methodology (“Noisy clockwork”, Bjornstad &amp; Grenfell): stochasticity; nonlinearity; partial observations; measurement error; mechanism; mechanistic inclusion of covariates.</p>
-<p>This motivates the POMP model structure. Comparison with other common model structures: ARIMA, LME, NLME, etc.</p>
-<p>Computation exercise: playing with a simple POMP in pomp. Example: boarding-school flu or Canadian rubella</p>
+<div id="session-1.-what-is-simulation-based-inference-for-epidemiological-dynamics" class="section level3">
+<h3>1:30-3:00 (Session 1). What is “Simulation-based Inference for Epidemiological Dynamics?”</h3>
+<ul>
+<li><p>Goals for model-based inference.</p></li>
+<li><p>Some scientific challenges.</p></li>
+<li><p>Mechanistic vs non-mechanistic models (POMP vs other common model structures: ARIMA, LME, NLME, etc.)</p></li>
+</ul>
+<p>I HAVEN’T DONE THIS HERE. IT COULD COME UP IN DISCUSSION OF THE “OVERVIEW”. I’D PREFER TO POSTPONE THE ISSUE TO A SUB-TOPIC OF “BENCHMARKING AND DIAGNOSTIC METHODS.”</p>
+<ul>
+<li>Computation exercise: playing with a simple POMP in pomp. Example: boarding-school flu or Canadian rubella</li>
+</ul>
+<hr />
+<div id="overview-of-our-ambitions" class="section level4">
+<h4>Overview of our ambitions</h4>
+<ul>
+<li><strong>Goal</strong>: Building understanding of disease transmission processes to improve public health.
+<ul>
+<li>Population-level processes: transmission events; susceptible, infected and recovered hosts.</li>
+<li>Within-host processes: pathogen vs the immune system; locations and life stages of pathogens.<br /></li>
+</ul></li>
+<li><strong>Approach</strong>: Using time series data to inform dynamic models.</li>
+<li><strong>Strengths and weaknesses of this approach</strong>:</li>
+</ul>
+<p>   </p>
+<p>I THINK IT WOULD BE GOOD TO HAVE TECHNOLOGY TO ALLOW FOR ANNOTATING HTML TO INTEGRATE DISCUSSION INTO THE PRESENTATION. IDEAS?</p>
+<p>       <br /><br /><br /><br /><br /><br /><br /></p>
+<ul>
+<li><strong>Alternative approaches</strong>:</li>
+</ul>
+<p><br /><br /><br /><br /><br /></p>
+<hr />
+</div>
+<div id="questions-and-answers" class="section level4">
+<h4>Questions and answers</h4>
+<ol style="list-style-type: decimal">
+<li><p>What roles are played by asymptomatic infection and waning immunity in cholera epidemics? (LINK TO FIGURE, OR PAPER?)</p></li>
+<li><p>What is the contribution to the HIV epidemic of dynamic variation in sexual behavior of an individual over time? How does this compare to the role of heterogeneity between individuals? (LINK TO FIGURE, OR PAPER?)</p></li>
+<li><p>What explains the seasonality of measles?</p></li>
+<li><p>What explains the seasonality of influenza?</p></li>
+<li><p>What explains the interannual variability of malaria?</p></li>
+<li><p>What will happen next in an Ebola outbreak?</p></li>
+</ol>
+<hr />
+</div>
 <div id="noisy-clockwork-time-series-analysis-of-population-fluctuations-in-animals" class="section level4">
-<h4>Noisy Clockwork: Time Series Analysis of Population Fluctuations in Animals</h4>
+<h4>Noisy clockwork: Time series analysis of population fluctuations in animals</h4>
 </div>
 <div id="six-problems-of-bjornstad-and-grenfell-science-2001" class="section level4">
 <h4>Six problems of <a href="http://dx.doi.org/10.1126/science.1062226">Bjornstad and Grenfell (Science, 2001)</a></h4>
 <ul>
-<li>Obstacles for <em>ecological</em> modeling and inference via nonlinear mechanistic models:</li>
+<li>Obstacles for <strong>ecological</strong> modeling and inference via nonlinear mechanistic models:</li>
 </ul>
 <ol style="list-style-type: decimal">
 <li><p>Combining measurement noise and process noise.</p></li>
@@ -183,61 +222,129 @@ img {
 <li><p>Modeling spatial-temporal dynamics.</p></li>
 </ol>
 <ul>
-<li>The same issues arise for <em>epidemiological</em> modeling and inference via nonlinear mechanistic models.</li>
+<li>The same issues arise for <strong>epidemiological</strong> modeling and inference via nonlinear mechanistic models.</li>
 </ul>
+<hr />
+</div>
+<div id="partially-observed-markov-process-pomp-models" class="section level4">
+<h4>Partially observed Markov process (POMP) models</h4>
+<ul>
+<li><p>Data <span class="math">\(y^*_1,\dots,y^*_N\)</span> collected at times <span class="math">\(t_1&lt;\dots&lt;t_N\)</span> are modeled as noisy and incomplete observations of a Markov process <span class="math">\(\{X(t), t\ge t_0\}\)</span>.</p></li>
+<li><p>This is a <strong>partially observed Markov process (POMP)</strong> model, also known as a hidden Markov model or a state space model.</p></li>
+<li><p><span class="math">\(\{X(t)\}\)</span> is Markov if the history of the process, <span class="math">\(\{X(s), s\le t\}\)</span>, is uninformative about the future of the process, <span class="math">\(\{X(s), s\ge t\}\)</span>, given the current value of the process, <span class="math">\(X(t)\)</span>.</p></li>
+<li><p>If all quantities important for the dynamics of the system are placed in the <strong>state</strong>, <span class="math">\(X(t)\)</span>, then the Markov property holds by construction.</p></li>
+<li><p>POMP models can include all the features desired by <span class="citation">Bj<span>ø</span>rnstad and Grenfell (2001)</span>.</p></li>
+</ul>
+<hr />
+</div>
+<div id="notation-for-partially-observed-markov-process-models" class="section level4">
+<h4>Notation for partially observed Markov process models</h4>
+<ul>
+<li><p>Write <span class="math">\(X_n=X(t_n)\)</span> and <span class="math">\(X_{0:N}=(X_0,\dots,X_N)\)</span>. Let <span class="math">\(Y_n\)</span> be a random variable modeling the observation at time <span class="math">\(t_n\)</span>.</p></li>
+<li><p>The one-step transition density, <span class="math">\(f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)\)</span>, together with the measurement density, <span class="math">\(f_{Y_n|X_n}(y_n|x_n;\theta)\)</span> and the initial density, <span class="math">\(f_{X_0}(x_0;\theta)\)</span>, specify the entire joint density via</p></li>
+</ul>
+<p><span class="math">\[f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta) = f_{X_0}(x_0;\theta)\,\prod_{n=1}^N\!f_{X_n | X_{n-1}}(x_n|x_{n-1};\theta)\,f_{Y_n|X_n}(y_n|x_n;\theta).\]</span></p>
+<ul>
+<li>The marginal density for sequence of measurements, <span class="math">\(Y_{1:N}\)</span>, evaluated at the data, <span class="math">\(y_{1:N}^*\)</span>, is</li>
+</ul>
+<p><span class="math">\[ f_{Y_{1:N}}(y^*_{1:N};\theta)=\int f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)\, dx_{0:N}.
+\]</span></p>
+<p>(SOME SIMPLE ALGEBRA HERE MIGHT BE APPROPRIATE AS AN EXERCISE - TO (RE)FAMILIARIZE THE AUDIENCE WITH SOME BASIC OPERATIONS ON DENSITIES??)</p>
+<hr />
+<p>To think algorithmically, we define some function calls:</p>
+<ul>
+<li><p>rprocess( ): a draw from <span class="math">\(f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)\)</span></p></li>
+<li><p>dprocess( ): evaluation of <span class="math">\(f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)\)</span></p></li>
+<li><p>rmeasure( ): a draw from <span class="math">\(f_{Y_n|X_n}(y_n| x_n;\theta)\)</span></p></li>
+<li><p>dmeasure( ): evaluation of <span class="math">\(f_{Y_n|X_n}(y_n| x_n;\theta)\)</span></p></li>
+</ul>
+<hr />
+</div>
+<div id="what-does-it-mean-for-methodology-to-be-simulation-based" class="section level4">
+<h4>What does it mean for methodology to be <strong>simulation-based</strong>?</h4>
+<ul>
+<li><p>Oftentimes, simulating random processes is easier than evaluating their transition probabilities.</p></li>
+<li><p>In other words, we may be able to write rprocess() but not dprocess().</p></li>
+<li><p><strong>Simulation-based</strong> methods require the user to specify rprocess() but not dprocess().</p></li>
+<li><p><strong>Plug-and-play</strong>, <strong>likelihood-free</strong> and <strong>equation-free</strong> are alternative terms for simulation-based.</p></li>
+</ul>
+<p>(DEFINITIONS SHOULD BE HYPERLINKS TO TAKE FULL ADVANTAGE OF HTML FORMAT)</p>
+<ul>
+<li>Much development of simulation-based statistical methodology has occurred in the past decade.</li>
+</ul>
+<hr />
+</div>
+<div id="the-pomp-package-for-pomp-models" class="section level4">
+<h4>The pomp package for POMP models</h4>
+<ul>
+<li><p>pomp is an R package for data analysis using partially observed Markov process (POMP) models.</p></li>
+<li><p>Note the distinction: lower case pomp is a software package; upper case POMP is a class of models.</p></li>
+<li><p>pomp builds methodology for POMP models in terms of arbitrary user-specified rprocess(), dprocess(), rmeasure() and dmeasure() functions.</p></li>
+<li><p>Following modern practice, most methodology in pomp is simulation-based, so does not require specification of dprocess().</p></li>
+<li><p>pomp has facilities to help construct rprocess(), rmeasure() and dmeasure() functions for model classes of epidemiological interest.</p></li>
+<li><p>pomp provides a forum for development, modification and sharing of models, methodology and data analysis workflows.</p></li>
+</ul>
+<hr />
+</div>
+<div id="over-to-aaron" class="section level4">
+<h4>OVER TO AARON</h4>
+<ul>
+<li>I WAS THINKING THAT FIRING UP pomp, FINDING THE EXAMPLES, THE DOCUMENTATION, AND RUNNING simulate ETC ON EXISTING EXAMPLES WOULD BE QUITE ENOUGH FOR THIS POINT. THE NEXT SESSION WILL WORK ON BUILDING A POMP.</li>
+</ul>
+<hr />
 </div>
 </div>
-<div id="section-1" class="section level3">
-<h3>3:30-5:00</h3>
+<div id="session-2" class="section level3">
+<h3>3:30-5:00 (Session 2)</h3>
 <p>Classes of dynamic models of epidemiological interest, and their simulation algorithms.</p>
 <p>Computation exercise: playing with an SIR simulation model in pomp.</p>
 </div>
 </div>
 <div id="thu.-jul-16" class="section level2">
 <h2>Thu. Jul 16</h2>
-<div id="section-2" class="section level3">
-<h3>8:30-10:00</h3>
+<div id="session-3" class="section level3">
+<h3>8:30-10:00 (Session 3)</h3>
 <p>Reconstruction of states from noisy observations; particle filtering</p>
 <p>Computation exercise: particle filtering for an SIR epidemic (boarding school data?)</p>
 </div>
-<div id="section-3" class="section level3">
-<h3>10:30-12:00</h3>
+<div id="session-4" class="section level3">
+<h3>10:30-12:00 (Session 4)</h3>
 <p>Principles of likelihood-based inference. ML. Likelihood ratio test, profile, AIC. Likelihood surfaces, slices, profiles, MLE. 2D example via pfilter. Visualization. How to handle &gt;2D?</p>
 </div>
-<div id="section-4" class="section level3">
-<h3>1:30-3:00</h3>
+<div id="session-5" class="section level3">
+<h3>1:30-3:00 (Session 5)</h3>
 <p>Iterated filtering to coerce a particle filter into carrying out maximization.</p>
 <p>Computation exercise: IF2 for an SIR epidemic.</p>
 <p>Practice of likelihood-based inference - profiles; mif likelihood vs pfilter likelihood; poor man’s profile; building and exploring a database of search output; building and using ARMA and iid benchmarks; model selection methods.</p>
 <p>Computation exercise: playing with these things for an SIR epidemic</p>
 </div>
-<div id="section-5" class="section level3">
-<h3>3:30-5:00</h3>
+<div id="session-6" class="section level3">
+<h3>3:30-5:00 (Session 6)</h3>
 <p>More diagnostic methods - probe matching; deterministic skeleton analysis; constructing and interpreting residuals.</p>
 <p>Computation exercise: playing with these things for an SIR epidemic</p>
 </div>
 </div>
 <div id="fri.-jul-17" class="section level2">
 <h2>Fri. Jul 17</h2>
-<div id="section-6" class="section level3">
-<h3>8:30-10:00</h3>
+<div id="session-7" class="section level3">
+<h3>8:30-10:00 (Session 7)</h3>
 <p>Case study of building a model (He et al, JRSI, measles?). Emphasis on the surprising importance of how stochasticity is included in the model. Noise on the rate of Markov chains.</p>
 <p>Case study (polio) (?)</p>
 <p>Computation exercise: playing with a pomp object for an endemic disease;</p>
 <p>[i think a format where we discuss a relevant paper for 45 mins and then the students get to spend 45 mins on some simple assigned tasks with the corresponding pomp objects would be interesting for the students. they’d feel they’re making the transition to working on a research problem, and this sort of approach of modifying existing code matches how most people learn pomp when we get them working on projects. also, we could distribute the papers ahead of time and give more committed members of the audience a head start on the background]</p>
 </div>
-<div id="section-7" class="section level3">
-<h3>10:30-12:00</h3>
+<div id="session-8" class="section level3">
+<h3>10:30-12:00 (Session 8)</h3>
 <p>Case study of covariates and forecasting (Laneri et al, malaria, if we can use the data!). SDE driven by gamma noise.</p>
 <p>Computation exercise: playing with these things on a pomp object;</p>
 </div>
-<div id="section-8" class="section level3">
-<h3>1:30-3:00</h3>
+<div id="session-9" class="section level3">
+<h3>1:30-3:00 (Session 9)</h3>
 <p>Case study of stochastic versus deterministic modeling (King et al, Ebola).</p>
 <p>Computation exercise: playing with these things on a pomp object;</p>
 </div>
-<div id="section-9" class="section level3">
-<h3>3:30-5:00</h3>
+<div id="session-10" class="section level3">
+<h3>3:30-5:00 (Session 10)</h3>
 <p>Case study: Comparing rival hypotheses (King et al, 2008, cholera)</p>
 <p>Computation exercise: playing with these things on a pomp object;</p>
 <hr />
@@ -270,6 +377,7 @@ img {
 <hr />
 <div class="references">
 <h2>References</h2>
+<p>Bj<span>ø</span>rnstad, O. N., and B. T. Grenfell. 2001. Noisy clockwork: Time series analysis of population fluctuations in animals. Science 293:638–643.</p>
 <p>Blake, I. M., R. Martin, A. Goel, N. Khetsuriani, J. Everts, C. Wolff, S. Wassilak, R. B. Aylward, and N. C. Grassly. 2014. The role of older children and adults in wild poliovirus transmission. Proceedings of the National Academy of Sciences of the U.S.A. 111:10604–10609.</p>
 <p>Camacho, A., S. Ballesteros, A. L. Graham, F. Carrat, O. Ratmann, and B. Cazelles. 2011. Explaining rapid reinfections in multiple-wave influenza outbreaks: Tristan da Cunha 1971 epidemic as a case study. Proceedings of the Royal Society of London. Series B:–.</p>
 <p>King, A. A., E. L. Ionides, M. Pascual, and M. J. Bouma. 2008. Inapparent infections and cholera dynamics. Nature 454:877–880.</p>

@@ -86,19 +86,81 @@ This module introduces statistical inference techniques and computational method
 
 ## Wed. Jul 15
 
-### 1:30-3:00
+### 1:30-3:00 (Session 1). What is "Simulation-based Inference for Epidemiological Dynamics?"
 
- Desiderata for modeling and inference methodology ("Noisy clockwork", Bjornstad & Grenfell): stochasticity; nonlinearity; partial observations; measurement error; mechanism; mechanistic inclusion of covariates.
+* Goals for model-based inference.
 
- This motivates the POMP model structure.  Comparison with other common model structures: ARIMA, LME, NLME, etc.
+* Some scientific challenges.
 
- Computation exercise: playing with a simple POMP in pomp.  Example: boarding-school flu or Canadian rubella
+* Mechanistic vs non-mechanistic models (POMP vs other common model structures: ARIMA, LME, NLME, etc.) 
 
-#### Noisy Clockwork: Time Series Analysis of Population Fluctuations in Animals
+I HAVEN'T DONE THIS HERE. IT COULD COME UP IN DISCUSSION OF THE "OVERVIEW". I'D PREFER TO POSTPONE THE ISSUE TO A SUB-TOPIC OF "BENCHMARKING AND DIAGNOSTIC METHODS." 
+
+
+* Computation exercise: playing with a simple POMP in pomp.  Example: boarding-school flu or Canadian rubella
+
+----------------------
+
+#### Overview of our ambitions
+
+* __Goal__: Building understanding of disease transmission processes to improve public health.
+    + Population-level processes: transmission events; susceptible, infected and recovered hosts. 
+    + Within-host processes: pathogen vs the immune system; locations and life stages of pathogens.  
+* __Approach__: Using time series data to inform dynamic models.
+* __Strengths and weaknesses of this approach__:
+
+\ 
+\ 
+
+I THINK IT WOULD BE GOOD TO HAVE TECHNOLOGY TO ALLOW FOR ANNOTATING HTML TO INTEGRATE DISCUSSION INTO THE PRESENTATION. IDEAS?
+
+\ 
+\ 
+\ 
+\ 
+\
+\
+\
+\
+\
+\
+\
+
+
+* __Alternative approaches__:
+
+\
+\
+\
+\
+\
+
+
+--------------------------------
+
+#### Questions and answers
+
+1. What roles are played by asymptomatic infection and waning immunity in cholera epidemics? (LINK TO FIGURE, OR PAPER?)
+
+2. What is the contribution to the HIV epidemic of dynamic variation in sexual behavior of an individual over time? How does this compare to the role of heterogeneity between individuals? (LINK TO FIGURE, OR PAPER?)
+
+3. What explains the seasonality of measles?
+
+4. What explains the seasonality of influenza?
+
+5. What explains the interannual variability of malaria?
+
+6. What will happen next in an Ebola outbreak? 
+
+
+
+--------------------------------
+
+#### Noisy clockwork: Time series analysis of population fluctuations in animals
 
 #### Six problems of [Bjornstad and Grenfell (Science, 2001)](http://dx.doi.org/10.1126/science.1062226)
 
-* Obstacles for _ecological_ modeling and inference via nonlinear mechanistic models:
+* Obstacles for __ecological__ modeling and inference via nonlinear mechanistic models:
 
 1. Combining measurement noise and process noise.
 
@@ -112,9 +174,95 @@ This module introduces statistical inference techniques and computational method
 
 6. Modeling spatial-temporal dynamics.
 
-* The same issues arise for _epidemiological_ modeling and inference via nonlinear mechanistic models.
+* The same issues arise for __epidemiological__ modeling and inference via nonlinear mechanistic models.
 
-### 3:30-5:00
+
+-------------------------------
+
+#### Partially observed Markov process (POMP) models
+
+
+* Data $y^*_1,\dots,y^*_N$ collected at times $t_1<\dots<t_N$ are modeled as noisy and incomplete observations of a Markov process $\{X(t), t\ge t_0\}$.
+
+* This is a __partially observed Markov process (POMP)__ model, also known as a hidden Markov model or a state space model.
+
+* $\{X(t)\}$ is Markov if the history of the process, $\{X(s), s\le t\}$, is uninformative about the future of the process, $\{X(s), s\ge t\}$, given the current value of the process, $X(t)$. 
+
+* If all quantities important for the dynamics of the system are placed in the __state__, $X(t)$, then the Markov property holds by construction.
+
+* POMP models can include all the features desired by @Bjornstad2001.
+
+
+------------------------------
+
+#### Notation for partially observed Markov process models
+
+* Write $X_n=X(t_n)$ and $X_{0:N}=(X_0,\dots,X_N)$. Let $Y_n$ be a random variable modeling the observation at time $t_n$.
+
+* The one-step transition density, $f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)$, together with the measurement density, $f_{Y_n|X_n}(y_n|x_n;\theta)$ and the initial density, $f_{X_0}(x_0;\theta)$, specify the entire joint density via
+
+$$f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta) = f_{X_0}(x_0;\theta)\,\prod_{n=1}^N\!f_{X_n | X_{n-1}}(x_n|x_{n-1};\theta)\,f_{Y_n|X_n}(y_n|x_n;\theta).$$
+
+* The marginal density for sequence of measurements, $Y_{1:N}$, evaluated at the data, $y_{1:N}^*$, is
+
+$$ f_{Y_{1:N}}(y^*_{1:N};\theta)=\int f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)\, dx_{0:N}.
+$$
+
+(SOME SIMPLE ALGEBRA HERE MIGHT BE APPROPRIATE AS AN EXERCISE - TO (RE)FAMILIARIZE THE AUDIENCE WITH SOME BASIC OPERATIONS ON DENSITIES??) 
+
+------------------------------
+
+To think algorithmically, we define some function calls:
+
+* rprocess( ): a draw from $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
+
+* dprocess( ): evaluation of $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
+
+* rmeasure( ): a draw from $f_{Y_n|X_n}(y_n| x_n;\theta)$
+
+* dmeasure( ): evaluation of $f_{Y_n|X_n}(y_n| x_n;\theta)$
+
+------------------------------
+
+#### What does it mean for methodology to be __simulation-based__?
+
+* Oftentimes, simulating random processes is easier than evaluating their transition probabilities.
+
+* In other words, we may be able to write rprocess() but not dprocess().
+
+*  __Simulation-based__ methods require the user to specify rprocess() but not dprocess().
+ 
+* __Plug-and-play__, __likelihood-free__ and __equation-free__ are alternative terms for simulation-based.
+
+(DEFINITIONS SHOULD BE HYPERLINKS TO TAKE FULL ADVANTAGE OF HTML FORMAT)
+
+* Much development of simulation-based statistical methodology has occurred in the past decade.
+
+------------------------------
+
+#### The pomp package for POMP models
+
+* pomp is an R package for data analysis using partially observed Markov process (POMP) models.
+
+* Note the distinction: lower case pomp  is a software package; upper case POMP is a class of models.
+
+* pomp builds methodology for POMP models in terms of arbitrary user-specified rprocess(), dprocess(), rmeasure() and dmeasure() functions.
+ 
+* Following modern practice, most methodology in pomp is simulation-based, so does not require specification of dprocess().
+
+* pomp has facilities to help construct rprocess(), rmeasure() and dmeasure() functions for model classes of epidemiological interest.
+
+* pomp provides a forum for development, modification and sharing of models, methodology and data analysis workflows.
+
+----------------------------
+
+#### OVER TO AARON
+
+* I WAS THINKING THAT FIRING UP pomp,  FINDING THE EXAMPLES, THE DOCUMENTATION, AND RUNNING simulate ETC ON EXISTING EXAMPLES WOULD BE QUITE ENOUGH FOR THIS POINT. THE NEXT SESSION WILL WORK ON BUILDING A POMP.
+
+----------------------------
+
+### 3:30-5:00 (Session 2)
 
  Classes of dynamic models of epidemiological interest, and their simulation algorithms.
 
@@ -122,17 +270,17 @@ This module introduces statistical inference techniques and computational method
 
 ## Thu. Jul 16
 
-### 8:30-10:00
+### 8:30-10:00 (Session 3)
 
  Reconstruction of states from noisy observations; particle filtering
 
  Computation exercise: particle filtering for an SIR epidemic (boarding school data?)
 
-### 10:30-12:00
+### 10:30-12:00 (Session 4)
 
  Principles of likelihood-based inference.  ML.  Likelihood ratio test, profile, AIC.  Likelihood surfaces, slices, profiles, MLE.  2D example via pfilter.  Visualization.  How to handle >2D?  
 
-### 1:30-3:00
+### 1:30-3:00 (Session 5)
 
 Iterated filtering to coerce a particle filter into carrying out maximization.
 
@@ -142,7 +290,7 @@ Iterated filtering to coerce a particle filter into carrying out maximization.
 
  Computation exercise: playing with these things for an SIR epidemic
 
-### 3:30-5:00
+### 3:30-5:00 (Session 6)
 
  More diagnostic methods - probe matching; deterministic skeleton analysis;  constructing and interpreting residuals.
 
@@ -150,7 +298,7 @@ Iterated filtering to coerce a particle filter into carrying out maximization.
 
 ## Fri. Jul 17
 
-### 8:30-10:00
+### 8:30-10:00 (Session 7)
  
  Case study of building a model (He et al, JRSI, measles?). Emphasis on the surprising importance of how stochasticity is included in the model.
  Noise on the rate of Markov chains.
@@ -161,20 +309,20 @@ Case study (polio) (?)
 
  [i think a format where we discuss a relevant paper for 45 mins and then the students get to spend 45 mins on some simple assigned tasks with the corresponding pomp objects would be interesting for the students. they'd feel they're making the transition to working on a research problem, and this sort of approach of modifying existing code matches how most people learn pomp when we get them working on projects. also, we could distribute the papers ahead of time and give more committed members of the audience a head start on the background]
 
-### 10:30-12:00
+### 10:30-12:00 (Session 8)
 
  Case study of covariates and forecasting (Laneri et al, malaria, if we can use the data!). SDE driven by gamma noise.
 
  Computation exercise: playing with these things on a pomp object;
 
 
-### 1:30-3:00
+### 1:30-3:00 (Session 9)
  
  Case study of stochastic versus deterministic modeling (King et al, Ebola).
 
  Computation exercise: playing with these things on a pomp object;
 
-### 3:30-5:00
+### 3:30-5:00 (Session 10)
 
  Case study: Comparing rival hypotheses (King et al, 2008, cholera)
 
