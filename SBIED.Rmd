@@ -86,7 +86,9 @@ This module introduces statistical inference techniques and computational method
 
 ## Wed. Jul 15
 
-### 1:30-3:00 (Session 1). What is "Simulation-based Inference for Epidemiological Dynamics?"
+### 1:30-3:00 (Session 1). 
+
+### 1A. What is "Simulation-based Inference for Epidemiological Dynamics?"
 
 * Goals for model-based inference.
 
@@ -240,7 +242,7 @@ To think algorithmically, we define some function calls:
 
 ------------------------------
 
-#### The pomp package for POMP models
+#### The pomp R package for POMP models
 
 * pomp is an R package for data analysis using partially observed Markov process (POMP) models.
 
@@ -256,17 +258,51 @@ To think algorithmically, we define some function calls:
 
 ----------------------------
 
+### 1B. Computer lab: Introduction to POMP models in pomp
+
 #### OVER TO AARON
 
 * I WAS THINKING THAT FIRING UP pomp,  FINDING THE EXAMPLES, THE DOCUMENTATION, AND RUNNING simulate ETC ON EXISTING EXAMPLES WOULD BE QUITE ENOUGH FOR THIS POINT. THE NEXT SESSION WILL WORK ON BUILDING A POMP.
+
+* THE LAST SLIDES OF 1A COULD COME HERE
+
+* MAYBE KICK OFF WITH SOMETHING LIKE SEC 2.1 OF THE JSS PAPER?
+
+* I'VE BEEN THINKING THAT, TO A 1ST APPROXIMATION, OUR JOB IS TO GUIDE PEOPLE THROUGH THE JSS PAPER AND THEN LEARN HOW TO PUT IT TO USE IN SCIENTIFIC SITUATIONS ARISING IN EPIDEMIOLOGY
+    + THE AUDIENCE IS SOMEWHAT DIFFERENT FROM THE JSS TARGET AUDIENCE, WHICH MOSTLY INVOLVES CHANGING ORDER AND EMPHASIS FROM THE JSS PAPER, BUT NOT THE FUNDAMENTAL TOPICS
+    + MORE EMPHASIS ON MODELS AND SIMULATION (SESSION 2 COVERS JSS SECS 4.1, 5.1, 5.2)
+    + ALSO, DOING JSS SEC 3.1 IN REVERSE ORDER: PFILTER BEFORE LIKELIHOOD 
+    + I'VE JUST NOTICED YOUR ALTERNATIVE OUTLINE FOLLOWS THE JSS ORDER ON THIS
+    + MY INCLINATION IS TO TEACH THE THEORY WHEN WE NEED IT FOR DOING... "HERE IS A PARTICLE FILTER. NOW WE CAN GET AT THE LIKELIHOOD. WHAT DO WE DO WITH IT?" rather than, "HERE IS THE THEORY OF LIKELIHOOD. FORTUNATELY, WE HAVE A PARTICLE FILTER SO WE CAN APPLY IT." BOTH APPROACHES ARE VALID, SO IT IS A GUESS WHAT'S BEST FOR THIS AUDIENCE.
 
 ----------------------------
 
 ### 3:30-5:00 (Session 2)
 
- Classes of dynamic models of epidemiological interest, and their simulation algorithms.
+### 2A. Simulating dynamic models: The stochastic Euler method.
+
+#### Euler's method for numerical solution of a deterministic, ordinary differential equation (ODE)
+
+#### Adding noise to differential equations to give a stochastic differential equation (SDE)
+
+#### ODE and SDE representations of an SIR model
+
+#### Compartment models, represented as ODEs, SDEs and Markov chains
+
+#### Markov chain representation of an SIR model
+
+* I THINK WE SHOULD FOCUS ON EULER METHODS; THE GILLESPIE ALGORITHM IS NOT EVEN NEEDED FOR OUR PURPOSES, AND ANYWAY IT HAS LIMITED SCOPE WHEREAS THE EULER APPROACH IS FAIRLY UNIVERSAL TO ALL THE CTS TIME MODELS WE WANT.
+
+* THIS IS ALL CTS TIME, AND NOISY RATES WILL PROBABLY HAVE TO COME LATER, BUT I THINK THIS IS ALREADY PLENTY TO DO, AND SUFFICIENT FOR THE 2B OUTLINED BELOW.
+
+### 2B. Computer lab: Exploring an SIR model in pomp
+
+* AN ASSUMPTION: STUDENTS MAY BE MORE MOTIVATED TO TINKER WITH EXISTING SIR CODE THAN TO GO THROUGH THE MORE RIGOROUS PROCESS OF FIRST LEARNING HOW TO BUILD A DISCRETE-TIME POMP FROM SCRATCH, ETC.
+
+* JSS SEC 5.1, 5.2
 
  Computation exercise: playing with an SIR simulation model in pomp.
+
 
 ## Thu. Jul 16
 
@@ -353,6 +389,7 @@ Multi-processor computing isn't listed anywhere yet; it could arise naturally th
 1. Advanced model construction: SDE, Euler-multinomial, extrademographic stochasticity
 1. Case study: measles, cholera, malaria
 1. Advanced practicum: Ebola in West Africa 2014
+
 
 ----------------------
 

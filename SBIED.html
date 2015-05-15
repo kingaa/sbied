@@ -72,8 +72,12 @@ img {
 <li><a href="#daily-schedule">Daily Schedule</a></li>
 <li><a href="#pre-sismid-timetable">Pre-SISMID timetable:</a></li>
 <li><a href="#wed.-jul-15">Wed. Jul 15</a><ul>
-<li><a href="#session-1.-what-is-simulation-based-inference-for-epidemiological-dynamics">1:30-3:00 (Session 1). What is “Simulation-based Inference for Epidemiological Dynamics?”</a></li>
+<li><a href="#session-1.">1:30-3:00 (Session 1).</a></li>
+<li><a href="#a.-what-is-simulation-based-inference-for-epidemiological-dynamics">1A. What is “Simulation-based Inference for Epidemiological Dynamics?”</a></li>
+<li><a href="#b.-computer-lab-introduction-to-pomp-models-in-pomp">1B. Computer lab: Introduction to POMP models in pomp</a></li>
 <li><a href="#session-2">3:30-5:00 (Session 2)</a></li>
+<li><a href="#a.-simulating-dynamic-models-the-stochastic-euler-method.">2A. Simulating dynamic models: The stochastic Euler method.</a></li>
+<li><a href="#b.-computer-lab-exploring-an-sir-model-in-pomp">2B. Computer lab: Exploring an SIR model in pomp</a></li>
 </ul></li>
 <li><a href="#thu.-jul-16">Thu. Jul 16</a><ul>
 <li><a href="#session-3">8:30-10:00 (Session 3)</a></li>
@@ -161,8 +165,11 @@ img {
 </div>
 <div id="wed.-jul-15" class="section level2">
 <h2>Wed. Jul 15</h2>
-<div id="session-1.-what-is-simulation-based-inference-for-epidemiological-dynamics" class="section level3">
-<h3>1:30-3:00 (Session 1). What is “Simulation-based Inference for Epidemiological Dynamics?”</h3>
+<div id="session-1." class="section level3">
+<h3>1:30-3:00 (Session 1).</h3>
+</div>
+<div id="a.-what-is-simulation-based-inference-for-epidemiological-dynamics" class="section level3">
+<h3>1A. What is “Simulation-based Inference for Epidemiological Dynamics?”</h3>
 <ul>
 <li><p>Goals for model-based inference.</p></li>
 <li><p>Some scientific challenges.</p></li>
@@ -274,8 +281,8 @@ img {
 </ul>
 <hr />
 </div>
-<div id="the-pomp-package-for-pomp-models" class="section level4">
-<h4>The pomp package for POMP models</h4>
+<div id="the-pomp-r-package-for-pomp-models" class="section level4">
+<h4>The pomp R package for POMP models</h4>
 <ul>
 <li><p>pomp is an R package for data analysis using partially observed Markov process (POMP) models.</p></li>
 <li><p>Note the distinction: lower case pomp is a software package; upper case POMP is a class of models.</p></li>
@@ -286,17 +293,58 @@ img {
 </ul>
 <hr />
 </div>
+</div>
+<div id="b.-computer-lab-introduction-to-pomp-models-in-pomp" class="section level3">
+<h3>1B. Computer lab: Introduction to POMP models in pomp</h3>
 <div id="over-to-aaron" class="section level4">
 <h4>OVER TO AARON</h4>
 <ul>
-<li>I WAS THINKING THAT FIRING UP pomp, FINDING THE EXAMPLES, THE DOCUMENTATION, AND RUNNING simulate ETC ON EXISTING EXAMPLES WOULD BE QUITE ENOUGH FOR THIS POINT. THE NEXT SESSION WILL WORK ON BUILDING A POMP.</li>
+<li><p>I WAS THINKING THAT FIRING UP pomp, FINDING THE EXAMPLES, THE DOCUMENTATION, AND RUNNING simulate ETC ON EXISTING EXAMPLES WOULD BE QUITE ENOUGH FOR THIS POINT. THE NEXT SESSION WILL WORK ON BUILDING A POMP.</p></li>
+<li><p>THE LAST SLIDES OF 1A COULD COME HERE</p></li>
+<li><p>MAYBE KICK OFF WITH SOMETHING LIKE SEC 2.1 OF THE JSS PAPER?</p></li>
+<li>I’VE BEEN THINKING THAT, TO A 1ST APPROXIMATION, OUR JOB IS TO GUIDE PEOPLE THROUGH THE JSS PAPER AND THEN LEARN HOW TO PUT IT TO USE IN SCIENTIFIC SITUATIONS ARISING IN EPIDEMIOLOGY
+<ul>
+<li>THE AUDIENCE IS SOMEWHAT DIFFERENT FROM THE JSS TARGET AUDIENCE, WHICH MOSTLY INVOLVES CHANGING ORDER AND EMPHASIS FROM THE JSS PAPER, BUT NOT THE FUNDAMENTAL TOPICS</li>
+<li>MORE EMPHASIS ON MODELS AND SIMULATION (SESSION 2 COVERS JSS SECS 4.1, 5.1, 5.2)</li>
+<li>ALSO, DOING JSS SEC 3.1 IN REVERSE ORDER: PFILTER BEFORE LIKELIHOOD</li>
+<li>I’VE JUST NOTICED YOUR ALTERNATIVE OUTLINE FOLLOWS THE JSS ORDER ON THIS</li>
+<li>MY INCLINATION IS TO TEACH THE THEORY WHEN WE NEED IT FOR DOING… “HERE IS A PARTICLE FILTER. NOW WE CAN GET AT THE LIKELIHOOD. WHAT DO WE DO WITH IT?” rather than, “HERE IS THE THEORY OF LIKELIHOOD. FORTUNATELY, WE HAVE A PARTICLE FILTER SO WE CAN APPLY IT.” BOTH APPROACHES ARE VALID, SO IT IS A GUESS WHAT’S BEST FOR THIS AUDIENCE.</li>
+</ul></li>
 </ul>
 <hr />
 </div>
 </div>
 <div id="session-2" class="section level3">
 <h3>3:30-5:00 (Session 2)</h3>
-<p>Classes of dynamic models of epidemiological interest, and their simulation algorithms.</p>
+</div>
+<div id="a.-simulating-dynamic-models-the-stochastic-euler-method." class="section level3">
+<h3>2A. Simulating dynamic models: The stochastic Euler method.</h3>
+<div id="eulers-method-for-numerical-solution-of-a-deterministic-ordinary-differential-equation-ode" class="section level4">
+<h4>Euler’s method for numerical solution of a deterministic, ordinary differential equation (ODE)</h4>
+</div>
+<div id="adding-noise-to-differential-equations-to-give-a-stochastic-differential-equation-sde" class="section level4">
+<h4>Adding noise to differential equations to give a stochastic differential equation (SDE)</h4>
+</div>
+<div id="ode-and-sde-representations-of-an-sir-model" class="section level4">
+<h4>ODE and SDE representations of an SIR model</h4>
+</div>
+<div id="compartment-models-represented-as-odes-sdes-and-markov-chains" class="section level4">
+<h4>Compartment models, represented as ODEs, SDEs and Markov chains</h4>
+</div>
+<div id="markov-chain-representation-of-an-sir-model" class="section level4">
+<h4>Markov chain representation of an SIR model</h4>
+<ul>
+<li><p>I THINK WE SHOULD FOCUS ON EULER METHODS; THE GILLESPIE ALGORITHM IS NOT EVEN NEEDED FOR OUR PURPOSES, AND ANYWAY IT HAS LIMITED SCOPE WHEREAS THE EULER APPROACH IS FAIRLY UNIVERSAL TO ALL THE CTS TIME MODELS WE WANT.</p></li>
+<li><p>THIS IS ALL CTS TIME, AND NOISY RATES WILL PROBABLY HAVE TO COME LATER, BUT I THINK THIS IS ALREADY PLENTY TO DO, AND SUFFICIENT FOR THE 2B OUTLINED BELOW.</p></li>
+</ul>
+</div>
+</div>
+<div id="b.-computer-lab-exploring-an-sir-model-in-pomp" class="section level3">
+<h3>2B. Computer lab: Exploring an SIR model in pomp</h3>
+<ul>
+<li><p>AN ASSUMPTION: STUDENTS MAY BE MORE MOTIVATED TO TINKER WITH EXISTING SIR CODE THAN TO GO THROUGH THE MORE RIGOROUS PROCESS OF FIRST LEARNING HOW TO BUILD A DISCRETE-TIME POMP FROM SCRATCH, ETC.</p></li>
+<li><p>JSS SEC 5.1, 5.2</p></li>
+</ul>
 <p>Computation exercise: playing with an SIR simulation model in pomp.</p>
 </div>
 </div>
