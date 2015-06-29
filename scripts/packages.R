@@ -31,10 +31,9 @@ subplex
 xtable
 "
 )
-pkglist <- setdiff(pkglist,rownames(installed.packages()))
 
 ## install the packages (you will be prompted for a mirror)
-if (length(pkglist)>0) install.packages(pkglist)
+if (length(pkglist)>0) update.packages(pkglist)
 install.packages(c("pomp","pompExamples"),repos="http://kinglab.eeb.lsa.umich.edu/R")
 
 cat("all packages installed successfully!\n")
