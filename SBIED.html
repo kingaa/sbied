@@ -81,8 +81,14 @@ img {
 </ul></li>
 <li><a href="#thu.-jul-16">Thu. Jul 16</a><ul>
 <li><a href="#session-3">8:30-10:00 (Session 3)</a></li>
+<li><a href="#a-theory-of-particle-filter-aak">3A: theory of particle filter (AAK)</a></li>
+<li><a href="#b-particle-filtering-in-practice-aak">3B: particle filtering in practice (AAK)</a></li>
 <li><a href="#session-4">10:30-12:00 (Session 4)</a></li>
+<li><a href="#a-principles-of-likelihood-based-inference.-eli">4A: Principles of likelihood-based inference. (ELI)</a></li>
+<li><a href="#b-likelihood-slices-grid-based-profiles-aak">4B: likelihood slices &amp; grid-based profiles (AAK)</a></li>
 <li><a href="#session-5">1:30-3:00 (Session 5)</a></li>
+<li><a href="#a-theory-of-if-eli">5A: theory of IF (ELI)</a></li>
+<li><a href="#b-if2-in-practice-eli">5B: IF2 in practice (ELI)</a></li>
 <li><a href="#session-6">3:30-5:00 (Session 6)</a></li>
 </ul></li>
 <li><a href="#fri.-jul-17">Fri. Jul 17</a><ul>
@@ -91,7 +97,6 @@ img {
 <li><a href="#session-9">1:30-3:00 (Session 9)</a></li>
 <li><a href="#session-10">3:30-5:00 (Session 10)</a></li>
 </ul></li>
-<li><a href="#other-options-on-case-studies">Other options on case studies:</a></li>
 <li><a href="#alternative-outline.">Alternative outline.</a></li>
 </ul>
 </div>
@@ -352,60 +357,68 @@ img {
 <h2>Thu. Jul 16</h2>
 <div id="session-3" class="section level3">
 <h3>8:30-10:00 (Session 3)</h3>
+</div>
+<div id="a-theory-of-particle-filter-aak" class="section level3">
+<h3>3A: theory of particle filter (AAK)</h3>
 <p>Reconstruction of states from noisy observations; particle filtering</p>
-<p>Computation exercise: particle filtering for an SIR epidemic (boarding school data?)</p>
+</div>
+<div id="b-particle-filtering-in-practice-aak" class="section level3">
+<h3>3B: particle filtering in practice (AAK)</h3>
+<p>Computation exercise: particle filtering for an SIR epidemic (boarding school data?); filtering failures, noise in likelihood estimation; effective sample size; conditional likelihoods; filtering means</p>
 </div>
 <div id="session-4" class="section level3">
 <h3>10:30-12:00 (Session 4)</h3>
-<p>Principles of likelihood-based inference. ML. Likelihood ratio test, profile, AIC. Likelihood surfaces, slices, profiles, MLE. 2D example via pfilter. Visualization. How to handle &gt;2D?</p>
+</div>
+<div id="a-principles-of-likelihood-based-inference.-eli" class="section level3">
+<h3>4A: Principles of likelihood-based inference. (ELI)</h3>
+<ol start="1050" style="list-style-type: upper-roman">
+<li>Likelihood ratio test, profile, AIC. Likelihood surfaces, slices, profiles, MLE. 2D example via pfilter. Visualization. How to handle &gt;2D?</li>
+</ol>
+</div>
+<div id="b-likelihood-slices-grid-based-profiles-aak" class="section level3">
+<h3>4B: likelihood slices &amp; grid-based profiles (AAK)</h3>
 </div>
 <div id="session-5" class="section level3">
 <h3>1:30-3:00 (Session 5)</h3>
+</div>
+<div id="a-theory-of-if-eli" class="section level3">
+<h3>5A: theory of IF (ELI)</h3>
 <p>Iterated filtering to coerce a particle filter into carrying out maximization.</p>
-<p>Computation exercise: IF2 for an SIR epidemic.</p>
-<p>Practice of likelihood-based inference - profiles; mif likelihood vs pfilter likelihood; poor man’s profile; building and exploring a database of search output; building and using ARMA and iid benchmarks; model selection methods.</p>
-<p>Computation exercise: playing with these things for an SIR epidemic</p>
+</div>
+<div id="b-if2-in-practice-eli" class="section level3">
+<h3>5B: IF2 in practice (ELI)</h3>
+<p>Computation exercise: IF2 for an SIR epidemic (boarding-school flu)</p>
+<p>Practice of likelihood-based inference - profiles; mif likelihood vs pfilter likelihood; poor man’s profile; building and exploring a database of search output; building and using trajectory-matching and iid benchmarks; model selection methods.</p>
+<p>Computation exercise: BBS example</p>
 </div>
 <div id="session-6" class="section level3">
 <h3>3:30-5:00 (Session 6)</h3>
-<p>More diagnostic methods - probe matching; deterministic skeleton analysis; constructing and interpreting residuals.</p>
-<p>Computation exercise: playing with these things for an SIR epidemic</p>
+<p>Diagnostic methods: simulation, probes, constructing and interpreting residuals. Model criticism and improvement. Benchmarks.</p>
+<p>Computation exercise: all this with the BBS example.</p>
 </div>
 </div>
 <div id="fri.-jul-17" class="section level2">
 <h2>Fri. Jul 17</h2>
 <div id="session-7" class="section level3">
 <h3>8:30-10:00 (Session 7)</h3>
-<p>Case study of building a model (He et al, JRSI, measles?). Emphasis on the surprising importance of how stochasticity is included in the model. Noise on the rate of Markov chains.</p>
-<p>Case study (polio) (?)</p>
-<p>Computation exercise: playing with a pomp object for an endemic disease;</p>
+<p>Case study: polio. (ELI)</p>
+<p>Covariates, stochasticity, extinction.</p>
 <p>[i think a format where we discuss a relevant paper for 45 mins and then the students get to spend 45 mins on some simple assigned tasks with the corresponding pomp objects would be interesting for the students. they’d feel they’re making the transition to working on a research problem, and this sort of approach of modifying existing code matches how most people learn pomp when we get them working on projects. also, we could distribute the papers ahead of time and give more committed members of the audience a head start on the background]</p>
 </div>
 <div id="session-8" class="section level3">
 <h3>10:30-12:00 (Session 8)</h3>
-<p>Case study of covariates and forecasting (Laneri et al, malaria, if we can use the data!). SDE driven by gamma noise.</p>
-<p>Computation exercise: playing with these things on a pomp object;</p>
+<p>Case study: measles. (AAK)</p>
+<p>Continuous-time processes, demographic &amp; extra-demographic stochasticity. Emphasis on the surprising importance of how stochasticity is included in the model. Noise on the rate of Markov chains. Interpretation of fitted parameters. Model mis-specification.</p>
 </div>
 <div id="session-9" class="section level3">
 <h3>1:30-3:00 (Session 9)</h3>
-<p>Case study of stochastic versus deterministic modeling (King et al, Ebola).</p>
-<p>Computation exercise: playing with these things on a pomp object;</p>
+<p>Case study: sexual contacts panel data (Romero et al. 2015).</p>
 </div>
 <div id="session-10" class="section level3">
 <h3>3:30-5:00 (Session 10)</h3>
-<p>Case study: Comparing rival hypotheses (King et al, 2008, cholera)</p>
-<p>Computation exercise: playing with these things on a pomp object;</p>
+<p>Case study: Ebola and forecasting (King et al. 2015)</p>
 <hr />
 </div>
-</div>
-<div id="other-options-on-case-studies" class="section level2">
-<h2>Other options on case studies:</h2>
-<ul>
-<li>Panel data (Romero Severson et al, sexual behavior)</li>
-<li>Any other pomp paper for which we have access to the data &amp; model</li>
-</ul>
-<p>Multi-processor computing isn’t listed anywhere yet; it could arise naturally through the case studies</p>
-<hr />
 </div>
 <div id="alternative-outline." class="section level2">
 <h2>Alternative outline.</h2>

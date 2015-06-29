@@ -308,72 +308,69 @@ To think algorithmically, we define some function calls:
 
 ### 8:30-10:00 (Session 3)
 
+### 3A: theory of particle filter (AAK)
+
  Reconstruction of states from noisy observations; particle filtering
 
- Computation exercise: particle filtering for an SIR epidemic (boarding school data?)
+### 3B: particle filtering in practice (AAK)
+ Computation exercise: particle filtering for an SIR epidemic (boarding school data?); filtering  failures, noise in likelihood estimation; effective sample size; conditional likelihoods; filtering means
 
 ### 10:30-12:00 (Session 4)
 
- Principles of likelihood-based inference.  ML.  Likelihood ratio test, profile, AIC.  Likelihood surfaces, slices, profiles, MLE.  2D example via pfilter.  Visualization.  How to handle >2D?  
+### 4A: Principles of likelihood-based inference. (ELI) 
+
+ML.  Likelihood ratio test, profile, AIC.  Likelihood surfaces, slices, profiles, MLE.  2D example via pfilter.  Visualization.  How to handle >2D?  
+
+### 4B: likelihood slices & grid-based profiles (AAK)
 
 ### 1:30-3:00 (Session 5)
 
+### 5A: theory of IF (ELI)
+
 Iterated filtering to coerce a particle filter into carrying out maximization.
 
- Computation exercise: IF2 for an SIR epidemic.
+### 5B: IF2 in practice (ELI)
 
- Practice of likelihood-based inference - profiles; mif likelihood vs pfilter likelihood; poor man's profile; building and exploring a database of search output; building and using ARMA and iid benchmarks; model selection methods.
+Computation exercise: IF2 for an SIR epidemic (boarding-school flu)
 
- Computation exercise: playing with these things for an SIR epidemic
+ Practice of likelihood-based inference - profiles; mif likelihood vs pfilter likelihood; poor man's profile; building and exploring a database of search output; building and using trajectory-matching and iid benchmarks; model selection methods.
+
+ Computation exercise: BBS example
 
 ### 3:30-5:00 (Session 6)
 
- More diagnostic methods - probe matching; deterministic skeleton analysis;  constructing and interpreting residuals.
+ Diagnostic methods: simulation, probes, constructing and interpreting residuals.  Model criticism and improvement.  Benchmarks.
 
- Computation exercise: playing with these things for an SIR epidemic
+ Computation exercise: all this with the BBS example.
 
 ## Fri. Jul 17
 
 ### 8:30-10:00 (Session 7)
  
- Case study of building a model (He et al, JRSI, measles?). Emphasis on the surprising importance of how stochasticity is included in the model.
- Noise on the rate of Markov chains.
-
-Case study (polio) (?)
-
- Computation exercise: playing with a pomp object for an endemic disease;
+ Case study: polio. (ELI)
+ 
+ Covariates, stochasticity, extinction.
 
  [i think a format where we discuss a relevant paper for 45 mins and then the students get to spend 45 mins on some simple assigned tasks with the corresponding pomp objects would be interesting for the students. they'd feel they're making the transition to working on a research problem, and this sort of approach of modifying existing code matches how most people learn pomp when we get them working on projects. also, we could distribute the papers ahead of time and give more committed members of the audience a head start on the background]
 
 ### 10:30-12:00 (Session 8)
 
- Case study of covariates and forecasting (Laneri et al, malaria, if we can use the data!). SDE driven by gamma noise.
-
- Computation exercise: playing with these things on a pomp object;
-
+ Case study: measles. (AAK)
+ 
+ Continuous-time processes, demographic & extra-demographic stochasticity.
+ Emphasis on the surprising importance of how stochasticity is included in the model.
+ Noise on the rate of Markov chains.
+ Interpretation of fitted parameters.
+ Model mis-specification.
 
 ### 1:30-3:00 (Session 9)
  
- Case study of stochastic versus deterministic modeling (King et al, Ebola).
-
- Computation exercise: playing with these things on a pomp object;
+ Case study: sexual contacts panel data (Romero et al. 2015).
 
 ### 3:30-5:00 (Session 10)
 
- Case study: Comparing rival hypotheses (King et al, 2008, cholera)
-
- Computation exercise: playing with these things on a pomp object;
+ Case study: Ebola and forecasting (King et al. 2015)
  
-----------------------
- 
-## Other options on case studies:
-
-- Panel data (Romero Severson et al, sexual behavior)
-- Any other pomp paper for which we have access to the data & model
-
-Multi-processor computing isn't listed anywhere yet; it could arise naturally through the case studies
-
-
 ----------------------
 
 ## Alternative outline.
