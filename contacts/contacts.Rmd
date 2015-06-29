@@ -115,7 +115,7 @@ Whether the data are sufficient to identify both $R_i$ and $D_i$ is an empirical
 
 Consider an SI model for HIV where the contact rates are either (a) constant; (b) vary only between individuals; (c) vary both between and within individuals. In each case, parameterize the model by fitting the behavioral model above, and supplying per-contact infection rates from the literature. Though this model is too simple to draw firm scientific conclusions, it does show the importance of the issue:
 
-![fig4](fig4.jpg)
+![fig4](contacts_fig4.jpg)
 
 Fig 4 of  @romero-severson15. The median of 500 simulations are shown as lines and the $75^{th}$ and $25^{th}$ quantiles are shown as gray envelopes for three parameterizations. 
 
