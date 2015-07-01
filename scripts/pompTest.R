@@ -1,15 +1,9 @@
 ## TEST SCRIPT
 ## If this script runs without errors, pomp is usable on your system.
 
-prereqs <- c("subplex","nloptr","mvtnorm","deSolve","coda")
-prereqs <- prereqs[!prereqs%in%rownames(installed.packages())]
-
-## The following may prompt you for a CRAN mirror: choose one near you.
-if (length(prereqs)>0) install.packages(prereqs)
-
 require(pomp)
 
-stopifnot(packageVersion("pomp")>="0.68-4")
+stopifnot(packageVersion("pomp")>="0.69-1")
 
 gomp2 <- pomp(
               data=data.frame(time=1:50,Y=NA),

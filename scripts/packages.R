@@ -1,4 +1,4 @@
-## check to see that the version of R is at least 3.1.2
+## check to see that the version of R is at least 3.2.0
 print(R.version.string)
 stopifnot(getRversion()>="3.2.0")
 
@@ -32,8 +32,11 @@ xtable
 "
 )
 
-## install the packages (you will be prompted for a mirror)
-if (length(pkglist)>0) update.packages(pkglist)
+pkglist <- setdiff(pkglist,rownames(installed.packages()))
+
+if (length(pkglist)>0) install.packages(pkglist)
+update.packages()
+
 install.packages(c("pomp","pompExamples"),repos="http://kinglab.eeb.lsa.umich.edu/R")
 
 cat("all packages installed successfully!\n")
