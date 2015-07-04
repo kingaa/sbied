@@ -69,13 +69,15 @@ img {
 <p>Open a terminal window and execute</p>
 <pre><code>xcode-select --install</code></pre>
 <p>This should have the result of installing command-line versions of all the tools you’ll need to compile C and FORTRAN code. To test it, run the installation and test scripts from <a href="http://kinglab.eeb.lsa.umich.edu/SBIED/scripts/preparation.html" class="uri">http://kinglab.eeb.lsa.umich.edu/SBIED/scripts/preparation.html</a>.</p>
+<p>If these still don’t work, complaining about a lack of FORTRAN support, try installing <code>gfortran</code> as shown in the instructions below for older versions of the OS.</p>
 </div>
 <div id="osx-10.9-and-older" class="section level3">
 <h3>OSX 10.9 and older</h3>
 <p>Make sure you have <code>Xcode</code> installed. It is available at <a href="https://developer.apple.com/xcode/downloads/" class="uri">https://developer.apple.com/xcode/downloads/</a>. You may need to follow the “Additional Tools” link to find an older version of <code>Xcode</code>.</p>
 <p>The following is based on the <a href="http://cran.r-project.org/bin/macosx/tools">instructions given on the <em>R</em> website</a>. If you have root privileges and wish to install <code>gfortran</code> globally in <code>/usr/local/</code>, then Download and run the <code>mac-fortran-sudo.sh</code> script from the course website. To do this, open a terminal and execute</p>
 <pre><code>curl -O http://kinglab.eeb.lsa.umich.edu/SBIED/scripts/mac-fortran-sudo.sh
-sudo sh mac-fortran-sudo.sh</code></pre>
+sh mac-fortran-sudo.sh</code></pre>
+<p>The last command uses <code>sudo</code> and will require you to enter your password.</p>
 <p>If you just wish to install <code>gfortran</code> in your user space in such a way that it can be easily removed later, then download and run the <code>mac-fortran.sh</code> script from the course website by opening a terminal and executing</p>
 <pre><code>curl -O http://kinglab.eeb.lsa.umich.edu/SBIED/scripts/mac-fortran.sh
 sh mac-fortran.sh</code></pre>

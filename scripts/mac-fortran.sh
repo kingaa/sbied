@@ -7,6 +7,9 @@ cd ~/gfortran
 curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2
 tar jxvf gfortran-4.8.2-darwin13.tar.bz2 
 
+echo "cleaning up: removing tarball"
+rm -f gfortran-4.8.2-darwin13.tar.bz2
+
 echo "setting up a Makevars file in ~/.R to tell R about the new fortran"
 mkdir -p ~/.R
 cd ~/.R

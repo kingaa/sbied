@@ -1,10 +1,12 @@
+------------------------------
+
 Dear SISMID participant,
 
 Ed and I are looking forward to having you in this year's [**Summer Institute in Statistics and Modeling in Infectious Diseases**](http://sismid.uw.edu) **Module 10: Simulation-based Inference for Epidemiological Dynamics**.  We'll be teaching some powerful and flexible approaches that expand the range of models that can be used in inference.
 
 You'll be learning about these methods through computational exercises.  Accordingly, please bring a laptop.
 
-This message is intended to make sure that you have the software you'll need for the module.  Please read the appropriate sections below, install the software as needed, and run the test scripts.  We will not have time in Seattle to spend on installation of software, so please make sure this is all done before you arrive.  If you run into problems, send me a note with a detailed description including the OS you’re running, the versions of `R`, `Rstudio`, and `pomp` you’re attempting to install, what you’ve done, and what problems you’ve encountered.
+This message is intended to make sure that you have the software you'll need for the module.  Please read the appropriate sections below, install the software as needed, and run the test scripts.  **We will not have time in Seattle to spend on installation of software, so please make sure this is all done before you arrive.**  If you run into problems, send me a note with a detailed description including the OS you’re running, the versions of `R`, `Rstudio`, and `pomp` you’re attempting to install, what you’ve done, and what problems you’ve encountered.
 
 #### All users:
 
@@ -47,3 +49,5 @@ In addition, if you can arrange to be able to run remote computations at your ho
 Looking forward to seeing you in Seattle,
 
 Aaron
+
+------------------------------
