@@ -15,7 +15,9 @@ Licensed under the Creative Commons attribution-noncommercial license, http://cr
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
 
-Revisit the analysis of @He2010.
+In this example, we revisit the analysis of @He2010.
+This is intended to be a concrete example of a full data analysis.
+Whilst @He2010 examined measles in 20 cities, we will focus on London alone.
 
 ```{r knitr-opts,include=FALSE,cache=FALSE,purl=FALSE}
 library(knitr)
@@ -38,7 +40,6 @@ opts_chunk$set(
   fig.pos="h!",
   fig.align='center',
   fig.height=4,fig.width=6.83,
-  out.width="\\linewidth",
   dpi=300,
   dev='png',
   dev.args=list(bg='transparent')
@@ -60,13 +61,17 @@ library(ggplot2)
 theme_set(theme_bw())
 ```
 
-To get started, we must install `pomp`.
-Run the following to do so.
+## Preliminaries
+
+To get started, we must install `pomp` if it is not already installed.
+The following commands install `pomp` from source (on github).
 ```{r pomp-install,eval=FALSE}
 require(devtools)
 install_github("kingaa/pomp")
 ```
+If we were to run into trouble in the above, we would consult the [package website](http://kingaa.github.io/pomp/install.html).
 
+Now we'll load the packages we'll need, and set the random seed, to allow reproducibility.
 ```{r prelims,cache=FALSE}
 set.seed(594709947L)
 require(ggplot2)
@@ -77,6 +82,12 @@ require(pomp)
 stopifnot(packageVersion("pomp")>="0.70-1")
 ```
 
+## Data and covariates
+
+Now we'll load the data and covariates.
+The data are measles reports from 20 cities in England and Wales.
+We also have information on the population sizes and birth-rates in these cities;
+we'll treat these variables as covariates.
 
 ```{r load-data}
 load("twentycities.rda")
@@ -87,12 +98,15 @@ measles %>%
 demog %>% subset(town=="London",select=-town) -> demog
 ```
 
+Let's plot the data and covariates.
+
 ```{r data-plot}
 dat %>% ggplot(aes(x=time,y=cases))+geom_line()
 demog %>% melt(id="year") %>%
   ggplot(aes(x=year,y=value))+geom_point()+
   facet_wrap(~variable,ncol=1,scales="free_y")
 ```
+
 
 ```{r prep-covariates}
 demog %>% 
@@ -162,23 +176,23 @@ rproc <- Csnippet("
 
 ```{r dmeasure}
 dmeas <- Csnippet("
-  double mn = rho*C;
-  double v = mn*(1.0-rho+tau*tau*mn);
+  double m = rho*C;
+  double v = m*(1.0-rho+psi*psi*m);
   double tol = 1.0e-18;
   if (cases > 0.0) {
-	  lik = pnorm(cases+0.5,mn,sqrt(v)+tol,1,0)-pnorm(cases-0.5,mn,sqrt(v)+tol,1,0)+tol;
+	  lik = pnorm(cases+0.5,m,sqrt(v)+tol,1,0)-pnorm(cases-0.5,m,sqrt(v)+tol,1,0)+tol;
   } else {
-    lik = pnorm(cases+0.5,mn,sqrt(v)+tol,1,0)+tol;
+    lik = pnorm(cases+0.5,m,sqrt(v)+tol,1,0)+tol;
   }
 ")
 ```
 
 ```{r rmeasure}
 rmeas <- Csnippet("
-  double mn = rho*C;
-  double v = mn*(1.0-rho+tau*tau*mn);
+  double m = rho*C;
+  double v = m*(1.0-rho+psi*psi*m);
   double tol = 1.0e-18;
-  cases = rnorm(mn,sqrt(v)+tol);
+  cases = rnorm(m,sqrt(v)+tol);
   if (cases > 0.0) {
     cases = nearbyint(cases);
   } else {
@@ -210,7 +224,7 @@ toEst <- Csnippet("
   Tcohort = logit(cohort);
   Tamplitude = logit(amplitude);
   TsigmaSE = log(sigmaSE);
-  Ttau = log(tau);
+  Tpsi = log(psi);
   TR0 = log(R0);
   to_log_barycentric (&TS_0, &S_0, 4);
 ")
@@ -225,7 +239,7 @@ fromEst <- Csnippet("
   Tcohort = expit(cohort);
   Tamplitude = expit(amplitude);
   TsigmaSE = exp(sigmaSE);
-  Ttau = exp(tau);
+  Tpsi = exp(psi);
   TR0 = exp(R0);
   from_log_barycentric (&TS_0, &S_0, 4);
 ")
@@ -246,7 +260,7 @@ dat %>%
        zeronames=c("C","W"),
        statenames=c("S","E","I","R","C","W"),
        paramnames=c("R0","mu","sigma","gamma","alpha","iota",
-                    "rho","sigmaSE","tau","cohort","amplitude",
+                    "rho","sigmaSE","psi","cohort","amplitude",
                     "S_0","E_0","I_0","R_0")
        ) -> m1
 ```
@@ -263,7 +277,7 @@ m1 %>% as.data.frame() %>%
 readRDS("He2010_mles.rds") %>% 
   subset(town=="London") -> mle
 paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
-                "rho","sigmaSE","tau","cohort","amplitude",
+                "rho","sigmaSE","psi","cohort","amplitude",
                 "S_0","E_0","I_0","R_0")
 coef(m1) <- unlist(mle[paramnames])
 ```
