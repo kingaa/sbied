@@ -296,59 +296,12 @@ m1 %>%
   ddply(~time+data,summarize,
         p=c(0.05,0.5,0.95),q=quantile(cases,prob=p,names=FALSE)) %>%
   mutate(p=mapvalues(p,from=c(0.05,0.5,0.95),to=c("lo","med","hi")),
-         data=mapvalues(data,from=c(T,F),to=c("data","simulation"))) %>%
+         data=mapvalues(data,from=c(TRUE,FALSE),to=c("data","simulation"))) %>%
   dcast(time+data~p,value.var='q') %>%
   ggplot(aes(x=time,y=med,color=data,fill=data,ymin=lo,ymax=hi))+
   geom_ribbon(alpha=0.2)
 ```
 
-
-```{r bake}
-bake <- function (file, expr) {
-  if (file.exists(file)) {
-    readRDS(file)
-    } else {
-      val <- eval(expr)
-      saveRDS(val,file=file)
-      val
-      }
-  }
-```
-
-```{r mif1}
-require(foreach)
-require(doMC)
-registerDoMC()
-
-bake("mif1.rds",{
-  start <- coef(m1)
-  start[c("alpha","cohort")] <- c(1,0)
-  foreach(i=1:15,.inorder=FALSE,
-          .packages=c("pomp","magrittr"),
-          .combine=c,
-          .options.multicore=mcopts) %dopar% {
-            mif2(m1,Nmif=50,Np=1000,
-                 cooling.fraction.50=0.2,
-                 transform=TRUE,
-                 rw.sd=rw.sd(R0=0.01,iota=0.01,
-                             rho=0.01,sigmaSE=0.01,
-                             tau=0.01,amplitude=0.01,
-                             S_0=ivp(0.02),E_0=ivp(0.02),
-                             I_0=ivp(0.02),R_0=ivp(0.02)))
-            }
-  }) -> mfs
-matplot(sapply(mfs,conv.rec,"loglik"),type='l',ylim=c(-3900,-3800),
-        ylab="loglik",xlab="mif2 iteration")
-```
-
-```{r pfilter2}
-foreach(mf=mfs,.inorder=TRUE,
-        .packages="pomp",
-        .options.multicore=mcopts) %dopar% {
-          pfilter(mf)
-          } -> pfs2
-print(sapply(pfs2,logLik))
-```
 
 
 ## References
