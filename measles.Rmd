@@ -1,0 +1,354 @@
+---
+title: "Measles example"
+author: "Aaron A. King"
+date: "07/07/2015"
+output:
+  html_document:
+    theme: flatly
+    toc: yes
+bibliography: sbied.bib
+csl: ecology.csl
+
+---
+
+Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
+
+Revisit the analysis of @He2010.
+
+```{r knitr-opts,include=FALSE,cache=FALSE,purl=FALSE}
+library(knitr)
+prefix <- "measles"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  out.width="\\linewidth",
+  dpi=300,
+  dev='png',
+  dev.args=list(bg='transparent')
+  )
+```
+```{r opts,include=FALSE,cache=FALSE}
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  encoding="UTF-8",
+  pomp.cache="cache"
+  )
+
+set.seed(998468235L,kind="L'Ecuyer")
+mcopts <- list(preschedule=FALSE,set.seed=TRUE)
+paropts <- list(.options.multicore=mcopts)
+
+library(ggplot2)
+theme_set(theme_bw())
+```
+
+To get started, we must install `pomp`.
+Run the following to do so.
+```{r pomp-install,eval=FALSE}
+require(devtools)
+install_github("kingaa/pomp")
+```
+
+```{r prelims,cache=FALSE}
+set.seed(594709947L)
+require(ggplot2)
+require(plyr)
+require(reshape2)
+require(magrittr)
+require(pomp)
+stopifnot(packageVersion("pomp")>="0.70-1")
+```
+
+
+```{r load-data}
+load("twentycities.rda")
+measles %>% 
+  subset(town=="London" & year>=1950 & year<1964) %>%
+  mutate(time=(julian(date,origin=as.Date("1950-01-01")))/365.25+1950) %>%
+  subset(time>1950 & time<1964, select=c(time,cases)) -> dat
+demog %>% subset(town=="London",select=-town) -> demog
+```
+
+```{r data-plot}
+dat %>% ggplot(aes(x=time,y=cases))+geom_line()
+demog %>% melt(id="year") %>%
+  ggplot(aes(x=year,y=value))+geom_point()+
+  facet_wrap(~variable,ncol=1,scales="free_y")
+```
+
+```{r prep-covariates}
+demog %>% 
+  summarize(
+    time=seq(from=min(year),to=max(year),by=1/12),
+    pop=predict(smooth.spline(x=year,y=pop),x=time)$y,
+    birthrate=predict(smooth.spline(x=year+0.5,y=births),x=time-4)$y
+    ) -> covar
+```
+```{r covarplot}
+plot(pop~time,data=covar,type='l')
+points(pop~year,data=demog)
+plot(birthrate~time,data=covar,type='l')
+points(births~year,data=demog)
+plot(birthrate~I(time-4),data=covar,type='l')
+points(births~I(year+0.5),data=demog)
+```
+
+```{r rprocess}
+rproc <- Csnippet("
+  double beta, br, seas, foi, dw, births;
+  double rate[6], trans[6];
+  
+  // cohort effect
+  if (fabs(t-floor(t)-251.0/365.0) < 0.5*dt) 
+    br = cohort*birthrate/dt + (1-cohort)*birthrate;
+  else 
+  	br = (1.0-cohort)*birthrate;
+
+  // term-time seasonality
+  t = (t-floor(t))*365.25;
+  if ((t>=7&&t<=100) || (t>=115&&t<=199) || (t>=252&&t<=300) || (t>=308&&t<=356))
+      seas = 1.0+amplitude*0.2411/0.7589;
+    else
+      seas = 1.0-amplitude;
+
+  // transmission rate
+  beta = R0*seas*(1.0-exp(-(gamma+mu)*dt))/dt;
+  // force of infection
+  foi = beta*pow(I+iota,alpha)/pop;
+  // white noise (extrademographic stochasticity)
+  dw = rgammawn(sigmaSE,dt);
+
+  rate[0] = dw*foi/dt;  //infection rate (stochastic)
+  rate[1] = mu;			    // natural S death
+  rate[2] = sigma;		  // rate of ending of latent stage
+  rate[3] = mu;			    // natural E death
+  rate[4] = gamma;		  // recovery
+  rate[5] = mu;			    // natural I death
+
+  // Poisson births
+  births = rpois(br*dt);
+  
+  // transitions between classes
+  reulermultinom(2,S,&rate[0],dt,&trans[0]);
+  reulermultinom(2,E,&rate[2],dt,&trans[2]);
+  reulermultinom(2,I,&rate[4],dt,&trans[4]);
+
+  S += births   - trans[0] - trans[1];
+  E += trans[0] - trans[2] - trans[3];
+  I += trans[2] - trans[4] - trans[5];
+  R = pop - S - E - I;
+  W += (dw - dt)/sigmaSE;  // standardized i.i.d. white noise
+  C += trans[4];           // true incidence
+")
+```
+
+```{r dmeasure}
+dmeas <- Csnippet("
+  double mn = rho*C;
+  double v = mn*(1.0-rho+tau*tau*mn);
+  double tol = 1.0e-18;
+  if (cases > 0.0) {
+	  lik = pnorm(cases+0.5,mn,sqrt(v)+tol,1,0)-pnorm(cases-0.5,mn,sqrt(v)+tol,1,0)+tol;
+  } else {
+    lik = pnorm(cases+0.5,mn,sqrt(v)+tol,1,0)+tol;
+  }
+")
+```
+
+```{r rmeasure}
+rmeas <- Csnippet("
+  double mn = rho*C;
+  double v = mn*(1.0-rho+tau*tau*mn);
+  double tol = 1.0e-18;
+  cases = rnorm(mn,sqrt(v)+tol);
+  if (cases > 0.0) {
+    cases = nearbyint(cases);
+  } else {
+    cases = 0.0;
+  }
+")
+```
+
+```{r initializer}
+initlz <- Csnippet("
+  double m = pop/(S_0+E_0+I_0+R_0);
+  S = nearbyint(m*S_0);
+  E = nearbyint(m*E_0);
+  I = nearbyint(m*I_0);
+  R = nearbyint(m*R_0);
+  W = 0;
+  C = 0;
+")
+```
+
+```{r transforms}
+toEst <- Csnippet("
+  Tmu = log(mu);
+  Tsigma = log(sigma);
+  Tgamma = log(gamma);
+  Talpha = log(alpha);
+  Tiota = log(iota);
+  Trho = logit(rho);
+  Tcohort = logit(cohort);
+  Tamplitude = logit(amplitude);
+  TsigmaSE = log(sigmaSE);
+  Ttau = log(tau);
+  TR0 = log(R0);
+  to_log_barycentric (&TS_0, &S_0, 4);
+")
+
+fromEst <- Csnippet("
+  Tmu = exp(mu);
+  Tsigma = exp(sigma);
+  Tgamma = exp(gamma);
+  Talpha = exp(alpha);
+  Tiota = exp(iota);
+  Trho = expit(rho);
+  Tcohort = expit(cohort);
+  Tamplitude = expit(amplitude);
+  TsigmaSE = exp(sigmaSE);
+  Ttau = exp(tau);
+  TR0 = exp(R0);
+  from_log_barycentric (&TS_0, &S_0, 4);
+")
+```
+
+```{r pomp-construction}
+dat %>% 
+  pomp(t0=with(dat,2*time[1]-time[2]),
+       time="time",
+       rprocess=euler.sim(rproc,delta.t=1/365.25),
+       dmeasure=dmeas,
+       rmeasure=rmeas,
+       toEstimationScale=toEst,
+       fromEstimationScale=fromEst,
+       initializer=initlz,
+       covar=covar,
+       tcovar="time",
+       zeronames=c("C","W"),
+       statenames=c("S","E","I","R","C","W"),
+       paramnames=c("R0","mu","sigma","gamma","alpha","iota",
+                    "rho","sigmaSE","tau","cohort","amplitude",
+                    "S_0","E_0","I_0","R_0")
+       ) -> m1
+```
+
+```{r plot-pomp}
+m1 %>% as.data.frame() %>% 
+  melt(id="time") %>%
+  ggplot(aes(x=time,y=value))+
+  geom_line()+
+  facet_grid(variable~.,scales="free_y")
+```
+
+```{r mle}
+readRDS("He2010_mles.rds") %>% 
+  subset(town=="London") -> mle
+paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
+                "rho","sigmaSE","tau","cohort","amplitude",
+                "S_0","E_0","I_0","R_0")
+coef(m1) <- unlist(mle[paramnames])
+```
+
+```{r pfilter1}
+require(foreach)
+require(doMC)
+registerDoMC()
+
+foreach(i=1:4,
+        .packages="pomp",
+        .options.multicore=mcopts) %dopar% {
+  pfilter(m1,Np=10000)
+} -> pfs
+logmeanexp(sapply(pfs,logLik),se=TRUE)
+```
+
+```{r sims1,fig.height=8}
+m1 %>% 
+  simulate(nsim=10,as.data.frame=TRUE,include.data=TRUE) %>%
+  ggplot(aes(x=time,y=cases,group=sim,color=(sim=="data")))+
+  guides(color=FALSE)+
+  geom_line()+facet_wrap(~sim,ncol=2)
+```
+```{r sims2}
+m1 %>% 
+  simulate(nsim=100,as.data.frame=TRUE,include.data=TRUE) %>%
+  subset(select=c(time,sim,cases)) %>%
+  mutate(data=sim=="data") %>%
+  ddply(~time+data,summarize,
+        p=c(0.05,0.5,0.95),q=quantile(cases,prob=p,names=FALSE)) %>%
+  mutate(p=mapvalues(p,from=c(0.05,0.5,0.95),to=c("lo","med","hi")),
+         data=mapvalues(data,from=c(T,F),to=c("data","simulation"))) %>%
+  dcast(time+data~p,value.var='q') %>%
+  ggplot(aes(x=time,y=med,color=data,fill=data,ymin=lo,ymax=hi))+
+  geom_ribbon(alpha=0.2)
+```
+
+
+```{r bake}
+bake <- function (file, expr) {
+  if (file.exists(file)) {
+    readRDS(file)
+    } else {
+      val <- eval(expr)
+      saveRDS(val,file=file)
+      val
+      }
+  }
+```
+
+```{r mif1}
+require(foreach)
+require(doMC)
+registerDoMC()
+
+bake("mif1.rds",{
+  start <- coef(m1)
+  start[c("alpha","cohort")] <- c(1,0)
+  foreach(i=1:15,.inorder=FALSE,
+          .packages=c("pomp","magrittr"),
+          .combine=c,
+          .options.multicore=mcopts) %dopar% {
+            mif2(m1,Nmif=50,Np=1000,
+                 cooling.fraction.50=0.2,
+                 transform=TRUE,
+                 rw.sd=rw.sd(R0=0.01,iota=0.01,
+                             rho=0.01,sigmaSE=0.01,
+                             tau=0.01,amplitude=0.01,
+                             S_0=ivp(0.02),E_0=ivp(0.02),
+                             I_0=ivp(0.02),R_0=ivp(0.02)))
+            }
+  }) -> mfs
+matplot(sapply(mfs,conv.rec,"loglik"),type='l',ylim=c(-3900,-3800),
+        ylab="loglik",xlab="mif2 iteration")
+```
+
+```{r pfilter2}
+foreach(mf=mfs,.inorder=TRUE,
+        .packages="pomp",
+        .options.multicore=mcopts) %dopar% {
+          pfilter(mf)
+          } -> pfs2
+print(sapply(pfs2,logLik))
+```
+
+
+## References
