@@ -1,0 +1,423 @@
+---
+title: "Introduction to pomp"
+author: "Aaron A. King"
+date: 2015-07-08
+output:
+  html_document:
+    theme: flatly
+    toc: yes
+bibliography: sbied.bib
+csl: ecology.csl
+---
+
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+
+
+Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
+Produced using `pomp` version `r packageVersion("pomp")`.
+
+```{r knitr-opts,include=FALSE,purl=FALSE}
+library(knitr)
+prefix <- "pomp-intro"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  dpi=300,
+  dev='png',
+  dev.args=list(bg='transparent')
+  )
+```
+```{r opts,include=FALSE,cache=FALSE}
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  pomp.cache="cache",
+  encoding="UTF-8"
+  )
+
+library(ggplot2)
+theme_set(theme_bw())
+```
+
+
+## Partially observed Markov process (POMP) models
+
+AKA: stochastic dynamical systems, (non-linear, non-Gaussian) state-space models, hidden Markov models.
+
+The following diagrams show the structure of a POMP model schematically.
+
+*********************
+
+![state_space_diagram1](http://kinglab.eeb.lsa.umich.edu/ICTPWID/SaoPaulo_2015/Aaron/graphics/state_space_diagram1.png)
+
+Schematic of the structure of a POMP showing causal relations and direction of information flow.
+**The key perspective to keep in mind is that the model is to be viewed as the process that generated the data.**
+   
+*********************
+
+![state_space_diagram2](http://kinglab.eeb.lsa.umich.edu/ICTPWID/SaoPaulo_2015/Aaron/graphics/state_space_diagram2.png)
+
+Another POMP model schematic, showing dependence among model variables.
+State variables, $x$, at time $t$ depend only on state variables at the previous timestep.
+Measurements, $y$, at time $t$ depend only on the state at that time.
+Formally, $\prob{x_t|x,y}=\prob{x_t|x_{t-1}}$ and $\prob{y_t|x,y}=\prob{y_t|x_{t}}$ for all $x=\{x_1,x_2,\dots,x_T\}$, $y=\{y_1,y_2,\dots,y_T\}$, and $t=1,\dots,T$.
+
+*********************
+
+## Example: the Ricker model
+
+#### The deterministic skeleton
+
+The Ricker map describes the deterministic dynamics of a simple population:
+$$N_{t+1} = r\,N_{t}\,\exp(-N_{t})$$
+
+Here, $N_t$ is the population density at time $t$ and $r$ is a fixed value (a parameter), related to the population's intrinsic capacity to increase.
+$N$ is a *state variable*, $r$ is a *parameter*.
+If we know $r$ and the *initial condition* $N_0$, the deterministic Ricker equation predicts the future population density at all times $t=1,2,\dots$.
+We can view the initial condition, $N_0$ as a special kind of parameter, an *initial-value parameter*.
+
+#### Process noise
+
+We can model process noise in this system by making the growth rate $r$ into a random variable.
+For example, if we assume that the intrinsic growth rate is log-normally distributed, $N$ becomes a stochastic process governed by
+$$N_{t+1} = r\,N_{t}\,\exp(-N_{t}+\varepsilon_{t}), \qquad \varepsilon_{t}\;\sim\;\dist{Normal}{0,\sigma},$$
+where the new parameter $\sigma$ is the standard deviation of the noise process $\varepsilon$.
+
+#### Measurement error
+
+Let's suppose that the Ricker model is our model for the dynamics of a real population.
+However, we cannot know the exact population density at any time, but only estimate it through sampling.
+
+Let's model measurement error by assuming the measurements, $y_t$, are Poisson with mean $\phi\,N_t$:
+$$y_{t}\;\sim\;\dist{Poisson}{\phi\,N_{t}}$$
+
+In this equation,
+
+1. $N_t$ is the true population density at time $t$,
+2. $y_t$ is the number of individuals sampled at time $t$,
+3. the choice of units for $N$ is peculiar and depends on the parameters (e.g., $N=\log(r)$ is the equilibrium),
+4. the parameter $\phi$ is proportional to our sampling effort, and also has peculiar units.
+
+### Working with the Ricker model in `pomp`.
+
+The `R` package `pomp` provides facilities for modeling POMPs, a toolbox of statistical inference methods for analyzing data using POMPs, and a development platform for implmenting new POMP inference methods.
+The basic data-structure provided by `pomp` is the *object of class `pomp`*, or *pomp object*.
+It is a container that holds real or simulated data and a POMP model, possibly together with other information such as model parameters, that may be needed to do things with the model and data.
+
+Let's see what can be done with a `pomp` object.
+First, if we haven't already, we must install `pomp` and `pompExamples`.
+Run the following to do so.
+```{r install-pomp,eval=FALSE}
+require(devtools)
+install_github("kingaa/pomp")
+# install_github("kingaa/pompExamples")
+```
+
+Now we'll load some packages, including `pomp`.
+```{r prelims,cache=F}
+set.seed(594709947L)
+require(ggplot2)
+require(plyr)
+require(reshape2)
+require(magrittr)
+require(pomp)
+stopifnot(packageVersion("pomp")>="0.69-1")
+```
+
+A pre-built `pomp` object encoding the Ricker model comes included with the package.
+Load it by
+```{r load-ricker,cache=FALSE}
+pompExample(ricker)
+```
+This has the effect of creating a `pomp` object named `ricker` in your workspace.
+We can plot the data by doing
+```{r plot-ricker}
+plot(ricker)
+```
+We can simulate by doing
+```{r sim-ricker1}
+x <- simulate(ricker)
+```
+What kind of object have we created?
+```{r}
+class(x)
+plot(x)
+```
+Why do we see more time series in the simulated `pomp` object?
+
+We can turn a pomp object into a data frame:
+```{r}
+y <- as.data.frame(ricker)
+head(y)
+head(simulate(ricker,as.data.frame=TRUE))
+```
+
+We can also run multiple simulations simultaneously:
+```{r}
+x <- simulate(ricker,nsim=10)
+class(x)
+sapply(x,class)
+x <- simulate(ricker,nsim=10,as.data.frame=TRUE)
+head(x)
+str(x)
+```
+Also,
+```{r fig.height=8}
+x <- simulate(ricker,nsim=9,as.data.frame=TRUE,include.data=TRUE)
+x %>% ggplot(aes(x=time,y=y,group=sim,color=(sim=="data")))+
+  geom_line()+guides(color=FALSE)+
+  facet_wrap(~sim,ncol=2)
+```
+
+
+We can compute a trajectory of the deterministic skeleton
+```{r traj-ricker}
+y <- trajectory(ricker)
+dim(y)
+dimnames(y)
+plot(time(ricker),y["N",1,],type="l")
+```
+
+Notice that `ricker` has parameters associated with it:
+```{r coef-ricker}
+coef(ricker)
+```
+These are the parameters at which the simulations and deterministic trajectory computations above were done.
+We can run these at different parameters:
+```{r}
+theta <- coef(ricker)
+theta[c("r","N.0")] <- c(5,3)
+y <- trajectory(ricker,params=theta)
+plot(time(ricker),y["N",1,],type="l")
+x <- simulate(ricker,params=theta)
+plot(x,var="y")
+```
+
+We can also change the parameters stored inside of `ricker`:
+```{r}
+coef(ricker,c("r","N.0","sigma")) <- c(39,0.5,1)
+coef(ricker)
+plot(simulate(ricker),var="y")
+```
+
+In all of the above, it's possible to work with more than one set of parameters at a time.
+For example:
+```{r bifdiag}
+p <- parmat(coef(ricker),500)
+dim(p); dimnames(p)
+p["r",] <- seq(from=2,to=40,length=500)
+y <- trajectory(ricker,params=p,times=200:1000)
+matplot(p["r",],y["N",,],pch=".",col='black',xlab='r',ylab='N',log='x')
+```
+
+More information on manipulating and extracting information from `pomp` objects can be viewed in the help pages (`methods?pomp`).
+
+There are a number of other examples included with the package.
+Do `pompExamples()` to see a list of these.
+
+#### Inference algorithms in `pomp`
+
+`pomp` provides a wide range of inference algorithms.
+We'll learn about these in detail soon, but for now, let's just look at some of their general features.
+
+The `pfilter` function runs a simple particle filter.
+It can be used to evaluate the likelihood at a particular set of parameters.
+One uses the `Np` argument to specify the number of particles to use:
+```{r pfilter1}
+pf <- pfilter(ricker,Np=1000)
+class(pf)
+plot(pf)
+logLik(pf)
+```
+
+Note that `pfilter` returns an object of class `pfilterd.pomp`.
+This is the general rule: inference algorithms return objects that are `pomp` objects with additional information.
+The package provides tools to extract this information.
+We can run the particle filter again by doing
+```{r pfilter2}
+pf <- pfilter(pf)
+logLik(pf)
+```
+which has the result of running the same computation again.
+Note that, because the particle filter is a Monte Carlo algorithm, we get a slightly different estimate of the log likelihood.
+
+Note that, by default, running `pfilter` on a `pfilterd.pomp` object causes the computation to be re-run with the same parameters as before.
+Any additional arguments we add override these defaults.
+This is the general rule in `pomp`.
+For example,
+```{r pfilter3}
+pf <- pfilter(pf,Np=100)
+logLik(pf)
+```
+Here, the particle filtering has been performed with only `r unique(pf@Np)` particles.
+
+## Building a custom `pomp` object
+
+A real `pomp` data analysis begins with constructing one or more `pomp` objects to hold the data and the model or models under consideration.
+We'll illustrate this process a dataset of *Parus major* abundance in Wytham Wood, near Oxford [@McCleery1991].
+
+Download and plot the data:
+```{r parus-data}
+loc <- url("http://kinglab.eeb.lsa.umich.edu/SBIED/data/parus.csv")
+dat <- read.csv(loc)
+head(dat)
+plot(pop~year,data=dat,type='o')
+```
+
+Let's suppose that we want to fit the stochastic Ricker model discussed above to these data.
+
+The call to construct a pomp object is, naturally enough, `pomp`.
+Documentation on this function can be had by doing `?pomp`. 
+Do `class?pomp` to get documentation on the pomp class.
+Learn about the various things you can do once you have a pomp object by doing `methods?pomp` and following the links therein.
+Read an overview of the package as a whole with links to its main features by doing `package?pomp`.
+A complete index of the functions in `pomp` is returned by the command `library(help=pomp)`.
+Finally, the home page for the `pomp` project is \url{http://kingaa.github.io/pomp};
+there you have access to the compleete source code, manuals, mailing lists, etc.
+
+```{r parus-pomp1}
+require(pomp)
+parus <- pomp(dat,times="year",t0=1959)
+```
+The `times` argument specifies that the column labelled "year" gives the measurement times;
+`t0` is the "zero-time", the time at which the state process will be initialized.
+We've set it to one year prior to the beginning of the data.
+Plot it:
+```{r parus-plot1}
+plot(parus)
+```
+
+#### Adding in the deterministic skeleton
+
+We can add the Ricker model deterministic skeleton to the `parus` `pomp` object.
+Since the Ricker model is a discrete-time model, its skeleton is a map that takes $N_t$ to $N_{t+1}$ according to the Ricker model equation
+$$N_{t+1} = r\,N_{t}\,\exp(-N_{t}).$$
+We provide this to `pomp` in the form of a `Csnippet`, a little snippet of C code that performs the computation.
+```{r parus-skel-defn}
+skel <- Csnippet("DN = r*N*exp(-N);")
+```
+We then add this to the pomp object:
+```{r parus-add-skel}
+parus <- pomp(parus,skeleton=skel,skeleton.type='map',
+              paramnames=c("r"),statenames=c("N"))
+```
+Note that we have to inform `pomp` as to which of the variables we've referred to in `skel` is a state variable (`statenames`) and which is a parameter (`paramnames`).
+The `skeleton.type` argument tells `pomp` that the skeleton is a discrete-time dynamical system (a map) rather than a continuous-time system (a vectorfield).
+
+With just the skeleton defined, we are in a position to compute the trajectories of the deterministic skeleton at any point in parameter space.
+For example,
+```{r parus-first-traj,results='markup'}
+traj <- trajectory(parus,params=c(N.0=1,r=12),as.data.frame=TRUE)
+traj %>% ggplot(aes(x=time,y=N))+geom_line()
+```
+
+#### A note on terminology
+
+If we know the state, $x(t_0)$, of the system at time $t_0$, it makes sense to speak about the entire trajectory of the system for all $t>t_0$.
+This is true whether we are thinking of the system as deterministic or stochastic.
+Of course, in the former case, the trajectory is uniquely determined by $x(t_0)$, while in the stochastic case, only the probability distribution of $x(t)$, $t>t_0$ is determined.
+In `pomp`, to avoid confusion, we use the term "trajectory" exclusively to refer to *trajectories of a deterministic process*.
+Thus, the `trajectory` command iterates or integrates the deterministic skeleton forward in time, returning the unique trajectory determined by the specified parameters.
+When we want to speak about sample paths of a stochastic process, we use the term *simulation*.
+Accordingly, the `simulate` command always returns individual sample paths from the POMP.
+In particular, we avoid "simulating a set of differential equations", preferring instead to speak of "integrating" the equatioins "computing trajectories".
+
+#### Adding in the process model simulator
+
+We can add the stochastic Ricker model to `parus` by writing a Csnippet that simulates one realization of the stochastic process, from an arbitary time $t$ to $t+1$, given arbitrary states and parameters.
+The following does this.
+```{r parus-sim-defn}
+stochStep <- Csnippet("
+  e = rnorm(0,sigma);
+  N = r*N*exp(-N+e);
+")
+parus %>%
+  pomp(rprocess=discrete.time.sim(step.fun=stochStep,delta.t=1),
+       paramnames=c("r","sigma"),statenames=c("N","e")) -> parus
+```
+We use `discrete.time.sim` here because the model is a stochastic map.
+We specify that the time step of the discrete-time process is `delta.t`, here, 1&nbsp;yr.
+
+At this point, we have what we need to simulate the stochastic Ricker model.
+```{r ricker-first-sim,results='markup'}
+sim <- simulate(parus,params=c(N.0=1,e.0=0,r=12,sigma=0.5),as.data.frame=TRUE,states=TRUE)
+plot(N~time,data=sim,type='o')
+lines(N~time,data=traj,type='l',col='red')
+```
+
+#### Adding in the measurement model and parameters
+
+We complete the specification of the POMP by specifying the measurement model.
+To obtain the Poisson measurement model described above, we write two Csnippets.
+The first simulates:
+```{r parus-rmeas-defn}
+rmeas <- Csnippet("pop = rpois(phi*N);")
+```
+and the second computes the likelihood of observing `pop` birds given a true density of `N`:
+```{r parus-dmeas-defn}
+dmeas <- Csnippet("lik = dpois(pop,phi*N,give_log);")
+```
+[Note the `give_log` argument.
+When this code is evaluated, `give_log` will be set to 1 if the log likelihood is desired, and 0 else.]
+We add these into the `pomp` object:
+```{r parus-add-meas}
+parus %>%
+  pomp(rmeasure=rmeas,dmeasure=dmeas,statenames=c("N"),paramnames=c("phi")) -> parus
+```
+Now we can simulate the whole POMP.
+First, let's add some parameters to the pomp object:
+```{r ricker-add-params}
+coef(parus) <- c(N.0=1,e.0=0,r=20,sigma=0.1,phi=200)
+```
+```{r ricker-second-sim,results='markup'}
+simulate(parus,nsim=3,as.data.frame=TRUE,include.data=TRUE) %>%
+  ggplot(aes(x=time,y=pop))+geom_line()+
+  facet_wrap(~sim)
+```
+
+## Exercises
+
+#### Exercise
+Fiddle with the parameters to try and make the simulations look more like the data.
+This will help you build some intuition for what the various parameters do.
+
+#### Exercise
+Reparameterize the Ricker model so that the scaling of $N$ is explicit:
+$$N_{t+1} = r\,N_{t}\,\exp\left(-\frac{N_{t}}{K}\right).$$
+
+Modify the `pomp` object we created above to reflect this reparameterization.
+
+Modify the measurement model so that
+$$\mathrm{pop}_t \sim \dist{Negbin}{\phi\,N_t,k},$$
+i.e., $\mathrm{pop}_t$ is negative-binomially distributed with mean $\phi\,N_t$ and clumping parameter $k$.
+See `?NegBinomial` for documentation on the negative binomial distribution and [the R Extensions Manual section on distribution functions](http://cran.r-project.org/doc/manuals/r-release/R-exts.html#Distribution-functions) for information on how to access these in C.
+
+### Exercise
+Construct a `pomp` object for the *Parus major* data and the stochastic Beverton-Holt model
+$$N_{t+1} = \frac{a\,N_t}{1+b\,N_t}\,\varepsilon_t,$$
+where $a$ and $b$ are parameters and
+$$\varepsilon_t \sim \dist{Lognormal}{-\tfrac{1}{2}\sigma^2,\sigma}$$.
+Assume the same measurement model as before.
+
+## References
