@@ -15,9 +15,9 @@ Licensed under the Creative Commons attribution-noncommercial license, http://cr
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
 
-```{r opts,include=FALSE}
+```{r knitr-opts,include=FALSE,purl=FALSE}
 library(knitr)
-prefix <- "pomps"
+prefix <- "FIXME"
 opts_chunk$set(
   progress=TRUE,
   prompt=FALSE,tidy=FALSE,highlight=TRUE,
@@ -36,14 +36,16 @@ opts_chunk$set(
   fig.pos="h!",
   fig.align='center',
   fig.height=4,fig.width=6.83,
-  out.width="\\linewidth",
   dpi=300,
   dev='png',
   dev.args=list(bg='transparent')
   )
-
+```
+```{r opts,include=FALSE}
 options(
   keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  pomp.cache="cache",
   encoding="UTF-8"
   )
 
@@ -53,9 +55,10 @@ theme_set(theme_bw())
 
 To get started, we must install `pomp` and `pompExamples`.
 Run the following to do so.
-```{r eval=FALSE}
-install.packages("pomp",repos="http://R-Forge.R-Project.org")
-install.packages("pompExamples",repos="http://kinglab.eeb.lsa.umich.edu/R")
+```{r install-pomp,eval=FALSE}
+require(devtools)
+install_github("kingaa/pomp")
+install_github("kingaa/pompExamples")
 ```
 
 ```{r prelims,echo=F,cache=F}
@@ -63,8 +66,9 @@ set.seed(594709947L)
 require(ggplot2)
 require(plyr)
 require(reshape2)
+require(magrittr)
 require(pomp)
-stopifnot(packageVersion("pomp")>="0.55-1")
+stopifnot(packageVersion("pomp")>="0.69-1")
 ```
 
 ## POMPs in `pomp`
