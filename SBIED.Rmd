@@ -75,10 +75,9 @@ This module introduces statistical inference techniques and computational method
 ## Pre-SISMID timetable:
 * 1 July - Distribute background reading
 * 24 June - Distribute instructions on installation of R and packages, Rstudio, testing of SHLIB, tutorial for R newbies
-* 17 June - Finalize pomp 1.0.0 and submit to CRAN
 * Reading list
-  - background [@King2008; @Blake2014; @Camacho2011; @Lavine2013; @Laneri2010]
-  - JSS MS
+    - background [@King2008; @Blake2014; @Camacho2011; @Lavine2013; @Laneri2010]
+    - JSS MS
 * website: http://kinglab.eeb.lsa.umich.edu/SBIED/
 * git repo
 
@@ -88,7 +87,7 @@ This module introduces statistical inference techniques and computational method
 
 ### 1:30-3:00 (Session 1). 
 
-### 1A. What is "Simulation-based Inference for Epidemiological Dynamics?"
+### 1A. What is "Simulation-based Inference for Epidemiological Dynamics?" (ELI)
 
 * Goals for model-based inference.
 
@@ -258,9 +257,7 @@ To think algorithmically, we define some function calls:
 
 ----------------------------
 
-### 1B. Computer lab: Introduction to POMP models in pomp
-
-#### OVER TO AARON
+### 1B. Computer lab: Introduction to POMP models in pomp (AAK)
 
 * I WAS THINKING THAT FIRING UP pomp,  FINDING THE EXAMPLES, THE DOCUMENTATION, AND RUNNING simulate ETC ON EXISTING EXAMPLES WOULD BE QUITE ENOUGH FOR THIS POINT. THE NEXT SESSION WILL WORK ON BUILDING A POMP.
 
