@@ -11,9 +11,16 @@ csl: ecology.csl
 
 ---
 
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dlta[1]{{\Delta}{#1}}
+
 Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
+Produced in R version `r getRversion()` using `pomp` version `r packageVersion("pomp")`.
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 library(knitr)
@@ -53,14 +60,6 @@ library(ggplot2)
 theme_set(theme_bw())
 ```
 
-To get started, we must install `pomp` and `pompExamples`.
-Run the following to do so.
-```{r install-pomp,eval=FALSE}
-require(devtools)
-install_github("kingaa/pomp")
-install_github("kingaa/pompExamples")
-```
-
 ```{r prelims,echo=F,cache=F}
 set.seed(594709947L)
 require(ggplot2)
@@ -69,102 +68,6 @@ require(reshape2)
 require(magrittr)
 require(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
-```
-
-## POMPs in `pomp`
-
-### Partially observed Markov process (POMP) models
-
-AKA: stochastic dynamical systems, (non-linear, non-Gaussian) state-space models, hidden Markov models.
-
------------------------------------
-![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/ICTPWID/SaoPaulo_2015/Aaron/graphics/state_space_diagram1.png)
-
-Schematic of the structure of a POMP showing causal relations and direction of information flow.
-**The key perspective to keep in mind is that the model is to be viewed as the process that generated the data.**
-
------------------------------------
-![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/ICTPWID/SaoPaulo_2015/Aaron/graphics/state_space_diagram2.png)
-
-Another POMP model schematic, showing dependence among model variables.
-State variables, $x$, at time $t$ depend only on state variables at the previous timestep.
-Measurements, $y$, at time $t$ depend only on the state at that time.
-Formally, $\mathrm{Prob}[x_t|x,y]=\mathrm{Prob}[x_t|x_{t-1}]$ and $\mathrm{Prob}[y_t|x,y]=\mathrm{Prob}[y_t|x_{t}]$ for all $x=\{x_1,x_2,\dots,x_T\}$, $y=\{y_1,y_2,\dots,y_T\}$, and $t=1,\dots,T$.
-
------------------------------------
-
-### Example: the Ricker model
-
-#### The deterministic skeleton
-
-The Ricker map describes the deterministic dynamics of a simple population:
-$$N_{t+1} = r\,N_{t}\,\exp(-N_{t})$$
-
-Here, $N_t$ is the population density at time $t$ and $r$ is a fixed value (a parameter), related to the population's intrinsic capacity to increase.
-$N$ is a *state variable*, $r$ is a *parameter*.
-If we know $r$ and the *initial condition* $N_0$, the deterministic Ricker equation predicts the future population density at all times $t=1,2,\dots$.
-We can view the initial condition, $N_0$ as a special kind of parameter, an *initial-value parameter*.
-
-#### Process noise
-
-We can model process noise in this system by making the growth rate $r$ into a random variable.
-For example, if we assume that the intrinsic growth rate is log-normally distributed, $N$ becomes a stochastic process governed by
-$$N_{t+1} = r\,N_{t}\,\exp(-N_{t}+\varepsilon_{t}), \qquad \varepsilon_{t}\;\sim\;\mathrm{normal}(0,\sigma),$$
-where the new parameter $\sigma$ is the standard deviation of the noise process $\varepsilon$.
-
-#### Measurement error
-
-Let's suppose that the Ricker model is our model for the dynamics of a real population.
-However, we cannot know the exact population density at any time, but only estimate it through sampling.
-
-Let's model measurement error by assuming the measurements, $y_t$, are Poisson with mean $\phi\,N_t$:
-$$y_{t}\;\sim\;\mathrm{Poisson}(\phi\,N_{t})$$
-
-In this equation,
-
-1. $N_t$ is the true population density at time $t$,
-2. $y_t$ is the number of individuals sampled at time $t$,
-3. the choice of units for $N$ is peculiar and depends on the parameters (e.g., $N=\log(r)$ is the equilibrium),
-4. the parameter $\phi$ is proportional to our sampling effort, and also has peculiar units.
-
-### Implementing the Ricker model in `pomp`
-
-The `R` package `pomp` provides facilities for modeling POMPs, a toolbox of statistical inference methods for analyzing data using POMPs, and a development platform for implmenting new POMP inference methods.
-Let's see how the model we've just described can be implemented in `pomp`.
-The file \texttt{sample\_data.csv} contains some daily measurements.
-Load and plot the data:
-```{r load-sample-data,results='markup'}
-loc <- url("http://kinglab.eeb.lsa.umich.edu/SIMM/data/sample_data.csv")
-dat <- read.csv(loc)
-head(dat)
-plot(y~day,data=dat,type='o')
-```
-The basic data-structure provided by `pomp` is the *object of class `pomp`*, or, for short, *pomp object*.
-It is a container that holds real or simulated data and a POMP model, possibly together with other information such as model parameters, that may be needed to do things with the model and data.
-We'll construct a pomp object to hold the data and the Ricker model; we'll do this in stages.
-
-The call to construct a pomp object is, naturally enough, `pomp`.
-Documentation on this function can be had by doing `?pomp`. 
-Do `class?pomp` to get documentation on the pomp class.
-Learn about the various things you can do once you have a pomp object by doing `methods?pomp` and following the links therein.
-Read an overview of the package as a whole with links to its main features by doing `package?pomp`.
-A complete index of the functions in `pomp` is returned by the command `library(help=pomp)`.
-Finally, the home page for the `pomp` project is \url{http://pomp.r-forge.r-project.org}; there you have access to the compleete source code, manuals, mailing lists, etc.
-
-```{r ricker-pomp-one}
-require(pomp)
-po <- pomp(dat,times="day",t0=0)
-```
-The `times` argument specifies that the column labelled "day" gives the measurement times;
-`t0` is the "zero-time", the time at which the state process will be initialized.
-One can examine the pomp object in various ways, and convert it into a data-frame:
-```{r ricker-pomp-two,eval=F}
-plot(po)
-print(po)
-show(po)
-time(po)
-obs(po)
-as.data.frame(po)
 ```
 
 

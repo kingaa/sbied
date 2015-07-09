@@ -1,0 +1,172 @@
+---
+title: "Stochastic simulation and compartmental models"
+author: "Edward L. Ionides and Aaron A. King"
+date: "2015-07-09"
+output:
+  html_document:
+    theme: flatly
+    toc: yes
+bibliography: ../sbied.bib
+csl: ../ecology.csl
+
+---
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dlta[1]{{\Delta}{#1}}
+
+Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
+Produced using `pomp` version `r packageVersion("pomp")`.
+
+```{r knitr-opts,include=FALSE,purl=FALSE,cache=FALSE}
+library(knitr)
+prefix <- "stochsim"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  dpi=300,
+  dev='png',
+  dev.args=list(bg='transparent')
+  )
+```
+```{r opts,include=FALSE,cache=FALSE}
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  pomp.cache="cache",
+  encoding="UTF-8"
+  )
+
+library(ggplot2)
+theme_set(theme_bw())
+```
+
+```{r prelims,echo=F,cache=F}
+set.seed(594709947L)
+require(ggplot2)
+require(plyr)
+require(reshape2)
+require(foreach)
+require(doMC)
+require(pomp)
+stopifnot(packageVersion("pomp")>="0.69-1")
+```
+
+# Simulating dynamics models: the stochastic Euler method
+
+
+# Compartmental models in `pomp`
+
+Below is a diagram of the SIR model.
+The host population is divided into three classes according to their infection status: 
+S, susceptible hosts; 
+I, infected (and infectious) hosts; 
+R, recovered and immune hosts. 
+The S$\to$I rate, $\lambda$, called the *force of infection*, depends on the number of infectious individuals according to $\lambda(t)={\beta\,I}/{N}$.
+The I$\to$R, or recovery, rate is $\gamma$.
+The case reports, $C$, result from a process by which infections are recorded with probability $\rho$. 
+Since diagnosed cases are treated with bed-rest and hence removed, infections are counted upon transition to R. 
+
+```{r seir-diagram,echo=FALSE,cache=FALSE}
+require(DiagrammeR)
+DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);"
+           ,height=200,width=500)
+```
+
+## Implementing compartmental models in `pomp`
+
+Load the data
+```{r flu-data}
+baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+url <- paste0(baseurl,"data/bsflu_data.txt")
+bsflu <- subset(read.table(url),select=c(day,B))
+ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
+```
+
+Set up the process model.
+We need a model that will simulate the process from time $t$ to time $t+\dlta{t}$.
+```{r rproc1}
+sir_step <- "
+  double t1 = rbinom(S,1-exp(-beta*I/pop*dt));
+  double t2 = rbinom(I,1-exp(-gamma*dt));
+  S -= t1;
+  I += t1 - t2;
+  R += t2;
+"
+```
+
+Let's assume that the data represent incidence, i.e., the number of new infections occurring on a given day.
+```{r rproc2}
+sir_step <- "
+  double t1 = rbinom(S,1-exp(-Beta*I/763*dt));
+  double t2 = rbinom(I,1-exp(-gamma*dt));
+  S -= t1;
+  I += t1 - t2;
+  R += t2;
+  H += t1;
+"
+```
+
+To initialize the state process, we write
+```{r initlz}
+sir_init <- "
+  S = 762;
+  I = 1;
+  R = 0;
+  H = 0;
+"
+```
+
+We add these to the data to make a `pomp` object:
+```{r sir-pomp1}
+bsflu <- pomp(bsflu,times="day",t0=0,
+              rprocess=euler.sim(step.fun=Csnippet(sir_step),delta.t=0.1),
+              initializer=Csnippet(sir_init), zeronames="H",
+              statenames=c("S","I","R","H"),
+              paramnames=c("Beta","gamma"))
+```
+
+`H` now accumulates the new infections.
+The incidence on day $t$ is $H(t+1)-H(t)$.
+
+We'll model the data with some degree, $\rho$ of under-reporting:
+$$\text{cases}_t \sim \dist{Binomial}{H(t+1)-H(t),\rho}.$$
+
+As before, we must write both a `dmeasure` and an `rmeasure` component:
+```{r meas-model}
+dmeas <- "lik = dbinom(B,H,rho,give_log);"
+rmeas <- "B = rbinom(H,rho);"
+```
+and put these into `bsflu`:
+```{r add-meas-model}
+bsflu <- pomp(bsflu,rmeasure=Csnippet(rmeas),dmeasure=Csnippet(dmeas),
+              statenames="H",paramnames="rho")
+```
+
+```{r}
+sims <- simulate(bsflu,params=c(Beta=2,gamma=0.1,rho=0.9),nsim=20,as=TRUE,include=TRUE)
+ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  geom_line()+guides(color=FALSE)
+```
+
+
+## References
