@@ -52,7 +52,7 @@ This module introduces statistical inference techniques and computational method
 
 ### 10:30-12:00 (Session 4)
 
-#### [Principles of likelihood-based inference.](./like/like.html)
+#### [Principles of likelihood-based inference.](./lik/lik.html)
 
 ### 1:30-3:00 (Session 5)
 
@@ -68,7 +68,7 @@ This module introduces statistical inference techniques and computational method
 
 ### 8:30-10:00 (Session 7)
  
-#### [Case study I: polio.](./polio)
+#### [Case study I: polio.](./polio/polio.html)
 
 ### 10:30-12:00 (Session 8)
 
