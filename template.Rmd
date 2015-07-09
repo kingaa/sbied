@@ -6,7 +6,7 @@ output:
   html_document:
     theme: flatly
     toc: yes
-bibliography: mbsie.bib
+bibliography: sbied.bib
 csl: ecology.csl
 
 ---
@@ -41,7 +41,7 @@ opts_chunk$set(
   dev.args=list(bg='transparent')
   )
 ```
-```{r opts,include=FALSE}
+```{r opts,include=FALSE,cache=FALSE}
 options(
   keep.source=TRUE,
   stringsAsFactors=FALSE,
