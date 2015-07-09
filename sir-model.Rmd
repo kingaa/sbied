@@ -70,9 +70,7 @@ require(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 ```
 
-## Compartmental models in epidemiology
-
-### The SIR model
+## The SIR model
 
 Below is a diagram of the SIR model.
 The host population is divided into three classes according to their infection status: 
@@ -99,8 +97,8 @@ url <- paste0(baseurl,"data/bs_flu.csv")
 read.csv(url,comment.char="#",colClasses=c(date="Date")) %>%
   subset(status=="confined") %>%
   mutate(day=as.integer(date-min(date))) %>%
-  subset(select=-c(status,date)) -> bbs
-bbs %>% ggplot(aes(x=day,y=cases))+geom_line()+geom_point()
+  subset(select=-c(status,date)) -> bsflu
+bsflu %>% ggplot(aes(x=day,y=cases))+geom_line()+geom_point()
 ```
 
 Set up the process model.
@@ -139,7 +137,7 @@ sir_init <- "
 
 We add these to the data to make a `pomp` object:
 ```{r sir-pomp1}
-bbs %<>% pomp(times="day",t0=0,
+bsflu %<>% pomp(times="day",t0=0,
               rprocess=euler.sim(step.fun=Csnippet(sir_step),delta.t=0.1),
               initializer=Csnippet(sir_init), zeronames="H",
               statenames=c("S","I","R","H"),
@@ -157,14 +155,14 @@ As before, we must write both a `dmeasure` and an `rmeasure` component:
 dmeas <- "lik = dbinom(cases,H,rho,give_log);"
 rmeas <- "cases = rbinom(H,rho);"
 ```
-and put these into `bbs`:
+and put these into `bsflu`:
 ```{r add-meas-model}
-bbs %<>% pomp(rmeasure=Csnippet(rmeas),dmeasure=Csnippet(dmeas),
+bsflu %<>% pomp(rmeasure=Csnippet(rmeas),dmeasure=Csnippet(dmeas),
               statenames="H",paramnames="rho")
 ```
 
 ```{r}
-simulate(bbs,params=c(Beta=2,gamma=0.1,rho=0.9),nsim=20,as=TRUE,include=TRUE) %>%
+simulate(bsflu,params=c(Beta=2,gamma=0.1,rho=0.9),nsim=20,as=TRUE,include=TRUE) %>%
   ggplot(aes(x=time,y=cases,group=sim,color=sim=="data"))+
   geom_line()+guides(color=FALSE)
 ```
@@ -185,35 +183,35 @@ fromEst <- "
  Trho = expit(rho);
 "
 
-bbs %<>% pomp(toEstimationScale=Csnippet(toEst),
+bsflu %<>% pomp(toEstimationScale=Csnippet(toEst),
               fromEstimationScale=Csnippet(fromEst),
               paramnames=c("Beta","gamma","rho"))
 ```
 
-### Sequential Monte Carlo in `pomp`
+## Sequential Monte Carlo in `pomp` (3B)
 
 In `pomp`, the basic particle filter is implemented in the command `pfilter`.
 We must choose the number of particles to use by setting the `Np` argument.
 
-```{r bbs-pfilter-1,results='markup',cache=T}
-pf <- pfilter(bbs,Np=1000,params=c(Beta=2,gamma=0.1,rho=0.9))
+```{r bsflu-pfilter-1,results='markup',cache=T}
+pf <- pfilter(bsflu,Np=1000,params=c(Beta=2,gamma=0.1,rho=0.9))
 logLik(pf)
 ```
 
 We can run a few particle filters to get an estimate of the Monte Carlo variability:
-```{r bbs-pfilter-2,results='markup',cache=T}
-pf <- replicate(n=10,pfilter(bbs,Np=1000,params=c(Beta=2,gamma=0.1,rho=0.9)))
+```{r bsflu-pfilter-2,results='markup',cache=T}
+pf <- replicate(n=10,pfilter(bsflu,Np=1000,params=c(Beta=2,gamma=0.1,rho=0.9)))
 ll <- sapply(pf,logLik)
 logmeanexp(ll,se=TRUE)
 ```
 Note that we're careful here to counteract Jensen's inequality.
 The particle filter gives us an unbiased estimate of the likelihood, not of the log-likelihood.
 
-To get an idea of what the likelihood surface looks like in the neighborhood of the default parameter set supplied by `bbs`, we can construct some likelihood slices.
+To get an idea of what the likelihood surface looks like in the neighborhood of the default parameter set supplied by `bsflu`, we can construct some likelihood slices.
 We'll make slices in the $\beta$ and $\gamma$ directions.
 Both slices will pass through the default parameter set.
 
-```{r bbs-like-slice,cache=T,results='hide'}
+```{r bsflu-like-slice,cache=T,results='hide'}
 require(pomp)
 require(foreach)
 require(doMC)
@@ -231,12 +229,12 @@ mcopts <- list(preschedule=FALSE,set.seed=TRUE)
 foreach (theta=iter(p,"row"),.combine=rbind,
          .inorder=FALSE,.options.multicore=mcopts) %dopar% 
   {
-    pfilter(bbs,params=unlist(theta),Np=1000) -> pf
+    pfilter(bsflu,params=unlist(theta),Np=1000) -> pf
     theta$loglik <- logLik(pf)
     theta
     } -> p
 ```
-```{r bbs-like-slice-plot,cache=F,results="hide"}
+```{r bsflu-like-slice-plot,cache=F,results="hide"}
 p %>%
   mutate(slice=as.character(slice)) %>%
   melt(id=c("slice","loglik")) %>% 
@@ -273,17 +271,17 @@ Also, since the likelihood is only estimated, we would expect the derivative est
 Here, let's opt for deterministic optimization of a rough function.
 We'll try using `optim`'s default method: Nelder-Mead.
 
-```{r bbs-like-optim-1,echo=T,eval=T,results='markup',cache=T}
-coef(bbs) <- c(Beta=2,gamma=0.1,rho=0.9)
+```{r bsflu-like-optim-1,echo=T,eval=T,results='markup',cache=T}
+coef(bsflu) <- c(Beta=2,gamma=0.1,rho=0.9)
 
 neg.ll <- function (par, est, ...) {
   ## parameters to be estimated are named in 'est'
-  allpars <- coef(bbs,transform=TRUE)
+  allpars <- coef(bsflu,transform=TRUE)
   allpars[est] <- par
   try(
     pfilter(
-      bbs,
-      params=partrans(bbs,allpars,dir="fromEst"),
+      bsflu,
+      params=partrans(bsflu,allpars,dir="fromEst"),
       ...
       )
     ) -> pf
@@ -294,7 +292,7 @@ neg.ll <- function (par, est, ...) {
       }
   }
 ```
-```{r bbs-like-optim-2,results='markup',cache=T}
+```{r bsflu-like-optim-2,results='markup',cache=T}
 require(plyr)
 ## use Nelder-Mead with fixed RNG seed
 fit <- optim(
@@ -307,7 +305,7 @@ fit <- optim(
   control=list(maxit=400,trace=0)
   )
 
-mle <- bbs
+mle <- bsflu
 coef(mle,c("gamma","Beta","rho"),trans=T) <- fit$par
 coef(mle,c("gamma","Beta","rho")) ## point estimate
 
@@ -320,7 +318,7 @@ logmeanexp(lls,se=TRUE)
 
 Some simulations at these parameters are shown next:
 
-```{r bbs-like-optim-plot}
+```{r bsflu-like-optim-plot}
 sims %>%
   ggplot(aes(x=time,y=cases,group=sim,color=sim=="data"))+
   geom_line()+

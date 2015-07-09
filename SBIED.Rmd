@@ -110,32 +110,12 @@ I HAVEN'T DONE THIS HERE. IT COULD COME UP IN DISCUSSION OF THE "OVERVIEW". I'D 
 * __Approach__: Using time series data to inform dynamic models.
 * __Strengths and weaknesses of this approach__:
 
-\ 
-\ 
+#### Outline
 
-I THINK IT WOULD BE GOOD TO HAVE TECHNOLOGY TO ALLOW FOR ANNOTATING HTML TO INTEGRATE DISCUSSION INTO THE PRESENTATION. IDEAS?
-
-\ 
-\ 
-\ 
-\ 
-\
-\
-\
-\
-\
-\
-\
-
-
-* __Alternative approaches__:
-
-\
-\
-\
-\
-\
-
+* why dynamic models?
+* what's wrong with traditional approaches?
+* what is simulation-based inference?
+* case studies
 
 --------------------------------
 

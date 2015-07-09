@@ -398,11 +398,11 @@ simulate(parus,nsim=3,as.data.frame=TRUE,include.data=TRUE) %>%
 
 ## Exercises
 
-#### Exercise
+### Exercise: Ricker model parameters
 Fiddle with the parameters to try and make the simulations look more like the data.
 This will help you build some intuition for what the various parameters do.
 
-#### Exercise
+### Exercise: Reformulating the Ricker model
 Reparameterize the Ricker model so that the scaling of $N$ is explicit:
 $$N_{t+1} = r\,N_{t}\,\exp\left(-\frac{N_{t}}{K}\right).$$
 
@@ -413,7 +413,7 @@ $$\mathrm{pop}_t \sim \dist{Negbin}{\phi\,N_t,k},$$
 i.e., $\mathrm{pop}_t$ is negative-binomially distributed with mean $\phi\,N_t$ and clumping parameter $k$.
 See `?NegBinomial` for documentation on the negative binomial distribution and [the R Extensions Manual section on distribution functions](http://cran.r-project.org/doc/manuals/r-release/R-exts.html#Distribution-functions) for information on how to access these in C.
 
-### Exercise
+### Exercise: Beverton-Holt
 Construct a `pomp` object for the *Parus major* data and the stochastic Beverton-Holt model
 $$N_{t+1} = \frac{a\,N_t}{1+b\,N_t}\,\varepsilon_t,$$
 where $a$ and $b$ are parameters and

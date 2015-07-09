@@ -18,7 +18,7 @@ Please share and remix noncommercially, mentioning its origin.
 ```{r opts,include=FALSE}
 library(pomp)
 library(knitr)
-prefix <- "pomps"
+prefix <- "mif"
 opts_chunk$set(
   progress=TRUE,
   prompt=FALSE,tidy=FALSE,highlight=TRUE,
@@ -43,7 +43,7 @@ opts_chunk$set(
   )
 
 options(
-  pomp.cache=getwd(),
+  pomp.cache="cache",
   keep.source=TRUE,
   encoding="UTF-8"
   )
@@ -231,7 +231,7 @@ Here is one possible explanation: the precision of interest is often the second 
 
 For a relatively simple epidemiological example of IF2, we consider fitting a stochastic SIR model to an influenza outbreak in a British boarding school [@anonymous78]. Reports consist of the number of children confined to bed for each of the 14 days of the outbreak. The total number of children at the school was 763, and a total of 512 children spent time away from class. Only one adult developed influenza-like illness, so adults are omitted from the data and model. First, we read in the boarding school flu (bsflu) data:
 ```{r load_bbs}
-bsflu_data <- read.table("bsflu_data.csv")
+bsflu_data <- read.table("http://kinglab.eeb.lsa.umich.edu/SBIED/data/bsflu_data.txt")
 ```
 
 Our model is a variation on a basic SIR Markov chain, with state $X(t)=(S(t),I(t),R_1(t),R_2(t),R_3(t) )$ giving the number of individuals in the susceptible and infectious categories, and three stages of recovery. The recovery stages, $R_1$, $R_2$ and $R_3$, are all modeled to be non-contagious. $R_1$ consists of individuals who are bed-confined if they show symptoms; $R_2$ consists of individuals who are convalescent if they showed symptoms; $R_3$ consists of recovered individuals who have returned to school-work if they were symtomatic.  The observation on day $n$ of the observed epidemic (with $n=1$ being 22 January) consists of the numbers of children who are bed-confined and convalescent. These measurements are modeled as $Y_n=(B_n,C_n)$ with $B_n\sim\mathrm{Poisson}(\rho R_1(t_n))$ and $C_n\sim\mathrm{Poisson}(\rho R_2(t_n))$. Here, $\rho$ is a reporting rate corresponding to the chance of being symptomatic.
@@ -334,12 +334,12 @@ plot(bsflu)
 To develop and debug code, it is nice to have a version that runs extra quickly, for which we set `run_level=1`. Here, `Np` is the number of particles (i.e., sequential Monte Carlo sample size), and `Nmif` is the number of iterations of the optimization procedure carried out below. Empirically, `Np=5000` and `Nmif=200` are around the minimum required to get stable results with an error in the likelihood of order 1 log unit for this example; this is implemented by setting `run_level=2`. One can then ramp up to larger values for more refined computations, implemented here by `run_level=3`.
 
 ```{r run_level}
-run_level <- 3
-bsflu_Np <-          c(100,2e4, 6e4)
-bsflu_Nmif <-        c(10, 100, 300)
-bsflu_Neval <-       c(2,  10,  10)
-bsflu_Nglobal <-     c(10, 10,  100)
-bsflu_Nlocal <-     c(10, 10,  20)
+runlevel <- 3
+switch(runlevel,
+       {bsflu_Np=100; bsflu_Nmif=10; bsflu_Neval=10; bsflu_Nglobal=10; bsflu_Nlocal=10}, 
+       {bsflu_Np=20000; bsflu_Nmif=100; bsflu_Neval=10; bsflu_Nglobal=10; bsflu_Nlocal=10}, 
+       {bsflu_Np=60000; bsflu_Nmif=300; bsflu_Neval=10; bsflu_Nglobal=100; bsflu_Nlocal=20}
+)
 ```
 
 
@@ -366,7 +366,7 @@ We proceed to carry out replicated particle filters at this tentative MLE:
 ```{r pf}
 t_pf <- system.time(
   pf <- foreach(i=1:cores,.packages='pomp') %dopar% try(
-    pfilter(bsflu,params=bsflu_mle,Np=bsflu_Np[run_level],seed=297221+i)
+    pfilter(bsflu,params=bsflu_mle,Np=bsflu_Np,seed=297221+i)
   )
 )
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
@@ -384,13 +384,13 @@ bsflu_rw.sd <- 0.02
 bsflu_cooling.fraction.50 <- 0.5
 
 t_local <- system.time({
-  mifs_local <- foreach(i=1:bsflu_Nlocal[run_level],.packages='pomp', .combine=c) %dopar%  {
+  mifs_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp', .combine=c) %dopar%  {
      mif2(
         bsflu,
         start=bsflu_mle,
         seed=743275+i,
-        Np=bsflu_Np[run_level],
-        Nmif=bsflu_Nmif[run_level],
+        Np=bsflu_Np,
+        Nmif=bsflu_Nmif,
         cooling.type="geometric",
         cooling.fraction.50=bsflu_cooling.fraction.50,
         transform=TRUE,
@@ -409,9 +409,9 @@ Although the filtering carried out by `mif2` in the final filtering iteration ge
 
 ```{r lik_local_eval}
 t_local_eval <- system.time({
-  liks_local <- foreach(i=1:bsflu_Nlocal[run_level],.packages='pomp',.combine=rbind) %dopar% {
+  liks_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp',.combine=rbind) %dopar% {
     set.seed(87932+i)
-    evals <- replicate(bsflu_Neval[run_level], logLik(pfilter(bsflu,params=coef(mifs_local[[i]]),Np=bsflu_Np[run_level])))
+    evals <- replicate(bsflu_Neval, logLik(pfilter(bsflu,params=coef(mifs_local[[i]]),Np=bsflu_Np)))
     logmeanexp(evals, se=TRUE)
   }
 })
@@ -447,7 +447,7 @@ We are now ready to carry out likelihood maximizations from diverse starting poi
 
 ```{r box_eval}
 t_global <- system.time({
-  mifs_global <- foreach(i=1:bsflu_Nglobal[run_level],.packages='pomp', .combine=c) %dopar%  mif2(
+  mifs_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp', .combine=c) %dopar%  mif2(
      mifs_local[[1]],
      start=c(apply(bsflu_box,1,function(x)runif(1,x)),bsflu_fixed_params),
      seed=743275+i
@@ -459,9 +459,9 @@ Although the filtering carried out by `mif2` in the final filtering iteration ge
 
 ```{r lik_global_eval}
 t_global_eval <- system.time({
-  liks_global <- foreach(i=1:bsflu_Nglobal[run_level],.packages='pomp',.combine=rbind) %dopar% {
+  liks_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp',.combine=rbind) %dopar% {
     set.seed(87932+i)
-    evals <- replicate(bsflu_Neval[run_level], logLik(pfilter(bsflu,params=coef(mifs_global[[i]]),Np=bsflu_Np[run_level])))
+    evals <- replicate(bsflu_Neval, logLik(pfilter(bsflu,params=coef(mifs_global[[i]]),Np=bsflu_Np)))
     logmeanexp(evals, se=TRUE)
   }
 })
