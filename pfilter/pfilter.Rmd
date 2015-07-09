@@ -1,0 +1,313 @@
+---
+title: "Sequential Monte Carlo"
+author: "Aaron A. King"
+date: "2015-07-09"
+output:
+  html_document:
+    theme: flatly
+    toc: yes
+bibliography: ../sbied.bib
+csl: ../ecology.csl
+
+---
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dlta[1]{{\Delta}{#1}}
+
+Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
+Produced using `pomp` version `r packageVersion("pomp")`.
+
+```{r knitr-opts,include=FALSE,purl=FALSE,cache=FALSE}
+library(knitr)
+prefix <- "pfilter"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  dpi=300,
+  dev='png',
+  dev.args=list(bg='transparent')
+  )
+```
+```{r opts,include=FALSE,cache=FALSE}
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  pomp.cache="cache",
+  encoding="UTF-8"
+  )
+
+library(ggplot2)
+theme_set(theme_bw())
+```
+
+```{r prelims,echo=F,cache=F}
+set.seed(594709947L)
+require(ggplot2)
+require(plyr)
+require(reshape2)
+require(foreach)
+require(doMC)
+require(pomp)
+stopifnot(packageVersion("pomp")>="0.69-1")
+```
+
+# Theory of the particle filter
+
+
+# Practicum: Sequential Monte Carlo in `pomp`
+
+
+Load the data
+```{r flu-data}
+baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+url <- paste0(baseurl,"data/bsflu_data.txt")
+bsflu <- subset(read.table(url),select=c(day,B))
+ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
+```
+
+Set up the process model.
+We need a model that will simulate the process from time $t$ to time $t+\dlta{t}$.
+```{r rproc1}
+sir_step <- "
+  double t1 = rbinom(S,1-exp(-beta*I/pop*dt));
+  double t2 = rbinom(I,1-exp(-gamma*dt));
+  S -= t1;
+  I += t1 - t2;
+  R += t2;
+"
+```
+
+Let's assume that the data represent incidence, i.e., the number of new infections occurring on a given day.
+```{r rproc2}
+sir_step <- "
+  double t1 = rbinom(S,1-exp(-Beta*I/763*dt));
+  double t2 = rbinom(I,1-exp(-gamma*dt));
+  S -= t1;
+  I += t1 - t2;
+  R += t2;
+  H += t1;
+"
+```
+
+To initialize the state process, we write
+```{r initlz}
+sir_init <- "
+  S = 762;
+  I = 1;
+  R = 0;
+  H = 0;
+"
+```
+
+We add these to the data to make a `pomp` object:
+```{r sir-pomp1}
+bsflu <- pomp(bsflu,times="day",t0=0,
+              rprocess=euler.sim(step.fun=Csnippet(sir_step),delta.t=0.1),
+              initializer=Csnippet(sir_init), zeronames="H",
+              statenames=c("S","I","R","H"),
+              paramnames=c("Beta","gamma"))
+```
+
+`H` now accumulates the new infections.
+The incidence on day $t$ is $H(t+1)-H(t)$.
+
+We'll model the data with some degree, $\rho$ of under-reporting:
+$$\text{cases}_t \sim \dist{Binomial}{H(t+1)-H(t),\rho}.$$
+
+As before, we must write both a `dmeasure` and an `rmeasure` component:
+```{r meas-model}
+dmeas <- "lik = dbinom(B,H,rho,give_log);"
+rmeas <- "B = rbinom(H,rho);"
+```
+and put these into `bsflu`:
+```{r add-meas-model}
+bsflu <- pomp(bsflu,rmeasure=Csnippet(rmeas),dmeasure=Csnippet(dmeas),
+              statenames="H",paramnames="rho")
+```
+
+```{r}
+sims <- simulate(bsflu,params=c(Beta=2,gamma=0.1,rho=0.9),nsim=20,as=TRUE,include=TRUE)
+ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  geom_line()+guides(color=FALSE)
+```
+
+The parameters are constrained to be positive, and $\rho < 1$.
+We'll find it useful to transform the parameters onto a scale on which there are no such constraints.
+The following accomplish this.
+```{r sir-partrans}
+toEst <- "
+ TBeta = log(Beta);
+ Tgamma = log(gamma);
+ Trho = logit(rho);
+"
+
+fromEst <- "
+ TBeta = exp(Beta);
+ Tgamma = exp(gamma);
+ Trho = expit(rho);
+"
+
+bsflu <- pomp(bsflu,toEstimationScale=Csnippet(toEst),
+              fromEstimationScale=Csnippet(fromEst),
+              paramnames=c("Beta","gamma","rho"))
+```
+
+In `pomp`, the basic particle filter is implemented in the command `pfilter`.
+We must choose the number of particles to use by setting the `Np` argument.
+
+```{r bsflu-pfilter-1,results='markup',cache=T}
+pf <- pfilter(bsflu,Np=1000,params=c(Beta=2,gamma=0.1,rho=0.9))
+logLik(pf)
+```
+
+We can run a few particle filters to get an estimate of the Monte Carlo variability:
+```{r bsflu-pfilter-2,results='markup',cache=T}
+pf <- replicate(n=10,pfilter(bsflu,Np=1000,params=c(Beta=2,gamma=0.1,rho=0.9)))
+ll <- sapply(pf,logLik)
+logmeanexp(ll,se=TRUE)
+```
+Note that we're careful here to counteract Jensen's inequality.
+The particle filter gives us an unbiased estimate of the likelihood, not of the log-likelihood.
+
+To get an idea of what the likelihood surface looks like in the neighborhood of the default parameter set supplied by `bsflu`, we can construct some likelihood slices.
+We'll make slices in the $\beta$ and $\gamma$ directions.
+Both slices will pass through the default parameter set.
+
+```{r bsflu-like-slice,cache=TRUE,results='hide'}
+sliceDesign(
+  c(Beta=2,gamma=0.1,rho=0.9),
+  Beta=rep(seq(from=0.5,to=1,length=40),each=3),
+  gamma=rep(seq(from=0.01,to=0.25,length=40),each=3)) -> p
+
+registerDoMC(cores=4)        ## number of cores on your machine
+
+set.seed(998468235L,kind="L'Ecuyer")
+mcopts <- list(preschedule=FALSE,set.seed=TRUE)
+
+foreach (theta=iter(p,"row"),.combine=rbind,
+         .inorder=FALSE,.options.multicore=mcopts) %dopar% 
+  {
+    pfilter(bsflu,params=unlist(theta),Np=1000) -> pf
+    theta$loglik <- logLik(pf)
+    theta
+    } -> p
+```
+```{r bsflu-like-slice-plot,cache=F,results="hide"}
+foreach (v=c("Beta","gamma")) %do%
+{
+  x <- subset(p,slice==v)
+  plot(x[[v]],x$loglik,xlab=v,ylab="loglik")
+}
+```
+
+#### Exercise
+Add likelihood slices along the $\rho$ direction.
+
+Clearly, the default parameter set is not particularly close to the MLE.
+One way to find the MLE is to try optimizing the estimated likelihood directly.
+There are many optimization algorithms to choose from, and many implemented in `R`.
+
+Two issues arise immediately.
+First, the particle filter gives us a stochastic estimate of the likelihood.
+We can reduce this variability by making `Np` larger, but we cannot make it go away.
+If we use a deterministic optimizer (i.e., one that assumes the objective function is evaluated deterministically), then we must control this variability somehow.
+For example, we can fix the seed of the pseudo-random number generator.
+A side effect will be that the objective function becomes jagged, marked by many small local knolls and pits.
+Alternatively, we can use a stochastic optimization algorithm, with which we will be only be able to obtain estimates of our MLE.
+This is the trade-off between a noisy and a rough objective function.
+Second, because the particle filter gives us just an estimate of the likelihood and no information about the derivative, we must choose an algorithm that is "derivative-free".
+There are many such, but we can expect less efficiency than would be possible with derivative information.
+Note that finite differencing is not an especially promising way of constructing derivatives. 
+The price would be a $n$-fold increase in cpu time, where $n$ is the dimension of the parameter space.
+Also, since the likelihood is only estimated, we would expect the derivative estimates to be noisy.
+
+Here, let's opt for deterministic optimization of a rough function.
+We'll try using `optim`'s default method: Nelder-Mead.
+
+```{r bsflu-like-optim-1,echo=T,eval=T,results='markup',cache=T}
+coef(bsflu) <- c(Beta=2,gamma=0.1,rho=0.9)
+
+neg.ll <- function (par, est, ...) {
+  ## parameters to be estimated are named in 'est'
+  allpars <- coef(bsflu,transform=TRUE)
+  allpars[est] <- par
+  try(
+    pfilter(
+      bsflu,
+      params=partrans(bsflu,allpars,dir="fromEst"),
+      ...
+      )
+    ) -> pf
+  if (inherits(pf,"try-error")) {
+    1e10 ## a big number
+    } else {
+      -logLik(pf)
+      }
+  }
+```
+```{r bsflu-like-optim-2,results='markup',cache=T}
+require(plyr)
+## use Nelder-Mead with fixed RNG seed
+fit <- optim(
+  par=c(-1.1, 0.33, 2.2),
+  est=c("gamma","Beta","rho"),
+  Np=200,
+  fn=neg.ll,
+  seed=3488755L,
+  method="Nelder-Mead",
+  control=list(maxit=400,trace=0)
+  )
+
+mle <- bsflu
+coef(mle,c("gamma","Beta","rho"),trans=T) <- fit$par
+coef(mle,c("gamma","Beta","rho")) ## point estimate
+
+simulate(mle,nsim=9,as.data.frame=TRUE,include=TRUE) -> sims
+
+lls <- replicate(n=5,logLik(pfilter(mle,Np=1000)))
+logmeanexp(lls,se=TRUE)
+```
+
+Some simulations at these parameters are shown next:
+
+```{r bsflu-like-optim-plot}
+ggplot(data=sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  geom_line()+
+  geom_text(x=9,y=320,
+            label=paste("log~L==",round(ll[1],1),"%+-%",round(ll[2],1)),
+            color="black",
+            parse=T,hjust=0)
+```
+
+#### Exercise
+Use simulated annealing to maximize the likelihood.
+Be sure to try several starting guesses.
+
+
+#### Exercise
+Construct likelihood slices on $\beta$ and $\gamma$ through the MLE you found above.
+
+
+
+
+## References
