@@ -1,5 +1,11 @@
+WEBSITE = tilia:/var/www/html/SBIED
+DATAFILES = bs_flu.csv parus.csv
+
 install-scripts:
-	rsync -avz --chmod=a+rX,go-w scripts website
+	rsync --delete -avz --chmod=a+rX,go-w scripts/ $(WEBSITE)/scripts
+
+install-data:
+	(cd data; rsync --delete -avz --chmod=a+rX,go-w $(DATAFILES) $(WEBSITE)/data)
 
 %.R: %.Rmd
 	Rscript --vanilla -e "library(knitr); purl(\"$*.Rmd\")"
