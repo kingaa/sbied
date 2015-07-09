@@ -27,7 +27,7 @@ opts_chunk$set(
   message=FALSE,
   error=FALSE,
   echo=TRUE,
-  cache=TRUE,
+#  cache=TRUE,
   results='markup',
   fig.show='asis',
   size='small',
@@ -243,12 +243,17 @@ Our Markov transmission model is that each individual in $S$ transitions to $I$ 
 
 This model has limitations and weaknesses. Writing down and fitting a model is a starting point for data analysis, not an end point. In particular, one should try model variations. For example, one could include a latency period for infections, or one could modify the model to give a better description of the bed-confinement and convalescence processes. Ten individuals received antibiotics for secondary infections, and they had longer bed-confinement and convalescence times. Partly for this reason, we will initially fit only the bed-confinement data, using $Y_n=B_n$ for our `dmeasure`. 
 
-For the code, we represent the states ($S$, $I$, $R_1$, $R_2$), the observations ($B$, $C$) and the parameters ($\beta$, $\mu_I$, $\rho$, $\mu_{R_1}$, $\mu_{R_2}$) as follows:
+For the code, we represent the states ($S$, $I$, $R_1$, $R_2$) and the parameters ($\beta$, $\mu_I$, $\rho$, $\mu_{R_1}$, $\mu_{R_2}$) as follows:
 
 ```{r bsflu_names}
 bsflu_statenames <- c("S","I","R1","R2")
-bsflu_obsnames <- c("B","C")
 bsflu_paramnames <- c("beta","mu_I","rho","mu_R1","mu_R2")
+```
+
+The observation names ($B$, $C$) are the names of the data variables:
+
+```{r bsflu_obsnames}
+(bsflu_obsnames <- colnames(bsflu_data)[1:2])
 ```
 
 We do not need a representation of $R_3$ since the total population size is fixed at $P=763$ and hence $R_3(t)=P-S(t)-I(t)-R_1(t)-R_2(t)$. 
@@ -295,18 +300,6 @@ bsflu_initializer <- "
 "
 ```
 
-We are going to treat $\mu_{R_1}$ and  $\mu_{R_2}$ as known, fixed at the empirical mean of the bed-confinement and convalescence times for symptomatic cases:
-
-```{r fixed_params}
-bsflu_fixed_params <- c(mu_R1=1/(sum(bsflu_data$B)/512),mu_R2=1/(sum(bsflu_data$C)/512))
-```
-
-It can also be helpful to build the pomp object with some set of preliminary values for the other parameters, to test simulation and filtering:
-
-```{r regular_params}
-bsflu_regular_params <- c(beta=0.004, mu_I=0.7, rho=0.9)
-```
-
 We can now build the pomp object:
 
 ```{r pomp_bsflu}
@@ -314,7 +307,6 @@ bsflu <- pomp(
      data=bsflu_data,
      times="day",
      t0=0,
-     params=c(bsflu_regular_params,bsflu_fixed_params),
      rprocess=euler.sim(
        step.fun=Csnippet(bsflu_rprocess),
        delta.t=1/12
@@ -334,7 +326,7 @@ plot(bsflu)
 To develop and debug code, it is nice to have a version that runs extra quickly, for which we set `run_level=1`. Here, `Np` is the number of particles (i.e., sequential Monte Carlo sample size), and `Nmif` is the number of iterations of the optimization procedure carried out below. Empirically, `Np=5000` and `Nmif=200` are around the minimum required to get stable results with an error in the likelihood of order 1 log unit for this example; this is implemented by setting `run_level=2`. One can then ramp up to larger values for more refined computations, implemented here by `run_level=3`.
 
 ```{r run_level}
-runlevel <- 3
+runlevel <- 1
 switch(runlevel,
        {bsflu_Np=100; bsflu_Nmif=10; bsflu_Neval=10; bsflu_Nglobal=10; bsflu_Nlocal=10}, 
        {bsflu_Np=20000; bsflu_Nmif=100; bsflu_Neval=10; bsflu_Nglobal=10; bsflu_Nlocal=10}, 
@@ -348,8 +340,14 @@ switch(runlevel,
 Before engaging in iterated filtering, it is often a good idea to check that the basic particle filter is working since iterated filtering builds on this technique. Here, carrying out slightly circular reasoning, we are going to test `pfilter` on a previously computed point estimate read in from [bsflu_params.csv](bsflu_params.csv):
  
 ```{r bsflu_params}
-bsflu_params <- data.matrix(read.table("bsflu_params.csv",row.names=NULL,header=TRUE))
+bsflu_params <- data.matrix(read.table("mif_bsflu_params.csv",row.names=NULL,header=TRUE))
 bsflu_mle <- bsflu_params[which.max(bsflu_params[,"logLik"]),][bsflu_paramnames]
+```
+
+We are going to treat $\mu_{R_1}$ and  $\mu_{R_2}$ as known, fixed at the empirical mean of the bed-confinement and convalescence times for symptomatic cases:
+
+```{r fixed_params}
+bsflu_fixed_params <- c(mu_R1=1/(sum(bsflu_data$B)/512),mu_R2=1/(sum(bsflu_data$C)/512))
 ```
 
 It is convenient to do some parallelization to speed up the computations. Most machines are multi-core nowadays, and using this computational capacity involves only (i) the following three lines of code to let R know you plan to use multiple processors; (ii) using the parallel for loop provided by 'foreach'.
@@ -473,8 +471,8 @@ summary(results_global$logLik,digits=5)
 It is good practice to build up a file of successful optimization results for subsequent investigation:
 
 ```{r save_params}
-if(run_level>1) write.table(rbind(results_local,results_global),
-   file="bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
+if(runlevel>1) write.table(rbind(results_local,results_global),
+   file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
 ```
 
 Evaluation of the best result of this search gives a likelihood of `r round(max(results_global$logLik),1)` with a standard error of `r round(results_global$logLik_se[which.max(results_global$logLik)],1)`. This took in `r round(t_global["elapsed"]/60,1)` minutes for the maximization and `r round(t_global_eval["elapsed"]/60,1)` minutes for the evaluation.  Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface 
@@ -485,9 +483,15 @@ pairs(~logLik+beta+mu_I+rho,data=subset(results_global,logLik>max(logLik)-250))
 
 We see that optimization attempts from diverse remote starting points end up with comparable likelihoods, even when the parameter values are quite distinct. This gives us some confidence in our maximization procedure. 
 
+## Exercises
 
+### Technical exercise: Construct a profile likelihood.
 
-## Technical exercise: Checking the model source code.
+How strong is the evidence about the contact rate, $\beta$, given this model and data? Use `mif2` to construct a profile likelihood. Due to time constraints, you may be able to compute only a preliminary version.
+
+It is also possible to profile over the basic reproduction number, $R_0=\beta P/\mu_I$. Is this more or less well determined that $\beta$ for this model and data?
+
+### Technical exercise: Check the model source code.
 
 Check the source code for the `bsflu` pomp object. Does the code implement the model described?
 
@@ -497,20 +501,23 @@ For various reasons, it can be surprisingly hard to make sure that the written e
 
 2. Suppose that there is an error in the coding of `rprocess`. Suppose that plug-and-play statistical methodology is used to infer parameters.  A conscientious researcher carries out a simulation study, using `simulate` to generate some realizations from the fitted model and checking that the inference methodology can successfully recover the known parameters for this model, up to some statistical error. Will this procedure help to identify the error in `rprocess`? If not, how does one debug `rprocess`? What research practices help minimize the risk of errors in simulation code?
 
-## Technical exercise: Assessing and improving algorithmic parameters
+### Technical exercise: Assessing and improving algorithmic parameters
 
 Develop your own heuristics to try to improve the performance of `mif2` in the previous example. Specifically, for a global optimization procedure carried out using random starting values in the specified box, let $\hat\Theta_\mathrm{max}$ be a random Monte Carlo estimate of the resulting MLE, and let $\hat\theta$ be the true (unknown) MLE. We can define the maximization error in the log likelihood to be
 $$e = \ell(\hat\theta) - E[\ell(\hat\Theta_\mathrm{max})].$$
 We cannot directly evaluate $e$, since there is also Monte Carlo error in our evaluation of $\ell(\theta)$, but we can compute it up to a known precision. Plan some code to estimates $e$ for a search procedure using a computational effort of $JM=2\times 10^7$, comparable to that used for each mif computation in the global search. Discuss the strengths and weaknesses of this quantification of optimization success. See if you can choose $J$ and $M$ subject to this constraint, together with choices of `rw.sd` and the cooling rate, `cooling.fraction.50`, to arrive at a quantifiably better procedure. Computationally, you may not be readily able to run your full procedure, but you could run a quicker version of it.
 
-## Technical exercise: Finding sharp peaks in the likelihood surface
+### Technical exercise: Finding sharp peaks in the likelihood surface
 
 Even in this small, 3 parameter, example, it takes a considerable amount of computation to find the global maximum (with values of $\beta$ around 0.004) starting from uniform draws in the specified box. The problem is that, on the scale on which "uniform" is defined, the peak around $\beta\approx 0.004$ is very narrow. Propose and test a more favorable way to draw starting parameters for the global search, with better scale invariance properties.
 
 ```{r save, include=FALSE}
-if(run_level>1) save(list = ls(all = TRUE), file = "Rout.rda")
+if(runlevel>1) save(list = ls(all = TRUE), file = "Rout.rda")
 ```
 
+### Technical exercise: Adding a latent class
+
+Modify the model to include a latent period between becoming exposed and becoming infectious. See what effect this has on the maximized likelihood.
 
 ----------------------
 
