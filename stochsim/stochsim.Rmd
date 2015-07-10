@@ -78,11 +78,11 @@ require(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 ```
 
-# Simulating dynamics models: the stochastic Euler method
+## Simulating dynamic models: the stochastic Euler method
 
-## Ed's material here.
+### Ed's material here.
 
-# Compartmental models in **pomp**.
+## Compartmental models in **pomp**.
 
 As an example that we can probe in some depth, let's look at an isolated outbreak of influenza that occurred in a boarding school for boys in England [@Anonymous1978].
 <!--- 763 boys were at risk, and ultimately 512 became infected. --->
@@ -190,13 +190,12 @@ pomp(sir,zeronames="H") -> sir
 
 Now, to include the observations in the model, we must write both a `dmeasure` and an `rmeasure` component:
 ```{r meas-model}
-dmeas <- "lik = dbinom(B,H,rho,give_log);"
-rmeas <- "B = rbinom(H,rho);"
+dmeas <- Csnippet("lik = dbinom(B,H,rho,give_log);")
+rmeas <- Csnippet("B = rbinom(H,rho);")
 ```
 and put these into our `pomp` object:
 ```{r add-meas-model}
-sir <- pomp(sir,rmeasure=Csnippet(rmeas),dmeasure=Csnippet(dmeas),
-            statenames="H",paramnames="rho")
+sir <- pomp(sir,rmeasure=rmeas,dmeasure=dmeas,statenames="H",paramnames="rho")
 ```
 
 Let's perform some simulations to verify that things are working.

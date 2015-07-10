@@ -48,7 +48,7 @@ opts_chunk$set(
   dev.args=list(bg='transparent')
   )
 ```
-```{r opts,include=FALSE,cache=FALSE}
+```{r prelims,include=FALSE,cache=FALSE}
 options(
   keep.source=TRUE,
   stringsAsFactors=FALSE,
@@ -56,13 +56,9 @@ options(
   encoding="UTF-8"
   )
 
-library(ggplot2)
-theme_set(theme_bw())
-```
-
-```{r prelims,echo=F,cache=F}
 set.seed(594709947L)
 require(ggplot2)
+theme_set(theme_bw())
 require(plyr)
 require(reshape2)
 require(magrittr)
