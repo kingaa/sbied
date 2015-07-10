@@ -1,5 +1,5 @@
 ---
-title: "Stochastic simulation and compartmental models"
+title: "Stochastic simulation of compartmental models"
 author: "Edward L. Ionides and Aaron A. King"
 date: "2015-07-09"
 output:
@@ -8,6 +8,8 @@ output:
     toc: yes
 bibliography: ../sbied.bib
 csl: ../ecology.csl
+nocite: >
+  @Keeling2007
 
 ---
 
@@ -17,10 +19,17 @@ csl: ../ecology.csl
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
 \newcommand\dlta[1]{{\Delta}{#1}}
 
+--------------------------
+
 Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
-Produced using `pomp` version `r packageVersion("pomp")`.
+
+Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
+
+[Back to Module 10 Home Page](http://kinglab.eeb.lsa.umich.edu/SBIED/index.html)
+
+--------------------------
 
 ```{r knitr-opts,include=FALSE,purl=FALSE,cache=FALSE}
 library(knitr)
@@ -55,14 +64,12 @@ options(
   pomp.cache="cache",
   encoding="UTF-8"
   )
-
-library(ggplot2)
-theme_set(theme_bw())
 ```
 
 ```{r prelims,echo=F,cache=F}
 set.seed(594709947L)
 require(ggplot2)
+theme_set(theme_bw())
 require(plyr)
 require(reshape2)
 require(foreach)
@@ -73,100 +80,199 @@ stopifnot(packageVersion("pomp")>="0.69-1")
 
 # Simulating dynamics models: the stochastic Euler method
 
+## Ed's material here.
 
-# Compartmental models in `pomp`
+# Compartmental models in **pomp**.
+
+As an example that we can probe in some depth, let's look at an isolated outbreak of influenza that occurred in a boarding school for boys in England [@Anonymous1978].
+<!--- 763 boys were at risk, and ultimately 512 became infected. --->
+Download the data and examine it:
+```{r flu-data1}
+baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+url <- paste0(baseurl,"data/bsflu_data.txt")
+bsflu <- read.table(url)
+head(bsflu)
+```
+The variable `B` refers to boys confined to bed and `C` to boys in convalescence.
+Let's restrict our attention for the moment to the `B` variable.
+```{r flu-data2}
+ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
+```
+
+Let's assume that $B$ indicates the number of boys confined to bed the preceding day and that the disease follows the simple SIR model.
+Our tasks will be, first, to estimate the parameters of the SIR and, second, to decide whether or not the SIR model is an adequate description of these data.
 
 Below is a diagram of the SIR model.
 The host population is divided into three classes according to their infection status: 
 S, susceptible hosts; 
 I, infected (and infectious) hosts; 
 R, recovered and immune hosts. 
-The S$\to$I rate, $\lambda$, called the *force of infection*, depends on the number of infectious individuals according to $\lambda(t)={\beta\,I}/{N}$.
-The I$\to$R, or recovery, rate is $\gamma$.
-The case reports, $C$, result from a process by which infections are recorded with probability $\rho$. 
-Since diagnosed cases are treated with bed-rest and hence removed, infections are counted upon transition to R. 
+The rate at which individuals move from S to I is the force of infection, $\lambda=\beta\,I/N$, while that at which individuals move into the R class is $\gamma$.
 
-```{r seir-diagram,echo=FALSE,cache=FALSE}
+```{r sir-diagram,echo=FALSE,cache=FALSE}
 require(DiagrammeR)
 DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);"
            ,height=200,width=500)
 ```
 
-## Implementing compartmental models in `pomp`
+Let's look at how we can view the SIR as a POMP model.
+The unobserved state variables, in this case, are the numbers of individuals, $S$, $I$, $R$ in the S, I, and R compartments, respectively.
+It's reasonable in this case to view the population size $N=S+I+R$, as fixed.
+The numbers that actually move from one compartment to another over any particular time interval are modeled as stochastic processes.
+In this case, we'll assume that the stochasticity is purely demographic, i.e., that each individual in a compartment at any given time faces the same risk of exiting the compartment.
 
-Load the data
-```{r flu-data}
-baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
-url <- paste0(baseurl,"data/bsflu_data.txt")
-bsflu <- subset(read.table(url),select=c(day,B))
-ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
-```
+To implement the model in **pomp**, the first thing we need is a stochastic simulator for the unobserved state process.
+We've seen that there are several ways of approximating the process just described for numerical purposes.
+An attractive option here is to model the number moving from one compartment to the next over a very short time interval as a binomial random variable.
+In particular, we model the number, $\dlta{N_{SI}}$, moving from S to I over interval $\dlta{t}$ as $$\dlta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\lambda\dlta{t}}},$$ and the number moving from I to R as $$\dlta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\gamma\dlta{t}}}.$$
 
-Set up the process model.
-We need a model that will simulate the process from time $t$ to time $t+\dlta{t}$.
+A `Csnippet` that encodes such a simulator is as follows:
 ```{r rproc1}
-sir_step <- "
-  double t1 = rbinom(S,1-exp(-beta*I/pop*dt));
-  double t2 = rbinom(I,1-exp(-gamma*dt));
-  S -= t1;
-  I += t1 - t2;
-  R += t2;
-"
+sir_step <- Csnippet("
+  double dN_SI = rbinom(S,1-exp(-beta*I/N*dt));
+  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  R += dN_IR;
+")
+```
+At day zero, we'll assume that $I=1$ and $R=0$, but we don't know how big the school is, so we treat $N$ as a parameter to be estimated and let $S(0)=N-1$.
+Thus an initializer `Csnippet` is
+```{r init1}
+sir_init <- Csnippet("
+  S = N-1;
+  I = 1;
+  R = 0;
+")
+```
+We fold these `Csnippet`s, with the data, into a `pomp` object thus:
+```{r rproc1-pomp}
+pomp(bsflu,time="day",t0=0,rprocess=euler.sim(sir_step,delta.t=1/6),
+     initializer=sir_init,paramnames=c("N","beta","gamma"),
+     statenames=c("S","I","R")) -> sir
 ```
 
-Let's assume that the data represent incidence, i.e., the number of new infections occurring on a given day.
+Now let's assume that the case reports, $B$, result from a process by which new infections result in confinement with probability $\rho$, which we can think of as the probability that an infection is severe enough to be noticed by the school authorities.
+Since confined cases have, presumably, a much lower transmission rate, let's treat $B$ as being a count of the number of boys who have moved from I to R over the course of the past day.
+We need a variable to track this.
+Let's modify our `Csnippet` above, adding a variable $H$ to track the incidence.
+We'll then replace the `rprocess` with the new one.
+
 ```{r rproc2}
-sir_step <- "
-  double t1 = rbinom(S,1-exp(-Beta*I/763*dt));
-  double t2 = rbinom(I,1-exp(-gamma*dt));
-  S -= t1;
-  I += t1 - t2;
-  R += t2;
-  H += t1;
-"
-```
+sir_step <- Csnippet("
+  double dN_SI = rbinom(S,1-exp(-beta*I/N*dt));
+  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  R += dN_IR;
+  H += dN_IR;
+")
 
-To initialize the state process, we write
-```{r initlz}
-sir_init <- "
-  S = 762;
+sir_init <- Csnippet("
+  S = N-1;
   I = 1;
   R = 0;
   H = 0;
-"
+")
+
+pomp(sir,rprocess=euler.sim(sir_step,delta.t=1/6),initializer=sir_init,
+     paramnames=c("beta","gamma","N"),statenames=c("S","I","R","H")) -> sir
 ```
 
-We add these to the data to make a `pomp` object:
-```{r sir-pomp1}
-bsflu <- pomp(bsflu,times="day",t0=0,
-              rprocess=euler.sim(step.fun=Csnippet(sir_step),delta.t=0.1),
-              initializer=Csnippet(sir_init), zeronames="H",
-              statenames=c("S","I","R","H"),
-              paramnames=c("Beta","gamma"))
+Now, we'll model the data, $B$, as a binomial process,
+$$B_t \sim \dist{Binomial}{H(t+1)-H(t),\rho}.$$
+But we have a problem, since at time $t$, the variable `H` we've defined will contain $H(t)$, not $H(t)-H(t-1)$.
+We can overcome this by telling `pomp` that we want `H` to be set to zero immediately following each observation.
+We do this by setting the `zeronames` argument to `pomp`:
+```{r zero1}
+pomp(sir,zeronames="H") -> sir
 ```
 
-`H` now accumulates the new infections.
-The incidence on day $t$ is $H(t+1)-H(t)$.
-
-We'll model the data with some degree, $\rho$ of under-reporting:
-$$\text{cases}_t \sim \dist{Binomial}{H(t+1)-H(t),\rho}.$$
-
-As before, we must write both a `dmeasure` and an `rmeasure` component:
+Now, to include the observations in the model, we must write both a `dmeasure` and an `rmeasure` component:
 ```{r meas-model}
 dmeas <- "lik = dbinom(B,H,rho,give_log);"
 rmeas <- "B = rbinom(H,rho);"
 ```
-and put these into `bsflu`:
+and put these into our `pomp` object:
 ```{r add-meas-model}
-bsflu <- pomp(bsflu,rmeasure=Csnippet(rmeas),dmeasure=Csnippet(dmeas),
-              statenames="H",paramnames="rho")
+sir <- pomp(sir,rmeasure=Csnippet(rmeas),dmeasure=Csnippet(dmeas),
+            statenames="H",paramnames="rho")
 ```
 
+Let's perform some simulations to verify that things are working.
+To do so, we'll need some parameters.
+A little thought will get us some ballpark estimates.
+In the data, it looks like there were a total of `r sum(bsflu$B)` infections, so the population size, $N$, must be somewhat in excess of this number.
+In fact, we can use the final-size equation
+$$R_0 = -\frac{\log{(1-f)}}{f},$$
+where $f=R(\infty)/N$ is the final size of the epidemic, together with the idea that $R_0$ must be, say, around 1.5, to estimate that $f\approx 0.6$, whence $N\approx 2600$.
+If the infectious period is roughly 1&nbsp;da, then $1/\gamma \approx 1~\text{da}$ and $\beta = \gamma\,R_0 \approx 1.5~\text{da}^{-1}$.
+
 ```{r}
-sims <- simulate(bsflu,params=c(Beta=2,gamma=0.1,rho=0.9),nsim=20,as=TRUE,include=TRUE)
+sims <- simulate(sir,params=c(beta=1.5,gamma=1,rho=0.9,N=2600),
+                 nsim=20,as=TRUE,include=TRUE)
+
 ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
   geom_line()+guides(color=FALSE)
 ```
 
+## Exercises
+
+### Explore the SIR model
+
+Fiddle with the parameters to see if you can't find parameters for which the data are a more plausible realization.
+
+### The SEIR model
+
+Below is a diagram of the so-called SEIR model.
+This differs from the SIR model in that infected individuals must pass a period of latency before becoming infectious.
+
+```{r seir-diagram,echo=FALSE,cache=FALSE}
+require(DiagrammeR)
+DiagrammeR("graph LR; S(S) --> E; E(E) --> I; I(I) --> R(R);"
+           ,height=200,width=600)
+```
+
+Modify the codes above to construct a `pomp` object containing the flu data and an SEIR model.
+Perform simulations as above and adjust parameters to get a sense of whether improvement is possible by including a latent period.
+
+### Rethinking the boarding-school flu data
+
+In the preceding, we've been assuming that $B_t$ represents the number of boys *sent* to bed on day $t$.
+Actually, this isn't correct at all.
+As described in the report [@Anonymous1978], $B_t$ represents the total number of boys *in* bed on day $t$.
+Since boys were potentially confined for more than one day, the data count each infection multiple times.
+On the other hand, we have information about the total number of boys at risk and the total number who were infected.
+In fact, we know from @Anonymous1978 that $N=763$ boys were at risk and $512$ boys in total spent between 3 and 7 days away from class (either in bed or convalescent).
+Moreover, there is information in the data on the number of boys, $C_t$, convalescent at day $t$.
+Since $1540~\text{boy-da}/512~\text{boy} \approx 3~\text{da}$, we know that the average duration spent in bed was 3&nbsp;da and, since $\sum_t\!C_t=`r sum(bsflu$C)`$, we can infer that the average time spent convalescing was $`r sum(bsflu$C)`~\text{boy-da}/512~\text{boy} \approx `r signif(sum(bsflu$C)/512,2)`~\text{da}$.
+
+```{r bsflu-plot2}
+require(reshape2)
+ggplot(data=melt(bsflu,id="day"),mapping=aes(x=day,y=value,color=variable))+
+  geom_line()+geom_point()
+```
+
+Formulate a model with both confinement and convalescent stages.
+Implement it in **pomp** using a compartmental model like that diagrammed below.
+
+```{r sirr-diagram,echo=FALSE,cache=FALSE}
+require(DiagrammeR)
+DiagrammeR("graph LR; S(S) --> I; I(I) --> R1(R1); R1 --> R2(R2);"
+           ,height=200,width=600)
+```
+
+You will have to give some thought to just how to model the relationship between the data ($B$ and $C$) and the state variables.
+How many parameters can reasonably be fixed?  How many must be estimated?
+Obtain some ballpark estimates of the parameters and simulate to see if you can plausibly explain the data as a realization of this model.
+
+--------------------------
+
+[Back to Module 10 Home Page](http://kinglab.eeb.lsa.umich.edu/SBIED/index.html)
+
+--------------------------
+
 
 ## References
+
+
