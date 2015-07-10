@@ -1,5 +1,5 @@
 ---
-title: "Sequential Monte Carlo"
+title: "Sequential Monte Carlo for POMPs"
 author: "Aaron A. King"
 date: "2015-07-09"
 output:
@@ -16,11 +16,19 @@ csl: ../ecology.csl
 \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
 \newcommand\dlta[1]{{\Delta}{#1}}
+\newcommand\lik{\mathscr{L}}
+
+--------------------------
 
 Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
-Produced using `pomp` version `r packageVersion("pomp")`.
+
+Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
+
+[Back to Module 10 Home Page](http://kinglab.eeb.lsa.umich.edu/SBIED/index.html)
+
+--------------------------
 
 ```{r knitr-opts,include=FALSE,purl=FALSE,cache=FALSE}
 library(knitr)
@@ -48,7 +56,7 @@ opts_chunk$set(
   dev.args=list(bg='transparent')
   )
 ```
-```{r opts,include=FALSE,cache=FALSE}
+```{r prelims,include=FALSE,cache=FALSE}
 options(
   keep.source=TRUE,
   stringsAsFactors=FALSE,
@@ -56,13 +64,10 @@ options(
   encoding="UTF-8"
   )
 
-library(ggplot2)
-theme_set(theme_bw())
-```
-
-```{r prelims,echo=F,cache=F}
 set.seed(594709947L)
 require(ggplot2)
+theme_set(theme_bw())
+require(grid)
 require(plyr)
 require(reshape2)
 require(foreach)
@@ -71,243 +76,430 @@ require(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 ```
 
-# Theory of the particle filter
+## Theory of the particle filter
+
+### The likelihood function
+
+- The basis for modern frequentist, Bayesian, and information-theoretic inference.
+- Definition: $\lik(\theta)=\prob{\mathrm{data}|\theta}$
+- The function itself is a representation of the what the data have to say about the parameters.
+- A good general reference on likelihood is @Pawitan2001.
 
 
-# Practicum: Sequential Monte Carlo in `pomp`
+### Likelihood for POMP models
+
+*********************
+
+![state_space_diagram2](http://kinglab.eeb.lsa.umich.edu/ICTPWID/SaoPaulo_2015/Aaron/graphics/state_space_diagram2.png)
+
+POMP model schematic, showing dependence among model variables.
+State variables, $X$, at time $t$ depend only on state variables at the previous timestep.
+Measurements, $Y$, at time $t$ depend only on the state at that time.
+Formally, $\prob{X_t|X,Y}=\prob{X_t|X_{t-1}}$ and $\prob{Y_t|X,Y}=\prob{Y_t|X_{t}}$ for all $X=\{X_1,X_2,\dots,X_T\}$, $Y=\{Y_1,Y_2,\dots,Y_T\}$, and $t=1,\dots,T$.
+
+*********************
+
+#### POMP model notation
+
+- Write $X_n=X(t_n)$ and $X_{0:N}=(X_0,\dots,X_N)$.
+
+- Let $Y_n$ be a random variable modeling the observation at time $t_n$.
+
+* The one-step transition density, $f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)$, together with the measurement density, $f_{Y_n|X_n}(y_n|x_n;\theta)$ and the initial density, $f_{X_0}(x_0;\theta)$, specify the entire joint density via
+$$f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta) = f_{X_0}(x_0;\theta)\,\prod_{n=1}^N\!f_{X_n | X_{n-1}}(x_n|x_{n-1};\theta)\,f_{Y_n|X_n}(y_n|x_n;\theta).$$
+
+* The marginal density for sequence of measurements, $Y_{1:N}$, evaluated at the data, $y_{1:N}^*$, is
+$$\lik(\theta) = f_{Y_{1:N}}(y^*_{1:N};\theta)=\int\!f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)\, dx_{0:N}.$$
 
 
-Load the data
-```{r flu-data}
+### Special case: deterministic unobserved state process
+
+Lets' begin with a special case.
+Suppose that the unobserved state process is deterministic.
+That is, $X_{n}=x_n(\theta)$ is a known function of $\theta$ for each $n$.
+What is the likelihood?
+
+Since the probability of the observation, $Y_n$, depends only on $X_n$ and $\theta$, and since, in particular $Y_{m}$ and $Y_{n}$ are independent given $X_{m}$ and $X_{n}$, we have $$\lik(\theta) = \prod_{n} f_{Y_n|X_n}(y_n^*;x_n(\theta),\theta)$$ or $$\log\lik(\theta) = \sum_{n} \log f_{Y_n|X_n}(y_n^*;x_n(\theta),\theta).$$
+
+```{r det-example,echo=FALSE,results="hide"}
+pompExample(bbs)
+x <- trajectory(bbs)
+y <- cbind(as.data.frame(bbs),x=x["cases",1,])
+mutate(y,xlab=sprintf("x[%d]",time),
+       ylab=sprintf("y[%d]",time)) -> y
+
+ggplot(data=y,
+       mapping=aes(x=time,xend=time))+
+  geom_point(aes(y=reports),color='black',alpha=0.5)+
+  geom_point(aes(y=x),color='red',alpha=0.5)+
+  geom_line(aes(y=reports),color='black',alpha=0.5)+
+  geom_line(aes(y=x),color='red',alpha=0.5)+
+  geom_text(aes(y=reports,label=ylab,vjust=ifelse(time>=10,2,-1)),parse=TRUE,color='black')+
+  geom_text(aes(y=x,label=xlab,vjust=ifelse(time>=10,-1,2)),parse=TRUE,color='red')+
+  geom_segment(aes(y=x,yend=reports),color='blue',linetype=2,alpha=0.3,
+               arrow=grid::arrow(length=grid::unit(0.02,"npc")))+
+  expand_limits(y=c(-20,320))+
+  labs(y="")
+```
+
+### Likelihood for stochastic models
+
+We can imagine using [Monte Carlo integration](./monteCarlo.html#monte-carlo-integration) for computing the likelihood of a state space model,
+$$\lik(\theta)=\prob{y_{1:T}|\theta}=\sum_{x_1}\cdots\sum_{x_T}\!\prod_{t=1}^{T}\!\prob{y_t|x_t,\theta}\,\prob{x_t|x_{t-1},\theta}.$$
+Specifically, if we have some probabilistic means of proposing trajectories for the unobserved state process, then we could just generate a large number of these and approximate $\lik(\theta)$ by its Monte Carlo estimate.
+Specifically, we generate $N$ trajectories of length $T$, $x_{t,k}$, $k=1\,\dots,N$, $t=1,\dots,T$.
+Let $w_k$ denote the probability of proposing trajectory $k$.
+For each trajectory, we compute the likelihood of that trajectory
+$$\ell_k(\theta)=\prod_{t=1}^{T} \prob{y_t|x_{t,k},\theta}\,\prob{x_{t,k}|x_{t-1,k},\theta}$$
+Then by the Monte Carlo theorem, we have 
+$$\lik(\theta) \approx \frac{1}{N}\,\sum_{k=1}^{N}\!\frac{\ell_k(\theta)}{w_k}.$$
+
+How shall we choose our trajectories?
+One idea would be to choose them so as to simplify the computation.
+If we choose them such that
+$$w_k=\prod_{t=1}^{T} \prob{x_{t,k}|x_{t-1,k},\theta},$$
+then we have
+$$\lik(\theta) \approx \frac{1}{N}\,\sum_{k=1}^{N} \frac{\ell_k(\theta)}{w_k} = \frac{1}{N}\,\sum_{k=1}^{N}\!\frac{\prod_{t=1}^{T} \prob{y_t|x_{t,k},\theta}\,\prob{x_{t,k}|x_{t-1,k},\theta}}{\prod_{t=1}^{T} \prob{x_{t,k}|x_{t-1,k},\theta}} = \frac{1}{N}\,\sum_{k=1}^{N}\!\prod_{t=1}^{T} \prob{y_t|x_{t,k},\theta}$$
+
+This implies that if we generate trajectories by simulation, all we have to do is compute the likelihood of the data with given each trajectory and average.
+
+Let's go back to the boarding school influenza outbreak to see what this would look like.
+Let's reconstruct the toy SIR model we were working with.
+
+```{r sir-construct}
 baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
 url <- paste0(baseurl,"data/bsflu_data.txt")
-bsflu <- subset(read.table(url),select=c(day,B))
-ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
-```
+bsflu <- read.table(url)
 
-Set up the process model.
-We need a model that will simulate the process from time $t$ to time $t+\dlta{t}$.
-```{r rproc1}
-sir_step <- "
-  double t1 = rbinom(S,1-exp(-beta*I/pop*dt));
-  double t2 = rbinom(I,1-exp(-gamma*dt));
-  S -= t1;
-  I += t1 - t2;
-  R += t2;
-"
-```
+sir_step <- Csnippet("
+  double dN_SI = rbinom(S,1-exp(-beta*I/N*dt));
+  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  R += dN_IR;
+  H += dN_IR;
+")
 
-Let's assume that the data represent incidence, i.e., the number of new infections occurring on a given day.
-```{r rproc2}
-sir_step <- "
-  double t1 = rbinom(S,1-exp(-Beta*I/763*dt));
-  double t2 = rbinom(I,1-exp(-gamma*dt));
-  S -= t1;
-  I += t1 - t2;
-  R += t2;
-  H += t1;
-"
-```
-
-To initialize the state process, we write
-```{r initlz}
-sir_init <- "
-  S = 762;
+sir_init <- Csnippet("
+  S = nearbyint(N)-1;
   I = 1;
   R = 0;
   H = 0;
-"
+")
+
+dmeas <- Csnippet("lik = dbinom(B,H,rho,give_log);")
+rmeas <- Csnippet("B = rbinom(H,rho);")
+
+pomp(bsflu,times="day",t0=0,
+     rprocess=euler.sim(sir_step,delta.t=1/5),
+     initializer=sir_init,rmeasure=rmeas,dmeasure=dmeas,
+     zeronames="H",statenames=c("H","S","I","R"),
+     paramnames=c("beta","gamma","rho","N")) -> sir
+plot(sir,main="",var="B")
 ```
 
-We add these to the data to make a `pomp` object:
-```{r sir-pomp1}
-bsflu <- pomp(bsflu,times="day",t0=0,
-              rprocess=euler.sim(step.fun=Csnippet(sir_step),delta.t=0.1),
-              initializer=Csnippet(sir_init), zeronames="H",
-              statenames=c("S","I","R","H"),
-              paramnames=c("Beta","gamma"))
+Let's generate a bunch of simulated trajectories at some particular point in parameter space.
+```{r bbs-mc-like-2,results='markup'}
+simulate(sir,params=c(beta=2,gamma=1,rho=0.5,N=2600),
+         nsim=60,states=TRUE) -> x
+matplot(time(sir),t(x["H",,]),type='l',lty=1,
+        xlab="time",ylab="H",bty='l')
 ```
 
-`H` now accumulates the new infections.
-The incidence on day $t$ is $H(t+1)-H(t)$.
-
-We'll model the data with some degree, $\rho$ of under-reporting:
-$$\text{cases}_t \sim \dist{Binomial}{H(t+1)-H(t),\rho}.$$
-
-As before, we must write both a `dmeasure` and an `rmeasure` component:
-```{r meas-model}
-dmeas <- "lik = dbinom(B,H,rho,give_log);"
-rmeas <- "B = rbinom(H,rho);"
+We can use the function `dmeasure` to evaluate the log likelihood of the data given the states, the model, and the parameters:
+```{r bbs-mc-like-3,results='markup',cache=T}
+ell <- dmeasure(sir,y=obs(sir),x=x,times=time(sir),log=TRUE,
+                params=c(beta=2,gamma=1,rho=0.5,N=2600))
+dim(ell)
 ```
-and put these into `bsflu`:
-```{r add-meas-model}
-bsflu <- pomp(bsflu,rmeasure=Csnippet(rmeas),dmeasure=Csnippet(dmeas),
-              statenames="H",paramnames="rho")
+According to the equation above, we should sum up the log likelihoods across time:
+```{r bbs-mc-like-4,results='markup'}
+ell <- apply(ell,1,sum); ell
 ```
+The variance of these estimates is ***very*** high and therefore the estimated likelihood is very imprecise.
+We are going to need very many simulations to get an estimate of the likelihood sufficiently precise to be of any use in parameter estimation or model selection.
+Moreover, even one simulation which is strictly incompatible with the data implies a likelihood of zero!
 
-```{r}
-sims <- simulate(bsflu,params=c(Beta=2,gamma=0.1,rho=0.9),nsim=20,as=TRUE,include=TRUE)
+What's the problem?
+Essentially, far too many of the trajectories don't pass near the data.
+Moreover, once a trajectory diverges from the data, it almost never comes back.
+*This is a consequence of the fact that we are proposing trajectories in a way that is completely unconditional on the data.*
+The problem will only get worse with longer data sets!
+
+### Sequential Monte Carlo
+
+We can arrive at a more efficient algorithm by factorizing the likelihood in a different way.
+$$\lik(\theta)=\prob{y^*_{1:T}|\theta}
+=\prod_{t}\,\prob{y^*_t|y^*_{1:t-1},\theta} 
+=\prod_{t}\,\sum_{x_{t}}\,\prob{y^*_t|x_t,\theta}\,\prob{x_t|y^*_{1:t-1},\theta}$$
+Now the Markov property gives us that
+$$\prob{x_t|y^*_{1:t-1},\theta} 
+= \sum_{x_{t-1}}\,\prob{x_t|x_{t-1},\theta}\,\prob{x_{t-1}|y^*_{1:t-1},\theta}$$
+and Bayes' theorem tells us that
+$$\prob{x_t|y^*_{1:t},\theta} = \prob{x_t|y_t,y^*_{1:t-1},\theta} =\frac{\prob{y^*_{t}|x_{t},\theta}\,\prob{x_{t}|y^*_{1:t-1},\theta}}{\sum_{x_{t}}\,\prob{y^*_{t}|x_{t},\theta}\,\prob{x_{t}|y^*_{1:t-1},\theta}}.$$
+
+This suggests that we keep track of two key distributions.
+We'll refer to the distribution of $x_t | y^*_{1:t-1}$ as the *prediction distribution* at time $t$ and
+the distribution of $x_{t} | y^*_{1:t}$ as the *filtering distribution* at time $t$.
+
+Let's use Monte Carlo techniques to estimate the sums.
+Suppose $x_{t-1,k}^{F}$, $k=1,\dots,N$ is a set of points drawn from the filtering distribution at time $t-1$.
+We obtain a sample $x_{t,k}^{P}$ of points drawn from the prediction distribution at time $t$ by simply simulating the process model:
+$$x_{t,k}^{P} \sim \mathrm{process}(x_{t-1,k}^{F},\theta), \qquad k=1,\dots,N.$$
+Having obtained $x_{t,k}^{P}$, we obtain a sample of points from the filtering distribution at time $t$ by *resampling* from $x_{t,k}^{P}$ with weights $\prob{y^*_{t}|x_{t},\theta}$.
+The Monte Carlo theorem tells us, too, that the conditional likelihood 
+$$\ell_t(\theta) = \prob{y^*_t|y^*_{1:t-1},\theta} = \sum_{x_{t}}\,\prob{y^*_{t}|x_{t},\theta}\,\prob{x_{t}|y^*_{1:t-1},\theta} \approx \frac{1}{N}\,\sum_k\,\prob{y^*_{t}|x_{t,k}^{P},\theta}.$$
+We can iterate this procedure through the data, one step at a time, alternately simulating and resampling, until we reach $t=T$.
+The full log likelihood is then approximately
+$$\log{\lik(\theta)} = \sum_t \log{\ell_t(\theta)}.$$
+
+This is known as the *sequential Monte Carlo* algorithm or the *particle filter*.
+Key references include @Kitagawa1987, @Arulampalam2002 and the book by @Doucet2001.
+
+
+## Practicum: Sequential Monte Carlo in **pomp**
+
+Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our influenza-outbreak case study.
+
+```{r sir-sim1}
+sims <- simulate(sir,params=c(beta=2,gamma=1,rho=0.8,N=2600),nsim=20,
+                 as.data.frame=TRUE,include.data=TRUE)
+
 ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
   geom_line()+guides(color=FALSE)
 ```
 
-The parameters are constrained to be positive, and $\rho < 1$.
-We'll find it useful to transform the parameters onto a scale on which there are no such constraints.
-The following accomplish this.
-```{r sir-partrans}
-toEst <- "
- TBeta = log(Beta);
- Tgamma = log(gamma);
- Trho = logit(rho);
-"
-
-fromEst <- "
- TBeta = exp(Beta);
- Tgamma = exp(gamma);
- Trho = expit(rho);
-"
-
-bsflu <- pomp(bsflu,toEstimationScale=Csnippet(toEst),
-              fromEstimationScale=Csnippet(fromEst),
-              paramnames=c("Beta","gamma","rho"))
-```
 
 In `pomp`, the basic particle filter is implemented in the command `pfilter`.
 We must choose the number of particles to use by setting the `Np` argument.
 
-```{r bsflu-pfilter-1,results='markup',cache=T}
-pf <- pfilter(bsflu,Np=1000,params=c(Beta=2,gamma=0.1,rho=0.9))
+```{r sir-pfilter-1,results='markup',cache=T}
+pf <- pfilter(sir,Np=5000,params=c(beta=2,gamma=1,rho=0.8,N=2600))
 logLik(pf)
 ```
 
 We can run a few particle filters to get an estimate of the Monte Carlo variability:
-```{r bsflu-pfilter-2,results='markup',cache=T}
-pf <- replicate(n=10,pfilter(bsflu,Np=1000,params=c(Beta=2,gamma=0.1,rho=0.9)))
-ll <- sapply(pf,logLik)
+```{r sir-pfilter-2,results='markup',cache=T}
+pf <- replicate(10,pfilter(sir,Np=5000,params=c(beta=2,gamma=1,rho=0.8,N=2600)))
+ll <- sapply(pf,logLik); ll
 logmeanexp(ll,se=TRUE)
 ```
 Note that we're careful here to counteract Jensen's inequality.
 The particle filter gives us an unbiased estimate of the likelihood, not of the log-likelihood.
 
-To get an idea of what the likelihood surface looks like in the neighborhood of the default parameter set supplied by `bsflu`, we can construct some likelihood slices.
+To get an idea of what the likelihood surface looks like in the neighborhood of the default parameter set supplied by `sir`, we can construct some likelihood slices.
 We'll make slices in the $\beta$ and $\gamma$ directions.
 Both slices will pass through the default parameter set.
 
-```{r bsflu-like-slice,cache=TRUE,results='hide'}
+```{r sir-like-slice,cache=TRUE,results='hide'}
 sliceDesign(
-  c(Beta=2,gamma=0.1,rho=0.9),
-  Beta=rep(seq(from=0.5,to=1,length=40),each=3),
-  gamma=rep(seq(from=0.01,to=0.25,length=40),each=3)) -> p
+  c(beta=2,gamma=1,rho=0.8,N=2600),
+  beta=rep(seq(from=0.5,to=4,length=40),each=3),
+  gamma=rep(seq(from=0.5,to=2,length=40),each=3)) -> p
 
-registerDoMC(cores=4)        ## number of cores on your machine
+require(foreach)
+require(doMC)
+registerDoMC(cores=5)        ## number of cores on this machine
 
 set.seed(998468235L,kind="L'Ecuyer")
 mcopts <- list(preschedule=FALSE,set.seed=TRUE)
 
 foreach (theta=iter(p,"row"),.combine=rbind,
          .inorder=FALSE,.options.multicore=mcopts) %dopar% 
-  {
-    pfilter(bsflu,params=unlist(theta),Np=1000) -> pf
-    theta$loglik <- logLik(pf)
-    theta
-    } -> p
+ {
+   pfilter(sir,params=unlist(theta),Np=5000) -> pf
+   theta$loglik <- logLik(pf)
+   theta
+ } -> p
 ```
-```{r bsflu-like-slice-plot,cache=F,results="hide"}
-foreach (v=c("Beta","gamma")) %do%
+
+Note that we've used the **foreach** package with the multicore backend (**doMC**) to parallelize these computations.
+To ensure that we have high-quality random numbers in each parallel *R* session, we use a parallel random number generator (`kind="L'Ecuyer"`, `.options.multicore=list(set.seed=TRUE)`).
+
+```{r sir-like-slice-plot,cache=F,results="hide"}
+foreach (v=c("beta","gamma")) %do% 
 {
   x <- subset(p,slice==v)
   plot(x[[v]],x$loglik,xlab=v,ylab="loglik")
 }
 ```
 
-#### Exercise
+------------------------
+
+### Exercise: Likelihood slices
+
 Add likelihood slices along the $\rho$ direction.
+
+------------------------
+
+Slices offer a very limited perspective on the geometry of the likelihood surface.
+With just two parameters, we can evaluate the likelihood at a grid of points and visualize the surface directly.
+```{r sir-grid1}
+expand.grid(beta=seq(from=1,to=4,length=50),
+            gamma=seq(from=0.7,to=3,length=50),
+            rho=0.8,
+            N=2600) -> p
+
+foreach (theta=iter(p,"row"),.combine=rbind,
+         .inorder=FALSE,.options.multicore=mcopts) %dopar% 
+ {
+   pfilter(sir,params=unlist(theta),Np=5000) -> pf
+   theta$loglik <- logLik(pf)
+   theta
+ } -> p
+
+```
+```{r sir-grid1-plot}
+pp <- mutate(p,loglik=ifelse(loglik>max(loglik)-100,loglik,NA))
+ggplot(data=pp,mapping=aes(x=beta,y=gamma,z=loglik,fill=loglik))+
+  geom_tile(color=NA)+
+  geom_contour(color='black',binwidth=3)+
+  scale_fill_gradient()+
+  labs(x=expression(beta),y=expression(gamma))
+```
+```{r sir-grid2}
+expand.grid(beta=seq(from=1,to=3,length=50),
+            gamma=1,
+            rho=0.8,
+            N=seq(from=1600,to=3000,length=50)) -> p
+
+foreach (theta=iter(p,"row"),.combine=rbind,
+         .inorder=FALSE,.options.multicore=mcopts) %dopar% 
+ {
+   pfilter(sir,params=unlist(theta),Np=5000) -> pf
+   theta$loglik <- logLik(pf)
+   theta
+ } -> p
+
+```
+```{r sir-grid2-plot}
+pp <- mutate(p,loglik=ifelse(loglik>max(loglik)-100,loglik,NA))
+ggplot(data=pp,mapping=aes(x=beta,y=N,z=loglik,fill=loglik))+
+  geom_tile(color=NA)+
+  geom_contour(color='black',binwidth=3)+
+  scale_fill_gradient()+
+  labs(x=expression(beta),y=expression(N))
+```
+
+### Maximizing the likelihood
 
 Clearly, the default parameter set is not particularly close to the MLE.
 One way to find the MLE is to try optimizing the estimated likelihood directly.
 There are many optimization algorithms to choose from, and many implemented in `R`.
 
-Two issues arise immediately.
-First, the particle filter gives us a stochastic estimate of the likelihood.
+Three issues arise immediately.
+
+1. The particle filter gives us a stochastic estimate of the likelihood.
 We can reduce this variability by making `Np` larger, but we cannot make it go away.
 If we use a deterministic optimizer (i.e., one that assumes the objective function is evaluated deterministically), then we must control this variability somehow.
 For example, we can fix the seed of the pseudo-random number generator.
 A side effect will be that the objective function becomes jagged, marked by many small local knolls and pits.
 Alternatively, we can use a stochastic optimization algorithm, with which we will be only be able to obtain estimates of our MLE.
 This is the trade-off between a noisy and a rough objective function.
-Second, because the particle filter gives us just an estimate of the likelihood and no information about the derivative, we must choose an algorithm that is "derivative-free".
+2. Because the particle filter gives us just an estimate of the likelihood and no information about the derivative, we must choose an algorithm that is "derivative-free".
 There are many such, but we can expect less efficiency than would be possible with derivative information.
 Note that finite differencing is not an especially promising way of constructing derivatives. 
 The price would be a $n$-fold increase in cpu time, where $n$ is the dimension of the parameter space.
 Also, since the likelihood is only estimated, we would expect the derivative estimates to be noisy.
+3. Finally, the parameters are constrained to be positive, and $\rho < 1$.
+We must therefore select an optimizer that can solve this *constrained maximization problem*, or figure out some of way of turning it into an unconstrained maximization problem.
+For the latter purpose, one can transform the parameters onto a scale on which there are no constraints.
 
 Here, let's opt for deterministic optimization of a rough function.
-We'll try using `optim`'s default method: Nelder-Mead.
+We'll try using `optim`'s default method: Nelder-Mead, fixing the random-number generator seed to make the likelihood calculation deterministic.
+Since Nelder-Mead is an unconstrained optimizer, we must transform the parameters.
+The following `Csnippet`s encode an appropriate transformation and its inverse, and introduce them into the `pomp` object.
+```{r sir-partrans}
+toEst <- Csnippet("
+ Tbeta = log(beta);
+ Tgamma = log(gamma);
+ Trho = logit(rho);
+")
 
-```{r bsflu-like-optim-1,echo=T,eval=T,results='markup',cache=T}
-coef(bsflu) <- c(Beta=2,gamma=0.1,rho=0.9)
+fromEst <- Csnippet("
+ Tbeta = exp(beta);
+ Tgamma = exp(gamma);
+ Trho = expit(rho);
+")
 
+pomp(sir,toEstimationScale=toEst,
+     fromEstimationScale=fromEst,
+     paramnames=c("beta","gamma","rho")) -> sir
+```
+
+Let's fix a reference point in parameter space and insert these parameters into the `pomp` object:
+```{r sir-ref-params}
+coef(sir) <- c(beta=2,gamma=1,rho=0.8,N=2600)
+```
+
+The following constructs a function returning the negative log likelihood of the data at a given point in parameter space.
+
+```{r sir-like-optim-1,echo=T,eval=T,results='markup',cache=T}
 neg.ll <- function (par, est, ...) {
   ## parameters to be estimated are named in 'est'
-  allpars <- coef(bsflu,transform=TRUE)
+  allpars <- coef(sir,transform=TRUE)
   allpars[est] <- par
   try(
-    pfilter(
-      bsflu,
-      params=partrans(bsflu,allpars,dir="fromEst"),
-      ...
-      )
-    ) -> pf
+    pfilter(sir,params=partrans(sir,allpars,dir="fromEst"),
+            Np=1000,seed=3488755L,...)
+  ) -> pf
   if (inherits(pf,"try-error")) {
-    1e10 ## a big number
+    1e10                 ## a big, bad number
     } else {
       -logLik(pf)
-      }
-  }
+    }
+}
 ```
-```{r bsflu-like-optim-2,results='markup',cache=T}
-require(plyr)
+
+Now we call `optim` to minimize this function:
+```{r sir-like-optim-2,results='markup',cache=T}
 ## use Nelder-Mead with fixed RNG seed
 fit <- optim(
-  par=c(-1.1, 0.33, 2.2),
-  est=c("gamma","Beta","rho"),
-  Np=200,
+  par=c(log(1), log(2), log(0.8)),
+  est=c("gamma","beta","rho"),
   fn=neg.ll,
-  seed=3488755L,
   method="Nelder-Mead",
   control=list(maxit=400,trace=0)
-  )
+)
 
-mle <- bsflu
-coef(mle,c("gamma","Beta","rho"),trans=T) <- fit$par
-coef(mle,c("gamma","Beta","rho")) ## point estimate
+mle <- sir
+coef(mle,c("gamma","beta","rho"),transform=TRUE) <- fit$par
+coef(mle,c("gamma","beta","rho")) ## point estimate
 
-simulate(mle,nsim=9,as.data.frame=TRUE,include=TRUE) -> sims
+fit$val
 
-lls <- replicate(n=5,logLik(pfilter(mle,Np=1000)))
-logmeanexp(lls,se=TRUE)
+simulate(mle,nsim=8,as.data.frame=TRUE,include=TRUE) -> sims
+
+lls <- replicate(n=5,logLik(pfilter(mle,Np=5000)))
+ll <- logmeanexp(lls,se=TRUE); ll
 ```
 
 Some simulations at these parameters are shown next:
 
-```{r bsflu-like-optim-plot}
+```{r sir-like-optim-plot}
 ggplot(data=sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
-  geom_line()+
-  geom_text(x=9,y=320,
-            label=paste("log~L==",round(ll[1],1),"%+-%",round(ll[2],1)),
-            color="black",
-            parse=T,hjust=0)
+  geom_line()
 ```
 
-#### Exercise
-Use simulated annealing to maximize the likelihood.
-Be sure to try several starting guesses.
+
+### Exercise: More slices
+
+Construct likelihood slices through the MLE we just found.
+
+### Exercise: Global maximization
+
+The search of parameter space we conducted above was local.
+It is possible that we found a local maximum, but that other maxima exist with higher likelihoods.
+Conduct a more thorough search by initializing the Nelder-Mead starting points across a wider region of parameter space.
+Do you find any other local maxima?
 
 
-#### Exercise
-Construct likelihood slices on $\beta$ and $\gamma$ through the MLE you found above.
+--------------------------
 
+[Back to Module 10 Home Page](http://kinglab.eeb.lsa.umich.edu/SBIED/index.html)
 
+--------------------------
 
 
 ## References
+
