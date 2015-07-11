@@ -1,5 +1,5 @@
 WEBSITE = tilia:/var/www/html/SBIED
-DATAFILES = bsflu_data.txt parus.csv
+DATAFILES = bsflu_data.txt parus.csv twentycities.rda
 
 install-scripts:
 	rsync --delete -avz --chmod=a+rX,go-w scripts/ $(WEBSITE)/scripts
