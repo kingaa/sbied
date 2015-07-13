@@ -90,7 +90,7 @@ This tutorial develops some classes of dynamic models relevant for biological sy
 
 We will develop deterministic and stochastic representations of a susceptible-infected-recovered (SIR) system, a fundamental class of models for disease transmission dynamics. We will do this using notation which generalizes to more complex systems [[@breto09]](http://dept.stat.lsa.umich.edu/~ionides/pubs/breto09.pdf).
 
-```{r sir-diagram-one,echo=FALSE,cache=FALSE}
+```{r sir-diagram,echo=FALSE,cache=FALSE}
 require(DiagrammeR)
 DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);"
            ,height=200,width=500)
@@ -125,13 +125,13 @@ $$ R(t) = R(0) + N_{IR}(t)$$
 
 * These equations represent something like _conservation of mass_, or _what goes in must come out_. 
 
-### The _ordinary differential equation_ (ODE) interpretation of the SIR model
+## The _ordinary differential equation_ (ODE) interpretation of the SIR model
 
 Together with initial conditions specifying $S(0)$, $I(0)$ and $R(0)$, we just need to write down ODEs for the flow counting processes. These are,
 $$ dN_{SI}/dt = \mu_{SI}(t) \, S(t),$$
 $$ dN_{IR}/dt = \mu_{IR}\, I(t).$$
 
-### The simple continuous-time Markov chain interpretation of the SIR model
+## The simple continuous-time Markov chain interpretation of the SIR model
 
 * Continuous-time Markov chains are the basic tool for building discrete population epidemic models.
 
@@ -145,9 +145,10 @@ $$P[N_{SI}(t+\delta)=N_{SI}(t)] = 1-\mu_{SI}(t) \, S(t) \delta + o(\delta)$$
 $$P[N_{IR}(t+\delta)=N_{IR}(t)+1] = \mu_{IR} \, I(t) \delta + o(\delta)$$
 $$P[N_{IR}(t+\delta)=N_{IR}(t)] = 1-\mu_{IR}(t) \, I(t) \delta + o(\delta)$$
 
+## Exercises
 
-
-#### Exercise: find the expected value of $N_{SI}(t+\delta)-N_{SI}(t)$ and $N_{IR}(t+\delta)-N_{IR}(t)$ given the current state, $S(t)$, $I(t)$ and $R(t)$. Take the limit as $\delta\to 0$ and show that this gives the ODE model.
+### From Markov chain to ODE 
+Find the expected value of $N_{SI}(t+\delta)-N_{SI}(t)$ and $N_{IR}(t+\delta)-N_{IR}(t)$ given the current state, $S(t)$, $I(t)$ and $R(t)$. Take the limit as $\delta\to 0$ and show that this gives the ODE model.
 
 
 * A _simple_ counting process is one which cannot count more than one event at a time ([Wikipedia: Point_process](https://en.wikipedia.org/wiki/Point_process)). Thus, in a technical sense, the SIR Markov chain model we have written is simple. One may want to model the extra randomness resulting from multiple simultaneous events: someone sneezing in a bus; large gatherings at football matches; etc. This extra randomness may even be critical to match the variability in data. 
@@ -234,8 +235,9 @@ where $\mathrm{Binomial}(n,p)$ is a binomial random variable with mean $np$ and 
 
 * What are the advantages of these different schemes? Conceptually, it is simplest to think of (1.) or (2.). Numerically, it is usually preferable to implement (3.). 
 
+## Exercises
 
-## Theoretical exercise: Compartment models via stochastic differential equations (SDEs)
+### Theoretical exercise: Compartment models via stochastic differential equations (SDEs)
 
 The Euler method extends naturally to stochastic differential equations. A natural way to add stochastic variation to an ODE $dx/dt=h(x)$ is
 $$ dX/dt = h(X) + \sigma \, dB/dt$$
@@ -247,7 +249,7 @@ Write down a stochastic Euler method for an SDE representation of the SIR model.
 
 * A useful method to deal with positivity constraints is to use Gamma noise rather than Brownian noise [@bhadra11,@laneri10]. SDEs driven by Gamma noise can be investigated by Euler solutions simply by replacing the Gaussian noise by an appropriate Gamma distribution.
 
-## Conceptual exercise: Euler's method vs Gillspie's algorithm
+### Conceptual exercise: Euler's method vs Gillspie's algorithm
 
 * A widely used, exact simulation method for continuous time Markov chains is [Gillspie's algorithm](https://en.wikipedia.org/wiki/Gillespie_algorithm
 ). We do not put much emphasis on Gillespie's algorithm here. Why? When would you prefer an implementation of Gillespie's algorithm to an Euler solution?
@@ -288,9 +290,6 @@ R, recovered and immune hosts.
 The rate at which individuals move from S to I is the force of infection, $\lambda=\beta\,I/N$, while that at which individuals move into the R class is $\gamma$.
 
 ```{r sir-diagram,echo=FALSE,cache=FALSE}
-require(DiagrammeR)
-DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);"
-           ,height=200,width=500)
 ```
 
 Let's look at how we can view the SIR as a POMP model.

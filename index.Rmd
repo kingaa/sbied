@@ -39,17 +39,6 @@ This module introduces statistical inference techniques and computational method
 
 ## Schedule of Topics
 
-1. Session 1 (Weds. 1:30-3:00): [What is "Simulation-based Inference for Epidemiological Dynamics?"](./intro/intro.html)
-2. Session 2 (Weds. 3:30-5:00): [Simulating dynamic models: the stochastic Euler method.](./stochsim/stochsim.html)
-3. Session 3 (Thurs. 8:30-10:00): [The particle filter: theory and practice](./pfilter/pfilter.html)
-1. Session 4 (Thurs. 10:30-12:00): Principles of likelihood-based inference.
-1. Session 5 (Thurs. 1:30-3:00): [Iterated filtering: theory and practice](./mif/mif.html)
-1. Session 6 (Thurs. 3:30-5:00): Diagnostics and model criticism
-1. Session 7 (Fri. 8:30-10:00): [Case study I: polio.](./polio/polio.html)
-1. Session 8 (Fri. 10:30-12:00): [Case study II: measles.](./measles/measles.html)
-1. Session 9 (Fri. 1:30-3:00): [Case study III: sexual contacts panel data](./contacts/contacts.html)
-1. Session 10 (Fri. 3:30-5:00): [Case study IV: Ebola and forecasting](./ebola/ebola.html)
-
 
 1. [Introduction: What is "Simulation-based Inference for Epidemiological Dynamics?"](./intro/intro.html)
 2. [Simulating dynamic models: the stochastic Euler method.](./stochsim/stochsim.html)
