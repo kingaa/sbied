@@ -27,8 +27,6 @@ Please share and remix noncommercially, mentioning its origin.
 
 Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 
-[Back to Module 10 Home Page](http://kinglab.eeb.lsa.umich.edu/SBIED/index.html)
-
 --------------------------
 
 ```{r knitr-opts,include=FALSE,purl=FALSE,cache=FALSE}
@@ -264,10 +262,6 @@ DiagrammeR("graph LR; S(S) --> I; I(I) --> R1(R1); R1 --> R2(R2);"
 You will have to give some thought to just how to model the relationship between the data ($B$ and $C$) and the state variables.
 How many parameters can reasonably be fixed?  How many must be estimated?
 Obtain some ballpark estimates of the parameters and simulate to see if you can plausibly explain the data as a realization of this model.
-
---------------------------
-
-[Back to Module 10 Home Page](http://kinglab.eeb.lsa.umich.edu/SBIED/index.html)
 
 --------------------------
 
