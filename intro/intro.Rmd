@@ -6,8 +6,8 @@ output:
   html_document:
     theme: flatly
     toc: yes
-bibliography: sbied.bib
-csl: ecology.csl
+bibliography: ../sbied.bib
+csl: ../ecology.csl
 nocite: |
   @King2008, @Romero-Severson2012, @Romero-Severson2015, @He2010, 
   @Laneri2010, @King2015
@@ -23,7 +23,7 @@ nocite: |
 Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
-Produced in R version `r getRversion()` using `pomp` version `r packageVersion("pomp")`.
+Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 library(knitr)
@@ -181,20 +181,28 @@ To think algorithmically, we define some function calls:
 
 ------------------------------
 
-# Practicum: The `pomp` `R` package for POMP models
+# Practicum: The **pomp**  **R**  package for POMP models
 
-* `pomp` is an `R` package for data analysis using partially observed Markov process (POMP) models.
+## Objectives
 
-* Note the distinction: lower case `pomp` is a software package; 
+1. To introduce students to the **pomp** package
+1. To explain how the components of a POMP model are encoded in this package
+1. To give some experience in the use and manipulation of `pomp` objects
+
+## Intro to **pomp**
+
+* **pomp** is an  **R**  package for data analysis using partially observed Markov process (POMP) models.
+
+* Note the distinction: lower case **pomp** is a software package; 
 upper case POMP is a class of models.
 
 * pomp builds methodology for POMP models in terms of arbitrary user-specified `rprocess()`, `dprocess()`, `rmeasure()`, and `dmeasure()` functions.
  
-* Following modern practice, most methodology in `pomp` is simulation-based, so does not require specification of `dprocess()`.
+* Following modern practice, most methodology in **pomp** is simulation-based, so does not require specification of `dprocess()`.
 
-* `pomp` has facilities to help construct `rprocess()`, `rmeasure()`, and `dmeasure()` functions for model classes of epidemiological interest.
+* **pomp** has facilities to help construct `rprocess()`, `rmeasure()`, and `dmeasure()` functions for model classes of epidemiological interest.
 
-* `pomp` provides a forum for development, modification and sharing of models, methodology and data analysis workflows.
+* **pomp** provides a forum for development, modification and sharing of models, methodology and data analysis workflows.
 
 The following diagrams show the structure of a POMP model schematically.
 
@@ -250,14 +258,14 @@ In this equation,
 3. the choice of units for $N$ is peculiar and depends on the parameters (e.g., $N=\log(r)$ is the equilibrium),
 4. the parameter $\phi$ is proportional to our sampling effort, and also has peculiar units.
 
-### Working with the Ricker model in `pomp`.
+### Working with the Ricker model in **pomp**.
 
-The `R` package `pomp` provides facilities for modeling POMPs, a toolbox of statistical inference methods for analyzing data using POMPs, and a development platform for implmenting new POMP inference methods.
-The basic data-structure provided by `pomp` is the *object of class `pomp`*, or *pomp object*.
+The  **R**  package **pomp** provides facilities for modeling POMPs, a toolbox of statistical inference methods for analyzing data using POMPs, and a development platform for implmenting new POMP inference methods.
+The basic data-structure provided by **pomp** is the *object of class `pomp`*, or *pomp object*.
 It is a container that holds real or simulated data and a POMP model, possibly together with other information such as model parameters, that may be needed to do things with the model and data.
 
 Let's see what can be done with a `pomp` object.
-First, if we haven't already, we must install `pomp` and `pompExamples`.
+First, if we haven't already, we must install **pomp** and `pompExamples`.
 Run the following to do so.
 ```{r install-pomp,eval=FALSE}
 require(devtools)
@@ -265,7 +273,7 @@ install_github("kingaa/pomp")
 # install_github("kingaa/pompExamples")
 ```
 
-Now we'll load some packages, including `pomp`.
+Now we'll load some packages, including **pomp**.
 ```{r prelims,cache=F}
 set.seed(594709947L)
 require(ggplot2)
@@ -366,9 +374,9 @@ More information on manipulating and extracting information from `pomp` objects 
 There are a number of other examples included with the package.
 Do `pompExamples()` to see a list of these.
 
-#### Inference algorithms in `pomp`
+#### Inference algorithms in **pomp**
 
-`pomp` provides a wide range of inference algorithms.
+**pomp** provides a wide range of inference algorithms.
 We'll learn about these in detail soon, but for now, let's just look at some of their general features.
 
 The `pfilter` function runs a simple particle filter.
@@ -394,7 +402,7 @@ Note that, because the particle filter is a Monte Carlo algorithm, we get a slig
 
 Note that, by default, running `pfilter` on a `pfilterd.pomp` object causes the computation to be re-run with the same parameters as before.
 Any additional arguments we add override these defaults.
-This is the general rule in `pomp`.
+This is the general rule in **pomp**.
 For example,
 ```{r pfilter3}
 pf <- pfilter(pf,Np=100)
@@ -404,7 +412,7 @@ Here, the particle filtering has been performed with only `r unique(pf@Np)` part
 
 ## Building a custom `pomp` object
 
-A real `pomp` data analysis begins with constructing one or more `pomp` objects to hold the data and the model or models under consideration.
+A real **pomp** data analysis begins with constructing one or more `pomp` objects to hold the data and the model or models under consideration.
 We'll illustrate this process a dataset of *Parus major* abundance in Wytham Wood, near Oxford [@McCleery1991].
 
 Download and plot the data:
@@ -422,7 +430,7 @@ Documentation on this function can be had by doing `?pomp`.
 Do `class?pomp` to get documentation on the pomp class.
 Learn about the various things you can do once you have a pomp object by doing `methods?pomp` and following the links therein.
 Read an overview of the package as a whole with links to its main features by doing `package?pomp`.
-A complete index of the functions in `pomp` is returned by the command `library(help=pomp)`.
+A complete index of the functions in **pomp** is returned by the command `library(help=pomp)`.
 Finally, the home page for the `pomp` project is \url{http://kingaa.github.io/pomp};
 there you have access to the compleete source code, manuals, mailing lists, etc.
 
@@ -467,7 +475,7 @@ ggplot(data=traj,aes(x=time,y=N))+geom_line()
 If we know the state, $x(t_0)$, of the system at time $t_0$, it makes sense to speak about the entire trajectory of the system for all $t>t_0$.
 This is true whether we are thinking of the system as deterministic or stochastic.
 Of course, in the former case, the trajectory is uniquely determined by $x(t_0)$, while in the stochastic case, only the probability distribution of $x(t)$, $t>t_0$ is determined.
-In `pomp`, to avoid confusion, we use the term "trajectory" exclusively to refer to *trajectories of a deterministic process*.
+In **pomp**, to avoid confusion, we use the term "trajectory" exclusively to refer to *trajectories of a deterministic process*.
 Thus, the `trajectory` command iterates or integrates the deterministic skeleton forward in time, returning the unique trajectory determined by the specified parameters.
 When we want to speak about sample paths of a stochastic process, we use the term *simulation*.
 Accordingly, the `simulate` command always returns individual sample paths from the POMP.
@@ -540,7 +548,7 @@ Modify the `pomp` object we created above to reflect this reparameterization.
 Modify the measurement model so that
 $$\mathrm{pop}_t \sim \dist{Negbin}{\phi\,N_t,k},$$
 i.e., $\mathrm{pop}_t$ is negative-binomially distributed with mean $\phi\,N_t$ and clumping parameter $k$.
-See `?NegBinomial` for documentation on the negative binomial distribution and [the R Extensions Manual section on distribution functions](http://cran.r-project.org/doc/manuals/r-release/R-exts.html#Distribution-functions) for information on how to access these in C.
+See `?NegBinomial` for documentation on the negative binomial distribution and [the **R** Extensions Manual section on distribution functions](http://cran.r-project.org/doc/manuals/r-release/R-exts.html#Distribution-functions) for information on how to access these in C.
 
 ### Beverton-Holt
 Construct a `pomp` object for the *Parus major* data and the stochastic Beverton-Holt model
