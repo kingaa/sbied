@@ -1,5 +1,7 @@
 WEBSITE = tilia:/var/www/html/SBIED
-DATAFILES = bsflu_data.txt parus.csv twentycities.rda
+DATAFILES = bsflu_data.txt parus.csv twentycities.rda ebola_data.csv
+
+default: install-scripts install-data
 
 install-scripts:
 	rsync --delete -avz --chmod=a+rX,go-w scripts/ $(WEBSITE)/scripts
