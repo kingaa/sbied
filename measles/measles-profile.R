@@ -276,9 +276,9 @@ bake("sigmaSE-profile1.rds",{
 
 ## ----sigmaSE-prof-round2,cache=FALSE-------------------------------------
 sigmaSE_prof %>%
-  subset(nfail.max==0,select=paramnames) %>%
   mutate(sigmaSE=exp(signif(log(sigmaSE),5))) %>%
-  ddply(~sigmaSE,subset,rank(-loglik)<=5) -> pd
+  ddply(~sigmaSE,subset,rank(-loglik)<=20) %>%
+  subset(nfail.max==0,select=paramnames) -> pd
 
 bake("sigmaSE-profile2.rds",{
   
