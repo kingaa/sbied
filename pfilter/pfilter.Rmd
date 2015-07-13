@@ -26,8 +26,6 @@ Please share and remix noncommercially, mentioning its origin.
 
 Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 
-[Back to Module 10 Home Page](http://kinglab.eeb.lsa.umich.edu/SBIED/index.html)
-
 --------------------------
 
 ```{r knitr-opts,include=FALSE,purl=FALSE,cache=FALSE}
@@ -75,6 +73,12 @@ require(doMC)
 require(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 ```
+
+### Objectives
+
+1. To convey and understanding of the nature of the problem of likelihood computation for POMP models
+1. To explain the simplest particle filter algorithm
+1. To give students experience visualizing and exploring likelihood surfaces using the particle filter for computation of the likelihood
 
 ## Theory of the particle filter
 
@@ -226,7 +230,7 @@ Moreover, once a trajectory diverges from the data, it almost never comes back.
 *This is a consequence of the fact that we are proposing trajectories in a way that is completely unconditional on the data.*
 The problem will only get worse with longer data sets!
 
-### Sequential Monte Carlo
+### The particle filter
 
 We can arrive at a more efficient algorithm by factorizing the likelihood in a different way.
 $$\lik(\theta)=\prob{y^*_{1:T}|\theta}
@@ -486,17 +490,18 @@ ggplot(data=sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 
 Construct likelihood slices through the MLE we just found.
 
+### Exercise: Visualizing the likelihood surface
+
+Evaluate the likelihood at points on a grid lying in a 2D slice through the MLE we found above.
+Each group should choose a different slice.
+Afterward, we'll compare results across groups.
+
 ### Exercise: Global maximization
 
 The search of parameter space we conducted above was local.
 It is possible that we found a local maximum, but that other maxima exist with higher likelihoods.
 Conduct a more thorough search by initializing the Nelder-Mead starting points across a wider region of parameter space.
 Do you find any other local maxima?
-
-
---------------------------
-
-[Back to Module 10 Home Page](http://kinglab.eeb.lsa.umich.edu/SBIED/index.html)
 
 --------------------------
 
