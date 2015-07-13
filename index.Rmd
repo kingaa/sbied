@@ -51,3 +51,10 @@ This module introduces statistical inference techniques and computational method
 
  
 ----------------------
+
+## In preparation...
+
+- [Instructions for preparing your laptop for the course exercises](./prep/preparation.html)
+ 
+----------------------
+
