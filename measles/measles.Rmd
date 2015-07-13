@@ -1,0 +1,1115 @@
+---
+title: "Case study: Measles in large and small towns"
+author: "Aaron A. King"
+date: "2015-07-07"
+output:
+  html_document:
+    theme: flatly
+    toc: yes
+bibliography: ../sbied.bib
+csl: ../ecology.csl
+
+---
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dlta[1]{{\Delta}{#1}}
+\newcommand\scinot[2]{$#1 \times 10^{#2}$\xspace}
+\newcommand{\mortality}{m}
+\newcommand{\birth}{b}
+\newcommand{\loglik}{\ell}
+\newcommand{\immigration}{\iota}
+\newcommand{\amplitude}{a}
+\newcommand{\cohort}{c}
+\newcommand{\R}{\textsf{R}}
+\newcommand{\Rzero}{{R_0}}
+
+Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
+
+Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
+
+```{r knitr-opts,include=FALSE,cache=FALSE,purl=FALSE}
+library(knitr)
+prefix <- "measles"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=5,fig.width=6.83,
+  dpi=300,
+  dev='png',
+  dev.args=list(bg='transparent')
+  )
+
+options(
+  cores=4,
+  pomp.cache="cache"
+)
+
+line.color <- "red"
+plot.color <- "black"
+```
+```{r ncpu,include=FALSE,purl=TRUE,cache=FALSE}
+ncpu <- as.integer(Sys.getenv("PBS_NP"))
+if (is.na(ncpu)) ncpu <- 40
+```
+```{r opts,include=FALSE,cache=FALSE,purl=FALSE}
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  encoding="UTF-8"
+)
+
+require(pomp)
+require(magrittr)
+require(plyr)
+require(reshape2)
+require(ggplot2)
+theme_set(theme_bw())
+
+set.seed(1109529108L)
+```
+
+----------------------------------
+
+## Objectives
+
+1. display a published case study using plug-and-play methods with non-trivial model complexities
+1. demonstrate the use of profile likelihood in scientific inference
+1. discuss the interpretation of parameter estimates
+1. emphasize the need to allow for extra sources of stochasticity in modeling
+
+----------------------------------
+
+## Measles revisited
+
+### Motivation: challenges in inference from disease dynamics
+
+- Understanding, forecasting, managing epidemiological systems increasingly depends on models
+- Dynamic models can be used to test causal hypotheses
+- Real epidemiological systems:
+    - are nonlinear
+    - are stochastic
+    - are nonstationary
+	  - evolve in continuous time
+	  - have hidden variables
+	  - can be measured only with (large) error
+- Dynamics of infectious disease outbreaks illustrate this well
+
+```{r some-data-plot,echo=FALSE,purl=FALSE}
+baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+download.file(paste0(baseurl,"data/twentycities.rda"),destfile="./twentycities.rda")
+load("twentycities.rda")
+measles %>% 
+  subset(town %in% c("London","Liverpool","Hastings")) %>%
+  ggplot(aes(x=date,y=cases))+
+  geom_line()+
+  facet_grid(town~.,scales='free_y')+
+  labs(y="weekly cases")
+```
+
+----------------------------------
+
+### Outline
+
+- revisit classic measles data set
+- ask questions about:
+    - measles extinction and recolonization
+    - transmission rates
+    - seasonality
+    - resupply of susceptibles
+- use a model that 
+    1. expresses our current understanding of measles dynamics
+    1. cannot be fit by existing likelihood-based methods
+- examine data from large and small towns using the same model
+- does our perspective on this disease change?
+- what bigger lessons can we learn regarding inference for dynamical systems?
+
+----------------------------------
+
+### He, Ionides, & King, *J. R. Soc. Interface* (2010)
+
+#### Data sets
+
+  - Twenty towns 
+	- population sizes: 2k--3.4M
+	- Weekly case reports, 1950--1963
+	- Annual birth records and population sizes, 1944--1963
+
+```{r map,echo=FALSE,purl=FALSE}
+# require(maps)
+# with(map("world","UK",plot=FALSE),data.frame(long=x,lat=y)) %>%
+#   subset(long>-7 & long < 3 & lat > 49 & lat < 58) -> GB
+# read.csv("data/GB_Coast.csv") %>%
+#   rename(c(Long="long",Lat="lat")) -> GB
+require(ggmap)
+ggmap(get_map(c(-4,54),zoom=6,scale=2,source="google",maptype="satellite"))+
+# ggplot(data=GB,aes(x=long,y=lat))+
+  geom_point(data=coord,aes(x=long,y=lat),color='red',alpha=1)+
+  # geom_text(data=coord,aes(x=long,y=lat,label=town),vjust=0,size=2,col='white')+
+  # geom_path()+
+  # coord_map(projection="gall",lat0=54)+
+  labs(x="",y="")+
+  theme_nothing()
+#   theme(panel.border=element_blank(),axis.ticks=element_blank(),
+#         axis.text=element_blank())
+```
+ 
+```{r dataplot,echo=FALSE,fig.height=10,purl=FALSE}
+demog %>% ddply(~town,summarize,mean.pop=mean(pop)) %>%
+  arrange(mean.pop) -> meanpop
+measles %>%
+  mutate(town=ordered(town,levels=meanpop$town)) %>%
+  ggplot(aes(x=date,y=cases))+
+  geom_line()+
+  scale_y_continuous(breaks=c(0,4,40,400,4000),trans=scales::log1p_trans())+
+  facet_wrap(~town,ncol=4)+theme(text=element_text(size=7))
+```
+
+---------------------------------------
+
+
+#### Continuous-time Markov process model
+
+```{r seir-diagram,echo=FALSE,cache=FALSE,purl=FALSE}
+require(DiagrammeR)
+DiagrammeR("digraph SEIR {
+  graph [rankdir=TD, overlap=false, fontsize = 10]
+  node[shape=egg, label='B'] b;
+  subgraph {
+    rank=same;
+    node[shape=oval, label='S'] S;
+    node[shape=oval, label='E'] E;
+    node[shape=oval, label='I'] I;
+    node[shape=oval, label='R'] R;
+    S->E E->I I->R
+  }
+  node[shape=diamond, label='dead'] d;
+  b->S
+  {S E I R}->d
+   }",type="grViz",engine="dot",height=300,width=800)
+```
+
+- $B(t) = \text{birth rate, from data}$
+- $N(t) = \text{population size, from data}$
+- overdispersed binomial measurement model: $\mathrm{cases}_t\,\vert\,I{\to}R=z_t \sim \dist{Normal}{\rho\,z_t,\rho\,(1-\rho)\,z_t+(\psi\,\rho\,z_t)^2}$
+
+- entry into susceptible class:
+$$\mu_{BS}(t) = (1-c)\,B(t-\tau)+c\,\delta(t-t_0)\,\int_{t-1}^{t}\,B(t-\tau-s)\,ds$$
+
+- force of infection
+$$\mu_{SE}(t) = \tfrac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
+
+- $c = \text{cohort effect}$  
+- $\tau = \text{school-entry delay}$  
+- $\beta(t) = \text{school-term transmission}$  
+- $\iota = \text{imported infections}$
+- $\zeta(t) = \text{white noise with intensity}\,\sigma_{SE}$
+
+
+---------------------------------------
+
+#### Fitting procedure
+
+- a large Latin-hypercube design was used to initiate searches
+- iterated filtering to maximize the likelihood
+- point estimates of all parameters for 20 cities
+- profile likelihoods to quantify uncertainty in London and Hastings
+
+---------------------------------------
+
+
+#### Imported infections
+
+$$\mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
+
+```{r imports,results="hide",echo=FALSE,purl=FALSE}   
+best <- read.csv('data/iota.csv',row.names=1)
+
+op <- par(
+          font=2,
+          fig=c(0,1,0,1),
+          mar=c(4,4,4,4),
+          bty='l'
+          )
+plot.new()
+mtext(side=2,line=2.5,text="profile log likelihood",adj=0.5)
+mtext(side=1,line=2,text=expression(paste("imported infections, ",iota)),adj=0.5)
+
+x <- best[grep('London',rownames(best)),]
+fit <- loess(loglik~log(iota),data=x,span=0.7)
+nd <- data.frame(iota=with(x,exp(seq(from=min(log(iota)),to=max(log(iota)),length=100))))
+nd$loglik <- predict(fit,newdata=nd)
+cutoff <- max(nd$loglik,na.rm=T)-0.5*qchisq(p=0.95,df=1)
+conf.int <- range(nd$iota[nd$loglik>cutoff],na.rm=T)
+par(fig=c(0,1,0.5,1),mar=c(0.5,4,4,4),new=T)
+plot(
+     loglik~iota,
+     data=x,
+     font=2,
+     bty='l',
+     ann=F,
+     xaxt='n',
+     log='x',
+     xlim=c(0.001,100),
+     ylim=max(x$loglik)+c(-15,1)
+     )
+axis(side=1,at=c(0.001,0.005,0.01,0.05,0.1,0.5,1,5,10,50,100),labels=F)
+lines(loglik~iota,data=nd,col=line.color)
+abline(h=cutoff,lty='33')
+abline(v=conf.int,lty='63')
+text(0.002,cutoff,"London",pos=3)
+
+x <- best[grep('Hastings',rownames(best)),]
+fit <- loess(loglik~log(iota),data=x,span=0.7)
+nd <- data.frame(iota=with(x,seq(from=min(iota),to=max(iota),length=100)))
+nd$loglik <- predict(fit,newdata=nd)
+cutoff <- max(nd$loglik,na.rm=T)-0.5*qchisq(p=0.95,df=1)
+conf.int <- range(nd$iota[nd$loglik>cutoff],na.rm=T)
+par(fig=c(0,1,0,0.5),mar=c(4,4,0.5,4),new=T)
+plot(
+     loglik~iota,
+     data=x,
+     font=2,
+     bty='l',
+     ann=F,
+     xaxt='n',
+     log='x',
+     xlim=c(0.001,100),
+     ylim=max(x$loglik)+c(-15,1)
+     )
+axis(
+     side=1,
+     at=c(0.001,0.005,0.01,0.05,0.1,0.5,1,5,10,50,100),
+     labels=c(expression(10^-3),"",expression(10^-2),"",expression(10^-1),"",expression(10^0),"",expression(10^1),"",expression(10^2))
+     )
+lines(loglik~iota,data=nd,col=line.color)
+abline(h=cutoff,lty='33')
+abline(v=conf.int,lty='63')
+text(0.002,cutoff,"Hastings",pos=3)
+par(op)
+```
+
+---------------------------------------
+
+
+#### Seasonality
+
+```{r amplitude,echo=FALSE,results="hide",purl=FALSE}   
+ 
+best <- read.csv('data/amplitude.csv',row.names=1)
+
+op <- par(
+          font=2,
+          fig=c(0,1,0,1),
+          mar=c(4,4,4,4),
+          bty='l'
+          )
+plot.new()
+mtext(side=2,line=2.5,text="profile log likelihood",adj=0.5)
+mtext(side=1,line=2,text="amplitude of term-time seasonality",adj=0.5)
+
+x <- best[grep('London',rownames(best)),]
+fit <- loess(loglik~amplitude,data=x,span=0.7)
+nd <- data.frame(amplitude=with(x,seq(from=min(amplitude),to=max(amplitude),length=100)))
+nd$loglik <- predict(fit,newdata=nd)
+cutoff <- max(nd$loglik,na.rm=T)-0.5*qchisq(p=0.95,df=1)
+conf.int <- range(nd$amplitude[nd$loglik>cutoff],na.rm=T)
+par(fig=c(0,1,0.5,1),mar=c(0.5,4,4,4),new=T)
+plot(
+     loglik~amplitude,
+     data=x,
+     font=2,
+     bty='l',
+     ann=F,
+     xaxt='n',
+     xlim=c(0,1),
+     ylim=max(x$loglik)+c(-10,1)
+     )
+axis(side=1,at=seq(0,1,by=0.2),labels=F)
+lines(loglik~amplitude,data=nd,col=line.color)
+abline(h=cutoff,lty='33')
+abline(v=conf.int,lty='63')
+text(0.9,cutoff,"London",pos=3)
+
+x <- best[grep('Hastings',rownames(best)),]
+fit <- loess(loglik~amplitude,data=x,span=0.7)
+nd <- data.frame(amplitude=with(x,seq(from=min(amplitude),to=max(amplitude),length=100)))
+nd$loglik <- predict(fit,newdata=nd)
+cutoff <- max(nd$loglik,na.rm=T)-0.5*qchisq(p=0.95,df=1)
+conf.int <- range(nd$amplitude[nd$loglik>cutoff],na.rm=T)
+par(fig=c(0,1,0,0.5),mar=c(4,4,0.5,4),new=T)
+plot(
+     loglik~amplitude,
+     data=x,
+     font=2,
+     bty='l',
+     ann=F,
+     xaxt='n',
+     xlim=c(0,1),
+     ylim=max(x$loglik)+c(-10,1)
+     )
+axis(side=1,at=seq(0,1,by=0.2))
+lines(loglik~amplitude,data=nd,col=line.color)
+abline(h=cutoff,lty='33')
+abline(v=conf.int,lty='63')
+text(0.9,cutoff,"Hastings",pos=3)
+par(op)
+```
+
+---------------------------------------
+
+### Notable findings
+
+#### Cohort effect
+
+```{r cohort-effect,echo=FALSE,results="hide",purl=FALSE}
+best <- read.csv('data/cohort.csv',row.names=1)
+
+op <- par(
+          font=2,
+          fig=c(0,1,0,1),
+          mar=c(4,4,4,4),
+          bty='l'
+          )
+plot.new()
+mtext(side=2,line=2.5,text="profile log likelihood",adj=0.5)
+mtext(side=1,line=2,text="cohort entry fraction",adj=0.5)
+
+x <- best[grep('London',rownames(best)),]
+fit <- loess(loglik~cohort,data=x,span=0.7)
+nd <- data.frame(cohort=with(x,seq(from=min(cohort),to=max(cohort),length=100)))
+nd$loglik <- predict(fit,newdata=nd)
+cutoff <- max(nd$loglik,na.rm=T)-0.5*qchisq(p=0.95,df=1)
+conf.int <- range(nd$cohort[nd$loglik>cutoff],na.rm=T)
+par(fig=c(0,1,0.5,1),mar=c(0.5,4,4,4),new=T)
+plot(
+     loglik~cohort,
+     data=x,
+     font=2,
+     bty='l',
+     ann=F,
+     xaxt='n',
+     xlim=c(0,1),
+     ylim=max(x$loglik)+c(-10,1)
+     )
+axis(side=1,at=seq(0,1,by=0.2),labels=F)
+lines(loglik~cohort,data=nd,col=line.color)
+abline(h=cutoff,lty='33')
+abline(v=conf.int,lty='63')
+text(0.1,cutoff,"London",pos=3)
+
+x <- best[grep('Hastings',rownames(best)),]
+fit <- loess(loglik~cohort,data=x,span=0.7)
+nd <- data.frame(cohort=with(x,seq(from=min(cohort),to=max(cohort),length=100)))
+nd$loglik <- predict(fit,newdata=nd)
+cutoff <- max(nd$loglik,na.rm=T)-0.5*qchisq(p=0.95,df=1)
+conf.int <- range(nd$cohort[nd$loglik>cutoff],na.rm=T)
+par(fig=c(0,1,0,0.5),mar=c(4,4,0.5,4),new=T)
+plot(
+     loglik~cohort,
+     data=x,
+     font=2,
+     bty='l',
+     ann=F,
+     xaxt='n',
+     xlim=c(0,1),
+     ylim=max(x$loglik)+c(-10,1)
+     )
+axis(side=1,at=seq(0,1,by=0.2))
+lines(loglik~cohort,data=nd,col=line.color)
+abline(h=cutoff,lty='33')
+abline(v=conf.int,lty='63')
+text(0.1,cutoff,"Hastings",pos=1)
+par(op)
+```
+
+---------------------------------------
+
+#### $R_0$
+
+```{r R0,echo=FALSE,results="hide",purl=FALSE}
+best <- read.csv('data/R0profile.csv',row.names=1)
+
+op <- par(
+          font=2,
+          fig=c(0,1,0,1),
+          mar=c(4,4,4,4),
+          bty='l'
+          )
+plot.new()
+mtext(side=2,line=2.5,text="profile log likelihood",adj=0.5)
+mtext(side=1,line=2,text=expression(R[0]),adj=0.5)
+
+x <- best[grep('London',rownames(best)),]
+fit <- loess(loglik~R0,data=x,span=0.7)
+nd <- data.frame(R0=with(x,seq(from=min(R0),to=max(R0),length=100)))
+nd$loglik <- predict(fit,newdata=nd)
+cutoff <- max(nd$loglik,na.rm=T)-0.5*qchisq(p=0.95,df=1)
+conf.int <- range(nd$R0[nd$loglik>cutoff],na.rm=T)
+par(fig=c(0,1,0.5,1),mar=c(0.5,4,4,4),new=T)
+plot(
+     loglik~R0,
+     data=x,
+     font=2,
+     bty='l',
+     ann=F,
+     xaxt='n',
+     xlim=c(10,100),
+     ylim=max(x$loglik)+c(-10,1)
+     )
+axis(side=1,at=seq(10,100,by=30),labels=F)
+lines(loglik~R0,data=nd,col=line.color)
+abline(h=cutoff,lty='33')
+abline(v=conf.int,lty='63')
+text(90,max(x$loglik),"London")
+
+x <- best[grep('Hastings',rownames(best)),]
+fit <- loess(loglik~R0,data=x,span=0.7)
+nd <- data.frame(R0=with(x,seq(from=min(R0),to=max(R0),length=100)))
+nd$loglik <- predict(fit,newdata=nd)
+cutoff <- max(nd$loglik,na.rm=T)-0.5*qchisq(p=0.95,df=1)
+conf.int <- range(nd$R0[nd$loglik>cutoff],na.rm=T)
+par(fig=c(0,1,0,0.5),mar=c(4,4,0.5,4),new=T)
+plot(
+     loglik~R0,
+     data=x,
+     font=2,
+     bty='l',
+     ann=F,
+     xaxt='n',
+     xlim=c(10,100),
+     ylim=max(x$loglik)+c(-10,1)
+     )
+axis(side=1,at=seq(10,100,by=30))
+lines(loglik~R0,data=nd,col=line.color)
+abline(h=cutoff,lty='33')
+abline(v=conf.int,lty='63')
+text(90,max(x$loglik),"Hastings")
+par(op)
+```
+
+
+---------------------------------------
+
+#### Birth delay
+
+```{r delay,eval=TRUE,echo=FALSE,results="hide",purl=FALSE}
+
+x <- read.csv('data/delay.csv',row.names=1)
+plot(
+     x$delay,
+     x$loglik,
+     type='b',
+     xlab=expression(paste(tau,' (yr)')),
+     ylab='profile log likelihood'
+     )
+
+```
+
+
+---------------------------------------
+
+#### Reporting rate
+
+```{r report-rate,echo=FALSE,results="hide",purl=FALSE}  
+load("twentycities.rda")
+readRDS("He2010_mles.rds") %>%
+  subset(select=c(town,rho)) -> est.rho
+
+demog %>%
+  subset(year==1950,select=c(town,pop)) -> pop
+
+measles %>%
+  mutate(year=as.integer(format(date,"%Y"))) %>%
+  ddply(~town+year,summarize,cases=sum(cases)) %>%
+  join(demog,by=c("town","year")) %>%
+  ddply(~town,summarize,
+        cases=cumsum(cases),
+        births=cumsum(births)) -> m
+
+# m %>% ggplot(aes(x=births,y=cases,group=town))+
+#   geom_point()+
+#   geom_smooth(method="lm")+
+#   facet_wrap(~town,ncol=4,scales="free")
+
+m %>% ddply(~town,summarize,slope=coef(lm(cases~births))[2]) %>%
+  join(pop,by='town') %>%
+  join(est.rho,by='town') %>%
+  melt(id=c("town","pop")) %>%
+  mutate(variable=mapvalues(variable,from=c("slope","rho"),
+                            to=c("regression","model"))) %>%
+  ggplot(aes(x=town,y=value,shape=variable,group=town))+
+  geom_point(size=3)+
+  geom_line(alpha=0.5)+
+  labs(x="",y="estimated reporting rate",
+       variable="estimate")+
+  theme(axis.text.x=element_text(angle=90,hjust=1))
+```
+
+---------------------------------------
+
+#### Predicted vs observed critical community size
+
+```{r fadeouts,echo=FALSE,results="hide",purl=FALSE}
+
+op <- par(
+          font=2,
+          fig=c(0,1,0,1),
+          mar=c(4,4,4,4),
+          bty='l'
+          )
+ccssim <- read.csv('data/ccssim.csv',comment.char='#')
+ccsdata <- read.csv('data/fadeouts_954.csv',row.names=1,comment.char='#')
+plot(
+     prop.fadeout~mean.pop,
+     data=ccsdata,
+     bty='l',
+     log='x',
+     ann=F,
+     pch=20,
+     xlim=range(ccssim$pop),
+     ylim=c(0,1)
+     )
+lines(prop.fadeout~pop,data=ccssim,lwd=3,col=line.color)
+mtext(side=1,line=3,text='community size')
+mtext(side=2,line=3,text='proportion of weeks without cases')
+par(op)
+```
+
+---------------------------------------
+
+#### Parameter estimates
+
+```{r est-table,echo=FALSE,purl=FALSE}
+load("twentycities.rda")
+mean.euler <- function(rate,dt=1/365) dt/(1-exp(-rate*dt))
+
+demog %>% 
+  subset(year==1950,select=c(town,pop)) -> pop
+readRDS("He2010_mles.rds") %>%
+  join(pop,by='town',type='left') %>%
+  mutate(IP=365*mean.euler(gamma),
+         LP=365*mean.euler(sigma)) %>%
+  arrange(pop) %>%
+  subset(select=c(town,pop,R0,amplitude,LP,IP,alpha,iota,rho,psi,sigmaSE)) -> est
+
+est %>% melt(id=c("town","pop")) %>%
+  ddply(~variable,summarize,cor=cor(log(value),log(pop),
+                                    use='all.obs',method='spearman')) -> cors
+cors <- setNames(cors$cor,cors$variable)
+
+est %>% set_rownames(est$town) %>%
+  subset(select=-town) -> tab
+tab %>% 
+  rbind(r=cors[names(tab)]) %>%
+  signif(3) %>%
+  kable()
+```
+
+$r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
+
+---------------------------------------
+
+#### Extrademographic stochasticity
+
+
+$$\mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
+
+```{r env-noise,echo=FALSE,results="hide",purl=FALSE}
+best <- read.csv('data/env_noise.csv',row.names=1)
+mean.euler <- function(rate,dt=1/365) dt/(1-exp(-rate*dt))
+best$IP <- mean.euler(best[,'gamma'])*365
+best$LP <- mean.euler(best[,'sigma'])*365
+best$sigSE <- 1.0/sqrt(best[,'eta'])
+
+op <- par(
+          font=2,
+          fig=c(0,1,0,1),
+          mar=c(4,4,4,4)
+          )
+plot.new()
+mtext(side=1,line=2,text=expression(sigma[SE]),adj=0.5)
+mtext(side=2,line=2.5,text="profile log likelihood",adj=0.5)
+mtext(side=4,line=2.5,text="duration (days)",adj=0.5)
+
+x <- best[grep('London',rownames(best)),]
+
+fit <- loess(loglik~sigSE,data=x,span=0.7)
+nd <- data.frame(sigSE=with(x,seq(from=min(sigSE),to=max(sigSE),length=100)))
+nd$loglik <- predict(fit,newdata=nd)
+fit <- loess(IP~sigSE,data=x,span=0.7)
+nd$IP<-predict(fit,newdata=nd)
+fit <- loess(LP~sigSE,data=x,span=0.7)
+nd$LP<-predict(fit,newdata=nd)
+cutoff <- max(nd$loglik,na.rm=T)-0.5*qchisq(p=0.95,df=1)
+ci.lond <- conf.int <- range(nd$sigSE[nd$loglik>cutoff],na.rm=T)
+
+par(fig=c(0,1,0.5,1),mar=c(0.5,4,4,4),new=T)
+plot(
+     loglik~sigSE,
+     data=x,
+     bty='u',
+     ann=F,
+     xaxt='n',
+     yaxt='n',
+     log='x',
+     xlim=c(0.005,0.5),
+     ylim=max(x$loglik)+c(-10,1)
+     )
+axis(side=1,at=c(0.005,0.01,0.02,0.05,0.1,0.2,0.5),labels=F)
+axis(side=2)
+lines(loglik~sigSE,data=nd,col=line.color)
+abline(h=cutoff,lty='33')
+abline(v=conf.int,lty='63')
+
+IPcol='red'
+LPcol='blue'
+IPlty=1
+LPlty=1
+plot.window(xlim=c(0.005,0.5),ylim=c(0,20))
+lines(IP~sigSE,data=nd,lwd=2,col=IPcol,lty=IPlty)
+lines(LP~sigSE,data=nd,lwd=2,col=LPcol,lty=LPlty)
+axis(side=4)
+
+plot.window(xlim=c(1,10),ylim=c(0,1))
+text(10^(0.9),0.8,"London",pos=3)
+legend("topleft",lwd=2,col=c(IPcol,LPcol),
+   lty=c(IPlty,LPlty),legend=c("IP","LP"),bty='n',bg='white')
+
+
+x <- best[grep('Hastings',rownames(best)),]
+
+fit <- loess(loglik~sigSE,data=x,span=0.7)
+nd <- data.frame(sigSE=with(x,seq(from=min(sigSE),to=max(sigSE),length=100)))
+nd$loglik <- predict(fit,newdata=nd)
+fit <- loess(IP~sigSE,data=x,span=0.7)
+nd$IP<-predict(fit,newdata=nd)
+fit <- loess(LP~sigSE,data=x,span=0.7)
+nd$LP<-predict(fit,newdata=nd)
+cutoff <- max(nd$loglik,na.rm=T)-0.5*qchisq(p=0.95,df=1)
+ci.hast <- conf.int <- range(nd$sigSE[nd$loglik>cutoff],na.rm=T)
+
+par(fig=c(0,1,0,0.5),mar=c(4,4,0.5,4),new=T)
+plot(
+     loglik~sigSE,
+     data=x,
+     bty='l',
+     ann=F,
+     xaxt='n',
+     yaxt='n',
+     log='x',
+     bty='u',
+     xlim=c(0.005,0.5),
+     ylim=max(x$loglik)+c(-10,1)
+     )
+axis(side=1,at=c(0.005,0.01,0.02,0.05,0.1,0.2,0.5))
+axis(side=2)
+lines(loglik~sigSE,data=nd,col=line.color)
+abline(h=cutoff,lty='33')
+abline(v=conf.int,lty='63')
+
+plot.window(xlim=c(0.005,0.5),ylim=c(0,20))
+lines(IP~sigSE,data=nd,lwd=2,col=IPcol,lty=IPlty)
+lines(LP~sigSE,data=nd,lwd=2,col=LPcol,lty=LPlty)
+axis(side=4)
+
+plot.window(xlim=c(1,10),ylim=c(0,1))
+text(10^(0.1),0.8,"Hastings",pos=3)
+
+par(op)
+```
+
+
+---------------------------------------
+
+
+## Practicum
+
+### Preliminaries
+
+We'll load the packages we'll need, and set the random seed, to allow reproducibility.
+```{r prelims,cache=FALSE}
+set.seed(594709947L)
+require(ggplot2)
+theme_set(theme_bw())
+require(plyr)
+require(reshape2)
+require(magrittr)
+require(pomp)
+stopifnot(packageVersion("pomp")>="0.70-1")
+```
+
+### Data and covariates
+
+Now we'll load the data and covariates.
+The data are measles reports from 20 cities in England and Wales.
+We also have information on the population sizes and birth-rates in these cities;
+we'll treat these variables as covariates.
+
+```{r load-data}
+baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+download.file(paste0(baseurl,"data/twentycities.rda"),destfile="./twentycities.rda")
+load("twentycities.rda")
+measles %>% 
+  mutate(year=as.integer(format(date,"%Y"))) %>%
+  subset(town=="London" & year>=1950 & year<1964) %>%
+  mutate(time=(julian(date,origin=as.Date("1950-01-01")))/365.25+1950) %>%
+  subset(time>1950 & time<1964, select=c(time,cases)) -> dat
+demog %>% subset(town=="London",select=-town) -> demog
+```
+
+Let's plot the data and covariates.
+
+```{r data-plot}
+dat %>% ggplot(aes(x=time,y=cases))+geom_line()
+demog %>% melt(id="year") %>%
+  ggplot(aes(x=year,y=value))+geom_point()+
+  facet_wrap(~variable,ncol=1,scales="free_y")
+```
+
+
+```{r prep-covariates}
+demog %>% 
+  summarize(
+    time=seq(from=min(year),to=max(year),by=1/12),
+    pop=predict(smooth.spline(x=year,y=pop),x=time)$y,
+    birthrate=predict(smooth.spline(x=year+0.5,y=births),x=time-4)$y
+    ) -> covar
+```
+```{r covarplot}
+plot(pop~time,data=covar,type='l')
+points(pop~year,data=demog)
+plot(birthrate~time,data=covar,type='l')
+points(births~year,data=demog)
+plot(birthrate~I(time-4),data=covar,type='l')
+points(births~I(year+0.5),data=demog)
+```
+
+### The partially observed Markov process model
+
+#### The (unobserved) process model
+
+Let's evaluate the hypothesis that these data were generated by an SEIR model.
+The SEIR model is a compartmental model that, diagrammatically, looks as follows.
+
+```{r seir-diagram,echo=FALSE,cache=FALSE}
+```
+$b = \text{births}$  
+$S = \text{susceptibles}$  
+$E = \text{exposed, incubating}$  
+$I = \text{infectious}$  
+$R = \text{recovered}$  
+
+We require a simulator for this model.
+The following implements a simulator.
+
+```{r rprocess}
+rproc <- Csnippet("
+  double beta, br, seas, foi, dw, births;
+  double rate[6], trans[6];
+  
+  // cohort effect
+  if (fabs(t-floor(t)-251.0/365.0) < 0.5*dt) 
+    br = cohort*birthrate/dt + (1-cohort)*birthrate;
+  else 
+  	br = (1.0-cohort)*birthrate;
+
+  // term-time seasonality
+  t = (t-floor(t))*365.25;
+  if ((t>=7&&t<=100) || (t>=115&&t<=199) || (t>=252&&t<=300) || (t>=308&&t<=356))
+      seas = 1.0+amplitude*0.2411/0.7589;
+    else
+      seas = 1.0-amplitude;
+
+  // transmission rate
+  beta = R0*(gamma+mu)*seas;
+  // expected force of infection
+  foi = beta*pow(I+iota,alpha)/pop;
+  // white noise (extrademographic stochasticity)
+  dw = rgammawn(sigmaSE,dt);
+
+  rate[0] = foi*dw/dt;  // stochastic force of infection
+  rate[1] = mu;			    // natural S death
+  rate[2] = sigma;		  // rate of ending of latent stage
+  rate[3] = mu;			    // natural E death
+  rate[4] = gamma;		  // recovery
+  rate[5] = mu;			    // natural I death
+
+  // Poisson births
+  births = rpois(br*dt);
+  
+  // transitions between classes
+  reulermultinom(2,S,&rate[0],dt,&trans[0]);
+  reulermultinom(2,E,&rate[2],dt,&trans[2]);
+  reulermultinom(2,I,&rate[4],dt,&trans[4]);
+
+  S += births   - trans[0] - trans[1];
+  E += trans[0] - trans[2] - trans[3];
+  I += trans[2] - trans[4] - trans[5];
+  R = pop - S - E - I;
+  W += (dw - dt)/sigmaSE;  // standardized i.i.d. white noise
+  C += trans[4];           // true incidence
+")
+```
+
+In the above, $C$ represents the true incidence, i.e., the number of new infections occurring over an interval.
+Since recognized measles infections are quarantined, we argue that most infection occurs before case recognition so that true incidence is a measure of the number of individuals progressing from the I to the R compartment in a given interval.
+
+We complete the process model definition by specifying the distribution of initial unobserved states.
+The following codes assume that the fraction of the population in each of the four compartments is known.
+
+```{r initializer}
+initlz <- Csnippet("
+  double m = pop/(S_0+E_0+I_0+R_0);
+  S = nearbyint(m*S_0);
+  E = nearbyint(m*E_0);
+  I = nearbyint(m*I_0);
+  R = nearbyint(m*R_0);
+  W = 0;
+  C = 0;
+")
+```
+
+
+#### The measurement model
+
+We'll model both under-reporting and measurement error.
+We want $\mathbb{E}[\text{cases}|C] = \rho\,C$, where $C$ is the true incidence and $0<\rho<1$ is the reporting efficiency.
+We'll also assume that $\mathrm{Var}[\text{cases}|C] = \rho\,(1-\rho)\,C + (\psi\,\rho\,C)^2$, where $\psi$ quantifies overdispersion.
+Note that when $\psi=0$, the variance-mean relation is that of the binomial distribution.
+To be specific, we'll choose
+$\text{cases|C} \sim f(\cdot|\rho,\psi,C)$,
+where $$f(c|\rho,\psi,C) = \Phi(c+\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2)-\Phi(c-\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2),$$
+where $\Phi(x,\mu,\sigma^2)$ is the c.d.f. of the normal distribution with mean $\mu$ and variance $\sigma^2$.
+
+The following computes $\mathbb{P}[\text{cases}|C]$.
+
+```{r dmeasure}
+dmeas <- Csnippet("
+  double m = rho*C;
+  double v = m*(1.0-rho+psi*psi*m);
+  double tol = 1.0e-18;
+  if (cases > 0.0) {
+	  lik = pnorm(cases+0.5,m,sqrt(v)+tol,1,0)-pnorm(cases-0.5,m,sqrt(v)+tol,1,0)+tol;
+  } else {
+    lik = pnorm(cases+0.5,m,sqrt(v)+tol,1,0)+tol;
+  }
+")
+```
+
+The following codes simulate $\text{cases} | C$.
+
+```{r rmeasure}
+rmeas <- Csnippet("
+  double m = rho*C;
+  double v = m*(1.0-rho+psi*psi*m);
+  double tol = 1.0e-18;
+  cases = rnorm(m,sqrt(v)+tol);
+  if (cases > 0.0) {
+    cases = nearbyint(cases);
+  } else {
+    cases = 0.0;
+  }
+")
+```
+
+#### Constructing the `pomp` object
+
+We put all the model components together with the data in a call to `pomp`:
+
+```{r pomp-construction}
+dat %>% 
+  pomp(t0=with(dat,2*time[1]-time[2]),
+       time="time",
+       rprocess=euler.sim(rproc,delta.t=1/365.25),
+       initializer=initlz,
+       dmeasure=dmeas,
+       rmeasure=rmeas,
+       covar=covar,
+       tcovar="time",
+       zeronames=c("C","W"),
+       statenames=c("S","E","I","R","C","W"),
+       paramnames=c("R0","mu","sigma","gamma","alpha","iota",
+                    "rho","sigmaSE","psi","cohort","amplitude",
+                    "S_0","E_0","I_0","R_0")
+       ) -> m1
+```
+
+The following codes plot the data and covariates together.
+
+```{r plot-pomp}
+m1 %>% as.data.frame() %>% 
+  melt(id="time") %>%
+  ggplot(aes(x=time,y=value))+
+  geom_line()+
+  facet_grid(variable~.,scales="free_y")
+```
+
+@He2010 estimated the parameters of this model.
+The full set is included in the *R* code accompanying this document, where they are read into a data frame called `mles`.
+
+```{r mles,include=FALSE}
+read.csv(text="
+town,loglik,loglik.sd,mu,delay,sigma,gamma,rho,R0,amplitude,alpha,iota,cohort,psi,S_0,E_0,I_0,R_0,sigmaSE
+Bedwellty,-1125.1,0.14,0.02,4,57.9,146,0.311,24.7,0.16,0.937,0.0396,0.351,0.951,0.0396,2.64e-05,2.45e-05,0.96,0.0611
+Birmingham,-3239.3,1.55,0.02,4,45.6,32.9,0.544,43.4,0.428,1.01,0.343,0.331,0.178,0.0264,8.96e-05,0.000335,0.973,0.0611
+Bradford,-2586.6,0.68,0.02,4,45.6,129,0.599,32.1,0.236,0.991,0.244,0.297,0.19,0.0365,7.41e-06,4.59e-06,0.964,0.0451
+Bristol,-2681.6,0.5,0.02,4,64.3,82.6,0.626,26.8,0.203,1.01,0.441,0.344,0.201,0.0358,9.62e-06,5.37e-06,0.964,0.0392
+Cardiff,-2364.9,0.73,0.02,4,39,143,0.602,34.4,0.223,0.996,0.141,0.267,0.27,0.0317,1.01e-05,9.21e-06,0.968,0.0539
+Consett,-1362.9,0.73,0.02,4,42.6,172,0.65,35.9,0.2,1.01,0.0731,0.31,0.406,0.0322,1.83e-05,1.97e-05,0.968,0.0712
+Dalton.in.Furness,-726.1,0.3,0.02,4,73.6,257,0.455,28.3,0.203,0.989,0.0386,0.421,0.818,0.0387,2.23e-05,2.36e-05,0.961,0.0779
+Halesworth,-318.6,0.51,0.02,4,49.6,210,0.754,33.1,0.381,0.948,0.00912,0.547,0.641,0.0526,1.99e-05,2.82e-05,0.947,0.0748
+Hastings,-1583.7,0.21,0.02,4,56.3,74.1,0.695,34.2,0.299,1,0.186,0.329,0.396,0.0233,5.61e-06,3.4e-06,0.977,0.0955
+Hull,-2729.4,0.39,0.02,4,42.1,73.9,0.582,38.9,0.221,0.968,0.142,0.275,0.256,0.0371,1.2e-05,1.13e-05,0.963,0.0636
+Leeds,-2918.6,0.23,0.02,4,40.7,35.1,0.666,47.8,0.267,1,1.25,0.592,0.167,0.0262,6.04e-05,3e-05,0.974,0.0778
+Lees,-548.1,1.1,0.02,4,45.6,244,0.612,29.7,0.153,0.968,0.0311,0.648,0.681,0.0477,2.66e-05,2.08e-05,0.952,0.0802
+Liverpool,-3403.1,0.34,0.02,4,49.4,39.3,0.494,48.1,0.305,0.978,0.263,0.191,0.136,0.0286,0.000184,0.00124,0.97,0.0533
+London,-3804.9,0.16,0.02,4,28.9,30.4,0.488,56.8,0.554,0.976,2.9,0.557,0.116,0.0297,5.17e-05,5.14e-05,0.97,0.0878
+Manchester,-3250.9,0.66,0.02,4,34.4,56.8,0.55,32.9,0.29,0.965,0.59,0.362,0.161,0.0489,2.41e-05,3.38e-05,0.951,0.0551
+Mold,-296.5,0.25,0.02,4,67.4,301,0.131,21.4,0.271,1.04,0.0145,0.436,2.87,0.064,2.61e-05,2.27e-05,0.936,0.0544
+Northwich,-1195.1,2.25,0.02,4,45.6,147,0.795,30.1,0.423,0.948,0.0602,0.236,0.402,0.0213,1.32e-05,1.58e-05,0.979,0.0857
+Nottingham,-2703.5,0.53,0.02,4,70.2,115,0.609,22.6,0.157,0.982,0.17,0.34,0.258,0.05,1.36e-05,1.41e-05,0.95,0.038
+Oswestry,-696.1,0.49,0.02,4,37.3,168,0.631,52.9,0.339,1.04,0.0298,0.263,0.476,0.0218,1.56e-05,1.61e-05,0.978,0.0699
+Sheffield,-2810.7,0.21,0.02,4,54.3,62.2,0.649,33.1,0.313,1.02,0.853,0.225,0.175,0.0291,6.04e-05,8.86e-05,0.971,0.0428
+",stringsAsFactors=FALSE) -> mles
+```
+```{r mle}
+mles %>% subset(town=="London") -> mle
+paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
+                "rho","sigmaSE","psi","cohort","amplitude",
+                "S_0","E_0","I_0","R_0")
+mle %>% extract(paramnames) %>% unlist() -> theta
+mle %>% subset(select=-c(S_0,E_0,I_0,R_0)) %>%
+  knitr::kable(row.names=FALSE)
+```
+
+Verify that we get the same likelihood as @He2010.
+
+```{r pfilter1}
+require(foreach)
+require(doMC)
+
+registerDoMC()
+
+set.seed(998468235L,kind="L'Ecuyer")
+mcopts <- list(preschedule=FALSE,set.seed=TRUE)
+
+foreach(i=1:4,
+        .packages="pomp",
+        .options.multicore=mcopts) %dopar% {
+  pfilter(m1,Np=10000,params=theta)
+} -> pfs
+logmeanexp(sapply(pfs,logLik),se=TRUE)
+```
+
+Simulations at the MLE.
+
+```{r sims1,fig.height=8}
+m1 %>% 
+  simulate(params=theta,nsim=9,as.data.frame=TRUE,include.data=TRUE) %>%
+  ggplot(aes(x=time,y=cases,group=sim,color=(sim=="data")))+
+  guides(color=FALSE)+
+  geom_line()+facet_wrap(~sim,ncol=2)
+```
+```{r sims2}
+m1 %>% 
+  simulate(params=theta,nsim=100,as.data.frame=TRUE,include.data=TRUE) %>%
+  subset(select=c(time,sim,cases)) %>%
+  mutate(data=sim=="data") %>%
+  ddply(~time+data,summarize,
+        p=c(0.05,0.5,0.95),q=quantile(cases,prob=p,names=FALSE)) %>%
+  mutate(p=mapvalues(p,from=c(0.05,0.5,0.95),to=c("lo","med","hi")),
+         data=mapvalues(data,from=c(TRUE,FALSE),to=c("data","simulation"))) %>%
+  dcast(time+data~p,value.var='q') %>%
+  ggplot(aes(x=time,y=med,color=data,fill=data,ymin=lo,ymax=hi))+
+  geom_ribbon(alpha=0.2)
+```
+
+#### Parameter transformations
+
+The parameters are constrained to be positive, and some of them are constrained to lie between $0$ and $1$.
+We can turn the likelihood maximization problem into an unconstrained maximization problem by transforming the parameters.
+The following Csnippets implement such a transformation and its inverse.
+
+```{r transforms}
+toEst <- Csnippet("
+  Tmu = log(mu);
+  Tsigma = log(sigma);
+  Tgamma = log(gamma);
+  Talpha = log(alpha);
+  Tiota = log(iota);
+  Trho = logit(rho);
+  Tcohort = logit(cohort);
+  Tamplitude = logit(amplitude);
+  TsigmaSE = log(sigmaSE);
+  Tpsi = log(psi);
+  TR0 = log(R0);
+  to_log_barycentric (&TS_0, &S_0, 4);
+")
+
+fromEst <- Csnippet("
+  Tmu = exp(mu);
+  Tsigma = exp(sigma);
+  Tgamma = exp(gamma);
+  Talpha = exp(alpha);
+  Tiota = exp(iota);
+  Trho = expit(rho);
+  Tcohort = expit(cohort);
+  Tamplitude = expit(amplitude);
+  TsigmaSE = exp(sigmaSE);
+  Tpsi = exp(psi);
+  TR0 = exp(R0);
+  from_log_barycentric (&TS_0, &S_0, 4);
+")
+
+
+pomp(m1,toEstimationScale=toEst,
+     fromEstimationScale=fromEst,
+     statenames=c("S","E","I","R","C","W"),
+     paramnames=c("R0","mu","sigma","gamma","alpha","iota",
+                  "rho","sigmaSE","psi","cohort","amplitude",
+                  "S_0","E_0","I_0","R_0")) -> m1
+```
+
+
+### Exercises
+
+#### Reformulate the model
+
+Modify the @He2010 model to remove the cohort effect.
+Run simulations and compute likelihoods to convince yourself that the resulting codes agree with the original ones for `cohort = 0`.
+
+Now modify the transmission seasonality to use a sinusoidal form.
+How many parameters must you use?
+Fixing the other parameters at their MLE values, compute and visualize a profile likelihood over these parameters.
+
+#### Extrademographic stochasticity
+
+Set the extrademographic stochasticity parameter $\sigma_{SE}=0$, set $\alpha=1$, and fix $\rho$ and $\iota$ at their MLE values, then maximize the likelihood over the remaining parameters. 
+How do your results compare with those at the MLE? 
+Compare likelihoods but also use simulations to diagnose differences between the models.
+
+
+## References
+
+```{r include=FALSE,cache=FALSE,eval=TRUE}
+if (exists("mpi.finalize")) mpi.finalize()
+```

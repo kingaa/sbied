@@ -1,0 +1,61 @@
+---
+title: "Simulation-based Inference for Epidemiological Dynamics"
+author: "Aaron A. King and Edward L. Ionides"
+output:
+  html_document:
+    theme: flatly
+bibliography: sbied.bib
+csl: ecology.csl
+
+---
+
+## Module description
+This module introduces statistical inference techniques and computational methods for dynamic models of epidemiological systems. The course will explore deterministic and stochastic formulations of epidemiological dynamics and develop inference methods appropriate for a range of models. Special emphasis will be on exact and approximate likelihood as the key elements in parameter estimation, hypothesis testing, and model selection. Specifically, the course will cover sequential Monte Carlo and synthetic likelihood techniques. Students will learn to implement these in R to carry out maximum likelihood and Bayesian inference. Knowledge of the material in Module 1 is assumed. Students new to R should complete a tutorial before the module.
+
+## Course objectives
+
+1. to introduce partially observed Markov process (POMP) models as tools for scientific investigation and public health policy
+1. to give students the ability to formulate POMP models of their own
+1. to teach efficient approaches for performing scientific inference using POMP models
+1. to familiarize students with the **pomp** package
+1. to give students opportunities to work with such inference methods
+1. to provide documented examples for student re-use
+
+----------------------
+
+## Daily Schedule
+
+**Time** | **Daily Activity**
+-----------|------------
+8:00 am -- 8:30 am | Coffee
+8:30 am -- 10:00 am | Class Session
+10:00 am -- 10:30 am | Break
+10:30 am -- 12:00 pm | Class Session
+12:00 pm -- 1:30 pm | Lunch Break
+1:30 pm -- 3:00 pm | Class Session
+3:00 pm -- 3:30 pm | Break
+3:30 pm -- 5:00 pm | Class Session
+
+----------------------
+
+## Schedule of Topics
+
+
+1. [Introduction: What is "Simulation-based Inference for Epidemiological Dynamics?"](./intro/intro.html)
+2. [Dynamic models and their simulation by Euler's method.](./stochsim/stochsim.html)
+3. [The particle filter: theory and practice](./pfilter/pfilter.html)
+1. [Iterated filtering: theory and practice](./mif/mif.html)
+1. [Case study I: polio.](./polio/polio.html)
+1. [Case study II: measles.](./measles/measles.html)
+1. [Case study III: sexual contacts panel data](./contacts/contacts.html)
+1. [Case study IV: Ebola and forecasting](./ebola/ebola.html)
+
+ 
+----------------------
+
+## In preparation...
+
+- [Instructions for preparing your laptop for the course exercises](./prep/preparation.html)
+ 
+----------------------
+

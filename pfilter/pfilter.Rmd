@@ -1,0 +1,647 @@
+---
+title: Likelihood for POMPs
+author: "Aaron A. King and Edward L. Ionides"
+date: "2015-07-09"
+output:
+  html_document:
+    theme: flatly
+    toc: yes
+bibliography: ../sbied.bib
+csl: ../ecology.csl
+
+---
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dlta[1]{{\Delta}{#1}}
+\newcommand\lik{\mathscr{L}}
+\newcommand\loglik{\ell}
+
+--------------------------
+
+Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
+
+Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
+
+--------------------------
+
+```{r knitr-opts,include=FALSE,purl=FALSE,cache=FALSE}
+library(knitr)
+prefix <- "pfilter"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  dpi=300,
+  dev='png',
+  dev.args=list(bg='transparent')
+  )
+```
+```{r prelims,include=FALSE,cache=FALSE}
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  pomp.cache="cache",
+  encoding="UTF-8"
+  )
+
+set.seed(594709947L)
+require(ggplot2)
+theme_set(theme_bw())
+require(grid)
+require(plyr)
+require(reshape2)
+require(foreach)
+require(doMC)
+require(pomp)
+stopifnot(packageVersion("pomp")>="0.69-1")
+```
+
+## Objectives
+
+1. To convey and understanding of the nature of the problem of likelihood computation for POMP models
+1. To explain the simplest particle filter algorithm
+1. To give students experience visualizing and exploring likelihood surfaces using the particle filter for computation of the likelihood
+1. Understand the basic techniques of likelihood-based inference
+2. Describe how to apply these techniques in situations where the likelihood cannot be written down explicitly but can be evaluated and maximized via Monte Carlo methods.
+3. Gain some experience at carrying out likelihood-based inferences for dynamic models using simulation-based statistical methodology in the R package 'pomp'.
+
+
+## Theory of the particle filter
+
+### The likelihood function
+
+- The basis for modern frequentist, Bayesian, and information-theoretic inference.
+- The function itself is a representation of the what the data have to say about the parameters.
+- A good general reference on likelihood is @Pawitan2001.
+
+#### Definition of the likelihood function
+
+Data are a sequence of $N$ observations, denoted $y_{1:N}^*$. A statistical model is a density function $f(y_{1:N};\theta)$ which defines a probability distribution for each value of a parameter vector $\theta$. Statistical inference involves deciding for which (if any) values of $\theta$ it is reasonable to model $y_{1:N}^*$ as a random draw from $f(y_{1:N};\theta)$.
+
+The likelihood function is the density function evaluated at the data. It is usually convenient to work with the log likelihood function,
+$$\loglik(\theta)=\log f(y_{1:N}^*;\theta)$$
+
+#### Modeling using discrete and continuous distributions
+
+Recall that the probability distribution $f(y_{1:N};\theta)$ defines a random variable $Y_{1:N}$ for which probabilities can be computed as integrals of $f(y_{1:N};\theta)$. Specifically, for any event $E$ describing a set of possible outcomes of $Y_{1:N}$, 
+$$P[\mbox{$Y_{1:N}$ is in $E$}] = \int_E f(y_{1:N}^*;\theta)\, dy_{1:N}.$$ 
+If the model corresponds to a discrete distribution, then the integral is replaced by a sum and the probability density function is called a probability mass function. The definition of the likelihood function remains unchanged. We will use the notation of continuous random variables, but all the methods apply also to discrete models. 
+
+#### Indirect specification of the statistical model via a simulation procedure
+
+* For simple statistical models, we may describe the model by explicitly writing the density function $f(y_{1:N};\theta)$. 
+One may then ask how to simulate a random variable $Y_{1:N}\sim f(y_{1:N};\theta)$.
+
+* For many dynamic models it is convenient to define the model via a procedure to simulate the random variable $Y_{1:N}$. 
+This implicitly defines the corresponding density $f(y_{1:N};\theta)$. 
+For a complicated simulation procedure, it may be difficult or impossible to write down $f(y_{1:N};\theta)$ exactly. 
+
+* It is important for us to bear in mind that the likelihood function exists even when we don't know what it is! We can still talk about the likelihood function, and develop numerical methods that take advantage of its statistical properties.
+
+
+### Likelihood for POMP models
+
+*********************
+
+![state_space_diagram2](http://kinglab.eeb.lsa.umich.edu/ICTPWID/SaoPaulo_2015/Aaron/graphics/state_space_diagram2.png)
+
+POMP model schematic, showing dependence among model variables.
+State variables, $x$, at time $t$ depend only on state variables at the previous timestep.
+Measurements, $y$, at time $t$ depend only on the state at that time.
+
+*********************
+
+#### POMP model notation
+
+- Write $X_n=X(t_n)$ and $X_{0:N}=(X_0,\dots,X_N)$.
+
+- Let $Y_n$ be a random variable modeling the observation at time $t_n$.
+
+* The one-step transition density, $f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)$, together with the measurement density, $f_{Y_n|X_n}(y_n|x_n;\theta)$ and the initial density, $f_{X_0}(x_0;\theta)$, specify the entire joint density via
+$$f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta) = f_{X_0}(x_0;\theta)\,\prod_{n=1}^N\!f_{X_n | X_{n-1}}(x_n|x_{n-1};\theta)\,f_{Y_n|X_n}(y_n|x_n;\theta).$$
+
+* The marginal density for sequence of measurements, $Y_{1:N}$, evaluated at the data, $y_{1:N}^*$, is
+$$\lik(\theta) = f_{Y_{1:N}}(y^*_{1:N};\theta)=\int\!f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)\, dx_{0:N}.$$
+
+
+#### Special case: deterministic unobserved state process
+
+Lets' begin with a special case.
+Suppose that the unobserved state process is deterministic.
+That is, $X_{n}=x_n(\theta)$ is a known function of $\theta$ for each $n$.
+What is the likelihood?
+
+Since the probability of the observation, $Y_n$, depends only on $X_n$ and $\theta$, and since, in particular $Y_{m}$ and $Y_{n}$ are independent given $X_{m}$ and $X_{n}$, we have $$\lik(\theta) = \prod_{n} f_{Y_n|X_n}(y_n^*;x_n(\theta),\theta)$$ or $$\log\lik(\theta) = \sum_{n} \log f_{Y_n|X_n}(y_n^*;x_n(\theta),\theta).$$
+
+```{r det-example,echo=FALSE,results="hide"}
+pompExample(bbs)
+x <- trajectory(bbs)
+y <- cbind(as.data.frame(bbs),x=x["cases",1,])
+mutate(y,xlab=sprintf("x[%d]",time),
+       ylab=sprintf("y[%d]",time)) -> y
+
+ggplot(data=y,
+       mapping=aes(x=time,xend=time))+
+  geom_point(aes(y=reports),color='black',alpha=0.5)+
+  geom_point(aes(y=x),color='red',alpha=0.5)+
+  geom_line(aes(y=reports),color='black',alpha=0.5)+
+  geom_line(aes(y=x),color='red',alpha=0.5)+
+  geom_text(aes(y=reports,label=ylab,vjust=ifelse(time>=10,2,-1)),parse=TRUE,color='black')+
+  geom_text(aes(y=x,label=xlab,vjust=ifelse(time>=10,-1,2)),parse=TRUE,color='red')+
+  geom_segment(aes(y=x,yend=reports),color='blue',linetype=2,alpha=0.3,
+               arrow=grid::arrow(length=grid::unit(0.02,"npc")))+
+  expand_limits(y=c(-20,320))+
+  labs(y="")
+```
+
+#### Likelihood for stochastic models
+
+We can imagine using [Monte Carlo integration](./monteCarlo.html#monte-carlo-integration) for computing the likelihood of a state space model,
+$$\lik(\theta)=\prob{y_{1:T}|\theta}=\sum_{x_1}\cdots\sum_{x_T}\!\prod_{t=1}^{T}\!\prob{y_t|x_t,\theta}\,\prob{x_t|x_{t-1},\theta}.$$
+Specifically, if we have some probabilistic means of proposing trajectories for the unobserved state process, then we could just generate a large number of these and approximate $\lik(\theta)$ by its Monte Carlo estimate.
+Specifically, we generate $N$ trajectories of length $T$, $x_{t,k}$, $k=1\,\dots,N$, $t=1,\dots,T$.
+Let $w_k$ denote the probability of proposing trajectory $k$.
+For each trajectory, we compute the likelihood of that trajectory
+$$\lik{_k}(\theta)=\prod_{t=1}^{T} \prob{y_t|x_{t,k},\theta}\,\prob{x_{t,k}|x_{t-1,k},\theta}$$
+Then by the Monte Carlo theorem, we have 
+$$\lik(\theta) \approx \frac{1}{N}\,\sum_{k=1}^{N}\!\frac{\lik_k(\theta)}{w_k}.$$
+
+How shall we choose our trajectories?
+One idea would be to choose them so as to simplify the computation.
+If we choose them such that
+$$w_k=\prod_{t=1}^{T} \prob{x_{t,k}|x_{t-1,k},\theta},$$
+then we have
+$$\lik(\theta) \approx \frac{1}{N}\,\sum_{k=1}^{N} \frac{\lik_k(\theta)}{w_k} = \frac{1}{N}\,\sum_{k=1}^{N}\!\frac{\prod_{t=1}^{T} \prob{y_t|x_{t,k},\theta}\,\prob{x_{t,k}|x_{t-1,k},\theta}}{\prod_{t=1}^{T} \prob{x_{t,k}|x_{t-1,k},\theta}} = \frac{1}{N}\,\sum_{k=1}^{N}\!\prod_{t=1}^{T} \prob{y_t|x_{t,k},\theta}$$
+
+This implies that if we generate trajectories by simulation, all we have to do is compute the likelihood of the data with given each trajectory and average.
+
+Let's go back to the boarding school influenza outbreak to see what this would look like.
+Let's reconstruct the toy SIR model we were working with.
+
+```{r sir-construct}
+baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+url <- paste0(baseurl,"data/bsflu_data.txt")
+bsflu <- read.table(url)
+
+sir_step <- Csnippet("
+  double dN_SI = rbinom(S,1-exp(-beta*I/N*dt));
+  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  R += dN_IR;
+  H += dN_IR;
+")
+
+sir_init <- Csnippet("
+  S = nearbyint(N)-1;
+  I = 1;
+  R = 0;
+  H = 0;
+")
+
+dmeas <- Csnippet("lik = dbinom(B,H,rho,give_log);")
+rmeas <- Csnippet("B = rbinom(H,rho);")
+
+pomp(bsflu,times="day",t0=0,
+     rprocess=euler.sim(sir_step,delta.t=1/5),
+     initializer=sir_init,rmeasure=rmeas,dmeasure=dmeas,
+     zeronames="H",statenames=c("H","S","I","R"),
+     paramnames=c("beta","gamma","rho","N")) -> sir
+plot(sir,main="",var="B")
+```
+
+Let's generate a bunch of simulated trajectories at some particular point in parameter space.
+```{r bbs-mc-like-2,results='markup'}
+simulate(sir,params=c(beta=2,gamma=1,rho=0.5,N=2600),
+         nsim=60,states=TRUE) -> x
+matplot(time(sir),t(x["H",,]),type='l',lty=1,
+        xlab="time",ylab="H",bty='l')
+```
+
+We can use the function `dmeasure` to evaluate the log likelihood of the data given the states, the model, and the parameters:
+```{r bbs-mc-like-3,results='markup',cache=T}
+ell <- dmeasure(sir,y=obs(sir),x=x,times=time(sir),log=TRUE,
+                params=c(beta=2,gamma=1,rho=0.5,N=2600))
+dim(ell)
+```
+According to the equation above, we should sum up the log likelihoods across time:
+```{r bbs-mc-like-4,results='markup'}
+ell <- apply(ell,1,sum); ell
+```
+The variance of these estimates is ***very*** high and therefore the estimated likelihood is very imprecise.
+We are going to need very many simulations to get an estimate of the likelihood sufficiently precise to be of any use in parameter estimation or model selection.
+Moreover, even one simulation which is strictly incompatible with the data implies a likelihood of zero!
+
+What's the problem?
+Essentially, far too many of the trajectories don't pass near the data.
+Moreover, once a trajectory diverges from the data, it almost never comes back.
+*This is a consequence of the fact that we are proposing trajectories in a way that is completely unconditional on the data.*
+The problem will only get worse with longer data sets!
+
+### The particle filter
+
+We can arrive at a more efficient algorithm by factorizing the likelihood in a different way.
+$$\lik(\theta)=\prob{y^*_{1:T}|\theta}
+=\prod_{t}\,\prob{y^*_t|y^*_{1:t-1},\theta} 
+=\prod_{t}\,\sum_{x_{t}}\,\prob{y^*_t|x_t,\theta}\,\prob{x_t|y^*_{1:t-1},\theta}$$
+Now the Markov property gives us that
+$$\prob{x_t|y^*_{1:t-1},\theta} 
+= \sum_{x_{t-1}}\,\prob{x_t|x_{t-1},\theta}\,\prob{x_{t-1}|y^*_{1:t-1},\theta}$$
+and Bayes' theorem tells us that
+$$\prob{x_t|y^*_{1:t},\theta} = \prob{x_t|y_t,y^*_{1:t-1},\theta} =\frac{\prob{y^*_{t}|x_{t},\theta}\,\prob{x_{t}|y^*_{1:t-1},\theta}}{\sum_{x_{t}}\,\prob{y^*_{t}|x_{t},\theta}\,\prob{x_{t}|y^*_{1:t-1},\theta}}.$$
+
+This suggests that we keep track of two key distributions.
+We'll refer to the distribution of $x_t | y^*_{1:t-1}$ as the *prediction distribution* at time $t$ and
+the distribution of $x_{t} | y^*_{1:t}$ as the *filtering distribution* at time $t$.
+
+Let's use Monte Carlo techniques to estimate the sums.
+Suppose $x_{t-1,k}^{F}$, $k=1,\dots,N$ is a set of points drawn from the filtering distribution at time $t-1$.
+We obtain a sample $x_{t,k}^{P}$ of points drawn from the prediction distribution at time $t$ by simply simulating the process model:
+$$x_{t,k}^{P} \sim \mathrm{process}(x_{t-1,k}^{F},\theta), \qquad k=1,\dots,N.$$
+Having obtained $x_{t,k}^{P}$, we obtain a sample of points from the filtering distribution at time $t$ by *resampling* from $x_{t,k}^{P}$ with weights $\prob{y^*_{t}|x_{t},\theta}$.
+The Monte Carlo theorem tells us, too, that the conditional likelihood 
+$$\lik_t(\theta) = \prob{y^*_t|y^*_{1:t-1},\theta} = \sum_{x_{t}}\,\prob{y^*_{t}|x_{t},\theta}\,\prob{x_{t}|y^*_{1:t-1},\theta} \approx \frac{1}{N}\,\sum_k\,\prob{y^*_{t}|x_{t,k}^{P},\theta}.$$
+We can iterate this procedure through the data, one step at a time, alternately simulating and resampling, until we reach $t=T$.
+The full log likelihood is then approximately
+$$\loglik(\theta) = \log{\lik(\theta)} = \sum_t \log{\lik_t(\theta)}.$$
+
+This is known as the *sequential Monte Carlo* algorithm or the *particle filter*.
+Key references include @Kitagawa1987, @Arulampalam2002 and the book by @Doucet2001.
+
+
+## Sequential Monte Carlo in **pomp**
+
+Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our influenza-outbreak case study.
+
+```{r sir-sim1}
+sims <- simulate(sir,params=c(beta=2,gamma=1,rho=0.8,N=2600),nsim=20,
+                 as.data.frame=TRUE,include.data=TRUE)
+
+ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  geom_line()+guides(color=FALSE)
+```
+
+
+In `pomp`, the basic particle filter is implemented in the command `pfilter`.
+We must choose the number of particles to use by setting the `Np` argument.
+
+```{r sir-pfilter-1,results='markup',cache=T}
+pf <- pfilter(sir,Np=5000,params=c(beta=2,gamma=1,rho=0.8,N=2600))
+logLik(pf)
+```
+
+We can run a few particle filters to get an estimate of the Monte Carlo variability:
+```{r sir-pfilter-2,results='markup',cache=T}
+pf <- replicate(10,pfilter(sir,Np=5000,params=c(beta=2,gamma=1,rho=0.8,N=2600)))
+ll <- sapply(pf,logLik); ll
+logmeanexp(ll,se=TRUE)
+```
+Note that we're careful here to counteract Jensen's inequality.
+The particle filter gives us an unbiased estimate of the likelihood, not of the log-likelihood.
+
+## The graph of the likelihood function: The likelihood surface
+
+* Intuitively, it can be helpful to think of the geometric surface defined by the likelihood function. 
+
+* If $\Theta$ is two-dimensional, then the surface $\ell(\theta)$ has features like a landscape. 
+
+    * Local maxima of $\ell(\theta)$ are peaks
+
+    * local minima are valleys
+
+    * peaks may be separated by a valley or may be joined by a ridge. If you go along the ridge, you may be able to go from one peak to the other without losing much elevation. Narrow ridges can be easy to fall off, and hard to get back on to.
+
+* In higher dimensions, one can still think of peaks and valleys and ridges. However, as the dimension increases it quickly becomes hard to imagine the surface.
+
+To get an idea of what the likelihood surface looks like in the neighborhood of the default parameter set supplied by `sir`, we can construct some likelihood slices.
+We'll make slices in the $\beta$ and $\gamma$ directions.
+Both slices will pass through the default parameter set.
+
+```{r sir-like-slice,cache=TRUE,results='hide'}
+sliceDesign(
+  c(beta=2,gamma=1,rho=0.8,N=2600),
+  beta=rep(seq(from=0.5,to=4,length=40),each=3),
+  gamma=rep(seq(from=0.5,to=2,length=40),each=3)) -> p
+
+require(foreach)
+require(doMC)
+registerDoMC(cores=5)        ## number of cores on this machine
+
+set.seed(998468235L,kind="L'Ecuyer")
+mcopts <- list(preschedule=FALSE,set.seed=TRUE)
+
+foreach (theta=iter(p,"row"),.combine=rbind,
+         .inorder=FALSE,.options.multicore=mcopts) %dopar% 
+ {
+   pfilter(sir,params=unlist(theta),Np=5000) -> pf
+   theta$loglik <- logLik(pf)
+   theta
+ } -> p
+```
+
+Note that we've used the **foreach** package with the multicore backend (**doMC**) to parallelize these computations.
+To ensure that we have high-quality random numbers in each parallel *R* session, we use a parallel random number generator (`kind="L'Ecuyer"`, `.options.multicore=list(set.seed=TRUE)`).
+
+```{r sir-like-slice-plot,cache=F,results="hide"}
+foreach (v=c("beta","gamma")) %do% 
+{
+  x <- subset(p,slice==v)
+  plot(x[[v]],x$loglik,xlab=v,ylab="loglik")
+}
+```
+
+
+------------------------
+
+### Exercise: Likelihood slices
+
+Add likelihood slices along the $\rho$ direction.
+
+------------------------
+
+Slices offer a very limited perspective on the geometry of the likelihood surface.
+With just two parameters, we can evaluate the likelihood at a grid of points and visualize the surface directly.
+```{r sir-grid1}
+expand.grid(beta=seq(from=1,to=4,length=50),
+            gamma=seq(from=0.7,to=3,length=50),
+            rho=0.8,
+            N=2600) -> p
+
+foreach (theta=iter(p,"row"),.combine=rbind,
+         .inorder=FALSE,.options.multicore=mcopts) %dopar% 
+ {
+   pfilter(sir,params=unlist(theta),Np=5000) -> pf
+   theta$loglik <- logLik(pf)
+   theta
+ } -> p
+
+```
+```{r sir-grid1-plot}
+pp <- mutate(p,loglik=ifelse(loglik>max(loglik)-100,loglik,NA))
+ggplot(data=pp,mapping=aes(x=beta,y=gamma,z=loglik,fill=loglik))+
+  geom_tile(color=NA)+
+  geom_contour(color='black',binwidth=3)+
+  scale_fill_gradient()+
+  labs(x=expression(beta),y=expression(gamma))
+```
+
+------------------------
+
+### Exercise: 2D likelihood slice
+
+Compute a slice of the likelihood in the $\beta$-$N$ plane.
+
+------------------------
+
+
+```{r sir-grid2,eval=FALSE,include=FALSE,purl=FALSE,fig.show=FALSE}
+expand.grid(beta=seq(from=1,to=3,length=50),
+            gamma=1,
+            rho=0.8,
+            N=seq(from=1600,to=3000,length=50)) -> p
+
+foreach (theta=iter(p,"row"),.combine=rbind,
+         .inorder=FALSE,.options.multicore=mcopts) %dopar% 
+ {
+   pfilter(sir,params=unlist(theta),Np=5000) -> pf
+   theta$loglik <- logLik(pf)
+   theta
+ } -> p
+
+```
+```{r sir-grid2-plot,eval=FALSE,include=FALSE,purl=FALSE}
+pp <- mutate(p,loglik=ifelse(loglik>max(loglik)-100,loglik,NA))
+ggplot(data=pp,mapping=aes(x=beta,y=N,z=loglik,fill=loglik))+
+  geom_tile(color=NA)+
+  geom_contour(color='black',binwidth=3)+
+  scale_fill_gradient()+
+  labs(x=expression(beta),y=expression(N))
+```
+
+
+## Maximizing the likelihood
+
+Call the whole parameter space $\Theta$. Let $\Theta^*$ be a subset of $\Theta$, constraining parameters to describe scientific hypotheses of interest. For example, in a disease transmission model, $\Theta^*$ could assert that the probability of a case being reported is $\rho=0.8$.
+
+* We define the maximized log likelihood for $\Theta$ and $\Theta^*$ to be
+$$\ell_\mathrm{max}=\max\{\ell(\theta), \mbox{$\theta$ in $\Theta$}\},\quad
+\ell^*_\mathrm{max}=\max\{\ell(\theta), \mbox{$\theta$ in $\Theta^*$}\}.$$
+
+* Intuitively, a model with a higher maximized likelihood should be preferable to a model with a substantially lower maximized likelihood. 
+
+* However, since $\Theta^*$ is a subset of $\Theta$, it is mathematically necessary that
+$$ \ell_\mathrm{max} > \hat\ell^*_\mathrm{max}.$$
+This raises the question of how close $\ell^*_\mathrm{max}$ should be to $\ell_\mathrm{max}$ to make it reasonable to prefer the simpler model $\Theta^*$ over the more complex model $\Theta$.
+
+* The principle of parsimony (Occam's razor) advocates  scientists to be satisfied with the simpler model unless there is good evidence to do otherwise. So, for a formal hypothesis test, we set our null hypothesis to be $\Theta^*$ and our alternative hypothesis to be $\Theta$.
+
+* A likelihood ratio test rejects $\Theta^*$ in favor of $\Theta$ when 
+$$ \ell_\mathrm{max} -\ell_\mathrm{max}^* > c.$$
+
+* An elegant mathematical property (Wilks' theorem) says that, for regular parametric models where $N$ is large and $\Theta$ has $d$ more free parameters than $\Theta^*$, then $2(\ell_\mathrm{max}-\ell^*_\mathrm{max})$ has a chi-square distribution with $d$ degrees of freedom.
+
+* For the concrete situation where $\Theta^*$ fixes a single parameter, $d=1$, and we look for a test of size $0.05$, this suggests we reject $\Theta^*$ if
+$$\ell_\mathrm{max} - \ell^*_\mathrm{max} > 1.92$$
+since $P[\chi^2_1>3.84]=0.05$.
+
+* One can carry out a simulation study to assess the actual size of this test, if one is concerned whether the asymptotic property of Wilks is sufficiently accurate. Fortunately, Wilks' theorem is often a good approximation for many finite-sample problems.
+
+* Wilks' theorem gives a convenient, quick scientific interpretation of maximized log likelihood values. One can choose later whether to refine the interpretation via further simulation studies. 
+
+* Akaike's information criterion (AIC) is defined by
+$$AIC = -2(\mbox{maximized log likelihood}) +2(\mbox{\# parametes}).$$
+This criterion makes a slightly different decision, recommending $\Theta$ over $\Theta^*$ if
+$$\ell_\mathrm{max} -\ell_\mathrm{max}^* > d.$$
+The justification of AIC is based on minimizing prediction error. AIC tends to prefer larger models than Occam's razor: heuristically, it does not value simplicity for its own sake, but only because unnecessary parameters lead to over-fitting and hence greater out-of-fit forecasting error. 
+
+* Wilks' theorem applies only to nested hypotheses (when $\Theta^*$ is a subset of $\Theta$) whereas AIC is applicable to compare non-nested models, which may have entirely different structure. 
+
+* Although AIC is not designed to be a formal statistical test, it is a commonly used objective rule for model selection. This rule could be intrepreted as a hypothsis test, with the size and power investigated by simulation, if desired.
+
+### Exercise: AIC as a formal statistical test
+
+Determine the size of AIC as a hypothesis test for nested hypotheses with $d=1$ in a regular parametric situation. 
+
+## Confidence intervals for parameters: Profile likelihood
+
+The likelihood ratio test with $d=1$ gives a good way to construct confidence intervals. Suppose we are interested in a specific parameter, $\phi$, and we want to consider whether the data support a possibility that $\phi=\phi^*$ in the absence of assumptions on the other parameters. Then, we can take $\Theta^*$ to be the subset of $\Theta$ satisfying $\phi=\phi^*$. Using the chi-square approximation to the likelihood ratio statistic, a 95% confidence interval for $\phi$ consists of all the values $\phi^*$ for which
+$$\ell_\mathrm{max}-\ell_\mathrm{max}^* < 1.92.$$
+
+A way to vizualize the information about a specific parameter $\phi$ is via the profile likelihood function, defined as 
+$$\ell_\mathrm{profile}(\phi^*) = \max\{\mbox{$\ell(\theta)$ subject to the constraint $\phi=\phi^*$}\}.$$
+We then plot $\ell_\mathrm{profile}(\phi)$ against $\phi$. 
+
+* The set of values of $\phi$ for which $\ell_\mathrm{profile}(\phi)$ lies above a horizontal line with $y$-axis value $\ell_\mathrm{max}-c$ gives an approximate confidence interval (using Wilks' theorem) with confidence level given by
+$P[\chi^2_1<2c]$.
+
+* The maximum of $\ell_\mathrm{profile}(\phi)$ over all values of $\phi$ is $\ell_\mathrm{max}$.
+
+* Thus, a profile plot allows us to visualize an entire spectrum of confidence intervals. 
+
+* If the profile plot has two peaks (i.e., $\ell_\mathrm{profile}(\phi)$ is bimodal) then a likelihood ratio test helps us to assess whether or not both peaks provide adequate explanations of the data.
+
+## Point estimates for parameters: The maximum likelihood estimate (MLE)
+
+We define maximum likelihood estimates (MLEs) $\hat\theta$ and $\hat\theta^*$ such that
+$$\ell(\hat\theta)=\ell_\mathrm{max},\quad \ell(\hat\theta^*)=\ell_\mathrm{max}^*.$$
+
+* If the likelihood function has a flat region, or ridge, at its maximum then the MLE is not unique. Alternatively, one can talk about a maximum likelihood surface describing the set of parameter values for which $\ell(\hat\theta)=\ell_\mathrm{max}$.
+
+* Flat, or nearly flat, ridges in the likelihood surface are not just an idle concern. Many dynamic models have some combination of parameters that is weakly identified, meaning that it cannot be well estimated from the available data.
+
+## Biological interpretation of parameter estimates
+
+When we write down a mechanistic model for an epidemiological system, we have some idea of what we intend parameters to mean; a reporting rate, a contact rate between individuals, an immigration rate, a duration of immunity, etc. 
+
+* The data and the parameter estimation procedure do not know about our intended interpretation of the model. It can and does happen that some parameter estimates statistically consistent with the data may be scientifically absurd according to the biological reasoning that went into building the model. 
+
+* This can arise as a consequence of weak identifiability. 
+
+* It can also be a warning that the data do not agree that our model represents reality in the way we had hoped. Perhaps more work is needed on model development.
+
+* Biologically unreasonable parameter estimates can sometimes be avoided by fixing some parameters at known, reasonable values. However, this risks suppressing the warning that the data were trying to give about weaknesses in the model, or in the biological interpretation of it.
+
+* This issue will be discussed further when it arises in case studies.
+
+## Maximizing the likelihood using the particle filter
+
+Clearly, the default parameter set is not particularly close to the MLE.
+One way to find the MLE is to try optimizing the estimated likelihood directly.
+There are many optimization algorithms to choose from, and many implemented in `R`.
+
+Three issues arise immediately.
+
+1. The particle filter gives us a stochastic estimate of the likelihood.
+We can reduce this variability by making `Np` larger, but we cannot make it go away.
+If we use a deterministic optimizer (i.e., one that assumes the objective function is evaluated deterministically), then we must control this variability somehow.
+For example, we can fix the seed of the pseudo-random number generator.
+A side effect will be that the objective function becomes jagged, marked by many small local knolls and pits.
+Alternatively, we can use a stochastic optimization algorithm, with which we will be only be able to obtain estimates of our MLE.
+This is the trade-off between a noisy and a rough objective function.
+2. Because the particle filter gives us just an estimate of the likelihood and no information about the derivative, we must choose an algorithm that is "derivative-free".
+There are many such, but we can expect less efficiency than would be possible with derivative information.
+Note that finite differencing is not an especially promising way of constructing derivatives. 
+The price would be a $n$-fold increase in cpu time, where $n$ is the dimension of the parameter space.
+Also, since the likelihood is only estimated, we would expect the derivative estimates to be noisy.
+3. Finally, the parameters are constrained to be positive, and $\rho < 1$.
+We must therefore select an optimizer that can solve this *constrained maximization problem*, or figure out some of way of turning it into an unconstrained maximization problem.
+For the latter purpose, one can transform the parameters onto a scale on which there are no constraints.
+
+Here, let's opt for deterministic optimization of a rough function.
+We'll try using `optim`'s default method: Nelder-Mead, fixing the random-number generator seed to make the likelihood calculation deterministic.
+Since Nelder-Mead is an unconstrained optimizer, we must transform the parameters.
+The following `Csnippet`s encode an appropriate transformation and its inverse, and introduce them into the `pomp` object.
+```{r sir-partrans}
+toEst <- Csnippet("
+ Tbeta = log(beta);
+ Tgamma = log(gamma);
+ Trho = logit(rho);
+")
+
+fromEst <- Csnippet("
+ Tbeta = exp(beta);
+ Tgamma = exp(gamma);
+ Trho = expit(rho);
+")
+
+pomp(sir,toEstimationScale=toEst,
+     fromEstimationScale=fromEst,
+     paramnames=c("beta","gamma","rho")) -> sir
+```
+
+Let's fix a reference point in parameter space and insert these parameters into the `pomp` object:
+```{r sir-ref-params}
+coef(sir) <- c(beta=2,gamma=1,rho=0.8,N=2600)
+```
+
+The following constructs a function returning the negative log likelihood of the data at a given point in parameter space.
+
+```{r sir-like-optim-1,echo=T,eval=T,results='markup',cache=T}
+neg.ll <- function (par, est, ...) {
+  ## parameters to be estimated are named in 'est'
+  allpars <- coef(sir,transform=TRUE)
+  allpars[est] <- par
+  try(
+    pfilter(sir,params=partrans(sir,allpars,dir="fromEst"),
+            Np=1000,seed=3488755L,...)
+  ) -> pf
+  if (inherits(pf,"try-error")) {
+    1e10                 ## a big, bad number
+    } else {
+      -logLik(pf)
+    }
+}
+```
+
+Now we call `optim` to minimize this function:
+```{r sir-like-optim-2,results='markup',cache=T}
+## use Nelder-Mead with fixed RNG seed
+fit <- optim(
+  par=c(log(1), log(2), log(0.8)),
+  est=c("gamma","beta","rho"),
+  fn=neg.ll,
+  method="Nelder-Mead",
+  control=list(maxit=400,trace=0)
+)
+
+mle <- sir
+coef(mle,c("gamma","beta","rho"),transform=TRUE) <- fit$par
+coef(mle,c("gamma","beta","rho")) ## point estimate
+
+fit$val
+
+simulate(mle,nsim=8,as.data.frame=TRUE,include=TRUE) -> sims
+
+lls <- replicate(n=5,logLik(pfilter(mle,Np=5000)))
+ll <- logmeanexp(lls,se=TRUE); ll
+```
+
+Some simulations at these parameters are shown next:
+
+```{r sir-like-optim-plot}
+ggplot(data=sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  geom_line()
+```
+
+
+### Exercise: More slices
+
+Construct likelihood slices through the MLE we just found.
+
+### Exercise: Visualizing the likelihood surface
+
+Evaluate the likelihood at points on a grid lying in a 2D slice through the MLE we found above.
+Each group should choose a different slice.
+Afterward, we'll compare results across groups.
+
+### Exercise: Global maximization
+
+The search of parameter space we conducted above was local.
+It is possible that we found a local maximum, but that other maxima exist with higher likelihoods.
+Conduct a more thorough search by initializing the Nelder-Mead starting points across a wider region of parameter space.
+Do you find any other local maxima?
+
+--------------------------
+
+
+## References
+

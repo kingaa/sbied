@@ -1,0 +1,370 @@
+---
+title: "Simulation-based Inference for Epidemiological Dynamics"
+author: "Aaron A. King and Edward L. Ionides"
+date: "05/12/2015"
+output:
+  html_document:
+    theme: flatly
+    toc: yes
+bibliography: sbied.bib
+csl: ecology.csl
+
+---
+
+Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
+
+```{r opts,include=FALSE}
+library(knitr)
+prefix <- "pomps"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  out.width="\\linewidth",
+  dpi=300,
+  dev='png',
+  dev.args=list(bg='transparent')
+  )
+
+options(
+  keep.source=TRUE,
+  encoding="UTF-8"
+  )
+
+library(ggplot2)
+theme_set(theme_bw())
+```
+
+**Module description:**
+This module introduces statistical inference techniques and computational methods for dynamic models of epidemiological systems. The course will explore deterministic and stochastic formulations of epidemiological dynamics and develop inference methods appropriate for a range of models. Special emphasis will be on exact and approximate likelihood as the key elements in parameter estimation, hypothesis testing, and model selection. Specifically, the course will cover sequential Monte Carlo and synthetic likelihood techniques. Students will learn to implement these in R to carry out maximum likelihood and Bayesian inference. Knowledge of the material in Module 1 is assumed. Students new to R should complete a tutorial before the module.
+
+----------------------
+
+## Daily Schedule
+
+**Time** | **Daily Activity**
+-----------|------------
+8:00 am -- 8:30 am | Coffee (and Registration on Mondays)
+8:30 am -- 10:00 am | Class Session
+10:00 am -- 10:30 am | Break
+10:30 am -- 12:00 pm | Class Session
+12:00 pm -- 1:30 pm | Lunch Break (and Registration on Wednesdays)
+1:30 pm -- 3:00 pm | Class Session
+3:00 pm -- 3:30 pm | Break
+3:30 pm -- 5:00 pm | Class Session
+5:00 pm -- 6:00 pm | Participants’ and Instructors’ Reception (Mondays and Wednesdays)
+
+----------------------
+
+## Pre-SISMID timetable:
+* 1 July - Distribute background reading
+* 24 June - Distribute instructions on installation of R and packages, Rstudio, testing of SHLIB, tutorial for R newbies
+* Reading list
+    - background [@King2008; @Blake2014; @Camacho2011; @Lavine2013; @Laneri2010]
+    - JSS MS
+* website: http://kinglab.eeb.lsa.umich.edu/SBIED/
+* git repo
+
+----------------------
+
+## Wed. Jul 15
+
+### 1:30-3:00 (Session 1). 
+
+### 1A. What is "Simulation-based Inference for Epidemiological Dynamics?" (ELI)
+
+* Goals for model-based inference.
+
+* Some scientific challenges.
+
+* Mechanistic vs non-mechanistic models (POMP vs other common model structures: ARIMA, LME, NLME, etc.) 
+
+I HAVEN'T DONE THIS HERE. IT COULD COME UP IN DISCUSSION OF THE "OVERVIEW". I'D PREFER TO POSTPONE THE ISSUE TO A SUB-TOPIC OF "BENCHMARKING AND DIAGNOSTIC METHODS." 
+
+
+* Computation exercise: playing with a simple POMP in pomp.  Example: boarding-school flu or Canadian rubella
+
+----------------------
+
+#### Overview of our ambitions
+
+* __Goal__: Building understanding of disease transmission processes to improve public health.
+    + Population-level processes: transmission events; susceptible, infected and recovered hosts. 
+    + Within-host processes: pathogen vs the immune system; locations and life stages of pathogens.  
+* __Approach__: Using time series data to inform dynamic models.
+* __Strengths and weaknesses of this approach__:
+
+#### Outline
+
+* why dynamic models?
+* what's wrong with traditional approaches?
+* what is simulation-based inference?
+* case studies
+
+--------------------------------
+
+#### Questions and answers
+
+1. What roles are played by asymptomatic infection and waning immunity in cholera epidemics? (LINK TO FIGURE, OR PAPER?)
+
+2. What is the contribution to the HIV epidemic of dynamic variation in sexual behavior of an individual over time? How does this compare to the role of heterogeneity between individuals? (LINK TO FIGURE, OR PAPER?)
+
+3. What explains the seasonality of measles?
+
+4. What explains the seasonality of influenza?
+
+5. What explains the interannual variability of malaria?
+
+6. What will happen next in an Ebola outbreak? 
+
+
+
+--------------------------------
+
+#### Noisy clockwork: Time series analysis of population fluctuations in animals
+
+#### Six problems of [Bjornstad and Grenfell (Science, 2001)](http://dx.doi.org/10.1126/science.1062226)
+
+* Obstacles for __ecological__ modeling and inference via nonlinear mechanistic models:
+
+1. Combining measurement noise and process noise.
+
+2. Including covariates in mechanistically plausible ways.
+
+3. Continuous time models.
+
+4. Modeling and estimating interactions in coupled systems. 
+
+5. Dealing with unobserved variables.
+
+6. Modeling spatial-temporal dynamics.
+
+* The same issues arise for __epidemiological__ modeling and inference via nonlinear mechanistic models.
+
+
+-------------------------------
+
+#### Partially observed Markov process (POMP) models
+
+
+* Data $y^*_1,\dots,y^*_N$ collected at times $t_1<\dots<t_N$ are modeled as noisy and incomplete observations of a Markov process $\{X(t), t\ge t_0\}$.
+
+* This is a __partially observed Markov process (POMP)__ model, also known as a hidden Markov model or a state space model.
+
+* $\{X(t)\}$ is Markov if the history of the process, $\{X(s), s\le t\}$, is uninformative about the future of the process, $\{X(s), s\ge t\}$, given the current value of the process, $X(t)$. 
+
+* If all quantities important for the dynamics of the system are placed in the __state__, $X(t)$, then the Markov property holds by construction.
+
+* POMP models can include all the features desired by @Bjornstad2001.
+
+
+------------------------------
+
+#### Notation for partially observed Markov process models
+
+* Write $X_n=X(t_n)$ and $X_{0:N}=(X_0,\dots,X_N)$. Let $Y_n$ be a random variable modeling the observation at time $t_n$.
+
+* The one-step transition density, $f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)$, together with the measurement density, $f_{Y_n|X_n}(y_n|x_n;\theta)$ and the initial density, $f_{X_0}(x_0;\theta)$, specify the entire joint density via
+
+$$f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta) = f_{X_0}(x_0;\theta)\,\prod_{n=1}^N\!f_{X_n | X_{n-1}}(x_n|x_{n-1};\theta)\,f_{Y_n|X_n}(y_n|x_n;\theta).$$
+
+* The marginal density for sequence of measurements, $Y_{1:N}$, evaluated at the data, $y_{1:N}^*$, is
+
+$$ f_{Y_{1:N}}(y^*_{1:N};\theta)=\int f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)\, dx_{0:N}.
+$$
+
+(SOME SIMPLE ALGEBRA HERE MIGHT BE APPROPRIATE AS AN EXERCISE - TO (RE)FAMILIARIZE THE AUDIENCE WITH SOME BASIC OPERATIONS ON DENSITIES??) 
+
+------------------------------
+
+To think algorithmically, we define some function calls:
+
+* rprocess( ): a draw from $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
+
+* dprocess( ): evaluation of $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
+
+* rmeasure( ): a draw from $f_{Y_n|X_n}(y_n| x_n;\theta)$
+
+* dmeasure( ): evaluation of $f_{Y_n|X_n}(y_n| x_n;\theta)$
+
+------------------------------
+
+#### What does it mean for methodology to be __simulation-based__?
+
+* Oftentimes, simulating random processes is easier than evaluating their transition probabilities.
+
+* In other words, we may be able to write rprocess() but not dprocess().
+
+*  __Simulation-based__ methods require the user to specify rprocess() but not dprocess().
+ 
+* __Plug-and-play__, __likelihood-free__ and __equation-free__ are alternative terms for simulation-based.
+
+(DEFINITIONS SHOULD BE HYPERLINKS TO TAKE FULL ADVANTAGE OF HTML FORMAT)
+
+* Much development of simulation-based statistical methodology has occurred in the past decade.
+
+------------------------------
+
+#### The pomp R package for POMP models
+
+* pomp is an R package for data analysis using partially observed Markov process (POMP) models.
+
+* Note the distinction: lower case pomp  is a software package; upper case POMP is a class of models.
+
+* pomp builds methodology for POMP models in terms of arbitrary user-specified rprocess(), dprocess(), rmeasure() and dmeasure() functions.
+ 
+* Following modern practice, most methodology in pomp is simulation-based, so does not require specification of dprocess().
+
+* pomp has facilities to help construct rprocess(), rmeasure() and dmeasure() functions for model classes of epidemiological interest.
+
+* pomp provides a forum for development, modification and sharing of models, methodology and data analysis workflows.
+
+----------------------------
+
+### 1B. Computer lab: Introduction to POMP models in pomp (AAK)
+
+* I WAS THINKING THAT FIRING UP pomp,  FINDING THE EXAMPLES, THE DOCUMENTATION, AND RUNNING simulate ETC ON EXISTING EXAMPLES WOULD BE QUITE ENOUGH FOR THIS POINT. THE NEXT SESSION WILL WORK ON BUILDING A POMP.
+
+* THE LAST SLIDES OF 1A COULD COME HERE
+
+* MAYBE KICK OFF WITH SOMETHING LIKE SEC 2.1 OF THE JSS PAPER?
+
+* I'VE BEEN THINKING THAT, TO A 1ST APPROXIMATION, OUR JOB IS TO GUIDE PEOPLE THROUGH THE JSS PAPER AND THEN LEARN HOW TO PUT IT TO USE IN SCIENTIFIC SITUATIONS ARISING IN EPIDEMIOLOGY
+    + THE AUDIENCE IS SOMEWHAT DIFFERENT FROM THE JSS TARGET AUDIENCE, WHICH MOSTLY INVOLVES CHANGING ORDER AND EMPHASIS FROM THE JSS PAPER, BUT NOT THE FUNDAMENTAL TOPICS
+    + MORE EMPHASIS ON MODELS AND SIMULATION (SESSION 2 COVERS JSS SECS 4.1, 5.1, 5.2)
+    + ALSO, DOING JSS SEC 3.1 IN REVERSE ORDER: PFILTER BEFORE LIKELIHOOD 
+    + I'VE JUST NOTICED YOUR ALTERNATIVE OUTLINE FOLLOWS THE JSS ORDER ON THIS
+    + MY INCLINATION IS TO TEACH THE THEORY WHEN WE NEED IT FOR DOING... "HERE IS A PARTICLE FILTER. NOW WE CAN GET AT THE LIKELIHOOD. WHAT DO WE DO WITH IT?" rather than, "HERE IS THE THEORY OF LIKELIHOOD. FORTUNATELY, WE HAVE A PARTICLE FILTER SO WE CAN APPLY IT." BOTH APPROACHES ARE VALID, SO IT IS A GUESS WHAT'S BEST FOR THIS AUDIENCE.
+
+----------------------------
+
+### 3:30-5:00 (Session 2)
+
+### 2A. Simulating dynamic models: The stochastic Euler method.
+
+#### Euler's method for numerical solution of a deterministic, ordinary differential equation (ODE)
+
+#### Adding noise to differential equations to give a stochastic differential equation (SDE)
+
+#### ODE and SDE representations of an SIR model
+
+#### Compartment models, represented as ODEs, SDEs and Markov chains
+
+#### Markov chain representation of an SIR model
+
+* I THINK WE SHOULD FOCUS ON EULER METHODS; THE GILLESPIE ALGORITHM IS NOT EVEN NEEDED FOR OUR PURPOSES, AND ANYWAY IT HAS LIMITED SCOPE WHEREAS THE EULER APPROACH IS FAIRLY UNIVERSAL TO ALL THE CTS TIME MODELS WE WANT.
+
+* THIS IS ALL CTS TIME, AND NOISY RATES WILL PROBABLY HAVE TO COME LATER, BUT I THINK THIS IS ALREADY PLENTY TO DO, AND SUFFICIENT FOR THE 2B OUTLINED BELOW.
+
+### 2B. Computer lab: Exploring an SIR model in pomp
+
+* AN ASSUMPTION: STUDENTS MAY BE MORE MOTIVATED TO TINKER WITH EXISTING SIR CODE THAN TO GO THROUGH THE MORE RIGOROUS PROCESS OF FIRST LEARNING HOW TO BUILD A DISCRETE-TIME POMP FROM SCRATCH, ETC.
+
+* JSS SEC 5.1, 5.2
+
+ Computation exercise: playing with an SIR simulation model in pomp.
+
+
+## Thu. Jul 16
+
+### 8:30-10:00 (Session 3)
+
+### 3A: theory of particle filter (AAK)
+
+ Reconstruction of states from noisy observations; particle filtering
+
+### 3B: particle filtering in practice (AAK)
+ Computation exercise: particle filtering for an SIR epidemic (boarding school data?); filtering  failures, noise in likelihood estimation; effective sample size; conditional likelihoods; filtering means
+
+### 10:30-12:00 (Session 4)
+
+### 4A: Principles of likelihood-based inference. (ELI) 
+
+ML.  Likelihood ratio test, profile, AIC.  Likelihood surfaces, slices, profiles, MLE.  2D example via pfilter.  Visualization.  How to handle >2D?  
+
+### 4B: likelihood slices & grid-based profiles (AAK)
+
+### 1:30-3:00 (Session 5)
+
+### 5A: theory of IF (ELI)
+
+Iterated filtering to coerce a particle filter into carrying out maximization.
+
+### 5B: IF2 in practice (ELI)
+
+Computation exercise: IF2 for an SIR epidemic (boarding-school flu)
+
+ Practice of likelihood-based inference - profiles; mif likelihood vs pfilter likelihood; poor man's profile; building and exploring a database of search output; building and using trajectory-matching and iid benchmarks; model selection methods.
+
+ Computation exercise: BBS example
+
+### 3:30-5:00 (Session 6)
+
+ Diagnostic methods: simulation, probes, constructing and interpreting residuals.  Model criticism and improvement.  Benchmarks.
+
+ Computation exercise: all this with the BBS example.
+
+## Fri. Jul 17
+
+### 8:30-10:00 (Session 7)
+ 
+ Case study: polio. (ELI)
+ 
+ Covariates, stochasticity, extinction.
+
+ [i think a format where we discuss a relevant paper for 45 mins and then the students get to spend 45 mins on some simple assigned tasks with the corresponding pomp objects would be interesting for the students. they'd feel they're making the transition to working on a research problem, and this sort of approach of modifying existing code matches how most people learn pomp when we get them working on projects. also, we could distribute the papers ahead of time and give more committed members of the audience a head start on the background]
+
+### 10:30-12:00 (Session 8)
+
+ Case study: measles. (AAK)
+ 
+ Continuous-time processes, demographic & extra-demographic stochasticity.
+ Emphasis on the surprising importance of how stochasticity is included in the model.
+ Noise on the rate of Markov chains.
+ Interpretation of fitted parameters.
+ Model mis-specification.
+
+### 1:30-3:00 (Session 9)
+ 
+ Case study: sexual contacts panel data (Romero et al. 2015).
+
+### 3:30-5:00 (Session 10)
+
+ Case study: Ebola and forecasting (King et al. 2015)
+ 
+----------------------
+
+## Alternative outline.
+
+1. Modeling & inference.  POMP models
+1. Simulation of dynamic POMP models: stochastic maps, Euler
+1. Simple example: single outbreak, coding up the model, simulation
+1. Inference: parameter estimation; full-information vs feature matching; principles of likelihood-based inference
+1. Likelihood for POMP models: the particle filter.  Theory.
+1. Particle filter in practice: computation of likelihood and likelihood surfaces; graphical display; slices and profiles; LR confidence intervals
+1. Maximization of likelihood using IF2.  Construction of profiles
+1. Inference: model selection
+1. Advanced model construction: SDE, Euler-multinomial, extrademographic stochasticity
+1. Case study: measles, cholera, malaria
+1. Advanced practicum: Ebola in West Africa 2014
+
+
+----------------------
+
+## References
