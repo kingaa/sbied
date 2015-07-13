@@ -1,6 +1,6 @@
 ---
 title: Likelihood for POMPs
-author: "Aaron A. King"
+author: "Aaron A. King and Edward L. Ionides"
 date: "2015-07-09"
 output:
   html_document:

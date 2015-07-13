@@ -14,11 +14,12 @@ This module introduces statistical inference techniques and computational method
 
 ## Course objectives
 
-1. to introduce the concept of partially observed Markov process models as a tool for scientific investigation and public health policy
-1. to give students the ability to formulate models of their own
-1. to teach efficient approaches for performing scientific inference using such models
+1. to introduce partially observed Markov process (POMP) models as tools for scientific investigation and public health policy
+1. to give students the ability to formulate POMP models of their own
+1. to teach efficient approaches for performing scientific inference using POMP models
 1. to familiarize students with the **pomp** package
 1. to give students opportunities to work with such inference methods
+1. to provide documented examples for student re-use
 
 ----------------------
 
@@ -41,7 +42,7 @@ This module introduces statistical inference techniques and computational method
 
 
 1. [Introduction: What is "Simulation-based Inference for Epidemiological Dynamics?"](./intro/intro.html)
-2. [Simulating dynamic models: the stochastic Euler method.](./stochsim/stochsim.html)
+2. [Dynamic models and their simulation by Euler's method.](./stochsim/stochsim.html)
 3. [The particle filter: theory and practice](./pfilter/pfilter.html)
 1. [Iterated filtering: theory and practice](./mif/mif.html)
 1. [Case study I: polio.](./polio/polio.html)

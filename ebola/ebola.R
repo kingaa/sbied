@@ -1,470 +1,184 @@
-## ----packages------------------------------------------------------------
-pkgs <- c("plyr","pomp","reshape2","magrittr","ggplot2","scales",
-          "foreach","doMC","doMPI","iterators")
+## ----prelims,include=FALSE,cache=FALSE-----------------------------------
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  pomp.cache="cache",
+  encoding="UTF-8"
+  )
 
-## ----package-install,eval=FALSE------------------------------------------
-## ipkgs <- rownames(installed.packages())
-## npkgs <- setdiff(pkgs,ipkgs)
-## if (length(npkgs)>0) install.packages(npkgs)
-## if (packageVersion("pomp")<"0.62-5") {
-##   install.packages("pomp", repos="http://R-Forge.R-project.org")
-##   }
+set.seed(594709947L)
+require(ggplot2)
+theme_set(theme_bw())
+require(plyr)
+require(reshape2)
+require(magrittr)
+require(pomp)
+stopifnot(packageVersion("pomp")>="0.69-1")
 
-## ----ebola,eval=FALSE----------------------------------------------------
-## require(pomp)
-## require(plyr)
-## require(reshape2)
-## require(magrittr)
-## 
-## stopifnot(packageVersion("pomp")>="0.62-4")
-## 
-## WHO.situation.report.Oct.1 <- '
-## week,Guinea,Liberia,SierraLeone
-## 1,2.244,,
-## 2,2.244,,
-## 3,0.073,,
-## 4,5.717,,
-## 5,3.954,,
-## 6,5.444,,
-## 7,3.274,,
-## 8,5.762,,
-## 9,7.615,,
-## 10,7.615,,
-## 11,27.392,,
-## 12,17.387,,
-## 13,27.115,,
-## 14,29.29,,
-## 15,27.84,,
-## 16,16.345,,
-## 17,10.917,,
-## 18,11.959,,
-## 19,11.959,,
-## 20,8.657,,
-## 21,26.537,,
-## 22,47.764,3.517,
-## 23,26.582,1.043,5.494
-## 24,32.967,18,57.048
-## 25,18.707,16.34,76.022
-## 26,24.322,13.742,36.768
-## 27,4.719,10.155,81.929
-## 28,7.081,24.856,102.632
-## 29,8.527,53.294,69.823
-## 30,92.227,70.146,81.783
-## 31,26.423,139.269,99.775
-## 32,16.549,65.66,88.17
-## 33,36.819,240.645,90.489
-## 34,92.08,274.826,161.54
-## 35,101.03,215.56,168.966
-## 36,102.113,388.553,186.144
-## 37,83.016,410.299,220.442
-## 38,106.674,300.989,258.693
-## 39,55.522,240.237,299.546
-## '
-## 
-## ## Population sizes in Guinea, Liberia, and Sierra Leone (census 2014)
-## populations <- c(Guinea=10628972,Liberia=4092310,SierraLeone=6190280)
-## populations["WestAfrica"] <- sum(populations)
-## 
-## read.csv(text=WHO.situation.report.Oct.1,stringsAsFactors=FALSE) %>%
-##   mutate(date=seq(from=as.Date("2014-01-05"),length=length(week),by='week')) %>%
-##   melt(id=c("week","date"),variable.name="country",value.name="cases") %>%
-##   mutate(deaths=NA) -> dat
-## 
-## ## Parameter transformations
-## 
-## paruntrans <- Csnippet('
-##   double *IC = &S_0;
-##   double *TIC = &TS_0;
-##   TR0 = log(R0);
-##   Trho = logit(rho);
-##   Tk = log(k);
-##   to_log_barycentric(TIC,IC,4);
-## ')
-## 
-## partrans <- Csnippet('
-##   double *IC = &S_0;
-##   double *TIC = &TS_0;
-##   TR0 = exp(R0);
-##   Trho = expit(rho);
-##   Tk = exp(k);
-##   from_log_barycentric(TIC,IC,4);
-## ')
-## 
-## ##  Measurement model: hierarchical model for cases
-## ## p(C_t | H_t): Negative binomial with mean rho*H_t and variance rho*H_t*(1+k*rho*H_t)
-## dObs <- Csnippet('
-##   double f;
-##   if (k > 0.0)
-##     f = dnbinom_mu(nearbyint(cases),1.0/k,rho*N_EI,1);
-##   else
-##     f = dpois(nearbyint(cases),rho*N_EI,1);
-##   lik = (give_log) ? f : exp(f);
-## ')
-## 
-## rObs <- Csnippet('
-##   if (k > 0) {
-##     cases = rnbinom_mu(1.0/k,rho*N_EI);
-##     deaths = rnbinom_mu(1.0/k,rho*cfr*N_IR);
-##   } else {
-##     cases = rpois(rho*N_EI);
-##     deaths = rpois(rho*cfr*N_IR);
-##   }')
-## 
-## ### measurement model for ordinary least-squares
-## dObsLS <- Csnippet('
-##   double f;
-##   f = dnorm(cases,rho*N_EI,k,1);
-##   lik = (give_log) ? f : exp(f);
-## ')
-## 
-## rObsLS <- Csnippet('
-##   cases = rnorm(rho*N_EI,k);
-##   deaths = NA_REAL;
-## ')
-## 
-## ## Process model simulator
-## rSim <- Csnippet('
-##   double lambda, beta;
-##   double *E = &E1;
-##   beta = R0 * gamma; // Transmission rate
-##   lambda = beta * I / N; // Force of infection
-##   int i;
-## 
-##   // Transitions
-##   // From class S
-##   double transS = rbinom(S, 1.0 - exp(- lambda * dt)); // No of infections
-##   // From class E
-##   double transE[nstageE]; // No of transitions between classes E
-##   for(i = 0; i < nstageE; i++){
-##     transE[i] = rbinom(E[i], 1.0 - exp(- nstageE * alpha * dt));
-##   }
-##   // From class I
-##   double transI = rbinom(I, 1.0 - exp(- gamma * dt)); // No of transitions I->R
-## 
-##   // Balance the equations
-##   S -= transS;
-##   E[0] += transS - transE[0];
-##   for(i=1; i < nstageE; i++) {
-##     E[i] += transE[i-1] - transE[i];
-##   }
-##   I += transE[nstageE - 1] - transI;
-##   R += transI;
-##   N_EI += transE[nstageE - 1]; // No of transitions from E to I
-##   N_IR += transI; // No of transitions from I to R
-## ')
-## 
-## ## Deterministic skeleton (an ODE), used in trajectory matching
-## skel <- Csnippet('
-##   double lambda, beta;
-##   double *E = &E1;
-##   double *DE = &DE1;
-##   beta = R0 * gamma; // Transmission rate
-##   lambda = beta * I / N; // Force of infection
-##   int i;
-## 
-##   // Balance the equations
-##   DS = - lambda * S;
-##   DE[0] = lambda * S - nstageE * alpha * E[0];
-##   for (i=1; i < nstageE; i++)
-##     DE[i] = nstageE * alpha * (E[i-1]-E[i]);
-##   DI = nstageE * alpha * E[nstageE-1] - gamma * I;
-##   DR = gamma * I;
-##   DN_EI = nstageE * alpha * E[nstageE-1];
-##   DN_IR = gamma * I;
-## ')
-## 
-## ebolaModel <- function (country=c("Guinea", "SierraLeone", "Liberia", "WestAfrica"),
-##                         data = NULL,
-##                         timestep = 0.01, nstageE = 3L,
-##                         type = c("raw","cum"), na.rm = FALSE, least.sq = FALSE) {
-## 
-##   type <- match.arg(type)
-##   ctry <- match.arg(country)
-##   pop <- unname(populations[ctry])
-## 
-##   ## Incubation period is supposed to be Gamma distributed with shape parameter 3
-##   ## and mean 11.4 days.  The discrete-time formula is used to calculate the
-##   ## corresponding alpha (cf He et al., Interface 2010).
-##   ## Case-fatality ratio is fixed at 0.7 (cf WHO Ebola response team, NEJM 2014)
-##   incubation_period <- 11.4/7
-##   infectious_period <- 7/7
-##   index_case <- 10/pop
-##   dt <- timestep
-##   nstageE <- as.integer(nstageE)
-## 
-##   globs <- paste0("static int nstageE = ",nstageE,";");
-## 
-##   theta <- c(N=pop,R0=1.4,
-##              alpha=-1/(nstageE*dt)*log(1-nstageE*dt/incubation_period),
-##              gamma=-log(1-dt/infectious_period)/dt,
-##              rho=0.2,cfr=0.7,
-##              k=0,
-##              S_0=1-index_case,E_0=index_case/2-5e-9,
-##              I_0=index_case/2-5e-9,R_0=1e-8)
-## 
-##   if (is.null(data)) {
-##     if (ctry=="WestAfrica") {
-##       dat <- ddply(dat,~week,summarize,
-##                    cases=sum(cases,na.rm=TRUE),
-##                    deaths=sum(deaths,na.rm=TRUE))
-##       } else {
-##         dat <- subset(dat,country==ctry,select=-country)
-##         }
-##     } else {
-##       dat <- data
-##       }
-## 
-##   if (na.rm) {
-##     dat <- mutate(subset(dat,!is.na(cases)),week=week-min(week)+1)
-##     }
-##   if (type=="cum") {
-##     dat <- mutate(dat,cases=cumsum(cases),deaths=cumsum(deaths))
-##     }
-## 
-##   ## Create the pomp object
-##   pomp(
-##     data=dat[c("week","cases","deaths")],
-##     times="week",
-##     t0=0,
-##     params=theta,
-##     globals=globs,
-##     obsnames=c("cases","deaths"),
-##     statenames=c("S","E1","I","R","N_EI","N_IR"),
-##     zeronames=if (type=="raw") c("N_EI","N_IR") else character(0),
-##     paramnames=c("N","R0","alpha","gamma","rho","k","cfr",
-##                  "S_0","E_0","I_0","R_0"),
-##     nstageE=nstageE,
-##     dmeasure=if (least.sq) dObsLS else dObs,
-##     rmeasure=if (least.sq) rObsLS else rObs,
-##     rprocess=discrete.time.sim(step.fun=rSim,delta.t=timestep),
-##     skeleton=skel,
-##     skeleton.type="vectorfield",
-##     parameter.transform=partrans,
-##     parameter.inv.transform=paruntrans,
-##     initializer=function (params, t0, nstageE, ...) {
-##       all.state.names <- c("S",paste0("E",1:nstageE),"I","R","N_EI","N_IR")
-##       comp.names <- c("S",paste0("E",1:nstageE),"I","R")
-##       x0 <- setNames(numeric(length(all.state.names)),all.state.names)
-##       frac <- c(params["S_0"],rep(params["E_0"]/nstageE,nstageE),params["I_0"],params["R_0"])
-##       x0[comp.names] <- round(params["N"]*frac/sum(frac))
-##       x0
-##       }
-##     ) -> po
-##   }
+## ----get-data------------------------------------------------------------
+baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/data/"
+read.csv(paste0(baseurl,"ebola_data.csv"),stringsAsFactors=FALSE,
+         colClasses=c(date="Date")) -> dat
+str(dat)
+head(dat)
 
-## ----simstudy,eval=FALSE-------------------------------------------------
-## require(pomp)
-## require(plyr)
-## require(reshape2)
-## require(magrittr)
-## options(stringsAsFactors=FALSE)
-## 
-## require(foreach)
-## require(doMPI)
-## require(iterators)
-## 
-## source("ebola-model.R")
-## noexport <- c("ebolaModel")
-## 
-## cl <- startMPIcluster()
-## registerDoMPI(cl)
-## 
-## bake <- function (file, expr) {
-##   if (file.exists(file)) {
-##     readRDS(file)
-##     } else {
-##       val <- eval(expr)
-##       saveRDS(val,file=file)
-##       val
-##       }
-##   }
-## 
-## ## trajectory matching simulation study
-## 
-## tic <- Sys.time()
-## 
-## po <- ebolaModel(country="Guinea",timestep=0.1)
-## params <- parmat(coef(po),3)
-## params["k",] <- c(0,0.2,0.5)
-## paramnames <- names(coef(po))
-## 
-## nsims <- 500
-## 
-## bake(file="ebola-sims.rds",{
-##   simulate(po,params=params,nsim=nsims,seed=208335746L,
-##            as.data.frame=TRUE,obs=TRUE) %>%
-##     rename(c(time="week")) %>%
-##     mutate(k=params["k",((as.integer(sim)-1)%%ncol(params))+1])
-##   }) -> simdat
-## 
-## pompUnload(po)
-## 
-## bake(file="ebola-tm-sim-profiles-R0.rds",{
-##   foreach(simul=1:nsims,
-##           .combine=rbind,.inorder=FALSE,
-##           .noexport=noexport,
-##           .options.mpi=list(chunkSize=10,seed=1598260027L,info=TRUE)) %:%
-##     foreach(type=c("raw","cum"),.combine=rbind,.inorder=FALSE) %dopar%
-##     {
-##       dat <- subset(simdat,sim==simul,select=c(week,cases,deaths))
-##       tm <- ebolaModel(country="Guinea",data=dat,type=as.character(type))
-##       st <- params[,(simul-1)%%3+1]
-##       true.k <- unname(st["k"])
-##       true.R0 <- unname(st["R0"])
-##       true.rho <- unname(st["rho"])
-##       st["k"] <- st["k"]+1e-6
-##       tm <- traj.match(tm,start=st,est=c("R0","k","rho"),transform=TRUE)
-##       if (coef(tm,"rho")==1) coef(tm,"rho") <- 0.999
-##       if (coef(tm,"rho")==0) coef(tm,"rho") <- 0.001
-##       tm <- traj.match(tm,est=c("R0","k","rho"),method='subplex',transform=TRUE)
-##       pompUnload(tm)
-##       data.frame(sim=simul,type=as.character(type),
-##                  true.k=true.k,true.R0=true.R0,true.rho=true.rho,
-##                  as.list(coef(tm)),loglik=logLik(tm),
-##                  conv=tm$convergence)
-##       } -> fits
-## 
-##   foreach (fit=iter(fits,by="row"),
-##            .noexport=noexport,
-##            .combine=rbind,.inorder=FALSE) %:%
-##     foreach (r0=seq(from=0.7,to=3,length=200),
-##              .combine=rbind,.inorder=FALSE,
-##              .options.mpi=list(chunkSize=200,seed=1598260027L,info=TRUE)) %dopar%
-##     {
-##       dat <- subset(simdat,sim==fit$sim,select=c(week,cases,deaths))
-##       tm <- ebolaModel(country="Guinea",data=dat,type=as.character(fit$type))
-##       coef(tm) <- unlist(fit[paramnames])
-##       coef(tm,"R0") <- r0
-##       if (coef(tm,"rho")==1) coef(tm,"rho") <- 0.999
-##       if (coef(tm,"rho")==0) coef(tm,"rho") <- 0.001
-##       tm <- traj.match(tm,est=c("k","rho"),transform=TRUE)
-##       if (coef(tm,"rho")==1) coef(tm,"rho") <- 0.999
-##       if (coef(tm,"rho")==0) coef(tm,"rho") <- 0.001
-##       tm <- traj.match(tm,est=c("k","rho"),transform=TRUE,method='subplex')
-##       pompUnload(tm)
-##       data.frame(sim=fit$sim,type=fit$type,
-##                  true.k=fit$true.k,true.R0=fit$true.R0,true.rho=fit$true.rho,
-##                  as.list(coef(tm)),loglik=logLik(tm),
-##                  conv=tm$convergence)
-##       }
-##   }) -> profiles
-## 
-## bake(file="ebola-tm-sim-fits.rds",{
-## 
-##   ddply(profiles,~type+sim+true.k,subset,loglik==max(loglik)) -> starts
-## 
-##   foreach(fit=iter(starts,by="row"),.combine=rbind,.inorder=FALSE,
-##           .noexport=noexport,
-##           .options.mpi=list(chunkSize=30,seed=1598260027L,info=TRUE)) %dopar%
-##     {
-##       dat <- subset(simdat,sim==fit$sim,select=c(week,cases,deaths))
-##       tm <- ebolaModel(country="Guinea",data=dat,type=as.character(fit$type))
-##       coef(tm) <- unlist(fit[paramnames])
-##       if (coef(tm,"rho")==1) coef(tm,"rho") <- 0.999
-##       if (coef(tm,"rho")==0) coef(tm,"rho") <- 0.001
-##       tm <- traj.match(tm,est=c("k","rho"),transform=TRUE)
-##       if (coef(tm,"rho")==1) coef(tm,"rho") <- 0.999
-##       if (coef(tm,"rho")==0) coef(tm,"rho") <- 0.001
-##       tm <- traj.match(tm,est=c("k","rho"),transform=TRUE,method='subplex')
-##       pompUnload(tm)
-##       data.frame(sim=fit$sim,type=fit$type,
-##                  true.k=fit$true.k,true.R0=fit$true.R0,true.rho=fit$true.rho,
-##                  as.list(coef(tm)),loglik=logLik(tm),
-##                  conv=tm$convergence)
-##       }
-##   }) -> fits
-## 
-## toc <- Sys.time()
-## print(toc-tic)
-## 
-## ## trajectory matching with least squares simulation study
-## 
-## tic <- Sys.time()
-## 
-## bake(file="ebola-ls-sim-profiles-R0.rds",{
-## 
-##   foreach(simul=1:nsims,
-##           .combine=rbind,.inorder=FALSE,
-##           .noexport=noexport,
-##           .options.mpi=list(chunkSize=10,seed=1598260027L,info=TRUE)) %:%
-##     foreach(type=c("raw","cum"),.combine=rbind,.inorder=FALSE) %dopar%
-##     {
-##       dat <- subset(simdat,sim==simul,select=c(week,cases,deaths))
-##       tm <- ebolaModel(country="Guinea",data=dat,type=as.character(type),
-##                        least.sq=TRUE)
-##       st <- params[,(simul-1)%%3+1]
-##       true.k <- unname(st["k"])
-##       true.R0 <- unname(st["R0"])
-##       true.rho <- unname(st["rho"])
-##       st["k"] <- 10
-##       tm <- traj.match(tm,start=st,est=c("R0","k","rho"),transform=TRUE)
-##       if (coef(tm,"rho")==1) coef(tm,"rho") <- 0.999
-##       if (coef(tm,"rho")==0) coef(tm,"rho") <- 0.001
-##       tm <- traj.match(tm,est=c("R0","k","rho"),method='subplex',transform=TRUE)
-##       pompUnload(tm)
-##       data.frame(sim=simul,type=as.character(type),
-##                  true.k=true.k,true.R0=true.R0,true.rho=true.rho,
-##                  as.list(coef(tm)),loglik=logLik(tm),
-##                  conv=tm$convergence)
-##       } -> fits
-## 
-##   foreach (fit=iter(fits,by="row"),
-##            .noexport=noexport,
-##            .combine=rbind,.inorder=FALSE) %:%
-##     foreach (r0=seq(from=0.7,to=3,length=200),
-##              .combine=rbind,.inorder=FALSE,
-##              .options.mpi=list(chunkSize=200,seed=1598260027L,info=TRUE)) %dopar%
-##     {
-##       dat <- subset(simdat,sim==fit$sim,select=c(week,cases,deaths))
-##       tm <- ebolaModel(country="Guinea",data=dat,type=as.character(fit$type),
-##                        least.sq=TRUE)
-##       coef(tm) <- unlist(fit[paramnames])
-##       coef(tm,"R0") <- r0
-##       if (coef(tm,"rho")==1) coef(tm,"rho") <- 0.999
-##       if (coef(tm,"rho")==0) coef(tm,"rho") <- 0.001
-##       tm <- traj.match(tm,est=c("k","rho"),transform=TRUE)
-##       if (coef(tm,"rho")==1) coef(tm,"rho") <- 0.999
-##       if (coef(tm,"rho")==0) coef(tm,"rho") <- 0.001
-##       tm <- traj.match(tm,est=c("k","rho"),transform=TRUE,method='subplex')
-##       pompUnload(tm)
-##       data.frame(sim=fit$sim,type=fit$type,
-##                  true.k=fit$true.k,true.R0=fit$true.R0,true.rho=fit$true.rho,
-##                  as.list(coef(tm)),loglik=logLik(tm),
-##                  conv=tm$convergence)
-##       }
-##   }) -> profiles
-## 
-## bake(file="ebola-ls-sim-fits.rds",{
-## 
-##   ddply(profiles,~type+sim+true.k,subset,loglik==max(loglik)) -> starts
-## 
-##   foreach(fit=iter(starts,by="row"),.combine=rbind,.inorder=FALSE,
-##           .noexport=noexport,
-##           .options.mpi=list(chunkSize=30,seed=1598260027L,info=TRUE)) %dopar%
-##     {
-##       dat <- subset(simdat,sim==fit$sim,select=c(week,cases,deaths))
-##       tm <- ebolaModel(country="Guinea",data=dat,type=as.character(fit$type),
-##                        least.sq=TRUE)
-##       coef(tm) <- unlist(fit[paramnames])
-##       if (coef(tm,"rho")==1) coef(tm,"rho") <- 0.999
-##       if (coef(tm,"rho")==0) coef(tm,"rho") <- 0.001
-##       tm <- traj.match(tm,est=c("k","rho"),transform=TRUE)
-##       if (coef(tm,"rho")==1) coef(tm,"rho") <- 0.999
-##       if (coef(tm,"rho")==0) coef(tm,"rho") <- 0.001
-##       tm <- traj.match(tm,est=c("k","rho"),transform=TRUE,method='subplex')
-##       pompUnload(tm)
-##       data.frame(sim=fit$sim,type=fit$type,
-##                  true.k=fit$true.k,true.R0=fit$true.R0,true.rho=fit$true.rho,
-##                  as.list(coef(tm)),loglik=logLik(tm),
-##                  conv=tm$convergence)
-##       }
-##   }) -> fits
-## 
-## toc <- Sys.time()
-## print(toc-tic)
-## 
-## closeCluster(cl)
-## mpi.quit()
+## ----popsizes------------------------------------------------------------
+## Population sizes in Guinea, Liberia, and Sierra Leone (census 2014)
+populations <- c(Guinea=10628972,Liberia=4092310,SierraLeone=6190280)
+
+## ----plot-data-----------------------------------------------------------
+dat %>%
+  ggplot(aes(x=date,y=cases,group=country,color=country))+
+  geom_line()
+
+## ----measmodel-----------------------------------------------------------
+dObs <- Csnippet('
+  double f;
+  if (k > 0.0)
+    f = dnbinom_mu(nearbyint(cases),1.0/k,rho*N_EI,1);
+  else
+    f = dpois(nearbyint(cases),rho*N_EI,1);
+  lik = (give_log) ? f : exp(f);
+')
+
+rObs <- Csnippet('
+  if (k > 0) {
+    cases = rnbinom_mu(1.0/k,rho*N_EI);
+  } else {
+    cases = rpois(rho*N_EI);
+  }')
+
+## ----rproc---------------------------------------------------------------
+rSim <- Csnippet('
+  double lambda, beta;
+  double *E = &E1;
+  beta = R0 * gamma; // Transmission rate
+  lambda = beta * I / N; // Force of infection
+  int i;
+
+  // Transitions
+  // From class S
+  double transS = rbinom(S, 1.0 - exp(- lambda * dt)); // No of infections
+  // From class E
+  double transE[nstageE]; // No of transitions between classes E
+  for(i = 0; i < nstageE; i++){
+    transE[i] = rbinom(E[i], 1.0 - exp(-nstageE * alpha * dt));
+  }
+  // From class I
+  double transI = rbinom(I, 1.0 - exp(-gamma * dt)); // No of transitions I->R
+
+  // Balance the equations
+  S -= transS;
+  E[0] += transS - transE[0];
+  for(i=1; i < nstageE; i++) {
+    E[i] += transE[i-1] - transE[i];
+  }
+  I += transE[nstageE-1] - transI;
+  R += transI;
+  N_EI += transE[nstageE-1]; // No of transitions from E to I
+  N_IR += transI; // No of transitions from I to R
+')
+
+## ----skel----------------------------------------------------------------
+skel <- Csnippet('
+  double lambda, beta;
+  const double *E = &E1;
+  double *DE = &DE1;
+  beta = R0 * gamma; // Transmission rate
+  lambda = beta * I / N; // Force of infection
+  int i;
+
+  // Balance the equations
+  DS = - lambda * S;
+  DE[0] = lambda * S - nstageE * alpha * E[0];
+  for (i=1; i < nstageE; i++)
+    DE[i] = nstageE * alpha * (E[i-1]-E[i]);
+  DI = nstageE * alpha * E[nstageE-1] - gamma * I;
+  DR = gamma * I;
+  DN_EI = nstageE * alpha * E[nstageE-1];
+  DN_IR = gamma * I;
+')
+
+## ----partrans------------------------------------------------------------
+toEst <- Csnippet('
+  const double *IC = &S_0;
+  double *TIC = &TS_0;
+  TR0 = log(R0);
+  Trho = logit(rho);
+  Tk = log(k);
+  to_log_barycentric(TIC,IC,4);
+')
+
+fromEst <- Csnippet('
+  const double *IC = &S_0;
+  double *TIC = &TS_0;
+  TR0 = exp(R0);
+  Trho = expit(rho);
+  Tk = exp(k);
+  from_log_barycentric(TIC,IC,4);
+')
+
+## ----pomp-construction---------------------------------------------------
+ebolaModel <- function (country=c("Guinea", "SierraLeone", "Liberia"),
+                        timestep = 0.1) {
+
+  ctry <- match.arg(country)
+  pop <- unname(populations[ctry])
+ 
+  ## Incubation period is supposed to be Gamma distributed with shape parameter 3
+  ## and mean 11.4 days.  The discrete-time formula is used to calculate the
+  ## corresponding alpha (cf He et al., Interface 2010).
+  ## Case-fatality ratio is fixed at 0.7 (cf WHO Ebola response team, NEJM 2014)
+  incubation_period <- 11.4/7
+  infectious_period <- 7/7
+  index_case <- 10/pop
+  dt <- timestep
+  nstageE <- 3L
+
+  globs <- paste0("static int nstageE = ",nstageE,";");
+
+  theta <- c(N=pop,R0=1.4,
+             alpha=-1/(nstageE*timestep)*log(1-nstageE*timestep/incubation_period),
+             gamma=-log(1-timestep/infectious_period)/timestep,
+             rho=0.2,cfr=0.7,
+             k=0,
+             S_0=1-index_case,E_0=index_case/2-5e-9,
+             I_0=index_case/2-5e-9,R_0=1e-8)
+
+  dat <- subset(dat,country==ctry,select=-country)
+
+  ## Create the pomp object
+  dat %>% 
+    extract(c("week","cases")) %>%
+    pomp(
+      times="week",
+      t0=min(dat$week)-1,
+      params=theta,
+      globals=globs,
+      statenames=c("S","E1","I","R","N_EI","N_IR"),
+      zeronames=c("N_EI","N_IR"),
+      paramnames=c("N","R0","alpha","gamma","rho","k","cfr",
+                   "S_0","E_0","I_0","R_0"),
+      nstageE=nstageE,
+      dmeasure=dObs, rmeasure=rObs,
+      rprocess=discrete.time.sim(step.fun=rSim, delta.t=timestep),
+      skeleton=skel, skeleton.type="vectorfield",
+      toEstimationScale=toEst,
+      fromEstimationScale=fromEst,
+      initializer=function (params, t0, nstageE, ...) {
+        all.state.names <- c("S",paste0("E",1:nstageE),"I","R","N_EI","N_IR")
+        comp.names <- c("S",paste0("E",1:nstageE),"I","R")
+        x0 <- setNames(numeric(length(all.state.names)),all.state.names)
+        frac <- c(params["S_0"],rep(params["E_0"]/nstageE,nstageE),params["I_0"],params["R_0"])
+        x0[comp.names] <- round(params["N"]*frac/sum(frac))
+        x0
+      }
+    ) -> po
+}
+
+ebolaModel("Guinea") -> gin
+ebolaModel("SierraLeone") -> sle
+ebolaModel("Liberia") -> lbr
 
 ## ----profiles,eval=FALSE-------------------------------------------------
 ## require(pomp)
