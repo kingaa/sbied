@@ -43,9 +43,7 @@ This module introduces statistical inference techniques and computational method
 1. [Introduction: What is "Simulation-based Inference for Epidemiological Dynamics?"](./intro/intro.html)
 2. [Simulating dynamic models: the stochastic Euler method.](./stochsim/stochsim.html)
 3. [The particle filter: theory and practice](./pfilter/pfilter.html)
-1. Principles of likelihood-based inference.
 1. [Iterated filtering: theory and practice](./mif/mif.html)
-1. Diagnostics and model criticism
 1. [Case study I: polio.](./polio/polio.html)
 1. [Case study II: measles.](./measles/measles.html)
 1. [Case study III: sexual contacts panel data](./contacts/contacts.html)
