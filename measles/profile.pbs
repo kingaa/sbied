@@ -1,0 +1,16 @@
+#!/bin/bash
+#PBS -S /bin/bash
+#PBS -N measles-profile
+#PBS -V
+#PBS -m abe
+#PBS -M kingaa@umich.edu
+#PBS -q flux
+#PBS -A kingaa_flux
+#PBS -l qos=flux
+#PBS -l nodes=100:ppn=4,walltime=8:00:00
+
+export OMPI_MCA_mpi_warn_on_fork=0
+
+cd $PBS_O_WORKDIR
+
+mpirun -mca mtl ^mxm -mca btl ^openib -np 1 Rscript --vanilla measles-profile.R > measles-profile.Rout 2>&1
