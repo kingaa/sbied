@@ -63,7 +63,7 @@ library(ggplot2)
 theme_set(theme_bw())
 ```
 
-# Introduction: What is Simulation-based Inference?
+## Introduction: What is Simulation-based Inference?
 
 ## Overview of our ambitions
 
@@ -73,12 +73,6 @@ theme_set(theme_bw())
 * __Approach__: Using time series data to inform dynamic models.
 * __Strengths and weaknesses of this approach__:
 
-#### Outline
-
-* why dynamic models?
-* what's wrong with traditional approaches to dynamics?
-* what is simulation-based inference?
-* case studies
 
 --------------------------------
 
@@ -89,8 +83,6 @@ theme_set(theme_bw())
 2. [What is the contribution to the HIV epidemic of dynamic variation in sexual behavior of an individual over time?](http://dx.doi.org/10.1093/aje/kwv044) [How does this compare to the role of heterogeneity between individuals?](http://dx.doi.org/10.1515/1948-4690.1042)
 
 3. [What explains the seasonality of measles?](http://dx.doi.org/10.1098/rsif.2009.0151)
-
-4. What explains the seasonality of influenza?
 
 5. [What explains the interannual variability of malaria](http://dx.doi.org/10.1371/journal.pcbi.1000898)?
 
@@ -175,21 +167,19 @@ To think algorithmically, we define some function calls:
  
 * __Plug-and-play__, __likelihood-free__ and __equation-free__ are alternative terms for simulation-based.
 
-(DEFINITIONS SHOULD BE HYPERLINKS TO TAKE FULL ADVANTAGE OF HTML FORMAT)
-
 * Much development of simulation-based statistical methodology has occurred in the past decade.
 
 ------------------------------
 
-# Practicum: The **pomp**  **R**  package for POMP models
+## Practicum: The **pomp**  **R**  package for POMP models
 
-## Objectives
+### Objectives
 
 1. To introduce students to the **pomp** package
 1. To explain how the components of a POMP model are encoded in this package
 1. To give some experience in the use and manipulation of `pomp` objects
 
-## Intro to **pomp**
+### Intro to **pomp**
 
 * **pomp** is an  **R**  package for data analysis using partially observed Markov process (POMP) models.
 
@@ -220,7 +210,6 @@ Schematic of the structure of a POMP showing causal relations and direction of i
 Another POMP model schematic, showing dependence among model variables.
 State variables, $x$, at time $t$ depend only on state variables at the previous timestep.
 Measurements, $y$, at time $t$ depend only on the state at that time.
-Formally, $\prob{x_t|x,y}=\prob{x_t|x_{t-1}}$ and $\prob{y_t|x,y}=\prob{y_t|x_{t}}$ for all $x=\{x_1,x_2,\dots,x_T\}$, $y=\{y_1,y_2,\dots,y_T\}$, and $t=1,\dots,T$.
 
 *********************
 
