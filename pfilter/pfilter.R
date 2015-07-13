@@ -149,29 +149,6 @@ ggplot(data=pp,mapping=aes(x=beta,y=gamma,z=loglik,fill=loglik))+
   scale_fill_gradient()+
   labs(x=expression(beta),y=expression(gamma))
 
-## ----sir-grid2-----------------------------------------------------------
-expand.grid(beta=seq(from=1,to=3,length=50),
-            gamma=1,
-            rho=0.8,
-            N=seq(from=1600,to=3000,length=50)) -> p
-
-foreach (theta=iter(p,"row"),.combine=rbind,
-         .inorder=FALSE,.options.multicore=mcopts) %dopar% 
- {
-   pfilter(sir,params=unlist(theta),Np=5000) -> pf
-   theta$loglik <- logLik(pf)
-   theta
- } -> p
-
-
-## ----sir-grid2-plot------------------------------------------------------
-pp <- mutate(p,loglik=ifelse(loglik>max(loglik)-100,loglik,NA))
-ggplot(data=pp,mapping=aes(x=beta,y=N,z=loglik,fill=loglik))+
-  geom_tile(color=NA)+
-  geom_contour(color='black',binwidth=3)+
-  scale_fill_gradient()+
-  labs(x=expression(beta),y=expression(N))
-
 ## ----sir-partrans--------------------------------------------------------
 toEst <- Csnippet("
  Tbeta = log(beta);
