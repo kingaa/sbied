@@ -30,7 +30,7 @@ Licensed under the Creative Commons attribution-noncommercial license, http://cr
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
 
-Produced in R version `r getRversion()` using `pomp` version `r packageVersion("pomp")`.
+Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
 ```{r knitr-opts,include=FALSE,cache=FALSE,purl=FALSE}
 library(knitr)
@@ -91,8 +91,8 @@ set.seed(1109529108L)
 
 ## Objectives
 
-1. display a published case study using plug-and-play methods with non-trivial model
-1. demonstrate the use of profile likelihood
+1. display a published case study using plug-and-play methods with non-trivial model complexities
+1. demonstrate the use of profile likelihood in scientific inference
 1. discuss the interpretation of parameter estimates
 1. emphasize the need to allow for extra sources of stochasticity in modeling
 
@@ -1097,9 +1097,15 @@ pomp(m1,toEstimationScale=toEst,
 Modify the @He2010 model to remove the cohort effect.
 Run simulations and compute likelihoods to convince yourself that the resulting codes agree with the original ones for `cohort = 0`.
 
+Now modify the transmission seasonality to use a sinusoidal form.
+How many parameters must you use?
+Fixing the other parameters at their MLE values, compute and visualize a profile likelihood over these parameters.
+
 #### Extrademographic stochasticity
 
-
+Set the extrademographic stochasticity parameter $\sigma_{SE}=0$, set $\alpha=1$, and fix $\rho$ and $\iota$ at their MLE values, then maximize the likelihood over the remaining parameters. 
+How do your results compare with those at the MLE? 
+Compare likelihoods but also use simulations to diagnose differences between the models.
 
 
 ## References
