@@ -1,7 +1,7 @@
 ---
 title: "Introduction to Simulation-based Inference"
-author: "Aaron A. King"
-date: 2015-07-08
+author: "Aaron A. King and Edward L. Ionides"
+date: 2015-07-14
 output:
   html_document:
     theme: flatly
@@ -9,7 +9,7 @@ output:
 bibliography: ../sbied.bib
 csl: ../ecology.csl
 nocite: |
-  @King2008, @Romero-Severson2012, @Romero-Severson2015, @He2010, 
+  @King2008, @Romero-Severson2015, @He2010, 
   @Laneri2010, @King2015
 ---
 
@@ -69,11 +69,21 @@ theme_set(theme_bw())
 ## Overview of our ambitions
 
 * __Goal__: To build understanding of disease transmission processes to improve public health.
-    + Population-level processes: transmission events; susceptible, infected and recovered hosts. 
-    + Within-host processes: pathogen vs the immune system; locations and life stages of pathogens.  
-* __Approach__: Using time series data to inform dynamic models.
-* __Strengths and weaknesses of this approach__:
+    * Population-level processes: transmission events; susceptible, infected and recovered hosts. 
+    * Within-host processes: pathogen vs the immune system; locations and life stages of pathogens.
 
+<p>
+
+* __Approach__: Using time series data to inform dynamic models.
+
+<p>
+
+* We may work with experimental or observational data:
+    + For population-level epidemiological dynamics, data are usually observational.
+    + For observational data, we must be cautious about inferring causality.
+        * Association is not causation.
+        * if $X$ appear to cause $Y$, could they both be determined by an unmeasured $Z$?
+        * Known biological mechanisms can support the structure of mechanistic, causal models.
 
 --------------------------------
 
@@ -81,11 +91,11 @@ theme_set(theme_bw())
 
 1. [What roles are played by asymptomatic infection and waning immunity in cholera epidemics?](http://dx.doi.org/10.1038/nature07084)
 
-2. [What is the contribution to the HIV epidemic of dynamic variation in sexual behavior of an individual over time?](http://dx.doi.org/10.1093/aje/kwv044) [How does this compare to the role of heterogeneity between individuals?](http://dx.doi.org/10.1515/1948-4690.1042)
+2. [What is the contribution to the HIV epidemic of dynamic variation in sexual behavior of an individual over time? How does this compare to the role of heterogeneity between individuals?](http://dx.doi.org/10.1093/aje/kwv044)
 
 3. [What explains the seasonality of measles?](http://dx.doi.org/10.1098/rsif.2009.0151)
 
-5. [What explains the interannual variability of malaria](http://dx.doi.org/10.1371/journal.pcbi.1000898)?
+5. [What explains the interannual variability of malaria?](http://dx.doi.org/10.1371/journal.pcbi.1000898)
 
 6. [What will happen next in an Ebola outbreak?](http://dx.doi.org/10.1098/rspb.2015.0347)
 
@@ -178,7 +188,7 @@ To think algorithmically, we define some function calls:
 
 1. To introduce students to the **pomp** package
 1. To explain how the components of a POMP model are encoded in this package
-1. To give some experience in the use and manipulation of `pomp` objects
+1. To give some experience in the use and manipulation of **pomp** objects
 
 ### Intro to **pomp**
 
@@ -187,7 +197,7 @@ To think algorithmically, we define some function calls:
 * Note the distinction: lower case **pomp** is a software package; 
 upper case POMP is a class of models.
 
-* pomp builds methodology for POMP models in terms of arbitrary user-specified `rprocess()`, `dprocess()`, `rmeasure()`, and `dmeasure()` functions.
+* **pomp** builds methodology for POMP models in terms of arbitrary user-specified `rprocess()`, `dprocess()`, `rmeasure()`, and `dmeasure()` functions.
  
 * Following modern practice, most methodology in **pomp** is simulation-based, so does not require specification of `dprocess()`.
 
@@ -251,10 +261,10 @@ In this equation,
 ### Working with the Ricker model in **pomp**.
 
 The  **R**  package **pomp** provides facilities for modeling POMPs, a toolbox of statistical inference methods for analyzing data using POMPs, and a development platform for implmenting new POMP inference methods.
-The basic data-structure provided by **pomp** is the *object of class `pomp`*, or *pomp object*.
+The basic data-structure provided by **pomp** is the *object of class `pomp`*, alternatively known as a **pomp** object.
 It is a container that holds real or simulated data and a POMP model, possibly together with other information such as model parameters, that may be needed to do things with the model and data.
 
-Let's see what can be done with a `pomp` object.
+Let's see what can be done with a **pomp** object.
 First, if we haven't already, we must install **pomp** and `pompExamples`.
 Run the following to do so.
 ```{r install-pomp,eval=FALSE}
@@ -273,12 +283,12 @@ require(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 ```
 
-A pre-built `pomp` object encoding the Ricker model comes included with the package.
+A pre-built **pomp** object encoding the Ricker model comes included with the package.
 Load it by
 ```{r load-ricker,cache=FALSE}
 pompExample(ricker)
 ```
-This has the effect of creating a `pomp` object named `ricker` in your workspace.
+This has the effect of creating a **pomp** object named `ricker` in your workspace.
 We can plot the data by doing
 ```{r plot-ricker}
 plot(ricker)
@@ -292,9 +302,9 @@ What kind of object have we created?
 class(x)
 plot(x)
 ```
-Why do we see more time series in the simulated `pomp` object?
+Why do we see more time series in the simulated **pomp** object?
 
-We can turn a pomp object into a data frame:
+We can turn a **pomp** object into a data frame:
 ```{r}
 y <- as.data.frame(ricker)
 head(y)
@@ -359,7 +369,7 @@ y <- trajectory(ricker,params=p,times=200:1000)
 matplot(p["r",],y["N",,],pch=".",col='black',xlab='r',ylab='N',log='x')
 ```
 
-More information on manipulating and extracting information from `pomp` objects can be viewed in the help pages (`methods?pomp`).
+More information on manipulating and extracting information from **pomp** objects can be viewed in the help pages (`methods?pomp`).
 
 There are a number of other examples included with the package.
 Do `pompExamples()` to see a list of these.
@@ -380,7 +390,7 @@ logLik(pf)
 ```
 
 Note that `pfilter` returns an object of class `pfilterd.pomp`.
-This is the general rule: inference algorithms return objects that are `pomp` objects with additional information.
+This is the general rule: inference algorithms return objects that are **pomp** objects with additional information.
 The package provides tools to extract this information.
 We can run the particle filter again by doing
 ```{r pfilter2}
@@ -400,9 +410,9 @@ logLik(pf)
 ```
 Here, the particle filtering has been performed with only `r unique(pf@Np)` particles.
 
-## Building a custom `pomp` object
+## Building a custom **pomp** object
 
-A real **pomp** data analysis begins with constructing one or more `pomp` objects to hold the data and the model or models under consideration.
+A real **pomp** data analysis begins with constructing one or more **pomp** objects to hold the data and the model or models under consideration.
 We'll illustrate this process a dataset of *Parus major* abundance in Wytham Wood, near Oxford [@McCleery1991].
 
 Download and plot the data:
@@ -415,14 +425,14 @@ plot(pop~year,data=dat,type='o')
 
 Let's suppose that we want to fit the stochastic Ricker model discussed above to these data.
 
-The call to construct a pomp object is, naturally enough, `pomp`.
+The call to construct a **pomp** object is, naturally enough, `pomp`.
 Documentation on this function can be had by doing `?pomp`. 
-Do `class?pomp` to get documentation on the pomp class.
-Learn about the various things you can do once you have a pomp object by doing `methods?pomp` and following the links therein.
+Do `class?pomp` to get documentation on the `pomp` class.
+Learn about the various things you can do once you have a **pomp** object by doing `methods?pomp` and following the links therein.
 Read an overview of the package as a whole with links to its main features by doing `package?pomp`.
 A complete index of the functions in **pomp** is returned by the command `library(help=pomp)`.
-Finally, the home page for the `pomp` project is \url{http://kingaa.github.io/pomp};
-there you have access to the compleete source code, manuals, mailing lists, etc.
+Finally, the home page for the **pomp** project is \url{http://kingaa.github.io/pomp};
+there you have access to the complete source code, manuals, mailing lists, etc.
 
 ```{r parus-pomp1}
 require(pomp)
@@ -438,20 +448,20 @@ plot(parus)
 
 #### Adding in the deterministic skeleton
 
-We can add the Ricker model deterministic skeleton to the `parus` `pomp` object.
+We can add the Ricker model deterministic skeleton to the `parus` **pomp** object.
 Since the Ricker model is a discrete-time model, its skeleton is a map that takes $N_t$ to $N_{t+1}$ according to the Ricker model equation
 $$N_{t+1} = r\,N_{t}\,\exp(-N_{t}).$$
 We provide this to `pomp` in the form of a `Csnippet`, a little snippet of C code that performs the computation.
 ```{r parus-skel-defn}
 skel <- Csnippet("DN = r*N*exp(-N);")
 ```
-We then add this to the pomp object:
+We then add this to the **pomp** object:
 ```{r parus-add-skel}
 parus <- pomp(parus,skeleton=skel,skeleton.type='map',
               paramnames=c("r"),statenames=c("N"))
 ```
-Note that we have to inform `pomp` as to which of the variables we've referred to in `skel` is a state variable (`statenames`) and which is a parameter (`paramnames`).
-The `skeleton.type` argument tells `pomp` that the skeleton is a discrete-time dynamical system (a map) rather than a continuous-time system (a vectorfield).
+Note that we have to inform **pomp** as to which of the variables we've referred to in `skel` is a state variable (`statenames`) and which is a parameter (`paramnames`).
+The `skeleton.type` argument tells **pomp** that the skeleton is a discrete-time dynamical system (a map) rather than a continuous-time system (a vectorfield).
 
 With just the skeleton defined, we are in a position to compute the trajectories of the deterministic skeleton at any point in parameter space.
 For example,
@@ -469,7 +479,7 @@ In **pomp**, to avoid confusion, we use the term "trajectory" exclusively to ref
 Thus, the `trajectory` command iterates or integrates the deterministic skeleton forward in time, returning the unique trajectory determined by the specified parameters.
 When we want to speak about sample paths of a stochastic process, we use the term *simulation*.
 Accordingly, the `simulate` command always returns individual sample paths from the POMP.
-In particular, we avoid "simulating a set of differential equations", preferring instead to speak of "integrating" the equatioins "computing trajectories".
+In particular, we avoid "simulating a set of differential equations", preferring instead to speak of "integrating" the equations, or "computing trajectories".
 
 #### Adding in the process model simulator
 
@@ -508,12 +518,12 @@ dmeas <- Csnippet("lik = dpois(pop,phi*N,give_log);")
 ```
 [Note the `give_log` argument.
 When this code is evaluated, `give_log` will be set to 1 if the log likelihood is desired, and 0 else.]
-We add these into the `pomp` object:
+We add these into the **pomp** object:
 ```{r parus-add-meas}
 pomp(parus,rmeasure=rmeas,dmeasure=dmeas,statenames=c("N"),paramnames=c("phi")) -> parus
 ```
 Now we can simulate the whole POMP.
-First, let's add some parameters to the pomp object:
+First, let's add some parameters to the **pomp** object:
 ```{r ricker-add-params}
 coef(parus) <- c(N.0=1,e.0=0,r=20,sigma=0.1,phi=200)
 ```
@@ -533,7 +543,7 @@ This will help you build some intuition for what the various parameters do.
 Reparameterize the Ricker model so that the scaling of $N$ is explicit:
 $$N_{t+1} = r\,N_{t}\,\exp\left(-\frac{N_{t}}{K}\right).$$
 
-Modify the `pomp` object we created above to reflect this reparameterization.
+Modify the **pomp** object we created above to reflect this reparameterization.
 
 Modify the measurement model so that
 $$\mathrm{pop}_t \sim \dist{Negbin}{\phi\,N_t,k},$$
@@ -541,7 +551,7 @@ i.e., $\mathrm{pop}_t$ is negative-binomially distributed with mean $\phi\,N_t$ 
 See `?NegBinomial` for documentation on the negative binomial distribution and [the **R** Extensions Manual section on distribution functions](http://cran.r-project.org/doc/manuals/r-release/R-exts.html#Distribution-functions) for information on how to access these in C.
 
 ### Beverton-Holt
-Construct a `pomp` object for the *Parus major* data and the stochastic Beverton-Holt model
+Construct a **pomp** object for the *Parus major* data and the stochastic Beverton-Holt model
 $$N_{t+1} = \frac{a\,N_t}{1+b\,N_t}\,\varepsilon_t,$$
 where $a$ and $b$ are parameters and
 $$\varepsilon_t \sim \dist{Lognormal}{-\tfrac{1}{2}\sigma^2,\sigma}.$$
