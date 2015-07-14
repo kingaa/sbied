@@ -1090,9 +1090,9 @@ pomp(m1,toEstimationScale=toEst,
 ```
 
 
-### Exercises
+## Exercises
 
-#### Reformulate the model
+### Reformulate the model
 
 Modify the @He2010 model to remove the cohort effect.
 Run simulations and compute likelihoods to convince yourself that the resulting codes agree with the original ones for `cohort = 0`.
@@ -1101,7 +1101,7 @@ Now modify the transmission seasonality to use a sinusoidal form.
 How many parameters must you use?
 Fixing the other parameters at their MLE values, compute and visualize a profile likelihood over these parameters.
 
-#### Extrademographic stochasticity
+### Extrademographic stochasticity
 
 Set the extrademographic stochasticity parameter $\sigma_{SE}=0$, set $\alpha=1$, and fix $\rho$ and $\iota$ at their MLE values, then maximize the likelihood over the remaining parameters. 
 How do your results compare with those at the MLE? 
