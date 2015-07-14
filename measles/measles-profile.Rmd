@@ -30,7 +30,7 @@ Licensed under the Creative Commons attribution-noncommercial license, http://cr
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
 
-Produced in R version `r getRversion()` using `pomp` version `r packageVersion("pomp")`.
+Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
 ```{r knitr-opts,include=FALSE,cache=FALSE,purl=FALSE}
 library(knitr)
@@ -239,12 +239,8 @@ The following Csnippets implement such a transformation and its inverse.
 
 ```{r transforms}
 toEst <- Csnippet("
-  Tmu = log(mu);
   Tsigma = log(sigma);
   Tgamma = log(gamma);
-  Talpha = log(alpha);
-  Tiota = log(iota);
-  Trho = logit(rho);
   Tcohort = logit(cohort);
   Tamplitude = logit(amplitude);
   TsigmaSE = log(sigmaSE);
@@ -254,12 +250,8 @@ toEst <- Csnippet("
 ")
 
 fromEst <- Csnippet("
-  Tmu = exp(mu);
-  Tsigma = exp(sigma);
+ Tsigma = exp(sigma);
   Tgamma = exp(gamma);
-  Talpha = exp(alpha);
-  Tiota = exp(iota);
-  Trho = expit(rho);
   Tcohort = expit(cohort);
   Tamplitude = expit(amplitude);
   TsigmaSE = exp(sigmaSE);
@@ -308,8 +300,9 @@ mle %>% extract(paramnames) %>% unlist() -> theta
 ## Profile over $\sigma_{SE}$
 
 ```{r sigmaSE-prof-design}
-estpars <- setdiff(names(theta),c("sigmaSE","mu"))
+estpars <- setdiff(names(theta),c("sigmaSE","mu","rho","alpha","iota"))
 
+theta["alpha"] <- 0
 theta.hi <- theta.lo <- theta
 theta.lo[estpars] <- 0.5*theta[estpars]
 theta.hi[estpars] <- 2*theta[estpars]
@@ -406,7 +399,7 @@ bake("sigmaSE-profile1.rds",{
   }}) -> sigmaSE_prof
 ```
 
-The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr.
+The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r signif(mean(sigmaSE_prof$etime)*3600/120,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.
 
 ```{r sigmaSE-prof-round2,cache=FALSE}
 sigmaSE_prof %>%
@@ -486,16 +479,16 @@ bake("sigmaSE-profile2.rds",{
   }}) -> sigmaSE_prof
 ```
 
-The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr.
+The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r signif(mean(sigmaSE_prof$etime)/550*3600,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.
 
 ```{r plot-sigmaSE-profile}
 sigmaSE_prof %>%
   subset(nfail.max==0) %>%
   mutate(sigmaSE=exp(signif(log(sigmaSE),5))) %>%
   ddply(~sigmaSE,subset,rank(-loglik)<=2) %>%
-  # subset(loglik>max(loglik)-100) %>%
   ggplot(aes(x=sigmaSE,y=loglik))+
-  geom_point()
+  geom_point()+
+  geom_smooth(method="loess")
 ```
 
 

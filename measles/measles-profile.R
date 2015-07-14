@@ -117,12 +117,8 @@ rmeas <- Csnippet("
 
 ## ----transforms----------------------------------------------------------
 toEst <- Csnippet("
-  Tmu = log(mu);
   Tsigma = log(sigma);
   Tgamma = log(gamma);
-  Talpha = log(alpha);
-  Tiota = log(iota);
-  Trho = logit(rho);
   Tcohort = logit(cohort);
   Tamplitude = logit(amplitude);
   TsigmaSE = log(sigmaSE);
@@ -132,12 +128,8 @@ toEst <- Csnippet("
 ")
 
 fromEst <- Csnippet("
-  Tmu = exp(mu);
-  Tsigma = exp(sigma);
+ Tsigma = exp(sigma);
   Tgamma = exp(gamma);
-  Talpha = exp(alpha);
-  Tiota = exp(iota);
-  Trho = expit(rho);
   Tcohort = expit(cohort);
   Tamplitude = expit(amplitude);
   TsigmaSE = exp(sigmaSE);
@@ -179,8 +171,9 @@ paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
 mle %>% extract(paramnames) %>% unlist() -> theta
 
 ## ----sigmaSE-prof-design-------------------------------------------------
-estpars <- setdiff(names(theta),c("sigmaSE","mu"))
+estpars <- setdiff(names(theta),c("sigmaSE","mu","rho","alpha","iota"))
 
+theta["alpha"] <- 0
 theta.hi <- theta.lo <- theta
 theta.lo[estpars] <- 0.5*theta[estpars]
 theta.hi[estpars] <- 2*theta[estpars]
@@ -356,10 +349,10 @@ sigmaSE_prof %>%
   subset(nfail.max==0) %>%
   mutate(sigmaSE=exp(signif(log(sigmaSE),5))) %>%
   ddply(~sigmaSE,subset,rank(-loglik)<=2) %>%
-  # subset(loglik>max(loglik)-100) %>%
   ggplot(aes(x=sigmaSE,y=loglik))+
   geom_point()
 
 ## ----include=FALSE,cache=FALSE,eval=TRUE---------------------------------
 if (exists("mpi.exit")) mpi.exit()
 
+q(save='no')
