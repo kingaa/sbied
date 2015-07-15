@@ -82,10 +82,15 @@ These objectives will be achieved using a recent study [@King2015], all codes fo
 
 ## Model and data
 
-### The situation as of 1 October 2014
+### An emerging infectious disease outbreak
 
 Let's situate ourselves at the beginning of October 2014.
 The WHO situation report contained data on the number of cases in each of Guinea, Sierra Leone, and Liberia.
+Key questions included:
+
+1. How fast will the outbreak unfold?
+1. How large will it ultimately prove?
+1. What interventions will be most effective?
 
 Download the data from the WHO Situation Report of 1 October 2014:
 ```{r get-data}
@@ -432,7 +437,7 @@ This arises from four sources:
 1. parametric uncertainty
 1. structural uncertainty
 
-Here, we'll explore how we can account for the first three of these in making forecasts.
+Here, we'll explore how we can account for the first three of these in making forecasts for the Sierra Leone outbreak.
 
 ```{r forecasts,eval=F}
 require(pomp)
@@ -444,31 +449,17 @@ options(stringsAsFactors=FALSE)
 set.seed(988077383L)
 
 require(foreach)
-require(doMPI)
+require(doMC)
 require(iterators)
 
-
+## forecast horizon
 horizon <- 13
 
-foreach (country=c("SierraLeone"),.inorder=TRUE,.combine=c) %:%
-  foreach (type=c("raw","cum"),.inorder=TRUE,.combine=c) %do%
-  {
-    M1 <- ebolaModel(country=country,type=type,
-                     timestep=0.01,nstageE=3,na.rm=TRUE)
-    M2 <- ebolaModel(country=country,type="raw",
-                     timestep=0.01,nstageE=3,na.rm=TRUE)
-    time(M2) <- seq(from=1,to=max(time(M1))+horizon,by=1)
-    M3 <- ebolaModel(country=country,type="raw",
-                     timestep=0.01,nstageE=3,na.rm=TRUE)
-    time(M3) <- seq(from=max(time(M1))+1,to=max(time(M1))+horizon,by=1)
-    timezero(M3) <- max(time(M1))
-    list(M1,M2,M3)
-    } -> models
-dim(models) <- c(3,2,1)
-dimnames(models) <- list(c("fit","det.forecast","stoch.forecast"),
-                         c("raw","cum"),c("SierraLeone"))
-
-noexport <- c("models")
+profs %>%
+  subset(country=="SierraLeone") %>%
+  subset(loglik==max(loglik),
+         select=-c(loglik,loglik.se,country,profile)) %>%
+  unlist() -> coef(sle)
 
 ## Weighted quantile function
 wquant <- function (x, weights, probs = c(0.025,0.5,0.975)) {
@@ -478,28 +469,11 @@ wquant <- function (x, weights, probs = c(0.025,0.5,0.975)) {
   w <- cumsum(weights)/sum(weights)
   rval <- approx(w,x,probs,rule=1)
   rval$y
-  }
+}
 
-starts <- c(Guinea="2014-01-05",Liberia="2014-06-01",SierraLeone="2014-06-08")
+registerDoMC(4)
 
-cl <- startMPIcluster()
-registerDoMPI(cl)
-
-bake <- function (file, expr) {
-  if (file.exists(file)) {
-    readRDS(file)
-    } else {
-      val <- eval(expr)
-      saveRDS(val,file=file)
-      val
-      }
-  }
-
-readRDS("profiles.rds") %>%
-  ddply(~country+type+model,subset,loglik>max(loglik)-6,
-        select=-c(conv,etime,loglik.se,nfail.min,nfail.max,profile)) -> mles
-
-mles %>% melt(id=c("country","type","model"),variable.name='parameter') %>%
+profs %>% melt(id=c("country","type","model"),variable.name='parameter') %>%
   ddply(~country+type+model+parameter,summarize,
         min=min(value),max=max(value)) %>%
   subset(parameter!="loglik") %>%
@@ -510,9 +484,10 @@ mles %>% ddply(~country+type+model,subset,loglik==max(loglik),select=-loglik) %>
   mutate(k=round(k,4),rho=round(rho,4),R0=round(R0,4),E_0=3*round(E_0/3)) %>%
   unique() %>%
   arrange(country,type,model) -> mles
-
+```
 ### STOCHASTIC MODEL
 
+```{r}
 bake(file="ebola-forecasts_stoch.rds",{
   foreach (country=c("SierraLeone"),
            .inorder=TRUE,.combine=rbind) %:%
@@ -569,9 +544,6 @@ ldply(list(stoch=fc_if,det=fc_tm),.id='model') %>%
         model=factor(model,levels=c("stoch","det")),
         date=as.Date(starts[unique(as.character(country))])+7*(time-1)) %>%
   saveRDS(file='forecasts.rds')
-
-closeCluster(cl)
-mpi.quit()
 ```
 
 ## References
