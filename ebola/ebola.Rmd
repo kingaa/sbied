@@ -16,12 +16,16 @@ csl: ../ecology.csl
 \newcommand\dlta[1]{{\Delta}{#1}}
 \newcommand\scinot[2]{$#1 \times 10^{#2}$\xspace}
 
+------------------------------------
+
+
 Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
 
-Produced in R version `r getRversion()` using `pomp` version `r packageVersion("pomp")`.
+Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
+------------------------------------
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 library(knitr)
@@ -68,16 +72,33 @@ require(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 ```
 
-## Model implementation
+## Objectives
+
+1. To demonstrate the use of diagnostic probes for model criticism
+1. To teach some forecasting methods based on POMP models
+
+These objectives will be achieved using a recent study [@King2015], all codes for which are available on [datadryad.org](http://dx.doi.org/10.5061/dryad.r5f30).
+
+
+## Model and data
+
+### The situation as of 1 October 2014
+
+Let's situate ourselves at the beginning of October 2014.
+The WHO situation report contained data on the number of cases in each of Guinea, Sierra Leone, and Liberia.
 
 Download the data from the WHO Situation Report of 1 October 2014:
 ```{r get-data}
-baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/data/"
-read.csv(paste0(baseurl,"ebola_data.csv"),stringsAsFactors=FALSE,
+# baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+baseurl <- "../"
+read.csv(paste0(baseurl,"data/ebola_data.csv"),stringsAsFactors=FALSE,
          colClasses=c(date="Date")) -> dat
-str(dat)
+sapply(dat,class)
 head(dat)
 ```
+
+Supplementing these data are population estimates for the three countries.
+
 ```{r popsizes}
 ## Population sizes in Guinea, Liberia, and Sierra Leone (census 2014)
 populations <- c(Guinea=10628972,Liberia=4092310,SierraLeone=6190280)
@@ -88,6 +109,21 @@ dat %>%
   ggplot(aes(x=date,y=cases,group=country,color=country))+
   geom_line()
 ```
+
+
+### An SEIR model with gamma-distributed latent and infectious periods
+
+Many of the early modeling efforts used variants on the simple SEIR model.
+Here, we'll focus on a variant that attempts a more accurate description of the durations of the latent and infectious periods.
+Specifically, this model assumes that the amount of time an individual spends in the latent period is
+$$\mathrm{LP} \sim \dist{Gamma}{m,\frac{1}{m\,\alpha}},$$
+where $m$ is an integer.
+This means that the latent period has expectation $1/\alpha$ and variance $1/(m\,\alpha)$.
+Likewise, we assume that the infectious period
+$$\mathrm{IP} \sim \dist{Gamma}{n,\frac{1}{n\,\gamma}}.$$
+In this document, we'll fix $m=n=3$.
+
+We implement Gamma distributions using the so-called *linear chain trick*.
 
 ```{r seir-diagram,echo=FALSE,cache=FALSE,purl=FALSE}
 require(DiagrammeR)
@@ -105,28 +141,6 @@ DiagrammeR("digraph SEIR {
   node[shape=diamond, label='  dead   '] d;
   I3->R I3->d
 }",type="grViz",engine="dot",height=100,width=800)
-```
-
-###  Measurement model: hierarchical model for cases
-
-$C_t | H_t$ is negative binomial with $\expect{C_t|H_t} = \rho\,H_t$ and $\var{C_t|H_t} = \rho\,H_t\,(1+k\,\rho\,H_t)$.
-
-```{r measmodel}
-dObs <- Csnippet('
-  double f;
-  if (k > 0.0)
-    f = dnbinom_mu(nearbyint(cases),1.0/k,rho*N_EI,1);
-  else
-    f = dpois(nearbyint(cases),rho*N_EI,1);
-  lik = (give_log) ? f : exp(f);
-')
-
-rObs <- Csnippet('
-  if (k > 0) {
-    cases = rnbinom_mu(1.0/k,rho*N_EI);
-  } else {
-    cases = rpois(rho*N_EI);
-  }')
 ```
 
 ### Process model simulator
@@ -189,6 +203,28 @@ skel <- Csnippet('
 ')
 ```
 
+###  Measurement model: overdispersed count data
+
+$C_t | H_t$ is negative binomial with $\expect{C_t|H_t} = \rho\,H_t$ and $\var{C_t|H_t} = \rho\,H_t\,(1+k\,\rho\,H_t)$.
+
+```{r measmodel}
+dObs <- Csnippet('
+  double f;
+  if (k > 0.0)
+    f = dnbinom_mu(nearbyint(cases),1.0/k,rho*N_EI,1);
+  else
+    f = dpois(nearbyint(cases),rho*N_EI,1);
+  lik = (give_log) ? f : exp(f);
+')
+
+rObs <- Csnippet('
+  if (k > 0) {
+    cases = rnbinom_mu(1.0/k,rho*N_EI);
+  } else {
+    cases = rpois(rho*N_EI);
+  }')
+```
+
 ### Parameter transformations
 
 ```{r partrans}
@@ -210,6 +246,8 @@ fromEst <- Csnippet('
   from_log_barycentric(TIC,IC,4);
 ')
 ```
+
+The following function constructs a *pomp* object to hold the data for any one of the countries.
 
 ```{r pomp-construction}
 ebolaModel <- function (country=c("Guinea", "SierraLeone", "Liberia"),
@@ -250,7 +288,7 @@ ebolaModel <- function (country=c("Guinea", "SierraLeone", "Liberia"),
       globals=globs,
       statenames=c("S","E1","I","R","N_EI","N_IR"),
       zeronames=c("N_EI","N_IR"),
-      paramnames=c("N","R0","alpha","gamma","rho","k","cfr",
+      paramnames=c("N","R0","alpha","gamma","rho","k",
                    "S_0","E_0","I_0","R_0"),
       nstageE=nstageE,
       dmeasure=dObs, rmeasure=rObs,
@@ -275,352 +313,21 @@ ebolaModel("Liberia") -> lbr
 ```
 
 
-## Parameter estimation
+## Parameter estimates
 
-The following are the contents of the file `profiles.R`, which uses trajectory matching and iterated filtering to estimate model parameters for all four countries and both types of data.
-Again, this is designed to be run on an MPI cluster.
-In a directory with the files `hosts` and `ebola-model.R` (see above), execute these computations via a command like
-```
-mpirun -hostfile hosts -np 101 Rscript --vanilla profiles.R
-```
+@King2015 estimated parameters for this model for each country.
+A large Latin hypercube design was used to initiate a large number of iterated filtering runs.
+Profile likelihoods were computed for each country against the parameters $k$ (the measurement model overdispersion) and $R_0$ (the basic reproductive ratio).
+Full details are given [on the datadryad.org site](http://dx.doi.org/10.5061/dryad.r5f30).
+The following loads the results of these calculations.
 
-Contents of file `profiles.R`:
-```{r profiles,eval=FALSE}
-require(pomp)
-require(plyr)
-require(reshape2)
-require(magrittr)
+```{r load-profile}
 options(stringsAsFactors=FALSE)
-
-require(foreach)
-require(doMPI)
-require(iterators)
-
-source("ebola-model.R")
-
-foreach (country=c("SierraLeone","Liberia","Guinea","WestAfrica"),
-         .inorder=TRUE,.combine=c) %:%
-  foreach (type=c("raw","cum"),.inorder=TRUE,.combine=c) %do%
-  {
-    ebolaModel(country=country,type=type,na.rm=TRUE)
-    } -> models
-dim(models) <- c(2,4)
-dimnames(models) <- list(c("raw","cum"),
-                         c("SierraLeone","Liberia","Guinea","WestAfrica"))
-
-noexport <- c("models")
-
-cl <- startMPIcluster()
-registerDoMPI(cl)
-
-bake <- function (file, expr) {
-  if (file.exists(file)) {
-    readRDS(file)
-    } else {
-      val <- eval(expr)
-      saveRDS(val,file=file)
-      val
-      }
-  }
-
-## trajectory matching: R0 profile
-
-bake(file="ebola-tm-fits-R0.rds",{
-  
-  starts <- profileDesign(R0=seq(1,3,length=200),
-                          upper=c(k=1),
-                          lower=c(k=1e-8),
-                          nprof=40)
-  
-  foreach (start=iter(starts,by='row'),
-           .combine=rbind,.inorder=FALSE,
-           .noexport=noexport,
-           .options.mpi=list(chunkSize=100,seed=2016138277L,info=TRUE)
-           ) %:%
-    foreach (type=c("raw","cum"),.combine=rbind,.inorder=FALSE) %:%
-    foreach (country=c("SierraLeone","Liberia","Guinea","WestAfrica"),
-             .combine=rbind,.inorder=FALSE) %dopar%
-    {
-      tm <- models[type,country][[1]]
-      tic <- Sys.time()
-      coef(tm,names(start)) <- unname(unlist(start))
-      coef(tm,"rho") <- 0.2
-      tm <- traj.match(tm,est=c("k","E_0","I_0"),transform=TRUE)
-      if (coef(tm,"k")==0) coef(tm,"k") <- 1e-8
-      if (coef(tm,"E_0")==0) coef(tm,"E_0") <- 1e-12
-      if (coef(tm,"I_0")==0) coef(tm,"I_0") <- 1e-12
-      tm <- traj.match(tm,method='subplex',control=list(maxit=1e5))
-      toc <- Sys.time()
-      etime <- toc-tic
-      units(etime) <- "hours"
-      data.frame(country=country,type=type,as.list(coef(tm)),
-                 loglik=logLik(tm),conv=tm$convergence,
-                 etime=as.numeric(etime))
-      } %>% mutate(sum=S_0+E_0+I_0+R_0,
-                   S_0=round(N*S_0/sum),
-                   E_0=round(N*E_0/sum),
-                   I_0=round(N*I_0/sum),
-                   R_0=round(N*R_0/sum)) %>%
-    subset(conv %in% c(0,1),select=-sum) %>%
-    unique()
-  
-  }) -> profR0
-
-## trajectory matching: k profile
-
-bake(file="ebola-tm-fits-k.rds",{
-  
-  starts <- profileDesign(k=seq(0,1,length=100),
-                          upper=c(R0=1),
-                          lower=c(R0=3),
-                          nprof=40)
-  
-  foreach (start=iter(starts,by='row'),
-           .combine=rbind,.inorder=FALSE,
-           .noexport=noexport,
-           .options.mpi=list(chunkSize=100,seed=2016138277L,info=TRUE)
-           ) %:%
-    foreach (type=c("raw","cum"),.combine=rbind,.inorder=FALSE) %:%
-    foreach (country=c("SierraLeone","Liberia","Guinea","WestAfrica"),
-             .combine=rbind,.inorder=FALSE) %dopar%
-    {
-      tm <- models[type,country][[1]]
-      tic <- Sys.time()
-      coef(tm,names(start)) <- unname(unlist(start))
-      coef(tm,"rho") <- 0.2
-      tm <- traj.match(tm,est=c("R0","E_0","I_0"),transform=TRUE)
-      if (coef(tm,"E_0")==0) coef(tm,"E_0") <- 1e-12
-      if (coef(tm,"I_0")==0) coef(tm,"I_0") <- 1e-12
-      tm <- traj.match(tm,method='subplex',control=list(maxit=1e5))
-      toc <- Sys.time()
-      etime <- toc-tic
-      units(etime) <- "hours"
-      data.frame(country=country,type=type,as.list(coef(tm)),
-                 loglik=logLik(tm),conv=tm$convergence,
-                 etime=as.numeric(etime))
-      } %>% mutate(sum=S_0+E_0+I_0+R_0,
-                   S_0=round(N*S_0/sum),
-                   E_0=round(N*E_0/sum),
-                   I_0=round(N*I_0/sum),
-                   R_0=round(N*R_0/sum)) %>%
-    subset(conv %in% c(0,1),select=-sum) %>%
-    unique()
-  
-  }) -> profk
-
-## All trajectory matching computations
-ldply(list(R0=profR0,k=profk),.id='profile') -> profTM
-
-## Iterated filtering, R0 profile
-
-bake(file="ebola-if-fits-R0_a.rds",{
-  
-  profTM %>% subset(profile=="R0") %>%
-    ddply(~country+type,subset,
-          is.finite(loglik)&loglik>max(loglik)-20) %>%
-    ddply(~country+type+R0,subset,
-          loglik==max(loglik),
-          select=-c(loglik,etime,conv,profile)) -> pars
-  
-  foreach (start=iter(pars,by='row'),
-           .combine=rbind,.inorder=FALSE,
-           .options.mpi=list(chunkSize=1,seed=1264624821L),
-           .noexport=noexport) %dopar%
-    {
-      tic <- Sys.time()
-      
-      country <- as.character(start$country)
-      type <- as.character(start$type)
-      st <- unlist(subset(start,select=-c(country,type)))
-      
-      po <- models[type,country][[1]]
-      coef(po,names(st)) <- st
-      if (coef(po,"E_0")==0) coef(po,"E_0") <- 1e-5
-      if (coef(po,"I_0")==0) coef(po,"I_0") <- 1e-5
-      
-      mf <- mif(po, Nmif=10,
-                rw.sd = c(k=0.02,E_0=1,I_0=1),
-                ivps = c("E_0","I_0"),
-                Np = 2000,
-                var.factor = 2,
-                method = "mif2",
-                cooling.type = "hyperbolic",
-                cooling.fraction = 0.5,
-                transform = TRUE,
-                verbose = FALSE)
-      mf <- continue(mf, Nmif = 50, cooling.fraction = 0.1)
-      
-      ## Runs 10 particle filters to assess Monte Carlo error in likelihood
-      pf <- replicate(10,pfilter(mf,Np=5000,max.fail=Inf))
-      ll <- sapply(pf,logLik)
-      ll <- logmeanexp(ll, se = TRUE)
-      nfail <- sapply(pf,getElement,"nfail")
-      toc <- Sys.time()
-      etime <- toc-tic
-      units(etime) <- "hours"
-      
-      data.frame(country=country,type=type,as.list(coef(mf)),
-                 loglik = ll[1],
-                 loglik.se = ll[2],
-                 nfail.min = min(nfail),
-                 nfail.max = max(nfail),
-                 etime = as.numeric(etime))
-      }
-  }) -> profR0
-
-## Filter once more on maxima
-
-bake(file="ebola-if-fits-R0.rds",{
-  
-  profR0 %>% subset(is.finite(loglik)&nfail.max==0) %>%
-    ddply(~country+type+R0,subset,rank(-loglik)<=5) %>%
-    subset(select=-c(loglik,loglik.se,nfail.max,nfail.min,etime)) -> pars
-  
-  foreach (start=iter(pars,by='row'),
-           .combine=rbind,.inorder=FALSE,
-           .options.mpi=list(chunkSize=1,seed=1264624821L),
-           .noexport=noexport) %dopar%
-    {
-      tic <- Sys.time()
-      
-      country <- as.character(start$country)
-      type <- as.character(start$type)
-      st <- unlist(subset(start,select=-c(country,type)))
-      
-      po <- models[type,country][[1]]
-      coef(po,names(st)) <- unname(st)
-      
-      ## Runs 10 particle filters to assess Monte Carlo error in likelihood
-      pf <- try(replicate(10,pfilter(po,Np=5000,max.fail=Inf)))
-      
-      toc <- Sys.time()
-      etime <- toc-tic
-      units(etime) <- "hours"
-      
-      ll <- sapply(pf,logLik)
-      ll <- logmeanexp(ll, se = TRUE)
-      nfail <- sapply(pf,getElement,"nfail")
-      
-      data.frame(country=country,type=type,as.list(coef(po)),
-                 loglik = ll[1],
-                 loglik.se = ll[2],
-                 nfail.min = min(nfail),
-                 nfail.max = max(nfail),
-                 etime = as.numeric(etime))
-      }
-  }) -> profR0
-
-## Iterated filtering, k profile
-
-bake(file="ebola-if-fits-k_a.rds",{
-  
-  profTM %>% subset(profile=="k") %>%
-    ddply(~country+type,subset,
-          is.finite(loglik)&loglik>max(loglik)-20) %>%
-    ddply(~country+type+k,subset,
-          loglik==max(loglik),
-          select=-c(loglik,etime,conv,profile)) -> pars
-  
-  foreach (start=iter(pars,by='row'),
-           .combine=rbind,.inorder=FALSE,
-           .options.mpi=list(chunkSize=1,seed=1264624821L),
-           .noexport=noexport) %dopar%
-    {
-      tic <- Sys.time()
-      
-      country <- as.character(start$country)
-      type <- as.character(start$type)
-      st <- unlist(subset(start,select=-c(country,type)))
-      
-      po <- models[type,country][[1]]
-      coef(po,names(st)) <- st
-      if (coef(po,"E_0")==0) coef(po,"E_0") <- 1e-5
-      if (coef(po,"I_0")==0) coef(po,"I_0") <- 1e-5
-      
-      mf <- mif(po, Nmif=10,
-                rw.sd = c(R0=0.02,E_0=1,I_0=1),
-                ivps = c("E_0","I_0"),
-                Np = 2000,
-                var.factor = 2,
-                method = "mif2",
-                cooling.type = "hyperbolic",
-                cooling.fraction = 0.5,
-                transform = TRUE,
-                verbose = FALSE)
-      mf <- continue(mf, Nmif = 50, cooling.fraction = 0.1)
-      
-      ## Runs 10 particle filters to assess Monte Carlo error in likelihood
-      pf <- replicate(10,pfilter(mf,Np=5000,max.fail=Inf))
-      ll <- sapply(pf,logLik)
-      ll <- logmeanexp(ll, se = TRUE)
-      nfail <- sapply(pf,getElement,"nfail")
-      toc <- Sys.time()
-      etime <- toc-tic
-      units(etime) <- "hours"
-      
-      data.frame(country=country,type=type,as.list(coef(mf)),
-                 loglik = ll[1],
-                 loglik.se = ll[2],
-                 nfail.min = min(nfail),
-                 nfail.max = max(nfail),
-                 etime = as.numeric(etime))
-      }
-  }) -> profk
-
-## Filter once more on maxima
-
-bake(file="ebola-if-fits-k.rds",{
-  
-  profk %>% subset(is.finite(loglik)&nfail.max==0) %>%
-    ddply(~country+type+R0,subset,rank(-loglik)<=5) %>%
-    subset(select=-c(loglik,loglik.se,nfail.max,nfail.min,etime)) -> pars
-  
-  foreach (start=iter(pars,by='row'),
-           .combine=rbind,.inorder=FALSE,
-           .options.mpi=list(chunkSize=1,seed=1264624821L),
-           .noexport=noexport) %dopar%
-    {
-      tic <- Sys.time()
-      
-      country <- as.character(start$country)
-      type <- as.character(start$type)
-      st <- unlist(subset(start,select=-c(country,type)))
-      
-      po <- models[type,country][[1]]
-      coef(po,names(st)) <- unname(st)
-      
-      ## Runs 10 particle filters to assess Monte Carlo error in likelihood
-      pf <- try(replicate(10,pfilter(po,Np=5000,max.fail=Inf)))
-      
-      toc <- Sys.time()
-      etime <- toc-tic
-      units(etime) <- "hours"
-      
-      ll <- sapply(pf,logLik)
-      ll <- logmeanexp(ll, se = TRUE)
-      nfail <- sapply(pf,getElement,"nfail")
-      
-      data.frame(country=country,type=type,as.list(coef(po)),
-                 loglik = ll[1],
-                 loglik.se = ll[2],
-                 nfail.min = min(nfail),
-                 nfail.max = max(nfail),
-                 etime = as.numeric(etime))
-      }
-  }) -> profk
-
-ldply(list(R0=profR0,k=profk),.id='profile') -> profIF
-
-ldply(list(det=profTM,stoch=profIF),.id='model') %>%
-  saveRDS(file='ebola-profiles.rds')
-
-closeCluster(cl)
-mpi.quit()
+profs <- read.csv(paste0(baseurl,"/ebola/ebola-profiles.csv"))
 ```
 
-Executing this code will result in the creation of several files, of which `ebola-profiles.rds` is the most important, containing as it does the results of all the parameter estimation.
-
-The following plots the results in various ways:
+The following plots the profile likelihoods.
+The horizontal line represents the critical value of the likelihood ratio test for $p=0.01$.
 ```{r profiles-plots,results='hide'}
 require(reshape2)
 require(plyr)
@@ -628,47 +335,37 @@ require(magrittr)
 require(ggplot2)
 theme_set(theme_bw())
 
-readRDS("ebola-profiles.rds") %>% 
-  melt(id=c("model","profile","country","type","loglik")) %>%
-  mutate(variable=as.character(variable),profile=as.character(profile)) %>% 
+profs %>% 
+  melt(id=c("profile","country","loglik")) %>%
   subset(variable==profile) %>%
-  ddply(~country+type+model,mutate,dll=loglik-max(loglik)) -> x
-
-x %>%
-  ddply(~country+type+model+profile+value,subset,loglik==max(loglik)) -> xx
-
-pls1 <- dlply(x,~country,function (x)  {
-  ggplot(data=x,mapping=aes(x=value,y=dll,color=model))+
-    geom_point(alpha=0.2)+
-    facet_wrap(~type+profile,scales='free')+
-    labs(title=unique(x$country))
-  })
-
-pls2 <- llply(names(pls1),function(n) {
-  pls1[[n]] %+% subset(x,country==n & dll>-20)
-  })
-
-pls3 <- llply(names(pls1),function (n) 
-  {
-  pls1[[n]] %+% subset(xx,country==n & dll>-20)
-  })
-
-print(pls1)
-print(pls2)
-print(pls3)
+  ddply(~country,mutate,dll=loglik-max(loglik)) %>%
+  ddply(~country+profile+value,subset,loglik==max(loglik)) %>% 
+  ggplot(mapping=aes(x=value,y=dll))+
+  geom_point(color='red')+
+  geom_hline(yintercept=-0.5*qchisq(p=0.99,df=1))+
+  facet_grid(country~profile,scales='free')+
+  labs(y=expression(l))
 ```
 
 ## Diagnostics
 
-The file `diagnostics.R`, whose contents are shown below, computes the diagnostics displayed in the paper.
-These computations are not very heavy, but can be accelerated using `doMC` if run on a multi-core workstation.
-In a directory containing `ebola-profiles.rds` (see above) and `ebola-model.R`, execute these codes with a command like
-```
-Rscript --vanilla diagnostics.R
-```
+Parameter estimation is the process of finding the parameters that are "best", in some sense, for a given model, from among the set of those that make sense for that model.
+Model selection, likewise, aims at identifying the "best" model, in some sense, from among a set of candidates.
+One can do both of these things more or less well, but no matter how carefully they are done, the best of a bad set of models is still bad.
 
-Contents of file `diagnostics.R`:
-```{r diagnostics,eval=FALSE}
+Lets' investigate the model here, at its maximum-likelihood parameters, to see if we can identify problems.
+The guiding principle in this is that, if the model is "good", then the data are a plausible realization of that model.
+Therefore, we can compare the data directly against model simulations.
+Moreover, we can quantify the agreement between simulations and data in any way we like.
+Any statistic, or set of statistics, that can be applied to the data can also be applied to simulations.
+Shortcomings of the model should manifest themselves as discrepancies between the model-predicted distribution of such statistics and their value on the data.
+
+**pomp** provides tools to facilitate this process.
+Specifically, the `probe` function applies a set of user-specified *probes* or summary statistics, to the model and the data, and quantifies the degree of disagreement in several ways.
+
+Let's see how this is done using the model for the Liberian outbreak.
+
+```{r diagnostics1}
 library(pomp)
 library(plyr)
 library(reshape2)
@@ -677,101 +374,67 @@ options(stringsAsFactors=FALSE)
 
 require(foreach)
 require(doMC)
-require(iterators)
 
-source("ebola-model.R")
+profs %>%
+  subset(country=="Liberia") %>%
+  subset(loglik==max(loglik),
+         select=-c(loglik,loglik.se,country,profile)) %>%
+  unlist() -> coef(lbr)
 
-readRDS("ebola-profiles.rds") %>%
-  ddply(~country+type+model,subset,loglik==max(loglik)) %>%
-  subset(type=="raw"&model=="stoch") -> mles
-
-time1 <- c(Guinea="2014-01-05",Liberia="2014-06-01",
-           SierraLeone="2014-06-08",WestAfrica="2014-01-05")
-
-registerDoMC(4)
-
-foreach (mle=iter(mles,by='row'),.combine=rbind) %dopar%
-  {
-    country=as.character(mle$country)
-    type=as.character(mle$type)
-    M <- ebolaModel(country=country,type=type,
-                    na.rm=TRUE,nstage=3,timestep=0.01)
-    p <- unlist(subset(mle,select=-c(country,type,model,profile,
-                                     loglik,loglik.se,
-                                     nfail.min,nfail.max,conv,etime)))
-    coef(M,names(p)) <- unname(unlist(p))
-    
-    t0 <- as.Date(time1[country])
-    
-    simulate(M,nsim=10,as.data.frame=TRUE,obs=TRUE,include.data=TRUE,seed=2186L) %>%
-      mutate(date=t0+time*7,country=country,type=type)
-    } %>% saveRDS(file="ebola-diagnostics-sim.rds")
-
-foreach (mle=iter(mles,by='row'),.combine=rbind) %dopar%
-  {
-    country=as.character(mle$country)
-    type=as.character(mle$type)
-    M <- ebolaModel(country=country,type=type,
-                    na.rm=TRUE,nstage=3,timestep=0.01)
-    p <- unlist(subset(mle,select=-c(country,type,model,profile,
-                                     loglik,loglik.se,
-                                     nfail.min,nfail.max,conv,etime)))
-    coef(M,names(p)) <- unname(unlist(p))
-    
-    probe(M,probes=list(probe.acf(var="cases",lags=1,type="correlation")),
-          nsim=500,seed=1878812716L) %>%
-      as.data.frame() -> pb
-    pb %>% mutate(sim=rownames(pb),
-                  data=ifelse(sim=="data","data","simulation"),
-                  type=type,
-                  country=country)
-    } %>% saveRDS(file="ebola-diagnostics-probes.rds")
-
-## Additional diagnostics
-
-## Run probes for each country
-## Custom probe: exponential growth rate
-probe.trend <- function (y) {
-  cases <- y["cases",]
-  df <- data.frame(week=seq_along(cases),cases=cases)
-  fit <- lm(log1p(cases)~week,data=df)
-  unname(coef(fit)[2])
-  }
-
-foreach (mle=iter(mles,by='row'),.combine=rbind) %dopar%
-  {
-    country=as.character(mle$country)
-    type=as.character(mle$type)
-    M <- ebolaModel(country=country,type=type,
-                    na.rm=TRUE,nstage=3,timestep=0.01)
-    p <- unlist(subset(mle,select=-c(country,type,model,profile,
-                                     loglik,loglik.se,
-                                     nfail.min,nfail.max,conv,etime)))
-    coef(M,names(p)) <- unname(unlist(p))
-    
-    ## remove an exponential trend, give residuals on the log scale
-    dm <- model.matrix(lm(log1p(cases)~time,data=as.data.frame(M)))
-    rm <- diag(nrow(dm))-dm%*%solve(crossprod(dm))%*%t(dm)
-    detrend <- function (x) log1p(x)%*%rm
-    
-    probe(M,probes=list(
-      probe.acf(var="cases",lags=1,type="correlation"),
-      sd=probe.sd(var="cases",transform=log1p),
-      probe.quantile(var="cases",prob=c(0.9)),
-      d=probe.acf(var="cases",lags=c(1,2,3),type="correlation",
-                  transform=detrend),
-      trend=probe.trend),
-      nsim=2000,seed=2186L
-      ) %>% as.data.frame() -> pb
-    pb %>% mutate(sim=rownames(pb),
-                  kind=ifelse(sim=="data","data","simulation"),
-                  type=type,
-                  country=country)
-    } %>%
-  melt(id=c("country","type","kind","sim"),variable.name="probe") %>%
-  arrange(country,type,probe,kind,sim) %>%
-  saveRDS(file="ebola-diagnostics-addl-probes.rds")
+simulate(lbr,nsim=20,as.data.frame=TRUE,include.data=TRUE) %>% 
+  mutate(date=min(dat$date)+7*(time-1)) %>% 
+  ggplot(aes(x=date,y=cases,group=sim,color=(sim=="data")),
+         alpha=(sim=="data"))+
+  geom_line()+
+  guides(color=FALSE,alpha=FALSE)+
+  scale_color_manual(values=c(`TRUE`='red',`FALSE`=gray(0.8)))+
+  scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0.4))
 ```
+
+The simulations appear to be growing a bit more quickly than the data.
+Let's try to quantify this.
+First, we'll write a function that estimates the exponential growth rate by linear regression.
+Then, we'll apply it to the data and to 500 simulations.
+
+```{r diagnostics-growth-rate}
+growth.rate <- function (y) {
+  cases <- y["cases",]
+  fit <- lm(log1p(cases)~seq_along(cases))
+  unname(coef(fit)[2])
+}
+probe(lbr,probes=list(r=growth.rate),nsim=500) %>% plot()
+```
+
+The simulations also appear to be more highly variable around the trend than do the data.
+
+```{r diagnostics-growth-rate-and-sd}
+growth.rate.plus <- function (y) {
+  cases <- y["cases",]
+  fit <- lm(log1p(cases)~seq_along(cases))
+  c(r=unname(coef(fit)[2]),sd=sd(residuals(fit)))
+}
+probe(lbr,probes=list(growth.rate.plus),
+      nsim=500) %>% plot()
+```
+
+We can look at a whole suite of probes simultaneously.
+
+```{r diagnostics2}
+log.detrend <- function (y) {
+  cases <- y["cases",]
+  as.numeric(residuals(lm(log1p(cases)~seq_along(cases))))
+} 
+
+probe(lbr,probes=list(
+  growth.rate.plus,
+  probe.quantile(var="cases",prob=c(0.1,0.5,0.9)),
+  probe.acf(var="cases",lags=c(1,2,3),type="correlation")
+            # transform=log.detrend)
+  ),
+  nsim=500) %>% plot()
+```
+
+### Exercise: the SEIR model for the Sierra Leone outbreak
 
 ## Forecasting
 
