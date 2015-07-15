@@ -62,18 +62,20 @@ img {
 
 
 <hr />
-<p>Dear SISMID participant,</p>
-<p>Ed and I are looking forward to having you in this year’s <a href="http://sismid.uw.edu"><strong>Summer Institute in Statistics and Modeling in Infectious Diseases</strong></a> <strong>Module 10: Simulation-based Inference for Epidemiological Dynamics</strong>. We’ll be teaching some powerful and flexible approaches that expand the range of models that can be used in inference.</p>
-<p>You’ll be learning about these methods through computational exercises. Accordingly, please bring a laptop.</p>
-<p>This message is intended to make sure that you have the software you’ll need for the module. Please read the appropriate sections below, install the software as needed, and run the test scripts. <strong>We will not have time in Seattle to spend on installation of software, so please make sure this is all done before you arrive.</strong> If you run into problems, send me a note with a detailed description including the OS you’re running, the versions of <code>R</code>, <code>Rstudio</code>, and <code>pomp</code> you’re attempting to install, what you’ve done, and what problems you’ve encountered.</p>
+<div id="software-installation-instructions" class="section level1">
+<h1>Software installation instructions</h1>
+<p>Please read the appropriate sections below, install the software as needed, and run the test scripts. If you run into problems, send a note to <a href="mailto:*kingaa@umich.edu">*kingaa@umich.edu</a>* with a detailed description of the problem you’ve encountered, including the OS you’re running, the versions of <strong>R</strong>, <strong>Rstudio</strong>, and <strong>pomp</strong> you’re attempting to install, what you’ve done, and what problems you’ve encountered.</p>
 <div id="all-users" class="section level4">
 <h4>All users:</h4>
-<p><code>R</code> and <code>Rstudio</code> are free and open-source. You’ll need at least version 3.2.0 of <code>R</code>. The latest version is 3.2.1, so if you need to update, go ahead and install version 3.2.1. Source code and binaries are available on CRAN (<a href="http://cran.r-project.org" class="uri">http://cran.r-project.org</a>). Install the latest version of <code>Rstudio</code> (<a href="http://www.rstudio.com/products/rstudio/download/" class="uri">http://www.rstudio.com/products/rstudio/download/</a>).</p>
-<p>Once you’ve installed these, open a session in <code>R</code> or <code>Rstudio</code> and run the following:</p>
-<pre><code>&gt; source(&quot;http://kinglab.eeb.lsa.umich.edu/SBIED/prep/packages.R&quot;,echo=TRUE)
-
+<p><strong>R</strong> and <strong>Rstudio</strong> are free and open-source. You’ll need at least version 3.2.0 of <strong>R</strong>. The latest version is 3.2.1, so if you need to update, go ahead and install version 3.2.1. Source code and binaries are available on CRAN (<a href="http://cran.r-project.org" class="uri">http://cran.r-project.org</a>). Install the latest version of <strong>Rstudio</strong> (<a href="http://www.rstudio.com/products/rstudio/download/" class="uri">http://www.rstudio.com/products/rstudio/download/</a>).</p>
+<p>Once you’ve installed these, open a session in <strong>R</strong> or <strong>Rstudio</strong> and run the following:</p>
+<pre><code>&gt; update.packages()
+&gt; source(&quot;http://kinglab.eeb.lsa.umich.edu/SBIED/prep/packages.R&quot;,echo=TRUE)
 &gt; source(&quot;http://kinglab.eeb.lsa.umich.edu/SBIED/prep/pompTest.R&quot;,echo=TRUE)</code></pre>
-<p>These commands run two scripts located on my website. [The <code>&gt;</code> is the command prompt; it’s not part of the command. Also, depending on your email client program, you may need to replace the quotation marks with plain keyboard double quotes.] The first script installs the packages we’ll need. As this script runs, you may be prompted to choose a CRAN mirror: choose one near you. The second checks whether you can work with pomp, which is the principal R package we’ll be using. The installation script above will install the development version from my own R package repository (<a href="http://kinglab.eeb.lsa.umich.edu/R/" class="uri">http://kinglab.eeb.lsa.umich.edu/R/</a>) in preference to the stable version from CRAN.</p>
+<p>[The <code>&gt;</code> is the command prompt; it’s not part of the command. Also, depending on your email client program, you may need to replace the quotation marks with plain keyboard double quotes.] The first command updates your installed packages. You may be prompted to specify a CRAN mirror: choose one near you. The second command runs a script on my website. It will install some needed packages if these are not already installed on your system. The third command will attempt to install <strong>pomp</strong>, the principal R package we’ll be using, from source code and will check whether you can work with it. The <code>pompTest.R</code> script will attempt to install a version that is more recent than that which is on CRAN. The latter will not be enough for our purposes.</p>
+<p>If the final command fails, try the following:</p>
+<pre><code>&gt; source(&quot;http://kinglab.eeb.lsa.umich.edu/SBIED/prep/hello.R&quot;,echo=TRUE)</code></pre>
+<p>If this fails to give the “Hello world!” message, you will need to follow the instructions below that correspond to your OS.</p>
 </div>
 <div id="linux-and-unix-users" class="section level4">
 <h4>Linux and unix users:</h4>
@@ -81,19 +83,17 @@ img {
 </div>
 <div id="macosx-users" class="section level4">
 <h4>MacOSX users:</h4>
-<p>So that you can compile C code and dynamically link it into an <code>R</code> session, you will need to make sure you have the Xcode app installed before running the second script above. This is free and can be installed via the App Store or downloaded from <a href="https://developer.apple.com/xcode/downloads/" class="uri">https://developer.apple.com/xcode/downloads/</a>.</p>
+<p>So that you can compile C code and dynamically link it into an <strong>R</strong> session, you will need to make sure you have the Xcode app installed before running the second script above. This is free and can be installed via the App Store or downloaded from [<a href="https://developer.apple.com/xcode/downloads/" class="uri">https://developer.apple.com/xcode/downloads/</a>].</p>
 <p>If you have trouble with the first command trying to install <code>pomp</code> from source, receiving the error,</p>
 <pre><code>make: gfortran-4.8: No such file or directory</code></pre>
-<p>then it is likely that you do not have the necessary version of gfortran installed. Have a look at <a href="./mac-fortran.html">these instructions</a> and contact me if these don’t work for you.</p>
+<p>then it is likely that you do not have the necessary version of gfortran installed. Have a look at <a href="./scripts/mac-fortran.html">these instructions</a> and contact me if these don’t work for you.</p>
 </div>
 <div id="windows-users" class="section level4">
 <h4>Windows users:</h4>
-<p>You will need the ability to compile C code and dynamically link it into an <code>R</code> session. To do this, you’ll need to install the <code>Rtools</code> suite. Download the latest frozen version (<a href="http://cran.r-project.org/bin/windows/Rtools" class="uri">http://cran.r-project.org/bin/windows/Rtools</a>) and install it. I had some problems with the unfrozen version (<code>Rtools33</code>) but none with the last frozen version (<code>Rtools32</code>). I also had some difficulties initially with the latest version of <code>Rstudio</code> but these went away when I installed version 0.98.1103 (downloaded from <a href="https://support.rstudio.com/hc/en-us/articles/206569407-Older-Versions-of-RStudio-Desktop" class="uri">https://support.rstudio.com/hc/en-us/articles/206569407-Older-Versions-of-RStudio-Desktop</a>) and now I am having no problems with version <code>Rstudio</code> version 0.99.447.</p>
+<p>You will need the ability to compile C code and dynamically link it into an <strong>R</strong> session. To do this, you’ll need to install the <code>Rtools</code> suite. Download the latest frozen version ([<a href="http://cran.r-project.org/bin/windows/Rtools" class="uri">http://cran.r-project.org/bin/windows/Rtools</a>]) and install it. I had some problems with the unfrozen version (<strong>Rtools33</strong>) but none with the last frozen version (<strong>Rtools32</strong>). I also had some difficulties initially with the latest version of <strong>Rstudio</strong> but these went away when I installed version 0.98.1103 (downloaded from <a href="https://support.rstudio.com/hc/en-us/articles/206569407-Older-Versions-of-RStudio-Desktop">here</a>) and now I am having no problems with version <strong>Rstudio</strong> version 0.99.447.</p>
 <p>If you use some other operating system, let me know!</p>
-<p>In addition, if you can arrange to be able to run remote computations at your home institution, this will be helpful. For example, if you have remote access to a multi-core computer on which to run computations, make sure it too is set up according to the instructions above and that you can log in and run computations.</p>
-<p>Looking forward to seeing you in Seattle,</p>
-<p>Aaron</p>
 <hr />
+</div>
 </div>
 
 

@@ -1,9 +1,10 @@
 ## TEST SCRIPT
 ## If this script runs without errors, pomp is usable on your system.
 
-require(pomp)
+require(devtools)
+install_github("kingaa/pomp@0.71-1")
 
-stopifnot(packageVersion("pomp")>="0.69-1")
+require(pomp)
 
 gomp2 <- pomp(
               data=data.frame(time=1:50,Y=NA),

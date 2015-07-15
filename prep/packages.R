@@ -38,8 +38,4 @@ xtable
 pkglist <- setdiff(pkglist,rownames(installed.packages()))
 
 if (length(pkglist)>0) install.packages(pkglist)
-update.packages()
-
-install.packages("pomp",repos="http://kinglab.eeb.lsa.umich.edu/R")
-
 cat("all packages installed successfully!\n")
