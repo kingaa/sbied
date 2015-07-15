@@ -114,14 +114,12 @@ dat %>%
 ### An SEIR model with gamma-distributed latent and infectious periods
 
 Many of the early modeling efforts used variants on the simple SEIR model.
-Here, we'll focus on a variant that attempts a more accurate description of the durations of the latent and infectious periods.
-Specifically, this model assumes that the amount of time an individual spends in the latent period is
+Here, we'll focus on a variant that attempts a more accurate description of the duration of the latent period.
+Specifically, this model assumes that the amount of time an infection remains latent is
 $$\mathrm{LP} \sim \dist{Gamma}{m,\frac{1}{m\,\alpha}},$$
 where $m$ is an integer.
 This means that the latent period has expectation $1/\alpha$ and variance $1/(m\,\alpha)$.
-Likewise, we assume that the infectious period
-$$\mathrm{IP} \sim \dist{Gamma}{n,\frac{1}{n\,\gamma}}.$$
-In this document, we'll fix $m=n=3$.
+In this document, we'll fix $m=3$.
 
 We implement Gamma distributions using the so-called *linear chain trick*.
 
@@ -133,13 +131,11 @@ DiagrammeR("digraph SEIR {
   node[shape=oval, label='E1'] E1;
   node[shape=oval, label='E2'] E2;
   node[shape=oval, label='E3'] E3;
-  node[shape=oval, label='I1'] I1;
-  node[shape=oval, label='I2'] I2;
-  node[shape=oval, label='I3'] I3;
-  S->E1 E1->E2 E2->E3 E3->I1 I1->I2 I2->I3
+  node[shape=oval, label='I'] I;
+  S->E1 E1->E2 E2->E3 E3->I
   node[shape=diamond, label='recovered'] R;
   node[shape=diamond, label='  dead   '] d;
-  I3->R I3->d
+  I->R I->d
 }",type="grViz",engine="dot",height=100,width=800)
 ```
 
@@ -247,34 +243,17 @@ fromEst <- Csnippet('
 ')
 ```
 
-The following function constructs a *pomp* object to hold the data for any one of the countries.
+The following function constructs a `pomp` object to hold the data for any one of the countries.
 
 ```{r pomp-construction}
 ebolaModel <- function (country=c("Guinea", "SierraLeone", "Liberia"),
-                        timestep = 0.1) {
+                        timestep = 0.1, nstageE = 3) {
 
   ctry <- match.arg(country)
   pop <- unname(populations[ctry])
- 
-  ## Incubation period is supposed to be Gamma distributed with shape parameter 3
-  ## and mean 11.4 days.  The discrete-time formula is used to calculate the
-  ## corresponding alpha (cf He et al., Interface 2010).
-  ## Case-fatality ratio is fixed at 0.7 (cf WHO Ebola response team, NEJM 2014)
-  incubation_period <- 11.4/7
-  infectious_period <- 7/7
-  index_case <- 10/pop
-  dt <- timestep
-  nstageE <- 3L
+  nstageE <- as.integer(nstageE)
 
-  globs <- paste0("static int nstageE = ",nstageE,";");
-
-  theta <- c(N=pop,R0=1.4,
-             alpha=-1/(nstageE*timestep)*log(1-nstageE*timestep/incubation_period),
-             gamma=-log(1-timestep/infectious_period)/timestep,
-             rho=0.2,cfr=0.7,
-             k=0,
-             S_0=1-index_case,E_0=index_case/2-5e-9,
-             I_0=index_case/2-5e-9,R_0=1e-8)
+  globs <- paste0("static int nstageE = ",nstageE,";")
 
   dat <- subset(dat,country==ctry,select=-country)
 
@@ -284,7 +263,6 @@ ebolaModel <- function (country=c("Guinea", "SierraLeone", "Liberia"),
     pomp(
       times="week",
       t0=min(dat$week)-1,
-      params=theta,
       globals=globs,
       statenames=c("S","E1","I","R","N_EI","N_IR"),
       zeronames=c("N_EI","N_IR"),
@@ -363,7 +341,7 @@ Shortcomings of the model should manifest themselves as discrepancies between th
 **pomp** provides tools to facilitate this process.
 Specifically, the `probe` function applies a set of user-specified *probes* or summary statistics, to the model and the data, and quantifies the degree of disagreement in several ways.
 
-Let's see how this is done using the model for the Liberian outbreak.
+Let's see how this is done using the model for the Guinean outbreak.
 
 ```{r diagnostics1}
 library(pomp)
@@ -372,23 +350,21 @@ library(reshape2)
 library(magrittr)
 options(stringsAsFactors=FALSE)
 
-require(foreach)
-require(doMC)
-
 profs %>%
-  subset(country=="Liberia") %>%
+  subset(country=="Guinea") %>%
   subset(loglik==max(loglik),
          select=-c(loglik,loglik.se,country,profile)) %>%
-  unlist() -> coef(lbr)
+  unlist() -> coef(gin)
 
-simulate(lbr,nsim=20,as.data.frame=TRUE,include.data=TRUE) %>% 
-  mutate(date=min(dat$date)+7*(time-1)) %>% 
-  ggplot(aes(x=date,y=cases,group=sim,color=(sim=="data")),
-         alpha=(sim=="data"))+
+simulate(gin,nsim=20,as.data.frame=TRUE,include.data=TRUE) %>% 
+  mutate(date=min(dat$date)+7*(time-1),
+         is.data=ifelse(sim=="data","yes","no")) %>% 
+  ggplot(aes(x=date,y=cases,group=sim,color=is.data,
+         alpha=is.data))+
   geom_line()+
   guides(color=FALSE,alpha=FALSE)+
-  scale_color_manual(values=c(`TRUE`='red',`FALSE`=gray(0.8)))+
-  scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0.4))
+  scale_color_manual(values=c(no=gray(0.6),yes='red'))+
+  scale_alpha_manual(values=c(no=0.5,yes=1))
 ```
 
 The simulations appear to be growing a bit more quickly than the data.
@@ -402,8 +378,10 @@ growth.rate <- function (y) {
   fit <- lm(log1p(cases)~seq_along(cases))
   unname(coef(fit)[2])
 }
-probe(lbr,probes=list(r=growth.rate),nsim=500) %>% plot()
+probe(gin,probes=list(r=growth.rate),nsim=500) %>% plot()
 ```
+
+Do these results bear out our suspicion that the model and data differ in terms of growth rate?
 
 The simulations also appear to be more highly variable around the trend than do the data.
 
@@ -413,40 +391,51 @@ growth.rate.plus <- function (y) {
   fit <- lm(log1p(cases)~seq_along(cases))
   c(r=unname(coef(fit)[2]),sd=sd(residuals(fit)))
 }
-probe(lbr,probes=list(growth.rate.plus),
+probe(gin,probes=list(growth.rate.plus),
       nsim=500) %>% plot()
 ```
 
-We can look at a whole suite of probes simultaneously.
+Let's also look more carefully at the distribution of values about the trend using the 1st and 3rd quantiles.
+Also, it looks like the data are less jagged than the simulations.
+We can quantify this using the autocorrelation function (ACF).
 
-```{r diagnostics2}
-log.detrend <- function (y) {
+```{r diagnostics2,fig.height=6}
+log1p.detrend <- function (y) {
   cases <- y["cases",]
-  as.numeric(residuals(lm(log1p(cases)~seq_along(cases))))
-} 
+  y["cases",] <- as.numeric(residuals(lm(log1p(cases)~seq_along(cases))))
+  y
+}
 
-probe(lbr,probes=list(
+probe(gin,probes=list(
   growth.rate.plus,
-  probe.quantile(var="cases",prob=c(0.1,0.5,0.9)),
-  probe.acf(var="cases",lags=c(1,2,3),type="correlation")
-            # transform=log.detrend)
-  ),
-  nsim=500) %>% plot()
+  probe.quantile(var="cases",prob=c(0.25,0.75)),
+  probe.acf(var="cases",lags=c(1,2,3),type="correlation",
+            transform=log1p.detrend)
+),nsim=500) %>% plot()
 ```
 
 ### Exercise: the SEIR model for the Sierra Leone outbreak
 
+Apply probes to investigate the extent to which the model is an adequate description of the data from the Sierra Leone outbreak.
+Have a look at the probes provided with **pomp**: `?basic.probes`.
+Try also to come up with some informative probes of your own.
+Discuss the implications of your findings.
+
 ## Forecasting
 
-Below are the contents of the file `forecasts.R`, which performs all the forecasting computations.
-In a directory containing `ebola-model.R`, `ebola-profiles.rds`, and `hosts`, a command like
-```
-mpirun -hostfile hosts -np 101 Rscript --vanilla forecasts.R
-```
-will result in the execution of these computations.
+Up to now, we've primarily focused on using POMP models to answer scientific questions.
+Of course, we can also use them to make forecasts.
+The key issues are to do with quantifying the forecast uncertainty.
+This arises from four sources:
 
-Contents of the file `forecasts.R`:
-```{r forecasts,eval=FALSE}
+1. measurement error
+1. process noise
+1. parametric uncertainty
+1. structural uncertainty
+
+Here, we'll explore how we can account for the first three of these in making forecasts.
+
+```{r forecasts,eval=F}
 require(pomp)
 require(plyr)
 require(reshape2)
@@ -459,7 +448,6 @@ require(foreach)
 require(doMPI)
 require(iterators)
 
-source("ebola-model.R")
 
 horizon <- 13
 
@@ -523,56 +511,6 @@ mles %>% ddply(~country+type+model,subset,loglik==max(loglik),select=-loglik) %>
   mutate(k=round(k,4),rho=round(rho,4),R0=round(R0,4),E_0=3*round(E_0/3)) %>%
   unique() %>%
   arrange(country,type,model) -> mles
-
-### DETERMINISTIC MODELS
-
-bake(file="ebola-forecasts_det.rds",{
-  foreach (country=c("SierraLeone"),
-           .inorder=TRUE,.combine=rbind) %:%
-    foreach (type=c("raw","cum"),nsamp=c(1000,3000),
-             .inorder=TRUE,.combine=rbind) %do%
-    {
-      
-      params <- sobolDesign(lower=ranges[country,type,'det',,'min'],
-                            upper=ranges[country,type,'det',,'max'],
-                            nseq=nsamp)
-      
-      foreach(p=iter(params,by='row'),
-              .inorder=FALSE,
-              .combine=rbind,
-              .noexport=noexport,
-              .options.multicore=list(set.seed=TRUE),
-              .options.mpi=list(chunkSize=10,seed=1568335316L,info=TRUE)
-              ) %dopar%
-        {
-          M1 <- models["fit",type,country][[1]]
-          M2 <- models["det.forecast",type,country][[1]]
-          ll <- logLik(traj.match(M1,start=unlist(p)))
-          x <- trajectory(M2,params=unlist(p))
-          p <- parmat(unlist(p),20)
-          rmeasure(M2,x=x,times=time(M2),params=p) %>%
-            melt() %>%
-            mutate(time=time(M2)[time],
-                   period=ifelse(time<=max(time(M1)),"calibration","projection"),
-                   loglik=ll)
-        } %>% 
-        subset(variable=="cases",select=-variable) %>%
-        mutate(weight=exp(loglik-mean(loglik))) %>%
-        arrange(time,rep) -> sims
-      
-      ess <- with(subset(sims,time==max(time)),weight/sum(weight))
-      ess <- 1/sum(ess^2)
-      cat("ESS det",country,type,"=",ess,"\n")
-      
-      sims %>%
-        ddply(~time+period,summarize,prob=c(0.025,0.5,0.975),
-              quantile=wquant(value,weights=weight,probs=prob)) %>%
-        mutate(prob=mapvalues(prob,from=c(0.025,0.5,0.975),
-                              to=c("lower","median","upper"))) %>%
-        dcast(period+time~prob,value.var='quantile') %>%
-        mutate(country=country,type=type)
-      }
-  }) -> fc_tm
 
 ### STOCHASTIC MODEL
 
