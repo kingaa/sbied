@@ -17,26 +17,6 @@ require(doMC)
 require(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 
-## ----det-example,echo=FALSE,results="hide"-------------------------------
-pompExample(bbs)
-x <- trajectory(bbs)
-y <- cbind(as.data.frame(bbs),x=x["cases",1,])
-mutate(y,xlab=sprintf("x[%d]",time),
-       ylab=sprintf("y[%d]",time)) -> y
-
-ggplot(data=y,
-       mapping=aes(x=time,xend=time))+
-  geom_point(aes(y=reports),color='black',alpha=0.5)+
-  geom_point(aes(y=x),color='red',alpha=0.5)+
-  geom_line(aes(y=reports),color='black',alpha=0.5)+
-  geom_line(aes(y=x),color='red',alpha=0.5)+
-  geom_text(aes(y=reports,label=ylab,vjust=ifelse(time>=10,2,-1)),parse=TRUE,color='black')+
-  geom_text(aes(y=x,label=xlab,vjust=ifelse(time>=10,-1,2)),parse=TRUE,color='red')+
-  geom_segment(aes(y=x,yend=reports),color='blue',linetype=2,alpha=0.3,
-               arrow=grid::arrow(length=grid::unit(0.02,"npc")))+
-  expand_limits(y=c(-20,320))+
-  labs(y="")
-
 ## ----sir-construct-------------------------------------------------------
 baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
 url <- paste0(baseurl,"data/bsflu_data.txt")

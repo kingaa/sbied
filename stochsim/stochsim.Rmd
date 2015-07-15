@@ -90,7 +90,7 @@ This tutorial develops some classes of dynamic models relevant for biological sy
 
 We will develop deterministic and stochastic representations of a susceptible-infected-recovered (SIR) system, a fundamental class of models for disease transmission dynamics. We will do this using notation which generalizes to more complex systems [[@breto09]](http://dept.stat.lsa.umich.edu/~ionides/pubs/breto09.pdf).
 
-```{r sir-diagram,echo=FALSE,cache=FALSE}
+```{r sir-diagram,echo=FALSE,cache=FALSE,purl=FALSE}
 require(DiagrammeR)
 DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);"
            ,height=200,width=500)
@@ -263,6 +263,8 @@ Write down a stochastic Euler method for an SDE representation of the SIR model.
 
 
 ## Compartmental models in **pomp**.
+
+[Download a script containing the **R** commands below.](./stochsim.R)
 
 As an example that we can probe in some depth, let's look at an isolated outbreak of influenza that occurred in a boarding school for boys in England [@Anonymous1978].
 <!--- 763 boys were at risk, and ultimately 512 became infected. --->

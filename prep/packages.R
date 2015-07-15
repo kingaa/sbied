@@ -12,6 +12,7 @@ bbmle
 coda
 colorspace
 deSolve
+devtools
 foreach
 ggplot2
 gridExtra
@@ -39,7 +40,6 @@ pkglist <- setdiff(pkglist,rownames(installed.packages()))
 if (length(pkglist)>0) install.packages(pkglist)
 update.packages()
 
-install.packages(c("pomp","pompExamples"),
-                 repos="http://kinglab.eeb.lsa.umich.edu/R")
+install.packages("pomp",repos="http://kinglab.eeb.lsa.umich.edu/R")
 
 cat("all packages installed successfully!\n")

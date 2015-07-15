@@ -13,12 +13,12 @@ csl: ecology.csl
 
 Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
 Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](http://dept.stat.lsa.umich.edu/~ionides/tutorials/cc-by-nc.png)
+![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
 
 ```{r opts,include=FALSE}
 library(pomp)
 library(knitr)
-prefix <- "pomps"
+prefix <- "polio"
 opts_chunk$set(
   progress=TRUE,
   prompt=FALSE,tidy=FALSE,highlight=TRUE,
@@ -43,7 +43,7 @@ opts_chunk$set(
   )
 
 options(
-  pomp.cache=getwd(),
+  pomp.cache="cache",
   keep.source=TRUE,
   encoding="UTF-8"
   )

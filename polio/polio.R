@@ -1,7 +1,7 @@
 ## ----opts,include=FALSE--------------------------------------------------
 library(pomp)
 library(knitr)
-prefix <- "pomps"
+prefix <- "polio"
 opts_chunk$set(
   progress=TRUE,
   prompt=FALSE,tidy=FALSE,highlight=TRUE,
@@ -26,7 +26,7 @@ opts_chunk$set(
   )
 
 options(
-  pomp.cache=getwd(),
+  pomp.cache="cache",
   keep.source=TRUE,
   encoding="UTF-8"
   )

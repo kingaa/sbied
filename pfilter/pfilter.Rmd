@@ -152,7 +152,7 @@ What is the likelihood?
 
 Since the probability of the observation, $Y_n$, depends only on $X_n$ and $\theta$, and since, in particular $Y_{m}$ and $Y_{n}$ are independent given $X_{m}$ and $X_{n}$, we have $$\lik(\theta) = \prod_{n} f_{Y_n|X_n}(y_n^*;x_n(\theta),\theta)$$ or $$\log\lik(\theta) = \sum_{n} \log f_{Y_n|X_n}(y_n^*;x_n(\theta),\theta).$$
 
-```{r det-example,echo=FALSE,results="hide"}
+```{r det-example,echo=FALSE,results="hide",purl=FALSE}
 pompExample(bbs)
 x <- trajectory(bbs)
 y <- cbind(as.data.frame(bbs),x=x["cases",1,])
@@ -196,6 +196,7 @@ This implies that if we generate trajectories by simulation, all we have to do i
 
 Let's go back to the boarding school influenza outbreak to see what this would look like.
 Let's reconstruct the toy SIR model we were working with.
+[Download a script containing the **R** commands below.](./pfilter.R)
 
 ```{r sir-construct}
 baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"

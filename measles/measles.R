@@ -280,6 +280,3 @@ pomp(m1,toEstimationScale=toEst,
                   "rho","sigmaSE","psi","cohort","amplitude",
                   "S_0","E_0","I_0","R_0")) -> m1
 
-## ----include=FALSE,cache=FALSE,eval=TRUE---------------------------------
-if (exists("mpi.finalize")) mpi.finalize()
-

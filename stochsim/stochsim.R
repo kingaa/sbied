@@ -17,11 +17,6 @@ require(doMC)
 require(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 
-## ----sir-diagram,echo=FALSE,cache=FALSE----------------------------------
-require(DiagrammeR)
-DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);"
-           ,height=200,width=500)
-
 ## ----flu-data1-----------------------------------------------------------
 baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
 url <- paste0(baseurl,"data/bsflu_data.txt")

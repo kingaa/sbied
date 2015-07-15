@@ -6,6 +6,7 @@ output:
   html_document:
     theme: flatly
     toc: yes
+    toc_depth: 3
 bibliography: ../sbied.bib
 csl: ../ecology.csl
 
@@ -1109,7 +1110,3 @@ Compare likelihoods but also use simulations to diagnose differences between the
 
 
 ## References
-
-```{r include=FALSE,cache=FALSE,eval=TRUE}
-if (exists("mpi.finalize")) mpi.finalize()
-```
