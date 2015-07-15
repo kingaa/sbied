@@ -89,8 +89,7 @@ The WHO situation report contained data on the number of cases in each of Guinea
 
 Download the data from the WHO Situation Report of 1 October 2014:
 ```{r get-data}
-# baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
-baseurl <- "../"
+baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
 read.csv(paste0(baseurl,"data/ebola_data.csv"),stringsAsFactors=FALSE,
          colClasses=c(date="Date")) -> dat
 sapply(dat,class)
