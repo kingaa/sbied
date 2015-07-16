@@ -23,6 +23,7 @@ bsflu <- read.table(url)
 head(bsflu)
 
 ## ----flu-data2-----------------------------------------------------------
+bsflu <- subset(bsflu,select=c(day,B))
 ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
 
 ## ----sir-diagram,echo=FALSE,cache=FALSE----------------------------------

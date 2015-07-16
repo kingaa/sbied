@@ -279,6 +279,7 @@ head(bsflu)
 The variable `B` refers to boys confined to bed and `C` to boys in convalescence.
 Let's restrict our attention for the moment to the `B` variable.
 ```{r flu-data2}
+bsflu <- subset(bsflu,select=c(day,B))
 ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
 ```
 
