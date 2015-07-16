@@ -54,12 +54,13 @@ opts_chunk$set(
   dev='png',
   dev.args=list(bg='transparent')
   )
+
+options(pomp.cache="cache")
 ```
 ```{r opts,include=FALSE,cache=FALSE}
 options(
   keep.source=TRUE,
   stringsAsFactors=FALSE,
-  pomp.cache="cache",
   encoding="UTF-8"
   )
 ```

@@ -26,7 +26,7 @@ Please share and remix noncommercially, mentioning its origin.
 
 Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
+```{r knitr-opts,include=FALSE,purl=FALSE,cache=FALSE}
 library(knitr)
 prefix <- "pomp-intro"
 opts_chunk$set(
@@ -51,12 +51,12 @@ opts_chunk$set(
   dev='png',
   dev.args=list(bg='transparent')
   )
+options(pomp.cache="cache")
 ```
 ```{r opts,include=FALSE,cache=FALSE}
 options(
   keep.source=TRUE,
   stringsAsFactors=FALSE,
-  pomp.cache="cache",
   encoding="UTF-8"
   )
 
@@ -495,7 +495,11 @@ stochStep <- Csnippet("
 pomp(parus,rprocess=discrete.time.sim(step.fun=stochStep,delta.t=1),
      paramnames=c("r","sigma"),statenames=c("N","e")) -> parus
 ```
-We use `discrete.time.sim` here because the model is a stochastic map.
+Note that in the above, we use the `exp` and `rnorm` functions from the [**R** API](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#The-R-API).
+In general any C function provided by **R** is available to you.
+**pomp** also provides a number of C functions that are documented in the header file, `pomp.h`, that is installed with the package.
+See the `Csnippet` documentation (`?Csnippet`) to read more about how to write them.
+Note too that we use `discrete.time.sim` here because the model is a stochastic map.
 We specify that the time step of the discrete-time process is `delta.t`, here, 1&nbsp;yr.
 
 At this point, we have what we need to simulate the stochastic Ricker model.
