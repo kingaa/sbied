@@ -31,30 +31,9 @@ require(DiagrammeR)
 DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);"
            ,height=200,width=500)
 
-## ----rproc1--------------------------------------------------------------
-sir_step <- Csnippet("
-  double dN_SI = rbinom(S,1-exp(-beta*I/N*dt));
-  double dN_IR = rbinom(I,1-exp(-gamma*dt));
-  S -= dN_SI;
-  I += dN_SI - dN_IR;
-  R += dN_IR;
-")
-
-## ----init1---------------------------------------------------------------
-sir_init <- Csnippet("
-  S = N-1;
-  I = 1;
-  R = 0;
-")
-
-## ----rproc1-pomp---------------------------------------------------------
-pomp(bsflu,time="day",t0=0,rprocess=euler.sim(sir_step,delta.t=1/6),
-     initializer=sir_init,paramnames=c("N","beta","gamma"),
-     statenames=c("S","I","R")) -> sir
-
 ## ----rproc2--------------------------------------------------------------
 sir_step <- Csnippet("
-  double dN_SI = rbinom(S,1-exp(-beta*I/N*dt));
+  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
   double dN_IR = rbinom(I,1-exp(-gamma*dt));
   S -= dN_SI;
   I += dN_SI - dN_IR;
@@ -70,7 +49,7 @@ sir_init <- Csnippet("
 ")
 
 pomp(sir,rprocess=euler.sim(sir_step,delta.t=1/6),initializer=sir_init,
-     paramnames=c("beta","gamma","N"),statenames=c("S","I","R","H")) -> sir
+     paramnames=c("Beta","gamma","N"),statenames=c("S","I","R","H")) -> sir
 
 ## ----zero1---------------------------------------------------------------
 pomp(sir,zeronames="H") -> sir
@@ -83,7 +62,7 @@ rmeas <- Csnippet("B = rbinom(H,rho);")
 sir <- pomp(sir,rmeasure=rmeas,dmeasure=dmeas,statenames="H",paramnames="rho")
 
 ## ------------------------------------------------------------------------
-sims <- simulate(sir,params=c(beta=1.5,gamma=1,rho=0.9,N=2600),
+sims <- simulate(sir,params=c(Beta=1.5,gamma=1,rho=0.9,N=2600),
                  nsim=20,as=TRUE,include=TRUE)
 
 ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
