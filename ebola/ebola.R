@@ -238,142 +238,113 @@ probe(gin,probes=list(
             transform=log1p.detrend)
 ),nsim=500) %>% plot()
 
-## ----forecasts,eval=F----------------------------------------------------
-## require(pomp)
-## require(plyr)
-## require(reshape2)
-## require(magrittr)
-## options(stringsAsFactors=FALSE)
-## 
-## set.seed(988077383L)
-## 
-## require(foreach)
-## require(doMPI)
-## require(iterators)
-## 
-## 
-## horizon <- 13
-## 
-## foreach (country=c("SierraLeone"),.inorder=TRUE,.combine=c) %:%
-##   foreach (type=c("raw","cum"),.inorder=TRUE,.combine=c) %do%
-##   {
-##     M1 <- ebolaModel(country=country,type=type,
-##                      timestep=0.01,nstageE=3,na.rm=TRUE)
-##     M2 <- ebolaModel(country=country,type="raw",
-##                      timestep=0.01,nstageE=3,na.rm=TRUE)
-##     time(M2) <- seq(from=1,to=max(time(M1))+horizon,by=1)
-##     M3 <- ebolaModel(country=country,type="raw",
-##                      timestep=0.01,nstageE=3,na.rm=TRUE)
-##     time(M3) <- seq(from=max(time(M1))+1,to=max(time(M1))+horizon,by=1)
-##     timezero(M3) <- max(time(M1))
-##     list(M1,M2,M3)
-##     } -> models
-## dim(models) <- c(3,2,1)
-## dimnames(models) <- list(c("fit","det.forecast","stoch.forecast"),
-##                          c("raw","cum"),c("SierraLeone"))
-## 
-## noexport <- c("models")
-## 
-## ## Weighted quantile function
-## wquant <- function (x, weights, probs = c(0.025,0.5,0.975)) {
-##   idx <- order(x)
-##   x <- x[idx]
-##   weights <- weights[idx]
-##   w <- cumsum(weights)/sum(weights)
-##   rval <- approx(w,x,probs,rule=1)
-##   rval$y
-##   }
-## 
-## starts <- c(Guinea="2014-01-05",Liberia="2014-06-01",SierraLeone="2014-06-08")
-## 
-## cl <- startMPIcluster()
-## registerDoMPI(cl)
-## 
-## bake <- function (file, expr) {
-##   if (file.exists(file)) {
-##     readRDS(file)
-##     } else {
-##       val <- eval(expr)
-##       saveRDS(val,file=file)
-##       val
-##       }
-##   }
-## 
-## readRDS("profiles.rds") %>%
-##   ddply(~country+type+model,subset,loglik>max(loglik)-6,
-##         select=-c(conv,etime,loglik.se,nfail.min,nfail.max,profile)) -> mles
-## 
-## mles %>% melt(id=c("country","type","model"),variable.name='parameter') %>%
-##   ddply(~country+type+model+parameter,summarize,
-##         min=min(value),max=max(value)) %>%
-##   subset(parameter!="loglik") %>%
-##   melt(measure=c("min","max")) %>%
-##   acast(country~type~model~parameter~variable) -> ranges
-## 
-## mles %>% ddply(~country+type+model,subset,loglik==max(loglik),select=-loglik) %>%
-##   mutate(k=round(k,4),rho=round(rho,4),R0=round(R0,4),E_0=3*round(E_0/3)) %>%
-##   unique() %>%
-##   arrange(country,type,model) -> mles
-## 
-## ### STOCHASTIC MODEL
-## 
-## bake(file="ebola-forecasts_stoch.rds",{
-##   foreach (country=c("SierraLeone"),
-##            .inorder=TRUE,.combine=rbind) %:%
-##     foreach (type=c("raw","cum"),nsamp=c(200,200),
-##              .inorder=TRUE,.combine=rbind) %do%
-##     {
-## 
-##       params <- sobolDesign(lower=ranges[country,type,'stoch',,'min'],
-##                             upper=ranges[country,type,'stoch',,'max'],
-##                             nseq=nsamp)
-## 
-##       foreach(p=iter(params,by='row'),
-##               .inorder=FALSE,
-##               .combine=rbind,
-##               .noexport=noexport,
-##               .options.multicore=list(set.seed=TRUE),
-##               .options.mpi=list(chunkSize=1,seed=1568335316L,info=TRUE)
-##               ) %dopar%
-##         {
-##           M1 <- models["fit",type,country][[1]]
-##           M2 <- models["stoch.forecast",type,country][[1]]
-##           pf <- pfilter(M1,params=unlist(p),Np=2000,save.states=TRUE)
-##           pf$saved.states %>% tail(1) %>% melt() %>%
-##             acast(variable~rep,value.var='value') %>%
-##             apply(2,function (x) {
-##               setNames(c(x["S"],sum(x[c("E1","E2","E3")]),x["I"],x["R"]),
-##                        c("S_0","E_0","I_0","R_0"))}) -> x
-##           pp <- parmat(unlist(p),ncol(x))
-##           pp[rownames(x),] <- x
-##           simulate(M2,params=pp,obs=TRUE) %>%
-##             melt() %>%
-##             mutate(time=time(M2)[time],
-##                    period=ifelse(time<=max(time(M1)),"calibration","projection"),
-##                    loglik=logLik(pf))
-##         } %>% subset(variable=="cases",select=-variable) %>%
-##         mutate(weight=exp(loglik-mean(loglik))) %>%
-##         arrange(time,rep) -> sims
-## 
-##       ess <- with(subset(sims,time==max(time)),weight/sum(weight))
-##       ess <- 1/sum(ess^2)
-##       cat("ESS stoch",country,type,"=",ess,"\n")
-## 
-##       sims %>% ddply(~time+period,summarize,prob=c(0.025,0.5,0.975),
-##                      quantile=wquant(value,weights=weight,probs=prob)) %>%
-##         mutate(prob=mapvalues(prob,from=c(0.025,0.5,0.975),
-##                               to=c("lower","median","upper"))) %>%
-##         dcast(period+time~prob,value.var='quantile') %>%
-##         mutate(country=country,type=type)
-##       }
-##   }) -> fc_if
-## 
-## ldply(list(stoch=fc_if,det=fc_tm),.id='model') %>%
-##   ddply(~country,mutate,
-##         model=factor(model,levels=c("stoch","det")),
-##         date=as.Date(starts[unique(as.character(country))])+7*(time-1)) %>%
-##   saveRDS(file='forecasts.rds')
-## 
-## closeCluster(cl)
-## mpi.quit()
+## ----forecasts-----------------------------------------------------------
+require(pomp)
+require(plyr)
+require(reshape2)
+require(magrittr)
+options(stringsAsFactors=FALSE)
+
+set.seed(988077383L)
+
+## forecast horizon
+horizon <- 13
+
+profs %>%
+  subset(country=="SierraLeone") %>%
+  subset(loglik==max(loglik),
+         select=-c(loglik,loglik.se,country,profile)) %>%
+  unlist() -> mle
+
+## Weighted quantile function
+wquant <- function (x, weights, probs = c(0.025,0.5,0.975)) {
+  idx <- order(x)
+  x <- x[idx]
+  weights <- weights[idx]
+  w <- cumsum(weights)/sum(weights)
+  rval <- approx(w,x,probs,rule=1)
+  rval$y
+}
+
+profs %>% 
+  subset(country=="SierraLeone",
+         select=-c(country,profile,loglik.se)) %>%
+  subset(loglik>max(loglik)-0.5*qchisq(df=1,p=0.99)) %>%
+  melt(variable.name="parameter") %>%
+  ddply(~parameter,summarize,
+        min=min(value),max=max(value)) %>%
+  subset(parameter!="loglik") %>%
+  melt(measure=c("min","max")) %>%
+  acast(parameter~variable) -> ranges
+
+params <- sobolDesign(lower=ranges[,'min'],
+                      upper=ranges[,'max'],
+                      nseq=20)
+plot(params)
+
+require(foreach)
+require(doMC)
+require(iterators)
+
+registerDoMC(cores=4)
+
+set.seed(887851050L,kind="L'Ecuyer")
+
+foreach(p=iter(params,by='row'),
+        .inorder=FALSE,
+        .combine=rbind,
+        .options.multicore=list(preschedule=TRUE,set.seed=TRUE)
+) %dopar%
+{
+  require(pomp)
+  
+  M1 <- ebolaModel("SierraLeone")
+  pf <- pfilter(M1,params=unlist(p),Np=2000,save.states=TRUE)
+  pf$saved.states %>% tail(1) %>% melt() %>% 
+    dcast(rep~variable,value.var="value") %>%
+    ddply(~rep,summarize,S_0=S,E_0=E1+E2+E3,I_0=I,R_0=R) %>%
+    melt(id="rep") %>% acast(variable~rep) -> x
+  
+  pp <- parmat(unlist(p),ncol(x))
+  
+  simulate(M1,params=pp,obs=TRUE) %>%
+    melt() %>%
+    mutate(time=time(M1)[time],
+           period="calibration",
+           loglik=logLik(pf)) -> calib
+
+    M2 <- M1
+  time(M2) <- max(time(M1))+seq_len(horizon)
+  timezero(M2) <- max(time(M1))
+  
+  pp[rownames(x),] <- x
+  
+  simulate(M2,params=pp,obs=TRUE) %>%
+    melt() %>%
+    mutate(time=time(M2)[time],
+           period="projection",
+           loglik=logLik(pf)) -> proj
+  
+  rbind(calib,proj)
+} %>% subset(variable=="cases",select=-variable) %>%
+  mutate(weight=exp(loglik-mean(loglik))) %>%
+  arrange(time,rep) -> sims
+
+ess <- with(subset(sims,time==max(time)),weight/sum(weight))
+ess <- 1/sum(ess^2); ess
+
+sims %>% ddply(~time+period,summarize,prob=c(0.025,0.5,0.975),
+               quantile=wquant(value,weights=weight,probs=prob)) %>%
+  mutate(prob=mapvalues(prob,from=c(0.025,0.5,0.975),
+                        to=c("lower","median","upper"))) %>%
+  dcast(period+time~prob,value.var='quantile') %>%
+  mutate(date=min(dat$date)+7*(time-1)) -> simq
+
+## ----forecast-plots------------------------------------------------------
+simq %>% ggplot(aes(x=date))+
+  geom_ribbon(aes(ymin=lower,ymax=upper,fill=period),alpha=0.3,color=NA)+
+  geom_line(aes(y=median,color=period))+
+  geom_point(data=subset(dat,country=="SierraLeone"),
+             mapping=aes(x=date,y=cases),color='black')+
+  labs(y="cases")
 
