@@ -1,3 +1,0 @@
-F77 = ~/gfortran/usr/local/bin/gfortran
-FC = ~/gfortran/usr/local/bin/gfortran
-FLIBS = -L~/gfortran/usr/local/lib
