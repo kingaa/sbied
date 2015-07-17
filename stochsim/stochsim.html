@@ -233,9 +233,8 @@ img {
 <h2>Compartmental models in <strong>pomp</strong>.</h2>
 <p><a href="./stochsim.R">Download a script containing the <strong>R</strong> commands below.</a></p>
 <p>As an example that we can probe in some depth, let’s look at an isolated outbreak of influenza that occurred in a boarding school for boys in England <span class="citation">(Anonymous 1978)</span>. <!--- 763 boys were at risk, and ultimately 512 became infected. ---> Download the data and examine it:</p>
-<pre class="r"><code>baseurl &lt;- &quot;http://kinglab.eeb.lsa.umich.edu/SBIED/&quot;
-url &lt;- paste0(baseurl,&quot;data/bsflu_data.txt&quot;)
-bsflu &lt;- read.table(url)
+<pre class="r"><code>base_url &lt;- &quot;http://kinglab.eeb.lsa.umich.edu/SBIED/&quot;
+bsflu &lt;- read.table(paste0(base_url,&quot;data/bsflu_data.txt&quot;))
 head(bsflu)</code></pre>
 <pre><code>##              B  C day
 ## 1978-01-22   1  0   1
@@ -291,7 +290,7 @@ sir_init &lt;- Csnippet(&quot;
 
 pomp(sir,rprocess=euler.sim(sir_step,delta.t=1/6),initializer=sir_init,
      paramnames=c(&quot;Beta&quot;,&quot;gamma&quot;,&quot;N&quot;),statenames=c(&quot;S&quot;,&quot;I&quot;,&quot;R&quot;,&quot;H&quot;)) -&gt; sir</code></pre>
-<p>Now, we’ll model the data, <span class="math">\(B\)</span>, as a binomial process, <span class="math">\[B_t \sim {\mathrm{Binomial}\left(H(t+1)-H(t),\rho\right)}.\]</span> But we have a problem, since at time <span class="math">\(t\)</span>, the variable <code>H</code> we’ve defined will contain <span class="math">\(H(t)\)</span>, not <span class="math">\(H(t)-H(t-1)\)</span>. We can overcome this by telling <code>pomp</code> that we want <code>H</code> to be set to zero immediately following each observation. We do this by setting the <code>zeronames</code> argument to <code>pomp</code>:</p>
+<p>Now, we’ll model the data, <span class="math">\(B\)</span>, as a binomial process, <span class="math">\[B_t \sim {\mathrm{Binomial}\left(H(t)-H(t-1),\rho\right)}.\]</span> But we have a problem, since at time <span class="math">\(t\)</span>, the variable <code>H</code> we’ve defined will contain <span class="math">\(H(t)\)</span>, not <span class="math">\(H(t)-H(t-1)\)</span>. We can overcome this by telling <code>pomp</code> that we want <code>H</code> to be set to zero immediately following each observation. We do this by setting the <code>zeronames</code> argument to <code>pomp</code>:</p>
 <pre class="r"><code>pomp(sir,zeronames=&quot;H&quot;) -&gt; sir</code></pre>
 <p>Now, to include the observations in the model, we must write both a <code>dmeasure</code> and an <code>rmeasure</code> component:</p>
 <pre class="r"><code>dmeas &lt;- Csnippet(&quot;lik = dbinom(B,H,rho,give_log);&quot;)

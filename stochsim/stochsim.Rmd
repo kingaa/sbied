@@ -271,9 +271,8 @@ As an example that we can probe in some depth, let's look at an isolated outbrea
 <!--- 763 boys were at risk, and ultimately 512 became infected. --->
 Download the data and examine it:
 ```{r flu-data1}
-baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
-url <- paste0(baseurl,"data/bsflu_data.txt")
-bsflu <- read.table(url)
+base_url <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+bsflu <- read.table(paste0(base_url,"data/bsflu_data.txt"))
 head(bsflu)
 ```
 The variable `B` refers to boys confined to bed and `C` to boys in convalescence.
@@ -361,7 +360,7 @@ pomp(sir,rprocess=euler.sim(sir_step,delta.t=1/6),initializer=sir_init,
 ```
 
 Now, we'll model the data, $B$, as a binomial process,
-$$B_t \sim \dist{Binomial}{H(t+1)-H(t),\rho}.$$
+$$B_t \sim \dist{Binomial}{H(t)-H(t-1),\rho}.$$
 But we have a problem, since at time $t$, the variable `H` we've defined will contain $H(t)$, not $H(t)-H(t-1)$.
 We can overcome this by telling `pomp` that we want `H` to be set to zero immediately following each observation.
 We do this by setting the `zeronames` argument to `pomp`:
