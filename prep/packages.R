@@ -2,7 +2,7 @@
 print(R.version.string)
 stopifnot(getRversion()>="3.2.0")
 
-options(warn=2)
+op <- options(warn=2)
 
 ## get list of packages to install
 pkglist <- scan(
@@ -38,4 +38,8 @@ xtable
 pkglist <- setdiff(pkglist,rownames(installed.packages()))
 
 if (length(pkglist)>0) install.packages(pkglist)
+
+options(op)
+
 cat("all packages installed successfully!\n")
+
