@@ -45,6 +45,7 @@ opts_chunk$set(
   error=FALSE,
   echo=TRUE,
   cache=TRUE,
+  cache_extra=rand_seed,
   results='markup',
   fig.show='asis',
   size='small',
@@ -743,6 +744,11 @@ par(op)
 
 
 ## Practicum
+
+### Objectives
+
+1. Demonstrate how further extra-demographic stochasticity can be modeled
+1. Demonstrate the use of covariates in **pomp**
 
 ### Preliminaries
 
