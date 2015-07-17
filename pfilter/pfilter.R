@@ -18,8 +18,8 @@ require(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 
 ## ----sir-construct-------------------------------------------------------
-baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
-url <- paste0(baseurl,"data/bsflu_data.txt")
+base_url <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+url <- paste0(base_url,"data/bsflu_data.txt")
 bsflu <- read.table(url)
 
 sir_step <- Csnippet("
@@ -46,13 +46,13 @@ pomp(bsflu,times="day",t0=0,
      initializer=sir_init,rmeasure=rmeas,dmeasure=dmeas,
      zeronames="H",statenames=c("H","S","I","R"),
      paramnames=c("beta","gamma","rho","N")) -> sir
-plot(sir,main="",var="B")
 
 ## ----bbs-mc-like-2,results='markup'--------------------------------------
 simulate(sir,params=c(beta=2,gamma=1,rho=0.5,N=2600),
-         nsim=60,states=TRUE) -> x
-matplot(time(sir),t(x["H",,]),type='l',lty=1,
-        xlab="time",ylab="H",bty='l')
+         nsim=10000,states=TRUE) -> x
+matplot(time(sir),t(x["H",1:50,]),type='l',lty=1,
+        xlab="time",ylab="H",bty='l',col='blue')
+lines(time(sir),obs(sir,"B"),lwd=2,col='black')
 
 ## ----bbs-mc-like-3,results='markup',cache=T------------------------------
 ell <- dmeasure(sir,y=obs(sir),x=x,times=time(sir),log=TRUE,
@@ -60,7 +60,7 @@ ell <- dmeasure(sir,y=obs(sir),x=x,times=time(sir),log=TRUE,
 dim(ell)
 
 ## ----bbs-mc-like-4,results='markup'--------------------------------------
-ell <- apply(ell,1,sum); ell
+ell <- apply(ell,1,sum); summary(exp(ell)); logmeanexp(ell,se=TRUE)
 
 ## ----sir-sim1------------------------------------------------------------
 sims <- simulate(sir,params=c(beta=2,gamma=1,rho=0.8,N=2600),nsim=20,

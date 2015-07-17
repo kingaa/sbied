@@ -150,7 +150,7 @@ Suppose that the unobserved state process is deterministic.
 That is, $X_{n}=x_n(\theta)$ is a known function of $\theta$ for each $n$.
 What is the likelihood?
 
-Since the probability of the observation, $Y_n$, depends only on $X_n$ and $\theta$, and since, in particular $Y_{m}$ and $Y_{n}$ are independent given $X_{m}$ and $X_{n}$, we have $$\lik(\theta) = \prod_{n} f_{Y_n|X_n}(y_n^*;x_n(\theta),\theta)$$ or $$\log\lik(\theta) = \sum_{n} \log f_{Y_n|X_n}(y_n^*;x_n(\theta),\theta).$$
+Since the probability of the observation, $Y_n$, depends only on $X_n$ and $\theta$, and since, in particular $Y_{m}$ and $Y_{n}$ are independent given $X_{m}$ and $X_{n}$, we have $$\lik(\theta) = \prod_{n} f_{Y_n|X_n}(y_n^*;x_n(\theta),\theta)$$ or $$\ell(\theta) = \log\lik(\theta) = \sum_{n} \log f_{Y_n|X_n}(y_n^*;x_n(\theta),\theta).$$
 
 ```{r det-example,echo=FALSE,results="hide",purl=FALSE}
 pompExample(bbs)
@@ -199,8 +199,8 @@ Let's reconstruct the toy SIR model we were working with.
 [Download a script containing the **R** commands below.](./pfilter.R)
 
 ```{r sir-construct}
-baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
-url <- paste0(baseurl,"data/bsflu_data.txt")
+base_url <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+url <- paste0(base_url,"data/bsflu_data.txt")
 bsflu <- read.table(url)
 
 sir_step <- Csnippet("
@@ -227,15 +227,15 @@ pomp(bsflu,times="day",t0=0,
      initializer=sir_init,rmeasure=rmeas,dmeasure=dmeas,
      zeronames="H",statenames=c("H","S","I","R"),
      paramnames=c("beta","gamma","rho","N")) -> sir
-plot(sir,main="",var="B")
 ```
 
 Let's generate a bunch of simulated trajectories at some particular point in parameter space.
 ```{r bbs-mc-like-2,results='markup'}
 simulate(sir,params=c(beta=2,gamma=1,rho=0.5,N=2600),
-         nsim=60,states=TRUE) -> x
-matplot(time(sir),t(x["H",,]),type='l',lty=1,
-        xlab="time",ylab="H",bty='l')
+         nsim=10000,states=TRUE) -> x
+matplot(time(sir),t(x["H",1:50,]),type='l',lty=1,
+        xlab="time",ylab="H",bty='l',col='blue')
+lines(time(sir),obs(sir,"B"),lwd=2,col='black')
 ```
 
 We can use the function `dmeasure` to evaluate the log likelihood of the data given the states, the model, and the parameters:
@@ -246,11 +246,10 @@ dim(ell)
 ```
 According to the equation above, we should sum up the log likelihoods across time:
 ```{r bbs-mc-like-4,results='markup'}
-ell <- apply(ell,1,sum); ell
+ell <- apply(ell,1,sum); summary(exp(ell)); logmeanexp(ell,se=TRUE)
 ```
-The variance of these estimates is ***very*** high and therefore the estimated likelihood is very imprecise.
+The likelihood appears to be very low, but the error in the estimate is very high and therefore the estimated likelihood is very imprecise.
 We are going to need very many simulations to get an estimate of the likelihood sufficiently precise to be of any use in parameter estimation or model selection.
-Moreover, even one simulation which is strictly incompatible with the data implies a likelihood of zero!
 
 What's the problem?
 Essentially, far too many of the trajectories don't pass near the data.
@@ -268,7 +267,7 @@ Now the Markov property gives us that
 $$\prob{x_t|y^*_{1:t-1},\theta} 
 = \sum_{x_{t-1}}\,\prob{x_t|x_{t-1},\theta}\,\prob{x_{t-1}|y^*_{1:t-1},\theta}$$
 and Bayes' theorem tells us that
-$$\prob{x_t|y^*_{1:t},\theta} = \prob{x_t|y_t,y^*_{1:t-1},\theta} =\frac{\prob{y^*_{t}|x_{t},\theta}\,\prob{x_{t}|y^*_{1:t-1},\theta}}{\sum_{x_{t}}\,\prob{y^*_{t}|x_{t},\theta}\,\prob{x_{t}|y^*_{1:t-1},\theta}}.$$
+$$\prob{x_t|y^*_{1:t},\theta} = \prob{x_t|y^*_t,y^*_{1:t-1},\theta} =\frac{\prob{y^*_{t}|x_{t},\theta}\,\prob{x_{t}|y^*_{1:t-1},\theta}}{\sum_{x_{t}}\,\prob{y^*_{t}|x_{t},\theta}\,\prob{x_{t}|y^*_{1:t-1},\theta}}.$$
 
 This suggests that we keep track of two key distributions.
 We'll refer to the distribution of $x_t | y^*_{1:t-1}$ as the *prediction distribution* at time $t$ and
@@ -450,7 +449,7 @@ $$\ell_\mathrm{max}=\max\{\ell(\theta), \mbox{$\theta$ in $\Theta$}\},\quad
 * Intuitively, a model with a higher maximized likelihood should be preferable to a model with a substantially lower maximized likelihood. 
 
 * However, since $\Theta^*$ is a subset of $\Theta$, it is mathematically necessary that
-$$ \ell_\mathrm{max} > \hat\ell^*_\mathrm{max}.$$
+$$ \ell_\mathrm{max} \ge \ell^*_\mathrm{max}.$$
 This raises the question of how close $\ell^*_\mathrm{max}$ should be to $\ell_\mathrm{max}$ to make it reasonable to prefer the simpler model $\Theta^*$ over the more complex model $\Theta$.
 
 * The principle of parsimony (Occam's razor) advocates  scientists to be satisfied with the simpler model unless there is good evidence to do otherwise. So, for a formal hypothesis test, we set our null hypothesis to be $\Theta^*$ and our alternative hypothesis to be $\Theta$.
@@ -469,7 +468,7 @@ since $P[\chi^2_1>3.84]=0.05$.
 * Wilks' theorem gives a convenient, quick scientific interpretation of maximized log likelihood values. One can choose later whether to refine the interpretation via further simulation studies. 
 
 * Akaike's information criterion (AIC) is defined by
-$$AIC = -2(\mbox{maximized log likelihood}) +2(\mbox{\# parametes}).$$
+$$AIC = -2(\mbox{maximized log likelihood}) +2(\mbox{# parameters}).$$
 This criterion makes a slightly different decision, recommending $\Theta$ over $\Theta^*$ if
 $$\ell_\mathrm{max} -\ell_\mathrm{max}^* > d.$$
 The justification of AIC is based on minimizing prediction error. AIC tends to prefer larger models than Occam's razor: heuristically, it does not value simplicity for its own sake, but only because unnecessary parameters lead to over-fitting and hence greater out-of-fit forecasting error. 
