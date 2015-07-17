@@ -170,18 +170,48 @@ paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
                 "S_0","E_0","I_0","R_0")
 mle %>% extract(paramnames) %>% unlist() -> theta
 
-## ----sigmaSE-prof-design-------------------------------------------------
-estpars <- setdiff(names(theta),c("sigmaSE","mu","rho","alpha","iota"))
+## ----pomp-construct------------------------------------------------------
+dat %>% 
+  pomp(t0=with(dat,2*time[1]-time[2]),
+       time="time",
+       params=theta,
+       rprocess=euler.sim(rproc,delta.t=1/365.25),
+       initializer=initlz,
+       dmeasure=dmeas,
+       rmeasure=rmeas,
+       toEstimationScale=toEst,
+       fromEstimationScale=fromEst,
+       covar=covar,
+       tcovar="time",
+       zeronames=c("C","W"),
+       statenames=c("S","E","I","R","C","W"),
+       paramnames=c("R0","mu","sigma","gamma","alpha","iota",
+                    "rho","sigmaSE","psi","cohort","amplitude",
+                    "S_0","E_0","I_0","R_0")
+  ) -> m1
+plot(simulate(m1))
 
-theta["alpha"] <- 0
-theta.hi <- theta.lo <- theta
-theta.lo[estpars] <- 0.5*theta[estpars]
-theta.hi[estpars] <- 2*theta[estpars]
+## ----sigmaSE-prof-design-------------------------------------------------
+estpars <- setdiff(names(theta),c("sigmaSE","mu","alpha","rho","iota"))
+
+theta["alpha"] <- 1
+
+theta.t <- partrans(m1,theta,"toEstimationScale")
+
+theta.t.hi <- theta.t.lo <- theta.t
+theta.t.lo[estpars] <- theta.t[estpars]-log(2)
+theta.t.hi[estpars] <- theta.t[estpars]+log(2)
 
 profileDesign(
-  sigmaSE=exp(seq(from=log(0.02),to=log(0.2),length=20)),
-  lower=theta.lo,upper=theta.hi,nprof=40
+  sigmaSE=seq(from=log(0.02),to=log(0.2),length=20),
+  lower=theta.t.lo,upper=theta.t.hi,nprof=40
 ) -> pd
+
+dim(pd)
+
+pd <- as.data.frame(t(partrans(m1,t(pd),"fromEstimationScale")))
+
+pairs(~sigmaSE+R0+mu+sigma+gamma+S_0+E_0,data=pd)
 
 ## ----bake----------------------------------------------------------------
 bake <- function (file, expr) {
@@ -218,7 +248,7 @@ bake("sigmaSE-profile1.rds",{
     require(pomp)
     
     options(stringsAsFactors=FALSE,pomp.cache=NULL)
-
+    
     dat %>% 
       pomp(t0=with(dat,2*time[1]-time[2]),
            time="time",
@@ -239,8 +269,7 @@ bake("sigmaSE-profile1.rds",{
       mif2(start = unlist(p),
            Nmif = 50, 
            rw.sd = rw.sd(
-             R0=0.02,sigma=0.02,gamma=0.02,alpha=0.02,
-             iota=0.02,psi=0.02,cohort=0.02,amplitude=0.02,
+             R0=0.02,sigma=0.02,gamma=0.02,psi=0.02,cohort=0.02,amplitude=0.02,
              S_0=ivp(0.02),E_0=ivp(0.02),I_0=ivp(0.02),R_0=ivp(0.02)),
            Np = 1000,
            cooling.type = "geometric",
@@ -257,8 +286,7 @@ bake("sigmaSE-profile1.rds",{
     toc <- Sys.time()
     etime <- toc-tic
     units(etime) <- "hours"
-    
-    
+
     data.frame(as.list(coef(mf)),
                loglik = ll[1],
                loglik.se = ll[2],
@@ -266,6 +294,11 @@ bake("sigmaSE-profile1.rds",{
                nfail.max = max(nfail),
                etime = as.numeric(etime))
   }}) -> sigmaSE_prof
+
+## ----round1-plot---------------------------------------------------------
+pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma)+psi+log(cohort),
+      data=sigmaSE_prof,subset=loglik>max(loglik)-100)
+summary(sigmaSE_prof)
 
 ## ----sigmaSE-prof-round2,cache=FALSE-------------------------------------
 sigmaSE_prof %>%
@@ -317,8 +350,7 @@ bake("sigmaSE-profile2.rds",{
       mif2(start = unlist(p),
            Nmif = 50, 
            rw.sd = rw.sd(
-             R0=0.02,sigma=0.02,gamma=0.02,alpha=0.02,
-             iota=0.02,psi=0.02,cohort=0.02,amplitude=0.02,
+             R0=0.02,sigma=0.02,gamma=0.02,psi=0.02,cohort=0.02,amplitude=0.02,
              S_0=ivp(0.02),E_0=ivp(0.02),I_0=ivp(0.02),R_0=ivp(0.02)),
            Np = 5000,
            cooling.type = "geometric",
@@ -345,14 +377,20 @@ bake("sigmaSE-profile2.rds",{
   }}) -> sigmaSE_prof
 
 ## ----plot-sigmaSE-profile------------------------------------------------
-sigmaSE_prof %>%
+sigmaSE_prof %<>%
   subset(nfail.max==0) %>%
   mutate(sigmaSE=exp(signif(log(sigmaSE),5))) %>%
-  ddply(~sigmaSE,subset,rank(-loglik)<=2) %>%
+  ddply(~sigmaSE,subset,rank(-loglik)<=2)
+
+sigmaSE_prof %>%
   ggplot(aes(x=sigmaSE,y=loglik))+
-  geom_point()
+  geom_point()+
+  geom_smooth(method="loess")
 
-## ----include=FALSE,cache=FALSE,eval=TRUE---------------------------------
-if (exists("mpi.exit")) mpi.exit()
+## ----profile-traces------------------------------------------------------
+pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma),
+      data=sigmaSE_prof)
 
-q(save='no')
+## ----include=FALSE,cache=FALSE,eval=FALSE--------------------------------
+## mpi.quit(save='no')
+

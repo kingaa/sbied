@@ -1,8 +1,8 @@
 default: r-scripts html-docs
 
-r-scripts: intro/intro.R stochsim/stochsim.R pfilter/pfilter.R mif/mif.R polio/polio.R measles/measles.R contacts/contacts.R ebola/ebola.R
+r-scripts: intro/intro.R stochsim/stochsim.R pfilter/pfilter.R mif/mif.R polio/polio.R measles/measles.R contacts/contacts.R ebola/ebola.R measles/measles-profile.R
 
-html-docs: index.html intro/intro.html stochsim/stochsim.html pfilter/pfilter.html mif/mif.html polio/polio.html measles/measles.html contacts/contacts.html ebola/ebola.html pfilter/monteCarlo.html
+html-docs: index.html intro/intro.html stochsim/stochsim.html pfilter/pfilter.html mif/mif.html polio/polio.html measles/measles.html contacts/contacts.html ebola/ebola.html pfilter/monteCarlo.html measles/measles-profile.html
 
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \

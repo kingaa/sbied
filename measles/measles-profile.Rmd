@@ -6,6 +6,7 @@ output:
   html_document:
     theme: flatly
     toc: yes
+    toc_depth: 2
 bibliography: ../sbied.bib
 csl: ../ecology.csl
 
@@ -44,6 +45,7 @@ opts_chunk$set(
   error=FALSE,
   echo=TRUE,
   cache=TRUE,
+  cache_extra=rand_seed,
   results='markup',
   fig.show='asis',
   size='small',
@@ -261,6 +263,8 @@ fromEst <- Csnippet("
 ")
 ```
 
+### ML point estimates
+
 @He2010 estimated the parameters of this model.
 The full set is included in the *R* code accompanying this document, where they are read into a data frame called `mles`.
 
@@ -297,21 +301,67 @@ paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
 mle %>% extract(paramnames) %>% unlist() -> theta
 ```
 
+### Construct and verify the `pomp` object
+
+```{r pomp-construct}
+dat %>% 
+  pomp(t0=with(dat,2*time[1]-time[2]),
+       time="time",
+       params=theta,
+       rprocess=euler.sim(rproc,delta.t=1/365.25),
+       initializer=initlz,
+       dmeasure=dmeas,
+       rmeasure=rmeas,
+       toEstimationScale=toEst,
+       fromEstimationScale=fromEst,
+       covar=covar,
+       tcovar="time",
+       zeronames=c("C","W"),
+       statenames=c("S","E","I","R","C","W"),
+       paramnames=c("R0","mu","sigma","gamma","alpha","iota",
+                    "rho","sigmaSE","psi","cohort","amplitude",
+                    "S_0","E_0","I_0","R_0")
+  ) -> m1
+plot(simulate(m1))
+```
+
 ## Profile over $\sigma_{SE}$
 
-```{r sigmaSE-prof-design}
-estpars <- setdiff(names(theta),c("sigmaSE","mu","rho","alpha","iota"))
+### Initial set of mifs
 
-theta["alpha"] <- 0
-theta.hi <- theta.lo <- theta
-theta.lo[estpars] <- 0.5*theta[estpars]
-theta.hi[estpars] <- 2*theta[estpars]
+To compute a likelihood profile over a given parameter (or set of parameters) across some range, we first construct a grid of points spanning that range.
+At each point in the grid, we fix the focal parameter (or set of parameters) at that value and maximize the likelihood over the remaining parameters.
+To ensure that this optimization is global, we initiate multiple optimizers at a variety of points across the space.
+The **pomp** function `profileDesign` is useful in constructing such a set of starting points for the optimization.
+
+The following code constructs a data frame, each row of which is a starting point for an optimization.
+We will be profiling over $\sigma_SE$ (`sigmaSE` in the code), fixing $\mu=0.02$ and $\alpha=1$.
+To simplify the calculation still further, we will hold $\rho$ and $\iota$ at their ML point estimates.
+
+```{r sigmaSE-prof-design}
+estpars <- setdiff(names(theta),c("sigmaSE","mu","alpha","rho","iota"))
+
+theta["alpha"] <- 1
+
+theta.t <- partrans(m1,theta,"toEstimationScale")
+
+theta.t.hi <- theta.t.lo <- theta.t
+theta.t.lo[estpars] <- theta.t[estpars]-log(2)
+theta.t.hi[estpars] <- theta.t[estpars]+log(2)
 
 profileDesign(
-  sigmaSE=exp(seq(from=log(0.02),to=log(0.2),length=20)),
-  lower=theta.lo,upper=theta.hi,nprof=40
+  sigmaSE=seq(from=log(0.02),to=log(0.2),length=20),
+  lower=theta.t.lo,upper=theta.t.hi,nprof=40
 ) -> pd
+
+dim(pd)
+
+pd <- as.data.frame(t(partrans(m1,t(pd),"fromEstimationScale")))
+
+pairs(~sigmaSE+R0+mu+sigma+gamma+S_0+E_0,data=pd)
 ```
+
+Here's a little function that saves the results of expensive computations.
 
 ```{r bake}
 bake <- function (file, expr) {
@@ -324,6 +374,10 @@ bake <- function (file, expr) {
   }
 }
 ```
+
+We'll run the profile computations on a cluster using MPI.
+Note that again, care must be taken with the parallel random number generator.
+
 
 ```{r sigmaSE-prof-round1,eval=TRUE,cache=FALSE}
 bake("sigmaSE-profile1.rds",{
@@ -349,7 +403,7 @@ bake("sigmaSE-profile1.rds",{
     require(pomp)
     
     options(stringsAsFactors=FALSE,pomp.cache=NULL)
-
+    
     dat %>% 
       pomp(t0=with(dat,2*time[1]-time[2]),
            time="time",
@@ -370,8 +424,7 @@ bake("sigmaSE-profile1.rds",{
       mif2(start = unlist(p),
            Nmif = 50, 
            rw.sd = rw.sd(
-             R0=0.02,sigma=0.02,gamma=0.02,alpha=0.02,
-             iota=0.02,psi=0.02,cohort=0.02,amplitude=0.02,
+             R0=0.02,sigma=0.02,gamma=0.02,psi=0.02,cohort=0.02,amplitude=0.02,
              S_0=ivp(0.02),E_0=ivp(0.02),I_0=ivp(0.02),R_0=ivp(0.02)),
            Np = 1000,
            cooling.type = "geometric",
@@ -388,8 +441,7 @@ bake("sigmaSE-profile1.rds",{
     toc <- Sys.time()
     etime <- toc-tic
     units(etime) <- "hours"
-    
-    
+
     data.frame(as.list(coef(mf)),
                loglik = ll[1],
                loglik.se = ll[2],
@@ -400,6 +452,16 @@ bake("sigmaSE-profile1.rds",{
 ```
 
 The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r signif(mean(sigmaSE_prof$etime)*3600/120,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.
+Let's examine the results.
+
+```{r round1-plot}
+pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma)+psi+log(cohort),
+      data=sigmaSE_prof,subset=loglik>max(loglik)-100)
+summary(sigmaSE_prof)
+```
+
+Next, we'll skim off the top 20 likelihoods for each value of the $\sigma_{SE}$ parameter.
+We'll put these through another round of miffing.
 
 ```{r sigmaSE-prof-round2,cache=FALSE}
 sigmaSE_prof %>%
@@ -451,8 +513,7 @@ bake("sigmaSE-profile2.rds",{
       mif2(start = unlist(p),
            Nmif = 50, 
            rw.sd = rw.sd(
-             R0=0.02,sigma=0.02,gamma=0.02,alpha=0.02,
-             iota=0.02,psi=0.02,cohort=0.02,amplitude=0.02,
+             R0=0.02,sigma=0.02,gamma=0.02,psi=0.02,cohort=0.02,amplitude=0.02,
              S_0=ivp(0.02),E_0=ivp(0.02),I_0=ivp(0.02),R_0=ivp(0.02)),
            Np = 5000,
            cooling.type = "geometric",
@@ -482,18 +543,27 @@ bake("sigmaSE-profile2.rds",{
 The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r signif(mean(sigmaSE_prof$etime)/550*3600,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.
 
 ```{r plot-sigmaSE-profile}
-sigmaSE_prof %>%
+sigmaSE_prof %<>%
   subset(nfail.max==0) %>%
   mutate(sigmaSE=exp(signif(log(sigmaSE),5))) %>%
-  ddply(~sigmaSE,subset,rank(-loglik)<=2) %>%
+  ddply(~sigmaSE,subset,rank(-loglik)<=2)
+
+sigmaSE_prof %>%
   ggplot(aes(x=sigmaSE,y=loglik))+
   geom_point()+
   geom_smooth(method="loess")
 ```
 
+Plot profile traces, which show the trade-off between intensity of extra-demographic stochasticity and duration of the infectious and latent periods.
+
+```{r profile-traces}
+pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma),
+      data=sigmaSE_prof)
+```
+
 
 ## References
 
-```{r include=FALSE,cache=FALSE,eval=TRUE}
-if (exists("mpi.exit")) mpi.exit()
+```{r include=FALSE,cache=FALSE,eval=FALSE}
+mpi.quit(save='no')
 ```
