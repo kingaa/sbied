@@ -27,7 +27,7 @@ opts_chunk$set(
   message=FALSE,
   error=FALSE,
   echo=TRUE,
-#  cache=TRUE,
+  cache=FALSE,
   results='markup',
   fig.show='asis',
   size='small',
@@ -326,8 +326,8 @@ plot(bsflu)
 To develop and debug code, it is nice to have a version that runs extra quickly, for which we set `run_level=1`. Here, `Np` is the number of particles (i.e., sequential Monte Carlo sample size), and `Nmif` is the number of iterations of the optimization procedure carried out below. Empirically, `Np=5000` and `Nmif=200` are around the minimum required to get stable results with an error in the likelihood of order 1 log unit for this example; this is implemented by setting `run_level=2`. One can then ramp up to larger values for more refined computations, implemented here by `run_level=3`.
 
 ```{r run_level}
-runlevel <- 3
-switch(runlevel,
+run_level <- 1
+switch(run_level,
        {bsflu_Np=100; bsflu_Nmif=10; bsflu_Neval=10; bsflu_Nglobal=10; bsflu_Nlocal=10}, 
        {bsflu_Np=20000; bsflu_Nmif=100; bsflu_Neval=10; bsflu_Nglobal=10; bsflu_Nlocal=10}, 
        {bsflu_Np=60000; bsflu_Nmif=300; bsflu_Neval=10; bsflu_Nglobal=100; bsflu_Nlocal=20}
@@ -350,21 +350,36 @@ We are going to treat $\mu_{R_1}$ and  $\mu_{R_2}$ as known, fixed at the empiri
 bsflu_fixed_params <- c(mu_R1=1/(sum(bsflu_data$B)/512),mu_R2=1/(sum(bsflu_data$C)/512))
 ```
 
-It is convenient to do some parallelization to speed up the computations. Most machines are multi-core nowadays, and using this computational capacity involves only (i) the following three lines of code to let R know you plan to use multiple processors; (ii) using the parallel for loop provided by 'foreach'.
-Since I am working on a double-threaded 12-cpu machine, I set
+It is convenient to do some parallelization to speed up the computations. Most machines are multi-core nowadays, and using this computational capacity involves only (i) the following lines of code to let R know you plan to use multiple processors; (ii) using the parallel for loop provided by 'foreach'.
 
-```{r pf1}
+```{r pf1,cache=FALSE}
 require(doParallel)
-cores <- 20
+cores <- 4
 registerDoParallel(cores)
+mcopts <- list(set.seed=TRUE)
+
+set.seed(396658101,kind="L'Ecuyer")
+```
+
+```{r bake,echo=FALSE,cache=FALSE}
+bake <- function (file, expr) {
+  if (file.exists(file)) {
+    readRDS(file)
+  } else {
+    val <- eval(expr)
+    saveRDS(val,file=file)
+    val
+  }
+}
 ```
 
 We proceed to carry out replicated particle filters at this tentative MLE:
 
-```{r pf}
+```{r pf,cache=TRUE,cache.extra=list(run_level,rand_seed)}
 t_pf <- system.time(
-  pf <- foreach(i=1:cores,.packages='pomp') %dopar% try(
-    pfilter(bsflu,params=bsflu_mle,Np=bsflu_Np,seed=297221+i)
+  pf <- foreach(i=1:20,.packages='pomp',
+      .options.multicore=mcopts) %dopar% try(
+    pfilter(bsflu,params=bsflu_mle,Np=bsflu_Np)
   )
 )
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
@@ -377,16 +392,15 @@ In  `r round(t_pf["elapsed"],1)` seconds, we obtain an unbiased likelihood estim
 
 Let's carry out a local search using `mif2` around this previously identified MLE. For that, we need to set the `rw.sd` and `cooling.fraction.50` algorithmic parameters:
 
-```{r box_search_local}
+```{r box_search_local,cache=TRUE,cache.extra=list(run_level,rand_seed)}
 bsflu_rw.sd <- 0.02
 bsflu_cooling.fraction.50 <- 0.5
 
 t_local <- system.time({
-  mifs_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp', .combine=c) %dopar%  {
+  mifs_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  {
      mif2(
         bsflu,
         start=bsflu_mle,
-        seed=743275+i,
         Np=bsflu_Np,
         Nmif=bsflu_Nmif,
         cooling.type="geometric",
@@ -405,10 +419,9 @@ t_local <- system.time({
 
 Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference. Partly, this is because some parameter perturbations remain in the last filtering iteration. Partly, this is because `mif2` is usually carried out with a smaller number of particles than is necessary for a good likelihood evaluation---the errors in `mif2` average out over many iterations of the filtering. Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
-```{r lik_local_eval}
+```{r lik_local_eval,cache=TRUE,cache.extra=list(run_level,rand_seed)}
 t_local_eval <- system.time({
   liks_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp',.combine=rbind) %dopar% {
-    set.seed(87932+i)
     evals <- replicate(bsflu_Neval, logLik(pfilter(bsflu,params=coef(mifs_local[[i]]),Np=bsflu_Np)))
     logmeanexp(evals, se=TRUE)
   }
@@ -443,22 +456,20 @@ bsflu_box <- rbind(
 
 We are now ready to carry out likelihood maximizations from diverse starting points. To simplify the code, we can reset only the starting parameters from `mifs_global[[1]]` since the rest of the call to `mif2` can be read in from `mifs_global[[1]]`:
 
-```{r box_eval}
+```{r box_eval,cache=TRUE,cache.extra=list(run_level,rand_seed)}
 t_global <- system.time({
-  mifs_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp', .combine=c) %dopar%  mif2(
+  mifs_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  mif2(
      mifs_local[[1]],
-     start=c(apply(bsflu_box,1,function(x)runif(1,x)),bsflu_fixed_params),
-     seed=743275+i
+     start=c(apply(bsflu_box,1,function(x)runif(1,x)),bsflu_fixed_params)
   )
 })
 ```
 
 Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference. Partly, this is because some parameter perturbations remain in the last filtering iteration. Partly, this is because `mif2` is usually carried out with a smaller number of particles than is necessary for a good likelihood evaluation---the errors in `mif2` average out over many iterations of the filtering. Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
-```{r lik_global_eval}
+```{r lik_global_eval,cache=TRUE,cache.extra=list(run_level,rand_seed)}
 t_global_eval <- system.time({
-  liks_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp',.combine=rbind) %dopar% {
-    set.seed(87932+i)
+  liks_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp',.combine=rbind, .options.multicore=mcopts) %dopar% {
     evals <- replicate(bsflu_Neval, logLik(pfilter(bsflu,params=coef(mifs_global[[i]]),Np=bsflu_Np)))
     logmeanexp(evals, se=TRUE)
   }
@@ -471,7 +482,7 @@ summary(results_global$logLik,digits=5)
 It is good practice to build up a file of successful optimization results for subsequent investigation:
 
 ```{r save_params}
-if(runlevel>1) write.table(rbind(results_local,results_global),
+if(run_level>1) write.table(rbind(results_local,results_global),
    file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
 ```
 
@@ -512,7 +523,7 @@ We cannot directly evaluate $e$, since there is also Monte Carlo error in our ev
 Even in this small, 3 parameter, example, it takes a considerable amount of computation to find the global maximum (with values of $\beta$ around 0.004) starting from uniform draws in the specified box. The problem is that, on the scale on which "uniform" is defined, the peak around $\beta\approx 0.004$ is very narrow. Propose and test a more favorable way to draw starting parameters for the global search, with better scale invariance properties.
 
 ```{r save, include=FALSE}
-if(runlevel>1) save(list = ls(all = TRUE), file = "Rout.rda")
+if(run_level>1) save(list = ls(all = TRUE), file = "Rout.rda")
 ```
 
 ### Technical exercise: Adding a latent class

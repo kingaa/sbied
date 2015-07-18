@@ -10,7 +10,7 @@ opts_chunk$set(
   message=FALSE,
   error=FALSE,
   echo=TRUE,
-#  cache=TRUE,
+  cache=FALSE,
   results='markup',
   fig.show='asis',
   size='small',
@@ -105,8 +105,8 @@ bsflu <- pomp(
 plot(bsflu)
 
 ## ----run_level-----------------------------------------------------------
-runlevel <- 3
-switch(runlevel,
+run_level <- 1
+switch(run_level,
        {bsflu_Np=100; bsflu_Nmif=10; bsflu_Neval=10; bsflu_Nglobal=10; bsflu_Nlocal=10}, 
        {bsflu_Np=20000; bsflu_Nmif=100; bsflu_Neval=10; bsflu_Nglobal=10; bsflu_Nlocal=10}, 
        {bsflu_Np=60000; bsflu_Nmif=300; bsflu_Neval=10; bsflu_Nglobal=100; bsflu_Nlocal=20}
@@ -119,29 +119,43 @@ bsflu_mle <- bsflu_params[which.max(bsflu_params[,"logLik"]),][bsflu_paramnames]
 ## ----fixed_params--------------------------------------------------------
 bsflu_fixed_params <- c(mu_R1=1/(sum(bsflu_data$B)/512),mu_R2=1/(sum(bsflu_data$C)/512))
 
-## ----pf1-----------------------------------------------------------------
+## ----pf1,cache=FALSE-----------------------------------------------------
 require(doParallel)
-cores <- 20
+cores <- 4
 registerDoParallel(cores)
+mcopts <- list(set.seed=TRUE)
 
-## ----pf------------------------------------------------------------------
+set.seed(396658101,kind="L'Ecuyer")
+
+## ----bake,echo=FALSE,cache=FALSE-----------------------------------------
+bake <- function (file, expr) {
+  if (file.exists(file)) {
+    readRDS(file)
+  } else {
+    val <- eval(expr)
+    saveRDS(val,file=file)
+    val
+  }
+}
+
+## ----pf,cache=TRUE,cache.extra=list(run_level,rand_seed)-----------------
 t_pf <- system.time(
-  pf <- foreach(i=1:cores,.packages='pomp') %dopar% try(
-    pfilter(bsflu,params=bsflu_mle,Np=bsflu_Np,seed=297221+i)
+  pf <- foreach(i=1:20,.packages='pomp',
+      .options.multicore=mcopts) %dopar% try(
+    pfilter(bsflu,params=bsflu_mle,Np=bsflu_Np)
   )
 )
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
 
-## ----box_search_local----------------------------------------------------
+## ----box_search_local,cache=TRUE,cache.extra=list(run_level,rand_seed)----
 bsflu_rw.sd <- 0.02
 bsflu_cooling.fraction.50 <- 0.5
 
 t_local <- system.time({
-  mifs_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp', .combine=c) %dopar%  {
+  mifs_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  {
      mif2(
         bsflu,
         start=bsflu_mle,
-        seed=743275+i,
         Np=bsflu_Np,
         Nmif=bsflu_Nmif,
         cooling.type="geometric",
@@ -157,10 +171,9 @@ t_local <- system.time({
   }
 })
 
-## ----lik_local_eval------------------------------------------------------
+## ----lik_local_eval,cache=TRUE,cache.extra=list(run_level,rand_seed)-----
 t_local_eval <- system.time({
   liks_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp',.combine=rbind) %dopar% {
-    set.seed(87932+i)
     evals <- replicate(bsflu_Neval, logLik(pfilter(bsflu,params=coef(mifs_local[[i]]),Np=bsflu_Np)))
     logmeanexp(evals, se=TRUE)
   }
@@ -179,19 +192,17 @@ bsflu_box <- rbind(
   rho = c(0.5,1)
 )
 
-## ----box_eval------------------------------------------------------------
+## ----box_eval,cache=TRUE,cache.extra=list(run_level,rand_seed)-----------
 t_global <- system.time({
-  mifs_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp', .combine=c) %dopar%  mif2(
+  mifs_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  mif2(
      mifs_local[[1]],
-     start=c(apply(bsflu_box,1,function(x)runif(1,x)),bsflu_fixed_params),
-     seed=743275+i
+     start=c(apply(bsflu_box,1,function(x)runif(1,x)),bsflu_fixed_params)
   )
 })
 
-## ----lik_global_eval-----------------------------------------------------
+## ----lik_global_eval,cache=TRUE,cache.extra=list(run_level,rand_seed)----
 t_global_eval <- system.time({
-  liks_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp',.combine=rbind) %dopar% {
-    set.seed(87932+i)
+  liks_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp',.combine=rbind, .options.multicore=mcopts) %dopar% {
     evals <- replicate(bsflu_Neval, logLik(pfilter(bsflu,params=coef(mifs_global[[i]]),Np=bsflu_Np)))
     logmeanexp(evals, se=TRUE)
   }
@@ -201,12 +212,12 @@ results_global <- data.frame(logLik=liks_global[,1],logLik_se=liks_global[,2],t(
 summary(results_global$logLik,digits=5)
 
 ## ----save_params---------------------------------------------------------
-if(runlevel>1) write.table(rbind(results_local,results_global),
+if(run_level>1) write.table(rbind(results_local,results_global),
    file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
 
 ## ----pairs_global--------------------------------------------------------
 pairs(~logLik+beta+mu_I+rho,data=subset(results_global,logLik>max(logLik)-250))
 
 ## ----save, include=FALSE-------------------------------------------------
-if(runlevel>1) save(list = ls(all = TRUE), file = "Rout.rda")
+if(run_level>1) save(list = ls(all = TRUE), file = "Rout.rda")
 
