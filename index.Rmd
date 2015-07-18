@@ -56,7 +56,6 @@ This module introduces statistical inference techniques and computational method
 ## Other materials
 
 - [Instructions for preparing your laptop for the course exercises](./prep/preparation.html)
-- [Some papers using POMP methods](http://kinglab.eeb.lsa.umich.edu/SBIED/papers/)
  
 ----------------------
 
