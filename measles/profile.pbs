@@ -7,7 +7,7 @@
 #PBS -q flux
 #PBS -A kingaa_flux
 #PBS -l qos=flux
-#PBS -l nodes=50:ppn=4,walltime=24:00:00
+#PBS -l procs=200,walltime=24:00:00
 
 export OMPI_MCA_mpi_warn_on_fork=0
 

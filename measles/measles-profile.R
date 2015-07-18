@@ -13,9 +13,10 @@ require(pomp)
 stopifnot(packageVersion("pomp")>="0.70-1")
 
 ## ----load-data-----------------------------------------------------------
-baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
-download.file(paste0(baseurl,"data/twentycities.rda"),destfile="./twentycities.rda")
-load("twentycities.rda")
+base_url <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+datfile <- file.path(tempdir(),"twentycities.rda")
+download.file(paste0(base_url,"data/twentycities.rda"),destfile=datfile)
+load(datfile)
 measles %>% 
   mutate(year=as.integer(format(date,"%Y"))) %>%
   subset(town=="London" & year>=1950 & year<1964) %>%
@@ -293,7 +294,11 @@ bake("sigmaSE-profile1.rds",{
                nfail.min = min(nfail),
                nfail.max = max(nfail),
                etime = as.numeric(etime))
-  }}) -> sigmaSE_prof
+  } -> res
+
+  closeCluster(cl)
+  res
+}) -> sigmaSE_prof
 
 ## ----round1-plot---------------------------------------------------------
 pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma)+psi+log(cohort),
@@ -367,14 +372,18 @@ bake("sigmaSE-profile2.rds",{
     toc <- Sys.time()
     etime <- toc-tic
     units(etime) <- "hours"
-    
+ 
     data.frame(as.list(coef(mf)),
                loglik = ll[1],
                loglik.se = ll[2],
                nfail.min = min(nfail),
                nfail.max = max(nfail),
                etime = as.numeric(etime))
-  }}) -> sigmaSE_prof
+  } -> res
+
+  closeCluster(cl)
+  res
+}) -> sigmaSE_prof
 
 ## ----plot-sigmaSE-profile------------------------------------------------
 sigmaSE_prof %<>%
@@ -391,6 +400,8 @@ sigmaSE_prof %>%
 pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma),
       data=sigmaSE_prof)
 
-## ----include=FALSE,cache=FALSE,eval=FALSE--------------------------------
-## mpi.quit(save='no')
+## ----include=FALSE,cache=FALSE,eval=TRUE---------------------------------
+try(detach("package:doMPI",unload=TRUE),silent=TRUE)
+if (exists("mpi.exit")) mpi.exit()
+try(detach("package:Rmpi",unload=TRUE),silent=TRUE)
 
