@@ -45,7 +45,7 @@ opts_chunk$set(
   error=FALSE,
   echo=TRUE,
   cache=TRUE,
-  cache_extra=rand_seed,
+  cache.extra=list(rand_seed,R.version.string),
   results='markup',
   fig.show='asis',
   size='small',
@@ -1094,6 +1094,10 @@ pomp(m1,toEstimationScale=toEst,
                   "rho","sigmaSE","psi","cohort","amplitude",
                   "S_0","E_0","I_0","R_0")) -> m1
 ```
+
+## Constructing a likelihood profile
+
+[The linked document shows how a likelihood profile can be constructed using IF2](./measles-profile.html).
 
 
 ## Exercises

@@ -41,6 +41,7 @@ opts_chunk$set(
   error=FALSE,
   echo=TRUE,
   cache=TRUE,
+  cache.extra=rand_seed,
   results='markup',
   fig.show='asis',
   size='small',
