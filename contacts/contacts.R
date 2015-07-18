@@ -3,15 +3,14 @@ require(ggplot2)
 theme_set(theme_bw())
 
 require(foreach)
-require(doMC)
+require(doParallel)
 
 options(
   keep.source=TRUE,
-  encoding="UTF-8",
-  cores=4
+  encoding="UTF-8"
 )
 
-registerDoMC()
+registerDoParallel(cores=4)
 mcopts <- list(set.seed=TRUE)
 
 ## ----data----------------------------------------------------------------
@@ -205,7 +204,7 @@ apply(obs(s2),1,mean)
 apply(states(s2),1,mean)
 plot(s2)
 
-## ----pfilter2------------------------------------------------------------
+## ----pfilter2,cache=TRUE-------------------------------------------------
 t2 <- system.time(
   pf2 <- foreach(i=1:10,.packages='pomp',
                  .options.multicore=mcopts) 
@@ -213,7 +212,7 @@ t2 <- system.time(
 )
 (loglik2 <- sapply(pf2,logLik))
 
-## ----mif-----------------------------------------------------------------
+## ----mif,cache=TRUE------------------------------------------------------
 t3 <- system.time(
   m2 <- foreach(i=1:10,.packages='pomp',
                 .options.multicore=mcopts) %dopar% try( 
