@@ -3,9 +3,9 @@ title: "Case Study: Dynamic Variation in Sexual Contact Rates"
 author: "Edward Ionides"
 date: "05/28/2015"
 output:
-  html_document:
-    theme: flatly
-    toc: yes
+html_document:
+theme: flatly
+toc: yes
 bibliography: contacts.bib
 csl: ecology.csl
 
@@ -15,7 +15,7 @@ Licensed under the Creative Commons attribution-noncommercial license, http://cr
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
-```{r opts,include=FALSE}
+```{r knitr-opts,include=FALSE,cache=FALSE,purl=FALSE}
 library(pomp)
 library(knitr)
 prefix <- "contacts"
@@ -27,7 +27,8 @@ opts_chunk$set(
   message=FALSE,
   error=FALSE,
   echo=TRUE,
-#  cache=TRUE,
+  cache=FALSE,
+  cache_extra=rand_seed,
   results='markup',
   fig.show='asis',
   size='small',
@@ -37,19 +38,27 @@ opts_chunk$set(
   fig.pos="h!",
   fig.align='center',
   fig.height=4,fig.width=6.83,
-#  out.width="\\linewidth",
   dpi=300,
   dev='png',
   dev.args=list(bg='transparent')
-  )
+)
+
+set.seed(2050320976)
+```
+```{r opts,include=FALSE,cache=FALSE}
+require(ggplot2)
+theme_set(theme_bw())
+
+require(foreach)
+require(doParallel)
 
 options(
   keep.source=TRUE,
   encoding="UTF-8"
-  )
+)
 
-library(ggplot2)
-theme_set(theme_bw())
+registerDoParallel(cores=4)
+mcopts <- list(set.seed=TRUE)
 ```
 
 ----------------------
@@ -72,8 +81,8 @@ Here, we consider the longitudinal data from @vittinghoff99 on total sexual cont
 ```{r data}
 contact_data <- read.table(file="contacts.csv",header=TRUE)
 matplot(t(contact_data[1:15,1:4]),
-  ylab="total sexual contacts",xlab="6-month intervals", 
-  type="l",xaxp=c(1,4,3))
+        ylab="total sexual contacts",xlab="6-month intervals", 
+        type="l",xaxp=c(1,4,3))
 ```
 
 We want a model that can describe all sources of variability in the data:
@@ -148,11 +157,11 @@ If $J_i$ is small for each $i$, sequential Monte Carlo may be computationally fe
 
 2. Chain together the $I$ panel members, setting
 $$X(t) = \left\{\begin{array}{ll}
- X_1(t) & \mbox{for $0\le t\le t_{1,J_1}$} \\
- X_2(t-t_{1,J_1}) & \mbox{for $t_{1,J_1}\le t\le t_{1,J_1}+t_{2,J_2}$} \\
- \vdots & \vdots \\
- X_I\Big(t-\sum_{i=1}^{I-1}t_{i,J_i} \Big)& 
-   \mbox{for $t-\sum_{i=1}^{I-1}t_{i,J_i}\le t\le \sum_{i=1}^{I}t_{i,J_i}$}
+X_1(t) & \mbox{for $0\le t\le t_{1,J_1}$} \\
+X_2(t-t_{1,J_1}) & \mbox{for $t_{1,J_1}\le t\le t_{1,J_1}+t_{2,J_2}$} \\
+\vdots & \vdots \\
+X_I\Big(t-\sum_{i=1}^{I-1}t_{i,J_i} \Big)& 
+\mbox{for $t-\sum_{i=1}^{I-1}t_{i,J_i}\le t\le \sum_{i=1}^{I}t_{i,J_i}$}
 \end{array}
 \right.$$ 
 with a corresponding chaining of the $K$ observation processes.
@@ -182,14 +191,14 @@ As a test set of parameters, we will use the MLE for total contacts reported in 
 ```{r params}
 contact_paramnames = c("mu_X","sigma_X","mu_D","sigma_D","mu_R","sigma_R","alpha")
 contact_mle <- c(
-    mu_X = 1.75,
-    sigma_X = 2.67,
-    mu_D = 3.81,
-    sigma_D = 4.42,
-    mu_R = 0.04,
-    sigma_R = 0,
-    alpha = 0.90
-  )
+  mu_X = 1.75,
+  sigma_X = 2.67,
+  mu_D = 3.81,
+  sigma_D = 4.42,
+  mu_R = 0.04,
+  sigma_R = 0,
+  alpha = 0.90
+)
 ```
 
 First, let's specify the dynamic model:
@@ -272,12 +281,13 @@ plot(s1)
 
 To check that this implementation of the model is consistent with the AJE version, we can check that the log likelihood at the MLE matches (to a reasonable approximation) the value of -9552.1 reported by @romero-severson15. On the assumption one is working on a multi-core machine, one might as well do some parallelization to put the cores to work and get smaller Monte Carlo errors for a given amount of patience:
 
-```{r pfilter}
-require(doParallel)
-cores <- 10
-registerDoParallel(cores)
+```{r pfilter,cache=TRUE}
+set.seed(2015,kind="L'Ecuyer")
+
 t1 <- system.time(
- pf1 <- foreach(i=1:cores,.packages='pomp') %dopar% try(pfilter(contacts,Np=2000,seed=2015+i))
+  pf1 <-    foreach(i=1:10,.packages='pomp',
+                    .options.multicore=mcopts) 
+  %dopar% try(pfilter(contacts,Np=2000))
 )
 (loglik1 <- sapply(pf1,logLik))
 ```
@@ -304,9 +314,9 @@ contact_fromEstimationScale <- Csnippet("
 ")
 
 contacts_with_trans <- pomp(contacts,
-  paramnames = contact_paramnames,
-  fromEstimationScale=contact_fromEstimationScale,
-  toEstimationScale=contact_toEstimationScale
+                            paramnames = contact_paramnames,
+                            fromEstimationScale=contact_fromEstimationScale,
+                            toEstimationScale=contact_toEstimationScale
 )
 ```
 
@@ -325,9 +335,12 @@ The dynamic model is coded as
 contact2_rprocess <- Csnippet("
   double Zcum, tol=0.000001;
   if( (int)t % 4 == 0) { 
-    D = (sigma_D < tol || mu_D < tol) ? mu_D : rgamma( pow(mu_D, 2) / pow(sigma_D, 2) , pow(sigma_D, 2) / mu_D );
-    R = (sigma_R < tol || mu_R < tol) ? mu_R : rgamma( pow(mu_R, 2) / pow(sigma_R, 2) , pow(sigma_R, 2) / mu_R );
-    X = (sigma_X < tol || mu_X < tol) ? mu_X : rgamma( pow(mu_X, 2) / pow(sigma_X, 2) , pow(sigma_X, 2) / mu_X );
+    D = (sigma_D < tol || mu_D < tol) ? mu_D : 
+          rgamma(pow(mu_D/sigma_D,2), pow(sigma_D,2)/mu_D);
+    R = (sigma_R < tol || mu_R < tol) ? mu_R : 
+          rgamma(pow(mu_R/sigma_R, 2), pow(sigma_R, 2)/mu_R);
+    X = (sigma_X < tol || mu_X < tol) ? mu_X : 
+          rgamma(pow(mu_X/sigma_X, 2), pow(sigma_X, 2)/mu_X);
     Z = (R < tol) ? 1/tol : rexp(1/R);
   }
   C = 0;
@@ -335,7 +348,8 @@ contact2_rprocess <- Csnippet("
   while(Zcum < 6){
        C  += Z * X;
        Z = (R < tol) ? 1/tol : rexp(1/R);
-       X = (sigma_X < tol || mu_X < tol) ? mu_X : rgamma( pow(mu_X, 2) / pow(sigma_X, 2) , pow(sigma_X, 2) / mu_X );
+       X = (sigma_X < tol || mu_X < tol) ? mu_X : 
+             rgamma(pow(mu_X/sigma_X, 2), pow(sigma_X, 2)/mu_X);
        Zcum += Z;
   }
   C += (6 - (Zcum - Z)) * X;
@@ -347,7 +361,6 @@ contact2_rprocess <- Csnippet("
 and the measurement model is
 
 ```{r measurement2}
-
 contact2_dmeasure <- Csnippet("
   lik = dnbinom(y, D, D/(D+C), give_log);
 ")
@@ -390,9 +403,11 @@ plot(s2)
 
 and we can filter, to obtain the likelihood:
 
-```{r pfilter2}
+```{r pfilter2,cache=TRUE}
 t2 <- system.time(
- pf2 <- foreach(i=1:cores,.packages='pomp') %dopar% try(pfilter(contacts2,Np=2000,seed=2015+i))
+  pf2 <- foreach(i=1:10,.packages='pomp',
+                 .options.multicore=mcopts) 
+  %dopar% try(pfilter(contacts2,Np=2000))
 )
 (loglik2 <- sapply(pf2,logLik))
 ```
@@ -400,30 +415,34 @@ t2 <- system.time(
 ### Likelihood maximization using the IF2 algorithm
 
 As an example of an iterated filtering investigation, let's carry out a local search, starting at the current estimate of the MLE.
-```{r mif}
+```{r mif,cache=TRUE}
 t3 <- system.time(
-  m2 <- foreach(i=1:cores,.packages='pomp') %dopar% try( 
-    mif2(contacts2,
-      seed=1903+i,
-      Nmif=10,
-      Np=200,
-      cooling.fraction.50=0.5,
-      cooling.type="geometric",
-      transform=TRUE,
-      rw.sd=rw.sd(mu_X=0.02,
-              sigma_X=0.02,
-              mu_D = 0.02,
-              sigma_D=0.02,
-              mu_R=0.02,
-              sigma_R =0.02,
-              alpha=0.02)
-    )
-  )
+  m2 <- foreach(i=1:10,.packages='pomp',
+                .options.multicore=mcopts) %dopar% try( 
+                  mif2(contacts2,
+                       Nmif=10,
+                       Np=200,
+                       cooling.fraction.50=0.5,
+                       cooling.type="geometric",
+                       transform=TRUE,
+                       rw.sd=rw.sd(mu_X=0.02,
+                                   sigma_X=0.02,
+                                   mu_D = 0.02,
+                                   sigma_D=0.02,
+                                   mu_R=0.02,
+                                   sigma_R =0.02,
+                                   alpha=0.02)
+                  )
+                )
 )
+
 params_new <- coef( m2[[which.max( sapply(m2,logLik) )]] )
-pf3 <- foreach(i=1:cores,.packages='pomp') %dopar% try(
-  pfilter(contacts2,params=params_new,Np=1000,seed=1809+i)
-)
+
+pf3 <- foreach(i=1:10,.packages='pomp',
+               .options.multicore=mcopts) %dopar% try(
+                 pfilter(contacts2,params=params_new,Np=1000,seed=1809+i)
+               )
+
 (loglik_new <- logmeanexp(sapply(pf3,logLik),se=TRUE))
 ```
 This is a relatively quick search, taking only `r round(t3["elapsed"],1)` seconds. The preliminary likelihood estimated as a consequence of running `mif2` and extracted here by `sapply(m2,logLik)` does not correspond to the actual, fixed parameter, model. It is the sequential Monte Carlo estimate of the likelihood from the last filtering iteration, and therefore will have some perturbation of the parameters. Further, one typically requires fewer particles for each filtering iteration than necessary to obtain a good likelihood estimate---stochastic errors can cancel out through the filtering iterations, rather than within any one iteration. For promising new parameter values, it is desirable to put computational effort into evaluating the likelihood sufficient to make the Monte Carlo error small compared to one log unit.

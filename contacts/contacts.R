@@ -1,44 +1,24 @@
-## ----opts,include=FALSE--------------------------------------------------
-library(pomp)
-library(knitr)
-prefix <- "contacts"
-opts_chunk$set(
-  progress=TRUE,
-  prompt=FALSE,tidy=FALSE,highlight=TRUE,
-  strip.white=TRUE,
-  warning=FALSE,
-  message=FALSE,
-  error=FALSE,
-  echo=TRUE,
-#  cache=TRUE,
-  results='markup',
-  fig.show='asis',
-  size='small',
-  fig.lp="fig:",
-  fig.path=paste0("figure/",prefix,"-"),
-  cache.path=paste0("cache/",prefix,"-"),
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=4,fig.width=6.83,
-#  out.width="\\linewidth",
-  dpi=300,
-  dev='png',
-  dev.args=list(bg='transparent')
-  )
+## ----opts,include=FALSE,cache=FALSE--------------------------------------
+require(ggplot2)
+theme_set(theme_bw())
+
+require(foreach)
+require(doMC)
 
 options(
   keep.source=TRUE,
-  encoding="UTF-8"
-  )
+  encoding="UTF-8",
+  cores=4
+)
 
-library(ggplot2)
-theme_set(theme_bw())
+registerDoMC()
+mcopts <- list(set.seed=TRUE)
 
 ## ----data----------------------------------------------------------------
 contact_data <- read.table(file="contacts.csv",header=TRUE)
 matplot(t(contact_data[1:15,1:4]),
-  ylab="total sexual contacts",xlab="6-month intervals", 
-  type="l",xaxp=c(1,4,3))
+        ylab="total sexual contacts",xlab="6-month intervals", 
+        type="l",xaxp=c(1,4,3))
 
 ## ----package-------------------------------------------------------------
 require(pomp)
@@ -51,14 +31,14 @@ contact_obsnames = c("y1", "y2", "y3", "y4")
 ## ----params--------------------------------------------------------------
 contact_paramnames = c("mu_X","sigma_X","mu_D","sigma_D","mu_R","sigma_R","alpha")
 contact_mle <- c(
-    mu_X = 1.75,
-    sigma_X = 2.67,
-    mu_D = 3.81,
-    sigma_D = 4.42,
-    mu_R = 0.04,
-    sigma_R = 0,
-    alpha = 0.90
-  )
+  mu_X = 1.75,
+  sigma_X = 2.67,
+  mu_D = 3.81,
+  sigma_D = 4.42,
+  mu_R = 0.04,
+  sigma_R = 0,
+  alpha = 0.90
+)
 
 ## ----rprocess------------------------------------------------------------
 contact_rprocess <- Csnippet("
@@ -126,12 +106,13 @@ apply(obs(s1),1,mean)
 apply(states(s1),1,mean)
 plot(s1)
 
-## ----pfilter-------------------------------------------------------------
-require(doParallel)
-cores <- 10
-registerDoParallel(cores)
+## ----pfilter,cache=TRUE--------------------------------------------------
+set.seed(2015,kind="L'Ecuyer")
+
 t1 <- system.time(
- pf1 <- foreach(i=1:cores,.packages='pomp') %dopar% try(pfilter(contacts,Np=2000,seed=2015+i))
+  pf1 <-    foreach(i=1:10,.packages='pomp',
+                    .options.multicore=mcopts) 
+  %dopar% try(pfilter(contacts,Np=2000))
 )
 (loglik1 <- sapply(pf1,logLik))
 
@@ -155,9 +136,9 @@ contact_fromEstimationScale <- Csnippet("
 ")
 
 contacts_with_trans <- pomp(contacts,
-  paramnames = contact_paramnames,
-  fromEstimationScale=contact_fromEstimationScale,
-  toEstimationScale=contact_toEstimationScale
+                            paramnames = contact_paramnames,
+                            fromEstimationScale=contact_fromEstimationScale,
+                            toEstimationScale=contact_toEstimationScale
 )
 
 ## ----statenames2---------------------------------------------------------
@@ -168,9 +149,12 @@ contact2_obsnames = "y"
 contact2_rprocess <- Csnippet("
   double Zcum, tol=0.000001;
   if( (int)t % 4 == 0) { 
-    D = (sigma_D < tol || mu_D < tol) ? mu_D : rgamma( pow(mu_D, 2) / pow(sigma_D, 2) , pow(sigma_D, 2) / mu_D );
-    R = (sigma_R < tol || mu_R < tol) ? mu_R : rgamma( pow(mu_R, 2) / pow(sigma_R, 2) , pow(sigma_R, 2) / mu_R );
-    X = (sigma_X < tol || mu_X < tol) ? mu_X : rgamma( pow(mu_X, 2) / pow(sigma_X, 2) , pow(sigma_X, 2) / mu_X );
+    D = (sigma_D < tol || mu_D < tol) ? mu_D : 
+          rgamma(pow(mu_D/sigma_D,2), pow(sigma_D,2)/mu_D);
+    R = (sigma_R < tol || mu_R < tol) ? mu_R : 
+          rgamma(pow(mu_R/sigma_R, 2), pow(sigma_R, 2)/mu_R);
+    X = (sigma_X < tol || mu_X < tol) ? mu_X : 
+          rgamma(pow(mu_X/sigma_X, 2), pow(sigma_X, 2)/mu_X);
     Z = (R < tol) ? 1/tol : rexp(1/R);
   }
   C = 0;
@@ -178,7 +162,8 @@ contact2_rprocess <- Csnippet("
   while(Zcum < 6){
        C  += Z * X;
        Z = (R < tol) ? 1/tol : rexp(1/R);
-       X = (sigma_X < tol || mu_X < tol) ? mu_X : rgamma( pow(mu_X, 2) / pow(sigma_X, 2) , pow(sigma_X, 2) / mu_X );
+       X = (sigma_X < tol || mu_X < tol) ? mu_X : 
+             rgamma(pow(mu_X/sigma_X, 2), pow(sigma_X, 2)/mu_X);
        Zcum += Z;
   }
   C += (6 - (Zcum - Z)) * X;
@@ -187,7 +172,6 @@ contact2_rprocess <- Csnippet("
 ")
 
 ## ----measurement2--------------------------------------------------------
-
 contact2_dmeasure <- Csnippet("
   lik = dnbinom(y, D, D/(D+C), give_log);
 ")
@@ -223,33 +207,39 @@ plot(s2)
 
 ## ----pfilter2------------------------------------------------------------
 t2 <- system.time(
- pf2 <- foreach(i=1:cores,.packages='pomp') %dopar% try(pfilter(contacts2,Np=2000,seed=2015+i))
+  pf2 <- foreach(i=1:10,.packages='pomp',
+                 .options.multicore=mcopts) 
+  %dopar% try(pfilter(contacts2,Np=2000))
 )
 (loglik2 <- sapply(pf2,logLik))
 
 ## ----mif-----------------------------------------------------------------
 t3 <- system.time(
-  m2 <- foreach(i=1:cores,.packages='pomp') %dopar% try( 
-    mif2(contacts2,
-      seed=1903+i,
-      Nmif=10,
-      Np=200,
-      cooling.fraction.50=0.5,
-      cooling.type="geometric",
-      transform=TRUE,
-      rw.sd=rw.sd(mu_X=0.02,
-              sigma_X=0.02,
-              mu_D = 0.02,
-              sigma_D=0.02,
-              mu_R=0.02,
-              sigma_R =0.02,
-              alpha=0.02)
-    )
-  )
+  m2 <- foreach(i=1:10,.packages='pomp',
+                .options.multicore=mcopts) %dopar% try( 
+                  mif2(contacts2,
+                       Nmif=10,
+                       Np=200,
+                       cooling.fraction.50=0.5,
+                       cooling.type="geometric",
+                       transform=TRUE,
+                       rw.sd=rw.sd(mu_X=0.02,
+                                   sigma_X=0.02,
+                                   mu_D = 0.02,
+                                   sigma_D=0.02,
+                                   mu_R=0.02,
+                                   sigma_R =0.02,
+                                   alpha=0.02)
+                  )
+                )
 )
+
 params_new <- coef( m2[[which.max( sapply(m2,logLik) )]] )
-pf3 <- foreach(i=1:cores,.packages='pomp') %dopar% try(
-  pfilter(contacts2,params=params_new,Np=1000,seed=1809+i)
-)
+
+pf3 <- foreach(i=1:10,.packages='pomp',
+               .options.multicore=mcopts) %dopar% try(
+                 pfilter(contacts2,params=params_new,Np=1000,seed=1809+i)
+               )
+
 (loglik_new <- logmeanexp(sapply(pf3,logLik),se=TRUE))
 
