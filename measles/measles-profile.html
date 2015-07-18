@@ -93,9 +93,9 @@ stopifnot(packageVersion(&quot;pomp&quot;)&gt;=&quot;0.70-1&quot;)</code></pre>
 <div id="data-and-covariates" class="section level3">
 <h3>Data and covariates</h3>
 <p>Now we’ll load the data and covariates. The data are measles reports from 20 cities in England and Wales. We also have information on the population sizes and birth-rates in these cities; we’ll treat these variables as covariates.</p>
-<pre class="r"><code>base_url &lt;- &quot;http://kinglab.eeb.lsa.umich.edu/SBIED/&quot;
+<pre class="r"><code>daturl &lt;- &quot;http://kingaa.github.io/pomp/vignettes/twentycities.rda&quot;
 datfile &lt;- file.path(tempdir(),&quot;twentycities.rda&quot;)
-download.file(paste0(base_url,&quot;data/twentycities.rda&quot;),destfile=datfile)
+download.file(daturl,destfile=datfile)
 load(datfile)
 measles %&gt;% 
   mutate(year=as.integer(format(date,&quot;%Y&quot;))) %&gt;%

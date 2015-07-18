@@ -23,7 +23,7 @@ csl: ../ecology.csl
 
 Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
 Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
+![CC-BY_NC](../graphics/cc-by-nc.png)
 
 Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 
@@ -123,7 +123,7 @@ For a complicated simulation procedure, it may be difficult or impossible to wri
 
 *********************
 
-![state_space_diagram2](http://kinglab.eeb.lsa.umich.edu/ICTPWID/SaoPaulo_2015/Aaron/graphics/state_space_diagram2.png)
+![state_space_diagram2](../graphics/state_space_diagram2.png)
 
 POMP model schematic, showing dependence among model variables.
 State variables, $x$, at time $t$ depend only on state variables at the previous timestep.

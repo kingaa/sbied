@@ -347,3 +347,4 @@ simq %>% ggplot(aes(x=date))+
   geom_point(data=subset(dat,country=="SierraLeone"),
              mapping=aes(x=date,y=cases),color='black')+
   labs(y="cases")
+

@@ -29,7 +29,7 @@ csl: ../ecology.csl
 
 Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
 Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
+![CC-BY_NC](../graphics/cc-by-nc.png)
 
 Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
@@ -116,9 +116,9 @@ set.seed(1109529108L)
 - Dynamics of infectious disease outbreaks illustrate this well
 
 ```{r load-data,echo=FALSE,purl=FALSE}
-base_url <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+daturl <- "http://kingaa.github.io/pomp/vignettes/twentycities.rda"
 datfile <- file.path(tempdir(),"twentycities.rda")
-download.file(paste0(base_url,"data/twentycities.rda"),destfile=datfile)
+download.file(daturl,destfile=datfile)
 load(datfile)
 ```
 ```{r some-data-plot,echo=FALSE,purl=FALSE}

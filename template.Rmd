@@ -19,7 +19,7 @@ csl: ecology.csl
 
 Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
 Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
+![CC-BY_NC](./graphics/cc-by-nc.png)
 Produced in R version `r getRversion()` using `pomp` version `r packageVersion("pomp")`.
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}

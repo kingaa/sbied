@@ -22,7 +22,7 @@ nocite: |
 
 Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
 Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](http://kinglab.eeb.lsa.umich.edu/graphics/cc-by-nc.png)
+![CC-BY_NC](../graphics/cc-by-nc.png)
 
 Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
@@ -209,14 +209,14 @@ The following diagrams show the structure of a POMP model schematically.
 
 *********************
 
-![state_space_diagram1](http://kinglab.eeb.lsa.umich.edu/ICTPWID/SaoPaulo_2015/Aaron/graphics/state_space_diagram1.png)
+![state_space_diagram1](../graphics/state_space_diagram1.png)
 
 Schematic of the structure of a POMP showing causal relations and direction of information flow.
 **The key perspective to keep in mind is that the model is to be viewed as the process that generated the data.**
    
 *********************
 
-![state_space_diagram2](http://kinglab.eeb.lsa.umich.edu/ICTPWID/SaoPaulo_2015/Aaron/graphics/state_space_diagram2.png)
+![state_space_diagram2](../graphics/state_space_diagram2.png)
 
 Another POMP model schematic, showing dependence among model variables.
 State variables, $x$, at time $t$ depend only on state variables at the previous timestep.
