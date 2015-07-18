@@ -34,6 +34,7 @@ opts_chunk$set(
   error=FALSE,
   echo=TRUE,
   cache=TRUE,
+  cache_extra=rand_seed,
   results='markup',
   fig.show='asis',
   size='small',
@@ -47,12 +48,12 @@ opts_chunk$set(
   dev='png',
   dev.args=list(bg='transparent')
   )
+options(pomp.cache="cache")
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
 options(
   keep.source=TRUE,
   stringsAsFactors=FALSE,
-  pomp.cache="cache",
   encoding="UTF-8"
   )
 
