@@ -94,8 +94,8 @@ Key questions included:
 
 Download the data from the WHO Situation Report of 1 October 2014:
 ```{r get-data}
-baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
-read.csv(paste0(baseurl,"data/ebola_data.csv"),stringsAsFactors=FALSE,
+base_url <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+read.csv(paste0(base_url,"data/ebola_data.csv"),stringsAsFactors=FALSE,
          colClasses=c(date="Date")) -> dat
 sapply(dat,class)
 head(dat)
@@ -305,7 +305,7 @@ The following loads the results of these calculations.
 
 ```{r load-profile}
 options(stringsAsFactors=FALSE)
-profs <- read.csv(paste0(baseurl,"/ebola/ebola-profiles.csv"))
+profs <- read.csv(paste0(base_url,"/ebola/ebola-profiles.csv"))
 ```
 
 The following plots the profile likelihoods.

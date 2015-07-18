@@ -16,8 +16,8 @@ require(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 
 ## ----get-data------------------------------------------------------------
-baseurl <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
-read.csv(paste0(baseurl,"data/ebola_data.csv"),stringsAsFactors=FALSE,
+base_url <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+read.csv(paste0(base_url,"data/ebola_data.csv"),stringsAsFactors=FALSE,
          colClasses=c(date="Date")) -> dat
 sapply(dat,class)
 head(dat)
@@ -164,7 +164,7 @@ ebolaModel("Liberia") -> lbr
 
 ## ----load-profile--------------------------------------------------------
 options(stringsAsFactors=FALSE)
-profs <- read.csv(paste0(baseurl,"/ebola/ebola-profiles.csv"))
+profs <- read.csv(paste0(base_url,"/ebola/ebola-profiles.csv"))
 
 ## ----profiles-plots,results='hide'---------------------------------------
 require(reshape2)
@@ -347,4 +347,3 @@ simq %>% ggplot(aes(x=date))+
   geom_point(data=subset(dat,country=="SierraLeone"),
              mapping=aes(x=date,y=cases),color='black')+
   labs(y="cases")
-
