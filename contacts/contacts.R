@@ -123,10 +123,10 @@ broil <- function (file, expr) {
   invisible(objlist)
 }
 
-## ----pfilter-------------------------------------------------------------
+## ----pfilter1------------------------------------------------------------
 broil("pfilter1.rda",{
   
-  set.seed(2015,kind="L'Ecuyer")
+  set.seed(1943810296,kind="L'Ecuyer")
   
   t1 <- system.time(
     pf1 <-    foreach(i=1:10,.packages='pomp',
@@ -228,16 +228,23 @@ plot(s2)
 
 ## ----pfilter2------------------------------------------------------------
 broil("pfilter2.rda",{
+
+  set.seed(1092903614,kind="L'Ecuyer")
+
   t2 <- system.time(
     pf2 <- foreach(i=1:10,.packages='pomp',
                    .options.multicore=mcopts) 
     %dopar% try(pfilter(contacts2,Np=2000))
   )
+
 })
 (loglik2 <- sapply(pf2,logLik))
 
 ## ----mif-----------------------------------------------------------------
 broil("mif1.rda",{
+
+  set.seed(354320731,kind="L'Ecuyer")
+
   t3 <- system.time(
     m2 <- foreach(i=1:10,.packages='pomp',
                   .options.multicore=mcopts) %dopar% try( 
@@ -264,6 +271,7 @@ broil("mif1.rda",{
                  .options.multicore=mcopts) %dopar% try(
                    pfilter(contacts2,params=params_new,Np=1000,seed=1809+i)
                  )
+
 })
 (loglik_new <- logmeanexp(sapply(pf3,logLik),se=TRUE))
 
