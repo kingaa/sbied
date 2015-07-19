@@ -15,7 +15,7 @@ Licensed under the Creative Commons attribution-noncommercial license, http://cr
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](http://dept.stat.lsa.umich.edu/~ionides/tutorials/cc-by-nc.png)
 
-```{r opts,include=FALSE}
+```{r knitr-opts,include=FALSE,purl=FALSE}
 library(pomp)
 library(knitr)
 prefix <- "mif"
@@ -27,7 +27,8 @@ opts_chunk$set(
   message=FALSE,
   error=FALSE,
   echo=TRUE,
-  cache=FALSE,
+  cache=TRUE,
+  cache.extra=rand_seed,
   results='markup',
   fig.show='asis',
   size='small',
@@ -40,13 +41,13 @@ opts_chunk$set(
   dpi=300,
   dev='png',
   dev.args=list(bg='transparent')
-  )
+)
 
 options(
   pomp.cache="cache",
   keep.source=TRUE,
   encoding="UTF-8"
-  )
+)
 
 library(ggplot2)
 theme_set(theme_bw())
@@ -72,8 +73,8 @@ Many, many statistical methods have been proposed for inference on POMP models [
 * Inference methodology that calls 'rprocess' but not 'dprocess' is said to be ___plug-and-play__. All popular modern Monte Carlo methods fall into this category. 
 
 * Simulation-based is equivalent to plug-and-play. 
-   + Historically, simulation-based meant simulating forward from initial conditions to the end of the time series. 
-   + However, particle filtering methods instead consider each observation interval sequentially. They carry out multiple, carefully selected, simulations over each interval.
++ Historically, simulation-based meant simulating forward from initial conditions to the end of the time series. 
++ However, particle filtering methods instead consider each observation interval sequentially. They carry out multiple, carefully selected, simulations over each interval.
 
 * We permit plug-and-play methods to call 'dmeasure'. A method that uses only 'rprocess' and 'rmeasure' is called doubly plug-and-play.
 
@@ -86,22 +87,22 @@ Many, many statistical methods have been proposed for inference on POMP models [
 * __Feature-based__ methods either consider a summary statistic (a function of the data) or work with an an alternative to the likelihood.
 
 * Asymptotically, full_information methods are statistically efficient and feature-based methods are not.
-   + Loss of statistical efficiency could potentially be an acceptable tradeoff for advantages in computational efficiency.
-   + However, good low-dimensional summary statistics can be hard to find. 
-   + When using statistically inefficient methods, it can be hard to know how much information you are losing. 
-   + Intuition and scientific reasoning can be inadequate tools to derive informative low-dimensional summary statistics [@shrestha11,@ionides11-statSci].
++ Loss of statistical efficiency could potentially be an acceptable tradeoff for advantages in computational efficiency.
++ However, good low-dimensional summary statistics can be hard to find. 
++ When using statistically inefficient methods, it can be hard to know how much information you are losing. 
++ Intuition and scientific reasoning can be inadequate tools to derive informative low-dimensional summary statistics [@shrestha11,@ionides11-statSci].
 
 ### Bayesian and frequentist methods
 
 * Recently, plug-and-play Bayesian methods have been discovered:
-   + particle Markov chain Monte Carlo (PMCMC) [@andrieu10].
-   + approximate Bayesian computation (ABC) [@toni09].
++ particle Markov chain Monte Carlo (PMCMC) [@andrieu10].
++ approximate Bayesian computation (ABC) [@toni09].
 
 * Prior belief specification is both the strength and weakness of Bayesian methodology:
-   + The likelihood surface for nonlinear POMP models often contains nonlinear ridges and variations in curvature. 
-   + These situations bring into question the appropriateness of independent priors derived from expert opinion on marginal distributions of parameters.
-   + They also are problematic for specification of "flat" or "uninformative" prior beliefs.
-   + Expert opinion can be treated as data for non-Bayesian analysis. However, our primary task is to identify the information in the data under investigation, so it can be helpful to use methods that do not force us to make our conclusions dependent on quantification of prior beliefs.
++ The likelihood surface for nonlinear POMP models often contains nonlinear ridges and variations in curvature. 
++ These situations bring into question the appropriateness of independent priors derived from expert opinion on marginal distributions of parameters.
++ They also are problematic for specification of "flat" or "uninformative" prior beliefs.
++ Expert opinion can be treated as data for non-Bayesian analysis. However, our primary task is to identify the information in the data under investigation, so it can be helpful to use methods that do not force us to make our conclusions dependent on quantification of prior beliefs.
 
 ### Full-information, plug-and-play, frequentist methods
 
@@ -110,8 +111,8 @@ Many, many statistical methods have been proposed for inference on POMP models [
 * Iterated filtering methods have been shown to solve likelihood-based inference problems for epidemiological situations which are computationally intractable for available Bayesian methodology [@ionides15].
 
 ### Summary of POMP inference methodologies
-                             
-                                                                             
+
+
 
 ------------------------
 
@@ -162,7 +163,7 @@ perturbation scale, $\sigma_{1{:}M}$
 __output__:
 Final parameter swarm, $\{\Theta^M_j, j=1,\dots,J\}$ 
 
- 
+
 1. $\quad$ For $m$ in $1{:} M$
 2. $\quad\quad\quad$ $\Theta^{F,m}_{0,j}\sim h_0(\theta|\Theta^{m-1}_{j}; \sigma_m)$ for $j$ in $1{:} J$
 3. $\quad\quad\quad$ $X_{0,j}^{F,m}\sim f_{X_0}(x_0 ; \Theta^{F,m}_{0,j})$ for $j$ in $1{:} J$
@@ -196,21 +197,21 @@ __comments__:
 
 * Perturbations are usually chosen to be Gaussian, with $\sigma_m$ being a scale factor for iteration $m$:
 $$h_n(\theta|\varphi;\sigma) \sim N[\varphi, \sigma^2_m V_n].$$
-    + $V_n$ is usually taken to be diagonal,
++ $V_n$ is usually taken to be diagonal,
 $$ V_n = \left( \begin{array}{ccccc}
 v_{1,n}^2 & 0 & 0 & \rightarrow & 0 \\
 0 & v_{2,n}^2 &  0 & \rightarrow & 0 \\
 0 & 0 & v_{3,n}^2 & \rightarrow & 0 \\
 \downarrow & & & \searrow & \downarrow \\
 0 & 0 & 0 & \rightarrow & v_{p,n}^2 \end{array}\right).$$
-    + If $\theta_i$ is a parameter that affects the dynamics or observations throughout the timeseries, it is called a __regular parameter__, and it is often appropriate to specify
++ If $\theta_i$ is a parameter that affects the dynamics or observations throughout the timeseries, it is called a __regular parameter__, and it is often appropriate to specify
 $$ v_{i,n} = v_i,$$
-    + If $\theta_j$ is a parameter that affects only the initial conditions of the dynamic model, it is called an __initial value parameter__ (IVP) and it is appropriate to specify
++ If $\theta_j$ is a parameter that affects only the initial conditions of the dynamic model, it is called an __initial value parameter__ (IVP) and it is appropriate to specify
 $$ v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=0$} \\
-                                      0 & \mbox{if $n>0$} \end{array}\right.$$
-    + If $\theta_k$ is a break-point parameter that models how the system changes at time $t_q$ then $\theta_k$ is like an IVP at time $t_q$ and it is appropriate to specify
+0 & \mbox{if $n>0$} \end{array}\right.$$
++ If $\theta_k$ is a break-point parameter that models how the system changes at time $t_q$ then $\theta_k$ is like an IVP at time $t_q$ and it is appropriate to specify
 $$ v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=q$} \\
-                                      0 & \mbox{if $n\neq q$} \end{array}\right.$$
+0 & \mbox{if $n\neq q$} \end{array}\right.$$
 
 * $\sigma_{1:M}$ is called a __cooling schedule__, following a thermodynamic analogy popularized by [simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing). As $\sigma_m$ becomes small, the system cools toward a "freezing point". If the algorithm is working sucessfully, the freezing point should be close to the lowest-energy state of the system, i.e., the MLE.
 
@@ -247,7 +248,7 @@ For the code, we represent the states ($S$, $I$, $R_1$, $R_2$) and the parameter
 
 ```{r bsflu_names}
 bsflu_statenames <- c("S","I","R1","R2")
-bsflu_paramnames <- c("beta","mu_I","rho","mu_R1","mu_R2")
+bsflu_paramnames <- c("Beta","mu_I","rho","mu_R1","mu_R2")
 ```
 
 The observation names ($B$, $C$) are the names of the data variables:
@@ -270,7 +271,7 @@ bsflu_rmeasure <- "
 "
 
 bsflu_rprocess <- "
-  double t1 = rbinom(S,1-exp(-beta*I*dt));
+  double t1 = rbinom(S,1-exp(-Beta*I*dt));
   double t2 = rbinom(I,1-exp(-dt*mu_I));
   double t3 = rbinom(R1,1-exp(-dt*mu_R1));
   double t4 = rbinom(R2,1-exp(-dt*mu_R2));
@@ -281,13 +282,13 @@ bsflu_rprocess <- "
 "
 
 bsflu_fromEstimationScale <- "
- Tbeta = exp(beta);
+ TBeta = exp(Beta);
  Tmu_I = exp(mu_I);
  Trho = expit(rho);
 "
 
 bsflu_toEstimationScale <- "
- Tbeta = log(beta);
+ TBeta = log(Beta);
  Tmu_I = log(mu_I);
  Trho = logit(rho);
 "
@@ -304,21 +305,21 @@ We can now build the pomp object:
 
 ```{r pomp_bsflu}
 bsflu <- pomp(
-     data=bsflu_data,
-     times="day",
-     t0=0,
-     rprocess=euler.sim(
-       step.fun=Csnippet(bsflu_rprocess),
-       delta.t=1/12
-       ),
-     rmeasure=Csnippet(bsflu_rmeasure),
-     dmeasure=Csnippet(bsflu_dmeasure),
-     fromEstimationScale=Csnippet(bsflu_fromEstimationScale),
-     toEstimationScale=Csnippet(bsflu_toEstimationScale),
-     obsnames = bsflu_obsnames,
-     statenames=bsflu_statenames,
-     paramnames=bsflu_paramnames,
-     initializer=Csnippet(bsflu_initializer)
+  data=bsflu_data,
+  times="day",
+  t0=0,
+  rprocess=euler.sim(
+    step.fun=Csnippet(bsflu_rprocess),
+    delta.t=1/12
+  ),
+  rmeasure=Csnippet(bsflu_rmeasure),
+  dmeasure=Csnippet(bsflu_dmeasure),
+  fromEstimationScale=Csnippet(bsflu_fromEstimationScale),
+  toEstimationScale=Csnippet(bsflu_toEstimationScale),
+  obsnames = bsflu_obsnames,
+  statenames=bsflu_statenames,
+  paramnames=bsflu_paramnames,
+  initializer=Csnippet(bsflu_initializer)
 ) 
 plot(bsflu)
 ```
@@ -338,7 +339,7 @@ switch(run_level,
 ### Running a particle filter
 
 Before engaging in iterated filtering, it is often a good idea to check that the basic particle filter is working since iterated filtering builds on this technique. Here, carrying out slightly circular reasoning, we are going to test `pfilter` on a previously computed point estimate read in from [bsflu_params.csv](bsflu_params.csv):
- 
+
 ```{r bsflu_params}
 bsflu_params <- data.matrix(read.table("mif_bsflu_params.csv",row.names=NULL,header=TRUE))
 bsflu_mle <- bsflu_params[which.max(bsflu_params[,"logLik"]),][bsflu_paramnames]
@@ -352,7 +353,7 @@ bsflu_fixed_params <- c(mu_R1=1/(sum(bsflu_data$B)/512),mu_R2=1/(sum(bsflu_data$
 
 It is convenient to do some parallelization to speed up the computations. Most machines are multi-core nowadays, and using this computational capacity involves only (i) the following lines of code to let R know you plan to use multiple processors; (ii) using the parallel for loop provided by 'foreach'.
 
-```{r pf1,cache=FALSE}
+```{r parallel-setup,cache=FALSE}
 require(doParallel)
 cores <- 4
 registerDoParallel(cores)
@@ -361,27 +362,41 @@ mcopts <- list(set.seed=TRUE)
 set.seed(396658101,kind="L'Ecuyer")
 ```
 
-```{r bake,echo=FALSE,cache=FALSE}
-bake <- function (file, expr) {
+```{r broil-defn,echo=FALSE,cache=FALSE}
+broil <- function (file, expr) {
   if (file.exists(file)) {
-    readRDS(file)
+    objlist <- load(file)
+    for (obj in objlist)
+      assign(obj,get(obj),envir=parent.frame())
   } else {
-    val <- eval(expr)
-    saveRDS(val,file=file)
-    val
+    expr <- substitute(expr)
+    e <- new.env()
+    eval(expr,envir=e)
+    objlist <- objects(envir=e)
+    save(list=objlist,file=file,envir=e)
+    for (obj in objlist)
+      assign(obj,get(obj,envir=e),envir=parent.frame())
   }
+  invisible(objlist)
 }
 ```
 
 We proceed to carry out replicated particle filters at this tentative MLE:
 
-```{r pf,cache=TRUE,cache.extra=list(run_level,rand_seed)}
-t_pf <- system.time(
-  pf <- foreach(i=1:20,.packages='pomp',
-      .options.multicore=mcopts) %dopar% try(
-    pfilter(bsflu,params=bsflu_mle,Np=bsflu_Np)
+```{r pf}
+broil(sprintf("pf-%d.rda",run_level),{
+  
+  set.seed(1320290398,kind="L'Ecuyer")
+  
+  t_pf <- system.time(
+    pf <- foreach(i=1:20,.packages='pomp',
+                  .options.multicore=mcopts) %dopar% try(
+                    pfilter(bsflu,params=bsflu_mle,Np=bsflu_Np)
+                  )
   )
-)
+  
+})
+
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
 ```
 
@@ -392,13 +407,17 @@ In  `r round(t_pf["elapsed"],1)` seconds, we obtain an unbiased likelihood estim
 
 Let's carry out a local search using `mif2` around this previously identified MLE. For that, we need to set the `rw.sd` and `cooling.fraction.50` algorithmic parameters:
 
-```{r box_search_local,cache=TRUE,cache.extra=list(run_level,rand_seed)}
+```{r box_search_local}
 bsflu_rw.sd <- 0.02
 bsflu_cooling.fraction.50 <- 0.5
 
-t_local <- system.time({
-  mifs_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  {
-     mif2(
+broil(sprintf("local_search-%d.rda",run_level),{
+  
+  set.seed(900242057,kind="L'Ecuyer")
+  
+  t_local <- system.time({
+    mifs_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  {
+      mif2(
         bsflu,
         start=bsflu_mle,
         Np=bsflu_Np,
@@ -407,24 +426,31 @@ t_local <- system.time({
         cooling.fraction.50=bsflu_cooling.fraction.50,
         transform=TRUE,
         rw.sd=rw.sd(
-           beta=bsflu_rw.sd,
-           mu_I=bsflu_rw.sd,
-           rho=bsflu_rw.sd
+          Beta=bsflu_rw.sd,
+          mu_I=bsflu_rw.sd,
+          rho=bsflu_rw.sd
         )
-     )
-
-  }
+      )
+      
+    }
+  })
+  
 })
 ```
 
 Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference. Partly, this is because some parameter perturbations remain in the last filtering iteration. Partly, this is because `mif2` is usually carried out with a smaller number of particles than is necessary for a good likelihood evaluation---the errors in `mif2` average out over many iterations of the filtering. Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
-```{r lik_local_eval,cache=TRUE,cache.extra=list(run_level,rand_seed)}
-t_local_eval <- system.time({
-  liks_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp',.combine=rbind) %dopar% {
-    evals <- replicate(bsflu_Neval, logLik(pfilter(bsflu,params=coef(mifs_local[[i]]),Np=bsflu_Np)))
-    logmeanexp(evals, se=TRUE)
-  }
+```{r lik_local_eval}
+broil(sprintf("lik_local-%d.rda",run_level),{
+  
+  set.seed(900242057,kind="L'Ecuyer")
+  
+  t_local_eval <- system.time({
+    liks_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp',.combine=rbind) %dopar% {
+      evals <- replicate(bsflu_Neval, logLik(pfilter(bsflu,params=coef(mifs_local[[i]]),Np=bsflu_Np)))
+      logmeanexp(evals, se=TRUE)
+    }
+  })
 })
 
 results_local <- data.frame(logLik=liks_local[,1],logLik_se=liks_local[,2],t(sapply(mifs_local,coef)))
@@ -434,7 +460,7 @@ summary(results_local$logLik,digits=5)
 This investigation took  `r round(t_local["elapsed"]/60,1)` minutes for the maximization and `r round(t_local_eval["elapsed"]/60,1)` minutes for the likelihood evaluation. These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 
 ```{r pairs_local}
-pairs(~logLik+beta+mu_I+rho,data=subset(results_local,logLik>max(logLik)-50))
+pairs(~logLik+Beta+mu_I+rho,data=subset(results_local,logLik>max(logLik)-50))
 ```
 
 ### A global search of the likelihood surface using randomized starting values
@@ -447,7 +473,7 @@ For our flu model, a box containing reasonable parameter values might be
 
 ```{r box}
 bsflu_box <- rbind(
-  beta=c(0.001,0.01),
+  Beta=c(0.001,0.01),
   mu_I=c(0.5,2),
   rho = c(0.5,1)
 )
@@ -456,23 +482,33 @@ bsflu_box <- rbind(
 
 We are now ready to carry out likelihood maximizations from diverse starting points. To simplify the code, we can reset only the starting parameters from `mifs_global[[1]]` since the rest of the call to `mif2` can be read in from `mifs_global[[1]]`:
 
-```{r box_eval,cache=TRUE,cache.extra=list(run_level,rand_seed)}
-t_global <- system.time({
-  mifs_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  mif2(
-     mifs_local[[1]],
-     start=c(apply(bsflu_box,1,function(x)runif(1,x)),bsflu_fixed_params)
-  )
+```{r box_eval}
+broil(sprintf("box_eval-%d.rda",run_level),{
+  
+  set.seed(1270401374,kind="L'Ecuyer")
+  
+  t_global <- system.time({
+    mifs_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  mif2(
+      mifs_local[[1]],
+      start=c(apply(bsflu_box,1,function(x)runif(1,x)),bsflu_fixed_params)
+    )
+  })
 })
 ```
 
 Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference. Partly, this is because some parameter perturbations remain in the last filtering iteration. Partly, this is because `mif2` is usually carried out with a smaller number of particles than is necessary for a good likelihood evaluation---the errors in `mif2` average out over many iterations of the filtering. Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
-```{r lik_global_eval,cache=TRUE,cache.extra=list(run_level,rand_seed)}
-t_global_eval <- system.time({
-  liks_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp',.combine=rbind, .options.multicore=mcopts) %dopar% {
-    evals <- replicate(bsflu_Neval, logLik(pfilter(bsflu,params=coef(mifs_global[[i]]),Np=bsflu_Np)))
-    logmeanexp(evals, se=TRUE)
-  }
+```{r lik_global_eval}
+broil(sprintf("lik_global_eval-%d.rda",run_level),{
+  
+  set.seed(442141592,kind="L'Ecuyer")
+  
+  t_global_eval <- system.time({
+    liks_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp',.combine=rbind, .options.multicore=mcopts) %dopar% {
+      evals <- replicate(bsflu_Neval, logLik(pfilter(bsflu,params=coef(mifs_global[[i]]),Np=bsflu_Np)))
+      logmeanexp(evals, se=TRUE)
+    }
+  })
 })
 
 results_global <- data.frame(logLik=liks_global[,1],logLik_se=liks_global[,2],t(sapply(mifs_global,coef)))
@@ -483,13 +519,13 @@ It is good practice to build up a file of successful optimization results for su
 
 ```{r save_params}
 if(run_level>1) write.table(rbind(results_local,results_global),
-   file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
+                            file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
 ```
 
 Evaluation of the best result of this search gives a likelihood of `r round(max(results_global$logLik),1)` with a standard error of `r round(results_global$logLik_se[which.max(results_global$logLik)],1)`. This took in `r round(t_global["elapsed"]/60,1)` minutes for the maximization and `r round(t_global_eval["elapsed"]/60,1)` minutes for the evaluation.  Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface 
 
 ```{r pairs_global}
-pairs(~logLik+beta+mu_I+rho,data=subset(results_global,logLik>max(logLik)-250))
+pairs(~logLik+Beta+mu_I+rho,data=subset(results_global,logLik>max(logLik)-250))
 ```
 
 We see that optimization attempts from diverse remote starting points end up with comparable likelihoods, even when the parameter values are quite distinct. This gives us some confidence in our maximization procedure. 
@@ -522,7 +558,7 @@ We cannot directly evaluate $e$, since there is also Monte Carlo error in our ev
 
 Even in this small, 3 parameter, example, it takes a considerable amount of computation to find the global maximum (with values of $\beta$ around 0.004) starting from uniform draws in the specified box. The problem is that, on the scale on which "uniform" is defined, the peak around $\beta\approx 0.004$ is very narrow. Propose and test a more favorable way to draw starting parameters for the global search, with better scale invariance properties.
 
-```{r save, include=FALSE}
+```{r save, include=FALSE,eval=FALSE}
 if(run_level>1) save(list = ls(all = TRUE), file = "Rout.rda")
 ```
 
