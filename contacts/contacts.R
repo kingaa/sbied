@@ -105,14 +105,36 @@ apply(obs(s1),1,mean)
 apply(states(s1),1,mean)
 plot(s1)
 
-## ----pfilter,cache=TRUE--------------------------------------------------
-set.seed(2015,kind="L'Ecuyer")
+## ----broil-defn----------------------------------------------------------
+broil <- function (file, expr) {
+  if (file.exists(file)) {
+    objlist <- load(file)
+    for (obj in objlist)
+      assign(obj,get(obj),envir=parent.frame())
+  } else {
+    expr <- substitute(expr)
+    e <- new.env()
+    eval(expr,envir=e)
+    objlist <- objects(envir=e)
+    save(list=objlist,file=file,envir=e)
+    for (obj in objlist)
+      assign(obj,get(obj,envir=e),envir=parent.frame())
+  }
+  invisible(objlist)
+}
 
-t1 <- system.time(
-  pf1 <-    foreach(i=1:10,.packages='pomp',
-                    .options.multicore=mcopts) 
-  %dopar% try(pfilter(contacts,Np=2000))
-)
+## ----pfilter-------------------------------------------------------------
+broil("pfilter1.rda",{
+  
+  set.seed(2015,kind="L'Ecuyer")
+  
+  t1 <- system.time(
+    pf1 <-    foreach(i=1:10,.packages='pomp',
+                      .options.multicore=mcopts) 
+    %dopar% try(pfilter(contacts,Np=2000))
+  )
+  
+})
 (loglik1 <- sapply(pf1,logLik))
 
 ## ----transformations-----------------------------------------------------
@@ -204,41 +226,44 @@ apply(obs(s2),1,mean)
 apply(states(s2),1,mean)
 plot(s2)
 
-## ----pfilter2,cache=TRUE-------------------------------------------------
-t2 <- system.time(
-  pf2 <- foreach(i=1:10,.packages='pomp',
-                 .options.multicore=mcopts) 
-  %dopar% try(pfilter(contacts2,Np=2000))
-)
+## ----pfilter2------------------------------------------------------------
+broil("pfilter2.rda",{
+  t2 <- system.time(
+    pf2 <- foreach(i=1:10,.packages='pomp',
+                   .options.multicore=mcopts) 
+    %dopar% try(pfilter(contacts2,Np=2000))
+  )
+})
 (loglik2 <- sapply(pf2,logLik))
 
-## ----mif,cache=TRUE------------------------------------------------------
-t3 <- system.time(
-  m2 <- foreach(i=1:10,.packages='pomp',
-                .options.multicore=mcopts) %dopar% try( 
-                  mif2(contacts2,
-                       Nmif=10,
-                       Np=200,
-                       cooling.fraction.50=0.5,
-                       cooling.type="geometric",
-                       transform=TRUE,
-                       rw.sd=rw.sd(mu_X=0.02,
-                                   sigma_X=0.02,
-                                   mu_D = 0.02,
-                                   sigma_D=0.02,
-                                   mu_R=0.02,
-                                   sigma_R =0.02,
-                                   alpha=0.02)
+## ----mif-----------------------------------------------------------------
+broil("mif1.rda",{
+  t3 <- system.time(
+    m2 <- foreach(i=1:10,.packages='pomp',
+                  .options.multicore=mcopts) %dopar% try( 
+                    mif2(contacts2,
+                         Nmif=10,
+                         Np=200,
+                         cooling.fraction.50=0.5,
+                         cooling.type="geometric",
+                         transform=TRUE,
+                         rw.sd=rw.sd(mu_X=0.02,
+                                     sigma_X=0.02,
+                                     mu_D = 0.02,
+                                     sigma_D=0.02,
+                                     mu_R=0.02,
+                                     sigma_R =0.02,
+                                     alpha=0.02)
+                    )
                   )
-                )
-)
-
-params_new <- coef( m2[[which.max( sapply(m2,logLik) )]] )
-
-pf3 <- foreach(i=1:10,.packages='pomp',
-               .options.multicore=mcopts) %dopar% try(
-                 pfilter(contacts2,params=params_new,Np=1000,seed=1809+i)
-               )
-
+  )
+  
+  params_new <- coef( m2[[which.max( sapply(m2,logLik) )]] )
+  
+  pf3 <- foreach(i=1:10,.packages='pomp',
+                 .options.multicore=mcopts) %dopar% try(
+                   pfilter(contacts2,params=params_new,Np=1000,seed=1809+i)
+                 )
+})
 (loglik_new <- logmeanexp(sapply(pf3,logLik),se=TRUE))
 

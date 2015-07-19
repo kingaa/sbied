@@ -3,12 +3,12 @@ title: "Case Study: Dynamic Variation in Sexual Contact Rates"
 author: "Edward Ionides"
 date: "05/28/2015"
 output:
-html_document:
-theme: flatly
-toc: yes
+  html_document:
+    theme: flatly
+    toc: yes
+    toc_depth: 3
 bibliography: contacts.bib
 csl: ecology.csl
-
 ---
 
 Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
@@ -279,16 +279,44 @@ apply(states(s1),1,mean)
 plot(s1)
 ```
 
-To check that this implementation of the model is consistent with the AJE version, we can check that the log likelihood at the MLE matches (to a reasonable approximation) the value of -9552.1 reported by @romero-severson15. On the assumption one is working on a multi-core machine, one might as well do some parallelization to put the cores to work and get smaller Monte Carlo errors for a given amount of patience:
+To check that this implementation of the model is consistent with the AJE version, we can check that the log likelihood at the MLE matches (to a reasonable approximation) the value of -9552.1 reported by @romero-severson15. 
+On the assumption one is working on a multi-core machine, one might as well do some parallelization to put the cores to work and get smaller Monte Carlo errors for a given amount of patience.
+Regardless of one's degree of patience, or the nature of one's hardware, however, it is always a good idea, before embarking on an expensive computation, to arrange to save the results.
+The `broil` function, defined here, does this.
+If the named file does not exist, the indicated computation is performed, and the results are saved in a file of that name.
+If the named file exists, these computations are not performed, but the file containing previously computed results is loaded.
+```{r broil-defn}
+broil <- function (file, expr) {
+  if (file.exists(file)) {
+    objlist <- load(file)
+    for (obj in objlist)
+      assign(obj,get(obj),envir=parent.frame())
+  } else {
+    expr <- substitute(expr)
+    e <- new.env()
+    eval(expr,envir=e)
+    objlist <- objects(envir=e)
+    save(list=objlist,file=file,envir=e)
+    for (obj in objlist)
+      assign(obj,get(obj,envir=e),envir=parent.frame())
+  }
+  invisible(objlist)
+}
+```
 
-```{r pfilter,cache=TRUE}
-set.seed(2015,kind="L'Ecuyer")
 
-t1 <- system.time(
-  pf1 <-    foreach(i=1:10,.packages='pomp',
-                    .options.multicore=mcopts) 
-  %dopar% try(pfilter(contacts,Np=2000))
-)
+```{r pfilter}
+broil("pfilter1.rda",{
+  
+  set.seed(2015,kind="L'Ecuyer")
+  
+  t1 <- system.time(
+    pf1 <-    foreach(i=1:10,.packages='pomp',
+                      .options.multicore=mcopts) 
+    %dopar% try(pfilter(contacts,Np=2000))
+  )
+  
+})
 (loglik1 <- sapply(pf1,logLik))
 ```
 
@@ -403,46 +431,49 @@ plot(s2)
 
 and we can filter, to obtain the likelihood:
 
-```{r pfilter2,cache=TRUE}
-t2 <- system.time(
-  pf2 <- foreach(i=1:10,.packages='pomp',
-                 .options.multicore=mcopts) 
-  %dopar% try(pfilter(contacts2,Np=2000))
-)
+```{r pfilter2}
+broil("pfilter2.rda",{
+  t2 <- system.time(
+    pf2 <- foreach(i=1:10,.packages='pomp',
+                   .options.multicore=mcopts) 
+    %dopar% try(pfilter(contacts2,Np=2000))
+  )
+})
 (loglik2 <- sapply(pf2,logLik))
 ```
 
 ### Likelihood maximization using the IF2 algorithm
 
 As an example of an iterated filtering investigation, let's carry out a local search, starting at the current estimate of the MLE.
-```{r mif,cache=TRUE}
-t3 <- system.time(
-  m2 <- foreach(i=1:10,.packages='pomp',
-                .options.multicore=mcopts) %dopar% try( 
-                  mif2(contacts2,
-                       Nmif=10,
-                       Np=200,
-                       cooling.fraction.50=0.5,
-                       cooling.type="geometric",
-                       transform=TRUE,
-                       rw.sd=rw.sd(mu_X=0.02,
-                                   sigma_X=0.02,
-                                   mu_D = 0.02,
-                                   sigma_D=0.02,
-                                   mu_R=0.02,
-                                   sigma_R =0.02,
-                                   alpha=0.02)
+```{r mif}
+broil("mif1.rda",{
+  t3 <- system.time(
+    m2 <- foreach(i=1:10,.packages='pomp',
+                  .options.multicore=mcopts) %dopar% try( 
+                    mif2(contacts2,
+                         Nmif=10,
+                         Np=200,
+                         cooling.fraction.50=0.5,
+                         cooling.type="geometric",
+                         transform=TRUE,
+                         rw.sd=rw.sd(mu_X=0.02,
+                                     sigma_X=0.02,
+                                     mu_D = 0.02,
+                                     sigma_D=0.02,
+                                     mu_R=0.02,
+                                     sigma_R =0.02,
+                                     alpha=0.02)
+                    )
                   )
-                )
-)
-
-params_new <- coef( m2[[which.max( sapply(m2,logLik) )]] )
-
-pf3 <- foreach(i=1:10,.packages='pomp',
-               .options.multicore=mcopts) %dopar% try(
-                 pfilter(contacts2,params=params_new,Np=1000,seed=1809+i)
-               )
-
+  )
+  
+  params_new <- coef( m2[[which.max( sapply(m2,logLik) )]] )
+  
+  pf3 <- foreach(i=1:10,.packages='pomp',
+                 .options.multicore=mcopts) %dopar% try(
+                   pfilter(contacts2,params=params_new,Np=1000,seed=1809+i)
+                 )
+})
 (loglik_new <- logmeanexp(sapply(pf3,logLik),se=TRUE))
 ```
 This is a relatively quick search, taking only `r round(t3["elapsed"],1)` seconds. The preliminary likelihood estimated as a consequence of running `mif2` and extracted here by `sapply(m2,logLik)` does not correspond to the actual, fixed parameter, model. It is the sequential Monte Carlo estimate of the likelihood from the last filtering iteration, and therefore will have some perturbation of the parameters. Further, one typically requires fewer particles for each filtering iteration than necessary to obtain a good likelihood estimate---stochastic errors can cancel out through the filtering iterations, rather than within any one iteration. For promising new parameter values, it is desirable to put computational effort into evaluating the likelihood sufficient to make the Monte Carlo error small compared to one log unit.
