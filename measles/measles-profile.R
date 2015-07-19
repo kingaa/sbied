@@ -1,6 +1,12 @@
-## ----ncpu,include=FALSE,purl=TRUE,cache=FALSE----------------------------
+## ----mpi-setup,include=FALSE,purl=TRUE,cache=FALSE-----------------------
 ncpu <- as.integer(Sys.getenv("PBS_NP"))
 if (is.na(ncpu)) ncpu <- 40
+
+require(foreach)
+require(doMPI)
+
+cl <- startMPIcluster(ncpu)
+registerDoMPI(cl)
 
 ## ----prelims,cache=FALSE-------------------------------------------------
 set.seed(594709947L)
@@ -228,12 +234,6 @@ bake <- function (file, expr) {
 ## ----sigmaSE-prof-round1,eval=TRUE,cache=FALSE---------------------------
 bake("sigmaSE-profile1.rds",{
  
-  require(foreach)
-  require(doMPI)
-  
-  cl <- startMPIcluster(ncpu)
-  registerDoMPI(cl)
-  
   foreach (p=iter(pd,"row"),
            .combine=rbind,
            .errorhandling="remove",
@@ -294,10 +294,7 @@ bake("sigmaSE-profile1.rds",{
                nfail.min = min(nfail),
                nfail.max = max(nfail),
                etime = as.numeric(etime))
-  } -> res
-
-  closeCluster(cl)
-  res
+  }
 }) -> sigmaSE_prof
 
 ## ----round1-plot---------------------------------------------------------
@@ -312,12 +309,6 @@ sigmaSE_prof %>%
   subset(nfail.max==0,select=paramnames) -> pd
 
 bake("sigmaSE-profile2.rds",{
-  
-  require(foreach)
-  require(doMPI)
-  
-  cl <- startMPIcluster(ncpu)
-  registerDoMPI(cl)
   
   foreach (p=iter(pd,"row"),
            .combine=rbind,
@@ -379,10 +370,7 @@ bake("sigmaSE-profile2.rds",{
                nfail.min = min(nfail),
                nfail.max = max(nfail),
                etime = as.numeric(etime))
-  } -> res
-
-  closeCluster(cl)
-  res
+  }
 }) -> sigmaSE_prof
 
 ## ----plot-sigmaSE-profile------------------------------------------------
@@ -401,6 +389,7 @@ pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma),
       data=sigmaSE_prof)
 
 ## ----include=FALSE,cache=FALSE,eval=TRUE---------------------------------
+closeCluster(cl)
 try(detach("package:doMPI",unload=TRUE),silent=TRUE)
 if (exists("mpi.exit")) mpi.exit()
 try(detach("package:Rmpi",unload=TRUE),silent=TRUE)

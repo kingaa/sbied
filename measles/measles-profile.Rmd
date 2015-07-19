@@ -73,14 +73,19 @@ options(
 )
 ```
 
-
 ## Build the `pomp` object
 
 ### Preliminaries
 
-```{r ncpu,include=FALSE,purl=TRUE,cache=FALSE}
+```{r mpi-setup,include=FALSE,purl=TRUE,cache=FALSE}
 ncpu <- as.integer(Sys.getenv("PBS_NP"))
 if (is.na(ncpu)) ncpu <- 40
+
+require(foreach)
+require(doMPI)
+
+cl <- startMPIcluster(ncpu)
+registerDoMPI(cl)
 ```
 
 Load the packages we'll need, and set the random seed, to allow reproducibility.
@@ -383,12 +388,6 @@ Note that again, care must be taken with the parallel random number generator.
 ```{r sigmaSE-prof-round1,eval=TRUE,cache=FALSE}
 bake("sigmaSE-profile1.rds",{
  
-  require(foreach)
-  require(doMPI)
-  
-  cl <- startMPIcluster(ncpu)
-  registerDoMPI(cl)
-  
   foreach (p=iter(pd,"row"),
            .combine=rbind,
            .errorhandling="remove",
@@ -449,10 +448,7 @@ bake("sigmaSE-profile1.rds",{
                nfail.min = min(nfail),
                nfail.max = max(nfail),
                etime = as.numeric(etime))
-  } -> res
-
-  closeCluster(cl)
-  res
+  }
 }) -> sigmaSE_prof
 ```
 
@@ -475,12 +471,6 @@ sigmaSE_prof %>%
   subset(nfail.max==0,select=paramnames) -> pd
 
 bake("sigmaSE-profile2.rds",{
-  
-  require(foreach)
-  require(doMPI)
-  
-  cl <- startMPIcluster(ncpu)
-  registerDoMPI(cl)
   
   foreach (p=iter(pd,"row"),
            .combine=rbind,
@@ -542,10 +532,7 @@ bake("sigmaSE-profile2.rds",{
                nfail.min = min(nfail),
                nfail.max = max(nfail),
                etime = as.numeric(etime))
-  } -> res
-
-  closeCluster(cl)
-  res
+  }
 }) -> sigmaSE_prof
 ```
 
@@ -574,6 +561,7 @@ pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma),
 ## References
 
 ```{r include=FALSE,cache=FALSE,eval=TRUE}
+closeCluster(cl)
 try(detach("package:doMPI",unload=TRUE),silent=TRUE)
 if (exists("mpi.exit")) mpi.exit()
 try(detach("package:Rmpi",unload=TRUE),silent=TRUE)
