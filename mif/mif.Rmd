@@ -304,6 +304,8 @@ bsflu_initializer <- "
 We can now build the pomp object:
 
 ```{r pomp_bsflu}
+require(pomp)
+
 bsflu <- pomp(
   data=bsflu_data,
   times="day",
@@ -327,7 +329,7 @@ plot(bsflu)
 To develop and debug code, it is nice to have a version that runs extra quickly, for which we set `run_level=1`. Here, `Np` is the number of particles (i.e., sequential Monte Carlo sample size), and `Nmif` is the number of iterations of the optimization procedure carried out below. Empirically, `Np=5000` and `Nmif=200` are around the minimum required to get stable results with an error in the likelihood of order 1 log unit for this example; this is implemented by setting `run_level=2`. One can then ramp up to larger values for more refined computations, implemented here by `run_level=3`.
 
 ```{r run_level}
-run_level <- 1
+run_level <- 3
 switch(run_level,
        {bsflu_Np=100; bsflu_Nmif=10; bsflu_Neval=10; bsflu_Nglobal=10; bsflu_Nlocal=10}, 
        {bsflu_Np=20000; bsflu_Nmif=100; bsflu_Neval=10; bsflu_Nglobal=10; bsflu_Nlocal=10}, 
