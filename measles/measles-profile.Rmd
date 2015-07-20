@@ -35,6 +35,8 @@ Produced in **R** version `r getRversion()` using **pomp** version `r packageVer
 
 ```{r knitr-opts,include=FALSE,cache=FALSE,purl=FALSE}
 library(knitr)
+library(pomp)
+stopifnot(packageVersion("pomp")>="0.73-1")
 prefix <- "measles-profiles"
 opts_chunk$set(
   progress=TRUE,
@@ -367,23 +369,9 @@ pd <- as.data.frame(t(partrans(m1,t(pd),"fromEstimationScale")))
 pairs(~sigmaSE+R0+mu+sigma+gamma+S_0+E_0,data=pd)
 ```
 
-Here's a little function that saves the results of expensive computations.
-
-```{r bake}
-bake <- function (file, expr) {
-  if (file.exists(file)) {
-    readRDS(file)
-  } else {
-    val <- eval(expr)
-    saveRDS(val,file=file)
-    val
-  }
-}
-```
-
+**pomp** provides two functions, `bake` and `stew`, that save the results of expensive computations.
 We'll run the profile computations on a cluster using MPI.
 Note that again, care must be taken with the parallel random number generator.
-
 
 ```{r sigmaSE-prof-round1,eval=TRUE,cache=FALSE}
 bake("sigmaSE-profile1.rds",{

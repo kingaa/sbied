@@ -93,26 +93,8 @@ mcopts <- list(set.seed=TRUE)
 
 set.seed(396658101,kind="L'Ecuyer")
 
-## ----broil-defn,echo=FALSE,cache=FALSE-----------------------------------
-broil <- function (file, expr) {
-  if (file.exists(file)) {
-    objlist <- load(file)
-    for (obj in objlist)
-      assign(obj,get(obj),envir=parent.frame())
-  } else {
-    expr <- substitute(expr)
-    e <- new.env()
-    eval(expr,envir=e)
-    objlist <- objects(envir=e)
-    save(list=objlist,file=file,envir=e)
-    for (obj in objlist)
-      assign(obj,get(obj,envir=e),envir=parent.frame())
-  }
-  invisible(objlist)
-}
-
 ## ----pf------------------------------------------------------------------
-broil(sprintf("pf-%d.rda",run_level),{
+stew(sprintf("pf-%d.rda",run_level),{
   
   set.seed(1320290398,kind="L'Ecuyer")
   
@@ -131,7 +113,7 @@ broil(sprintf("pf-%d.rda",run_level),{
 bsflu_rw.sd <- 0.02
 bsflu_cooling.fraction.50 <- 0.5
 
-broil(sprintf("local_search-%d.rda",run_level),{
+stew(sprintf("local_search-%d.rda",run_level),{
   
   set.seed(900242057,kind="L'Ecuyer")
   
@@ -158,7 +140,7 @@ broil(sprintf("local_search-%d.rda",run_level),{
 })
 
 ## ----lik_local_eval------------------------------------------------------
-broil(sprintf("lik_local-%d.rda",run_level),{
+stew(sprintf("lik_local-%d.rda",run_level),{
   
   set.seed(900242057,kind="L'Ecuyer")
   
@@ -184,7 +166,7 @@ bsflu_box <- rbind(
 )
 
 ## ----box_eval------------------------------------------------------------
-broil(sprintf("box_eval-%d.rda",run_level),{
+stew(sprintf("box_eval-%d.rda",run_level),{
   
   set.seed(1270401374,kind="L'Ecuyer")
   
@@ -197,7 +179,7 @@ broil(sprintf("box_eval-%d.rda",run_level),{
 })
 
 ## ----lik_global_eval-----------------------------------------------------
-broil(sprintf("lik_global_eval-%d.rda",run_level),{
+stew(sprintf("lik_global_eval-%d.rda",run_level),{
   
   set.seed(442141592,kind="L'Ecuyer")
   

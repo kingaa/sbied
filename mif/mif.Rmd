@@ -364,29 +364,10 @@ mcopts <- list(set.seed=TRUE)
 set.seed(396658101,kind="L'Ecuyer")
 ```
 
-```{r broil-defn,echo=FALSE,cache=FALSE}
-broil <- function (file, expr) {
-  if (file.exists(file)) {
-    objlist <- load(file)
-    for (obj in objlist)
-      assign(obj,get(obj),envir=parent.frame())
-  } else {
-    expr <- substitute(expr)
-    e <- new.env()
-    eval(expr,envir=e)
-    objlist <- objects(envir=e)
-    save(list=objlist,file=file,envir=e)
-    for (obj in objlist)
-      assign(obj,get(obj,envir=e),envir=parent.frame())
-  }
-  invisible(objlist)
-}
-```
-
 We proceed to carry out replicated particle filters at this tentative MLE:
 
 ```{r pf}
-broil(sprintf("pf-%d.rda",run_level),{
+stew(sprintf("pf-%d.rda",run_level),{
   
   set.seed(1320290398,kind="L'Ecuyer")
   
@@ -413,7 +394,7 @@ Let's carry out a local search using `mif2` around this previously identified ML
 bsflu_rw.sd <- 0.02
 bsflu_cooling.fraction.50 <- 0.5
 
-broil(sprintf("local_search-%d.rda",run_level),{
+stew(sprintf("local_search-%d.rda",run_level),{
   
   set.seed(900242057,kind="L'Ecuyer")
   
@@ -443,7 +424,7 @@ broil(sprintf("local_search-%d.rda",run_level),{
 Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference. Partly, this is because some parameter perturbations remain in the last filtering iteration. Partly, this is because `mif2` is usually carried out with a smaller number of particles than is necessary for a good likelihood evaluation---the errors in `mif2` average out over many iterations of the filtering. Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
 ```{r lik_local_eval}
-broil(sprintf("lik_local-%d.rda",run_level),{
+stew(sprintf("lik_local-%d.rda",run_level),{
   
   set.seed(900242057,kind="L'Ecuyer")
   
@@ -485,7 +466,7 @@ bsflu_box <- rbind(
 We are now ready to carry out likelihood maximizations from diverse starting points. To simplify the code, we can reset only the starting parameters from `mifs_global[[1]]` since the rest of the call to `mif2` can be read in from `mifs_global[[1]]`:
 
 ```{r box_eval}
-broil(sprintf("box_eval-%d.rda",run_level),{
+stew(sprintf("box_eval-%d.rda",run_level),{
   
   set.seed(1270401374,kind="L'Ecuyer")
   
@@ -501,7 +482,7 @@ broil(sprintf("box_eval-%d.rda",run_level),{
 Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference. Partly, this is because some parameter perturbations remain in the last filtering iteration. Partly, this is because `mif2` is usually carried out with a smaller number of particles than is necessary for a good likelihood evaluation---the errors in `mif2` average out over many iterations of the filtering. Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
 ```{r lik_global_eval}
-broil(sprintf("lik_global_eval-%d.rda",run_level),{
+stew(sprintf("lik_global_eval-%d.rda",run_level),{
   
   set.seed(442141592,kind="L'Ecuyer")
   

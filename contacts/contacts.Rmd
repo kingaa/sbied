@@ -282,31 +282,12 @@ plot(s1)
 To check that this implementation of the model is consistent with the AJE version, we can check that the log likelihood at the MLE matches (to a reasonable approximation) the value of -9552.1 reported by @romero-severson15. 
 On the assumption one is working on a multi-core machine, one might as well do some parallelization to put the cores to work and get smaller Monte Carlo errors for a given amount of patience.
 Regardless of one's degree of patience, or the nature of one's hardware, however, it is always a good idea, before embarking on an expensive computation, to arrange to save the results.
-The `broil` function, defined here, does this.
+The `stew` function, provided by **pomp**, does this.
 If the named file does not exist, the indicated computation is performed, and the results are saved in a file of that name.
 If the named file exists, these computations are not performed, but the file containing previously computed results is loaded.
-```{r broil-defn}
-broil <- function (file, expr) {
-  if (file.exists(file)) {
-    objlist <- load(file)
-    for (obj in objlist)
-      assign(obj,get(obj),envir=parent.frame())
-  } else {
-    expr <- substitute(expr)
-    e <- new.env()
-    eval(expr,envir=e)
-    objlist <- objects(envir=e)
-    save(list=objlist,file=file,envir=e)
-    for (obj in objlist)
-      assign(obj,get(obj,envir=e),envir=parent.frame())
-  }
-  invisible(objlist)
-}
-```
-
 
 ```{r pfilter1}
-broil("pfilter1.rda",{
+stew("pfilter1.rda",{
   
   set.seed(1943810296,kind="L'Ecuyer")
   
@@ -432,7 +413,7 @@ plot(s2)
 and we can filter, to obtain the likelihood:
 
 ```{r pfilter2}
-broil("pfilter2.rda",{
+stew("pfilter2.rda",{
 
   set.seed(1092903614,kind="L'Ecuyer")
 
@@ -450,7 +431,7 @@ broil("pfilter2.rda",{
 
 As an example of an iterated filtering investigation, let's carry out a local search, starting at the current estimate of the MLE.
 ```{r mif}
-broil("mif1.rda",{
+stew("mif1.rda",{
 
   set.seed(354320731,kind="L'Ecuyer")
 

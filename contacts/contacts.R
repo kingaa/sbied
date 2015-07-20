@@ -105,26 +105,8 @@ apply(obs(s1),1,mean)
 apply(states(s1),1,mean)
 plot(s1)
 
-## ----broil-defn----------------------------------------------------------
-broil <- function (file, expr) {
-  if (file.exists(file)) {
-    objlist <- load(file)
-    for (obj in objlist)
-      assign(obj,get(obj),envir=parent.frame())
-  } else {
-    expr <- substitute(expr)
-    e <- new.env()
-    eval(expr,envir=e)
-    objlist <- objects(envir=e)
-    save(list=objlist,file=file,envir=e)
-    for (obj in objlist)
-      assign(obj,get(obj,envir=e),envir=parent.frame())
-  }
-  invisible(objlist)
-}
-
 ## ----pfilter1------------------------------------------------------------
-broil("pfilter1.rda",{
+stew("pfilter1.rda",{
   
   set.seed(1943810296,kind="L'Ecuyer")
   
@@ -227,7 +209,7 @@ apply(states(s2),1,mean)
 plot(s2)
 
 ## ----pfilter2------------------------------------------------------------
-broil("pfilter2.rda",{
+stew("pfilter2.rda",{
 
   set.seed(1092903614,kind="L'Ecuyer")
 
@@ -241,7 +223,7 @@ broil("pfilter2.rda",{
 (loglik2 <- sapply(pf2,logLik))
 
 ## ----mif-----------------------------------------------------------------
-broil("mif1.rda",{
+stew("mif1.rda",{
 
   set.seed(354320731,kind="L'Ecuyer")
 

@@ -220,17 +220,6 @@ pd <- as.data.frame(t(partrans(m1,t(pd),"fromEstimationScale")))
 
 pairs(~sigmaSE+R0+mu+sigma+gamma+S_0+E_0,data=pd)
 
-## ----bake----------------------------------------------------------------
-bake <- function (file, expr) {
-  if (file.exists(file)) {
-    readRDS(file)
-  } else {
-    val <- eval(expr)
-    saveRDS(val,file=file)
-    val
-  }
-}
-
 ## ----sigmaSE-prof-round1,eval=TRUE,cache=FALSE---------------------------
 bake("sigmaSE-profile1.rds",{
  
