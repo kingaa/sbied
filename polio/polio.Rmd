@@ -7,7 +7,7 @@ output:
     theme: flatly
     toc: yes
 bibliography: polio.bib
-csl: ecology.csl
+csl: ../ecology.csl
 
 ---
 
