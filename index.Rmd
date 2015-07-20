@@ -23,6 +23,22 @@ This module introduces statistical inference techniques and computational method
 
 ----------------------
 
+## Schedule of Topics
+
+
+0. [Instructions for preparing your laptop for the course exercises](./prep/preparation.html)
+1. [Introduction: What is "Simulation-based Inference for Epidemiological Dynamics?"](./intro/intro.html)
+2. [Dynamic models and their simulation by Euler's method.](./stochsim/stochsim.html)
+3. [The particle filter: theory and practice](./pfilter/pfilter.html)
+1. [Iterated filtering: theory and practice](./mif/mif.html)
+1. [Case study I: polio.](./polio/polio.html)
+1. [Case study II: measles.](./measles/measles.html)
+1. [Case study III: sexual contacts panel data](./contacts/contacts.html)
+1. [Case study IV: Ebola and forecasting](./ebola/ebola.html)
+
+ 
+----------------------
+
 ## Daily Schedule
 
 **Time** | **Daily Activity**
@@ -37,25 +53,3 @@ This module introduces statistical inference techniques and computational method
 3:30 pm -- 5:00 pm | Class Session
 
 ----------------------
-
-## Schedule of Topics
-
-
-1. [Introduction: What is "Simulation-based Inference for Epidemiological Dynamics?"](./intro/intro.html)
-2. [Dynamic models and their simulation by Euler's method.](./stochsim/stochsim.html)
-3. [The particle filter: theory and practice](./pfilter/pfilter.html)
-1. [Iterated filtering: theory and practice](./mif/mif.html)
-1. [Case study I: polio.](./polio/polio.html)
-1. [Case study II: measles.](./measles/measles.html)
-1. [Case study III: sexual contacts panel data](./contacts/contacts.html)
-1. [Case study IV: Ebola and forecasting](./ebola/ebola.html)
-
- 
-----------------------
-
-## Other materials
-
-- [Instructions for preparing your laptop for the course exercises](./prep/preparation.html)
- 
-----------------------
-
