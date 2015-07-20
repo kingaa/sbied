@@ -1,6 +1,6 @@
 ## ----mpi-setup,include=FALSE,purl=TRUE,cache=FALSE-----------------------
 ncpu <- as.integer(Sys.getenv("PBS_NP"))
-if (is.na(ncpu)) ncpu <- 40
+if (is.na(ncpu)) ncpu <- 4
 
 require(foreach)
 require(doMPI)

@@ -159,22 +159,11 @@ measles %>%
 	- Annual birth records and population sizes, 1944--1963
 
 ```{r map,echo=FALSE,purl=FALSE}
-# require(maps)
-# with(map("world","UK",plot=FALSE),data.frame(long=x,lat=y)) %>%
-#   subset(long>-7 & long < 3 & lat > 49 & lat < 58) -> GB
-# read.csv("data/GB_Coast.csv") %>%
-#   rename(c(Long="long",Lat="lat")) -> GB
 require(ggmap)
 ggmap(get_map(c(-4,54),zoom=6,scale=2,source="google",maptype="satellite"))+
-# ggplot(data=GB,aes(x=long,y=lat))+
   geom_point(data=coord,aes(x=long,y=lat),color='red',alpha=1)+
-  # geom_text(data=coord,aes(x=long,y=lat,label=town),vjust=0,size=2,col='white')+
-  # geom_path()+
-  # coord_map(projection="gall",lat0=54)+
   labs(x="",y="")+
   theme_nothing()
-#   theme(panel.border=element_blank(),axis.ticks=element_blank(),
-#         axis.text=element_blank())
 ```
  
 ```{r dataplot,echo=FALSE,fig.height=10,purl=FALSE}
@@ -517,7 +506,6 @@ par(op)
 #### Birth delay
 
 ```{r delay,eval=TRUE,echo=FALSE,results="hide",purl=FALSE}
-
 x <- read.csv('data/delay.csv',row.names=1)
 plot(
      x$delay,
@@ -526,7 +514,6 @@ plot(
      xlab=expression(paste(tau,' (yr)')),
      ylab='profile log likelihood'
      )
-
 ```
 
 ```{r mles,include=FALSE}
