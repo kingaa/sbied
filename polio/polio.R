@@ -1,39 +1,3 @@
-## ----opts,include=FALSE--------------------------------------------------
-library(pomp)
-library(knitr)
-prefix <- "polio"
-opts_chunk$set(
-  progress=TRUE,
-  prompt=FALSE,tidy=FALSE,highlight=TRUE,
-  strip.white=TRUE,
-  warning=FALSE,
-  message=FALSE,
-  error=FALSE,
-  echo=TRUE,
-  cache=TRUE,
-  results='markup',
-  fig.show='asis',
-  size='small',
-  fig.lp="fig:",
-  fig.path=paste0("figure/",prefix,"-"),
-  cache.path=paste0("cache/",prefix,"-"),
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=4,fig.width=6.83,
-  dpi=300,
-  dev='png',
-  dev.args=list(bg='transparent')
-  )
-
-options(
-  pomp.cache="cache",
-  keep.source=TRUE,
-  encoding="UTF-8"
-  )
-
-library(ggplot2)
-theme_set(theme_bw())
-
 ## ----data----------------------------------------------------------------
 polio_data <- read.table("polio_wisconsin.csv")
 colnames(polio_data)
@@ -57,7 +21,7 @@ covartable <- data.frame(
   polio_bspline_basis,
   B=polio_data$births,
   P=predict(smooth.spline(x=1931:1954,y=polio_data$pop[12*(1:24)]),
-               x=polio_tcovar)$y
+            x=polio_tcovar)$y
 )
 
 ## ----rp_names------------------------------------------------------------
@@ -190,21 +154,31 @@ polio_Nreps_local <- c(10, 20, 40)
 polio_Nreps_global <-c(10, 20, 100)
 polio_Nsim <-        c(50,100, 500) 
 
-## ----pf1-----------------------------------------------------------------
+## ----parallel-setup,cache=FALSE------------------------------------------
 require(doParallel)
-cores <- 20
-registerDoParallel(cores)
-t1 <- system.time(
-  pf1 <- foreach(i=1:cores,.packages='pomp') %dopar% try(
-    pfilter(polio,Np=polio_Np[run_level],seed=297221+i)
+registerDoParallel()
+
+## ----pf1,cache=FALSE-----------------------------------------------------
+stew(file=sprintf("pf1-%d.rda",run_level),{
+  set.seed(493536993,kind="L'Ecuyer")
+  t1 <- system.time(
+    pf1 <- foreach(i=1:20,.packages='pomp',
+                   .options.multicore=list(set.seed=TRUE)) %dopar% try(
+                     pfilter(polio,Np=polio_Np[run_level])
+                   )
   )
-)
+})
 (L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE))
 
-## ----persistence---------------------------------------------------------
-t_sim <- system.time(
- sim <- foreach(i=1:polio_Nsim[run_level],.packages='pomp') %dopar% simulate(polio,seed=1099999+i)
-)
+## ----persistence,cache=FALSE---------------------------------------------
+stew(sprintf("persistence-%d.rda",run_level),{
+  set.seed(493536993,kind="L'Ecuyer")
+  t_sim <- system.time(
+    sim <- foreach(i=1:polio_Nsim[run_level],.packages='pomp',
+                   .options.multicore=list(set.seed=TRUE)) %dopar% 
+      simulate(polio)
+  )
+})
 
 no_cases_data <- sum(obs(polio)==0)
 no_cases_sim <- sum(sapply(sim,obs)==0)/length(sim)
@@ -216,48 +190,57 @@ imports_sim <- coef(polio)["psi"]*mean(sapply(sim,function(po) mean(states(po)["
 mle_simulation <- simulate(polio,seed=127)
 plot(mle_simulation)
 
-## ----mif-----------------------------------------------------------------
+## ----mif,cache=FALSE-----------------------------------------------------
 polio_rw.sd_rp <- 0.02
 polio_rw.sd_ivp <- 0.2
 polio_cooling.fraction.50 <- 0.5
 
-t2 <- system.time({
- m2 <- foreach(i=1:polio_Nreps_local[run_level],
-   .packages='pomp', .combine=c) %dopar% try(
-   mif2(polio,
-     seed=143275+i,
-     Np=polio_Np[run_level],
-     Nmif=polio_Nmif[run_level],
-     cooling.type="geometric",
-     cooling.fraction.50=polio_cooling.fraction.50,
-     transform=TRUE,
-     rw.sd=rw.sd(
-       b1=polio_rw.sd_rp,
-       b2=polio_rw.sd_rp,
-       b3=polio_rw.sd_rp,
-       b4=polio_rw.sd_rp,
-       b5=polio_rw.sd_rp,
-       b6=polio_rw.sd_rp,
-       psi=polio_rw.sd_rp,
-       rho=polio_rw.sd_rp,
-       tau=polio_rw.sd_rp,
-       sigma_dem=polio_rw.sd_rp,
-       sigma_env=polio_rw.sd_rp,
-       IO_0=ivp(polio_rw.sd_ivp),
-       SO_0=ivp(polio_rw.sd_ivp)
-     )
-   )
- )
-
- lik_m2 <- foreach(i=1:polio_Nreps_local[run_level],.packages='pomp',.combine=rbind) %dopar% {
-   set.seed(87932+i)
-   logmeanexp(replicate(polio_Nreps_eval[run_level], logLik(pfilter(polio,params=coef(m2[[i]]),Np=polio_Np[run_level]))),
-     se=TRUE)
- }
+stew(sprintf("mif-%d.rda",run_level),{
+  set.seed(318817883,kind="L'Ecuyer")
+  t2 <- system.time({
+    m2 <- foreach(i=1:polio_Nreps_local[run_level],
+                  .packages='pomp', .combine=c,
+                  .options.multicore=list(set.seed=TRUE)) %dopar% try(
+                    mif2(polio,
+                         seed=143275+i,
+                         Np=polio_Np[run_level],
+                         Nmif=polio_Nmif[run_level],
+                         cooling.type="geometric",
+                         cooling.fraction.50=polio_cooling.fraction.50,
+                         transform=TRUE,
+                         rw.sd=rw.sd(
+                           b1=polio_rw.sd_rp,
+                           b2=polio_rw.sd_rp,
+                           b3=polio_rw.sd_rp,
+                           b4=polio_rw.sd_rp,
+                           b5=polio_rw.sd_rp,
+                           b6=polio_rw.sd_rp,
+                           psi=polio_rw.sd_rp,
+                           rho=polio_rw.sd_rp,
+                           tau=polio_rw.sd_rp,
+                           sigma_dem=polio_rw.sd_rp,
+                           sigma_env=polio_rw.sd_rp,
+                           IO_0=ivp(polio_rw.sd_ivp),
+                           SO_0=ivp(polio_rw.sd_ivp)
+                         )
+                    )
+                  )
+    
+    lik_m2 <- foreach(i=1:polio_Nreps_local[run_level],.packages='pomp',
+                      .combine=rbind,.options.multicore=list(set.seed=TRUE)) %dopar% 
+                      {
+                        logmeanexp(
+                          replicate(polio_Nreps_eval[run_level],
+                                    logLik(pfilter(polio,params=coef(m2[[i]]),Np=polio_Np[run_level]))
+                                    ),
+                          se=TRUE)
+                      }
+  })
 })
 
 r2 <- data.frame(logLik=lik_m2[,1],logLik_se=lik_m2[,2],t(sapply(m2,coef)))
-if(run_level>1) write.table(r2,file="polio_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
+if (run_level>1) 
+  write.table(r2,file="polio_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
 summary(r2$logLik,digits=5)
 
 ## ----pairs---------------------------------------------------------------
@@ -280,17 +263,28 @@ polio_box <- rbind(
   IO_0=c(0,0.01)
 )
 
-## ----box_eval------------------------------------------------------------
-t3 <- system.time({
- m3 <- foreach(i=1:polio_Nreps_global[run_level],.packages='pomp', .combine=c) %dopar%  mif2(
-      m2[[1]],
-      seed=1587690+i, 
-      start=c(apply(polio_box,1,function(x)runif(1,x)),polio_fixed_params)
- )
- lik_m3 <- foreach(i=1:polio_Nreps_global[run_level],.packages='pomp',.combine=rbind) %dopar% {
-   set.seed(87932+i)
-   logmeanexp(replicate(polio_Nreps_eval[run_level], logLik(pfilter(polio,params=coef(m3[[i]]),Np=polio_Np[run_level]))), se=TRUE)
- }
+## ----box_eval,cache=FALSE------------------------------------------------
+stew(file=sprintf("box_eval-%d.rda",run_level),{
+  set.seed(290860873,kind="L'Ecuyer")
+  t3 <- system.time({
+    m3 <- foreach(i=1:polio_Nreps_global[run_level],.packages='pomp',.combine=c,
+                  .options.multicore=list(set.seed=TRUE)) %dopar%  
+      mif2(
+        m2[[1]],
+        seed=1587690+i, 
+        start=c(apply(polio_box,1,function(x)runif(1,x)),polio_fixed_params)
+      )
+    
+    lik_m3 <- foreach(i=1:polio_Nreps_global[run_level],.packages='pomp',.combine=rbind,
+                      .options.multicore=list(set.seed=TRUE)) %dopar% {
+                        set.seed(87932+i)
+                        logmeanexp(
+                          replicate(polio_Nreps_eval[run_level],
+                                    logLik(pfilter(polio,params=coef(m3[[i]]),Np=polio_Np[run_level]))
+                          ), 
+                          se=TRUE)
+                      }
+  })
 })
 
 r3 <- data.frame(logLik=lik_m3[,1],logLik_se=lik_m3[,2],t(sapply(m3,coef)))
@@ -329,7 +323,4 @@ plot(m3[r3$logLik>max(r3$logLik)-10])
 ## ----likelihood_convergence----------------------------------------------
 loglik_convergence <- do.call(cbind,conv.rec(m3[r3$logLik>max(r3$logLik)-10],"loglik"))
 matplot(loglik_convergence,type="l",lty=1,ylim=max(loglik_convergence,na.rm=T)+c(-10,0))
-
-## ----save, include=FALSE-------------------------------------------------
-if(run_level>1) save(list = ls(all = TRUE), file = "Rout.rda")
 

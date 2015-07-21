@@ -15,8 +15,9 @@ Licensed under the Creative Commons attribution-noncommercial license, http://cr
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
-```{r opts,include=FALSE}
+```{r opts,include=FALSE,purl=FALSE}
 library(pomp)
+stopifnot(packageVersion("pomp")>="0.73-1")
 library(knitr)
 prefix <- "polio"
 opts_chunk$set(
@@ -28,6 +29,7 @@ opts_chunk$set(
   error=FALSE,
   echo=TRUE,
   cache=TRUE,
+  cache.extra=rand_seed,
   results='markup',
   fig.show='asis',
   size='small',
@@ -43,13 +45,11 @@ opts_chunk$set(
   )
 
 options(
+  cores=15,
   pomp.cache="cache",
   keep.source=TRUE,
   encoding="UTF-8"
   )
-
-library(ggplot2)
-theme_set(theme_bw())
 ```
 
 
@@ -139,7 +139,7 @@ covartable <- data.frame(
   polio_bspline_basis,
   B=polio_data$births,
   P=predict(smooth.spline(x=1931:1954,y=polio_data$pop[12*(1:24)]),
-               x=polio_tcovar)$y
+            x=polio_tcovar)$y
 )
 ```
 
@@ -306,17 +306,22 @@ polio_Nreps_global <-c(10, 20, 100)
 polio_Nsim <-        c(50,100, 500) 
 ```
 
-Since I have a double-threaded 12-cpu machine, it is convenient to do some parallelization to generate replicated calls to `pfilter`. Notice that the replications are averaged using the `logmeanexp` function.
-
-```{r pf1}
+Since most modern machines have multiple cores, it is convenient to do some parallelization to generate replicated calls to `pfilter`. Notice that the replications are averaged using the `logmeanexp` function.
+```{r parallel-setup,cache=FALSE}
 require(doParallel)
-cores <- 20
-registerDoParallel(cores)
-t1 <- system.time(
-  pf1 <- foreach(i=1:cores,.packages='pomp') %dopar% try(
-    pfilter(polio,Np=polio_Np[run_level],seed=297221+i)
+registerDoParallel()
+```
+
+```{r pf1,cache=FALSE}
+stew(file=sprintf("pf1-%d.rda",run_level),{
+  set.seed(493536993,kind="L'Ecuyer")
+  t1 <- system.time(
+    pf1 <- foreach(i=1:20,.packages='pomp',
+                   .options.multicore=list(set.seed=TRUE)) %dopar% try(
+                     pfilter(polio,Np=polio_Np[run_level])
+                   )
   )
-)
+})
 (L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE))
 ```
 
@@ -330,10 +335,15 @@ This setup has minor differences in notation, model construction and code compar
 
 The scientific purpose of fitting a model typically involves analyzing properties of the fitted model, often investigated using simulation. Following @martinez-bakker15, we are interested in how often months with no reported cases ($Y_n=0$) correspond to months without any local asymptomatic cases, defined for our continuous state model as $I^B_n+I^O_n<1/2$. For Wisconsin, using our model at the estimated MLE, we compute as follows:
 
-```{r persistence}
-t_sim <- system.time(
- sim <- foreach(i=1:polio_Nsim[run_level],.packages='pomp') %dopar% simulate(polio,seed=1099999+i)
-)
+```{r persistence,cache=FALSE}
+stew(sprintf("persistence-%d.rda",run_level),{
+  set.seed(493536993,kind="L'Ecuyer")
+  t_sim <- system.time(
+    sim <- foreach(i=1:polio_Nsim[run_level],.packages='pomp',
+                   .options.multicore=list(set.seed=TRUE)) %dopar% 
+      simulate(polio)
+  )
+})
 
 no_cases_data <- sum(obs(polio)==0)
 no_cases_sim <- sum(sapply(sim,obs)==0)/length(sim)
@@ -358,48 +368,57 @@ We see from this simulation that the fitted model can generate report histories 
 
 Now, let's see if we can improve on the previous MLE. We use the iterated filtering algorithm IF2 of @ionides15, which uses a random walk in parameter space to approach the MLE. We set a constant random walk standard deviation for each of the regular parameters and a larger constant for each of the initial value parameters. 
 
-```{r mif}
+```{r mif,cache=FALSE}
 polio_rw.sd_rp <- 0.02
 polio_rw.sd_ivp <- 0.2
 polio_cooling.fraction.50 <- 0.5
 
-t2 <- system.time({
- m2 <- foreach(i=1:polio_Nreps_local[run_level],
-   .packages='pomp', .combine=c) %dopar% try(
-   mif2(polio,
-     seed=143275+i,
-     Np=polio_Np[run_level],
-     Nmif=polio_Nmif[run_level],
-     cooling.type="geometric",
-     cooling.fraction.50=polio_cooling.fraction.50,
-     transform=TRUE,
-     rw.sd=rw.sd(
-       b1=polio_rw.sd_rp,
-       b2=polio_rw.sd_rp,
-       b3=polio_rw.sd_rp,
-       b4=polio_rw.sd_rp,
-       b5=polio_rw.sd_rp,
-       b6=polio_rw.sd_rp,
-       psi=polio_rw.sd_rp,
-       rho=polio_rw.sd_rp,
-       tau=polio_rw.sd_rp,
-       sigma_dem=polio_rw.sd_rp,
-       sigma_env=polio_rw.sd_rp,
-       IO_0=ivp(polio_rw.sd_ivp),
-       SO_0=ivp(polio_rw.sd_ivp)
-     )
-   )
- )
-
- lik_m2 <- foreach(i=1:polio_Nreps_local[run_level],.packages='pomp',.combine=rbind) %dopar% {
-   set.seed(87932+i)
-   logmeanexp(replicate(polio_Nreps_eval[run_level], logLik(pfilter(polio,params=coef(m2[[i]]),Np=polio_Np[run_level]))),
-     se=TRUE)
- }
+stew(sprintf("mif-%d.rda",run_level),{
+  set.seed(318817883,kind="L'Ecuyer")
+  t2 <- system.time({
+    m2 <- foreach(i=1:polio_Nreps_local[run_level],
+                  .packages='pomp', .combine=c,
+                  .options.multicore=list(set.seed=TRUE)) %dopar% try(
+                    mif2(polio,
+                         seed=143275+i,
+                         Np=polio_Np[run_level],
+                         Nmif=polio_Nmif[run_level],
+                         cooling.type="geometric",
+                         cooling.fraction.50=polio_cooling.fraction.50,
+                         transform=TRUE,
+                         rw.sd=rw.sd(
+                           b1=polio_rw.sd_rp,
+                           b2=polio_rw.sd_rp,
+                           b3=polio_rw.sd_rp,
+                           b4=polio_rw.sd_rp,
+                           b5=polio_rw.sd_rp,
+                           b6=polio_rw.sd_rp,
+                           psi=polio_rw.sd_rp,
+                           rho=polio_rw.sd_rp,
+                           tau=polio_rw.sd_rp,
+                           sigma_dem=polio_rw.sd_rp,
+                           sigma_env=polio_rw.sd_rp,
+                           IO_0=ivp(polio_rw.sd_ivp),
+                           SO_0=ivp(polio_rw.sd_ivp)
+                         )
+                    )
+                  )
+    
+    lik_m2 <- foreach(i=1:polio_Nreps_local[run_level],.packages='pomp',
+                      .combine=rbind,.options.multicore=list(set.seed=TRUE)) %dopar% 
+                      {
+                        logmeanexp(
+                          replicate(polio_Nreps_eval[run_level],
+                                    logLik(pfilter(polio,params=coef(m2[[i]]),Np=polio_Np[run_level]))
+                                    ),
+                          se=TRUE)
+                      }
+  })
 })
 
 r2 <- data.frame(logLik=lik_m2[,1],logLik_se=lik_m2[,2],t(sapply(m2,coef)))
-if(run_level>1) write.table(r2,file="polio_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
+if (run_level>1) 
+  write.table(r2,file="polio_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
 summary(r2$logLik,digits=5)
 ```
 
@@ -440,17 +459,28 @@ polio_box <- rbind(
 
 We then carry out a search identical to the local one except for the starting parameter values. This can be succinctly coded by calling `mif2` on the previously constructed object, `m2[[1]]`, with a reset starting value:
 
-```{r box_eval}
-t3 <- system.time({
- m3 <- foreach(i=1:polio_Nreps_global[run_level],.packages='pomp', .combine=c) %dopar%  mif2(
-      m2[[1]],
-      seed=1587690+i, 
-      start=c(apply(polio_box,1,function(x)runif(1,x)),polio_fixed_params)
- )
- lik_m3 <- foreach(i=1:polio_Nreps_global[run_level],.packages='pomp',.combine=rbind) %dopar% {
-   set.seed(87932+i)
-   logmeanexp(replicate(polio_Nreps_eval[run_level], logLik(pfilter(polio,params=coef(m3[[i]]),Np=polio_Np[run_level]))), se=TRUE)
- }
+```{r box_eval,cache=FALSE}
+stew(file=sprintf("box_eval-%d.rda",run_level),{
+  set.seed(290860873,kind="L'Ecuyer")
+  t3 <- system.time({
+    m3 <- foreach(i=1:polio_Nreps_global[run_level],.packages='pomp',.combine=c,
+                  .options.multicore=list(set.seed=TRUE)) %dopar%  
+      mif2(
+        m2[[1]],
+        seed=1587690+i, 
+        start=c(apply(polio_box,1,function(x)runif(1,x)),polio_fixed_params)
+      )
+    
+    lik_m3 <- foreach(i=1:polio_Nreps_global[run_level],.packages='pomp',.combine=rbind,
+                      .options.multicore=list(set.seed=TRUE)) %dopar% {
+                        set.seed(87932+i)
+                        logmeanexp(
+                          replicate(polio_Nreps_eval[run_level],
+                                    logLik(pfilter(polio,params=coef(m3[[i]]),Np=polio_Np[run_level]))
+                          ), 
+                          se=TRUE)
+                      }
+  })
 })
 
 r3 <- data.frame(logLik=lik_m3[,1],logLik_se=lik_m3[,2],t(sapply(m3,coef)))
@@ -459,7 +489,6 @@ summary(r3$logLik,digits=5)
 ```
 
 Evaluation of the best result of this search gives a likelihood of `r round(max(r3$logLik),1)` with a standard error of `r round(r3$logLik_se[which.max(r3$logLik)],1)`. We see that optimization attempts from diverse remote starting points can approach our MLE, but do not exceed it. This gives us some reasonable confidence in our MLE. 
-
 
 Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface 
 
@@ -553,7 +582,7 @@ loglik_convergence <- do.call(cbind,conv.rec(m3[r3$logLik>max(r3$logLik)-10],"lo
 matplot(loglik_convergence,type="l",lty=1,ylim=max(loglik_convergence,na.rm=T)+c(-10,0))
 ```
 
-```{r save, include=FALSE}
+```{r save, include=FALSE,purl=FALSE,eval=FALSE}
 if(run_level>1) save(list = ls(all = TRUE), file = "Rout.rda")
 ```
 
