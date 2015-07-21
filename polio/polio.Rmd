@@ -297,7 +297,7 @@ plot(polio)
 Let's carry out a likelihood evaluation at the reported MLE.  To develop and debug code, it is nice to have a version that runs extra quickly, for which we set `run_level=1`. Here, `Np` is the number of particles (i.e., sequential Monte Carlo sample size), and `Nmif` is the number of iterations of the optimization procedure carried out below. Empirically, `Np=5000` and `Nmif=200` are around the minimum required to get stable results with an error in the likelihood of order 1 log unit for this example; this is implemented by setting `run_level=2`. One can then ramp up to larger values for more refined computations, implemented here by `run_level=3`.
 
 ```{r run_level}
-run_level <- 1
+run_level <- 3
 polio_Np <-          c(100,5e3,1e4)
 polio_Nmif <-        c(10, 200,400)
 polio_Nreps_eval <-  c(2,  10,  20)

@@ -182,7 +182,7 @@ polio <- pomp(
 plot(polio)
 
 ## ----run_level-----------------------------------------------------------
-run_level <- 1
+run_level <- 3
 polio_Np <-          c(100,5e3,1e4)
 polio_Nmif <-        c(10, 200,400)
 polio_Nreps_eval <-  c(2,  10,  20)
