@@ -73,7 +73,7 @@ require(reshape2)
 require(foreach)
 require(doMC)
 require(pomp)
-stopifnot(packageVersion("pomp")>="0.69-1")
+stopifnot(packageVersion("pomp")>="0.74-1")
 ```
 
 ## Objectives
@@ -577,13 +577,16 @@ coef(sir) <- c(Beta=2,gamma=1,rho=0.8,N=2600)
 The following constructs a function returning the negative log likelihood of the data at a given point in parameter space.
 
 ```{r sir-like-optim-1,echo=T,eval=T,results='markup',cache=T}
-neg.ll <- function (par, est, ...) {
+neg.ll <- function (par, est) {
   ## parameters to be estimated are named in 'est'
   allpars <- coef(sir,transform=TRUE)
   allpars[est] <- par
   try(
-    pfilter(sir,params=partrans(sir,allpars,dir="fromEst"),
-            Np=1000,seed=3488755L,...)
+    freeze(
+      pfilter(sir,params=partrans(sir,allpars,dir="fromEst"),
+              Np=1000),
+      seed=5859684
+    )
   ) -> pf
   if (inherits(pf,"try-error")) {
     1e10                 ## a big, bad number
