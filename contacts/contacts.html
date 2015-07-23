@@ -240,15 +240,14 @@ apply(obs(s1),1,mean)</code></pre>
 <p>To check that this implementation of the model is consistent with the AJE version, we can check that the log likelihood at the MLE matches (to a reasonable approximation) the value of -9552.1 reported by <span class="citation">Romero-Severson et al. (2015)</span>. On the assumption one is working on a multi-core machine, one might as well do some parallelization to put the cores to work and get smaller Monte Carlo errors for a given amount of patience. Regardless of one’s degree of patience, or the nature of one’s hardware, however, it is always a good idea, before embarking on an expensive computation, to arrange to save the results. The <code>stew</code> function, provided by <strong>pomp</strong>, does this. If the named file does not exist, the indicated computation is performed, and the results are saved in a file of that name. If the named file exists, these computations are not performed, but the file containing previously computed results is loaded.</p>
 <pre class="r"><code>stew(&quot;pfilter1.rda&quot;,{
   
-  set.seed(1943810296,kind=&quot;L'Ecuyer&quot;)
-  
   t1 &lt;- system.time(
     pf1 &lt;-    foreach(i=1:10,.packages='pomp',
                       .options.multicore=mcopts) 
     %dopar% try(pfilter(contacts,Np=2000))
   )
   
-})
+},seed=1943810296,kind=&quot;L'Ecuyer&quot;)
+
 (loglik1 &lt;- sapply(pf1,logLik))</code></pre>
 <pre><code>##  [1] -9566.831 -9558.116 -9559.200 -9554.664 -9561.365 -9559.850 -9561.002
 ##  [8] -9562.758 -9555.364 -9558.430</code></pre>
@@ -347,15 +346,14 @@ apply(obs(s2),1,mean)</code></pre>
 <p>and we can filter, to obtain the likelihood:</p>
 <pre class="r"><code>stew(&quot;pfilter2.rda&quot;,{
 
-  set.seed(1092903614,kind=&quot;L'Ecuyer&quot;)
-
   t2 &lt;- system.time(
     pf2 &lt;- foreach(i=1:10,.packages='pomp',
                    .options.multicore=mcopts) 
     %dopar% try(pfilter(contacts2,Np=2000))
   )
 
-})
+},seed=1092903614,kind=&quot;L'Ecuyer&quot;)
+
 (loglik2 &lt;- sapply(pf2,logLik))</code></pre>
 <pre><code>##  [1] -9559.774 -9560.892 -9558.294 -9557.502 -9552.792 -9559.816 -9559.183
 ##  [8] -9558.187 -9555.103 -9559.254</code></pre>
@@ -363,8 +361,6 @@ apply(obs(s2),1,mean)</code></pre>
 <h3>Likelihood maximization using the IF2 algorithm</h3>
 <p>As an example of an iterated filtering investigation, let’s carry out a local search, starting at the current estimate of the MLE.</p>
 <pre class="r"><code>stew(&quot;mif1.rda&quot;,{
-
-  set.seed(354320731,kind=&quot;L'Ecuyer&quot;)
 
   t3 &lt;- system.time(
     m2 &lt;- foreach(i=1:10,.packages='pomp',
@@ -393,16 +389,17 @@ apply(obs(s2),1,mean)</code></pre>
                    pfilter(contacts2,params=params_new,Np=1000,seed=1809+i)
                  )
 
-})
+},seed=354320731,kind=&quot;L'Ecuyer&quot;)
+
 (loglik_new &lt;- logmeanexp(sapply(pf3,logLik),se=TRUE))</code></pre>
 <pre><code>##                      se 
 ## -9627.32875     2.13624</code></pre>
-<p>This is a relatively quick search, taking only 124.6 seconds. The preliminary likelihood estimated as a consequence of running <code>mif2</code> and extracted here by <code>sapply(m2,logLik)</code> does not correspond to the actual, fixed parameter, model. It is the sequential Monte Carlo estimate of the likelihood from the last filtering iteration, and therefore will have some perturbation of the parameters. Further, one typically requires fewer particles for each filtering iteration than necessary to obtain a good likelihood estimate—stochastic errors can cancel out through the filtering iterations, rather than within any one iteration. For promising new parameter values, it is desirable to put computational effort into evaluating the likelihood sufficient to make the Monte Carlo error small compared to one log unit.</p>
+<p>This is a relatively quick search, taking only 125.3 seconds. The preliminary likelihood estimated as a consequence of running <code>mif2</code> and extracted here by <code>sapply(m2,logLik)</code> does not correspond to the actual, fixed parameter, model. It is the sequential Monte Carlo estimate of the likelihood from the last filtering iteration, and therefore will have some perturbation of the parameters. Further, one typically requires fewer particles for each filtering iteration than necessary to obtain a good likelihood estimate—stochastic errors can cancel out through the filtering iterations, rather than within any one iteration. For promising new parameter values, it is desirable to put computational effort into evaluating the likelihood sufficient to make the Monte Carlo error small compared to one log unit.</p>
 </div>
 </div>
 <div id="comparison-of-approaches-1-and-2" class="section level2">
 <h2>Comparison of Approaches 1 and 2</h2>
-<p>We are most directly interested in which method is best when we wish to carry out inference by iterated filtering. However, a more easily tested proxy for that is to see which method is more compuationally efficient for filtering. For approach 1, the log likelihood estimates had mean -9559.8 and sd 3.5 and took 31.4 seconds. For method 2, the log likelihood estimates had mean -9558.1 and sd 2.4 and took 35.8 seconds.</p>
+<p>We are most directly interested in which method is best when we wish to carry out inference by iterated filtering. However, a more easily tested proxy for that is to see which method is more compuationally efficient for filtering. For approach 1, the log likelihood estimates had mean -9559.8 and sd 3.5 and took 29.3 seconds. For method 2, the log likelihood estimates had mean -9558.1 and sd 2.4 and took 34.7 seconds.</p>
 <p>For this model, we find that Method 2 and Method 3 are quite comparable. A possible explanation for this is that the main Monte Carlo challenge in this situation is the time-constant random effects for each individual: <span class="math">\(D\)</span> is a truly time-constant random effect; the initial choice of <span class="math">\(X\)</span> is a slowly varying random effect, since <span class="math">\(1/\mu_R\)</span> is on the same timescale as the total observation length. For time-constant random effects, there may be not much additional value to the resampling carried out by method 2 within the time series for each individual. This resampling is the main difference between methods 2 and 3.</p>
 </div>
 <div id="technical-exercise-practical-implications-of-the-unbiasedness-of-the-particle-filter-and-the-concavity-of-the-logarithm" class="section level2">

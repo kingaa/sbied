@@ -289,15 +289,14 @@ If the named file exists, these computations are not performed, but the file con
 ```{r pfilter1}
 stew("pfilter1.rda",{
   
-  set.seed(1943810296,kind="L'Ecuyer")
-  
   t1 <- system.time(
     pf1 <-    foreach(i=1:10,.packages='pomp',
                       .options.multicore=mcopts) 
     %dopar% try(pfilter(contacts,Np=2000))
   )
   
-})
+},seed=1943810296,kind="L'Ecuyer")
+
 (loglik1 <- sapply(pf1,logLik))
 ```
 
@@ -415,15 +414,14 @@ and we can filter, to obtain the likelihood:
 ```{r pfilter2}
 stew("pfilter2.rda",{
 
-  set.seed(1092903614,kind="L'Ecuyer")
-
   t2 <- system.time(
     pf2 <- foreach(i=1:10,.packages='pomp',
                    .options.multicore=mcopts) 
     %dopar% try(pfilter(contacts2,Np=2000))
   )
 
-})
+},seed=1092903614,kind="L'Ecuyer")
+
 (loglik2 <- sapply(pf2,logLik))
 ```
 
@@ -432,8 +430,6 @@ stew("pfilter2.rda",{
 As an example of an iterated filtering investigation, let's carry out a local search, starting at the current estimate of the MLE.
 ```{r mif}
 stew("mif1.rda",{
-
-  set.seed(354320731,kind="L'Ecuyer")
 
   t3 <- system.time(
     m2 <- foreach(i=1:10,.packages='pomp',
@@ -462,7 +458,8 @@ stew("mif1.rda",{
                    pfilter(contacts2,params=params_new,Np=1000,seed=1809+i)
                  )
 
-})
+},seed=354320731,kind="L'Ecuyer")
+
 (loglik_new <- logmeanexp(sapply(pf3,logLik),se=TRUE))
 ```
 This is a relatively quick search, taking only `r round(t3["elapsed"],1)` seconds. The preliminary likelihood estimated as a consequence of running `mif2` and extracted here by `sapply(m2,logLik)` does not correspond to the actual, fixed parameter, model. It is the sequential Monte Carlo estimate of the likelihood from the last filtering iteration, and therefore will have some perturbation of the parameters. Further, one typically requires fewer particles for each filtering iteration than necessary to obtain a good likelihood estimate---stochastic errors can cancel out through the filtering iterations, rather than within any one iteration. For promising new parameter values, it is desirable to put computational effort into evaluating the likelihood sufficient to make the Monte Carlo error small compared to one log unit.
