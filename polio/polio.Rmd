@@ -42,7 +42,7 @@ opts_chunk$set(
   dpi=300,
   dev='png',
   dev.args=list(bg='transparent')
-  )
+)
 
 options(
   keep.source=TRUE,
@@ -73,7 +73,7 @@ This is one of a [series of tutorials](http://dept.stat.lsa.umich.edu/~ionides/t
 ## Introduction
 
 The massive global polio eradication initiative (GPEI) has brought polio from a major global disease to the brink of extinction. Finishing this task is proving hard, and improved understanding polio ecology might assist.  @martinez-bakker15 investigated this using extensive state level pre-vaccination era data in USA. We will follow the approach of @martinez-bakker15 for one state (Wisconsin). In the context of their model, we can quantify seasonality of transmission, the role of the birth rate in explaining the transmission dynamics, and the persistence mechanism of polio. @martinez-bakker15 carrried out this analysis for all 48 contigous states and District of Columbia, and their data and code are all publicly available. The data we study, in [polio_wisconsin.csv](polio_wisconsin.csv), consist of `cases`, the monthly reported polio cases; `births`, the  monthly recorded births; `pop`, the annual census; `time`, date in years.
- 
+
 ```{r data}
 polio_data <- read.table("polio_wisconsin.csv")
 colnames(polio_data)
@@ -81,7 +81,7 @@ colnames(polio_data)
 
 We implement the compartment model of @martinez-bakker15, having compartments representing susceptible babies in each of six one-month birth cohorts ($S^B_1$,...,$S^B_6$), susceptible older individuals ($S^O$), infected babies ($I^B$), infected older individuals ($I^O$), and recovered with lifelong immunity ($R$). The state vector of the disease transmission model consists of numbers of individuals in each compartment at each time, 
 $$X(t)=\big(S^B_1(t),...,S^B_6(t), I^B(t),I^O(t),R(t) \big).$$
- Babies under six months are modeled as fully protected from symptomatic poliomyelitis; older infections lead to reported cases (usually paralysis) at a rate $\rho$. 
+Babies under six months are modeled as fully protected from symptomatic poliomyelitis; older infections lead to reported cases (usually paralysis) at a rate $\rho$. 
 
 The flows through the compartments are graphically represented as follows (Figure 1A of @martinez-bakker15):
 
@@ -281,26 +281,26 @@ We can now put these pieces together into a pomp object.
 
 ```{r pomp}
 stew("polio_pomp.rda",{
-polio <- pomp(
-  data=subset(polio_data, 
-    (time > polio_t0 + 0.01) & (time < 1953+1/12+0.01),	
-    select=c("cases","time")),
-  times="time",
-  t0=polio_t0,
-  params=polio_mle,
-  rprocess = euler.sim(step.fun = polio_rprocess, delta.t=1/12),
-  rmeasure= polio_rmeasure,
-  dmeasure = polio_dmeasure,
-  covar=covartable,
-  tcovar="time",
-  obsnames = polio_obsnames,
-  statenames = polio_statenames,
-  paramnames = polio_paramnames,
-  covarnames = c("xi1","B","P"),
-  initializer=polio_initializer,
-  toEstimationScale=polio_toEstimationScale, 
-  fromEstimationScale=polio_fromEstimationScale
-)})
+  polio <- pomp(
+    data=subset(polio_data, 
+                (time > polio_t0 + 0.01) & (time < 1953+1/12+0.01),	
+                select=c("cases","time")),
+    times="time",
+    t0=polio_t0,
+    params=polio_mle,
+    rprocess = euler.sim(step.fun = polio_rprocess, delta.t=1/12),
+    rmeasure= polio_rmeasure,
+    dmeasure = polio_dmeasure,
+    covar=covartable,
+    tcovar="time",
+    obsnames = polio_obsnames,
+    statenames = polio_statenames,
+    paramnames = polio_paramnames,
+    covarnames = c("xi1","B","P"),
+    initializer=polio_initializer,
+    toEstimationScale=polio_toEstimationScale, 
+    fromEstimationScale=polio_fromEstimationScale
+  )})
 plot(polio)
 ```
 
@@ -416,7 +416,7 @@ stew(sprintf("mif-%d.rda",run_level),{
                         logmeanexp(
                           replicate(polio_Nreps_eval[run_level],
                                     logLik(pfilter(polio,params=coef(m2[[i]]),Np=polio_Np[run_level]))
-                                    ),
+                          ),
                           se=TRUE)
                       }
   })
@@ -549,7 +549,7 @@ When carrying out parameter estimation for dynamic systems, we need to specify b
 Discuss issues in specifying and inferring initial conditions, with particular reference to this polio example. 
 
 Suggest a possible improvement in the treatment of initial conditions here, code it up and make some preliminary assessment of its effectiveness. How will you decide if it is a substantial improvement? 
- 
+
 ## Technical exercise: Parameter estimation using randomized starting values.
 
 Comment on the computations above, for parameter estimation using randomized starting values. Propose and try out at least one modification of the procedure. How could one make a formal statement quantifying the error of the optimization procedure?
