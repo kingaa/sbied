@@ -16,7 +16,7 @@ require(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 
 ## ----get-data------------------------------------------------------------
-base_url <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+base_url <- "http://kingaa.github.io/sbied/"
 read.csv(paste0(base_url,"data/ebola_data.csv"),stringsAsFactors=FALSE,
          colClasses=c(date="Date")) -> dat
 sapply(dat,class)

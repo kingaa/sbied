@@ -17,7 +17,7 @@ require(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 
 ## ----flu-data1-----------------------------------------------------------
-base_url <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+base_url <- "http://kingaa.github.io/sbied/"
 bsflu <- read.table(paste0(base_url,"data/bsflu_data.txt"))
 head(bsflu)
 

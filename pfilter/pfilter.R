@@ -18,7 +18,7 @@ require(pomp)
 stopifnot(packageVersion("pomp")>="0.74-1")
 
 ## ----sir-construct-------------------------------------------------------
-base_url <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+base_url <- "http://kingaa.github.io/sbied/"
 url <- paste0(base_url,"data/bsflu_data.txt")
 bsflu <- read.table(url)
 
