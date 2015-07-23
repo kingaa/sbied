@@ -42,15 +42,13 @@ opts_chunk$set(
   dev='png',
   dev.args=list(bg='transparent')
 )
-
+```
+```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
 options(
-  pomp.cache="cache",
+  pomp.cache=".",
   keep.source=TRUE,
   encoding="UTF-8"
 )
-
-library(ggplot2)
-theme_set(theme_bw())
 ```
 
 
@@ -232,7 +230,7 @@ Here is one possible explanation: the precision of interest is often the second 
 
 For a relatively simple epidemiological example of IF2, we consider fitting a stochastic SIR model to an influenza outbreak in a British boarding school [@anonymous78]. Reports consist of the number of children confined to bed for each of the 14 days of the outbreak. The total number of children at the school was 763, and a total of 512 children spent time away from class. Only one adult developed influenza-like illness, so adults are omitted from the data and model. First, we read in the boarding school flu (bsflu) data:
 ```{r load_bbs}
-bsflu_data <- read.table("http://kinglab.eeb.lsa.umich.edu/SBIED/data/bsflu_data.txt")
+bsflu_data <- read.table("http://kingaa.github.io/sbied/data/bsflu_data.txt")
 ```
 
 Our model is a variation on a basic SIR Markov chain, with state $X(t)=(S(t),I(t),R_1(t),R_2(t),R_3(t) )$ giving the number of individuals in the susceptible and infectious categories, and three stages of recovery. The recovery stages, $R_1$, $R_2$ and $R_3$, are all modeled to be non-contagious. $R_1$ consists of individuals who are bed-confined if they show symptoms; $R_2$ consists of individuals who are convalescent if they showed symptoms; $R_3$ consists of recovered individuals who have returned to school-work if they were symtomatic.  The observation on day $n$ of the observed epidemic (with $n=1$ being 22 January) consists of the numbers of children who are bed-confined and convalescent. These measurements are modeled as $Y_n=(B_n,C_n)$ with $B_n\sim\mathrm{Poisson}(\rho R_1(t_n))$ and $C_n\sim\mathrm{Poisson}(\rho R_2(t_n))$. Here, $\rho$ is a reporting rate corresponding to the chance of being symptomatic.
@@ -301,12 +299,12 @@ bsflu_initializer <- "
 "
 ```
 
-We can now build the pomp object:
+We can now build the pomp object.
 
 ```{r pomp_bsflu}
 require(pomp)
 stopifnot(packageVersion("pomp")>="0.74-2")
-
+stew(file="pomp_bsflu.rda",{
 bsflu <- pomp(
   data=bsflu_data,
   times="day",
@@ -323,7 +321,7 @@ bsflu <- pomp(
   statenames=bsflu_statenames,
   paramnames=bsflu_paramnames,
   initializer=Csnippet(bsflu_initializer)
-) 
+)})
 plot(bsflu)
 ```
 
@@ -358,7 +356,7 @@ It is convenient to do some parallelization to speed up the computations. Most m
 
 ```{r parallel-setup,cache=FALSE}
 require(doParallel)
-cores <- 4
+cores <- 15
 registerDoParallel(cores)
 mcopts <- list(set.seed=TRUE)
 

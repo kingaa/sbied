@@ -1,5 +1,12 @@
+## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
+options(
+  pomp.cache=".",
+  keep.source=TRUE,
+  encoding="UTF-8"
+)
+
 ## ----load_bbs------------------------------------------------------------
-bsflu_data <- read.table("http://kinglab.eeb.lsa.umich.edu/SBIED/data/bsflu_data.txt")
+bsflu_data <- read.table("http://kingaa.github.io/sbied/data/bsflu_data.txt")
 
 ## ----bsflu_names---------------------------------------------------------
 bsflu_statenames <- c("S","I","R1","R2")
@@ -51,7 +58,7 @@ bsflu_initializer <- "
 ## ----pomp_bsflu----------------------------------------------------------
 require(pomp)
 stopifnot(packageVersion("pomp")>="0.74-2")
-
+stew(file="pomp_bsflu.rda",{
 bsflu <- pomp(
   data=bsflu_data,
   times="day",
@@ -68,7 +75,7 @@ bsflu <- pomp(
   statenames=bsflu_statenames,
   paramnames=bsflu_paramnames,
   initializer=Csnippet(bsflu_initializer)
-) 
+)})
 plot(bsflu)
 
 ## ----run_level-----------------------------------------------------------
@@ -88,7 +95,7 @@ bsflu_fixed_params <- c(mu_R1=1/(sum(bsflu_data$B)/512),mu_R2=1/(sum(bsflu_data$
 
 ## ----parallel-setup,cache=FALSE------------------------------------------
 require(doParallel)
-cores <- 4
+cores <- 15
 registerDoParallel(cores)
 mcopts <- list(set.seed=TRUE)
 
