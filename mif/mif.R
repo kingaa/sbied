@@ -50,6 +50,7 @@ bsflu_initializer <- "
 
 ## ----pomp_bsflu----------------------------------------------------------
 require(pomp)
+stopifnot(packageVersion("pomp")>="0.74-2")
 
 bsflu <- pomp(
   data=bsflu_data,
@@ -94,10 +95,8 @@ mcopts <- list(set.seed=TRUE)
 set.seed(396658101,kind="L'Ecuyer")
 
 ## ----pf------------------------------------------------------------------
-stew(sprintf("pf-%d.rda",run_level),{
-  
-  set.seed(1320290398,kind="L'Ecuyer")
-  
+stew(file=sprintf("pf-%d.rda",run_level),{
+ 
   t_pf <- system.time(
     pf <- foreach(i=1:20,.packages='pomp',
                   .options.multicore=mcopts) %dopar% try(
@@ -105,7 +104,7 @@ stew(sprintf("pf-%d.rda",run_level),{
                   )
   )
   
-})
+},seed=1320290398,kind="L'Ecuyer")
 
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
 
@@ -113,9 +112,7 @@ stew(sprintf("pf-%d.rda",run_level),{
 bsflu_rw.sd <- 0.02
 bsflu_cooling.fraction.50 <- 0.5
 
-stew(sprintf("local_search-%d.rda",run_level),{
-  
-  set.seed(900242057,kind="L'Ecuyer")
+stew(file=sprintf("local_search-%d.rda",run_level),{
   
   t_local <- system.time({
     mifs_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  {
@@ -137,12 +134,11 @@ stew(sprintf("local_search-%d.rda",run_level),{
     }
   })
   
-})
+},seed=900242057,kind="L'Ecuyer")
+
 
 ## ----lik_local_eval------------------------------------------------------
-stew(sprintf("lik_local-%d.rda",run_level),{
-  
-  set.seed(900242057,kind="L'Ecuyer")
+stew(file=sprintf("lik_local-%d.rda",run_level),{
   
   t_local_eval <- system.time({
     liks_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp',.combine=rbind) %dopar% {
@@ -150,7 +146,7 @@ stew(sprintf("lik_local-%d.rda",run_level),{
       logmeanexp(evals, se=TRUE)
     }
   })
-})
+},seed=900242057,kind="L'Ecuyer")
 
 results_local <- data.frame(logLik=liks_local[,1],logLik_se=liks_local[,2],t(sapply(mifs_local,coef)))
 summary(results_local$logLik,digits=5)
@@ -166,9 +162,7 @@ bsflu_box <- rbind(
 )
 
 ## ----box_eval------------------------------------------------------------
-stew(sprintf("box_eval-%d.rda",run_level),{
-  
-  set.seed(1270401374,kind="L'Ecuyer")
+stew(file=sprintf("box_eval-%d.rda",run_level),{
   
   t_global <- system.time({
     mifs_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  mif2(
@@ -176,12 +170,10 @@ stew(sprintf("box_eval-%d.rda",run_level),{
       start=c(apply(bsflu_box,1,function(x)runif(1,x)),bsflu_fixed_params)
     )
   })
-})
+},seed=1270401374,kind="L'Ecuyer")
 
 ## ----lik_global_eval-----------------------------------------------------
-stew(sprintf("lik_global_eval-%d.rda",run_level),{
-  
-  set.seed(442141592,kind="L'Ecuyer")
+stew(file=sprintf("lik_global_eval-%d.rda",run_level),{
   
   t_global_eval <- system.time({
     liks_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp',.combine=rbind, .options.multicore=mcopts) %dopar% {
@@ -189,18 +181,16 @@ stew(sprintf("lik_global_eval-%d.rda",run_level),{
       logmeanexp(evals, se=TRUE)
     }
   })
-})
+},seed=442141592,kind="L'Ecuyer")
 
 results_global <- data.frame(logLik=liks_global[,1],logLik_se=liks_global[,2],t(sapply(mifs_global,coef)))
 summary(results_global$logLik,digits=5)
 
-## ----save_params---------------------------------------------------------
-if(run_level>1) write.table(rbind(results_local,results_global),
-                            file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
+## ----save_params,eval=FALSE----------------------------------------------
+## if (run_level>1)
+##    write.table(rbind(results_local,results_global),
+##                             file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
 
 ## ----pairs_global--------------------------------------------------------
 pairs(~logLik+Beta+mu_I+rho,data=subset(results_global,logLik>max(logLik)-250))
-
-## ----save, include=FALSE,eval=FALSE--------------------------------------
-## if(run_level>1) save(list = ls(all = TRUE), file = "Rout.rda")
 

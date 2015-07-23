@@ -36,20 +36,8 @@ This module introduces statistical inference techniques and computational method
 1. [Case study III: sexual contacts panel data](./contacts/contacts.html)&nbsp;&nbsp;&nbsp;[(**R** script)](./contacts/contacts.R)
 1. [Case study IV: Ebola and forecasting](./ebola/ebola.html)&nbsp;&nbsp;&nbsp;[(**R** script)](./ebola/ebola.R)
 
- 
 ----------------------
 
-## Daily Schedule
-
-**Time** | **Daily Activity**
------------|------------
-8:00 am -- 8:30 am | Coffee
-8:30 am -- 10:00 am | Class Session
-10:00 am -- 10:30 am | Break
-10:30 am -- 12:00 pm | Class Session
-12:00 pm -- 1:30 pm | Lunch Break
-1:30 pm -- 3:00 pm | Class Session
-3:00 pm -- 3:30 pm | Break
-3:30 pm -- 5:00 pm | Class Session
+[**pomp** homepage](http://kingaa.github.io/pomp)
 
 ----------------------

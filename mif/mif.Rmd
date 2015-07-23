@@ -1,6 +1,6 @@
 ---
 title: "Iterated filtering: Principles and practice"
-author: "Edward Ionides"
+author: "Edward Ionides and Aaron A. King"
 date: "06/25/2015"
 output:
   html_document:
@@ -13,7 +13,7 @@ csl: ../ecology.csl
 
 Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
 Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](http://dept.stat.lsa.umich.edu/~ionides/tutorials/cc-by-nc.png)
+![CC-BY_NC](../graphics/cc-by-nc.png)
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 library(pomp)
@@ -305,6 +305,7 @@ We can now build the pomp object:
 
 ```{r pomp_bsflu}
 require(pomp)
+stopifnot(packageVersion("pomp")>="0.74-2")
 
 bsflu <- pomp(
   data=bsflu_data,
@@ -367,10 +368,8 @@ set.seed(396658101,kind="L'Ecuyer")
 We proceed to carry out replicated particle filters at this tentative MLE:
 
 ```{r pf}
-stew(sprintf("pf-%d.rda",run_level),{
-  
-  set.seed(1320290398,kind="L'Ecuyer")
-  
+stew(file=sprintf("pf-%d.rda",run_level),{
+ 
   t_pf <- system.time(
     pf <- foreach(i=1:20,.packages='pomp',
                   .options.multicore=mcopts) %dopar% try(
@@ -378,7 +377,7 @@ stew(sprintf("pf-%d.rda",run_level),{
                   )
   )
   
-})
+},seed=1320290398,kind="L'Ecuyer")
 
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
 ```
@@ -394,9 +393,7 @@ Let's carry out a local search using `mif2` around this previously identified ML
 bsflu_rw.sd <- 0.02
 bsflu_cooling.fraction.50 <- 0.5
 
-stew(sprintf("local_search-%d.rda",run_level),{
-  
-  set.seed(900242057,kind="L'Ecuyer")
+stew(file=sprintf("local_search-%d.rda",run_level),{
   
   t_local <- system.time({
     mifs_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  {
@@ -418,15 +415,14 @@ stew(sprintf("local_search-%d.rda",run_level),{
     }
   })
   
-})
+},seed=900242057,kind="L'Ecuyer")
+
 ```
 
 Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference. Partly, this is because some parameter perturbations remain in the last filtering iteration. Partly, this is because `mif2` is usually carried out with a smaller number of particles than is necessary for a good likelihood evaluation---the errors in `mif2` average out over many iterations of the filtering. Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
 ```{r lik_local_eval}
-stew(sprintf("lik_local-%d.rda",run_level),{
-  
-  set.seed(900242057,kind="L'Ecuyer")
+stew(file=sprintf("lik_local-%d.rda",run_level),{
   
   t_local_eval <- system.time({
     liks_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp',.combine=rbind) %dopar% {
@@ -434,7 +430,7 @@ stew(sprintf("lik_local-%d.rda",run_level),{
       logmeanexp(evals, se=TRUE)
     }
   })
-})
+},seed=900242057,kind="L'Ecuyer")
 
 results_local <- data.frame(logLik=liks_local[,1],logLik_se=liks_local[,2],t(sapply(mifs_local,coef)))
 summary(results_local$logLik,digits=5)
@@ -466,9 +462,7 @@ bsflu_box <- rbind(
 We are now ready to carry out likelihood maximizations from diverse starting points. To simplify the code, we can reset only the starting parameters from `mifs_global[[1]]` since the rest of the call to `mif2` can be read in from `mifs_global[[1]]`:
 
 ```{r box_eval}
-stew(sprintf("box_eval-%d.rda",run_level),{
-  
-  set.seed(1270401374,kind="L'Ecuyer")
+stew(file=sprintf("box_eval-%d.rda",run_level),{
   
   t_global <- system.time({
     mifs_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  mif2(
@@ -476,15 +470,13 @@ stew(sprintf("box_eval-%d.rda",run_level),{
       start=c(apply(bsflu_box,1,function(x)runif(1,x)),bsflu_fixed_params)
     )
   })
-})
+},seed=1270401374,kind="L'Ecuyer")
 ```
 
 Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference. Partly, this is because some parameter perturbations remain in the last filtering iteration. Partly, this is because `mif2` is usually carried out with a smaller number of particles than is necessary for a good likelihood evaluation---the errors in `mif2` average out over many iterations of the filtering. Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
 ```{r lik_global_eval}
-stew(sprintf("lik_global_eval-%d.rda",run_level),{
-  
-  set.seed(442141592,kind="L'Ecuyer")
+stew(file=sprintf("lik_global_eval-%d.rda",run_level),{
   
   t_global_eval <- system.time({
     liks_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp',.combine=rbind, .options.multicore=mcopts) %dopar% {
@@ -492,7 +484,7 @@ stew(sprintf("lik_global_eval-%d.rda",run_level),{
       logmeanexp(evals, se=TRUE)
     }
   })
-})
+},seed=442141592,kind="L'Ecuyer")
 
 results_global <- data.frame(logLik=liks_global[,1],logLik_se=liks_global[,2],t(sapply(mifs_global,coef)))
 summary(results_global$logLik,digits=5)
@@ -500,8 +492,9 @@ summary(results_global$logLik,digits=5)
 
 It is good practice to build up a file of successful optimization results for subsequent investigation:
 
-```{r save_params}
-if(run_level>1) write.table(rbind(results_local,results_global),
+```{r save_params,eval=FALSE}
+if (run_level>1) 
+   write.table(rbind(results_local,results_global),
                             file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
 ```
 
@@ -541,9 +534,6 @@ We cannot directly evaluate $e$, since there is also Monte Carlo error in our ev
 
 Even in this small, 3 parameter, example, it takes a considerable amount of computation to find the global maximum (with values of $\beta$ around 0.004) starting from uniform draws in the specified box. The problem is that, on the scale on which "uniform" is defined, the peak around $\beta\approx 0.004$ is very narrow. Propose and test a more favorable way to draw starting parameters for the global search, with better scale invariance properties.
 
-```{r save, include=FALSE,eval=FALSE}
-if(run_level>1) save(list = ls(all = TRUE), file = "Rout.rda")
-```
 
 ### Technical exercise: Adding a latent class
 
