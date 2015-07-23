@@ -39,5 +39,6 @@ This module introduces statistical inference techniques and computational method
 ----------------------
 
 [**pomp** homepage](http://kingaa.github.io/pomp)
+[Source code for these notes](http://github.com/kingaa/sbied/)
 
 ----------------------
