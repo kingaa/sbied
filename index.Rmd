@@ -27,14 +27,14 @@ This module introduces statistical inference techniques and computational method
 
 
 0. [Instructions for preparing your laptop for the course exercises](./prep/preparation.html)
-1. [Introduction: What is "Simulation-based Inference for Epidemiological Dynamics?"](./intro/intro.html)
-2. [Dynamic models and their simulation by Euler's method.](./stochsim/stochsim.html)
-3. [The particle filter: theory and practice](./pfilter/pfilter.html)
-1. [Iterated filtering: theory and practice](./mif/mif.html)
-1. [Case study I: polio.](./polio/polio.html)
-1. [Case study II: measles.](./measles/measles.html)
-1. [Case study III: sexual contacts panel data](./contacts/contacts.html)
-1. [Case study IV: Ebola and forecasting](./ebola/ebola.html)
+1. [Introduction: What is "Simulation-based Inference for Epidemiological Dynamics?"](./intro/intro.html)&nbsp;&nbsp;&nbsp;[(**R** script)](./intro/intro.R)
+1. [Dynamic models and their simulation by Euler's method.](./stochsim/stochsim.html)&nbsp;&nbsp;&nbsp;[(**R** script)](./stochsim/stochsim.R)
+1. [Likelihood for POMPs: theory and practice](./pfilter/pfilter.html)&nbsp;&nbsp;&nbsp;[(**R** script)](./pfilter/pfilter.R)
+1. [Iterated filtering: theory and practice](./mif/mif.html)&nbsp;&nbsp;&nbsp;[(**R** script)](./mif/mif.R)
+1. [Case study I: polio.](./polio/polio.html)&nbsp;&nbsp;&nbsp;[(**R** script)](./polio/polio.R)
+1. [Case study II: measles.](./measles/measles.html)&nbsp;&nbsp;&nbsp;[(**R** script)](./measles/measles.R)
+1. [Case study III: sexual contacts panel data](./contacts/contacts.html)&nbsp;&nbsp;&nbsp;[(**R** script)](./contacts/contacts.R)
+1. [Case study IV: Ebola and forecasting](./ebola/ebola.html)&nbsp;&nbsp;&nbsp;[(**R** script)](./ebola/ebola.R)
 
  
 ----------------------
