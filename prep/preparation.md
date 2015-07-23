@@ -12,7 +12,7 @@ Once you’ve installed these, open a session in **R** or **Rstudio** and run th
 
 ```
 > update.packages()
-> source("http://kinglab.eeb.lsa.umich.edu/SBIED/prep/packages.R",echo=TRUE)
+> source("http://kingaa.github.io/sbied/prep/packages.R",echo=TRUE)
 > source("http://kinglab.eeb.lsa.umich.edu/SBIED/prep/pompTest.R",echo=TRUE)
 ```
 
@@ -20,7 +20,7 @@ Once you’ve installed these, open a session in **R** or **Rstudio** and run th
 
 If the final command fails, try the following:
 ```
-> source("http://kinglab.eeb.lsa.umich.edu/SBIED/prep/hello.R",echo=TRUE)
+> source("http://kingaa.github.io/sbied/prep/hello.R",echo=TRUE)
 ```
 If this fails to give the "Hello world!" message, you will need to follow the instructions below that correspond to your OS.
 

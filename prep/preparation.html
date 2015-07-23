@@ -70,11 +70,11 @@ img {
 <p><strong>R</strong> and <strong>Rstudio</strong> are free and open-source. You’ll need at least version 3.2.0 of <strong>R</strong>. The latest version is 3.2.1, so if you need to update, go ahead and install version 3.2.1. Source code and binaries are available on CRAN (<a href="http://cran.r-project.org" class="uri">http://cran.r-project.org</a>). Install the latest version of <strong>Rstudio</strong> (<a href="http://www.rstudio.com/products/rstudio/download/" class="uri">http://www.rstudio.com/products/rstudio/download/</a>).</p>
 <p>Once you’ve installed these, open a session in <strong>R</strong> or <strong>Rstudio</strong> and run the following:</p>
 <pre><code>&gt; update.packages()
-&gt; source(&quot;http://kinglab.eeb.lsa.umich.edu/SBIED/prep/packages.R&quot;,echo=TRUE)
+&gt; source(&quot;http://kingaa.github.io/sbied/prep/packages.R&quot;,echo=TRUE)
 &gt; source(&quot;http://kinglab.eeb.lsa.umich.edu/SBIED/prep/pompTest.R&quot;,echo=TRUE)</code></pre>
 <p>[The <code>&gt;</code> is the command prompt; it’s not part of the command. Also, depending on your email client program, you may need to replace the quotation marks with plain keyboard double quotes.] The first command updates your installed packages. You may be prompted to specify a CRAN mirror: choose one near you. The second command runs a script on my website. It will install some needed packages if these are not already installed on your system. The third command will attempt to install <strong>pomp</strong>, the principal R package we’ll be using, from source code and will check whether you can work with it. The <code>pompTest.R</code> script will attempt to install a version that is more recent than that which is on CRAN. The latter will not be enough for our purposes.</p>
 <p>If the final command fails, try the following:</p>
-<pre><code>&gt; source(&quot;http://kinglab.eeb.lsa.umich.edu/SBIED/prep/hello.R&quot;,echo=TRUE)</code></pre>
+<pre><code>&gt; source(&quot;http://kingaa.github.io/sbied/prep/hello.R&quot;,echo=TRUE)</code></pre>
 <p>If this fails to give the “Hello world!” message, you will need to follow the instructions below that correspond to your OS.</p>
 </div>
 <div id="linux-and-unix-users" class="section level4">

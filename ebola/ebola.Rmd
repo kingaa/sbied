@@ -94,7 +94,7 @@ Key questions included:
 
 Download the data from the WHO Situation Report of 1 October 2014:
 ```{r get-data}
-base_url <- "http://kinglab.eeb.lsa.umich.edu/SBIED/"
+base_url <- "http://kingaa.github.io/sbied/"
 read.csv(paste0(base_url,"data/ebola_data.csv"),stringsAsFactors=FALSE,
          colClasses=c(date="Date")) -> dat
 sapply(dat,class)

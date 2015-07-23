@@ -75,11 +75,11 @@ img {
 <h3>OSX 10.9 and older</h3>
 <p>Make sure you have <code>Xcode</code> installed. It is available at <a href="https://developer.apple.com/xcode/downloads/" class="uri">https://developer.apple.com/xcode/downloads/</a>. You may need to follow the “Additional Tools” link to find an older version of <code>Xcode</code>.</p>
 <p>The following is based on the <a href="http://cran.r-project.org/bin/macosx/tools">instructions given on the <em>R</em> website</a>. If you have root privileges and wish to install <code>gfortran</code> globally in <code>/usr/local/</code>, then Download and run the <code>mac-fortran-sudo.sh</code> script from the course website. To do this, open a terminal and execute</p>
-<pre><code>curl -O http://kinglab.eeb.lsa.umich.edu/SBIED/prep/mac-fortran-sudo.sh
+<pre><code>curl -O http://kingaa.github.io/sbied/prep/mac-fortran-sudo.sh
 sh mac-fortran-sudo.sh</code></pre>
 <p>The last command uses <code>sudo</code> and will require you to enter your password.</p>
 <p>If you just wish to install <code>gfortran</code> in your user space in such a way that it can be easily removed later, then download and run the <code>mac-fortran.sh</code> script from the course website by opening a terminal and executing</p>
-<pre><code>curl -O http://kinglab.eeb.lsa.umich.edu/SBIED/prep/mac-fortran.sh
+<pre><code>curl -O http://kingaa.github.io/sbied/prep/mac-fortran.sh
 sh mac-fortran.sh</code></pre>
 <p>This will download and unpack a new version of <code>gfortran</code>, putting it into a new directory: <code>~/gfortran</code>. It will also put a <code>Makevars</code> file into your <code>~/.R</code> directory so that <code>R</code> knows where to look when it wants <code>gfortran</code>.</p>
 <p>If it works, you should be able to run the <a href="./preparation.html">installation and test scripts</a>.</p>
