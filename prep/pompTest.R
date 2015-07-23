@@ -2,7 +2,7 @@
 ## If this script runs without errors, pomp is usable on your system.
 
 require(devtools)
-install_github("kingaa/pomp@0.71-1")
+install_github("kingaa/pomp")
 
 require(pomp)
 

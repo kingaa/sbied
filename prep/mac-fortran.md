@@ -19,15 +19,8 @@ If these still don't work, complaining about a lack of FORTRAN support, try inst
 Make sure you have `Xcode` installed.  It is available at https://developer.apple.com/xcode/downloads/.  You may need to follow the "Additional Tools" link to find an older version of `Xcode`.
 
 The following is based on the [instructions given on the *R* website](http://cran.r-project.org/bin/macosx/tools).
-If you have root privileges and wish to install `gfortran` globally in `/usr/local/`, then 
-Download and run the `mac-fortran-sudo.sh` script from the course website.  To do this, open a terminal and execute
-```
-curl -O http://kingaa.github.io/sbied/prep/mac-fortran-sudo.sh
-sh mac-fortran-sudo.sh
-```
-The last command uses `sudo` and will require you to enter your password.
 
-If you just wish to install `gfortran` in your user space in such a way that it can be easily removed later, then download and run the `mac-fortran.sh` script from the course website by opening a terminal and executing
+To install `gfortran` in your user space in such a way that it can be easily removed later, download and run the `mac-fortran.sh` script from the course website by opening a terminal and executing
 ```
 curl -O http://kingaa.github.io/sbied/prep/mac-fortran.sh
 sh mac-fortran.sh

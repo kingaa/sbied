@@ -13,7 +13,7 @@ Once you’ve installed these, open a session in **R** or **Rstudio** and run th
 ```
 > update.packages()
 > source("http://kingaa.github.io/sbied/prep/packages.R",echo=TRUE)
-> source("http://kinglab.eeb.lsa.umich.edu/SBIED/prep/pompTest.R",echo=TRUE)
+> source("http://kingaa.github.io/sbied/prep/pompTest.R",echo=TRUE)
 ```
 
 [The `>` is the command prompt; it’s not part of the command.  Also, depending on your email client program, you may need to replace the quotation marks with plain keyboard double quotes.]  The first command updates your installed packages.  You may be prompted to specify a CRAN mirror: choose one near you.  The second command runs a script on my website.  It will install some needed packages if these are not already installed on your system.  The third command will attempt to install **pomp**, the principal R package we’ll be using, from source code and will check whether you can work with it.  The `pompTest.R` script will attempt to install a version that is more recent than that which is on CRAN.  The latter will not be enough for our purposes.
