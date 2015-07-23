@@ -1,3 +1,12 @@
+## ----opts,cache=FALSE,include=FALSE--------------------------------------
+## 'pomp' will store its files in the current working directory
+options(pomp.cache=".")
+
+## Set this to an appropriate number for your machine
+options(cores=15)
+
+set.seed(5996485L)
+
 ## ----data----------------------------------------------------------------
 polio_data <- read.table("polio_wisconsin.csv")
 colnames(polio_data)
@@ -125,8 +134,11 @@ polio_fromEstimationScale <- Csnippet("
 ")
 
 ## ----pomp----------------------------------------------------------------
+stew("polio_pomp.rda",{
 polio <- pomp(
-  data=subset(polio_data, select=c("cases","time"),(time > polio_t0 + 0.01) & (time < 1953+1/12+0.01)),
+  data=subset(polio_data, 
+    (time > polio_t0 + 0.01) & (time < 1953+1/12+0.01),	
+    select=c("cases","time")),
   times="time",
   t0=polio_t0,
   params=polio_mle,
@@ -142,7 +154,7 @@ polio <- pomp(
   initializer=polio_initializer,
   toEstimationScale=polio_toEstimationScale, 
   fromEstimationScale=polio_fromEstimationScale
-) 
+)})
 plot(polio)
 
 ## ----run_level-----------------------------------------------------------
@@ -160,25 +172,23 @@ registerDoParallel()
 
 ## ----pf1,cache=FALSE-----------------------------------------------------
 stew(file=sprintf("pf1-%d.rda",run_level),{
-  set.seed(493536993,kind="L'Ecuyer")
   t1 <- system.time(
     pf1 <- foreach(i=1:20,.packages='pomp',
                    .options.multicore=list(set.seed=TRUE)) %dopar% try(
                      pfilter(polio,Np=polio_Np[run_level])
                    )
   )
-})
+},seed=493536993,kind="L'Ecuyer")
 (L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE))
 
 ## ----persistence,cache=FALSE---------------------------------------------
 stew(sprintf("persistence-%d.rda",run_level),{
-  set.seed(493536993,kind="L'Ecuyer")
   t_sim <- system.time(
     sim <- foreach(i=1:polio_Nsim[run_level],.packages='pomp',
                    .options.multicore=list(set.seed=TRUE)) %dopar% 
       simulate(polio)
   )
-})
+},seed=493536993,kind="L'Ecuyer")
 
 no_cases_data <- sum(obs(polio)==0)
 no_cases_sim <- sum(sapply(sim,obs)==0)/length(sim)
@@ -196,13 +206,11 @@ polio_rw.sd_ivp <- 0.2
 polio_cooling.fraction.50 <- 0.5
 
 stew(sprintf("mif-%d.rda",run_level),{
-  set.seed(318817883,kind="L'Ecuyer")
   t2 <- system.time({
     m2 <- foreach(i=1:polio_Nreps_local[run_level],
                   .packages='pomp', .combine=c,
                   .options.multicore=list(set.seed=TRUE)) %dopar% try(
                     mif2(polio,
-                         seed=143275+i,
                          Np=polio_Np[run_level],
                          Nmif=polio_Nmif[run_level],
                          cooling.type="geometric",
@@ -236,7 +244,7 @@ stew(sprintf("mif-%d.rda",run_level),{
                           se=TRUE)
                       }
   })
-})
+},seed=318817883,kind="L'Ecuyer")
 
 r2 <- data.frame(logLik=lik_m2[,1],logLik_se=lik_m2[,2],t(sapply(m2,coef)))
 if (run_level>1) 
@@ -265,13 +273,11 @@ polio_box <- rbind(
 
 ## ----box_eval,cache=FALSE------------------------------------------------
 stew(file=sprintf("box_eval-%d.rda",run_level),{
-  set.seed(290860873,kind="L'Ecuyer")
   t3 <- system.time({
     m3 <- foreach(i=1:polio_Nreps_global[run_level],.packages='pomp',.combine=c,
                   .options.multicore=list(set.seed=TRUE)) %dopar%  
       mif2(
         m2[[1]],
-        seed=1587690+i, 
         start=c(apply(polio_box,1,function(x)runif(1,x)),polio_fixed_params)
       )
     
@@ -285,7 +291,8 @@ stew(file=sprintf("box_eval-%d.rda",run_level),{
                           se=TRUE)
                       }
   })
-})
+},seed=290860873,kind="L'Ecuyer")
+
 
 r3 <- data.frame(logLik=lik_m3[,1],logLik_se=lik_m3[,2],t(sapply(m3,coef)))
 if(run_level>1) write.table(r3,file="polio_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
