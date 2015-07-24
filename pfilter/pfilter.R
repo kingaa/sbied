@@ -2,7 +2,6 @@
 options(
   keep.source=TRUE,
   stringsAsFactors=FALSE,
-  pomp.cache="cache",
   encoding="UTF-8"
   )
 
