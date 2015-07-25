@@ -166,7 +166,7 @@ polio_Nsim <-        c(50,100, 500)
 require(doParallel)
 registerDoParallel()
 
-## ----pf1,cache=FALSE-----------------------------------------------------
+## ----pf1-----------------------------------------------------------------
 stew(file=sprintf("pf1-%d.rda",run_level),{
   t1 <- system.time(
     pf1 <- foreach(i=1:20,.packages='pomp',
@@ -177,7 +177,7 @@ stew(file=sprintf("pf1-%d.rda",run_level),{
 },seed=493536993,kind="L'Ecuyer")
 (L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE))
 
-## ----persistence,cache=FALSE---------------------------------------------
+## ----persistence---------------------------------------------------------
 stew(sprintf("persistence-%d.rda",run_level),{
   t_sim <- system.time(
     sim <- foreach(i=1:polio_Nsim[run_level],.packages='pomp',
@@ -196,7 +196,7 @@ imports_sim <- coef(polio)["psi"]*mean(sapply(sim,function(po) mean(states(po)["
 mle_simulation <- simulate(polio,seed=127)
 plot(mle_simulation)
 
-## ----mif,cache=FALSE-----------------------------------------------------
+## ----mif-----------------------------------------------------------------
 polio_rw.sd_rp <- 0.02
 polio_rw.sd_ivp <- 0.2
 polio_cooling.fraction.50 <- 0.5
@@ -267,7 +267,7 @@ polio_box <- rbind(
   IO_0=c(0,0.01)
 )
 
-## ----box_eval,cache=FALSE------------------------------------------------
+## ----box_eval------------------------------------------------------------
 stew(file=sprintf("box_eval-%d.rda",run_level),{
   t3 <- system.time({
     m3 <- foreach(i=1:polio_Nreps_global[run_level],.packages='pomp',.combine=c,

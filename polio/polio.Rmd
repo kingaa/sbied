@@ -318,7 +318,7 @@ require(doParallel)
 registerDoParallel()
 ```
 
-```{r pf1,cache=FALSE}
+```{r pf1}
 stew(file=sprintf("pf1-%d.rda",run_level),{
   t1 <- system.time(
     pf1 <- foreach(i=1:20,.packages='pomp',
@@ -340,7 +340,7 @@ This setup has minor differences in notation, model construction and code compar
 
 The scientific purpose of fitting a model typically involves analyzing properties of the fitted model, often investigated using simulation. Following @martinez-bakker15, we are interested in how often months with no reported cases ($Y_n=0$) correspond to months without any local asymptomatic cases, defined for our continuous state model as $I^B_n+I^O_n<1/2$. For Wisconsin, using our model at the estimated MLE, we compute as follows:
 
-```{r persistence,cache=FALSE}
+```{r persistence}
 stew(sprintf("persistence-%d.rda",run_level),{
   t_sim <- system.time(
     sim <- foreach(i=1:polio_Nsim[run_level],.packages='pomp',
@@ -372,7 +372,7 @@ We see from this simulation that the fitted model can generate report histories 
 
 Now, let's see if we can improve on the previous MLE. We use the iterated filtering algorithm IF2 of @ionides15, which uses a random walk in parameter space to approach the MLE. We set a constant random walk standard deviation for each of the regular parameters and a larger constant for each of the initial value parameters. 
 
-```{r mif,cache=FALSE}
+```{r mif}
 polio_rw.sd_rp <- 0.02
 polio_rw.sd_ivp <- 0.2
 polio_cooling.fraction.50 <- 0.5
@@ -461,7 +461,7 @@ polio_box <- rbind(
 
 We then carry out a search identical to the local one except for the starting parameter values. This can be succinctly coded by calling `mif2` on the previously constructed object, `m2[[1]]`, with a reset starting value:
 
-```{r box_eval,cache=FALSE}
+```{r box_eval}
 stew(file=sprintf("box_eval-%d.rda",run_level),{
   t3 <- system.time({
     m3 <- foreach(i=1:polio_Nreps_global[run_level],.packages='pomp',.combine=c,
