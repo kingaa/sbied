@@ -1,6 +1,5 @@
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
 options(
-  pomp.cache=".",
   keep.source=TRUE,
   encoding="UTF-8"
 )
@@ -57,8 +56,7 @@ bsflu_initializer <- "
 
 ## ----pomp_bsflu----------------------------------------------------------
 require(pomp)
-stopifnot(packageVersion("pomp")>="0.74-2")
-stew(file="pomp_bsflu.rda",{
+stopifnot(packageVersion("pomp")>="0.75-1")
 bsflu <- pomp(
   data=bsflu_data,
   times="day",
@@ -75,7 +73,7 @@ bsflu <- pomp(
   statenames=bsflu_statenames,
   paramnames=bsflu_paramnames,
   initializer=Csnippet(bsflu_initializer)
-)})
+)
 plot(bsflu)
 
 ## ----run_level-----------------------------------------------------------
@@ -103,7 +101,7 @@ set.seed(396658101,kind="L'Ecuyer")
 
 ## ----pf------------------------------------------------------------------
 stew(file=sprintf("pf-%d.rda",run_level),{
- 
+  
   t_pf <- system.time(
     pf <- foreach(i=1:20,.packages='pomp',
                   .options.multicore=mcopts) %dopar% try(
@@ -195,8 +193,8 @@ summary(results_global$logLik,digits=5)
 
 ## ----save_params,eval=FALSE----------------------------------------------
 ## if (run_level>1)
-##    write.table(rbind(results_local,results_global),
-##                             file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
+##   write.table(rbind(results_local,results_global),
+##               file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
 
 ## ----pairs_global--------------------------------------------------------
 pairs(~logLik+Beta+mu_I+rho,data=subset(results_global,logLik>max(logLik)-250))

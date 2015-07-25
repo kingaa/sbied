@@ -1,0 +1,52 @@
+Loading required package: foreach
+Loading required package: doMPI
+Loading required package: iterators
+Loading required package: Rmpi
+	200 slaves are spawned successfully. 0 failed.
+Loading required package: ggplot2
+Loading required package: methods
+Loading required package: plyr
+Loading required package: reshape2
+Loading required package: magrittr
+Loading required package: pomp
+[1] 800  16
+automatically exporting the following variables from the local environment:
+  covar, dat, dmeas, fromEst, initlz, rmeas, rproc, toEst 
+    sigmaSE              R0                mu           sigma         
+ Min.   :0.02000   Min.   :  3.372   Min.   :0.02   Min.   :   13.11  
+ 1st Qu.:0.03561   1st Qu.: 28.399   1st Qu.:0.02   1st Qu.:   23.74  
+ Median :0.06336   Median : 36.731   Median :0.02   Median :   37.76  
+ Mean   :0.07986   Mean   : 40.965   Mean   :0.02   Mean   :  194.59  
+ 3rd Qu.:0.11263   3rd Qu.: 49.638   3rd Qu.:0.02   3rd Qu.:   69.29  
+ Max.   :0.20000   Max.   :114.879   Max.   :0.02   Max.   :40344.89  
+     gamma             alpha        iota          rho          sigmaSE.1      
+ Min.   :  12.52   Min.   :1   Min.   :2.9   Min.   :0.488   Min.   :0.02000  
+ 1st Qu.:  25.22   1st Qu.:1   1st Qu.:2.9   1st Qu.:0.488   1st Qu.:0.03561  
+ Median :  35.40   Median :1   Median :2.9   Median :0.488   Median :0.06336  
+ Mean   :  49.42   Mean   :1   Mean   :2.9   Mean   :0.488   Mean   :0.07986  
+ 3rd Qu.:  52.36   3rd Qu.:1   3rd Qu.:2.9   3rd Qu.:0.488   3rd Qu.:0.11263  
+ Max.   :3193.67   Max.   :1   Max.   :2.9   Max.   :0.488   Max.   :0.20000  
+      psi              cohort           amplitude            S_0         
+ Min.   :0.07324   Min.   :0.000682   Min.   :0.06034   Min.   :0.01046  
+ 1st Qu.:0.10591   1st Qu.:0.290074   1st Qu.:0.30183   1st Qu.:0.02457  
+ Median :0.11427   Median :0.541770   Median :0.44643   Median :0.03009  
+ Mean   :0.11632   Mean   :0.541389   Mean   :0.49434   Mean   :0.03203  
+ 3rd Qu.:0.12462   3rd Qu.:0.831442   3rd Qu.:0.66118   3rd Qu.:0.03683  
+ Max.   :0.19332   Max.   :0.997954   Max.   :0.99962   Max.   :0.09337  
+      E_0                 I_0                 R_0             loglik     
+ Min.   :1.978e-05   Min.   :1.508e-05   Min.   :0.9065   Min.   :-6696  
+ 1st Qu.:3.639e-05   1st Qu.:3.743e-05   1st Qu.:0.9631   1st Qu.:-3878  
+ Median :5.170e-05   Median :4.898e-05   Median :0.9698   Median :-3841  
+ Mean   :5.360e-05   Mean   :5.141e-05   Mean   :0.9679   Mean   :-4065  
+ 3rd Qu.:6.669e-05   3rd Qu.:6.395e-05   3rd Qu.:0.9753   3rd Qu.:-3824  
+ Max.   :1.331e-04   Max.   :1.177e-04   Max.   :0.9895   Max.   :-3802  
+   loglik.se       nfail.min       nfail.max          etime       
+ Min.   :0.814   Min.   : 0.00   Min.   : 0.000   Min.   :0.3560  
+ 1st Qu.:1.674   1st Qu.: 0.00   1st Qu.: 0.000   1st Qu.:0.3867  
+ Median :2.267   Median : 0.00   Median : 0.000   Median :0.3952  
+ Mean   :2.276   Mean   : 6.13   Mean   : 6.675   Mean   :0.3966  
+ 3rd Qu.:3.010   3rd Qu.: 0.00   3rd Qu.: 0.000   3rd Qu.:0.4027  
+ Max.   :3.162   Max.   :84.00   Max.   :85.000   Max.   :0.4937  
+automatically exporting the following variables from the local environment:
+  covar, dat, dmeas, fromEst, initlz, rmeas, rproc, toEst 
+[1] "Detaching Rmpi. Rmpi cannot be used unless relaunching R."

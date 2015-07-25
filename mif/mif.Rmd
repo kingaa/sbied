@@ -45,7 +45,6 @@ opts_chunk$set(
 ```
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
 options(
-  pomp.cache=".",
   keep.source=TRUE,
   encoding="UTF-8"
 )
@@ -303,8 +302,7 @@ We can now build the pomp object.
 
 ```{r pomp_bsflu}
 require(pomp)
-stopifnot(packageVersion("pomp")>="0.74-2")
-stew(file="pomp_bsflu.rda",{
+stopifnot(packageVersion("pomp")>="0.75-1")
 bsflu <- pomp(
   data=bsflu_data,
   times="day",
@@ -321,7 +319,7 @@ bsflu <- pomp(
   statenames=bsflu_statenames,
   paramnames=bsflu_paramnames,
   initializer=Csnippet(bsflu_initializer)
-)})
+)
 plot(bsflu)
 ```
 
@@ -367,7 +365,7 @@ We proceed to carry out replicated particle filters at this tentative MLE:
 
 ```{r pf}
 stew(file=sprintf("pf-%d.rda",run_level),{
- 
+  
   t_pf <- system.time(
     pf <- foreach(i=1:20,.packages='pomp',
                   .options.multicore=mcopts) %dopar% try(
@@ -492,8 +490,8 @@ It is good practice to build up a file of successful optimization results for su
 
 ```{r save_params,eval=FALSE}
 if (run_level>1) 
-   write.table(rbind(results_local,results_global),
-                            file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
+  write.table(rbind(results_local,results_global),
+              file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
 ```
 
 Evaluation of the best result of this search gives a likelihood of `r round(max(results_global$logLik),1)` with a standard error of `r round(results_global$logLik_se[which.max(results_global$logLik)],1)`. This took in `r round(t_global["elapsed"]/60,1)` minutes for the maximization and `r round(t_global_eval["elapsed"]/60,1)` minutes for the evaluation.  Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface 
@@ -539,10 +537,4 @@ Modify the model to include a latent period between becoming exposed and becomin
 
 ----------------------
 
-
 ## References
-
-
-
-
-

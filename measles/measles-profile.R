@@ -16,7 +16,7 @@ require(plyr)
 require(reshape2)
 require(magrittr)
 require(pomp)
-stopifnot(packageVersion("pomp")>="0.70-1")
+stopifnot(packageVersion("pomp")>="0.75-1")
 
 ## ----load-data-----------------------------------------------------------
 daturl <- "http://kingaa.github.io/pomp/vignettes/twentycities.rda"
@@ -237,7 +237,7 @@ bake("sigmaSE-profile1.rds",{
     require(reshape2)
     require(pomp)
     
-    options(stringsAsFactors=FALSE,pomp.cache=NULL)
+    options(stringsAsFactors=FALSE)
     
     dat %>% 
       pomp(t0=with(dat,2*time[1]-time[2]),
@@ -313,7 +313,7 @@ bake("sigmaSE-profile2.rds",{
     require(reshape2)
     require(pomp)
     
-    options(stringsAsFactors=FALSE,pomp.cache=NULL)
+    options(stringsAsFactors=FALSE)
 
     dat %>% 
       pomp(t0=with(dat,2*time[1]-time[2]),

@@ -36,7 +36,6 @@ Produced in **R** version `r getRversion()` using **pomp** version `r packageVer
 ```{r knitr-opts,include=FALSE,cache=FALSE,purl=FALSE}
 library(knitr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="0.73-1")
 prefix <- "measles-profiles"
 opts_chunk$set(
   progress=TRUE,
@@ -62,10 +61,7 @@ opts_chunk$set(
   dev.args=list(bg='transparent')
   )
 
-options(
-  cores=4,
-  pomp.cache="cache"
-)
+options(cores=4)
 ```
 ```{r opts,include=FALSE,cache=FALSE,purl=FALSE}
 options(
@@ -99,7 +95,7 @@ require(plyr)
 require(reshape2)
 require(magrittr)
 require(pomp)
-stopifnot(packageVersion("pomp")>="0.70-1")
+stopifnot(packageVersion("pomp")>="0.75-1")
 ```
 
 ### Data and covariates
@@ -390,7 +386,7 @@ bake("sigmaSE-profile1.rds",{
     require(reshape2)
     require(pomp)
     
-    options(stringsAsFactors=FALSE,pomp.cache=NULL)
+    options(stringsAsFactors=FALSE)
     
     dat %>% 
       pomp(t0=with(dat,2*time[1]-time[2]),
@@ -474,7 +470,7 @@ bake("sigmaSE-profile2.rds",{
     require(reshape2)
     require(pomp)
     
-    options(stringsAsFactors=FALSE,pomp.cache=NULL)
+    options(stringsAsFactors=FALSE)
 
     dat %>% 
       pomp(t0=with(dat,2*time[1]-time[2]),

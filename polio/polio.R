@@ -1,7 +1,4 @@
 ## ----opts,cache=FALSE,include=FALSE--------------------------------------
-## 'pomp' will store its files in the current working directory
-options(pomp.cache=".")
-
 ## Set this to an appropriate number for your machine
 options(cores=15)
 
@@ -134,27 +131,26 @@ polio_fromEstimationScale <- Csnippet("
 ")
 
 ## ----pomp----------------------------------------------------------------
-stew("polio_pomp.rda",{
-  polio <- pomp(
-    data=subset(polio_data, 
-                (time > polio_t0 + 0.01) & (time < 1953+1/12+0.01),	
-                select=c("cases","time")),
-    times="time",
-    t0=polio_t0,
-    params=polio_mle,
-    rprocess = euler.sim(step.fun = polio_rprocess, delta.t=1/12),
-    rmeasure= polio_rmeasure,
-    dmeasure = polio_dmeasure,
-    covar=covartable,
-    tcovar="time",
-    obsnames = polio_obsnames,
-    statenames = polio_statenames,
-    paramnames = polio_paramnames,
-    covarnames = c("xi1","B","P"),
-    initializer=polio_initializer,
-    toEstimationScale=polio_toEstimationScale, 
-    fromEstimationScale=polio_fromEstimationScale
-  )})
+polio <- pomp(
+  data=subset(polio_data, 
+              (time > polio_t0 + 0.01) & (time < 1953+1/12+0.01),	
+              select=c("cases","time")),
+  times="time",
+  t0=polio_t0,
+  params=polio_mle,
+  rprocess = euler.sim(step.fun = polio_rprocess, delta.t=1/12),
+  rmeasure= polio_rmeasure,
+  dmeasure = polio_dmeasure,
+  covar=covartable,
+  tcovar="time",
+  obsnames = polio_obsnames,
+  statenames = polio_statenames,
+  paramnames = polio_paramnames,
+  covarnames = c("xi1","B","P"),
+  initializer=polio_initializer,
+  toEstimationScale=polio_toEstimationScale, 
+  fromEstimationScale=polio_fromEstimationScale
+)
 plot(polio)
 
 ## ----run_level-----------------------------------------------------------
