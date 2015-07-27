@@ -455,7 +455,7 @@ stew("mif1.rda",{
   
   pf3 <- foreach(i=1:10,.packages='pomp',
                  .options.multicore=mcopts) %dopar% try(
-                   pfilter(contacts2,params=params_new,Np=1000,seed=1809+i)
+                   pfilter(contacts2,params=params_new,Np=1000)
                  )
 
 },seed=354320731,kind="L'Ecuyer")
