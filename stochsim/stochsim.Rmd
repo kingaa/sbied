@@ -259,13 +259,9 @@ Write down a stochastic Euler method for an SDE representation of the SIR model.
 
 
 
-<br>
-<br>
-
-
 ## Compartmental models in **pomp**.
 
-[Download a script containing the **R** commands below.](./stochsim.R)
+[Download a script containing the **R** commands below.](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim.R)
 
 As an example that we can probe in some depth, let's look at an isolated outbreak of influenza that occurred in a boarding school for boys in England [@Anonymous1978].
 <!--- 763 boys were at risk, and ultimately 512 became infected. --->

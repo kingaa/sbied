@@ -226,7 +226,7 @@ Measurements, $y$, at time $t$ depend only on the state at that time.
 
 ## Example: the Ricker model
 
-[Download a script containing the **R** commands below.](./intro.R)
+[Download a script containing the **R** commands below.](http://raw.githubusercontent.com/kingaa/sbied/master/intro/intro.R)
 
 #### The deterministic skeleton
 

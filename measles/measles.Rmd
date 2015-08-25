@@ -1082,7 +1082,7 @@ pomp(m1,toEstimationScale=toEst,
 ## Constructing a likelihood profile
 
 [The linked document shows how a likelihood profile can be constructed using IF2](./measles-profile.html).
-
+[The corresponding **R** script is here](http://raw.githubusercontent.com/kingaa/sbied/master/measles/measles-profile.R).
 
 ## Exercises
 

@@ -196,7 +196,7 @@ This implies that if we generate trajectories by simulation, all we have to do i
 
 Let's go back to the boarding school influenza outbreak to see what this would look like.
 Let's reconstruct the toy SIR model we were working with.
-[Download a script containing the **R** commands below.](./pfilter.R)
+[Download a script containing the **R** commands below.](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter.R)
 
 ```{r sir-construct}
 base_url <- "http://kingaa.github.io/sbied/"
