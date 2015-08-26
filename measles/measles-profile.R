@@ -1,11 +1,8 @@
 ## ----mpi-setup,include=FALSE,purl=TRUE,cache=FALSE-----------------------
-ncpu <- as.integer(Sys.getenv("PBS_NP"))
-if (is.na(ncpu)) ncpu <- 4
-
 require(foreach)
 require(doMPI)
 
-cl <- startMPIcluster(ncpu)
+cl <- startMPIcluster()
 registerDoMPI(cl)
 
 ## ----prelims,cache=FALSE-------------------------------------------------
@@ -377,7 +374,7 @@ sigmaSE_prof %>%
 pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma),
       data=sigmaSE_prof)
 
-## ----include=FALSE,cache=FALSE,eval=TRUE---------------------------------
+## ----include=FALSE,cache=FALSE,eval=TRUE,purl=TRUE-----------------------
 closeCluster(cl)
 try(detach("package:doMPI",unload=TRUE),silent=TRUE)
 if (exists("mpi.exit")) mpi.exit()

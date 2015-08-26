@@ -13,4 +13,4 @@ export OMPI_MCA_mpi_warn_on_fork=0
 
 cd $PBS_O_WORKDIR
 
-mpirun -mca mtl ^mxm -mca btl ^openib -np 1 Rscript --vanilla measles-profile.R > measles-profile.Rout 2>&1
+mpirun -mca mtl ^mxm -mca btl ^openib -np $PBS_NP Rscript --vanilla measles-profile.R > measles-profile.Rout 2>&1
