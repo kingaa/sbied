@@ -56,7 +56,7 @@ options(
 This tutorial is part of a series given as a [short course](http://kingaa.github.io/sbied) given at the [Summer Institute in Statistics and Modeling in Infectious Diseases](http://sismid.uw.org).
 It covers likelihood estimation via iterated filtering, as part of a [series of tutorials](http://dept.stat.lsa.umich.edu/~ionides/tutorials/index.html) on time series analysis using mechanistic modeling.
 It presupposes familiarity with building partially observed Markov process (POMP) objects in the **R** package **pomp** [@king15]. 
-**pomp** is available from [CRAN](http://cran.r-project.org/web/packages/pomp) ad [github](http://kingaa.github.io/pomp).
+**pomp** is available from [CRAN](http://cran.r-project.org/web/packages/pomp) and [github](http://kingaa.github.io/pomp).
 The code here runs **pomp** version `r packageVersion("pomp")` on **R** version `r getRversion()`.
 This tutorial follows on from the topic of carrying out particle filtering (also known as sequential Monte Carlo) via `pfilter` in **pomp**. 
 We have the following goals:
