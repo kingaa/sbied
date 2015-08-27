@@ -59,7 +59,7 @@ set.seed(5996485L)
 
 ## Objectives
 
-This is one of a [series of tutorials](http://dept.stat.lsa.umich.edu/~ionides/tutorials/index.html) on time series analysis using mechanistic modeling.
+This is one of a [series of tutorials](kingaa.github.io/sbied) on time series analysis using mechanistic modeling.
 
 1. Show how partially observed Markov process (POMP) methods can be used to understand transmission dynamics of polio.
 
@@ -114,7 +114,9 @@ Following @martinez-bakker15, we make an approximation for the initial condition
 
 ## Building a pomp object 
 
-pomp is an R package for time series data analysis, focusing on the use of POMP models [@king15]. pomp is available from [CRAN](http://cran.r-project.org/web/packages/pomp), with development versions available from [R-Forge](http://pomp.r-forge.r-project.org). Here, we use pomp version `r packageVersion("pomp")`
+pomp is an R package for time series data analysis, focusing on the use of POMP models [@king15].
+pomp is available from [CRAN](http://cran.r-project.org/web/packages/pomp), with development versions available from [github](http://kingaa.github.io/pomp). 
+Here, we use pomp version `r packageVersion("pomp")`.
 
 ```{r package}
 require(pomp)
