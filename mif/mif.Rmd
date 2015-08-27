@@ -53,7 +53,13 @@ options(
 
 ## Objectives
 
-This tutorial covers likelihood estimation via iterated filtering, in preparation for a [series of tutorials](http://dept.stat.lsa.umich.edu/~ionides/tutorials/index.html) on time series analysis using mechanistic modeling. It presupposes familiarity with building partially observed Markov process (POMP) objects in the R package pomp [@king15]. pomp is available from [CRAN](http://cran.r-project.org/web/packages/pomp). The code here runs pomp version `r packageVersion("pomp")`, downloaded from  [R-Forge](http://pomp.r-forge.r-project.org), on R version `r getRversion()`. This tutorial follows on from the topic of carrying out particle filtering (also known as sequential Monte Carlo) via 'pfilter' in pomp. We have the following goals:
+This tutorial is part of a series given as a [short course](http://kingaa.github.io/sbied) given at the [Summer Institute in Statistics and Modeling in Infectious Diseases](http://sismid.uw.org).
+It covers likelihood estimation via iterated filtering, as part of a [series of tutorials](http://dept.stat.lsa.umich.edu/~ionides/tutorials/index.html) on time series analysis using mechanistic modeling.
+It presupposes familiarity with building partially observed Markov process (POMP) objects in the **R** package **pomp** [@king15]. 
+**pomp** is available from [CRAN](http://cran.r-project.org/web/packages/pomp) ad [github](http://kingaa.github.io/pomp).
+The code here runs **pomp** version `r packageVersion("pomp")` on **R** version `r getRversion()`.
+This tutorial follows on from the topic of carrying out particle filtering (also known as sequential Monte Carlo) via `pfilter` in **pomp**. 
+We have the following goals:
 
 1. Review the available options for inference on POMP models, to put iterated filtering in context.
 
@@ -298,7 +304,7 @@ bsflu_initializer <- "
 "
 ```
 
-We can now build the pomp object.
+We can now build the `pomp` object.
 
 ```{r pomp_bsflu}
 require(pomp)
@@ -512,7 +518,7 @@ It is also possible to profile over the basic reproduction number, $R_0=\beta P/
 
 ### Technical exercise: Check the model source code.
 
-Check the source code for the `bsflu` pomp object. Does the code implement the model described?
+Check the source code for the `bsflu` `pomp` object. Does the code implement the model described?
 
 For various reasons, it can be surprisingly hard to make sure that the written equations and the code are perfectly matched. Here are some things to think about:
 

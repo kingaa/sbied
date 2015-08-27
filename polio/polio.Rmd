@@ -59,7 +59,8 @@ set.seed(5996485L)
 
 ## Objectives
 
-This is one of a [series of tutorials](kingaa.github.io/sbied) on time series analysis using mechanistic modeling.
+This tutorial is part of a series given as a [short course](http://kingaa.github.io/sbied) given at the [Summer Institute in Statistics and Modeling in Infectious Diseases](http://sismid.uw.org).
+It is one of a [series of tutorials](http://dept.stat.lsa.umich.edu/~ionides/tutorials/index.html) on time series analysis using mechanistic modeling.
 
 1. Show how partially observed Markov process (POMP) methods can be used to understand transmission dynamics of polio.
 
