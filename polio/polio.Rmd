@@ -95,7 +95,7 @@ with $\{\xi_k(t),k=1,\dots,K\}$ being a periodic B-spline basis. We set $K=6$. T
 $$\lambda_n = \bar\lambda_n \epsilon_n,$$
 where $\epsilon_n$ is a Gamma random variable with mean 1 and variance $\sigma^2_{\mathrm{env}} + \sigma^2_{\mathrm{dem}}\big/\bar\lambda_n$. These two terms capture variation on the environmental and demographic scales, respectively. All compartments suffer a mortality rate, set at $\delta=1/60\mathrm{yr}^{-1}$. 
 Within each month, all susceptible individuals are modeled as having exposure to constant competing hazards of mortality and polio infection.  The chance of remaining in the susceptible population when exposed to these hazards for one month is therefore
-$$p_n = \exp\big\{ -(\delta+\lambda)/12\big\},$$
+$$p_n = \exp\big\{ -(\delta+\lambda_n)/12\big\},$$
 with the chance of polio infection being 
 $$q_n = (1-p_n)\lambda_n\big/(\lambda_n+\delta).$$
 We employ a continuous population model, with no demographic stochasticity (in some sense, the demographic-scale stochasticity in $\lambda_n$ is in fact environmental stochasticity since it modifies a rate that affects all compartments equally). Writing $B_n$ for births in month $n$, we obtain the dynamic model of @martinez-bakker15:
@@ -108,14 +108,17 @@ I^O_{n+1}&=& q_n S^O_n
 \end{array}$$
 The model for the reported observations, conditional on the state, is a discretized normal distribution truncated at zero, with both environmental and Poisson-scale contributions to the variance:
 $$Y_n= \max\{\mathrm{round}(Z_n),0\}, \quad Z_n\sim\mathrm{normal}\left(\rho I^O_n, \big(\tau  I^O_n\big)^2 + \rho I^O_n\right).$$
-Additional parameters are used to specify initial state values at time $t_0=1932+ 4/12$. We will suppose there are parameters $\big(\tilde S^B_{1,0},...,\tilde S^B_{6,0}, \tilde I^B_0,\tilde I^O_0,\tilde S^O_0\big)$ that specify the population in each compartment at time $t_0$ via
+Additional parameters are used to specify initial state values at time $t_0=1932+ 4/12$. 
+We will suppose there are parameters $\big(\tilde S^B_{1,0},...,\tilde S^B_{6,0}, \tilde I^B_0,\tilde I^O_0,\tilde S^O_0\big)$ that specify the population in each compartment at time $t_0$ via
 $$ S^B_{1,0}= {\tilde S}^B_{1,0} ,...,S^B_{6,0}= \tilde S^B_{6,0}, \quad I^B_{0}= P_0 \tilde I^B_{0},\quad S^O_{0}= P_0 \tilde S^O_{0}, \quad I^O_{0}= P_0 \tilde I^O_{0}.$$
-Following @martinez-bakker15, we make an approximation for the initial conditions of ignoring infant infections at time $t_0$. Thus, we set $\tilde I^B_{0}=0$ and use monthly births in the preceding months (ignoring infant mortality) to fix $\tilde S^B_{k,0}=0$ for $k=1,\dots,6$. The estimated initial conditions are then defined by the two parameters $\tilde I^O_{0}$ and $\tilde S^O_{0}$, since the initial recovered population, $R_0$, is specified by subtraction of all the other compartments from the total initial population, $P_0$. Note that it is convenient to parameterize the estimated initial states as fractions of the population, whereas the initial states fixed at births are parameterized directly as a count.
+Following @martinez-bakker15, we make an approximation for the initial conditions of ignoring infant infections at time $t_0$. 
+Thus, we set $\tilde I^B_{0}=0$ and use monthly births in the preceding months (ignoring infant mortality) to fix $\tilde S^B_{k,0}=B_{1-k}$ for $k=1,\dots,6$. The estimated initial conditions are then defined by the two parameters $\tilde I^O_{0}$ and $\tilde S^O_{0}$, since the initial recovered population, $R_0$, is specified by subtraction of all the other compartments from the total initial population, $P_0$. 
+Note that it is convenient to parameterize the estimated initial states as fractions of the population, whereas the initial states fixed at births are parameterized directly as a count.
 
 
 ## Building a pomp object 
 
-pomp is an R package for time series data analysis, focusing on the use of POMP models [@king15].
+**pomp** is an **R** package for time series data analysis, focusing on the use of POMP models [@king15].
 pomp is available from [CRAN](http://cran.r-project.org/web/packages/pomp), with development versions available from [github](http://kingaa.github.io/pomp). 
 Here, we use pomp version `r packageVersion("pomp")`.
 
@@ -163,7 +166,7 @@ polio_ivp_names <- c("SO_0","IO_0")
 polio_paramnames <- c(polio_rp_names,polio_ivp_names)
 ```
 
-Finally, there are two quantities in the dynamic model specification, $\delta=1/60 \mathrm{yr}^{-1}$ and $\mathrm{K}=6$, that we are not estimating. In addition, there are six other initial value quantities, $\{\tilde S^B_{1,0},\dots,\tilde S^B_{6,0}\}$, which are treating as _fixed parameters_ (FPs). 
+Finally, there are two quantities in the dynamic model specification, $\delta=1/60 \mathrm{yr}^{-1}$ and $\mathrm{K}=6$, that we are not estimating. In addition, there are six other initial value quantities, $\{\tilde S^B_{1,0},\dots,\tilde S^B_{6,0}\}$, which we are treating as _fixed parameters_ (FPs). 
 
 ```{r fixed_names} 
 polio_fp_names <- c("delta","K","SB1_0","SB2_0","SB3_0","SB4_0","SB5_0","SB6_0")
