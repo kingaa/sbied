@@ -474,7 +474,7 @@ stew(file=sprintf("box_eval-%d.rda",run_level),{
                   .options.multicore=list(set.seed=TRUE)) %dopar%  
       mif2(
         m2[[1]],
-        start=c(apply(polio_box,1,function(x)runif(1,x)),polio_fixed_params)
+        start=c(apply(polio_box,1,function(x)runif(1,x[1],x[2])),polio_fixed_params)
       )
     
     lik_m3 <- foreach(i=1:polio_Nreps_global[run_level],.packages='pomp',.combine=rbind,
