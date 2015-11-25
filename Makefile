@@ -16,5 +16,5 @@ clean:
 	$(RM) Rplots.ps Rplots.pdf
 
 fresh: clean
-	$(RM) -r cache figure
-
+	find . -name "cache" -print | xargs rm -rf
+	find . -name "figure" -print | xargs rm -rf

@@ -93,7 +93,7 @@ bsflu_fixed_params <- c(mu_R1=1/(sum(bsflu_data$B)/512),mu_R2=1/(sum(bsflu_data$
 
 ## ----parallel-setup,cache=FALSE------------------------------------------
 require(doParallel)
-cores <- 15
+cores <- 20
 registerDoParallel(cores)
 mcopts <- list(set.seed=TRUE)
 
@@ -172,7 +172,7 @@ stew(file=sprintf("box_eval-%d.rda",run_level),{
   t_global <- system.time({
     mifs_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  mif2(
       mifs_local[[1]],
-      start=c(apply(bsflu_box,1,function(x)runif(1,x)),bsflu_fixed_params)
+      start=c(apply(bsflu_box,1,function(x)runif(1,x[1],x[2])),bsflu_fixed_params)
     )
   })
 },seed=1270401374,kind="L'Ecuyer")
