@@ -27,8 +27,7 @@ ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
 
 ## ----sir-diagram,echo=FALSE,cache=FALSE----------------------------------
 require(DiagrammeR)
-DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);"
-           ,height=200,width=500)
+DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);",height=200,width=500)
 
 ## ----rproc2--------------------------------------------------------------
 sir_step <- Csnippet("
@@ -69,8 +68,7 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 
 ## ----seir-diagram,echo=FALSE,cache=FALSE---------------------------------
 require(DiagrammeR)
-DiagrammeR("graph LR; S(S) --> E; E(E) --> I; I(I) --> R(R);"
-           ,height=200,width=600)
+DiagrammeR("graph LR; S(S) --> E; E(E) --> I; I(I) --> R(R);",height=200,width=600)
 
 ## ----bsflu-plot2---------------------------------------------------------
 require(reshape2)
@@ -79,6 +77,5 @@ ggplot(data=melt(bsflu,id="day"),mapping=aes(x=day,y=value,color=variable))+
 
 ## ----sirr-diagram,echo=FALSE,cache=FALSE---------------------------------
 require(DiagrammeR)
-DiagrammeR("graph LR; S(S) --> I; I(I) --> R1(R1); R1 --> R2(R2);"
-           ,height=200,width=600)
+DiagrammeR("graph LR; S(S) --> I; I(I) --> R1(R1); R1 --> R2(R2);",height=200,width=600)
 

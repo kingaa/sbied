@@ -384,7 +384,7 @@ stew(file=sprintf("pf-%d.rda",run_level),{
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
 ```
 
-In  `r round(t_pf["elapsed"],1)` seconds, we obtain an unbiased likelihood estimate of `r round(L_pf[1],2)` with a Monte standard error of `r round(L_pf[2],2)`.
+In  `r round(t_pf["elapsed"],1)` seconds, we obtain an unbiased likelihood estimate of `r round(L_pf[1],2)` with a Monte Carlo standard error of `r round(L_pf[2],2)`.
 
 
 ### A local search of the likelihood surface
@@ -500,7 +500,9 @@ if (run_level>1)
               file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
 ```
 
-Evaluation of the best result of this search gives a likelihood of `r round(max(results_global$logLik),1)` with a standard error of `r round(results_global$logLik_se[which.max(results_global$logLik)],1)`. This took in `r round(t_global["elapsed"]/60,1)` minutes for the maximization and `r round(t_global_eval["elapsed"]/60,1)` minutes for the evaluation.  Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface 
+Evaluation of the best result of this search gives a likelihood of `r round(max(results_global$logLik),1)` with a standard error of `r round(results_global$logLik_se[which.max(results_global$logLik)],2)`.
+This took in `r round(t_global["elapsed"]/60,1)` minutes for the maximization and `r round(t_global_eval["elapsed"]/60,1)` minutes for the evaluation.
+Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface 
 
 ```{r pairs_global}
 pairs(~logLik+Beta+mu_I+rho,data=subset(results_global,logLik>max(logLik)-250))

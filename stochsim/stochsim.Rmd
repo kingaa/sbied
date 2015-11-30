@@ -93,8 +93,7 @@ We will develop deterministic and stochastic representations of a susceptible-in
 
 ```{r sir-diagram,echo=FALSE,cache=FALSE,purl=FALSE}
 require(DiagrammeR)
-DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);"
-           ,height=200,width=500)
+DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);",height=200,width=500)
 ```
 $S = \text{susceptible}$  
 $I = \text{infected and infectious}$  
@@ -404,8 +403,7 @@ This differs from the SIR model in that infected individuals must pass a period 
 
 ```{r seir-diagram,echo=FALSE,cache=FALSE}
 require(DiagrammeR)
-DiagrammeR("graph LR; S(S) --> E; E(E) --> I; I(I) --> R(R);"
-           ,height=200,width=600)
+DiagrammeR("graph LR; S(S) --> E; E(E) --> I; I(I) --> R(R);",height=200,width=600)
 ```
 
 Modify the codes above to construct a `pomp` object containing the flu data and an SEIR model.
@@ -433,8 +431,7 @@ Implement it in **pomp** using a compartmental model like that diagrammed below.
 
 ```{r sirr-diagram,echo=FALSE,cache=FALSE}
 require(DiagrammeR)
-DiagrammeR("graph LR; S(S) --> I; I(I) --> R1(R1); R1 --> R2(R2);"
-           ,height=200,width=600)
+DiagrammeR("graph LR; S(S) --> I; I(I) --> R1(R1); R1 --> R2(R2);",height=200,width=600)
 ```
 
 You will have to give some thought to just how to model the relationship between the data ($B$ and $C$) and the state variables.

@@ -495,7 +495,9 @@ if(run_level>1) write.table(r3,file="polio_params.csv",append=TRUE,col.names=FAL
 summary(r3$logLik,digits=5)
 ```
 
-Evaluation of the best result of this search gives a likelihood of `r round(max(r3$logLik),1)` with a standard error of `r round(r3$logLik_se[which.max(r3$logLik)],1)`. We see that optimization attempts from diverse remote starting points can approach our MLE, but do not exceed it. This gives us some reasonable confidence in our MLE. 
+Evaluation of the best result of this search gives a likelihood of `r round(max(r3$logLik),1)` with a standard error of `r round(r3$logLik_se[which.max(r3$logLik)],2)`.
+We see that optimization attempts from diverse remote starting points can approach our MLE, but do not exceed it.
+This gives us some reasonable confidence in our MLE. 
 
 Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface 
 
