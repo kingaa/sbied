@@ -1,6 +1,6 @@
-## check to see that the version of R is at least 3.2.0
+## check to see that the version of R is at least 3.2.1
 print(R.version.string)
-stopifnot(getRversion()>="3.2.0")
+stopifnot(getRversion()>="3.2.1")
 
 op <- options(warn=2)
 
@@ -14,6 +14,8 @@ colorspace
 deSolve
 devtools
 foreach
+doMC
+doParallel
 ggplot2
 gridExtra
 gtable
@@ -42,4 +44,3 @@ if (length(pkglist)>0) install.packages(pkglist)
 options(op)
 
 cat("all packages installed successfully!\n")
-

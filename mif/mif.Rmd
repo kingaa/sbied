@@ -253,10 +253,9 @@ bsflu_statenames <- c("S","I","R1","R2")
 bsflu_paramnames <- c("Beta","mu_I","rho","mu_R1","mu_R2")
 ```
 
-The observation names ($B$, $C$) are the names of the data variables:
-
+In the codes below, we'll refer to the data variables by their names ($B$, $C$), as given in the `bsflu_data` data-frame:
 ```{r bsflu_obsnames}
-(bsflu_obsnames <- colnames(bsflu_data)[1:2])
+colnames(bsflu_data)[1:2]
 ```
 
 We do not need a representation of $R_3$ since the total population size is fixed at $P=763$ and hence $R_3(t)=P-S(t)-I(t)-R_1(t)-R_2(t)$. 
@@ -307,7 +306,7 @@ We can now build the `pomp` object.
 
 ```{r pomp_bsflu}
 require(pomp)
-stopifnot(packageVersion("pomp")>="0.75-1")
+stopifnot(packageVersion("pomp")>="1.2.2")
 bsflu <- pomp(
   data=bsflu_data,
   times="day",
@@ -320,7 +319,6 @@ bsflu <- pomp(
   dmeasure=Csnippet(bsflu_dmeasure),
   fromEstimationScale=Csnippet(bsflu_fromEstimationScale),
   toEstimationScale=Csnippet(bsflu_toEstimationScale),
-  obsnames = bsflu_obsnames,
   statenames=bsflu_statenames,
   paramnames=bsflu_paramnames,
   initializer=Csnippet(bsflu_initializer)
@@ -328,7 +326,41 @@ bsflu <- pomp(
 plot(bsflu)
 ```
 
-To develop and debug code, it is nice to have a version that runs extra quickly, for which we set `run_level=1`. Here, `Np` is the number of particles (i.e., sequential Monte Carlo sample size), and `Nmif` is the number of iterations of the optimization procedure carried out below. Empirically, `Np=5000` and `Nmif=200` are around the minimum required to get stable results with an error in the likelihood of order 1 log unit for this example; this is implemented by setting `run_level=2`. One can then ramp up to larger values for more refined computations, implemented here by `run_level=3`.
+
+## Testing the codes.
+
+To develop and debug code, it is useful to have example codes that run quickly.
+Here, we run some simulations and a particle filter, simply to check that the codes are working correctly.
+We'll use the following parameters, derived from our earlier explorations
+```{r start_params}
+params <- c(Beta=0.005,mu_I=2,rho=0.9,mu_R1=1/3,mu_R2=1/2)
+```
+
+Now to run some simulations:
+```{r init_sim}
+y <- simulate(bsflu,params=params,nsim=10,as.data.frame=TRUE)
+
+require(ggplot2)
+require(reshape2)
+
+ggplot(data=melt(subset(y,select=c(time,B,C,sim)),
+                 id=c("sim","time")),
+       mapping=aes(x=time,y=value,group=sim))+
+  geom_line()+
+  facet_grid(variable~.)+
+  theme_classic()
+```
+
+Before engaging in iterated filtering, it is a good idea to check that the basic particle filter is working since iterated filtering builds on this technique.
+The simulations above check the `rprocess` and `rmeasure` codes;
+the particle filter depends on the `rprocess` and `dmeasure` codes and so is a check of the latter.
+
+```{r init_pfilter}
+pf <- pfilter(bsflu,params=params,Np=1000)
+plot(pf)
+```
+
+These plots show the data along with the *effective sample size* of the particle filter (`ess`) and the log likelihood of each observation conditional on the preceding ones (`cond.logLik`).
 
 ```{r run_level}
 run_level <- 3
@@ -339,97 +371,115 @@ switch(run_level,
 )
 ```
 
+## Setting up the estimation problem.
 
-### Running a particle filter
-
-Before engaging in iterated filtering, it is often a good idea to check that the basic particle filter is working since iterated filtering builds on this technique. Here, carrying out slightly circular reasoning, we are going to test `pfilter` on a previously computed point estimate read in from [bsflu_params.csv](bsflu_params.csv):
-
-```{r bsflu_params}
-bsflu_params <- data.matrix(read.table("mif_bsflu_params.csv",row.names=NULL,header=TRUE))
-bsflu_mle <- bsflu_params[which.max(bsflu_params[,"logLik"]),][bsflu_paramnames]
-```
-
-We are going to treat $\mu_{R_1}$ and  $\mu_{R_2}$ as known, fixed at the empirical mean of the bed-confinement and convalescence times for symptomatic cases:
+Let's treat $\mu_{R_1}$ and  $\mu_{R_2}$ as known, and fix these parameters at the empirical means of the bed-confinement and convalescence times for symptomatic cases, respectively:
 
 ```{r fixed_params}
-bsflu_fixed_params <- c(mu_R1=1/(sum(bsflu_data$B)/512),mu_R2=1/(sum(bsflu_data$C)/512))
+fixed_params <- with(bsflu_data,c(mu_R1=1/(sum(B)/512),mu_R2=1/(sum(C)/512)))
+est_params <- params[c("Beta","mu_I","rho")]
 ```
 
-It is convenient to do some parallelization to speed up the computations. Most machines are multi-core nowadays, and using this computational capacity involves only (i) the following lines of code to let R know you plan to use multiple processors; (ii) using the parallel for loop provided by 'foreach'.
+It will be helpful to do parallelize most of the computations.
+Most machines are multi-core nowadays, and using this computational capacity involves only 
+(i) the following lines of code to let R know you plan to use multiple processors; 
+(ii) using the parallel for loop provided by the **foreach** package; and
+(iii) proper attention to the use of parallel random number generators.
 
 ```{r parallel-setup,cache=FALSE}
+require(foreach)
 require(doParallel)
+
 cores <- 20
 registerDoParallel(cores)
-mcopts <- list(set.seed=TRUE)
 
-set.seed(396658101,kind="L'Ecuyer")
+set.seed(2036049659,kind="L'Ecuyer")
+mcopts <- list(set.seed=TRUE)
 ```
+
+The first two lines load the **foreach** and **doParallel** packages, the latter being a "backend" for the **foreach** package.
+The next two lines specify that we intend to use 20 parallel **R** processes, running on a single multicore machine.
+The final two lines set up a parallel random number generator, fix its seed, and allow us to inform **foreach** about this choice.
+
+## Estimating the likelihood.
 
 We proceed to carry out replicated particle filters at this tentative MLE:
 
 ```{r pf}
-stew(file=sprintf("pf-%d.rda",run_level),{
+stew(file="pf-1.rda",{
   
   t_pf <- system.time(
     pf <- foreach(i=1:20,.packages='pomp',
-                  .options.multicore=mcopts) %dopar% try(
-                    pfilter(bsflu,params=bsflu_mle,Np=bsflu_Np)
-                  )
+                  .options.multicore=list(set.seed=TRUE)) %dopar% 
+      try(
+        pfilter(bsflu,params=c(est_params,fixed_params),Np=1000)
+      )
   )
   
-},seed=1320290398,kind="L'Ecuyer")
+},seed=625904618,kind="L'Ecuyer")
 
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
 ```
 
 In  `r round(t_pf["elapsed"],1)` seconds, we obtain an unbiased likelihood estimate of `r round(L_pf[1],2)` with a Monte Carlo standard error of `r round(L_pf[2],2)`.
 
+## Building up a picture of the likelihood surface
 
-### A local search of the likelihood surface
+Given a model and a set of data, the likelihood surface is well defined, though it may be difficult to visualize.
+We can develop a progressively more complete picture of this surface by storing likelihood estimates whenever we compute them.
+In particular, it is very useful to construct a database within which to store the likelihood of every point for which we have an estimated likelihood.
+This will become progressively more complete as our parameter-space search goes on.
+At this point, we've computed the likelihood at a single point.
+Let's store this point, together with the estimated likelihood and our estimate of the standard error on that likelihood, in a CSV file:
+```{r init_csv}
+results <- as.data.frame(as.list(c(est_params,fixed_params,loglik=L_pf[1],loglik.se=L_pf[2])))
+write.csv(results,file="mif_bsflu_params.csv",row.names=FALSE)
+```
 
-Let's carry out a local search using `mif2` around this previously identified MLE. For that, we need to set the `rw.sd` and `cooling.fraction.50` algorithmic parameters:
+## A local search of the likelihood surface
+
+Let's carry out a local search using `mif2` around this point in parameter space. 
+For that, we need to set the `rw.sd` and `cooling.fraction.50` algorithmic parameters:
 
 ```{r box_search_local}
-bsflu_rw.sd <- 0.02
-bsflu_cooling.fraction.50 <- 0.5
-
-stew(file=sprintf("local_search-%d.rda",run_level),{
+stew(file="local_search-1.rda",{
   
   t_local <- system.time({
-    mifs_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  {
-      mif2(
-        bsflu,
-        start=bsflu_mle,
-        Np=bsflu_Np,
-        Nmif=bsflu_Nmif,
-        cooling.type="geometric",
-        cooling.fraction.50=bsflu_cooling.fraction.50,
-        transform=TRUE,
-        rw.sd=rw.sd(
-          Beta=bsflu_rw.sd,
-          mu_I=bsflu_rw.sd,
-          rho=bsflu_rw.sd
+    mifs_local <- foreach(i=1:20,
+                          .packages='pomp',
+                          .combine=c, 
+                          .options.multicore=list(set.seed=TRUE)) %dopar%  
+      try(
+        mif2(
+          bsflu,
+          start=c(fixed_params,est_params),
+          Np=20000,
+          Nmif=100,
+          cooling.type="geometric",
+          cooling.fraction.50=0.5,
+          transform=TRUE,
+          rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02)
         )
       )
-      
-    }
-  })
-  
-},seed=900242057,kind="L'Ecuyer")
+  })  
+},seed=482947940,kind="L'Ecuyer")
 
 ```
 
 Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference. Partly, this is because some parameter perturbations remain in the last filtering iteration. Partly, this is because `mif2` is usually carried out with a smaller number of particles than is necessary for a good likelihood evaluation---the errors in `mif2` average out over many iterations of the filtering. Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
 ```{r lik_local_eval}
-stew(file=sprintf("lik_local-%d.rda",run_level),{
+stew(file="lik_local-1.rda",{
   
   t_local_eval <- system.time({
-    liks_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp',.combine=rbind) %dopar% {
-      evals <- replicate(bsflu_Neval, logLik(pfilter(bsflu,params=coef(mifs_local[[i]]),Np=bsflu_Np)))
-      logmeanexp(evals, se=TRUE)
-    }
+    liks_local <- foreach(mf=mifs_local,
+                          .packages='pomp',
+                          .combine=rbind) %dopar% 
+      try({
+        evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
+        ll <- logmeanexp(evals,se=TRUE)
+        c(coef(mf),loglik=ll)
+      })
   })
 },seed=900242057,kind="L'Ecuyer")
 
@@ -468,7 +518,7 @@ stew(file=sprintf("box_eval-%d.rda",run_level),{
   t_global <- system.time({
     mifs_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  mif2(
       mifs_local[[1]],
-      start=c(apply(bsflu_box,1,function(x)runif(1,x[1],x[2])),bsflu_fixed_params)
+      start=c(apply(bsflu_box,1,function(x)runif(1,x[1],x[2])),fixed_params)
     )
   })
 },seed=1270401374,kind="L'Ecuyer")

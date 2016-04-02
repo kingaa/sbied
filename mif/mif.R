@@ -12,7 +12,7 @@ bsflu_statenames <- c("S","I","R1","R2")
 bsflu_paramnames <- c("Beta","mu_I","rho","mu_R1","mu_R2")
 
 ## ----bsflu_obsnames------------------------------------------------------
-(bsflu_obsnames <- colnames(bsflu_data)[1:2])
+colnames(bsflu_data)[1:2]
 
 ## ----csnippets_bsflu-----------------------------------------------------
 bsflu_dmeasure <- "
@@ -56,7 +56,7 @@ bsflu_initializer <- "
 
 ## ----pomp_bsflu----------------------------------------------------------
 require(pomp)
-stopifnot(packageVersion("pomp")>="0.75-1")
+stopifnot(packageVersion("pomp")>="1.2.2")
 bsflu <- pomp(
   data=bsflu_data,
   times="day",
@@ -69,12 +69,31 @@ bsflu <- pomp(
   dmeasure=Csnippet(bsflu_dmeasure),
   fromEstimationScale=Csnippet(bsflu_fromEstimationScale),
   toEstimationScale=Csnippet(bsflu_toEstimationScale),
-  obsnames = bsflu_obsnames,
   statenames=bsflu_statenames,
   paramnames=bsflu_paramnames,
   initializer=Csnippet(bsflu_initializer)
 )
 plot(bsflu)
+
+## ----start_params--------------------------------------------------------
+params <- c(Beta=0.005,mu_I=2,rho=0.9,mu_R1=1/3,mu_R2=1/2)
+
+## ----init_sim------------------------------------------------------------
+y <- simulate(bsflu,params=params,nsim=10,as.data.frame=TRUE)
+
+require(ggplot2)
+require(reshape2)
+
+ggplot(data=melt(subset(y,select=c(time,B,C,sim)),
+                 id=c("sim","time")),
+       mapping=aes(x=time,y=value,group=sim))+
+  geom_line()+
+  facet_grid(variable~.)+
+  theme_classic()
+
+## ----init_pfilter--------------------------------------------------------
+pf <- pfilter(bsflu,params=params,Np=1000)
+plot(pf)
 
 ## ----run_level-----------------------------------------------------------
 run_level <- 3
@@ -84,72 +103,75 @@ switch(run_level,
        {bsflu_Np=60000; bsflu_Nmif=300; bsflu_Neval=10; bsflu_Nglobal=100; bsflu_Nlocal=20}
 )
 
-## ----bsflu_params--------------------------------------------------------
-bsflu_params <- data.matrix(read.table("mif_bsflu_params.csv",row.names=NULL,header=TRUE))
-bsflu_mle <- bsflu_params[which.max(bsflu_params[,"logLik"]),][bsflu_paramnames]
-
 ## ----fixed_params--------------------------------------------------------
-bsflu_fixed_params <- c(mu_R1=1/(sum(bsflu_data$B)/512),mu_R2=1/(sum(bsflu_data$C)/512))
+fixed_params <- with(bsflu_data,c(mu_R1=1/(sum(B)/512),mu_R2=1/(sum(C)/512)))
+est_params <- params[c("Beta","mu_I","rho")]
 
 ## ----parallel-setup,cache=FALSE------------------------------------------
+require(foreach)
 require(doParallel)
+
 cores <- 20
 registerDoParallel(cores)
+
+set.seed(2036049659,kind="L'Ecuyer")
 mcopts <- list(set.seed=TRUE)
 
-set.seed(396658101,kind="L'Ecuyer")
-
 ## ----pf------------------------------------------------------------------
-stew(file=sprintf("pf-%d.rda",run_level),{
+stew(file="pf-1.rda",{
   
   t_pf <- system.time(
     pf <- foreach(i=1:20,.packages='pomp',
-                  .options.multicore=mcopts) %dopar% try(
-                    pfilter(bsflu,params=bsflu_mle,Np=bsflu_Np)
-                  )
+                  .options.multicore=list(set.seed=TRUE)) %dopar% 
+      try(
+        pfilter(bsflu,params=c(est_params,fixed_params),Np=1000)
+      )
   )
   
-},seed=1320290398,kind="L'Ecuyer")
+},seed=625904618,kind="L'Ecuyer")
 
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
 
-## ----box_search_local----------------------------------------------------
-bsflu_rw.sd <- 0.02
-bsflu_cooling.fraction.50 <- 0.5
+## ----init_csv------------------------------------------------------------
+results <- as.data.frame(as.list(c(est_params,fixed_params,loglik=L_pf[1],loglik.se=L_pf[2])))
+write.csv(results,file="mif_bsflu_params.csv",row.names=FALSE)
 
-stew(file=sprintf("local_search-%d.rda",run_level),{
+## ----box_search_local----------------------------------------------------
+stew(file="local_search-1.rda",{
   
   t_local <- system.time({
-    mifs_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  {
-      mif2(
-        bsflu,
-        start=bsflu_mle,
-        Np=bsflu_Np,
-        Nmif=bsflu_Nmif,
-        cooling.type="geometric",
-        cooling.fraction.50=bsflu_cooling.fraction.50,
-        transform=TRUE,
-        rw.sd=rw.sd(
-          Beta=bsflu_rw.sd,
-          mu_I=bsflu_rw.sd,
-          rho=bsflu_rw.sd
+    mifs_local <- foreach(i=1:20,
+                          .packages='pomp',
+                          .combine=c, 
+                          .options.multicore=list(set.seed=TRUE)) %dopar%  
+      try(
+        mif2(
+          bsflu,
+          start=c(fixed_params,est_params),
+          Np=20000,
+          Nmif=100,
+          cooling.type="geometric",
+          cooling.fraction.50=0.5,
+          transform=TRUE,
+          rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02)
         )
       )
-      
-    }
-  })
-  
-},seed=900242057,kind="L'Ecuyer")
+  })  
+},seed=482947940,kind="L'Ecuyer")
 
 
 ## ----lik_local_eval------------------------------------------------------
-stew(file=sprintf("lik_local-%d.rda",run_level),{
+stew(file="lik_local-1.rda",{
   
   t_local_eval <- system.time({
-    liks_local <- foreach(i=1:bsflu_Nlocal,.packages='pomp',.combine=rbind) %dopar% {
-      evals <- replicate(bsflu_Neval, logLik(pfilter(bsflu,params=coef(mifs_local[[i]]),Np=bsflu_Np)))
-      logmeanexp(evals, se=TRUE)
-    }
+    liks_local <- foreach(mf=mifs_local,
+                          .packages='pomp',
+                          .combine=rbind) %dopar% 
+      try({
+        evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
+        ll <- logmeanexp(evals,se=TRUE)
+        c(coef(mf),loglik=ll)
+      })
   })
 },seed=900242057,kind="L'Ecuyer")
 
@@ -172,7 +194,7 @@ stew(file=sprintf("box_eval-%d.rda",run_level),{
   t_global <- system.time({
     mifs_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  mif2(
       mifs_local[[1]],
-      start=c(apply(bsflu_box,1,function(x)runif(1,x[1],x[2])),bsflu_fixed_params)
+      start=c(apply(bsflu_box,1,function(x)runif(1,x[1],x[2])),fixed_params)
     )
   })
 },seed=1270401374,kind="L'Ecuyer")

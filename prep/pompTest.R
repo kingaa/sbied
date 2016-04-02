@@ -1,8 +1,9 @@
 ## TEST SCRIPT
 ## If this script runs without errors, pomp is usable on your system.
 
+install.packages(c("pomp","pompExamples"),
+                 repos="http://kingaa.github.io")
 require(devtools)
-install_github("kingaa/pomp")
 
 require(pomp)
 
