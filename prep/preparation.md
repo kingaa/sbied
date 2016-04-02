@@ -6,7 +6,7 @@ Please read the appropriate sections below, install the software as needed, and 
 
 #### All users:
 
-**R** and **Rstudio** are free and open-source.  You’ll need at least version 3.2.0 of **R**.  The latest version is 3.2.1, so if you need to update, go ahead and install version 3.2.1.  Source code and binaries are available on CRAN (http://cran.r-project.org).  Install the latest version of **Rstudio** (http://www.rstudio.com/products/rstudio/download/).  
+**R** and **Rstudio** are free and open-source.  You’ll need at least version 3.2.1 of **R**.  The latest version is 3.2.4, so if you need to update, go ahead and install version 3.2.4.  Source code and binaries are available on CRAN (http://cran.r-project.org).  Install the latest version of **Rstudio** (http://www.rstudio.com/products/rstudio/download/).  
 
 Once you’ve installed these, open a session in **R** or **Rstudio** and run the following:
 
