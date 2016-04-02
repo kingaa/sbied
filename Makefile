@@ -9,7 +9,8 @@ html-docs: index.html intro/intro.html stochsim/stochsim.html pfilter/pfilter.ht
 	Rscript --vanilla -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
 
 %.html: %.md
-	pandoc -s --mathjax="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" $*.md -o $*.html
+	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
+	Rscript --vanilla -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
 
 %.R: %.Rmd
 	Rscript --vanilla -e "library(knitr); purl(\"$*.Rmd\",output=\"$*.R\")"
