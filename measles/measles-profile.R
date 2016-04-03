@@ -18,7 +18,7 @@ stopifnot(packageVersion("pomp")>="0.75-1")
 ## ----load-data-----------------------------------------------------------
 daturl <- "http://kingaa.github.io/pomp/vignettes/twentycities.rda"
 datfile <- file.path(tempdir(),"twentycities.rda")
-download.file(daturl,destfile=datfile)
+download.file(daturl,destfile=datfile,mode="wb")
 load(datfile)
 measles %>% 
   mutate(year=as.integer(format(date,"%Y"))) %>%
