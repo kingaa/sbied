@@ -3,7 +3,6 @@ title: "Case study: Forecasting Ebola"
 author: "Aaron A. King, Matthieu Domenech de Cell&egrave;s, Felicia M. G. Magpantay, and Pejman Rohani"
 output:
   html_document:
-    theme: flatly
     toc: yes
 bibliography: ../sbied.bib
 csl: ../ecology.csl

@@ -1,9 +1,7 @@
 ---
 title: "Simulation-based Inference for Epidemiological Dynamics"
 author: "Aaron A. King and Edward L. Ionides"
-output:
-  html_document:
-    theme: flatly
+output: html_document
 bibliography: sbied.bib
 csl: ecology.csl
 

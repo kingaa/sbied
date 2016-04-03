@@ -4,7 +4,6 @@ author: "Edward Ionides"
 date: "05/28/2015"
 output:
   html_document:
-    theme: flatly
     toc: yes
     toc_depth: 3
 bibliography: contacts.bib

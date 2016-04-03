@@ -4,7 +4,6 @@ author: "Edward Ionides"
 date: "06/25/2015"
 output:
   html_document:
-    theme: flatly
     toc: yes
 bibliography: polio.bib
 csl: ../ecology.csl

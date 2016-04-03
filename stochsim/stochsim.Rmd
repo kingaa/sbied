@@ -4,7 +4,6 @@ author: "Edward L. Ionides and Aaron A. King"
 date: "2015-07-13"
 output:
   html_document:
-    theme: flatly
     toc: yes
 bibliography: ../sbied.bib
 csl: ../ecology.csl

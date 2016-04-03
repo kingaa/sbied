@@ -2,7 +2,7 @@
 
 # Software installation instructions
 
-Please read the appropriate sections below, install the software as needed, and run the test scripts.  If you run into problems, send a note to *kingaa@umich.edu* with a detailed description of the problem you've encountered, including the OS you’re running, the versions of **R**, **Rstudio**, and **pomp** you’re attempting to install, what you’ve done, and what problems you’ve encountered.
+Please read the appropriate sections below, install the software as needed, and run the test scripts.  If you run into problems, send a note to kingaa@umich.edu with a detailed description of the problem you've encountered, including the OS you’re running, the versions of **R**, **Rstudio**, and **pomp** you’re attempting to install, what you’ve done, and what problems you’ve encountered.
 
 #### All users:
 
@@ -30,7 +30,7 @@ If you have trouble with either script above, make sure you have the GNU compile
 
 #### MacOSX users:
 
-So that you can compile C code and dynamically link it into an **R** session, you will need to make sure you have the Xcode app installed before running the second script above.  This is free and can be installed via the App Store or downloaded from [https://developer.apple.com/xcode/downloads/].
+So that you can compile C code and dynamically link it into an **R** session, you will need to make sure you have the Xcode app installed before running the second script above.  This is free and can be installed via the App Store or downloaded from https://developer.apple.com/xcode/downloads/.
 
 If you have trouble with the first command trying to install `pomp` from source, receiving the error,
 
@@ -42,7 +42,7 @@ then it is likely that you do not have the necessary version of gfortran install
 
 #### Windows users:
 
-You will need the ability to compile C code and dynamically link it into an **R** session.  To do this, you’ll need to install the `Rtools` suite.  Download the latest frozen version ([http://cran.r-project.org/bin/windows/Rtools]) and install it.  I had some problems with the unfrozen version (**Rtools33**) but none with the last frozen version (**Rtools32**).  I also had some difficulties initially with the latest version of **Rstudio** but these went away when I installed version 0.98.1103 (downloaded from [here](https://support.rstudio.com/hc/en-us/articles/206569407-Older-Versions-of-RStudio-Desktop)) and now I am having no problems with version **Rstudio** version 0.99.447.
+You will need the ability to compile C code and dynamically link it into an **R** session.  To do this, you’ll need to install the `Rtools` suite.  Download the latest frozen version (http://cran.r-project.org/bin/windows/Rtools) and install it.  I had some problems with the unfrozen version (**Rtools33**) but none with the last frozen version (**Rtools32**).  I also had some difficulties initially with the latest version of **Rstudio** but these went away when I installed version 0.98.1103 (downloaded from [here](https://support.rstudio.com/hc/en-us/articles/206569407-Older-Versions-of-RStudio-Desktop)) and now I am having no problems with version **Rstudio** version 0.99.447.
 
 If you use some other operating system, let me know!
 
