@@ -3,8 +3,8 @@ title: "Iterated filtering: Principles and practice"
 author: "Edward Ionides and Aaron A. King"
 date: "06/25/2015"
 output:
-  html_document:
-    toc: yes
+html_document:
+toc: yes
 bibliography: mif.bib
 csl: ../ecology.csl
 
@@ -325,7 +325,7 @@ plot(bsflu)
 ```
 
 
-## Testing the codes.
+### Testing the codes.
 
 To develop and debug code, it is useful to have example codes that run quickly.
 Here, we run some simulations and a particle filter, simply to check that the codes are working correctly.
@@ -360,7 +360,7 @@ plot(pf)
 
 These plots show the data along with the *effective sample size* of the particle filter (`ess`) and the log likelihood of each observation conditional on the preceding ones (`cond.logLik`).
 
-## Setting up the estimation problem.
+### Setting up the estimation problem.
 
 Let's treat $\mu_{R_1}$ and  $\mu_{R_2}$ as known, and fix these parameters at the empirical means of the bed-confinement and convalescence times for symptomatic cases, respectively:
 
@@ -391,13 +391,12 @@ The next line tells **foreach** that we will use the **doParallel** backend.
 By default, **R** will guess how many concurrent **R** processes to run on this single multicore machine.
 The final line sets up a parallel random number generator and fixes its seed.
 
-## Estimating the likelihood.
+### Estimating the likelihood.
 
 We proceed to carry out replicated particle filters at an initial guess of $\beta=0.01$, $\mu_I=2$, and $\rho=0.9$.
 
 ```{r pf,echo=F,eval=T}
 stew(file="pf.rda",{
-  
   t_pf <- system.time(
     pf <- foreach(i=1:10,.packages='pomp',
                   .options.multicore=list(set.seed=TRUE)) %dopar% 
@@ -412,7 +411,7 @@ stew(file="pf.rda",{
 
 In  `r round(t_pf["elapsed"],1)` seconds, we obtain an unbiased likelihood estimate of `r round(L_pf[1],1)` with a Monte Carlo standard error of `r round(L_pf[2],2)`.
 
-## Building up a picture of the likelihood surface
+### Building up a picture of the likelihood surface
 
 Given a model and a set of data, the likelihood surface is well defined, though it may be difficult to visualize.
 We can develop a progressively more complete picture of this surface by storing likelihood estimates whenever we compute them.
@@ -425,7 +424,7 @@ results <- as.data.frame(as.list(c(coef(pf[[1]]),loglik=L_pf[1],loglik=L_pf[2]))
 write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 ```
 
-## A local search of the likelihood surface
+### A local search of the likelihood surface
 
 Let's carry out a local search using `mif2` around this point in parameter space. 
 For that, we need to set the `rw.sd` and `cooling.fraction.50` algorithmic parameters.
@@ -434,7 +433,7 @@ For simplicity, we'll use the same perturbation size on $\rho$.
 We fix `cooling.fraction.50=0.5`, so that 50 `mif2` iterations result in a 50% decrease in the perturbation magnitudes.
 
 ```{r box_search_local}
-stew(file="local_search.rda",{
+stew(file="box_search_local.rda",{
   t_local <- system.time({
     mifs_local <- foreach(i=1:20,
                           .packages='pomp',
@@ -457,32 +456,32 @@ stew(file="local_search.rda",{
 
 ggplot(data=melt(conv.rec(mifs_local)),
        aes(x=iteration,y=value,group=L1,color=factor(L1)))+
-    geom_line()+
-    guides(color=FALSE)+
-    facet_wrap(~variable,scales="free_y")+
-    theme_bw()
+  geom_line()+
+  guides(color=FALSE)+
+  facet_wrap(~variable,scales="free_y")+
+  theme_bw()
 ```
 
 Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference. Partly, this is because parameter perturbations are applied in the last filtering iteration. Partly, this is because `mif2` is usually carried out with a smaller number of particles than is necessary for a good likelihood evaluation---the errors in `mif2` average out over many iterations of the filtering. Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
-```{r lik_local_eval}
+```{r lik_local}
 stew(file="lik_local.rda",{
-  t_local_eval <- system.time({
+  t_local <- system.time({
     results_local <- foreach(mf=mifs_local,
                              .packages='pomp',
                              .combine=rbind,
                              .options.multicore=list(set.seed=TRUE)) %dopar% 
-      try({
+    {
         evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
         ll <- logmeanexp(evals,se=TRUE)
         c(coef(mf),loglik=ll[1],loglik=ll[2])
-      })
+    }
   })
 },seed=900242057,kind="L'Ecuyer")
 results_local <- as.data.frame(results_local)
 ```
 
-This investigation took  `r round(t_local["elapsed"]/60,1)` minutes for the maximization and `r round(t_local_eval["elapsed"]/60,1)` minutes for the likelihood evaluation. These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
+This investigation took  `r round(t_local["elapsed"]/60,1)` minutes for the maximization and `r round(t_local["elapsed"]/60,1)` minutes for the likelihood evaluation. These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 
 ```{r pairs_local}
 pairs(~loglik+Beta+mu_I+rho,data=results_local)
@@ -494,7 +493,7 @@ results <- rbind(results,results_local[names(results)])
 write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 ```
 
-## A global search of the likelihood surface using randomized starting values
+### A global search of the likelihood surface using randomized starting values
 
 When carrying out parameter estimation for dynamic systems, we need to specify beginning values for both the dynamic system (in the state space) and the parameters (in the parameter space). By convention, we use  _initial values_ for the initialization of the dynamic system and _starting values_ for initialization of the parameter search.
 
@@ -511,46 +510,36 @@ bsflu_box <- rbind(
 ```
 
 We are now ready to carry out likelihood maximizations from diverse starting points.
-In the following, we take advantage of a general **pomp** behavior:
-re-running a command on an object created by the same command preserves the algorithmic arguments.
 
-```{r box_eval}
-stew(file="box_eval.rda",{
-    t_global <- system.time({
-        mifs_global <- foreach(i=1:300, 
-                               .packages='pomp', 
-                               .combine=c,
-                               .options.multicore=list(set.seed=TRUE)
-                               ) %dopar%  
-        mif2(
-            mifs_local[[1]],
-            start=c(apply(bsflu_box,1,function(x)runif(1,x[1],x[2])),fixed_params)
-        )
-    })
+```{r box_search_global}
+stew(file="box_search_global.rda",{
+  t_global <- system.time({
+    results_global <- foreach(i=1:300, 
+                              .packages='pomp', 
+                              .combine=rbind,
+                              .options.multicore=list(set.seed=TRUE)
+    ) %dopar% {
+      guess <- apply(bsflu_box,1,function(x)runif(1,x[1],x[2]))
+      mf <- mif2(mifs_local[[1]],start=c(guess,fixed_params),
+                 cooling.type='geometric')
+      mf <- mif2(mf,Nmif=100)
+      ll <- replicate(10,logLik(pfilter(mf,Np=20000)))
+      ll <- logmeanexp(ll,se=TRUE)
+      c(coef(mf),loglik=ll[1],loglik=ll[2])
+    }
+  })
 },seed=1270401374,kind="L'Ecuyer")
-
-stew(file="lik_global_eval.rda",{
-    t_global_eval <- system.time({
-        results_global <- foreach(mf=mifs_global,
-                                  .packages='pomp',
-                                  .combine=rbind,
-                                  .options.multicore=list(set.seed=TRUE)) %dopar%
-        {
-            evals <- replicate(10,logLik(pfilter(mf,Np=20000)))
-            ll <- logmeanexp(evals,se=TRUE)
-            c(coef(mf),loglik=ll[1],loglik=ll[2])
-        }
-    })
-},seed=442141592,kind="L'Ecuyer")
-
 results_global <- as.data.frame(results_global)
 results <- rbind(results,results_global[names(results)])
 write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 ```
 
+In the above, we took advantage of a general **pomp** behavior:
+re-running a command on an object created by the same command preserves the algorithmic arguments.
+
 Evaluation of the best result of this search gives a likelihood of `r round(max(results_global$loglik),1)` with a standard error of `r round(results_global$loglik.se[which.max(results_global$loglik)],2)`.
-This took in `r round(t_global["elapsed"]/60,1)` minutes for the maximization and `r round(t_global_eval["elapsed"]/60,1)` minutes for the evaluation.
-Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface 
+This took in `r round(t_global["elapsed"]/60,1)` minutes altogether on a machine with `r getOption("cores")` processors.
+One can visualize aspects of the global geometry of the likelihood surface with a scatterplot matrix of these diverse parameter estimates:
 
 ```{r pairs_global}
 pairs(~loglik+Beta+mu_I+rho,data=results_global)
