@@ -15,7 +15,6 @@ Please share and remix noncommercially, mentioning its origin.
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
-library(pomp)
 library(knitr)
 prefix <- "mif"
 opts_chunk$set(
@@ -41,12 +40,12 @@ opts_chunk$set(
   dev='png',
   dev.args=list(bg='transparent')
 )
+options(keep.source=TRUE,encoding="UTF-8")
 ```
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
-options(
-  keep.source=TRUE,
-  encoding="UTF-8"
-)
+library(pomp)
+options(cores=20,stringsAsFactors=FALSE)
+stopifnot(packageVersion("pomp")>="1.4")
 ```
 
 
@@ -230,14 +229,14 @@ for initial value parameters (IVPs).
 * It is surprising that useful general advice exists for these quantities that could in principle be highly model-specific.
 Here is one possible explanation: the precision of interest is often the second significant figure and there are often order 100 observations (10 monthly obsevations would be too few to fit a mechanistic model; 1000 would be unusual for an epidemiological system). 
 
-## Applying IF2 to a boarding school influenza outbreak
+## Applying IF2 to the boarding school influenza outbreak
 
 For a relatively simple epidemiological example of IF2, we consider fitting a stochastic SIR model to an influenza outbreak in a British boarding school [@anonymous78]. Reports consist of the number of children confined to bed for each of the 14 days of the outbreak. The total number of children at the school was 763, and a total of 512 children spent time away from class. Only one adult developed influenza-like illness, so adults are omitted from the data and model. First, we read in the boarding school flu (bsflu) data:
 ```{r load_bbs}
 bsflu_data <- read.table("http://kingaa.github.io/sbied/data/bsflu_data.txt")
 ```
 
-Our model is a variation on a basic SIR Markov chain, with state $X(t)=(S(t),I(t),R_1(t),R_2(t),R_3(t) )$ giving the number of individuals in the susceptible and infectious categories, and three stages of recovery. The recovery stages, $R_1$, $R_2$ and $R_3$, are all modeled to be non-contagious. $R_1$ consists of individuals who are bed-confined if they show symptoms; $R_2$ consists of individuals who are convalescent if they showed symptoms; $R_3$ consists of recovered individuals who have returned to school-work if they were symtomatic.  The observation on day $n$ of the observed epidemic (with $n=1$ being 22 January) consists of the numbers of children who are bed-confined and convalescent. These measurements are modeled as $Y_n=(B_n,C_n)$ with $B_n\sim\mathrm{Poisson}(\rho R_1(t_n))$ and $C_n\sim\mathrm{Poisson}(\rho R_2(t_n))$. Here, $\rho$ is a reporting rate corresponding to the chance of being symptomatic.
+Our model is a variation on a basic SIR Markov chain, with state $X(t)=(S(t),I(t),R_1(t),R_2(t),R_3(t))$ giving the number of individuals in the susceptible and infectious categories, and three stages of recovery. The recovery stages, $R_1$, $R_2$ and $R_3$, are all modeled to be non-contagious. $R_1$ consists of individuals who are bed-confined if they show symptoms; $R_2$ consists of individuals who are convalescent if they showed symptoms; $R_3$ consists of recovered individuals who have returned to school-work if they were symtomatic.  The observation on day $n$ of the observed epidemic (with $n=1$ being 22 January) consists of the numbers of children who are bed-confined and convalescent. These measurements are modeled as $Y_n=(B_n,C_n)$ with $B_n\sim\mathrm{Poisson}(\rho R_1(t_n))$ and $C_n\sim\mathrm{Poisson}(\rho R_2(t_n))$. Here, $\rho$ is a reporting rate corresponding to the chance of being symptomatic.
 
 The index case for the epidemic was proposed to be a boy returning to Britain from Hong Kong, who was reported to have a transient febrile illness
 from 15 to 18 January. It would therefore be reasonable to initialize the epidemic with $I(t_0)=1$ at $t_0=-6$. This is a little tricky to reconcile with the rest of the data; for now, we avoid this issue by instead initializing with  $I(t_0)=1$ at $t_0=0$. All other individuals are modeled to be initially susceptible.
@@ -246,7 +245,8 @@ Our Markov transmission model is that each individual in $S$ transitions to $I$ 
 
 This model has limitations and weaknesses. Writing down and fitting a model is a starting point for data analysis, not an end point. In particular, one should try model variations. For example, one could include a latency period for infections, or one could modify the model to give a better description of the bed-confinement and convalescence processes. Ten individuals received antibiotics for secondary infections, and they had longer bed-confinement and convalescence times. Partly for this reason, we will initially fit only the bed-confinement data, using $Y_n=B_n$ for our `dmeasure`. 
 
-For the code, we represent the states ($S$, $I$, $R_1$, $R_2$) and the parameters ($\beta$, $\mu_I$, $\rho$, $\mu_{R_1}$, $\mu_{R_2}$) as follows:
+We do not need a representation of $R_3$ since the total population size is fixed at $P=763$ and hence $R_3(t)=P-S(t)-I(t)-R_1(t)-R_2(t)$. 
+For the code, we enumerate the state variables ($S$, $I$, $R_1$, $R_2$) and the parameters ($\beta$, $\mu_I$, $\rho$, $\mu_{R_1}$, $\mu_{R_2}$) as follows:
 
 ```{r bsflu_names}
 bsflu_statenames <- c("S","I","R1","R2")
@@ -258,7 +258,6 @@ In the codes below, we'll refer to the data variables by their names ($B$, $C$),
 colnames(bsflu_data)[1:2]
 ```
 
-We do not need a representation of $R_3$ since the total population size is fixed at $P=763$ and hence $R_3(t)=P-S(t)-I(t)-R_1(t)-R_2(t)$. 
 Now, we write the model code:
 
 ```{r csnippets_bsflu}
@@ -302,11 +301,10 @@ bsflu_initializer <- "
 "
 ```
 
-We can now build the `pomp` object.
+We build the `pomp` object:
 
 ```{r pomp_bsflu}
-require(pomp)
-stopifnot(packageVersion("pomp")>="1.2.2")
+library(pomp)
 bsflu <- pomp(
   data=bsflu_data,
   times="day",
@@ -340,8 +338,8 @@ Now to run some simulations:
 ```{r init_sim}
 y <- simulate(bsflu,params=params,nsim=10,as.data.frame=TRUE)
 
-require(ggplot2)
-require(reshape2)
+library(ggplot2)
+library(reshape2)
 
 ggplot(data=melt(subset(y,select=c(time,B,C,sim)),
                  id=c("sim","time")),
@@ -362,66 +360,57 @@ plot(pf)
 
 These plots show the data along with the *effective sample size* of the particle filter (`ess`) and the log likelihood of each observation conditional on the preceding ones (`cond.logLik`).
 
-```{r run_level}
-run_level <- 3
-switch(run_level,
-       {bsflu_Np=100; bsflu_Nmif=10; bsflu_Neval=10; bsflu_Nglobal=10; bsflu_Nlocal=10}, 
-       {bsflu_Np=20000; bsflu_Nmif=100; bsflu_Neval=10; bsflu_Nglobal=10; bsflu_Nlocal=10}, 
-       {bsflu_Np=60000; bsflu_Nmif=300; bsflu_Neval=10; bsflu_Nglobal=100; bsflu_Nlocal=20}
-)
-```
-
 ## Setting up the estimation problem.
 
 Let's treat $\mu_{R_1}$ and  $\mu_{R_2}$ as known, and fix these parameters at the empirical means of the bed-confinement and convalescence times for symptomatic cases, respectively:
 
 ```{r fixed_params}
-fixed_params <- with(bsflu_data,c(mu_R1=1/(sum(B)/512),mu_R2=1/(sum(C)/512)))
-est_params <- params[c("Beta","mu_I","rho")]
+(fixed_params <- with(bsflu_data,c(mu_R1=1/(sum(B)/512),mu_R2=1/(sum(C)/512))))
 ```
 
-It will be helpful to do parallelize most of the computations.
+We will estimate $\beta$, $\mu_I$, and $\rho$.
+
+It will be helpful to parallelize most of the computations.
 Most machines are multi-core nowadays, and using this computational capacity involves only 
-(i) the following lines of code to let R know you plan to use multiple processors; 
-(ii) using the parallel for loop provided by the **foreach** package; and
-(iii) proper attention to the use of parallel random number generators.
+
+i. the following lines of code to let R know you plan to use multiple processors; 
+i. the parallel for loop provided by the **foreach** package; and
+i. proper attention to the use of parallel random number generators.
 
 ```{r parallel-setup,cache=FALSE}
-require(foreach)
-require(doParallel)
+library(foreach)
+library(doParallel)
 
-cores <- 20
-registerDoParallel(cores)
+registerDoParallel()
 
 set.seed(2036049659,kind="L'Ecuyer")
-mcopts <- list(set.seed=TRUE)
 ```
 
 The first two lines load the **foreach** and **doParallel** packages, the latter being a "backend" for the **foreach** package.
-The next two lines specify that we intend to use 20 parallel **R** processes, running on a single multicore machine.
-The final two lines set up a parallel random number generator, fix its seed, and allow us to inform **foreach** about this choice.
+The next line tells **foreach** that we will use the **doParallel** backend.
+By default, **R** will guess how many concurrent **R** processes to run on this single multicore machine.
+The final line sets up a parallel random number generator and fixes its seed.
 
 ## Estimating the likelihood.
 
-We proceed to carry out replicated particle filters at this tentative MLE:
+We proceed to carry out replicated particle filters at an initial guess of $\beta=0.01$, $\mu_I=2$, and $\rho=0.9$.
 
-```{r pf}
-stew(file="pf-1.rda",{
+```{r pf,echo=F,eval=T}
+stew(file="pf.rda",{
   
   t_pf <- system.time(
-    pf <- foreach(i=1:20,.packages='pomp',
+    pf <- foreach(i=1:10,.packages='pomp',
                   .options.multicore=list(set.seed=TRUE)) %dopar% 
       try(
-        pfilter(bsflu,params=c(est_params,fixed_params),Np=1000)
+        pfilter(bsflu,params=c(Beta=0.01,mu_I=2,rho=0.9,fixed_params),Np=10000)
       )
   )
-  
 },seed=625904618,kind="L'Ecuyer")
 
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
 ```
 
-In  `r round(t_pf["elapsed"],1)` seconds, we obtain an unbiased likelihood estimate of `r round(L_pf[1],2)` with a Monte Carlo standard error of `r round(L_pf[2],2)`.
+In  `r round(t_pf["elapsed"],1)` seconds, we obtain an unbiased likelihood estimate of `r round(L_pf[1],1)` with a Monte Carlo standard error of `r round(L_pf[2],2)`.
 
 ## Building up a picture of the likelihood surface
 
@@ -432,18 +421,20 @@ This will become progressively more complete as our parameter-space search goes 
 At this point, we've computed the likelihood at a single point.
 Let's store this point, together with the estimated likelihood and our estimate of the standard error on that likelihood, in a CSV file:
 ```{r init_csv}
-results <- as.data.frame(as.list(c(est_params,fixed_params,loglik=L_pf[1],loglik.se=L_pf[2])))
-write.csv(results,file="mif_bsflu_params.csv",row.names=FALSE)
+results <- as.data.frame(as.list(c(coef(pf[[1]]),loglik=L_pf[1],loglik=L_pf[2])))
+write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 ```
 
 ## A local search of the likelihood surface
 
 Let's carry out a local search using `mif2` around this point in parameter space. 
-For that, we need to set the `rw.sd` and `cooling.fraction.50` algorithmic parameters:
+For that, we need to set the `rw.sd` and `cooling.fraction.50` algorithmic parameters.
+Since $\beta$ and $\mu_I$ will be estimated on the log scale, and we expect that multiplicative perturbations of these parameters will have roughly similar effects on the likelihood, we'll use a perturbation size of $0.02$, which we imagine will have a small but non-negligible effect.
+For simplicity, we'll use the same perturbation size on $\rho$.
+We fix `cooling.fraction.50=0.5`, so that 50 `mif2` iterations result in a 50% decrease in the perturbation magnitudes.
 
 ```{r box_search_local}
-stew(file="local_search-1.rda",{
-  
+stew(file="local_search.rda",{
   t_local <- system.time({
     mifs_local <- foreach(i=1:20,
                           .packages='pomp',
@@ -452,48 +443,58 @@ stew(file="local_search-1.rda",{
       try(
         mif2(
           bsflu,
-          start=c(fixed_params,est_params),
-          Np=20000,
-          Nmif=100,
+          start=c(Beta=0.01,mu_I=2,rho=0.9,fixed_params),
+          Np=2000,
+          Nmif=50,
           cooling.type="geometric",
           cooling.fraction.50=0.5,
           transform=TRUE,
           rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02)
         )
       )
-  })  
+  })
 },seed=482947940,kind="L'Ecuyer")
 
+ggplot(data=melt(conv.rec(mifs_local)),
+       aes(x=iteration,y=value,group=L1,color=factor(L1)))+
+    geom_line()+
+    guides(color=FALSE)+
+    facet_wrap(~variable,scales="free_y")+
+    theme_bw()
 ```
 
-Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference. Partly, this is because some parameter perturbations remain in the last filtering iteration. Partly, this is because `mif2` is usually carried out with a smaller number of particles than is necessary for a good likelihood evaluation---the errors in `mif2` average out over many iterations of the filtering. Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
+Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference. Partly, this is because parameter perturbations are applied in the last filtering iteration. Partly, this is because `mif2` is usually carried out with a smaller number of particles than is necessary for a good likelihood evaluation---the errors in `mif2` average out over many iterations of the filtering. Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
 ```{r lik_local_eval}
-stew(file="lik_local-1.rda",{
-  
+stew(file="lik_local.rda",{
   t_local_eval <- system.time({
-    liks_local <- foreach(mf=mifs_local,
-                          .packages='pomp',
-                          .combine=rbind) %dopar% 
+    results_local <- foreach(mf=mifs_local,
+                             .packages='pomp',
+                             .combine=rbind,
+                             .options.multicore=list(set.seed=TRUE)) %dopar% 
       try({
         evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
         ll <- logmeanexp(evals,se=TRUE)
-        c(coef(mf),loglik=ll)
+        c(coef(mf),loglik=ll[1],loglik=ll[2])
       })
   })
 },seed=900242057,kind="L'Ecuyer")
-
-results_local <- data.frame(logLik=liks_local[,1],logLik_se=liks_local[,2],t(sapply(mifs_local,coef)))
-summary(results_local$logLik,digits=5)
+results_local <- as.data.frame(results_local)
 ```
 
 This investigation took  `r round(t_local["elapsed"]/60,1)` minutes for the maximization and `r round(t_local_eval["elapsed"]/60,1)` minutes for the likelihood evaluation. These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 
 ```{r pairs_local}
-pairs(~logLik+Beta+mu_I+rho,data=subset(results_local,logLik>max(logLik)-50))
+pairs(~loglik+Beta+mu_I+rho,data=results_local)
 ```
 
-### A global search of the likelihood surface using randomized starting values
+We add these newly explored points to our database:
+```{r local_database}
+results <- rbind(results,results_local[names(results)])
+write.csv(results,file="bsflu_params.csv",row.names=FALSE)
+```
+
+## A global search of the likelihood surface using randomized starting values
 
 When carrying out parameter estimation for dynamic systems, we need to specify beginning values for both the dynamic system (in the state space) and the parameters (in the parameter space). By convention, we use  _initial values_ for the initialization of the dynamic system and _starting values_ for initialization of the parameter search.
 
@@ -509,52 +510,50 @@ bsflu_box <- rbind(
 )
 ```
 
-
-We are now ready to carry out likelihood maximizations from diverse starting points. To simplify the code, we can reset only the starting parameters from `mifs_global[[1]]` since the rest of the call to `mif2` can be read in from `mifs_global[[1]]`:
+We are now ready to carry out likelihood maximizations from diverse starting points.
+In the following, we take advantage of a general **pomp** behavior:
+re-running a command on an object created by the same command preserves the algorithmic arguments.
 
 ```{r box_eval}
-stew(file=sprintf("box_eval-%d.rda",run_level),{
-  
-  t_global <- system.time({
-    mifs_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp', .combine=c, .options.multicore=mcopts) %dopar%  mif2(
-      mifs_local[[1]],
-      start=c(apply(bsflu_box,1,function(x)runif(1,x[1],x[2])),fixed_params)
-    )
-  })
+stew(file="box_eval.rda",{
+    t_global <- system.time({
+        mifs_global <- foreach(i=1:300, 
+                               .packages='pomp', 
+                               .combine=c,
+                               .options.multicore=list(set.seed=TRUE)
+                               ) %dopar%  
+        mif2(
+            mifs_local[[1]],
+            start=c(apply(bsflu_box,1,function(x)runif(1,x[1],x[2])),fixed_params)
+        )
+    })
 },seed=1270401374,kind="L'Ecuyer")
-```
 
-Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference. Partly, this is because some parameter perturbations remain in the last filtering iteration. Partly, this is because `mif2` is usually carried out with a smaller number of particles than is necessary for a good likelihood evaluation---the errors in `mif2` average out over many iterations of the filtering. Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
-
-```{r lik_global_eval}
-stew(file=sprintf("lik_global_eval-%d.rda",run_level),{
-  
-  t_global_eval <- system.time({
-    liks_global <- foreach(i=1:bsflu_Nglobal,.packages='pomp',.combine=rbind, .options.multicore=mcopts) %dopar% {
-      evals <- replicate(bsflu_Neval, logLik(pfilter(bsflu,params=coef(mifs_global[[i]]),Np=bsflu_Np)))
-      logmeanexp(evals, se=TRUE)
-    }
-  })
+stew(file="lik_global_eval.rda",{
+    t_global_eval <- system.time({
+        results_global <- foreach(mf=mifs_global,
+                                  .packages='pomp',
+                                  .combine=rbind,
+                                  .options.multicore=list(set.seed=TRUE)) %dopar%
+        {
+            evals <- replicate(10,logLik(pfilter(mf,Np=20000)))
+            ll <- logmeanexp(evals,se=TRUE)
+            c(coef(mf),loglik=ll[1],loglik=ll[2])
+        }
+    })
 },seed=442141592,kind="L'Ecuyer")
 
-results_global <- data.frame(logLik=liks_global[,1],logLik_se=liks_global[,2],t(sapply(mifs_global,coef)))
-summary(results_global$logLik,digits=5)
+results_global <- as.data.frame(results_global)
+results <- rbind(results,results_global[names(results)])
+write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 ```
 
-It is good practice to build up a file of successful optimization results for subsequent investigation:
-
-```{r save_params,eval=FALSE}
-if (run_level>1) 
-  write.table(rbind(results_local,results_global),
-              file="mif_bsflu_params.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
-```
-
-Evaluation of the best result of this search gives a likelihood of `r round(max(results_global$logLik),1)` with a standard error of `r round(results_global$logLik_se[which.max(results_global$logLik)],2)`.
+Evaluation of the best result of this search gives a likelihood of `r round(max(results_global$loglik),1)` with a standard error of `r round(results_global$loglik.se[which.max(results_global$loglik)],2)`.
 This took in `r round(t_global["elapsed"]/60,1)` minutes for the maximization and `r round(t_global_eval["elapsed"]/60,1)` minutes for the evaluation.
 Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface 
 
 ```{r pairs_global}
-pairs(~logLik+Beta+mu_I+rho,data=subset(results_global,logLik>max(logLik)-250))
+pairs(~loglik+Beta+mu_I+rho,data=results_global)
 ```
 
 We see that optimization attempts from diverse remote starting points end up with comparable likelihoods, even when the parameter values are quite distinct. This gives us some confidence in our maximization procedure. 
