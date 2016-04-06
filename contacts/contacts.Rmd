@@ -45,11 +45,11 @@ opts_chunk$set(
 set.seed(2050320976)
 ```
 ```{r opts,include=FALSE,cache=FALSE}
-require(ggplot2)
+library(ggplot2)
 theme_set(theme_bw())
 
-require(foreach)
-require(doParallel)
+library(foreach)
+library(doParallel)
 
 options(
   keep.source=TRUE,
@@ -176,7 +176,7 @@ This results in high-dimensional latent and measurement processes, which is nume
 Here, we use **pomp** version `r packageVersion("pomp")`
 
 ```{r package}
-require(pomp)
+library(pomp)
 packageVersion("pomp")
 ```
 

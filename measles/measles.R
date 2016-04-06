@@ -29,12 +29,12 @@ Sheffield,-2810.7,0.21,0.02,4,54.3,62.2,0.649,33.1,0.313,1.02,0.853,0.225,0.175,
 
 ## ----prelims,cache=FALSE-------------------------------------------------
 set.seed(594709947L)
-require(ggplot2)
+library(ggplot2)
 theme_set(theme_bw())
-require(plyr)
-require(reshape2)
-require(magrittr)
-require(pomp)
+library(plyr)
+library(reshape2)
+library(magrittr)
+library(pomp)
 stopifnot(packageVersion("pomp")>="0.70-1")
 
 ## ----load-data-----------------------------------------------------------
@@ -74,7 +74,7 @@ plot(birthrate~I(time-4),data=covar,type='l')
 points(births~I(year+0.5),data=demog)
 
 ## ----seir-diagram,echo=FALSE,cache=FALSE---------------------------------
-require(DiagrammeR)
+library(DiagrammeR)
 DiagrammeR("digraph SEIR {
   graph [rankdir=TD, overlap=false, fontsize = 10]
   node[shape=egg, label='B'] b;
@@ -209,8 +209,8 @@ mle %>% subset(select=-c(S_0,E_0,I_0,R_0)) %>%
   knitr::kable(row.names=FALSE)
 
 ## ----pfilter1------------------------------------------------------------
-require(foreach)
-require(doMC)
+library(foreach)
+library(doMC)
 
 registerDoMC()
 

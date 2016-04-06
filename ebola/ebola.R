@@ -6,12 +6,12 @@ options(
   )
 
 set.seed(594709947L)
-require(ggplot2)
+library(ggplot2)
 theme_set(theme_bw())
-require(plyr)
-require(reshape2)
-require(magrittr)
-require(pomp)
+library(plyr)
+library(reshape2)
+library(magrittr)
+library(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 
 ## ----get-data------------------------------------------------------------
@@ -166,10 +166,10 @@ options(stringsAsFactors=FALSE)
 profs <- read.csv(paste0(base_url,"/ebola/ebola-profiles.csv"))
 
 ## ----profiles-plots,results='hide'---------------------------------------
-require(reshape2)
-require(plyr)
-require(magrittr)
-require(ggplot2)
+library(reshape2)
+library(plyr)
+library(magrittr)
+library(ggplot2)
 theme_set(theme_bw())
 
 profs %>% 
@@ -238,10 +238,10 @@ probe(gin,probes=list(
 ),nsim=500) %>% plot()
 
 ## ----forecasts-----------------------------------------------------------
-require(pomp)
-require(plyr)
-require(reshape2)
-require(magrittr)
+library(pomp)
+library(plyr)
+library(reshape2)
+library(magrittr)
 options(stringsAsFactors=FALSE)
 
 set.seed(988077383L)
@@ -281,9 +281,9 @@ params <- sobolDesign(lower=ranges[,'min'],
                       nseq=20)
 plot(params)
 
-require(foreach)
-require(doMC)
-require(iterators)
+library(foreach)
+library(doMC)
+library(iterators)
 
 registerDoMC(cores=4)
 
@@ -295,7 +295,7 @@ foreach(p=iter(params,by='row'),
         .options.multicore=list(preschedule=TRUE,set.seed=TRUE)
 ) %dopar%
 {
-  require(pomp)
+  library(pomp)
   
   M1 <- ebolaModel("SierraLeone")
   pf <- pfilter(M1,params=unlist(p),Np=2000,save.states=TRUE)

@@ -61,12 +61,12 @@ options(
   )
 
 set.seed(594709947L)
-require(ggplot2)
+library(ggplot2)
 theme_set(theme_bw())
-require(plyr)
-require(reshape2)
-require(magrittr)
-require(pomp)
+library(plyr)
+library(reshape2)
+library(magrittr)
+library(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 ```
 
@@ -126,7 +126,7 @@ In this document, we'll fix $m=3$.
 We implement Gamma distributions using the so-called *linear chain trick*.
 
 ```{r seir-diagram,echo=FALSE,cache=FALSE,purl=FALSE}
-require(DiagrammeR)
+library(DiagrammeR)
 DiagrammeR("digraph SEIR {
   graph [rankdir=LR, overlap=false, fontsize = 10]
   node[shape=oval, label='S'] S;
@@ -309,10 +309,10 @@ profs <- read.csv(paste0(base_url,"/ebola/ebola-profiles.csv"))
 The following plots the profile likelihoods.
 The horizontal line represents the critical value of the likelihood ratio test for $p=0.01$.
 ```{r profiles-plots,results='hide'}
-require(reshape2)
-require(plyr)
-require(magrittr)
-require(ggplot2)
+library(reshape2)
+library(plyr)
+library(magrittr)
+library(ggplot2)
 theme_set(theme_bw())
 
 profs %>% 
@@ -438,10 +438,10 @@ This arises from four sources:
 Here, we'll explore how we can account for the first three of these in making forecasts for the Sierra Leone outbreak.
 
 ```{r forecasts}
-require(pomp)
-require(plyr)
-require(reshape2)
-require(magrittr)
+library(pomp)
+library(plyr)
+library(reshape2)
+library(magrittr)
 options(stringsAsFactors=FALSE)
 
 set.seed(988077383L)
@@ -481,9 +481,9 @@ params <- sobolDesign(lower=ranges[,'min'],
                       nseq=20)
 plot(params)
 
-require(foreach)
-require(doMC)
-require(iterators)
+library(foreach)
+library(doMC)
+library(iterators)
 
 registerDoMC(cores=4)
 
@@ -495,7 +495,7 @@ foreach(p=iter(params,by='row'),
         .options.multicore=list(preschedule=TRUE,set.seed=TRUE)
 ) %dopar%
 {
-  require(pomp)
+  library(pomp)
   
   M1 <- ebolaModel("SierraLeone")
   pf <- pfilter(M1,params=unlist(p),Np=2000,save.states=TRUE)

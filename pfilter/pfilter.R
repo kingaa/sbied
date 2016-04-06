@@ -6,14 +6,14 @@ options(
   )
 
 set.seed(594709947L)
-require(ggplot2)
+library(ggplot2)
 theme_set(theme_bw())
-require(grid)
-require(plyr)
-require(reshape2)
-require(foreach)
-require(doMC)
-require(pomp)
+library(grid)
+library(plyr)
+library(reshape2)
+library(foreach)
+library(doMC)
+library(pomp)
 stopifnot(packageVersion("pomp")>="0.74-1")
 
 ## ----sir-construct-------------------------------------------------------
@@ -83,8 +83,8 @@ sliceDesign(
   Beta=rep(seq(from=0.5,to=4,length=40),each=3),
   gamma=rep(seq(from=0.5,to=2,length=40),each=3)) -> p
 
-require(foreach)
-require(doMC)
+library(foreach)
+library(doMC)
 registerDoMC(cores=5)        ## number of cores on this machine
 
 set.seed(998468235L,kind="L'Ecuyer")

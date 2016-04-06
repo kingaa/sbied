@@ -7,13 +7,13 @@ options(
 
 ## ----prelims,echo=F,cache=F----------------------------------------------
 set.seed(594709947L)
-require(ggplot2)
+library(ggplot2)
 theme_set(theme_bw())
-require(plyr)
-require(reshape2)
-require(foreach)
-require(doMC)
-require(pomp)
+library(plyr)
+library(reshape2)
+library(foreach)
+library(doMC)
+library(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 
 ## ----flu-data1-----------------------------------------------------------
@@ -26,7 +26,7 @@ bsflu <- subset(bsflu,select=c(day,B))
 ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
 
 ## ----sir-diagram,echo=FALSE,cache=FALSE----------------------------------
-require(DiagrammeR)
+library(DiagrammeR)
 DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);",height=200,width=500)
 
 ## ----rproc2--------------------------------------------------------------
@@ -67,15 +67,15 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
   geom_line()+guides(color=FALSE)
 
 ## ----seir-diagram,echo=FALSE,cache=FALSE---------------------------------
-require(DiagrammeR)
+library(DiagrammeR)
 DiagrammeR("graph LR; S(S) --> E; E(E) --> I; I(I) --> R(R);",height=200,width=600)
 
 ## ----bsflu-plot2---------------------------------------------------------
-require(reshape2)
+library(reshape2)
 ggplot(data=melt(bsflu,id="day"),mapping=aes(x=day,y=value,color=variable))+
   geom_line()+geom_point()
 
 ## ----sirr-diagram,echo=FALSE,cache=FALSE---------------------------------
-require(DiagrammeR)
+library(DiagrammeR)
 DiagrammeR("graph LR; S(S) --> I; I(I) --> R1(R1); R1 --> R2(R2);",height=200,width=600)
 

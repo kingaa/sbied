@@ -1,9 +1,9 @@
 ## ----opts,include=FALSE,cache=FALSE--------------------------------------
-require(ggplot2)
+library(ggplot2)
 theme_set(theme_bw())
 
-require(foreach)
-require(doParallel)
+library(foreach)
+library(doParallel)
 
 options(
   keep.source=TRUE,
@@ -20,7 +20,7 @@ matplot(t(contact_data[1:15,1:4]),
         type="l",xaxp=c(1,4,3))
 
 ## ----package-------------------------------------------------------------
-require(pomp)
+library(pomp)
 packageVersion("pomp")
 
 ## ----statenames----------------------------------------------------------

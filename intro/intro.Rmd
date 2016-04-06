@@ -269,7 +269,7 @@ Let's see what can be done with a `pomp` object.
 First, if we haven't already, we must install **pomp** and `pompExamples`.
 Run the following to do so.
 ```{r install-pomp,eval=FALSE}
-require(devtools)
+library(devtools)
 install_github("kingaa/pomp")
 # install_github("kingaa/pompExamples")
 ```
@@ -277,10 +277,10 @@ install_github("kingaa/pomp")
 Now we'll load some packages, including **pomp**.
 ```{r prelims,cache=F}
 set.seed(594709947L)
-require(ggplot2)
-require(plyr)
-require(reshape2)
-require(pomp)
+library(ggplot2)
+library(plyr)
+library(reshape2)
+library(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 ```
 
@@ -436,7 +436,7 @@ Finally, the home page for the `pomp` project is \url{http://kingaa.github.io/po
 there you have access to the complete source code, manuals, mailing lists, etc.
 
 ```{r parus-pomp1}
-require(pomp)
+library(pomp)
 parus <- pomp(dat,times="year",t0=1959)
 ```
 The `times` argument specifies that the column labelled "year" gives the measurement times;

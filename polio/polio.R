@@ -9,7 +9,7 @@ polio_data <- read.table("polio_wisconsin.csv")
 colnames(polio_data)
 
 ## ----package-------------------------------------------------------------
-require(pomp)
+library(pomp)
 packageVersion("pomp")
 
 ## ----statenames----------------------------------------------------------
@@ -163,7 +163,7 @@ polio_Nreps_global <-c(10, 20, 100)
 polio_Nsim <-        c(50,100, 500) 
 
 ## ----parallel-setup,cache=FALSE------------------------------------------
-require(doParallel)
+library(doParallel)
 registerDoParallel()
 
 ## ----pf1-----------------------------------------------------------------

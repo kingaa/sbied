@@ -122,7 +122,7 @@ pomp is available from [CRAN](http://cran.r-project.org/web/packages/pomp), with
 Here, we use pomp version `r packageVersion("pomp")`.
 
 ```{r package}
-require(pomp)
+library(pomp)
 packageVersion("pomp")
 ```
 
@@ -319,7 +319,7 @@ polio_Nsim <-        c(50,100, 500)
 
 Since most modern machines have multiple cores, it is convenient to do some parallelization to generate replicated calls to `pfilter`. Notice that the replications are averaged using the `logmeanexp` function.
 ```{r parallel-setup,cache=FALSE}
-require(doParallel)
+library(doParallel)
 registerDoParallel()
 ```
 

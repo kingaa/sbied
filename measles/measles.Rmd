@@ -75,11 +75,11 @@ options(
   encoding="UTF-8"
 )
 
-require(pomp)
-require(magrittr)
-require(plyr)
-require(reshape2)
-require(ggplot2)
+library(pomp)
+library(magrittr)
+library(plyr)
+library(reshape2)
+library(ggplot2)
 theme_set(theme_bw())
 
 set.seed(1109529108L)
@@ -155,7 +155,7 @@ measles %>%
 	- Annual birth records and population sizes, 1944--1963
 
 ```{r map,echo=FALSE,purl=FALSE}
-require(ggmap)
+library(ggmap)
 ggmap(get_map(c(-4,54),zoom=6,scale=2,source="google",maptype="satellite"))+
   geom_point(data=coord,aes(x=long,y=lat),color='red',alpha=1)+
   labs(x="",y="")+
@@ -179,7 +179,7 @@ measles %>%
 #### Continuous-time Markov process model
 
 ```{r seir-diagram,echo=FALSE,cache=FALSE,purl=FALSE}
-require(DiagrammeR)
+library(DiagrammeR)
 DiagrammeR("digraph SEIR {
   graph [rankdir=TD, overlap=false, fontsize = 10]
   node[shape=egg, label='B'] b;
@@ -763,12 +763,12 @@ par(op)
 We'll load the packages we'll need, and set the random seed, to allow reproducibility.
 ```{r prelims,cache=FALSE}
 set.seed(594709947L)
-require(ggplot2)
+library(ggplot2)
 theme_set(theme_bw())
-require(plyr)
-require(reshape2)
-require(magrittr)
-require(pomp)
+library(plyr)
+library(reshape2)
+library(magrittr)
+library(pomp)
 stopifnot(packageVersion("pomp")>="0.70-1")
 ```
 
@@ -993,8 +993,8 @@ mle %>% subset(select=-c(S_0,E_0,I_0,R_0)) %>%
 Verify that we get the same likelihood as @He2010.
 
 ```{r pfilter1}
-require(foreach)
-require(doMC)
+library(foreach)
+library(doMC)
 
 registerDoMC()
 

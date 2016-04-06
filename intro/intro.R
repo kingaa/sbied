@@ -9,16 +9,16 @@ library(ggplot2)
 theme_set(theme_bw())
 
 ## ----install-pomp,eval=FALSE---------------------------------------------
-## require(devtools)
+## library(devtools)
 ## install_github("kingaa/pomp")
 ## # install_github("kingaa/pompExamples")
 
 ## ----prelims,cache=F-----------------------------------------------------
 set.seed(594709947L)
-require(ggplot2)
-require(plyr)
-require(reshape2)
-require(pomp)
+library(ggplot2)
+library(plyr)
+library(reshape2)
+library(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 
 ## ----load-ricker,cache=FALSE---------------------------------------------
@@ -103,7 +103,7 @@ head(dat)
 plot(pop~year,data=dat,type='o')
 
 ## ----parus-pomp1---------------------------------------------------------
-require(pomp)
+library(pomp)
 parus <- pomp(dat,times="year",t0=1959)
 
 ## ----parus-plot1---------------------------------------------------------

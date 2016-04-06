@@ -59,12 +59,12 @@ options(
   )
 
 set.seed(594709947L)
-require(ggplot2)
+library(ggplot2)
 theme_set(theme_bw())
-require(plyr)
-require(reshape2)
-require(magrittr)
-require(pomp)
+library(plyr)
+library(reshape2)
+library(magrittr)
+library(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 ```
 

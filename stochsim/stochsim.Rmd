@@ -66,13 +66,13 @@ options(
 
 ```{r prelims,echo=F,cache=F}
 set.seed(594709947L)
-require(ggplot2)
+library(ggplot2)
 theme_set(theme_bw())
-require(plyr)
-require(reshape2)
-require(foreach)
-require(doMC)
-require(pomp)
+library(plyr)
+library(reshape2)
+library(foreach)
+library(doMC)
+library(pomp)
 stopifnot(packageVersion("pomp")>="0.69-1")
 ```
 
@@ -91,7 +91,7 @@ This tutorial develops some classes of dynamic models relevant for biological sy
 We will develop deterministic and stochastic representations of a susceptible-infected-recovered (SIR) system, a fundamental class of models for disease transmission dynamics. We will do this using notation which generalizes to more complex systems [[@breto09]](http://dept.stat.lsa.umich.edu/~ionides/pubs/breto09.pdf).
 
 ```{r sir-diagram,echo=FALSE,cache=FALSE,purl=FALSE}
-require(DiagrammeR)
+library(DiagrammeR)
 DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);",height=200,width=500)
 ```
 $S = \text{susceptible}$  
@@ -401,7 +401,7 @@ Below is a diagram of the so-called SEIR model.
 This differs from the SIR model in that infected individuals must pass a period of latency before becoming infectious.
 
 ```{r seir-diagram,echo=FALSE,cache=FALSE}
-require(DiagrammeR)
+library(DiagrammeR)
 DiagrammeR("graph LR; S(S) --> E; E(E) --> I; I(I) --> R(R);",height=200,width=600)
 ```
 
@@ -420,7 +420,7 @@ Moreover, there is information in the data on the number of boys, $C_t$, convale
 Since $1540~\text{boy-da}/512~\text{boy} \approx 3~\text{da}$, we know that the average duration spent in bed was 3&nbsp;da and, since $\sum_t\!C_t=`r sum(bsflu$C)`$, we can infer that the average time spent convalescing was $`r sum(bsflu$C)`~\text{boy-da}/512~\text{boy} \approx `r signif(sum(bsflu$C)/512,2)`~\text{da}$.
 
 ```{r bsflu-plot2}
-require(reshape2)
+library(reshape2)
 ggplot(data=melt(bsflu,id="day"),mapping=aes(x=day,y=value,color=variable))+
   geom_line()+geom_point()
 ```
@@ -429,7 +429,7 @@ Formulate a model with both confinement and convalescent stages.
 Implement it in **pomp** using a compartmental model like that diagrammed below.
 
 ```{r sirr-diagram,echo=FALSE,cache=FALSE}
-require(DiagrammeR)
+library(DiagrammeR)
 DiagrammeR("graph LR; S(S) --> I; I(I) --> R1(R1); R1 --> R2(R2);",height=200,width=600)
 ```
 

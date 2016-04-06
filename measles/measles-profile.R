@@ -1,18 +1,18 @@
 ## ----mpi-setup,include=FALSE,purl=TRUE,cache=FALSE-----------------------
-require(foreach)
-require(doMPI)
+library(foreach)
+library(doMPI)
 
 cl <- startMPIcluster()
 registerDoMPI(cl)
 
 ## ----prelims,cache=FALSE-------------------------------------------------
 set.seed(594709947L)
-require(ggplot2)
+library(ggplot2)
 theme_set(theme_bw())
-require(plyr)
-require(reshape2)
-require(magrittr)
-require(pomp)
+library(plyr)
+library(reshape2)
+library(magrittr)
+library(pomp)
 stopifnot(packageVersion("pomp")>="0.75-1")
 
 ## ----load-data-----------------------------------------------------------
@@ -229,10 +229,10 @@ bake("sigmaSE-profile1.rds",{
     
     tic <- Sys.time()
     
-    require(magrittr)
-    require(plyr)
-    require(reshape2)
-    require(pomp)
+    library(magrittr)
+    library(plyr)
+    library(reshape2)
+    library(pomp)
     
     options(stringsAsFactors=FALSE)
     
@@ -305,10 +305,10 @@ bake("sigmaSE-profile2.rds",{
     
     tic <- Sys.time()
     
-    require(magrittr)
-    require(plyr)
-    require(reshape2)
-    require(pomp)
+    library(magrittr)
+    library(plyr)
+    library(reshape2)
+    library(pomp)
     
     options(stringsAsFactors=FALSE)
 
