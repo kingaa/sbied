@@ -3,7 +3,7 @@ default: r-scripts html-docs datafiles results
 r-scripts: intro/intro.R stochsim/stochsim.R pfilter/pfilter.R mif/mif.R polio/polio.R measles/measles.R contacts/contacts.R ebola/ebola.R measles/measles-profile.R
 	for i in $^; do cp $$i www/$$i; done
 
-html-docs: index.html intro/intro.html stochsim/stochsim.html pfilter/pfilter.html mif/mif.html polio/polio.html measles/measles.html contacts/contacts.html ebola/ebola.html pfilter/monteCarlo.html measles/measles-profile.html prep/preparation.html prep/mac-fortran.html
+html-docs: index.html intro/intro.html stochsim/stochsim.html pfilter/pfilter.html mif/mif.html polio/polio.html measles/measles.html contacts/contacts.html ebola/ebola.html pfilter/monteCarlo.html measles/measles-profile.html prep/preparation.html
 	for i in $^; do cp $$i www/$$i; done
 
 datafiles: data/ebola_data.csv data/parus.csv contacts/contacts.csv contacts/contacts2.csv polio/polio_wisconsin.csv 
