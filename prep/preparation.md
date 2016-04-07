@@ -40,7 +40,7 @@ If you have trouble with the first command trying to install `pomp` from source,
 make: gfortran-4.8: No such file or directory
 ```
 
-then it is likely that you do not have the necessary version of gfortran installed.  Have a look at [these instructions](./mac-fortran.html) and contact me if these don’t work for you.
+then it is likely that you do not have the necessary version of gfortran installed.  Have a look at [these instructions](http://kingaa.github.io/mac-fortran.html) and contact me if these don’t work for you.
 
 #### Windows users:
 
