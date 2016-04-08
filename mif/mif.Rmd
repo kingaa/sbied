@@ -201,11 +201,11 @@ __comments__:
 $$h_n(\theta|\varphi;\sigma) \sim N[\varphi, \sigma^2_m V_n].$$
 + $V_n$ is usually taken to be diagonal,
 $$ V_n = \left( \begin{array}{ccccc}
-v_{1,n}^2 & 0 & 0 & \rightarrow & 0 \\
-0 & v_{2,n}^2 &  0 & \rightarrow & 0 \\
-0 & 0 & v_{3,n}^2 & \rightarrow & 0 \\
-\downarrow & & & \searrow & \downarrow \\
-0 & 0 & 0 & \rightarrow & v_{p,n}^2 \end{array}\right).$$
+v_{1,n}^2 & 0 & 0 & \cdots & 0 \\
+0 & v_{2,n}^2 &  0 & \cdots & 0 \\
+0 & 0 & v_{3,n}^2 & \cdots & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & 0 & \cdots & v_{p,n}^2 \end{array}\right).$$
 + If $\theta_i$ is a parameter that affects the dynamics or observations throughout the timeseries, it is called a __regular parameter__, and it is often appropriate to specify
 $$ v_{i,n} = v_i,$$
 + If $\theta_j$ is a parameter that affects only the initial conditions of the dynamic model, it is called an __initial value parameter__ (IVP) and it is appropriate to specify

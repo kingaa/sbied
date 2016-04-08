@@ -94,53 +94,83 @@ stopifnot(packageVersion("pomp")>="0.74-1")
 
 #### Definition of the likelihood function
 
-Data are a sequence of $N$ observations, denoted $y_{1:N}^*$. A statistical model is a density function $f(y_{1:N};\theta)$ which defines a probability distribution for each value of a parameter vector $\theta$. Statistical inference involves deciding for which (if any) values of $\theta$ it is reasonable to model $y_{1:N}^*$ as a random draw from $f(y_{1:N};\theta)$.
+Data are a sequence of $N$ observations, denoted $y_{1:N}^*$.
+A statistical model is a density function $f(y_{1:N};\theta)$ which defines a probability distribution for each value of a parameter vector $\theta$.
+Statistical inference involves deciding for which (if any) values of $\theta$ it is reasonable to model $y_{1:N}^*$ as a random draw from $f(y_{1:N};\theta)$.
 
-The likelihood function is the density function evaluated at the data. It is usually convenient to work with the log likelihood function,
+The likelihood function is the density function evaluated at the data.
+It is usually convenient to work with the log likelihood function,
 $$\loglik(\theta)=\log f(y_{1:N}^*;\theta)$$
 
 #### Modeling using discrete and continuous distributions
 
-Recall that the probability distribution $f(y_{1:N};\theta)$ defines a random variable $Y_{1:N}$ for which probabilities can be computed as integrals of $f(y_{1:N};\theta)$. Specifically, for any event $E$ describing a set of possible outcomes of $Y_{1:N}$, 
-$$P[\mbox{$Y_{1:N}$ is in $E$}] = \int_E f(y_{1:N}^*;\theta)\, dy_{1:N}.$$ 
-If the model corresponds to a discrete distribution, then the integral is replaced by a sum and the probability density function is called a probability mass function. The definition of the likelihood function remains unchanged. We will use the notation of continuous random variables, but all the methods apply also to discrete models. 
+Recall that the probability distribution $f(y_{1:N};\theta)$ defines a random variable $Y_{1:N}$ for which probabilities can be computed as integrals of $f(y_{1:N};\theta)$.
+Specifically, for any event $E$ describing a set of possible outcomes of $Y_{1:N}$, 
+$$P[Y_{1:N} \in E] = \int_E f(y_{1:N};\theta)\, dy_{1:N}.$$ 
+If the model corresponds to a discrete distribution, then the integral is replaced by a sum and the probability density function is called a probability mass function.
+The definition of the likelihood function remains unchanged.
+We will use the notation of continuous random variables, but all the methods apply also to discrete models. 
 
 #### Indirect specification of the statistical model via a simulation procedure
 
-* For simple statistical models, we may describe the model by explicitly writing the density function $f(y_{1:N};\theta)$. 
-One may then ask how to simulate a random variable $Y_{1:N}\sim f(y_{1:N};\theta)$.
-
-* For many dynamic models it is convenient to define the model via a procedure to simulate the random variable $Y_{1:N}$. 
-This implicitly defines the corresponding density $f(y_{1:N};\theta)$. 
-For a complicated simulation procedure, it may be difficult or impossible to write down $f(y_{1:N};\theta)$ exactly. 
-
-* It is important for us to bear in mind that the likelihood function exists even when we don't know what it is! We can still talk about the likelihood function, and develop numerical methods that take advantage of its statistical properties.
+- For simple statistical models, we may describe the model by explicitly writing the density function $f(y_{1:N};\theta)$. 
+  One may then ask how to simulate a random variable $Y_{1:N}\sim f(y_{1:N};\theta)$.
+- For many dynamic models it is convenient to define the model via a procedure to simulate the random variable $Y_{1:N}$. 
+  This implicitly defines the corresponding density $f(y_{1:N};\theta)$. 
+  For a complicated simulation procedure, it may be difficult or impossible to write down or even compute $f(y_{1:N};\theta)$ exactly. 
+- It is important to bear in mind that the likelihood function exists even when we don't know what it is!
+  We can still talk about the likelihood function, and develop numerical methods that take advantage of its statistical properties.
 
 
 ### Likelihood for POMP models
 
 *********************
-
-![state_space_diagram2](../graphics/state_space_diagram2.png)
-
 POMP model schematic, showing dependence among model variables.
-State variables, $x$, at time $t$ depend only on state variables at the previous timestep.
-Measurements, $y$, at time $t$ depend only on the state at that time.
+Measurements, $Y_n$, at time $t_n$ depend only on the state, $X_n$, at that time.
+State variables depend only on state variables at the previous timestep.
+```{r ssdiag,echo=FALSE,out.width="1200px",purl=FALSE}
+library(grid)
+vp <- viewport(width=unit(20/3,"inches"),height=unit(5,"inches"))
+pushViewport(vp)
+# grid.rect(x=0.5,y=0.5,width=1,height=1)
+fs <- 9
+grid.text(x=0.6,y=0.85,label="measurement model",just="centre",gp=gpar(fontsize=fs))
+grid.lines(x=unit(c(0.6,1/4),"npc")+unit(c(0,2),"points"),y=unit(c(0.85,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gpar(lty=2))
+grid.lines(x=unit(c(0.6,2/4),"npc")+unit(c(0,2),"points"),y=unit(c(0.85,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gpar(lty=2))
+grid.lines(x=unit(c(0.6,3/4),"npc")+unit(c(0,-2),"points"),y=unit(c(0.85,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gpar(lty=2))
 
-*********************
+grid.text(x=0.3,y=0.15,label="process model",just="centre",gp=gpar(fontsize=fs))
+grid.lines(x=unit(c(0.3,6/16),"npc"),y=unit(c(0.15,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gpar(lty=2))
+grid.lines(x=unit(c(0.3,10/16),"npc"),y=unit(c(0.15,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gpar(lty=2))
+
+x1 <- unit(rep(c(1/4,1/2,3/4),2),"npc")
+y1 <- unit(rep(c(1/3,2/3),each=3),"npc")
+w <- unit(1/8,"npc")
+h <- unit(1/6,"npc")
+
+grid.rect(x=x1,y=y1,width=w,height=h,just=c(0.5,0.5),gp=gpar(fill="white",lwd=2))
+grid.text(x=x1,y=y1,label=c(
+  expression(italic(X[n-1])),expression(italic(X[n])),expression(italic(X[n+1])),
+  expression(italic(Y[n-1])),expression(italic(Y[n])),expression(italic(Y[n+1]))),
+  gp=gpar(fontface=3))
+grid.lines(x=c(2/16,3/16),y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(5/16,7/16),y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(9/16,11/16),y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(13/16,14/16),y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(1/4),y=c(5/12,7/12),arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(2/4),y=c(5/12,7/12),arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(3/4),y=c(5/12,7/12),arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+popViewport()
+```
 
 #### POMP model notation
 
 - Write $X_n=X(t_n)$ and $X_{0:N}=(X_0,\dots,X_N)$.
-
 - Let $Y_n$ be a random variable modeling the observation at time $t_n$.
-
-* The one-step transition density, $f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)$, together with the measurement density, $f_{Y_n|X_n}(y_n|x_n;\theta)$ and the initial density, $f_{X_0}(x_0;\theta)$, specify the entire joint density via
+- The one-step transition density, $f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)$, together with the measurement density, $f_{Y_n|X_n}(y_n|x_n;\theta)$ and the initial density, $f_{X_0}(x_0;\theta)$, specify the entire joint density via
 $$f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta) = f_{X_0}(x_0;\theta)\,\prod_{n=1}^N\!f_{X_n | X_{n-1}}(x_n|x_{n-1};\theta)\,f_{Y_n|X_n}(y_n|x_n;\theta).$$
-
-* The marginal density for sequence of measurements, $Y_{1:N}$, evaluated at the data, $y_{1:N}^*$, is
+- The marginal density for sequence of measurements, $Y_{1:N}$, evaluated at the data, $y_{1:N}^*$, is
 $$\lik(\theta) = f_{Y_{1:N}}(y^*_{1:N};\theta)=\int\!f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)\, dx_{0:N}.$$
-
 
 #### Special case: deterministic unobserved state process
 
