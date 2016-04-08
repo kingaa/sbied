@@ -1,6 +1,8 @@
-------------------------------
+---
+title: Software installation instructions
+---
 
-# Software installation instructions
+------------------------------
 
 Please read the appropriate sections below, install the software as needed, and run the test scripts.  If you run into problems, send a note to kingaa@umich.edu with a detailed description of the problem you've encountered, including the OS you’re running, the versions of **R**, **Rstudio**, and **pomp** you’re attempting to install, what you’ve done, and what problems you’ve encountered.
 
