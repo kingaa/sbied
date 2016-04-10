@@ -3,8 +3,8 @@ title: "Iterated filtering: Principles and practice"
 author: "Edward Ionides and Aaron A. King"
 date: "06/25/2015"
 output:
-html_document:
-toc: yes
+  html_document:
+    toc: yes
 bibliography: mif.bib
 csl: ../ecology.csl
 

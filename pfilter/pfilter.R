@@ -3,7 +3,7 @@ options(
   keep.source=TRUE,
   stringsAsFactors=FALSE,
   encoding="UTF-8"
-  )
+)
 
 set.seed(594709947L)
 library(ggplot2)
@@ -14,7 +14,7 @@ library(reshape2)
 library(foreach)
 library(doParallel)
 library(pomp)
-stopifnot(packageVersion("pomp")>="0.74-1")
+stopifnot(packageVersion("pomp")>="1.4.5")
 
 ## ----sir-construct-------------------------------------------------------
 base_url <- "http://kingaa.github.io/sbied/"
@@ -47,34 +47,28 @@ pomp(bsflu,times="day",t0=0,
      paramnames=c("Beta","gamma","rho","N")) -> sir
 
 ## ----bbs-mc-like-2,results='markup'--------------------------------------
-simulate(sir,params=c(Beta=2,gamma=1,rho=0.5,N=2600),
+simulate(sir,params=c(Beta=2,gamma=1,rho=0.8,N=2600),
          nsim=10000,states=TRUE) -> x
 matplot(time(sir),t(x["H",1:50,]),type='l',lty=1,
         xlab="time",ylab="H",bty='l',col='blue')
 lines(time(sir),obs(sir,"B"),lwd=2,col='black')
 
 ## ----bbs-mc-like-3,results='markup',cache=T------------------------------
-ell <- dmeasure(sir,y=obs(sir),x=x,times=time(sir),log=TRUE,
-                params=c(Beta=2,gamma=1,rho=0.5,N=2600))
+ell <- dmeasure(sir,y=obs(sir),x=x,times=time(sir),
+                params=c(Beta=2,gamma=1,rho=0.8,N=2600),log=TRUE)
 dim(ell)
 
 ## ----bbs-mc-like-4,results='markup'--------------------------------------
 ell <- apply(ell,1,sum); summary(exp(ell)); logmeanexp(ell,se=TRUE)
-
-## ----sir-sim1------------------------------------------------------------
-sims <- simulate(sir,params=c(Beta=2,gamma=1,rho=0.8,N=2600),nsim=20,
-                 as.data.frame=TRUE,include.data=TRUE)
-
-ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
-  geom_line()+guides(color=FALSE)
 
 ## ----sir-pfilter-1,results='markup',cache=T------------------------------
 pf <- pfilter(sir,Np=5000,params=c(Beta=2,gamma=1,rho=0.8,N=2600))
 logLik(pf)
 
 ## ----sir-pfilter-2,results='markup',cache=T------------------------------
-pf <- replicate(10,pfilter(sir,Np=5000,params=c(Beta=2,gamma=1,rho=0.8,N=2600)))
-ll <- sapply(pf,logLik); ll
+pf <- replicate(10,pfilter(sir,Np=10000,
+                           params=c(Beta=2,gamma=1,rho=0.8,N=2600)))
+ll <- sapply(pf,logLik)
 logmeanexp(ll,se=TRUE)
 
 ## ----sir-like-slice,cache=TRUE,results='hide'----------------------------
@@ -88,22 +82,29 @@ library(doParallel)
 registerDoParallel()
 
 set.seed(998468235L,kind="L'Ecuyer")
-mcopts <- list(preschedule=FALSE,set.seed=TRUE)
 
 foreach (theta=iter(p,"row"),.combine=rbind,
-         .inorder=FALSE,.options.multicore=mcopts) %dopar% 
- {
-   pfilter(sir,params=unlist(theta),Np=5000) -> pf
-   theta$loglik <- logLik(pf)
-   theta
- } -> p
+         .inorder=FALSE,
+         .options.multicore=list(set.seed=TRUE)
+) %dopar% {
+  pfilter(sir,params=unlist(theta),Np=5000) -> pf
+  theta$loglik <- logLik(pf)
+  theta
+} -> p
 
-## ----sir-like-slice-plot,cache=F,results="hide"--------------------------
-foreach (v=c("Beta","gamma")) %do% 
-{
-  x <- subset(p,slice==v)
-  plot(x[[v]],x$loglik,xlab=v,ylab="loglik")
-}
+## ----sir-like-slice-plot,cache=FALSE,echo=FALSE,results="hide"-----------
+library(magrittr)
+library(reshape2)
+library(ggplot2)
+p %>% 
+  melt(measure=c("Beta","gamma")) %>%
+  subset(variable==slice) %>%
+  ggplot(aes(x=value,y=loglik,color=variable))+
+  geom_point()+
+  facet_grid(~variable,scales="free_x")+
+  guides(color=FALSE)+
+  labs(x="parameter value",color="")+
+  theme_bw()
 
 ## ----sir-grid1-----------------------------------------------------------
 expand.grid(Beta=seq(from=1,to=4,length=50),
@@ -112,17 +113,21 @@ expand.grid(Beta=seq(from=1,to=4,length=50),
             N=2600) -> p
 
 foreach (theta=iter(p,"row"),.combine=rbind,
-         .inorder=FALSE,.options.multicore=mcopts) %dopar% 
- {
-   pfilter(sir,params=unlist(theta),Np=5000) -> pf
-   theta$loglik <- logLik(pf)
-   theta
- } -> p
+         .inorder=FALSE,
+         .options.multicore=list(set.seed=TRUE)
+) %dopar% {
+  pfilter(sir,params=unlist(theta),Np=5000) -> pf
+  theta$loglik <- logLik(pf)
+  theta
+} -> p
 
-
-## ----sir-grid1-plot------------------------------------------------------
-pp <- mutate(p,loglik=ifelse(loglik>max(loglik)-100,loglik,NA))
-ggplot(data=pp,mapping=aes(x=Beta,y=gamma,z=loglik,fill=loglik))+
+## ----sir-grid1-plot,echo=F,cache=F,purl=T--------------------------------
+library(magrittr)
+library(reshape2)
+library(plyr)
+p %>% 
+  mutate(loglik=ifelse(loglik>max(loglik)-100,loglik,NA)) %>%
+  ggplot(aes(x=Beta,y=gamma,z=loglik,fill=loglik))+
   geom_tile(color=NA)+
   geom_contour(color='black',binwidth=3)+
   scale_fill_gradient()+
@@ -150,7 +155,6 @@ coef(sir) <- c(Beta=2,gamma=1,rho=0.8,N=2600)
 
 ## ----sir-like-optim-1,echo=T,eval=T,results='markup',cache=T-------------
 neg.ll <- function (par, est) {
-  ## parameters to be estimated are named in 'est'
   allpars <- coef(sir,transform=TRUE)
   allpars[est] <- par
   try(
@@ -162,9 +166,9 @@ neg.ll <- function (par, est) {
   ) -> pf
   if (inherits(pf,"try-error")) {
     1e10                 ## a big, bad number
-    } else {
-      -logLik(pf)
-    }
+  } else {
+    -logLik(pf)
+  }
 }
 
 ## ----sir-like-optim-2,results='markup',cache=T---------------------------
@@ -183,12 +187,13 @@ coef(mle,c("gamma","Beta","rho")) ## point estimate
 
 fit$val
 
-simulate(mle,nsim=8,as.data.frame=TRUE,include=TRUE) -> sims
-
 lls <- replicate(n=5,logLik(pfilter(mle,Np=5000)))
 ll <- logmeanexp(lls,se=TRUE); ll
 
-## ----sir-like-optim-plot-------------------------------------------------
+simulate(mle,nsim=8,as.data.frame=TRUE,include.data=TRUE) -> sims
+
+## ----sir-like-optim-plot,echo=F------------------------------------------
 ggplot(data=sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  guides(color=FALSE)+
   geom_line()
 

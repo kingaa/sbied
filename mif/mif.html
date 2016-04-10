@@ -116,7 +116,36 @@ $(document).ready(function () {
 </div>
 
 <div id="TOC">
-true
+<ul>
+<li><a href="#objectives">Objectives</a></li>
+<li><a href="#introduction">Introduction</a><ul>
+<li><a href="#plug-and-play-also-called-simulation-based-methods">Plug-and-play (also called simulation-based) methods</a></li>
+<li><a href="#full-information-and-feature-based-methods">Full-information and feature-based methods</a></li>
+<li><a href="#bayesian-and-frequentist-methods">Bayesian and frequentist methods</a></li>
+<li><a href="#full-information-plug-and-play-frequentist-methods">Full-information, plug-and-play, frequentist methods</a></li>
+<li><a href="#summary-of-pomp-inference-methodologies">Summary of POMP inference methodologies</a></li>
+</ul></li>
+<li><a href="#an-iterated-filtering-algorithm-if2">An iterated filtering algorithm (IF2)</a><ul>
+<li><a href="#if2-algorithm-pseudocode">IF2 algorithm pseudocode</a></li>
+<li><a href="#choosing-the-algorithmic-settings-for-if2">Choosing the algorithmic settings for IF2</a></li>
+</ul></li>
+<li><a href="#applying-if2-to-the-boarding-school-influenza-outbreak">Applying IF2 to the boarding school influenza outbreak</a><ul>
+<li><a href="#testing-the-codes.">Testing the codes.</a></li>
+<li><a href="#setting-up-the-estimation-problem.">Setting up the estimation problem.</a></li>
+<li><a href="#running-a-particle-filter.">Running a particle filter.</a></li>
+<li><a href="#building-up-a-picture-of-the-likelihood-surface">Building up a picture of the likelihood surface</a></li>
+<li><a href="#a-local-search-of-the-likelihood-surface">A local search of the likelihood surface</a></li>
+<li><a href="#a-global-search-of-the-likelihood-surface-using-randomized-starting-values">A global search of the likelihood surface using randomized starting values</a></li>
+</ul></li>
+<li><a href="#exercises">Exercises</a><ul>
+<li><a href="#construct-a-profile-likelihood.">Construct a profile likelihood.</a></li>
+<li><a href="#check-the-model-source-code.">Check the model source code.</a></li>
+<li><a href="#assessing-and-improving-algorithmic-parameters">Assessing and improving algorithmic parameters</a></li>
+<li><a href="#finding-sharp-peaks-in-the-likelihood-surface">Finding sharp peaks in the likelihood surface</a></li>
+<li><a href="#adding-a-latent-class">Adding a latent class</a></li>
+</ul></li>
+<li><a href="#references">References</a></li>
+</ul>
 </div>
 
 <p>Licensed under the Creative Commons attribution-noncommercial license, <a href="http://creativecommons.org/licenses/by-nc/3.0/" class="uri">http://creativecommons.org/licenses/by-nc/3.0/</a>. Please share and remix noncommercially, mentioning its origin.<br />
@@ -124,7 +153,7 @@ true
 <hr />
 <div id="objectives" class="section level2">
 <h2>Objectives</h2>
-<p>This tutorial is part of a series given as a <a href="http://kingaa.github.io/sbied">short course</a> given at the <a href="http://sismid.uw.org">Summer Institute in Statistics and Modeling in Infectious Diseases</a>. It covers likelihood estimation via the method of iterated filtering. It presupposes familiarity with building partially observed Markov process (POMP) objects in the <strong>R</strong> package <strong>pomp</strong> <span class="citation">(King et al. in press)</span>. <strong>pomp</strong> is available from <a href="http://cran.r-project.org/web/packages/pomp">CRAN</a> and <a href="http://kingaa.github.io/pomp">github</a>. The code here runs <strong>pomp</strong> version 1.4.3.1 on <strong>R</strong> version 3.2.4. This tutorial follows on from the topic of carrying out particle filtering (also known as sequential Monte Carlo) via <code>pfilter</code> in <strong>pomp</strong>. We have the following goals:</p>
+<p>This tutorial is part of a series given as a <a href="http://kingaa.github.io/sbied">short course</a> given at the <a href="http://sismid.uw.org">Summer Institute in Statistics and Modeling in Infectious Diseases</a>. It covers likelihood estimation via the method of iterated filtering. It presupposes familiarity with building partially observed Markov process (POMP) objects in the <strong>R</strong> package <strong>pomp</strong> <span class="citation">(King et al. in press)</span>. <strong>pomp</strong> is available from <a href="http://cran.r-project.org/web/packages/pomp">CRAN</a> and <a href="http://kingaa.github.io/pomp">github</a>. The code here runs <strong>pomp</strong> version 1.4.5.1 on <strong>R</strong> version 3.2.4. This tutorial follows on from the topic of carrying out particle filtering (also known as sequential Monte Carlo) via <code>pfilter</code> in <strong>pomp</strong>. We have the following goals:</p>
 <ol style="list-style-type: decimal">
 <li><p>Review the available options for inference on POMP models, to put iterated filtering in context.</p></li>
 <li><p>Understand how iterated filtering algorithms carry out repeated particle filtering operations, with randomly perturbed parameter values, in order to maximize the likelihood.</p></li>

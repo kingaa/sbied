@@ -1,4 +1,4 @@
-% This file was created with JabRef 2.10.
+% This file was created with JabRef 2.10b2.
 % Encoding: UTF8
 
 
@@ -685,11 +685,8 @@
 
   __markedentry            = {[kingaa:]},
   Abstract                 = {We describe a discrete-time, stochastic population model with density dependence, environmental-type process noise, and lognormal observation or sampling error. The model, a stochastic version of the Gompertz model, can be transformed into a linear Gaussian state-space model (Kalman filter) for convenient fitting to time series data. The model has a multivariate normal likelihood function and is simple enough for a variety of uses ranging from theoretical study of parameter estimation issues to routine data analyses in population monitoring. A special case of the model is the discrete-time, stochastic exponential growth model (density independence) with environmental-type process error and lognormal observation error.
-
 We describe two methods for estimating parameters in the Gompertz state-space model, and we compare the statistical qualities of the methods with computer simulations. The methods are maximum likelihood based on observations and restricted maximum likelihood based on first differences. Both offer adequate statistical properties. Because the likelihood function is identical to a repeated-measures analysis of variance model with a random time effect, parameter estimates can be calculated using PROC MIXED of SAS.
-
 We use the model to analyze a data set from the Breeding Bird Survey. The fitted model suggests that over 70% of the noise in the population's growth rate is due to observation error. The model describes the autocovariance properties of the data especially well.
-
 While observation error and process noise variance parameters can both be estimated from one time series, multimodal likelihood functions can and do occur. For data arising from the model, the statistically consistent parameter estimates do not necessarily correspond to the global maximum in the likelihood function. Maximization, simulation, and bootstrapping programs must accommodate the phenomenon of multimodal likelihood functions to produce statistically valid results.},
   Doi                      = {10.1890/0012-9615(2006)76%5B323:EDDPNA%5D2.0.CO%3B2},
   File                     = {Dennis2006.pdf:Dennis2006.pdf:PDF},
@@ -1781,19 +1778,28 @@ While observation error and process noise variance parameters can both be estima
   Timestamp                = {2008.08.13}
 }
 
-@Article{King2015a,
-  Title                    = {Statistical inference for partially observed {M}arkov processes via the {R} package pomp},
+@Article{King2016,
+  Title                    = {Statistical Inference for Partially Observed Markov Processes via the R Package pomp},
   Author                   = {King, Aaron A. and Nguyen, Dao and Ionides, Edward L.},
   Journal                  = {Journal of Statistical Software},
-  Year                     = {in press},
+  Year                     = {2016},
 
+  Month                    = mar,
+  Number                   = {12},
+  Pages                    = {1--43},
+  Volume                   = {69},
+
+  __markedentry            = {[kingaa:]},
   Abstract                 = {Partially observed Markov process (POMP) models, also known as hidden Markov models or state space models, are ubiquitous tools for time series analysis. The R package pomp provides a very flexible framework for Monte Carlo statistical investigations using nonlinear, non-Gaussian POMP models. A range of modern statistical methods for POMP models have been implemented in this framework including sequential Monte Carlo, iterated filtering, particle Markov chain Monte Carlo, approximate Bayesian computation, maximum synthetic likelihood estimation, nonlinear forecasting, and trajectory matching. In this paper, we demonstrate the application of these methodologies using some simple toy problems. We also illustrate the specification of more complex POMP models, using a nonlinear epidemiological model with a discrete population, seasonality, and extra-demographic stochasticity. We discuss the specification of user-defined models and the development of additional methods within the programming environment provided by pomp.},
+  Doi                      = {10.18637/jss.v069.i12},
+  File                     = {:King2016.pdf:PDF},
+  Keywords                 = {Markov processes, hidden Markov model, state space model, stochastic dynamical system, maximum likelihood, plug-and-play, time series, mechanistic model, sequential Monte Carlo, R},
   King                     = {yes},
   Lab                      = {yes},
-  Order                    = {49},
+  Order                    = {50},
   Owner                    = {kingaa},
-  Timestamp                = {2015.03.03},
-  Url                      = {http://kingaa.github.io/pomp/vignettes/pompjss.pdf}
+  Pomp                     = {yes},
+  Timestamp                = {2016.03.29}
 }
 
 @Article{Kitagawa1987,
@@ -1902,8 +1908,7 @@ While observation error and process noise variance parameters can both be estima
 }
 
 @Article{Ligges2008,
-  Title                    = {R Help Desk
-: How Can I Avoid This Loop or Make It Faster?},
+  Title                    = {R Help Desk : How Can I Avoid This Loop or Make It Faster?},
   Author                   = {Uwe Ligges and John Fox},
   Journal                  = {R News},
   Year                     = {2008},
@@ -2264,7 +2269,6 @@ While observation error and process noise variance parameters can both be estima
 
   __markedentry            = {[kingaa:]},
   Abstract                 = {Coyotes and lynx are the two most important mammalian predators of snowshoe hares throughout much of the boreal forest. Populations of hares cycle in abundance, with peaks in density occurring every 8–11 yr, and experimental results suggest that predation is a necessary factor causing these cycles. We measured the functional responses of coyotes and lynx during a cyclic fluctuation of hare populations in the southwest Yukon, to determine their effect on the cyclic dynamics. We used snow-tracking and radio telemetry to examine changes in the foraging behavior of the predators.
-
 Coyotes and lynx both fed mostly on hares during all winters except during cyclic lows, when the main alternative prey of coyotes was voles, and lynx switched to hunting red squirrels. Both predators showed clear functional responses to changes in the densities of hares. Kill rates of hares by coyotes varied from 0.3 to 2.3 hares/d, with the most hares killed one year before the cyclic peak, while those of lynx varied from 0.3 to 1.2 hares/d, with the highest one year after the peak. Maximum kill rates by both predators were greater than their energetic needs. The functional response of coyotes was equally well described by linear and type-2 curves, and that of lynx was well described by a type-2 curve. Kill rates by coyotes were higher during the increase in density of hares than during the cyclic decline, while the reverse was true for lynx. Coyotes killed more hares early in the winter, and cached many of these for later retrieval. Lower densities of hares were associated with longer reactive distances of both predators to hares, but with little apparent change in time spent searching or handling prey. In summary, our data show that the two similarly sized predators differed in their foraging behavior and relative abilities at capturing alternative prey, leading to different patterns in their functional responses to fluctuations in the density of their preferred prey.},
   Doi                      = {10.1890/0012-9658(1998)079%5B1193:FROCAL%5D2.0.CO%3B2},
   File                     = {ODonoghue1998.pdf:ODonoghue1998.pdf:PDF},
@@ -2406,13 +2410,9 @@ Coyotes and lynx both fed mostly on hares during all winters except during cycli
   Author                   = {{R Core Team}},
   Year                     = {2014},
 
-  Review                   = {An Introduction to R
-Notes on R: A Programming Environment for Data Analysis and Graphics
-
+  Review                   = {An Introduction to R Notes on R: A Programming Environment for Data Analysis and Graphics
 Version 3.1.1 (2014-07-10)
-
-W. N. Venables, D. M. Smith
-and the R Core Team},
+W. N. Venables, D. M. Smith and the R Core Team},
   Url                      = {http://cran.r-project.org/doc/manuals/r-release/R-intro.html}
 }
 
