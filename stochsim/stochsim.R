@@ -12,9 +12,9 @@ theme_set(theme_bw())
 library(plyr)
 library(reshape2)
 library(foreach)
-library(doMC)
+library(doParallel)
 library(pomp)
-stopifnot(packageVersion("pomp")>="0.69-1")
+stopifnot(packageVersion("pomp")>="1.4")
 
 ## ----flu-data1-----------------------------------------------------------
 base_url <- "http://kingaa.github.io/sbied/"

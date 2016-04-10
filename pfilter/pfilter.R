@@ -12,7 +12,7 @@ library(grid)
 library(plyr)
 library(reshape2)
 library(foreach)
-library(doMC)
+library(doParallel)
 library(pomp)
 stopifnot(packageVersion("pomp")>="0.74-1")
 
@@ -84,8 +84,8 @@ sliceDesign(
   gamma=rep(seq(from=0.5,to=2,length=40),each=3)) -> p
 
 library(foreach)
-library(doMC)
-registerDoMC(cores=5)        ## number of cores on this machine
+library(doParallel)
+registerDoParallel()
 
 set.seed(998468235L,kind="L'Ecuyer")
 mcopts <- list(preschedule=FALSE,set.seed=TRUE)

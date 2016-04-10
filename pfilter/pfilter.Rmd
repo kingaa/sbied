@@ -69,7 +69,7 @@ library(grid)
 library(plyr)
 library(reshape2)
 library(foreach)
-library(doMC)
+library(doParallel)
 library(pomp)
 stopifnot(packageVersion("pomp")>="0.74-1")
 ```
@@ -372,8 +372,8 @@ sliceDesign(
   gamma=rep(seq(from=0.5,to=2,length=40),each=3)) -> p
 
 library(foreach)
-library(doMC)
-registerDoMC(cores=5)        ## number of cores on this machine
+library(doParallel)
+registerDoParallel()
 
 set.seed(998468235L,kind="L'Ecuyer")
 mcopts <- list(preschedule=FALSE,set.seed=TRUE)
@@ -387,7 +387,7 @@ foreach (theta=iter(p,"row"),.combine=rbind,
  } -> p
 ```
 
-Note that we've used the **foreach** package with the multicore backend (**doMC**) to parallelize these computations.
+Note that we've used the **foreach** package with the parallel backend (**doParallel**) to parallelize these computations.
 To ensure that we have high-quality random numbers in each parallel *R* session, we use a parallel random number generator (`kind="L'Ecuyer"`, `.options.multicore=list(set.seed=TRUE)`).
 
 ```{r sir-like-slice-plot,cache=F,results="hide"}

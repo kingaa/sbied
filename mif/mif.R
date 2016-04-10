@@ -93,10 +93,11 @@ set.seed(2036049659,kind="L'Ecuyer")
 stew(file="pf.rda",{
   t_pf <- system.time(
     pf <- foreach(i=1:10,.packages='pomp',
-                  .options.multicore=list(set.seed=TRUE)) %dopar% 
-      try(
-        pfilter(bsflu,params=c(Beta=0.01,mu_I=2,rho=0.9,fixed_params),Np=10000)
-      )
+                  .options.multicore=list(set.seed=TRUE),
+                  .export=c("bsflu","fixed_params")
+    ) %dopar% {
+      pfilter(bsflu,params=c(Beta=0.01,mu_I=2,rho=0.9,fixed_params),Np=10000)
+    }
   )
 },seed=625904618,kind="L'Ecuyer")
 
@@ -112,19 +113,21 @@ stew(file="box_search_local.rda",{
     mifs_local <- foreach(i=1:20,
                           .packages='pomp',
                           .combine=c, 
-                          .options.multicore=list(set.seed=TRUE)) %dopar%  
-      try(
-        mif2(
-          bsflu,
-          start=c(Beta=0.01,mu_I=2,rho=0.9,fixed_params),
-          Np=2000,
-          Nmif=50,
-          cooling.type="geometric",
-          cooling.fraction.50=0.5,
-          transform=TRUE,
-          rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02)
-        )
+                          .options.multicore=list(set.seed=TRUE),
+                          .export=c("bsflu","fixed_params")
+    ) %dopar%  
+    {
+      mif2(
+        bsflu,
+        start=c(Beta=0.01,mu_I=2,rho=0.9,fixed_params),
+        Np=2000,
+        Nmif=50,
+        cooling.type="geometric",
+        cooling.fraction.50=0.5,
+        transform=TRUE,
+        rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02)
       )
+    }
   })
 },seed=482947940,kind="L'Ecuyer")
 
@@ -134,12 +137,13 @@ stew(file="lik_local.rda",{
     results_local <- foreach(mf=mifs_local,
                              .packages='pomp',
                              .combine=rbind,
-                             .options.multicore=list(set.seed=TRUE)) %dopar% 
-                             {
-                               evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
-                               ll <- logmeanexp(evals,se=TRUE)
-                               c(coef(mf),loglik=ll[1],loglik=ll[2])
-                             }
+                             .options.multicore=list(set.seed=TRUE)
+    ) %dopar% 
+    {
+      evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
+      ll <- logmeanexp(evals,se=TRUE)
+      c(coef(mf),loglik=ll[1],loglik=ll[2])
+    }
   })
 },seed=900242057,kind="L'Ecuyer")
 results_local <- as.data.frame(results_local)
@@ -158,13 +162,16 @@ bsflu_box <- rbind(
 ## ----box_search_global---------------------------------------------------
 stew(file="box_search_global.rda",{
   t_global <- system.time({
+    mf1 <- mifs_local[[1]]
     guesses <- as.data.frame(apply(bsflu_box,1,function(x)runif(300,x[1],x[2])))
     results_global <- foreach(guess=iter(guesses,"row"), 
                               .packages='pomp', 
                               .combine=rbind,
-                              .options.multicore=list(set.seed=TRUE)
-    ) %dopar% {
-      mf <- mif2(mifs_local[[1]],start=c(unlist(guess),fixed_params),
+                              .options.multicore=list(set.seed=TRUE),
+                              .export=c("mf1","fixed_params")
+    ) %dopar% 
+    {
+      mf <- mif2(mf1,start=c(unlist(guess),fixed_params),
                  cooling.type='geometric')
       mf <- mif2(mf,Nmif=100)
       ll <- replicate(10,logLik(pfilter(mf,Np=100000)))

@@ -215,7 +215,40 @@ Schematic of the structure of a POMP showing causal relations and direction of i
    
 *********************
 
-![state_space_diagram2](../graphics/state_space_diagram2.png)
+```{r ssdiag2,echo=FALSE,out.width="1200px",purl=FALSE}
+library(grid)
+vp <- viewport(width=unit(20/3,"inches"),height=unit(5,"inches"))
+pushViewport(vp)
+# grid.rect(x=0.5,y=0.5,width=1,height=1)
+fs <- 9
+grid.text(x=0.6,y=0.85,label="measurement model",just="centre",gp=gpar(fontsize=fs))
+grid.lines(x=unit(c(0.6,1/4),"npc")+unit(c(0,2),"points"),y=unit(c(0.85,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gpar(lty=2))
+grid.lines(x=unit(c(0.6,2/4),"npc")+unit(c(0,2),"points"),y=unit(c(0.85,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gpar(lty=2))
+grid.lines(x=unit(c(0.6,3/4),"npc")+unit(c(0,-2),"points"),y=unit(c(0.85,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gpar(lty=2))
+
+grid.text(x=0.3,y=0.15,label="process model",just="centre",gp=gpar(fontsize=fs))
+grid.lines(x=unit(c(0.3,6/16),"npc"),y=unit(c(0.15,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gpar(lty=2))
+grid.lines(x=unit(c(0.3,10/16),"npc"),y=unit(c(0.15,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gpar(lty=2))
+
+x1 <- unit(rep(c(1/4,1/2,3/4),2),"npc")
+y1 <- unit(rep(c(1/3,2/3),each=3),"npc")
+w <- unit(1/8,"npc")
+h <- unit(1/6,"npc")
+
+grid.rect(x=x1,y=y1,width=w,height=h,just=c(0.5,0.5),gp=gpar(fill="white",lwd=2))
+grid.text(x=x1,y=y1,label=c(
+  expression(italic(X[n-1])),expression(italic(X[n])),expression(italic(X[n+1])),
+  expression(italic(Y[n-1])),expression(italic(Y[n])),expression(italic(Y[n+1]))),
+  gp=gpar(fontface=3))
+grid.lines(x=c(2/16,3/16),y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(5/16,7/16),y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(9/16,11/16),y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(13/16,14/16),y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(1/4),y=c(5/12,7/12),arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(2/4),y=c(5/12,7/12),arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(3/4),y=c(5/12,7/12),arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+popViewport()
+```
 
 Another POMP model schematic, showing dependence among model variables.
 State variables, $x$, at time $t$ depend only on state variables at the previous timestep.

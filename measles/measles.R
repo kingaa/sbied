@@ -210,9 +210,9 @@ mle %>% subset(select=-c(S_0,E_0,I_0,R_0)) %>%
 
 ## ----pfilter1------------------------------------------------------------
 library(foreach)
-library(doMC)
+library(doParallel)
 
-registerDoMC()
+registerDoParallel()
 
 set.seed(998468235L,kind="L'Ecuyer")
 mcopts <- list(preschedule=FALSE,set.seed=TRUE)

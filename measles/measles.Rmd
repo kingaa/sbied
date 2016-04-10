@@ -994,9 +994,9 @@ Verify that we get the same likelihood as @He2010.
 
 ```{r pfilter1}
 library(foreach)
-library(doMC)
+library(doParallel)
 
-registerDoMC()
+registerDoParallel()
 
 set.seed(998468235L,kind="L'Ecuyer")
 mcopts <- list(preschedule=FALSE,set.seed=TRUE)

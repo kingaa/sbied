@@ -282,10 +282,10 @@ params <- sobolDesign(lower=ranges[,'min'],
 plot(params)
 
 library(foreach)
-library(doMC)
+library(doParallel)
 library(iterators)
 
-registerDoMC(cores=4)
+registerDoParallel()
 
 set.seed(887851050L,kind="L'Ecuyer")
 
