@@ -14,7 +14,7 @@ library(reshape2)
 library(foreach)
 library(doParallel)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.4")
+stopifnot(packageVersion("pomp")>="1.4.5")
 
 ## ----flu-data1-----------------------------------------------------------
 base_url <- "http://kingaa.github.io/sbied/"
