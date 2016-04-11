@@ -25,9 +25,16 @@ head(bsflu)
 bsflu <- subset(bsflu,select=c(day,B))
 ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
 
-## ----sir-diagram,echo=FALSE,cache=FALSE----------------------------------
-library(DiagrammeR)
-DiagrammeR("graph LR; S(S) --> I; I(I) --> R(R);",height=200,width=500)
+## ----sir-diagram,echo=FALSE,cache=FALSE,fig.height=5/6-------------------
+library(grid)
+vp <- viewport(width=unit(40/6,"inches"),height=unit(5/6,"inches"))
+pushViewport(vp)
+fs <- 24
+grid.rect(x=c(1/4,2/4,3/4),y=1/2,width=1/8,height=1,just=c(0.5,0.5),gp=gpar(fill="white",lwd=2))
+grid.text(x=c(1/4,2/4,3/4),y=1/2,label=c("S","I","R"),gp=gpar(fontface=3,fontsize=fs))
+grid.lines(x=c(5/16,7/16),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(9/16,11/16),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
+popViewport()
 
 ## ----rproc2--------------------------------------------------------------
 sir_step <- Csnippet("
@@ -66,16 +73,8 @@ sims <- simulate(sir,params=c(Beta=1.5,gamma=1,rho=0.9,N=2600),
 ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
   geom_line()+guides(color=FALSE)
 
-## ----seir-diagram,echo=FALSE,cache=FALSE---------------------------------
-library(DiagrammeR)
-DiagrammeR("graph LR; S(S) --> E; E(E) --> I; I(I) --> R(R);",height=200,width=600)
-
 ## ----bsflu-plot2---------------------------------------------------------
 library(reshape2)
 ggplot(data=melt(bsflu,id="day"),mapping=aes(x=day,y=value,color=variable))+
   geom_line()+geom_point()
-
-## ----sirr-diagram,echo=FALSE,cache=FALSE---------------------------------
-library(DiagrammeR)
-DiagrammeR("graph LR; S(S) --> I; I(I) --> R1(R1); R1 --> R2(R2);",height=200,width=600)
 
