@@ -7,13 +7,11 @@ options(
 
 ## ----prelims,echo=F,cache=F----------------------------------------------
 set.seed(594709947L)
-library(ggplot2)
-theme_set(theme_bw())
 library(plyr)
 library(reshape2)
-library(foreach)
-library(doParallel)
 library(pomp)
+library(ggplot2)
+theme_set(theme_bw())
 stopifnot(packageVersion("pomp")>="1.4.5")
 
 ## ----flu-data1-----------------------------------------------------------
@@ -21,8 +19,7 @@ base_url <- "http://kingaa.github.io/sbied/"
 bsflu <- read.table(paste0(base_url,"data/bsflu_data.txt"))
 head(bsflu)
 
-## ----flu-data2,echo=F,cache=F--------------------------------------------
-bsflu <- subset(bsflu,select=c(day,B))
+## ----flu-data2,echo=F----------------------------------------------------
 ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
 
 ## ----rproc2--------------------------------------------------------------
@@ -61,12 +58,4 @@ sims <- simulate(sir,params=c(Beta=1.5,gamma=1,rho=0.9,N=2600),
 
 ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
   geom_line()+guides(color=FALSE)
-
-## ----bsflu-reload--------------------------------------------------------
-bsflu <- read.table(paste0(base_url,"data/bsflu_data.txt"))
-
-## ----bsflu-plot2,echo=F--------------------------------------------------
-library(reshape2)
-ggplot(data=melt(bsflu,id="day"),mapping=aes(x=day,y=value,color=variable))+
-  geom_line()+geom_point()+labs(color="")+theme(legend.position=c(0.8,0.8))
 
