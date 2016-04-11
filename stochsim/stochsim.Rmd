@@ -17,6 +17,8 @@ nocite: >
 \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
 \newcommand\dlta[1]{{\Delta}{#1}}
+\newcommand\lik{\mathscr{L}}
+\newcommand\loglik{\ell}
 
 --------------------------
 
@@ -73,7 +75,7 @@ library(reshape2)
 library(foreach)
 library(doParallel)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.4")
+stopifnot(packageVersion("pomp")>="1.4.5")
 ```
 
 ## Objectives
@@ -81,10 +83,8 @@ stopifnot(packageVersion("pomp")>="1.4")
 This tutorial develops some classes of dynamic models relevant for biological systems, with particular reference to epidemiology.  We have the following goals:
 
 1. Dynamic systems can often be represented in terms of _flows_ between _compartments_. We will develop the concept of a _compartment model_ for which we specify _rates_ for the flows between compartments.
-
-2. We develop deterministic and stochastic interpretations of a compartment model.
-
-3. We introduce Euler's method to simulate from dynamic models, and we apply it to both deterministic and stochastic compartment models.
+1. We develop deterministic and stochastic interpretations of a compartment model.
+1. We introduce Euler's method to simulate from dynamic models, and we apply it to both deterministic and stochastic compartment models.
 
 ## Introduction
 
@@ -99,29 +99,21 @@ $I = \text{infected and infectious}$
 $R = \text{recovered and/or removed}$  
 
 * We suppose that each arrow has an associated rate, so here there is a rate $\mu_{SI}(t)$ at which individuals in $S$ transition to $I$, and $\mu_{IR}$ at which individuals in $I$ transition to $R$. 
-
-* To account for demography (births/deaths/immigration/emmigration) we allow the possibility of a source and sink compartment, which is not usually represented on the flow diagram. We write $\mu_{{\small\bullet} S}$ for a rate of births into $S$, and denote mortality rates by $\mu_{S{\small\bullet}}$, $\mu_{I{\small\bullet}}$, $\mu_{R{\small\bullet}}$.
-
-* The rates may be either constant or varying. In particular, for a simple SIR model, the recovery rate $\mu_{IR}$ is a constant but the infection rate has the time-varying form
-$$\mu_{SI}(t)=\beta \, I(t),$$
-with $\beta$ being the _contact rate_. Now, for the simplest SIR model, ignoring demography, we set
-$$ \mu_{{\small\bullet} S}=\mu_{S{\small\bullet}}=\mu_{I{\small\bullet}}=\mu_{R{\small\bullet}}=0.$$
-
-* To develop a systemtic notation, it turns out to be convenient to keep track of the flows between compartments as well as the number of individuals in each compartment. Let
-$$N_{SI}(t)$$
-count the number of individuals who have transitioned from $S$ to $I$ by time $t$. We say that $N_{SI}(t)$ is a _counting process_. A similarly constructed process
-$$N_{IR}(t)$$
-counts individuals transitioning from $I$ to $R$. To include demography, we could keep track of birth and death events by the counting processes $N_{{\small\bullet} S}(t)$, $N_{S{\small\bullet}}(t)$, $N_{I{\small\bullet}}(t)$, $N_{R{\small\bullet}}(t)$.
-
+* To account for demography (births/deaths/immigration/emmigration) we allow the possibility of a source and sink compartment, which is not usually represented on the flow diagram.
+  We write $\mu_{{\small\bullet} S}$ for a rate of births into $S$, and denote mortality rates by $\mu_{S{\small\bullet}}$, $\mu_{I{\small\bullet}}$, $\mu_{R{\small\bullet}}$.
+* The rates may be either constant or varying. In particular, for a simple SIR model, the recovery rate $\mu_{IR}$ is a constant but the infection rate has the time-varying form $$\mu_{SI}(t)=\beta \, I(t),$$ with $\beta$ being the _contact rate_. 
+  Now, for the simplest SIR model, ignoring demography, we set $$ \mu_{{\small\bullet} S}=\mu_{S{\small\bullet}}=\mu_{I{\small\bullet}}=\mu_{R{\small\bullet}}=0.$$
+* To develop a systematic notation, it turns out to be convenient to keep track of the flows between compartments as well as the number of individuals in each compartment. 
+  Let $$N_{SI}(t)$$ count the number of individuals who have transitioned from $S$ to $I$ by time $t$. 
+  We say that $N_{SI}(t)$ is a _counting process_. 
+  A similarly constructed process $$N_{IR}(t)$$ counts individuals transitioning from $I$ to $R$.
+  To include demography, we could keep track of birth and death events by the counting processes $N_{{\small\bullet} S}(t)$, $N_{S{\small\bullet}}(t)$, $N_{I{\small\bullet}}(t)$, $N_{R{\small\bullet}}(t)$.
 * For discrete population compartment models, the flow counting processes are non-decreasing and integer valued.
-
 * For continuous population compartment models, the flow counting processes are non-decreasing and real valued.
-
 * The numbers of people in each compartment can be computed via these counting processes. Ignoring demography, we have:
 $$ S(t)= S(0) - N_{SI}(t)$$
 $$ I(t)= I(0) + N_{SI}(t) - N_{IR}(t)$$
 $$ R(t) = R(0) + N_{IR}(t)$$
-
 * These equations represent something like _conservation of mass_, or _what goes in must come out_. 
 
 ## The _ordinary differential equation_ (ODE) interpretation of the SIR model
@@ -134,7 +126,8 @@ $$ dN_{IR}/dt = \mu_{IR}\, I(t).$$
 
 * Continuous-time Markov chains are the basic tool for building discrete population epidemic models.
 
-* Recall that a _Markov chain_ is a discrete-valued stochastic process with the _Markov property_:  the future evolution of the process depends only on the current state.
+* Recall that a _Markov chain_ is a discrete-valued stochastic process with the _Markov property_:
+  the future evolution of the process depends only on the current state.
 
 * Surprisingly many models have this Markov property. If all important variables are included in the state of the system, then the Markov property appears automatically.
 
@@ -150,9 +143,8 @@ $$P[N_{IR}(t+\delta)=N_{IR}(t)] = 1-\mu_{IR}(t) \, I(t) \delta + o(\delta)$$
 Find the expected value of $N_{SI}(t+\delta)-N_{SI}(t)$ and $N_{IR}(t+\delta)-N_{IR}(t)$ given the current state, $S(t)$, $I(t)$ and $R(t)$. Take the limit as $\delta\to 0$ and show that this gives the ODE model.
 
 
-* A _simple_ counting process is one which cannot count more than one event at a time ([Wikipedia: Point_process](https://en.wikipedia.org/wiki/Point_process)). Thus, in a technical sense, the SIR Markov chain model we have written is simple. One may want to model the extra randomness resulting from multiple simultaneous events: someone sneezing in a bus; large gatherings at football matches; etc. This extra randomness may even be critical to match the variability in data. 
+* A _simple_ counting process is one which cannot count more than one event at a time ([Wikipedia: point process](https://en.wikipedia.org/wiki/Point_process)). Thus, in a technical sense, the SIR Markov chain model we have written is simple. One may want to model the extra randomness resulting from multiple simultaneous events: someone sneezing in a bus; large gatherings at football matches; etc. This extra randomness may even be critical to match the variability in data. 
 * We will see later, in the [measles case study](../measles/measles.html), a situation where this extra randomness plays an important role. Setting up the model using counting processes, as we have done here, turns out to be useful for this.
-
 
 
 ## Euler's method for ordinary differential equations (ODEs)
