@@ -614,6 +614,11 @@ Propose and test a more favorable way to draw starting parameters for the global
 
 Modify the model to include a latent period between becoming exposed and becoming infectious. See what effect this has on the maximized likelihood.
 
+--------------------------
+
+## [Back to course homepage](http://kingaa.github.io/sbied)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R)
+
 ----------------------
 
 ## References

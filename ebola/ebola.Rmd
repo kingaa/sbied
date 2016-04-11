@@ -549,4 +549,11 @@ simq %>% ggplot(aes(x=date))+
   labs(y="cases")
 ```
 
+--------------------------
+
+## [Back to course homepage](http://kingaa.github.io/sbied)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola.R)
+
+----------------------
+
 ## References

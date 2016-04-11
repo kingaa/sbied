@@ -130,6 +130,8 @@ $(document).ready(function () {
 <li><a href="#comparison-of-approaches-1-and-2">Comparison of Approaches 1 and 2</a></li>
 <li><a href="#technical-exercise-practical-implications-of-the-unbiasedness-of-the-particle-filter-and-the-concavity-of-the-logarithm">Technical exercise: Practical implications of the unbiasedness of the particle filter and the concavity of the logarithm</a></li>
 <li><a href="#technical-exercise-ability-to-filter-as-a-proxy-for-ability-to-carry-out-inference">Technical exercise: Ability to filter as a proxy for ability to carry out inference</a></li>
+<li><a href="#back-to-course-homepage"><a href="http://kingaa.github.io/sbied">Back to course homepage</a></a></li>
+<li><a href="#r-codes-for-this-document"><a href="http://raw.githubusercontent.com/kingaa/sbied/master/contacts/contacts.R"><strong>R</strong> codes for this document</a></a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
@@ -201,7 +203,7 @@ X_I\Big(t-\sum_{i=1}^{I-1}t_{i,J_i} \Big)&amp;
 </div>
 <div id="building-a-pomp-object-for-panel-data-approach-1" class="section level2">
 <h2>Building a pomp object for panel data: Approach 1</h2>
-<p><strong>pomp</strong> is an <strong>R</strong> package for time series data analysis, focusing on the use of POMP models <span class="citation">(King et al. in press)</span>. <strong>pomp</strong> is available from <a href="http://cran.r-project.org/web/packages/pomp">CRAN</a>, with development versions available from <a href="http://kingaa.github.io/pomp">github</a>. Here, we use <strong>pomp</strong> version 1.4.3.1</p>
+<p><strong>pomp</strong> is an <strong>R</strong> package for time series data analysis, focusing on the use of POMP models <span class="citation">(King et al. in press)</span>. <strong>pomp</strong> is available from <a href="http://cran.r-project.org/web/packages/pomp">CRAN</a>, with development versions available from <a href="http://kingaa.github.io/pomp">github</a>. Here, we use <strong>pomp</strong> version 1.4.5.1</p>
 <pre class="r"><code>library(pomp)
 packageVersion(&quot;pomp&quot;)</code></pre>
 <pre><code>## [1] '1.4.3.1'</code></pre>
@@ -467,6 +469,13 @@ apply(obs(s2),1,mean)</code></pre>
 <h2>Technical exercise: Ability to filter as a proxy for ability to carry out inference</h2>
 <p>The main inferential challenge in a maximum likelihood approach for POMP models is to identify an MLE. Methods such as iterated filtering and PMCMC are based on sequential Monte Carlo. Therefore, these methods are usually applicable if and only if one has a decent SMC algorithm available. Quantifying success at filtering, e.g., by considering the variance of the SMC likelihood estimator, is considerably quicker and easier than quantifying success at optimization or posterior distribution reconstruction. Therefore, it is natural to carry out an investigation such as the previous exercise and conclude that Approach 2 is probably preferable for inference.</p>
 <p>Carry out a simple experiment to see whether you can conclude Approach 2 is indeed better for iterated filtering in the context of this model and data. Obtain error estimates to assess whether your evidence is significant despite Monte Carlo uncertainty.</p>
+<hr />
+</div>
+<div id="back-to-course-homepage" class="section level2">
+<h2><a href="http://kingaa.github.io/sbied">Back to course homepage</a></h2>
+</div>
+<div id="r-codes-for-this-document" class="section level2">
+<h2><a href="http://raw.githubusercontent.com/kingaa/sbied/master/contacts/contacts.R"><strong>R</strong> codes for this document</a></h2>
 <hr />
 </div>
 <div id="references" class="section level2 unnumbered">

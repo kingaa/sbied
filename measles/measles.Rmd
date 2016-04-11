@@ -1101,4 +1101,12 @@ How do your results compare with those at the MLE?
 Compare likelihoods but also use simulations to diagnose differences between the models.
 
 
+
+--------------------------
+
+## [Back to course homepage](http://kingaa.github.io/sbied)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/measles/measles.R)
+
+----------------------
+
 ## References

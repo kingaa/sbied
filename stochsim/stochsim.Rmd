@@ -255,7 +255,7 @@ Consider some difficulties that might arise with non-negativity constraints, and
 
 ## Compartmental models in **pomp**.
 
-[Download a script containing the **R** commands below.](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/stochsim.R)
+[Download a script containing the **R** commands below.](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/stochsim.R).
 
 ### The boarding-school flu outbreak
 
@@ -458,4 +458,10 @@ Obtain some ballpark estimates of the parameters and simulate to see if you can 
 
 --------------------------
 
+## [Back to course homepage](http://kingaa.github.io/sbied)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/stochsim.R)
+
+--------------------------
+
 ## References
+

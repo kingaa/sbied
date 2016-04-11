@@ -250,4 +250,11 @@ $$\frac{\sum\!w_k\,(h(Y_k)-\overline{h})^2}{\sum\!w_k}.$$
 Obtaining accurate estimates requires some thought to the importance distribution $g$.
 Specifically, if the tails of $g$ are lighter than those of $f$, the Monte Carlo variance will be inflated and the estimates can be unusable.
 
+--------------------------
+
+## [Back to course homepage](http://kingaa.github.io/sbied)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/monteCarlo.R)
+
+--------------------------
+
 ## References

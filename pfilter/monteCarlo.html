@@ -124,6 +124,8 @@ $(document).ready(function () {
 </ul></li>
 <li><a href="#monte-carlo-integration">Monte Carlo integration</a></li>
 <li><a href="#importance-sampling">Importance sampling</a></li>
+<li><a href="#back-to-course-homepage"><a href="http://kingaa.github.io/sbied">Back to course homepage</a></a></li>
+<li><a href="#r-codes-for-this-document"><a href="http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/monteCarlo.R"><strong>R</strong> codes for this document</a></a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
@@ -193,6 +195,14 @@ $(document).ready(function () {
 <p>Specifically, suppose we wish to compute <span class="math inline">\({\mathbb{E}\left[{h(X)}\right]}\)</span>, where <span class="math inline">\(X\sim{f}\)</span>, but that it’s difficult or impossible to draw random samples from <span class="math inline">\(f\)</span>. Suppose <span class="math inline">\(g\)</span> is a probability distribution from which it’s relatively easy to draw samples and let <span class="math inline">\(Y_k\sim{g}\)</span> for <span class="math inline">\(k=1\,\dots,N\)</span> be i.i.d. random variables drawn from <span class="math inline">\(g\)</span>. Notice that <span class="math display">\[{\mathbb{E}\left[{h(X)}\right]} = \int\!h(x)\,f(x)\,{d{x}} = \int\!h(x)\,\frac{f(x)}{g(x)}\,g(x)\,{d{x}}.\]</span> We can apply the Monte Carlo integration theorem to this integral to conclude that <span class="math display">\[{\mathbb{E}\left[{h(X)}\right]} \approx \frac{1}{N}\,\sum_{k=1}^{N}\!h(Y_k)\,\frac{f(Y_k)}{g(Y_k)}.\]</span></p>
 <p>Since <span class="math inline">\({\mathbb{E}\left[{f(Y)/g(Y)}\right]}=1\)</span>, we can replace the importance sampling rule above with another, which is slightly less accurate but more precise. Let <span class="math inline">\(w_k=f(Y_k)/g(Y_k)\)</span> be the <em>importance weights</em>. Then we have <span class="math display">\[{\mathbb{E}\left[{h(X)}\right]} \approx \overline{h} = \frac{\sum\!w_k\,h(Y_k)}{\sum\!w_k}.\]</span> The Monte Carlo variance associated with this estimate is <span class="math display">\[\frac{\sum\!w_k\,(h(Y_k)-\overline{h})^2}{\sum\!w_k}.\]</span></p>
 <p>Obtaining accurate estimates requires some thought to the importance distribution <span class="math inline">\(g\)</span>. Specifically, if the tails of <span class="math inline">\(g\)</span> are lighter than those of <span class="math inline">\(f\)</span>, the Monte Carlo variance will be inflated and the estimates can be unusable.</p>
+<hr />
+</div>
+<div id="back-to-course-homepage" class="section level2">
+<h2><a href="http://kingaa.github.io/sbied">Back to course homepage</a></h2>
+</div>
+<div id="r-codes-for-this-document" class="section level2">
+<h2><a href="http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/monteCarlo.R"><strong>R</strong> codes for this document</a></h2>
+<hr />
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2>References</h2>

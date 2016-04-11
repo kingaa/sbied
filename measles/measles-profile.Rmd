@@ -537,11 +537,19 @@ pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma),
       data=sigmaSE_prof)
 ```
 
-## References
-
 ```{r include=FALSE,cache=FALSE,eval=TRUE,purl=TRUE}
 closeCluster(cl)
 try(detach("package:doMPI",unload=TRUE),silent=TRUE)
 if (exists("mpi.exit")) mpi.exit()
 try(detach("package:Rmpi",unload=TRUE),silent=TRUE)
 ```
+
+--------------------------
+
+## [Back to course homepage](http://kingaa.github.io/sbied)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/measles/measles-profile.R)
+
+----------------------
+
+## References
+

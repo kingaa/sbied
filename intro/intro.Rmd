@@ -595,4 +595,11 @@ where $a$ and $b$ are parameters and
 $$\varepsilon_t \sim \dist{Lognormal}{-\tfrac{1}{2}\sigma^2,\sigma}.$$
 Assume the same measurement model as before.
 
+--------------------------
+
+## [Back to course homepage](http://kingaa.github.io/sbied)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/intro/intro.R)
+
+----------------------
+
 ## References

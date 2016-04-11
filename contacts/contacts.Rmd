@@ -502,9 +502,11 @@ The main inferential challenge in a maximum likelihood approach for POMP models 
 
 Carry out a simple experiment to see whether you can conclude Approach 2 is indeed better for iterated filtering in the context of this model and data. Obtain error estimates to assess whether your evidence is significant despite Monte Carlo uncertainty.
 
+--------------------------
+
+## [Back to course homepage](http://kingaa.github.io/sbied)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/contacts/contacts.R)
 
 ----------------------
 
 ## References
-
-

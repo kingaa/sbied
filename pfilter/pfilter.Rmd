@@ -678,6 +678,9 @@ Do you find any other local maxima?
 
 --------------------------
 
+## [Back to course homepage](http://kingaa.github.io/sbied)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R)
+
+--------------------------
 
 ## References
-
