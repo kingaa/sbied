@@ -9,7 +9,7 @@ html-docs: index.html intro/intro.html stochsim/stochsim.html pfilter/pfilter.ht
 datafiles: data/ebola_data.csv data/parus.csv contacts/contacts.csv contacts/contacts2.csv polio/polio_wisconsin.csv 
 	for i in $^; do cp $$i www/$$i; done
 
-results: contacts/mif1.rda contacts/pfilter1.rda contacts/pfilter2.rda mif/box_search_global.rda mif/box_search_local.rda mif/lik_local.rda mif/pf.rda polio/box_eval-1.rda polio/box_eval-3.rda polio/mif-1.rda polio/mif-3.rda polio/persistence-1.rda polio/persistence-3.rda polio/pf1-1.rda polio/pf1-3.rda measles/sigmaSE-profile1.rds measles/sigmaSE-profile2.rds polio/polio_params.csv ebola/ebola-profiles.csv mif/bsflu_params.csv
+results: contacts/mif1.rda contacts/pfilter1.rda contacts/pfilter2.rda mif/box_search_global.rda mif/box_search_local.rda mif/lik_local.rda mif/pf.rda polio/local_search.rda polio/global_search.rda polio/sims.rds measles/sigmaSE-profile1.rds measles/sigmaSE-profile2.rds polio/polio_params.csv ebola/ebola-profiles.csv mif/bsflu_params.csv
 	for i in $^; do cp $$i www/$$i; done
 
 %.html: %.Rmd
