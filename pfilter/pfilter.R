@@ -72,25 +72,25 @@ ll <- sapply(pf,logLik)
 logmeanexp(ll,se=TRUE)
 
 ## ----sir-like-slice,cache=TRUE,results='hide'----------------------------
-sliceDesign(
-  c(Beta=2,gamma=1,rho=0.8,N=2600),
-  Beta=rep(seq(from=0.5,to=4,length=40),each=3),
-  gamma=rep(seq(from=0.5,to=2,length=40),each=3)) -> p
+bake(file="sir-lik-slice.rds",seed=998468235L,kind="L'Ecuyer",{
 
-library(foreach)
-library(doParallel)
-registerDoParallel()
+    sliceDesign(
+        c(Beta=2,gamma=1,rho=0.8,N=2600),
+        Beta=rep(seq(from=0.5,to=4,length=40),each=3),
+        gamma=rep(seq(from=0.5,to=2,length=40),each=3)) -> p
+    
+    library(foreach)
+    library(doParallel)
+    registerDoParallel()
 
-set.seed(998468235L,kind="L'Ecuyer")
-
-foreach (theta=iter(p,"row"),.combine=rbind,
-         .inorder=FALSE,
-         .options.multicore=list(set.seed=TRUE)
-) %dopar% {
-  pfilter(sir,params=unlist(theta),Np=5000) -> pf
-  theta$loglik <- logLik(pf)
-  theta
-} -> p
+    foreach (theta=iter(p,"row"),.combine=rbind,.inorder=FALSE,
+             .options.multicore=list(set.seed=TRUE)
+             ) %dopar% {
+                 pfilter(sir,params=unlist(theta),Np=5000) -> pf
+                 theta$loglik <- logLik(pf)
+                 theta
+             }
+}) -> p
 
 ## ----sir-like-slice-plot,cache=FALSE,echo=FALSE,results="hide"-----------
 library(magrittr)
@@ -107,19 +107,27 @@ p %>%
   theme_bw()
 
 ## ----sir-grid1-----------------------------------------------------------
-expand.grid(Beta=seq(from=1,to=4,length=50),
-            gamma=seq(from=0.7,to=3,length=50),
-            rho=0.8,
-            N=2600) -> p
+bake(file="sir-grid1.rds",seed=421776444,kind="L'Ecuyer",{
 
-foreach (theta=iter(p,"row"),.combine=rbind,
-         .inorder=FALSE,
-         .options.multicore=list(set.seed=TRUE)
-) %dopar% {
-  pfilter(sir,params=unlist(theta),Np=5000) -> pf
-  theta$loglik <- logLik(pf)
-  theta
-} -> p
+    expand.grid(Beta=seq(from=1,to=4,length=50),
+                gamma=seq(from=0.7,to=3,length=50),
+                rho=0.8,
+                N=2600) -> p
+    
+    library(foreach)
+    library(doParallel)
+    registerDoParallel()
+    
+    foreach (theta=iter(p,"row"),.combine=rbind,.inorder=FALSE,
+             .options.multicore=list(set.seed=TRUE)
+             ) %dopar% 
+    {
+        pfilter(sir,params=unlist(theta),Np=5000) -> pf
+        theta$loglik <- logLik(pf)
+        theta
+    }
+    
+})-> p
 
 ## ----sir-grid1-plot,echo=F,cache=F,purl=T--------------------------------
 library(magrittr)

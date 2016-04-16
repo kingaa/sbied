@@ -203,10 +203,10 @@ X_I\Big(t-\sum_{i=1}^{I-1}t_{i,J_i} \Big)&amp;
 </div>
 <div id="building-a-pomp-object-for-panel-data-approach-1" class="section level2">
 <h2>Building a pomp object for panel data: Approach 1</h2>
-<p><strong>pomp</strong> is an <strong>R</strong> package for time series data analysis, focusing on the use of POMP models <span class="citation">(King et al. in press)</span>. <strong>pomp</strong> is available from <a href="http://cran.r-project.org/web/packages/pomp">CRAN</a>, with development versions available from <a href="http://kingaa.github.io/pomp">github</a>. Here, we use <strong>pomp</strong> version 1.4.5.1</p>
+<p><strong>pomp</strong> is an <strong>R</strong> package for time series data analysis, focusing on the use of POMP models <span class="citation">(King et al. in press)</span>. <strong>pomp</strong> is available from <a href="http://cran.r-project.org/web/packages/pomp">CRAN</a>, with development versions available from <a href="http://kingaa.github.io/pomp">github</a>. Here, we use <strong>pomp</strong> version 1.4.7.2</p>
 <pre class="r"><code>library(pomp)
 packageVersion(&quot;pomp&quot;)</code></pre>
-<pre><code>## [1] '1.4.3.1'</code></pre>
+<pre><code>## [1] '1.4.7.2'</code></pre>
 <p><span class="citation">Romero-Severson et al. (2015)</span> implemented the above Approach 1. We proceed to use this approach to build a pomp object using C snippets. In this approach, we code the state and observation variable names are as follows:</p>
 <pre class="r"><code>contact_statenames = c(&quot;X&quot;,&quot;D&quot;,&quot;R&quot;,&quot;C1&quot;,&quot;C2&quot;,&quot;C3&quot;,&quot;C4&quot;)
 contact_obsnames = c(&quot;y1&quot;, &quot;y2&quot;, &quot;y3&quot;, &quot;y4&quot;)</code></pre>

@@ -424,7 +424,7 @@ bake(file="sir-grid1.rds",seed=421776444,kind="L'Ecuyer",{
     registerDoParallel()
     
     foreach (theta=iter(p,"row"),.combine=rbind,.inorder=FALSE,
-             .options.multicore=mcopts
+             .options.multicore=list(set.seed=TRUE)
              ) %dopar% 
     {
         pfilter(sir,params=unlist(theta),Np=5000) -> pf
