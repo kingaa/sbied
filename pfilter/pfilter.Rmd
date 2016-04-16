@@ -362,25 +362,25 @@ We'll make slices in the $\beta$ and $\gamma$ directions.
 Both slices will pass through the default parameter set.
 
 ```{r sir-like-slice,cache=TRUE,results='hide'}
-sliceDesign(
-  c(Beta=2,gamma=1,rho=0.8,N=2600),
-  Beta=rep(seq(from=0.5,to=4,length=40),each=3),
-  gamma=rep(seq(from=0.5,to=2,length=40),each=3)) -> p
+bake(file="sir-lik-slice.rds",seed=998468235L,kind="L'Ecuyer",{
 
-library(foreach)
-library(doParallel)
-registerDoParallel()
+    sliceDesign(
+        c(Beta=2,gamma=1,rho=0.8,N=2600),
+        Beta=rep(seq(from=0.5,to=4,length=40),each=3),
+        gamma=rep(seq(from=0.5,to=2,length=40),each=3)) -> p
+    
+    library(foreach)
+    library(doParallel)
+    registerDoParallel()
 
-set.seed(998468235L,kind="L'Ecuyer")
-
-foreach (theta=iter(p,"row"),.combine=rbind,
-         .inorder=FALSE,
-         .options.multicore=list(set.seed=TRUE)
-) %dopar% {
-  pfilter(sir,params=unlist(theta),Np=5000) -> pf
-  theta$loglik <- logLik(pf)
-  theta
-} -> p
+    foreach (theta=iter(p,"row"),.combine=rbind,.inorder=FALSE,
+             .options.multicore=list(set.seed=TRUE)
+             ) %dopar% {
+                 pfilter(sir,params=unlist(theta),Np=5000) -> pf
+                 theta$loglik <- logLik(pf)
+                 theta
+             }
+}) -> p
 ```
 
 Note that we've used the **foreach** package with the parallel backend (**doParallel**) to parallelize these computations.
@@ -412,19 +412,27 @@ Add likelihood slices along the $\rho$ direction.
 Slices offer a very limited perspective on the geometry of the likelihood surface.
 With just two parameters, we can evaluate the likelihood at a grid of points and visualize the surface directly.
 ```{r sir-grid1}
-expand.grid(Beta=seq(from=1,to=4,length=50),
-            gamma=seq(from=0.7,to=3,length=50),
-            rho=0.8,
-            N=2600) -> p
+bake(file="sir-grid1.rds",seed=421776444,kind="L'Ecuyer",{
 
-foreach (theta=iter(p,"row"),.combine=rbind,
-         .inorder=FALSE,
-         .options.multicore=list(set.seed=TRUE)
-) %dopar% {
-  pfilter(sir,params=unlist(theta),Np=5000) -> pf
-  theta$loglik <- logLik(pf)
-  theta
-} -> p
+    expand.grid(Beta=seq(from=1,to=4,length=50),
+                gamma=seq(from=0.7,to=3,length=50),
+                rho=0.8,
+                N=2600) -> p
+    
+    library(foreach)
+    library(doParallel)
+    registerDoParallel()
+    
+    foreach (theta=iter(p,"row"),.combine=rbind,.inorder=FALSE,
+             .options.multicore=mcopts
+             ) %dopar% 
+    {
+        pfilter(sir,params=unlist(theta),Np=5000) -> pf
+        theta$loglik <- logLik(pf)
+        theta
+    }
+    
+})-> p
 ```
 ```{r sir-grid1-plot,echo=F,cache=F,purl=T}
 library(magrittr)
