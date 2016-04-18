@@ -1,7 +1,7 @@
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
 library(pomp)
-options(cores=20,stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp")>="1.4")
+options(stringsAsFactors=FALSE)
+stopifnot(packageVersion("pomp")>="1.4.7")
 
 ## ----load_bbs------------------------------------------------------------
 bsflu_data <- read.table("http://kingaa.github.io/sbied/data/bsflu_data.txt")

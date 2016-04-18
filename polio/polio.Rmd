@@ -58,10 +58,6 @@ read_chunk("polio_model.R")
 read_chunk("profile_rho.R")
 set.seed(5996485L)
 ```
-```{r cores,include=FALSE,purl=TRUE,cache=FALSE}
-## change this line to reflect the architecture of your machine
-options(cores=30)
-```
 
 ## Objectives
 
@@ -324,7 +320,7 @@ stew(file="local_search.rda",{
 },seed=318817883,kind="L'Ecuyer")
 ```
 
-This investigation took `r round(t1["elapsed"]/60,1)` minutes on a machine with `r getOption("cores")` cores.
+This investigation took `r round(t1["elapsed"]/60,1)` minutes on a machine with `r getDoParWorkers()` cores.
 The maximum likelihood we obtain is `r with(subset(m1,loglik==max(loglik)),round(loglik,1))`.
 These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 ```{r pairs_local,fig.width=6,fig.height=6}
@@ -430,7 +426,7 @@ write.csv(params,file="polio_params.csv",row.names=FALSE,na="")
 ```
 
 This search gives a maximized likelihood estimate of `r with(m2,round(max(loglik),1))` with a standard error of `r with(subset(m2,loglik==max(loglik)),round(loglik.se,2))`.
-It took about `r round(t2[3]/60)` mins on a `r getOption("cores")`-core machine.
+It took about `r round(t2[3]/60)` mins on a `r getDoParWorkers()`-core machine.
 This compares with the results of @martinez-bakker15, who report a maximized likelihood of -794.3 with a standard error of 0.11.
 
 Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface.

@@ -1,7 +1,3 @@
-## ----cores,include=FALSE,purl=TRUE,cache=FALSE---------------------------
-## change this line to reflect the architecture of your machine
-options(cores=30)
-
 ## ----data----------------------------------------------------------------
 
 ## ----load-package--------------------------------------------------------

@@ -208,51 +208,78 @@ The following diagrams show the structure of a POMP model schematically.
 
 *********************
 
-![state_space_diagram1](../graphics/state_space_diagram1.png)
-
 Schematic of the structure of a POMP showing causal relations and direction of information flow.
+
+![pomp_schematic](../graphics/pomp_schematic1.png)
+
 **The key perspective to keep in mind is that the model is to be viewed as the process that generated the data.**
-   
+
 *********************
 
-```{r ssdiag2,echo=FALSE,out.width="1200px",purl=FALSE}
+Another POMP model schematic, showing dependence among model variables.
+
+```{r ssdiag2,echo=FALSE,purl=FALSE,fig.width=6,fig.height=3}
 library(grid)
-vp <- viewport(width=unit(20/3,"inches"),height=unit(5,"inches"))
+vp <- viewport(x=unit(0.5,"npc"),y=unit(0.54,"npc"),
+               width=unit(0.96,"npc"),height=unit(0.96,"npc"))
 pushViewport(vp)
-# grid.rect(x=0.5,y=0.5,width=1,height=1)
-fs <- 9
-grid.text(x=0.6,y=0.85,label="measurement model",just="centre",gp=gpar(fontsize=fs))
-grid.lines(x=unit(c(0.6,1/4),"npc")+unit(c(0,2),"points"),y=unit(c(0.85,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gpar(lty=2))
-grid.lines(x=unit(c(0.6,2/4),"npc")+unit(c(0,2),"points"),y=unit(c(0.85,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gpar(lty=2))
-grid.lines(x=unit(c(0.6,3/4),"npc")+unit(c(0,-2),"points"),y=unit(c(0.85,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gpar(lty=2))
 
-grid.text(x=0.3,y=0.15,label="process model",just="centre",gp=gpar(fontsize=fs))
-grid.lines(x=unit(c(0.3,6/16),"npc"),y=unit(c(0.15,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gpar(lty=2))
-grid.lines(x=unit(c(0.3,10/16),"npc"),y=unit(c(0.15,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gpar(lty=2))
+fs <- 12
+x1 <- 0.6; y1 <- 0.88
+gp <- gpar(lty=2,col=grey(0.6),fontsize=12)
+grid.text(x=x1,y=y1,label="measurement model",just="centre",gp=gpar(fontsize=fs,col=grey(0.6)))
+grid.lines(x=unit(c(x1,3/12),"npc")+unit(c(0,2),"points"),y=unit(c(y1,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gp)
+grid.lines(x=unit(c(x1,6/12),"npc")+unit(c(0,2),"points"),y=unit(c(y1,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gp)
+grid.lines(x=unit(c(x1,8/12),"npc")+unit(c(0,-2),"points"),y=unit(c(y1,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gp)
+grid.lines(x=unit(c(x1,10/12),"npc")+unit(c(0,-2),"points"),y=unit(c(y1,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gp)
 
-x1 <- unit(rep(c(1/4,1/2,3/4),2),"npc")
-y1 <- unit(rep(c(1/3,2/3),each=3),"npc")
-w <- unit(1/8,"npc")
+x1 <- 0.4; y1 <- 0.14
+grid.text(x=x1,y=y1,label="process model",just="centre",gp=gp)
+grid.lines(x=unit(c(x1,4/24),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
+grid.lines(x=unit(c(x1,23/72),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
+grid.lines(x=unit(c(x1,31/72),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
+grid.lines(x=unit(c(x1,14/24),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
+grid.lines(x=unit(c(x1,18/24),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
+grid.lines(x=unit(c(x1,65/72),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
+
+grid.text(x=1/72,y=c(1/3,2/3),label=c("states","observations"),just="centre",rot=90,gp=gp)
+
+x1 <- unit(c(1,3,6,8,10,3,6,8,10)/12,"npc")
+y1 <- unit(c(rep(1,5),rep(2,4))/3,"npc")
+w <- unit(1/12,"npc")
 h <- unit(1/6,"npc")
+
+grid.lines(x=c(1/48,47/48),y=1/12,arrow=arrow(length=unit(0.02,"npc")))
+grid.text(x=x1[1:5],y=1/24,label=c(expression(italic(t[0])),expression(italic(t[1])),expression(italic(t[n-1])),expression(italic(t[n])),expression(italic(t[n+1]))))
 
 grid.rect(x=x1,y=y1,width=w,height=h,just=c(0.5,0.5),gp=gpar(fill="white",lwd=2))
 grid.text(x=x1,y=y1,label=c(
-  expression(italic(X[n-1])),expression(italic(X[n])),expression(italic(X[n+1])),
-  expression(italic(Y[n-1])),expression(italic(Y[n])),expression(italic(Y[n+1]))),
+  expression(italic(X[0])),expression(italic(X[1])),
+  expression(italic(X[n-1])),expression(italic(X[n])),
+  expression(italic(X[n+1])),
+  expression(italic(Y[1])),expression(italic(Y[n-1])),
+  expression(italic(Y[n])),expression(italic(Y[n+1]))),
   gp=gpar(fontface=3))
-grid.lines(x=c(2/16,3/16),y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=c(5/16,7/16),y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=c(9/16,11/16),y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=c(13/16,14/16),y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=c(1/4),y=c(5/12,7/12),arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=c(2/4),y=c(5/12,7/12),arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=c(3/4),y=c(5/12,7/12),arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.text(x=c(4.5,11.5)/12,y=unit(1/3,"npc")+unit(2,"point"),label=quote(phantom(0)~cdots~phantom(0)),gp=gpar(fontsize=15))
+grid.lines(x=c(1,3)/12+c(1,-1)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(3,4)/12+c(1,1/3)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(5,6)/12+c(-1/3,-1)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(6,8)/12+c(1,-1)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(8,10)/12+c(1,-1)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(10,11)/12+c(1,1/3)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=3/12,y=c(1,2)/3+c(1,-1)/12,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=6/12,y=c(1,2)/3+c(1,-1)/12,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=8/12,y=c(1,2)/3+c(1,-1)/12,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=10/12,y=c(1,2)/3+c(1,-1)/12,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+
 popViewport()
 ```
 
-Another POMP model schematic, showing dependence among model variables.
-State variables, $x$, at time $t$ depend only on state variables at the previous timestep.
-Measurements, $y$, at time $t$ depend only on the state at that time.
+The state process, $X_n$, is Markovian, i.e.,
+$$\mathrm{Prob}[X_n|X_0,\dots,X_{n-1},Y_1,\dots,Y_{n-1}]=\mathrm{Prob}[X_n|X_{n-1}].$$
+Moreover, the measurements, $Y_n$, depend only on the state at that time:
+$$\mathrm{Prob}[Y_n|X_0,\dots,X_{n},Y_1,\dots,Y_{n-1}]=\mathrm{Prob}[Y_n|X_{n}],$$
+for all $n=1,\dots,N$.
 
 *********************
 

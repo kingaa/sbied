@@ -10,7 +10,7 @@ options(
   encoding="UTF-8"
 )
 
-registerDoParallel(cores=4)
+registerDoParallel()
 mcopts <- list(set.seed=TRUE)
 
 ## ----data----------------------------------------------------------------
