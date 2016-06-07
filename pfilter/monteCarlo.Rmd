@@ -1,7 +1,6 @@
 ---
 title: "Monte Carlo Methods"
 author: "Aaron A. King"
-date: "2015-07-10"
 output:
   html_document:
     toc: yes
@@ -16,12 +15,12 @@ csl: ../ecology.csl
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
 \newcommand\dd[1]{d{#1}}
 \newcommand\dlta[1]{{\Delta}{#1}}
-\newcommand\lik{\mathscr{L}}
+\newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\ell}
 
 -----------------------------------
 
-Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
@@ -49,8 +48,8 @@ opts_chunk$set(
   cache.path=paste0("cache/",prefix,"-"),
   fig.pos="h!",
   fig.align='center',
-  fig.height=4,fig.width=6.83,
-  dpi=300,
+  fig.height=3,fig.width=4.85,
+  dpi=100,
   dev='png',
   dev.args=list(bg='transparent')
   )
@@ -168,6 +167,7 @@ The following procedure simulates $X\!\sim\!f$.
 -----------------------------------
 
 Diagram of the rejection method.
+$M$ is chosen so that $M\,g>f$ everywhere.
 We propose points by drawing them uniformly from the area under the graph of $M\,g$ and accept them if they lie under the graph of $f$.
 The $X$-coordinate of the points are then distributed according to $f$.
 
@@ -179,7 +179,8 @@ g <- dnorm(x,mean=1,sd=5)
 Mg <- 1.1*max(f)/max(g)*g
 xx <- c(6.1,2.6,-4)
 yy <- c(0.16,0.12,0.06)
-plot(x,Mg,type='l',col='red',xlab='x',ylab="pdf",ylim=c(0,1.05*max(Mg)),bty='l')
+plot(x,Mg,type='l',col='red',xlab='x',ylab="pdf",ylim=c(0,1.05*max(Mg)),bty='l',axes=F,
+     frame.plot=TRUE)
 lines(x,g,col='blue')
 lines(x,f,col='black')
 text(xx,yy,labels=c("M g","f","g"),col=c("red","black","blue"),font=3,cex=1.5)
@@ -253,7 +254,6 @@ Specifically, if the tails of $g$ are lighter than those of $f$, the Monte Carlo
 --------------------------
 
 ## [Back to course homepage](http://kingaa.github.io/sbied)
-## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/monteCarlo.R)
 
 --------------------------
 

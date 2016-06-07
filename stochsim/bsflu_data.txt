@@ -1,0 +1,21 @@
+## data read from graph in Anonymous (1978) 
+## 'Influenza in a boarding school' Brit. Med. J. 1:578.
+## cases are recorded with error of +/- 1 case
+## 763 boys were at risk, 512 boys spent time away from class
+## B = number confined to bed
+## C = number convalescent
+"B" "C" "day"
+"1978-01-22" 1 0 1
+"1978-01-23" 6 0 2
+"1978-01-24" 26 0 3
+"1978-01-25" 73 1 4
+"1978-01-26" 222 8 5
+"1978-01-27" 293 16 6
+"1978-01-28" 258 99 7
+"1978-01-29" 236 160 8
+"1978-01-30" 191 173 9
+"1978-01-31" 124 162 10
+"1978-02-01" 69 150 11
+"1978-02-02" 26 89 12
+"1978-02-03" 11 44 13
+"1978-02-04" 4 22 14

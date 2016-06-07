@@ -107,7 +107,7 @@ set.seed(2028866059L)
 #' 
 #' #### The Markov assumption
 #' 
-#' - $\mathrm{Prob}[X_n|X_0,\dots,X_{n-1}]=\mathrm{Prob}[X_n|X_{n-1}]$.
+#' - $\prob{X_n|X_0,\dots,X_{n-1}}=\prob{X_n|X_{n-1}}$.
 #' - Interpretation: knowledge of the system's state at any point in time is sufficient to determine the distribution of possible futures.
 #' - Alternative interpretation: the system's state is sufficiently rich so as to encompass all important features of the system's history
 #' - Systems with delays can usually be rewritten as Markovian systems, at least approximately.
@@ -135,9 +135,9 @@ set.seed(2028866059L)
 #' 
 #' 
 #' The state process, $X_n$, is Markovian, i.e.,
-#' $$\mathrm{Prob}[X_n|X_0,\dots,X_{n-1},Y_1,\dots,Y_{n-1}]=\mathrm{Prob}[X_n|X_{n-1}].$$
+#' $$\prob{X_n|X_0,\dots,X_{n-1},Y_1,\dots,Y_{n-1}}=\prob{X_n|X_{n-1}}.$$
 #' Moreover, the measurements, $Y_n$, depend only on the state at that time:
-#' $$\mathrm{Prob}[Y_n|X_0,\dots,X_{n},Y_1,\dots,Y_{n-1}]=\mathrm{Prob}[Y_n|X_{n}],$$
+#' $$\prob{Y_n|X_0,\dots,X_{n},Y_1,\dots,Y_{n-1}}=\prob{Y_n|X_{n}},$$
 #' for all $n=1,\dots,N$.
 #' 
 #' ------------------------------
