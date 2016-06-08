@@ -1,0 +1,7 @@
+figure
+cache
+papers
+www
+**/*\.o
+**/*\.so
+roster.*
