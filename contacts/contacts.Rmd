@@ -1,7 +1,6 @@
 ---
-title: "Case Study: Dynamic Variation in Sexual Contact Rates"
+title: "Case study: dynamic variation in sexual contact rates"
 author: "Edward Ionides"
-date: "05/28/2015"
 output:
   html_document:
     toc: yes

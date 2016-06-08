@@ -172,7 +172,7 @@ bsflu_data <- read.table("http://kingaa.github.io/sbied/stochsim/bsflu_data.txt"
 #' $R_2$ consists of individuals who are convalescent if they showed symptoms;
 #' $R_3$ consists of recovered individuals who have returned to school-work if they were symtomatic.
 #' The observation on day $n$ of the observed epidemic (with $t_1$ being 22 January) consists of the numbers of children who are bed-confined and convalescent.
-#' These measurements are modeled as $Y_n=(B_n,C_n)$ with $B_n\sim\mathrm{Poisson}(\rho R_1(t_n))$ and $C_n\sim\mathrm{Poisson}(\rho R_2(t_n))$.
+#' To keep things simple, and because our primary interest is in parameters related to transmission, we'll focus on the bed-confinement numbers, $B_n$, modeling these as $B_n\sim\dist{Poisson}{\rho R_1(t_n)}$.
 #' Here, $\rho$ is a reporting rate corresponding to the chance of being symptomatic.
 #' 
 #' 
