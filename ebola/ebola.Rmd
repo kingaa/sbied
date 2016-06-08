@@ -1,5 +1,5 @@
 ---
-title: "Case study: Forecasting Ebola"
+title: "Case study: forecasting Ebola"
 author: "Aaron A. King, Matthieu Domenech de Cell&egrave;s, Felicia M. G. Magpantay, and Pejman Rohani"
 output:
   html_document:
@@ -18,7 +18,7 @@ csl: ../ecology.csl
 ------------------------------------
 
 
-Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
@@ -47,7 +47,7 @@ opts_chunk$set(
   fig.pos="h!",
   fig.align='center',
   fig.height=4,fig.width=6.83,
-  dpi=300,
+  dpi=100,
   dev='png',
   dev.args=list(bg='transparent')
   )
@@ -67,7 +67,7 @@ library(plyr)
 library(reshape2)
 library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="0.69-1")
+stopifnot(packageVersion("pomp")>="1.4.7")
 ```
 
 ## Objectives
@@ -93,7 +93,7 @@ Key questions included:
 Download the data from the WHO Situation Report of 1 October 2014:
 ```{r get-data}
 base_url <- "http://kingaa.github.io/sbied/"
-read.csv(paste0(base_url,"data/ebola_data.csv"),stringsAsFactors=FALSE,
+read.csv(paste0(base_url,"ebola/ebola_data.csv"),stringsAsFactors=FALSE,
          colClasses=c(date="Date")) -> dat
 sapply(dat,class)
 head(dat)
@@ -125,7 +125,7 @@ In this document, we'll fix $m=3$.
 
 We implement Gamma distributions using the so-called *linear chain trick*.
 
-```{r seir-diagram,echo=FALSE,cache=FALSE,purl=FALSE}
+```{r seir-diagram,include=FALSE,cache=FALSE,purl=FALSE,eval=FALSE}
 library(DiagrammeR)
 DiagrammeR("digraph SEIR {
   graph [rankdir=LR, overlap=false, fontsize = 10]
@@ -140,6 +140,8 @@ DiagrammeR("digraph SEIR {
   I->R I->d
 }",type="grViz",engine="dot",height=100,width=800)
 ```
+
+![Model flow diagram.](./model_diagram.png)
 
 ### Process model simulator
 
@@ -173,6 +175,18 @@ rSim <- Csnippet('
   N_EI += transE[nstageE-1]; // No of transitions from E to I
   N_IR += transI; // No of transitions from I to R
 ')
+
+rInit <- Csnippet("
+  double m = N/(S_0+E_0+I_0+R_0);
+  double *E = &E1;
+  int j;
+  S = nearbyint(m*S_0);
+  for (j = 0; j < nstageE; j++) E[j] = nearbyint(m*E_0/nstageE);
+  I = nearbyint(m*I_0);
+  R = nearbyint(m*R_0);
+  N_EI = 0;
+  N_IR = 0;
+")
 ```
 
 
@@ -266,25 +280,17 @@ ebolaModel <- function (country=c("Guinea", "SierraLeone", "Liberia"),
       times="week",
       t0=min(dat$week)-1,
       globals=globs,
-      statenames=c("S","E1","I","R","N_EI","N_IR"),
+      statenames=c("S",sprintf("E%1d",seq_len(nstageE)),
+                   "I","R","N_EI","N_IR"),
       zeronames=c("N_EI","N_IR"),
       paramnames=c("N","R0","alpha","gamma","rho","k",
                    "S_0","E_0","I_0","R_0"),
-      nstageE=nstageE,
       dmeasure=dObs, rmeasure=rObs,
       rprocess=discrete.time.sim(step.fun=rSim, delta.t=timestep),
-      skeleton=skel, skeleton.type="vectorfield",
+      skeleton=vectorfield(skel),
       toEstimationScale=toEst,
       fromEstimationScale=fromEst,
-      initializer=function (params, t0, nstageE, ...) {
-        all.state.names <- c("S",paste0("E",1:nstageE),"I","R","N_EI","N_IR")
-        comp.names <- c("S",paste0("E",1:nstageE),"I","R")
-        x0 <- setNames(numeric(length(all.state.names)),all.state.names)
-        frac <- c(params["S_0"],rep(params["E_0"]/nstageE,nstageE),params["I_0"],params["R_0"])
-        x0[comp.names] <- round(params["N"]*frac/sum(frac))
-        x0
-      }
-    ) -> po
+      initializer=rInit) -> po
 }
 
 ebolaModel("Guinea") -> gin
@@ -552,7 +558,7 @@ simq %>% ggplot(aes(x=date))+
 --------------------------
 
 ## [Back to course homepage](http://kingaa.github.io/sbied)
-## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola.R)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/gh-pages/ebola/ebola.R)
 
 ----------------------
 
