@@ -1,4 +1,4 @@
-default: intro.R intro.html parus.csv
+default: intro.R intro.html parus.csv ricker.R ricker.html
 ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)
