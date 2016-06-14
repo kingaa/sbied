@@ -126,7 +126,7 @@ If the darts are thrown in such a way as to be equally likely to land anywhere i
 -----------------------------------
 
 Region $D$ lies within region $U$.
-A random variable $X$ is said to be uniformly distributed over a region $D$ ($X\!\sim\!\mathrm{uniform}(D)$) if, for any ${A}\subset{D}$, $\mathrm{Prob}[X\in{A]}=\mathrm{area}(A)/\mathrm{area}(D)$.
+A random variable $X$ is said to be uniformly distributed over a region $D$ ($X\!\sim\!\mathrm{uniform}(D)$) if, for any ${A}\subset{D}$, $\prob{X\in{A}}=\mathrm{area}(A)/\mathrm{area}(D)$.
 
 ```{r region-diagram,echo=F}
 op <- par(mar=c(0,1,0,1),mgp=c(2,1,0),font=4,family="sans")
