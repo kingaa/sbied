@@ -151,14 +151,14 @@ $(document).ready(function () {
 <p>The third command will attempt to install <strong>pomp</strong>, the principal <strong>R</strong> package we’ll be using, and will check whether you can work with it. The installed <strong>pomp</strong> version is more recent than that which is on CRAN; you must install this more recent version.</p>
 <p>If the final command fails, try the following:</p>
 <pre><code>&gt; source(&quot;http://kingaa.github.io/scripts/hello.R&quot;,echo=TRUE)</code></pre>
-<p>If this fails to give the “Hello world!” message, you will need to follow the instructions below that correspond to your OS.</p>
+<p>If this fails to give the “Hello!” messages, you will need to follow the instructions below that correspond to your OS.</p>
 <div id="linux-and-unix-users" class="section level4">
 <h4>Linux and unix users:</h4>
-<p>If you have trouble with either script above, make sure you have the GNU compiler collection (GCC) installed on your computer. Linux distributions typically include this by default but it is not impossible that you have somehow avoided this.</p>
+<p>If you have trouble with any of the scripts above, make sure you have the GNU compiler collection (GCC), including <strong>gfortran</strong> installed on your computer. Linux distributions typically include this by default but it is not impossible that you have somehow avoided this.</p>
 </div>
 <div id="macosx-users" class="section level4">
 <h4>MacOSX users:</h4>
-<p>So that you can compile C code and dynamically link it into an <strong>R</strong> session, you will need to make sure you have the Xcode app installed before running the second script above. This is gratis and can be installed via the App Store or downloaded from <a href="https://developer.apple.com/xcode/downloads/">developer.apple.com</a>.</p>
+<p>So that you can compile C code and dynamically link it into an <strong>R</strong> session, you will need to have the <strong>Xcode</strong> app installed before running the <code>pompTest.R</code> script above. This is gratis and can be installed via the App Store or downloaded from <a href="https://developer.apple.com/xcode/downloads/">developer.apple.com</a>.</p>
 <p>If the <code>pompTest.R</code> script fails because you cannot load <strong>pomp</strong>, try installing it from source. The easiest way to do this is to use the <strong>devtools</strong> package. Do</p>
 <pre><code>install.packages(&quot;devtools&quot;)
 library(devtools)

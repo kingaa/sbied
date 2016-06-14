@@ -67,16 +67,16 @@ If the final command fails, try the following:
 ```
 > source("http://kingaa.github.io/scripts/hello.R",echo=TRUE)
 ```
-If this fails to give the "Hello world!" message, you will need to follow the instructions below that correspond to your OS.
+If this fails to give the "Hello!" messages, you will need to follow the instructions below that correspond to your OS.
 
 #### Linux and unix users:
 
-If you have trouble with either script above, make sure you have the GNU compiler collection (GCC) installed on your computer.
+If you have trouble with any of the scripts above, make sure you have the GNU compiler collection (GCC), including **gfortran** installed on your computer.
 Linux distributions typically include this by default but it is not impossible that you have somehow avoided this.
 
 #### MacOSX users:
 
-So that you can compile C code and dynamically link it into an **R** session, you will need to make sure you have the Xcode app installed before running the second script above.
+So that you can compile C code and dynamically link it into an **R** session, you will need to have the **Xcode** app installed before running the `pompTest.R` script above.
 This is gratis and can be installed via the App Store or downloaded from [developer.apple.com](https://developer.apple.com/xcode/downloads/).
 
 If the `pompTest.R` script fails because you cannot load **pomp**, try installing it from source.
