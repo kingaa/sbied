@@ -220,7 +220,6 @@ set.seed(2028866059L)
 #' First, we'll load some packages, including **pomp**.
 ## ----prelims,cache=F-----------------------------------------------------
 library(ggplot2)
-library(plyr)
 library(reshape2)
 library(pomp)
 stopifnot(packageVersion("pomp")>="1.4.9")
