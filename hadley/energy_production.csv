@@ -1,0 +1,3490 @@
+## Primary energy production by region (in TJ/year)
+## data from The Shift Project Data Portal 
+## (http://www.tsp-data-portal.org, accessed 2016-01-05)
+## Missing data assumed zero.
+## [SOURCES: Etemad & Luciani (1900-1980), 
+##  US EIA Historical Statistics (1981-2010)]
+"year","source","region","TJ"
+1900,"Coal","Asia and Oceania",542522.6
+1901,"Coal","Asia and Oceania",612609.6
+1902,"Coal","Asia and Oceania",653338.2
+1903,"Coal","Asia and Oceania",694323.1
+1904,"Coal","Asia and Oceania",731250.6
+1905,"Coal","Asia and Oceania",780040.2
+1906,"Coal","Asia and Oceania",1047767.6
+1907,"Coal","Asia and Oceania",1130345.2
+1908,"Coal","Asia and Oceania",1276793.3
+1909,"Coal","Asia and Oceania",1201218.8
+1910,"Coal","Asia and Oceania",1251276.7
+1911,"Coal","Asia and Oceania",1435855
+1912,"Coal","Asia and Oceania",1370139.9
+1913,"Coal","Asia and Oceania",1474284.8
+1914,"Coal","Asia and Oceania",1572693.8
+1915,"Coal","Asia and Oceania",1526187.5
+1916,"Coal","Asia and Oceania",1590391.7
+1917,"Coal","Asia and Oceania",1735868.4
+1918,"Coal","Asia and Oceania",1879717.5
+1919,"Coal","Asia and Oceania",2050255
+1920,"Coal","Asia and Oceania",1944644.7
+1921,"Coal","Asia and Oceania",1911511.9
+1922,"Coal","Asia and Oceania",1953114.6
+1923,"Coal","Asia and Oceania",2085191.7
+1924,"Coal","Asia and Oceania",2234719.9
+1925,"Coal","Asia and Oceania",2265236.9
+1926,"Coal","Asia and Oceania",2226145.1
+1927,"Coal","Asia and Oceania",2378993.2
+1928,"Coal","Asia and Oceania",2381736
+1929,"Coal","Asia and Oceania",2408514.8
+1930,"Coal","Asia and Oceania",2338714.8
+1931,"Coal","Asia and Oceania",2162425.4
+1932,"Coal","Asia and Oceania",2098779.7
+1933,"Coal","Asia and Oceania",2269986.5
+1934,"Coal","Asia and Oceania",2527022.6
+1935,"Coal","Asia and Oceania",2737960.6
+1936,"Coal","Asia and Oceania",2968332.6
+1937,"Coal","Asia and Oceania",3117059.8
+1938,"Coal","Asia and Oceania",3261806.7
+1939,"Coal","Asia and Oceania",3538856.7
+1940,"Coal","Asia and Oceania",3953305.8
+1941,"Coal","Asia and Oceania",4261074.9
+1942,"Coal","Asia and Oceania",4174578.2
+1943,"Coal","Asia and Oceania",3951273.4
+1944,"Coal","Asia and Oceania",3882273.7
+1945,"Coal","Asia and Oceania",2529513.9
+1946,"Coal","Asia and Oceania",2117185.4
+1947,"Coal","Asia and Oceania",2394163.6
+1948,"Coal","Asia and Oceania",2521158.9
+1949,"Coal","Asia and Oceania",3064541.1
+1950,"Coal","Asia and Oceania",3396290.5
+1951,"Coal","Asia and Oceania",3803674.3
+1952,"Coal","Asia and Oceania",4223623.1
+1953,"Coal","Asia and Oceania",4356634.3
+1954,"Coal","Asia and Oceania",4628605.5
+1955,"Coal","Asia and Oceania",5001049.8
+1956,"Coal","Asia and Oceania",5444465.3
+1957,"Coal","Asia and Oceania",6166572.5
+1958,"Coal","Asia and Oceania",9162423.5
+1959,"Coal","Asia and Oceania",10738603.8
+1960,"Coal","Asia and Oceania",12784277.3
+1961,"Coal","Asia and Oceania",9498072.3
+1962,"Coal","Asia and Oceania",9743988.5
+1963,"Coal","Asia and Oceania",9891193.8
+1964,"Coal","Asia and Oceania",10742090.3
+1965,"Coal","Asia and Oceania",11224197.9
+1966,"Coal","Asia and Oceania",12003488.4
+1967,"Coal","Asia and Oceania",9908599.4
+1968,"Coal","Asia and Oceania",11630329.1
+1969,"Coal","Asia and Oceania",12369496.5
+1970,"Coal","Asia and Oceania",13052278.2
+1971,"Coal","Asia and Oceania",13424278.1
+1972,"Coal","Asia and Oceania",13911062.8
+1973,"Coal","Asia and Oceania",14600867
+1974,"Coal","Asia and Oceania",14884192.9
+1975,"Coal","Asia and Oceania",16182572
+1976,"Coal","Asia and Oceania",16701599.6
+1977,"Coal","Asia and Oceania",17846048.9
+1978,"Coal","Asia and Oceania",19339243.6
+1979,"Coal","Asia and Oceania",19784101.8
+1980,"Coal","Asia and Oceania",17925465.4
+1981,"Coal","Asia and Oceania",18641594.5
+1982,"Coal","Asia and Oceania",19708418.8
+1983,"Coal","Asia and Oceania",21054172
+1984,"Coal","Asia and Oceania",23219419.9
+1985,"Coal","Asia and Oceania",24290870.4
+1986,"Coal","Asia and Oceania",25233606.4
+1987,"Coal","Asia and Oceania",26317117.7
+1988,"Coal","Asia and Oceania",27439223
+1989,"Coal","Asia and Oceania",29004287.1
+1990,"Coal","Asia and Oceania",29807626.9
+1991,"Coal","Asia and Oceania",30754185.8
+1992,"Coal","Asia and Oceania",31711072.1
+1993,"Coal","Asia and Oceania",32633999.5
+1994,"Coal","Asia and Oceania",34340091.5
+1995,"Coal","Asia and Oceania",36818549.4
+1996,"Coal","Asia and Oceania",37529122.4
+1997,"Coal","Asia and Oceania",41354028.7
+1998,"Coal","Asia and Oceania",42179988.1
+1999,"Coal","Asia and Oceania",41380137
+2000,"Coal","Asia and Oceania",43167628.1
+2001,"Coal","Asia and Oceania",46633980.8
+2002,"Coal","Asia and Oceania",50613948
+2003,"Coal","Asia and Oceania",56047798.3
+2004,"Coal","Asia and Oceania",61066774.2
+2005,"Coal","Asia and Oceania",71690542.3
+2006,"Coal","Asia and Oceania",77144352.1
+2007,"Coal","Asia and Oceania",82245580.8
+2008,"Coal","Asia and Oceania",85712488.2
+2009,"Coal","Asia and Oceania",91936641.4
+2010,"Coal","Asia and Oceania",98539355.8
+2011,"Coal","Asia and Oceania",105601012.6
+2012,"Coal","Asia and Oceania",102319365.3
+2013,"Coal","Asia and Oceania",104855350.8
+2014,"Coal","Asia and Oceania",104407198
+1900,"Coal","Europe",11541835.5
+1901,"Coal","Europe",11187846.1
+1902,"Coal","Europe",11262939.4
+1903,"Coal","Europe",11750771.6
+1904,"Coal","Europe",11876121.8
+1905,"Coal","Europe",12544595.6
+1906,"Coal","Europe",12960817.2
+1907,"Coal","Europe",13786995.9
+1908,"Coal","Europe",13817883.2
+1909,"Coal","Europe",13936952.7
+1910,"Coal","Europe",14321953
+1911,"Coal","Europe",14786706.8
+1912,"Coal","Europe",15175643.5
+1913,"Coal","Europe",16334468.6
+1914,"Coal","Europe",14303614.8
+1915,"Coal","Europe",13462217
+1916,"Coal","Europe",13983972.1
+1917,"Coal","Europe",13679829.4
+1918,"Coal","Europe",12676248.2
+1919,"Coal","Europe",10768401.2
+1920,"Coal","Europe",12224716.2
+1921,"Coal","Europe",10839541.2
+1922,"Coal","Europe",12979502
+1923,"Coal","Europe",12810097.7
+1924,"Coal","Europe",13897580.1
+1925,"Coal","Europe",13682553.5
+1926,"Coal","Europe",11404694.1
+1927,"Coal","Europe",14971109.7
+1928,"Coal","Europe",14817605.4
+1929,"Coal","Europe",15970460.2
+1930,"Coal","Europe",14689827.3
+1931,"Coal","Europe",13380942.3
+1932,"Coal","Europe",12187207.1
+1933,"Coal","Europe",12315081.5
+1934,"Coal","Europe",13139400.9
+1935,"Coal","Europe",13569486.1
+1936,"Coal","Europe",14166080.2
+1937,"Coal","Europe",15524775.6
+1938,"Coal","Europe",15467323.5
+1939,"Coal","Europe",15422354.8
+1940,"Coal","Europe",16408162.4
+1941,"Coal","Europe",16123726
+1942,"Coal","Europe",16393162.3
+1943,"Coal","Europe",16527403.3
+1944,"Coal","Europe",14738300.3
+1945,"Coal","Europe",9210331
+1946,"Coal","Europe",12519223.1
+1947,"Coal","Europe",13727554.8
+1948,"Coal","Europe",15013528.9
+1949,"Coal","Europe",16218013.3
+1950,"Coal","Europe",16831386.3
+1951,"Coal","Europe",17752207.3
+1952,"Coal","Europe",18381158.6
+1953,"Coal","Europe",18581786.6
+1954,"Coal","Europe",18867830.5
+1955,"Coal","Europe",19423310.7
+1956,"Coal","Europe",19806665.1
+1957,"Coal","Europe",20058661.1
+1958,"Coal","Europe",20056360.1
+1959,"Coal","Europe",20099762.3
+1960,"Coal","Europe",20147902.2
+1961,"Coal","Europe",20432723.8
+1962,"Coal","Europe",20706827.9
+1963,"Coal","Europe",20967451.8
+1964,"Coal","Europe",21380230.7
+1965,"Coal","Europe",20862270
+1966,"Coal","Europe",20184940.9
+1967,"Coal","Europe",19383804.4
+1968,"Coal","Europe",19339146.3
+1969,"Coal","Europe",19120298.1
+1970,"Coal","Europe",19277109.6
+1971,"Coal","Europe",19233693.8
+1972,"Coal","Europe",18324573.7
+1973,"Coal","Europe",18412563.8
+1974,"Coal","Europe",17898503.3
+1975,"Coal","Europe",18756036.7
+1976,"Coal","Europe",18921004.2
+1977,"Coal","Europe",19000013.3
+1978,"Coal","Europe",19248902.5
+1979,"Coal","Europe",19775289.8
+1980,"Coal","Europe",16889642.5
+1981,"Coal","Europe",16639473.4
+1982,"Coal","Europe",17379441.8
+1983,"Coal","Europe",17359615.8
+1984,"Coal","Europe",15990345.1
+1985,"Coal","Europe",17295509.8
+1986,"Coal","Europe",17639822.6
+1987,"Coal","Europe",17387999.1
+1988,"Coal","Europe",17114817.9
+1989,"Coal","Europe",16693829.5
+1990,"Coal","Europe",15138751.8
+1991,"Coal","Europe",9989338.8
+1992,"Coal","Europe",9192076.5
+1993,"Coal","Europe",8583905
+1994,"Coal","Europe",7932560.7
+1995,"Coal","Europe",7629427.3
+1996,"Coal","Europe",8066322.7
+1997,"Coal","Europe",7961018.1
+1998,"Coal","Europe",7226227.3
+1999,"Coal","Europe",7057083.9
+2000,"Coal","Europe",6553467.9
+2001,"Coal","Europe",6638109.1
+2002,"Coal","Europe",6519887.8
+2003,"Coal","Europe",6443586
+2004,"Coal","Europe",6200782.4
+2005,"Coal","Europe",5999009
+2006,"Coal","Europe",6006530.3
+2007,"Coal","Europe",6088731.1
+2008,"Coal","Europe",5961124.6
+2009,"Coal","Europe",5671044
+2010,"Coal","Europe",5492603.6
+2011,"Coal","Europe",5689306.4
+2012,"Coal","Europe",5591897.2
+2013,"Coal","Europe",4973780.6
+2014,"Coal","Europe",4853477.1
+1900,"Coal","Africa",24048.3
+1901,"Coal","Africa",40355.5
+1902,"Coal","Africa",60157.1
+1903,"Coal","Africa",81631.5
+1904,"Coal","Africa",92145.9
+1905,"Coal","Africa",106125
+1906,"Coal","Africa",121181.4
+1907,"Coal","Africa",133729.2
+1908,"Coal","Africa",138707.2
+1909,"Coal","Africa",159194.3
+1910,"Coal","Africa",180128.3
+1911,"Coal","Africa",174431.2
+1912,"Coal","Africa",184905.3
+1913,"Coal","Africa",202474
+1914,"Coal","Africa",199323
+1915,"Coal","Africa",202256.3
+1916,"Coal","Africa",239171.4
+1917,"Coal","Africa",258529.1
+1918,"Coal","Africa",247605
+1919,"Coal","Africa",256813.7
+1920,"Coal","Africa",286392.4
+1921,"Coal","Africa",284684.5
+1922,"Coal","Africa",243230.1
+1923,"Coal","Africa",296618.4
+1924,"Coal","Africa",312798.8
+1925,"Coal","Africa",328502.7
+1926,"Coal","Africa",352617.3
+1927,"Coal","Africa",346217.7
+1928,"Coal","Africa",352241.2
+1929,"Coal","Africa",360099.7
+1930,"Coal","Africa",338961.3
+1931,"Coal","Africa",294320.6
+1932,"Coal","Africa",263316.7
+1933,"Coal","Africa",283375.8
+1934,"Coal","Africa",325332.9
+1935,"Coal","Africa",360872.5
+1936,"Coal","Africa",392111.5
+1937,"Coal","Africa",422074.8
+1938,"Coal","Africa",442578.5
+1939,"Coal","Africa",456984.3
+1940,"Coal","Africa",478973.6
+1941,"Coal","Africa",514732.4
+1942,"Coal","Africa",565504.6
+1943,"Coal","Africa",575527
+1944,"Coal","Africa",639199.7
+1945,"Coal","Africa",648420.7
+1946,"Coal","Africa",655436.1
+1947,"Coal","Africa",649913.7
+1948,"Coal","Africa",670417.4
+1949,"Coal","Africa",714425
+1950,"Coal","Africa",747356.4
+1951,"Coal","Africa",757759
+1952,"Coal","Africa",802671.3
+1953,"Coal","Africa",827560.2
+1954,"Coal","Africa",849275.4
+1955,"Coal","Africa",940331.6
+1956,"Coal","Africa",984602.2
+1957,"Coal","Africa",1023765.2
+1958,"Coal","Africa",1066368.2
+1959,"Coal","Africa",1049507.6
+1960,"Coal","Africa",982280.7
+1961,"Coal","Africa",1093549.2
+1962,"Coal","Africa",1126458.1
+1963,"Coal","Africa",1152049.9
+1964,"Coal","Africa",1222281.5
+1965,"Coal","Africa",1325374.1
+1966,"Coal","Africa",1311821.4
+1967,"Coal","Africa",1331026.8
+1968,"Coal","Africa",1393704.7
+1969,"Coal","Africa",1413427.2
+1970,"Coal","Africa",1475576.8
+1971,"Coal","Africa",1579455
+1972,"Coal","Africa",1570846.3
+1973,"Coal","Africa",1671073.3
+1974,"Coal","Africa",1760300.9
+1975,"Coal","Africa",1854994.9
+1976,"Coal","Africa",2034310.3
+1977,"Coal","Africa",2240024.9
+1978,"Coal","Africa",2364773.9
+1979,"Coal","Africa",2684587.9
+1980,"Coal","Africa",2744057.4
+1981,"Coal","Africa",3069974.8
+1982,"Coal","Africa",3174828.2
+1983,"Coal","Africa",3290499.5
+1984,"Coal","Africa",3669777.9
+1985,"Coal","Africa",3907822.4
+1986,"Coal","Africa",4002666.4
+1987,"Coal","Africa",4014958.1
+1988,"Coal","Africa",4122316
+1989,"Coal","Africa",3990995.4
+1990,"Coal","Africa",3975060.2
+1991,"Coal","Africa",4048456.6
+1992,"Coal","Africa",4149189.3
+1993,"Coal","Africa",4174355.5
+1994,"Coal","Africa",4409229.1
+1995,"Coal","Africa",4626030.5
+1996,"Coal","Africa",4612480.6
+1997,"Coal","Africa",5142300.9
+1998,"Coal","Africa",5192055.1
+1999,"Coal","Africa",5128485.1
+2000,"Coal","Africa",5232852.8
+2001,"Coal","Africa",5267475.8
+2002,"Coal","Africa",5164722.5
+2003,"Coal","Africa",5515163.4
+2004,"Coal","Africa",5591892
+2005,"Coal","Africa",5645529.4
+2006,"Coal","Africa",5633419.5
+2007,"Coal","Africa",5691255.5
+2008,"Coal","Africa",5775203.5
+2009,"Coal","Africa",5714321.7
+2010,"Coal","Africa",5842125.2
+2011,"Coal","Africa",5818905.8
+2012,"Coal","Africa",6038215.9
+2013,"Coal","Africa",6019249.7
+2014,"Coal","Africa",6113585.8
+1900,"Coal","Central and South America",10798.4
+1901,"Coal","Central and South America",18657.2
+1902,"Coal","Central and South America",21673
+1903,"Coal","Central and South America",24982.4
+1904,"Coal","Central and South America",23518.5
+1905,"Coal","Central and South America",25142.5
+1906,"Coal","Central and South America",29305.8
+1907,"Coal","Central and South America",29522.7
+1908,"Coal","Central and South America",36307.4
+1909,"Coal","Central and South America",36632.8
+1910,"Coal","Central and South America",40033.1
+1911,"Coal","Central and South America",44353.2
+1912,"Coal","Central and South America",46662.1
+1913,"Coal","Central and South America",45619.2
+1914,"Coal","Central and South America",40223.7
+1915,"Coal","Central and South America",43369.5
+1916,"Coal","Central and South America",52571.5
+1917,"Coal","Central and South America",58812.4
+1918,"Coal","Central and South America",62003.9
+1919,"Coal","Central and South America",60150.6
+1920,"Coal","Central and South America",49414
+1921,"Coal","Central and South America",54708.5
+1922,"Coal","Central and South America",46748.9
+1923,"Coal","Central and South America",50307.7
+1924,"Coal","Central and South America",58791.9
+1925,"Coal","Central and South America",55681.8
+1926,"Coal","Central and South America",57258.6
+1927,"Coal","Central and South America",55804
+1928,"Coal","Central and South America",56343.8
+1929,"Coal","Central and South America",61942.7
+1930,"Coal","Central and South America",59426.6
+1931,"Coal","Central and South America",47075
+1932,"Coal","Central and South America",44329.8
+1933,"Coal","Central and South America",62657.3
+1934,"Coal","Central and South America",77268.4
+1935,"Coal","Central and South America",87422.8
+1936,"Coal","Central and South America",83424
+1937,"Coal","Central and South America",86778.4
+1938,"Coal","Central and South America",91501.5
+1939,"Coal","Central and South America",90547.7
+1940,"Coal","Central and South America",104875.1
+1941,"Coal","Central and South America",106651.9
+1942,"Coal","Central and South America",123805.4
+1943,"Coal","Central and South America",132435.8
+1944,"Coal","Central and South America",129410.8
+1945,"Coal","Central and South America",128617.1
+1946,"Coal","Central and South America",122706.5
+1947,"Coal","Central and South America",126318.6
+1948,"Coal","Central and South America",132370.5
+1949,"Coal","Central and South America",130575.2
+1950,"Coal","Central and South America",148583.7
+1951,"Coal","Central and South America",145087.4
+1952,"Coal","Central and South America",150061.3
+1953,"Coal","Central and South America",155352.8
+1954,"Coal","Central and South America",162612.1
+1955,"Coal","Central and South America",177149.5
+1956,"Coal","Central and South America",176239.8
+1957,"Coal","Central and South America",169654.1
+1958,"Coal","Central and South America",186972.8
+1959,"Coal","Central and South America",187846.2
+1960,"Coal","Central and South America",181862.8
+1961,"Coal","Central and South America",198528.3
+1962,"Coal","Central and South America",208294.5
+1963,"Coal","Central and South America",215199.8
+1964,"Coal","Central and South America",218752.6
+1965,"Coal","Central and South America",223172.3
+1966,"Coal","Central and South America",218816.2
+1967,"Coal","Central and South America",248423.9
+1968,"Coal","Central and South America",264432.2
+1969,"Coal","Central and South America",281457
+1970,"Coal","Central and South America",248638.3
+1971,"Coal","Central and South America",266930.9
+1972,"Coal","Central and South America",270073.7
+1973,"Coal","Central and South America",266516.6
+1974,"Coal","Central and South America",278000.3
+1975,"Coal","Central and South America",298970.4
+1976,"Coal","Central and South America",339139.8
+1977,"Coal","Central and South America",404084
+1978,"Coal","Central and South America",451389.1
+1979,"Coal","Central and South America",504699
+1980,"Coal","Central and South America",225686.3
+1981,"Coal","Central and South America",240226.8
+1982,"Coal","Central and South America",250290.6
+1983,"Coal","Central and South America",275392.5
+1984,"Coal","Central and South America",330908.3
+1985,"Coal","Central and South America",389441.7
+1986,"Coal","Central and South America",430239.7
+1987,"Coal","Central and South America",489507.1
+1988,"Coal","Central and South America",576531.5
+1989,"Coal","Central and South America",669346.8
+1990,"Coal","Central and South America",688777.4
+1991,"Coal","Central and South America",684592.7
+1992,"Coal","Central and South America",711957.5
+1993,"Coal","Central and South America",721652.4
+1994,"Coal","Central and South America",723249.6
+1995,"Coal","Central and South America",778444.3
+1996,"Coal","Central and South America",858441.6
+1997,"Coal","Central and South America",1095990.1
+1998,"Coal","Central and South America",1189320.7
+1999,"Coal","Central and South America",1140308.8
+2000,"Coal","Central and South America",1317896.9
+2001,"Coal","Central and South America",1437107.5
+2002,"Coal","Central and South America",1316321.2
+2003,"Coal","Central and South America",1570430.1
+2004,"Coal","Central and South America",1663537.6
+2005,"Coal","Central and South America",1833467.6
+2006,"Coal","Central and South America",2025546.7
+2007,"Coal","Central and South America",2075047.8
+2008,"Coal","Central and South America",2156350.2
+2009,"Coal","Central and South America",2077494.7
+2010,"Coal","Central and South America",2094317.5
+2011,"Coal","Central and South America",2380109.1
+2012,"Coal","Central and South America",2508385.3
+2013,"Coal","Central and South America",2467685.9
+2014,"Coal","Central and South America",2504000.5
+1900,"Coal","Eurasia",389922
+1901,"Coal","Eurasia",398876
+1902,"Coal","Eurasia",397403.8
+1903,"Coal","Eurasia",407106
+1904,"Coal","Eurasia",473259.5
+1905,"Coal","Eurasia",450572.7
+1906,"Coal","Eurasia",524377
+1907,"Coal","Eurasia",627505
+1908,"Coal","Eurasia",624367.5
+1909,"Coal","Eurasia",651780.7
+1910,"Coal","Eurasia",609466.3
+1911,"Coal","Eurasia",647234.5
+1912,"Coal","Eurasia",763663
+1913,"Coal","Eurasia",828185.9
+1914,"Coal","Eurasia",776185.6
+1915,"Coal","Eurasia",763965.5
+1916,"Coal","Eurasia",806460.1
+1917,"Coal","Eurasia",754616.2
+1918,"Coal","Eurasia",295247.8
+1919,"Coal","Eurasia",206098.1
+1920,"Coal","Eurasia",185219.8
+1921,"Coal","Eurasia",203803.6
+1922,"Coal","Eurasia",247522.7
+1923,"Coal","Eurasia",278547.5
+1924,"Coal","Eurasia",371660.3
+1925,"Coal","Eurasia",377926.4
+1926,"Coal","Eurasia",590892.2
+1927,"Coal","Eurasia",742671.5
+1928,"Coal","Eurasia",817740.4
+1929,"Coal","Eurasia",922312.3
+1930,"Coal","Eurasia",1095445.6
+1931,"Coal","Eurasia",1292449
+1932,"Coal","Eurasia",1464783.1
+1933,"Coal","Eurasia",1728342
+1934,"Coal","Eurasia",2126246.3
+1935,"Coal","Eurasia",2462246.5
+1936,"Coal","Eurasia",2835135.3
+1937,"Coal","Eurasia",2856001.7
+1938,"Coal","Eurasia",2978076.6
+1939,"Coal","Eurasia",3255597.4
+1940,"Coal","Eurasia",3671039.3
+1941,"Coal","Eurasia",3542989.9
+1942,"Coal","Eurasia",2172132.8
+1943,"Coal","Eurasia",3171313.9
+1944,"Coal","Eurasia",2582424.5
+1945,"Coal","Eurasia",2962775.1
+1946,"Coal","Eurasia",3308758.1
+1947,"Coal","Eurasia",3766076.4
+1948,"Coal","Eurasia",4277544.8
+1949,"Coal","Eurasia",4830494.6
+1950,"Coal","Eurasia",5326375.8
+1951,"Coal","Eurasia",5783056.1
+1952,"Coal","Eurasia",6158063.7
+1953,"Coal","Eurasia",6498215.8
+1954,"Coal","Eurasia",7048216.5
+1955,"Coal","Eurasia",7953931.9
+1956,"Coal","Eurasia",8749399.1
+1957,"Coal","Eurasia",9451234.3
+1958,"Coal","Eurasia",10134766.6
+1959,"Coal","Eurasia",10408650.7
+1960,"Coal","Eurasia",10568598
+1961,"Coal","Eurasia",10558736.1
+1962,"Coal","Eurasia",10804320.4
+1963,"Coal","Eurasia",11077638.3
+1964,"Coal","Eurasia",11505529
+1965,"Coal","Eurasia",12017647.4
+1966,"Coal","Eurasia",12252164.5
+1967,"Coal","Eurasia",12517709.5
+1968,"Coal","Eurasia",12563087.2
+1969,"Coal","Eurasia",12863721.5
+1970,"Coal","Eurasia",13164619.9
+1971,"Coal","Eurasia",13496883.6
+1972,"Coal","Eurasia",12608020.8
+1973,"Coal","Eurasia",12863162.4
+1974,"Coal","Eurasia",13198308.5
+1975,"Coal","Eurasia",13505323.7
+1976,"Coal","Eurasia",13737392.2
+1977,"Coal","Eurasia",13906791.9
+1978,"Coal","Eurasia",13942218.2
+1979,"Coal","Eurasia",13800896.1
+1980,"Coal","Eurasia",11589648.4
+1981,"Coal","Eurasia",11378206.9
+1982,"Coal","Eurasia",11558149
+1983,"Coal","Eurasia",11487613.4
+1984,"Coal","Eurasia",11613008.4
+1985,"Coal","Eurasia",11815630.5
+1986,"Coal","Eurasia",12199385.7
+1987,"Coal","Eurasia",12340379.7
+1988,"Coal","Eurasia",12498404.7
+1989,"Coal","Eurasia",11990717.7
+1990,"Coal","Eurasia",13088918.2
+1991,"Coal","Eurasia",10194808.4
+1992,"Coal","Eurasia",9608954.4
+1993,"Coal","Eurasia",8558574.6
+1994,"Coal","Eurasia",7130174.6
+1995,"Coal","Eurasia",6834758.7
+1996,"Coal","Eurasia",6532499
+1997,"Coal","Eurasia",6011340.9
+1998,"Coal","Eurasia",5832390.2
+1999,"Coal","Eurasia",6955062
+2000,"Coal","Eurasia",7329362.2
+2001,"Coal","Eurasia",7326030.3
+2002,"Coal","Eurasia",7283284.7
+2003,"Coal","Eurasia",7905460.2
+2004,"Coal","Eurasia",7988482.9
+2005,"Coal","Eurasia",8500740.4
+2006,"Coal","Eurasia",8730789.1
+2007,"Coal","Eurasia",8812841.1
+2008,"Coal","Eurasia",9328535.7
+2009,"Coal","Eurasia",8570237.1
+2010,"Coal","Eurasia",9641141.7
+2011,"Coal","Eurasia",9921628.6
+2012,"Coal","Eurasia",10821772.6
+2013,"Coal","Eurasia",10769196.7
+2014,"Coal","Eurasia",10362591.4
+1939,"Coal","Middle East",2198.1
+1940,"Coal","Middle East",2696.3
+1941,"Coal","Middle East",2637.7
+1942,"Coal","Middle East",2403.2
+1943,"Coal","Middle East",2022.2
+1944,"Coal","Middle East",2930.8
+1945,"Coal","Middle East",4396.1
+1946,"Coal","Middle East",4396.1
+1947,"Coal","Middle East",5509.8
+1948,"Coal","Middle East",4396.1
+1949,"Coal","Middle East",4982.3
+1950,"Coal","Middle East",5861.5
+1951,"Coal","Middle East",5861.5
+1952,"Coal","Middle East",4982.3
+1953,"Coal","Middle East",4542.7
+1954,"Coal","Middle East",644.8
+1955,"Coal","Middle East",7180.4
+1956,"Coal","Middle East",5568.4
+1957,"Coal","Middle East",5158.1
+1958,"Coal","Middle East",5392.6
+1959,"Coal","Middle East",6945.9
+1960,"Coal","Middle East",6740.7
+1961,"Coal","Middle East",5802.9
+1962,"Coal","Middle East",6008.1
+1963,"Coal","Middle East",6682.1
+1964,"Coal","Middle East",8030.3
+1965,"Coal","Middle East",8352.7
+1966,"Coal","Middle East",8352.7
+1967,"Coal","Middle East",8499.2
+1968,"Coal","Middle East",11312.7
+1969,"Coal","Middle East",14360.7
+1970,"Coal","Middle East",15533
+1971,"Coal","Middle East",17584.6
+1972,"Coal","Middle East",29307.6
+1973,"Coal","Middle East",2930.8
+1974,"Coal","Middle East",35169.1
+1975,"Coal","Middle East",29307.6
+1976,"Coal","Middle East",26376.8
+1977,"Coal","Middle East",26376.8
+1978,"Coal","Middle East",26376.8
+1979,"Coal","Middle East",26376.8
+1980,"Coal","Middle East",24909
+1981,"Coal","Middle East",19373.7
+1982,"Coal","Middle East",31080.9
+1983,"Coal","Middle East",28396.3
+1984,"Coal","Middle East",34346.8
+1985,"Coal","Middle East",34651.2
+1986,"Coal","Middle East",34928
+1987,"Coal","Middle East",34319.1
+1988,"Coal","Middle East",34872.6
+1989,"Coal","Middle East",33212
+1990,"Coal","Middle East",30444.4
+1991,"Coal","Middle East",24798.3
+1992,"Coal","Middle East",26874.1
+1993,"Coal","Middle East",26818.7
+1994,"Coal","Middle East",35786
+1995,"Coal","Middle East",30257
+1996,"Coal","Middle East",31179.8
+1997,"Coal","Middle East",29675.6
+1998,"Coal","Middle East",30166
+1999,"Coal","Middle East",28743.7
+2000,"Coal","Middle East",28155.1
+2001,"Coal","Middle East",23936.7
+2002,"Coal","Middle East",25310.1
+2003,"Coal","Middle East",28032.4
+2004,"Coal","Middle East",29528.5
+2005,"Coal","Middle East",38161.4
+2006,"Coal","Middle East",40491.3
+2007,"Coal","Middle East",40834.6
+2008,"Coal","Middle East",38995.2
+2009,"Coal","Middle East",28253.2
+2010,"Coal","Middle East",25138.4
+2011,"Coal","Middle East",25408.2
+2012,"Coal","Middle East",28841.6
+2013,"Coal","Middle East",28920.6
+2014,"Coal","Middle East",28920.6
+1900,"Coal","North America",6750471.5
+1901,"Coal","North America",7349398.6
+1902,"Coal","North America",7686815.2
+1903,"Coal","North America",8955322.9
+1904,"Coal","North America",8829374
+1905,"Coal","North America",9839131.3
+1906,"Coal","North America",10392264.2
+1907,"Coal","North America",12029944
+1908,"Coal","North America",10467198.5
+1909,"Coal","North America",11559768.6
+1910,"Coal","North America",12620748.4
+1911,"Coal","North America",12451983
+1912,"Coal","North America",13458374
+1913,"Coal","North America",14330393.3
+1914,"Coal","North America",12919496
+1915,"Coal","North America",13342274.7
+1916,"Coal","North America",14799301.4
+1917,"Coal","North America",16287325.7
+1918,"Coal","North America",17028483.7
+1919,"Coal","North America",13959448.9
+1920,"Coal","North America",16599829
+1921,"Coal","North America",12834596.5
+1922,"Coal","North America",12108091.5
+1923,"Coal","North America",16601829.3
+1924,"Coal","North America",14404394.9
+1925,"Coal","North America",14649457
+1926,"Coal","North America",16586899.8
+1927,"Coal","North America",15146099.2
+1928,"Coal","North America",14618463.5
+1929,"Coal","North America",15418367.6
+1930,"Coal","North America",13589628.1
+1931,"Coal","North America",11142811.4
+1932,"Coal","North America",9121537.3
+1933,"Coal","North America",9702168.8
+1934,"Coal","North America",10570172.2
+1935,"Coal","North America",10786555.3
+1936,"Coal","North America",12514950
+1937,"Coal","North America",12621042.3
+1938,"Coal","North America",10066491.6
+1939,"Coal","North America",11360775
+1940,"Coal","North America",13020864.8
+1941,"Coal","North America",14465017.3
+1942,"Coal","North America",16253999.9
+1943,"Coal","North America",16425875.7
+1944,"Coal","North America",17187842
+1945,"Coal","North America",15938484.8
+1946,"Coal","North America",15105703.8
+1947,"Coal","North America",17345108.2
+1948,"Coal","North America",16659391
+1949,"Coal","North America",12382111.4
+1950,"Coal","North America",14341417.9
+1951,"Coal","North America",14733149.6
+1952,"Coal","North America",13013244.4
+1953,"Coal","North America",12499374.8
+1954,"Coal","North America",10812792.1
+1955,"Coal","North America",12533421.6
+1956,"Coal","North America",13484027.5
+1957,"Coal","North America",13142482.6
+1958,"Coal","North America",10986008.7
+1959,"Coal","North America",10986622.7
+1960,"Coal","North America",11041673.3
+1961,"Coal","North America",10699529.9
+1962,"Coal","North America",11156847.7
+1963,"Coal","North America",12080387.7
+1964,"Coal","North America",12770342.4
+1965,"Coal","North America",13334837.6
+1966,"Coal","North America",13836653.9
+1967,"Coal","North America",14298038.1
+1968,"Coal","North America",14111036.4
+1969,"Coal","North America",14449783.1
+1970,"Coal","North America",15691384
+1971,"Coal","North America",14336005.1
+1972,"Coal","North America",15420429.7
+1973,"Coal","North America",15425137.8
+1974,"Coal","North America",15740881.2
+1975,"Coal","North America",16963729.3
+1976,"Coal","North America",17756109.6
+1977,"Coal","North America",18201338.7
+1978,"Coal","North America",17363272.3
+1979,"Coal","North America",20423977.4
+1980,"Coal","North America",18736648.1
+1981,"Coal","North America",18600673.2
+1982,"Coal","North America",18929663.9
+1983,"Coal","North America",17666061
+1984,"Coal","North America",20337192.9
+1985,"Coal","North America",20053765.3
+1986,"Coal","North America",20160270.7
+1987,"Coal","North America",20878911.4
+1988,"Coal","North America",21646950.9
+1989,"Coal","North America",22252503.1
+1990,"Coal","North America",23278446
+1991,"Coal","North America",22514439.4
+1992,"Coal","North America",22387717.8
+1993,"Coal","North America",21164233.8
+1994,"Coal","North America",23061780
+1995,"Coal","North America",23058079
+1996,"Coal","North America",23726642.1
+1997,"Coal","North America",24404203.6
+1998,"Coal","North America",25008062.4
+1999,"Coal","North America",24203823.2
+2000,"Coal","North America",23601766.7
+2001,"Coal","North America",24188302.4
+2002,"Coal","North America",23317301.5
+2003,"Coal","North America",22571264.5
+2004,"Coal","North America",23370033.9
+2005,"Coal","North America",23673421
+2006,"Coal","North America",24274786.3
+2007,"Coal","North America",24092072.1
+2008,"Coal","North America",24382073.5
+2009,"Coal","North America",22119301.4
+2010,"Coal","North America",22680402.7
+2011,"Coal","North America",22899985.6
+2012,"Coal","North America",21448617.5
+2013,"Coal","North America",20919833
+2014,"Coal","North America",21161734
+1922,"Gas","Asia and Oceania",5945
+1923,"Gas","Asia and Oceania",7709
+1924,"Gas","Asia and Oceania",9473
+1925,"Gas","Asia and Oceania",11237.1
+1926,"Gas","Asia and Oceania",13001.1
+1927,"Gas","Asia and Oceania",14765.2
+1928,"Gas","Asia and Oceania",16529.2
+1929,"Gas","Asia and Oceania",22154.6
+1930,"Gas","Asia and Oceania",21796.9
+1931,"Gas","Asia and Oceania",24430.7
+1932,"Gas","Asia and Oceania",27064.6
+1933,"Gas","Asia and Oceania",29698.4
+1934,"Gas","Asia and Oceania",32332.3
+1935,"Gas","Asia and Oceania",34966.1
+1936,"Gas","Asia and Oceania",37600
+1937,"Gas","Asia and Oceania",44898.6
+1938,"Gas","Asia and Oceania",1896.5
+1939,"Gas","Asia and Oceania",1842.3
+1940,"Gas","Asia and Oceania",1788.2
+1941,"Gas","Asia and Oceania",1734
+1942,"Gas","Asia and Oceania",1679.8
+1943,"Gas","Asia and Oceania",1625.6
+1944,"Gas","Asia and Oceania",1571.4
+1945,"Gas","Asia and Oceania",1517.2
+1946,"Gas","Asia and Oceania",4390.6
+1947,"Gas","Asia and Oceania",4765.6
+1948,"Gas","Asia and Oceania",20540.4
+1949,"Gas","Asia and Oceania",28804.1
+1950,"Gas","Asia and Oceania",30855.3
+1951,"Gas","Asia and Oceania",40690.4
+1952,"Gas","Asia and Oceania",53198.4
+1953,"Gas","Asia and Oceania",67475.5
+1954,"Gas","Asia and Oceania",78815.1
+1955,"Gas","Asia and Oceania",100313.1
+1956,"Gas","Asia and Oceania",118879.5
+1957,"Gas","Asia and Oceania",134914
+1958,"Gas","Asia and Oceania",141958.2
+1959,"Gas","Asia and Oceania",165639.5
+1960,"Gas","Asia and Oceania",205310.8
+1961,"Gas","Asia and Oceania",233881.8
+1962,"Gas","Asia and Oceania",267154.2
+1963,"Gas","Asia and Oceania",306789.2
+1964,"Gas","Asia and Oceania",331806.3
+1965,"Gas","Asia and Oceania",372875.7
+1966,"Gas","Asia and Oceania",393064.7
+1967,"Gas","Asia and Oceania",420426.6
+1968,"Gas","Asia and Oceania",578545
+1969,"Gas","Asia and Oceania",587042.5
+1970,"Gas","Asia and Oceania",700935.9
+1971,"Gas","Asia and Oceania",809748.5
+1972,"Gas","Asia and Oceania",954487.4
+1973,"Gas","Asia and Oceania",1212498.7
+1974,"Gas","Asia and Oceania",1619122.3
+1975,"Gas","Asia and Oceania",1776805.2
+1976,"Gas","Asia and Oceania",2074491.4
+1977,"Gas","Asia and Oceania",2324473.6
+1978,"Gas","Asia and Oceania",2661543.7
+1979,"Gas","Asia and Oceania",2924850.8
+1980,"Gas","Asia and Oceania",2846024.6
+1981,"Gas","Asia and Oceania",3025347.6
+1982,"Gas","Asia and Oceania",3080060.5
+1983,"Gas","Asia and Oceania",3418087.9
+1984,"Gas","Asia and Oceania",3999285
+1985,"Gas","Asia and Oceania",4450894.6
+1986,"Gas","Asia and Oceania",4787813.1
+1987,"Gas","Asia and Oceania",5071437.9
+1988,"Gas","Asia and Oceania",5460719.6
+1989,"Gas","Asia and Oceania",5679127.8
+1990,"Gas","Asia and Oceania",6343872.1
+1991,"Gas","Asia and Oceania",6802940.5
+1992,"Gas","Asia and Oceania",7165396.6
+1993,"Gas","Asia and Oceania",7594661.2
+1994,"Gas","Asia and Oceania",8209795.7
+1995,"Gas","Asia and Oceania",8665303.2
+1996,"Gas","Asia and Oceania",9357338.7
+1997,"Gas","Asia and Oceania",9703120.1
+1998,"Gas","Asia and Oceania",9726378.1
+1999,"Gas","Asia and Oceania",10369208.4
+2000,"Gas","Asia and Oceania",10535536.2
+2001,"Gas","Asia and Oceania",10537521.5
+2002,"Gas","Asia and Oceania",11288839.8
+2003,"Gas","Asia and Oceania",11939275.2
+2004,"Gas","Asia and Oceania",12339255.4
+2005,"Gas","Asia and Oceania",13336276.2
+2006,"Gas","Asia and Oceania",14389688.2
+2007,"Gas","Asia and Oceania",15248166.3
+2008,"Gas","Asia and Oceania",15894674
+2009,"Gas","Asia and Oceania",16789331.9
+2010,"Gas","Asia and Oceania",18587233.3
+2011,"Gas","Asia and Oceania",18692594.2
+2012,"Gas","Asia and Oceania",18646264
+2013,"Gas","Asia and Oceania",19248629.2
+2014,"Gas","Asia and Oceania",20579220.2
+1922,"Gas","Europe",23805.7
+1923,"Gas","Europe",27011.1
+1924,"Gas","Europe",30216.4
+1925,"Gas","Europe",33421.8
+1926,"Gas","Europe",36627.2
+1927,"Gas","Europe",39832.6
+1928,"Gas","Europe",43037.9
+1929,"Gas","Europe",49797.9
+1930,"Gas","Europe",56557.8
+1931,"Gas","Europe",63317.7
+1932,"Gas","Europe",70077.6
+1933,"Gas","Europe",76837.6
+1934,"Gas","Europe",83597.5
+1935,"Gas","Europe",90357.4
+1936,"Gas","Europe",97117.3
+1937,"Gas","Europe",103877.3
+1938,"Gas","Europe",99785
+1939,"Gas","Europe",95692.7
+1940,"Gas","Europe",91600.4
+1941,"Gas","Europe",87508.1
+1942,"Gas","Europe",83415.8
+1943,"Gas","Europe",79323.5
+1944,"Gas","Europe",75231.2
+1945,"Gas","Europe",71138.9
+1946,"Gas","Europe",88010.8
+1947,"Gas","Europe",88903.3
+1948,"Gas","Europe",156437.6
+1949,"Gas","Europe",256113.2
+1950,"Gas","Europe",232298.7
+1951,"Gas","Europe",294703.5
+1952,"Gas","Europe",356711.7
+1953,"Gas","Europe",424929.3
+1954,"Gas","Europe",473656.6
+1955,"Gas","Europe",530064.8
+1956,"Gas","Europe",604262.4
+1957,"Gas","Europe",677964
+1958,"Gas","Europe",770431.8
+1959,"Gas","Europe",956967.7
+1960,"Gas","Europe",987701.2
+1961,"Gas","Europe",1095221.4
+1962,"Gas","Europe",1229309.2
+1963,"Gas","Europe",1342515.8
+1964,"Gas","Europe",1491691
+1965,"Gas","Europe",1675602.2
+1966,"Gas","Europe",1911745.1
+1967,"Gas","Europe",2277015.5
+1968,"Gas","Europe",2916797.8
+1969,"Gas","Europe",3756426.6
+1970,"Gas","Europe",4862770.8
+1971,"Gas","Europe",5948963.6
+1972,"Gas","Europe",7168594
+1973,"Gas","Europe",8134800.8
+1974,"Gas","Europe",8944807.2
+1975,"Gas","Europe",9195596.6
+1976,"Gas","Europe",9848021.4
+1977,"Gas","Europe",10004714.6
+1978,"Gas","Europe",10270481.2
+1979,"Gas","Europe",10646441.6
+1980,"Gas","Europe",9258964.3
+1981,"Gas","Europe",9115726.5
+1982,"Gas","Europe",8706932.4
+1983,"Gas","Europe",8972427
+1984,"Gas","Europe",9065247
+1985,"Gas","Europe",9266054.3
+1986,"Gas","Europe",9195291.8
+1987,"Gas","Europe",9428719.3
+1988,"Gas","Europe",9011227.5
+1989,"Gas","Europe",9081916
+1990,"Gas","Europe",8837441.4
+1991,"Gas","Europe",9259037.8
+1992,"Gas","Europe",9313969.8
+1993,"Gas","Europe",9739754.6
+1994,"Gas","Europe",9841585.1
+1995,"Gas","Europe",10259489.2
+1996,"Gas","Europe",11588601.1
+1997,"Gas","Europe",11206395.6
+1998,"Gas","Europe",11029155.4
+1999,"Gas","Europe",11302133
+2000,"Gas","Europe",11631323.2
+2001,"Gas","Europe",11757369.4
+2002,"Gas","Europe",12096320.6
+2003,"Gas","Europe",12196966.7
+2004,"Gas","Europe",12659173.9
+2005,"Gas","Europe",12141956.6
+2006,"Gas","Europe",11783110.9
+2007,"Gas","Europe",11330228.4
+2008,"Gas","Europe",11739676.4
+2009,"Gas","Europe",11293154.2
+2010,"Gas","Europe",11517294.4
+2011,"Gas","Europe",10499091.2
+2012,"Gas","Europe",10777595.7
+2013,"Gas","Europe",10494956.9
+2014,"Gas","Europe",9890411.4
+1946,"Gas","Africa",3033.3
+1947,"Gas","Africa",3033.3
+1948,"Gas","Africa",3121.3
+1949,"Gas","Africa",3165.2
+1950,"Gas","Africa",3340.5
+1951,"Gas","Africa",3603.6
+1952,"Gas","Africa",3690.9
+1953,"Gas","Africa",3996.2
+1954,"Gas","Africa",4432.8
+1955,"Gas","Africa",4389.5
+1956,"Gas","Africa",4871.8
+1957,"Gas","Africa",4830.3
+1958,"Gas","Africa",5139.2
+1959,"Gas","Africa",5925.7
+1960,"Gas","Africa",6365.3
+1961,"Gas","Africa",10233.9
+1962,"Gas","Africa",16342.7
+1963,"Gas","Africa",21919.5
+1964,"Gas","Africa",40764.4
+1965,"Gas","Africa",112528
+1966,"Gas","Africa",137667.6
+1967,"Gas","Africa",115205.1
+1968,"Gas","Africa",161272.4
+1969,"Gas","Africa",135287.2
+1970,"Gas","Africa",144100.1
+1971,"Gas","Africa",174227.9
+1972,"Gas","Africa",301148.1
+1973,"Gas","Africa",430968.3
+1974,"Gas","Africa",458639.5
+1975,"Gas","Africa",653767.9
+1976,"Gas","Africa",703219.5
+1977,"Gas","Africa",663932.8
+1978,"Gas","Africa",927117
+1979,"Gas","Africa",1547208.1
+1980,"Gas","Africa",818141.3
+1981,"Gas","Africa",1256292.4
+1982,"Gas","Africa",1505115.5
+1983,"Gas","Africa",2049608
+1984,"Gas","Africa",2185423.4
+1985,"Gas","Africa",2244998.3
+1986,"Gas","Africa",2263518.8
+1987,"Gas","Africa",2540245.6
+1988,"Gas","Africa",2708653.1
+1989,"Gas","Africa",2886568.7
+1990,"Gas","Africa",2969504
+1991,"Gas","Africa",3239824.8
+1992,"Gas","Africa",3341383.2
+1993,"Gas","Africa",3367596.5
+1994,"Gas","Africa",3261920
+1995,"Gas","Africa",3609817.2
+1996,"Gas","Africa",3751529.1
+1997,"Gas","Africa",4098130.8
+1998,"Gas","Africa",4315020.8
+1999,"Gas","Africa",4687843.2
+2000,"Gas","Africa",5161222.3
+2001,"Gas","Africa",5358025.5
+2002,"Gas","Africa",5416316.5
+2003,"Gas","Africa",5889824.9
+2004,"Gas","Africa",6094321.5
+2005,"Gas","Africa",6996976.3
+2006,"Gas","Africa",7406181.4
+2007,"Gas","Africa",7612538.4
+2008,"Gas","Africa",8309947.3
+2009,"Gas","Africa",7992659.8
+2010,"Gas","Africa",8287140.3
+2011,"Gas","Africa",8013376
+2012,"Gas","Africa",8751129.9
+2013,"Gas","Africa",8219641.5
+2014,"Gas","Africa",8299211.2
+1929,"Gas","Central and South America",16183.4
+1930,"Gas","Central and South America",17957.6
+1931,"Gas","Central and South America",19731.9
+1932,"Gas","Central and South America",21506.1
+1933,"Gas","Central and South America",23280.3
+1934,"Gas","Central and South America",25054.5
+1935,"Gas","Central and South America",26828.8
+1936,"Gas","Central and South America",28603
+1937,"Gas","Central and South America",86937.7
+1938,"Gas","Central and South America",89074.5
+1939,"Gas","Central and South America",91211.2
+1940,"Gas","Central and South America",93347.9
+1941,"Gas","Central and South America",95484.7
+1942,"Gas","Central and South America",97621.4
+1943,"Gas","Central and South America",99758.1
+1944,"Gas","Central and South America",101894.9
+1945,"Gas","Central and South America",104031.6
+1946,"Gas","Central and South America",106543.6
+1947,"Gas","Central and South America",120042.2
+1948,"Gas","Central and South America",110774
+1949,"Gas","Central and South America",123177.2
+1950,"Gas","Central and South America",153423.1
+1951,"Gas","Central and South America",168607.6
+1952,"Gas","Central and South America",162583.8
+1953,"Gas","Central and South America",188650.7
+1954,"Gas","Central and South America",207031.7
+1955,"Gas","Central and South America",221044.5
+1956,"Gas","Central and South America",242419.9
+1957,"Gas","Central and South America",287559.7
+1958,"Gas","Central and South America",322900.1
+1959,"Gas","Central and South America",329700.7
+1960,"Gas","Central and South America",384858.8
+1961,"Gas","Central and South America",455915.5
+1962,"Gas","Central and South America",517231
+1963,"Gas","Central and South America",555267.1
+1964,"Gas","Central and South America",600845.3
+1965,"Gas","Central and South America",650526.9
+1966,"Gas","Central and South America",695559.1
+1967,"Gas","Central and South America",750055.9
+1968,"Gas","Central and South America",803656.6
+1969,"Gas","Central and South America",846363.1
+1970,"Gas","Central and South America",941142.1
+1971,"Gas","Central and South America",1014425.6
+1972,"Gas","Central and South America",1157166.7
+1973,"Gas","Central and South America",1292759.4
+1974,"Gas","Central and South America",1320215.5
+1975,"Gas","Central and South America",1348176.9
+1976,"Gas","Central and South America",1423114.1
+1977,"Gas","Central and South America",1516729.8
+1978,"Gas","Central and South America",1505958.8
+1979,"Gas","Central and South America",1671952.6
+1980,"Gas","Central and South America",1445067.4
+1981,"Gas","Central and South America",1601579.6
+1982,"Gas","Central and South America",1678684.3
+1983,"Gas","Central and South America",1735367.6
+1984,"Gas","Central and South America",1986005.6
+1985,"Gas","Central and South America",2045176.9
+1986,"Gas","Central and South America",2078534.2
+1987,"Gas","Central and South America",1987498.7
+1988,"Gas","Central and South America",2125855.4
+1989,"Gas","Central and South America",2429272.6
+1990,"Gas","Central and South America",2310538.5
+1991,"Gas","Central and South America",2483180.6
+1992,"Gas","Central and South America",2464052.6
+1993,"Gas","Central and South America",2631110
+1994,"Gas","Central and South America",2793531.7
+1995,"Gas","Central and South America",2955566.2
+1996,"Gas","Central and South America",3168366
+1997,"Gas","Central and South America",3347808.6
+1998,"Gas","Central and South America",3582493.5
+1999,"Gas","Central and South America",3592362.6
+2000,"Gas","Central and South America",3904363
+2001,"Gas","Central and South America",4174633.1
+2002,"Gas","Central and South America",4172301
+2003,"Gas","Central and South America",4590887.2
+2004,"Gas","Central and South America",5132828.7
+2005,"Gas","Central and South America",5273001
+2006,"Gas","Central and South America",5707487.5
+2007,"Gas","Central and South America",5612593.8
+2008,"Gas","Central and South America",5837288.6
+2009,"Gas","Central and South America",5565060
+2010,"Gas","Central and South America",5992163.2
+2011,"Gas","Central and South America",6205815.9
+2012,"Gas","Central and South America",6518231
+2013,"Gas","Central and South America",6716758.3
+2014,"Gas","Central and South America",6776682.3
+1922,"Gas","Eurasia",781.6
+1923,"Gas","Eurasia",2580.6
+1924,"Gas","Eurasia",4379.6
+1925,"Gas","Eurasia",6178.6
+1926,"Gas","Eurasia",7977.6
+1927,"Gas","Eurasia",9776.6
+1928,"Gas","Eurasia",11575.6
+1929,"Gas","Eurasia",19156.2
+1930,"Gas","Eurasia",26736.8
+1931,"Gas","Eurasia",34317.4
+1932,"Gas","Eurasia",41898
+1933,"Gas","Eurasia",49478.7
+1934,"Gas","Eurasia",57059.3
+1935,"Gas","Eurasia",64639.9
+1936,"Gas","Eurasia",72220.5
+1937,"Gas","Eurasia",79801.1
+1938,"Gas","Eurasia",86442.9
+1939,"Gas","Eurasia",93084.7
+1940,"Gas","Eurasia",99726.5
+1941,"Gas","Eurasia",106368.4
+1942,"Gas","Eurasia",113010.2
+1943,"Gas","Eurasia",119652
+1944,"Gas","Eurasia",126293.8
+1945,"Gas","Eurasia",132935.6
+1946,"Gas","Eurasia",139577.4
+1947,"Gas","Eurasia",170842.8
+1948,"Gas","Eurasia",188708.7
+1949,"Gas","Eurasia",195036.2
+1950,"Gas","Eurasia",214428.2
+1951,"Gas","Eurasia",232703.5
+1952,"Gas","Eurasia",237616.6
+1953,"Gas","Eurasia",255631.4
+1954,"Gas","Eurasia",279601.5
+1955,"Gas","Eurasia",333534.3
+1956,"Gas","Eurasia",449141.6
+1957,"Gas","Eurasia",691671.4
+1958,"Gas","Eurasia",1045342
+1959,"Gas","Eurasia",1317090
+1960,"Gas","Eurasia",1686207.2
+1961,"Gas","Eurasia",2195311.3
+1962,"Gas","Eurasia",2736648.4
+1963,"Gas","Eurasia",3343605.6
+1964,"Gas","Eurasia",4040897.3
+1965,"Gas","Eurasia",4751811.8
+1966,"Gas","Eurasia",5321138.9
+1967,"Gas","Eurasia",5860205.6
+1968,"Gas","Eurasia",6294049.5
+1969,"Gas","Eurasia",6741441.7
+1970,"Gas","Eurasia",7367642
+1971,"Gas","Eurasia",7905592
+1972,"Gas","Eurasia",8240131.3
+1973,"Gas","Eurasia",8796207.8
+1974,"Gas","Eurasia",9679975
+1975,"Gas","Eurasia",10766743.6
+1976,"Gas","Eurasia",11946079.9
+1977,"Gas","Eurasia",16228315.9
+1978,"Gas","Eurasia",13853303.4
+1979,"Gas","Eurasia",15133805.4
+1980,"Gas","Eurasia",16865140.5
+1981,"Gas","Eurasia",17317513.8
+1982,"Gas","Eurasia",18635037
+1983,"Gas","Eurasia",19949303.2
+1984,"Gas","Eurasia",22586802.2
+1985,"Gas","Eurasia",24724187.1
+1986,"Gas","Eurasia",26191210.1
+1987,"Gas","Eurasia",27450164
+1988,"Gas","Eurasia",29435489.9
+1989,"Gas","Eurasia",30430029.2
+1990,"Gas","Eurasia",31156673.7
+1991,"Gas","Eurasia",30561764.1
+1992,"Gas","Eurasia",29346658.7
+1993,"Gas","Eurasia",28707749.6
+1994,"Gas","Eurasia",27125373.3
+1995,"Gas","Eurasia",26560818.7
+1996,"Gas","Eurasia",25560038.8
+1997,"Gas","Eurasia",24169028.6
+1998,"Gas","Eurasia",24560462.8
+1999,"Gas","Eurasia",24959673.5
+2000,"Gas","Eurasia",25816986.7
+2001,"Gas","Eurasia",26073530.7
+2002,"Gas","Eurasia",26664457.6
+2003,"Gas","Eurasia",27564115
+2004,"Gas","Eurasia",28579711
+2005,"Gas","Eurasia",28961416.1
+2006,"Gas","Eurasia",29674374.1
+2007,"Gas","Eurasia",29986260.6
+2008,"Gas","Eurasia",30355920.8
+2009,"Gas","Eurasia",26496244.9
+2010,"Gas","Eurasia",29024213.7
+2011,"Gas","Eurasia",30765571.7
+2012,"Gas","Eurasia",30725010.9
+2013,"Gas","Eurasia",31740813
+2014,"Gas","Eurasia",31097055.8
+1955,"Gas","Middle East",27469.8
+1956,"Gas","Middle East",34805.6
+1957,"Gas","Middle East",43323.3
+1958,"Gas","Middle East",41856.7
+1959,"Gas","Middle East",54187.8
+1960,"Gas","Middle East",108484.9
+1961,"Gas","Middle East",116950.6
+1962,"Gas","Middle East",139692.3
+1963,"Gas","Middle East",165088.3
+1964,"Gas","Middle East",207157
+1965,"Gas","Middle East",218949.6
+1966,"Gas","Middle East",242543
+1967,"Gas","Middle East",291040.1
+1968,"Gas","Middle East",384846
+1969,"Gas","Middle East",573256.8
+1970,"Gas","Middle East",950516.8
+1971,"Gas","Middle East",1153867.2
+1972,"Gas","Middle East",1323539
+1973,"Gas","Middle East",1552575.7
+1974,"Gas","Middle East",1737550.2
+1975,"Gas","Middle East",1766836.5
+1976,"Gas","Middle East",1822774
+1977,"Gas","Middle East",1944108.3
+1978,"Gas","Middle East",2045684.8
+1979,"Gas","Middle East",2459619.4
+1980,"Gas","Middle East",1573848.7
+1981,"Gas","Middle East",1603946.3
+1982,"Gas","Middle East",1518251.5
+1983,"Gas","Middle East",1676707.3
+1984,"Gas","Middle East",2217444
+1985,"Gas","Middle East",2634337.3
+1986,"Gas","Middle East",2914400.9
+1987,"Gas","Middle East",3351841.9
+1988,"Gas","Middle East",3660345.6
+1989,"Gas","Middle East",4082979.3
+1990,"Gas","Middle East",4103246.6
+1991,"Gas","Middle East",4259428
+1992,"Gas","Middle East",4568753.5
+1993,"Gas","Middle East",4892326.7
+1994,"Gas","Middle East",5179651.3
+1995,"Gas","Middle East",5511270.6
+1996,"Gas","Middle East",6109500.8
+1997,"Gas","Middle East",6875071.5
+1998,"Gas","Middle East",7284655
+1999,"Gas","Middle East",7655784
+2000,"Gas","Middle East",8363306.7
+2001,"Gas","Middle East",8823673.9
+2002,"Gas","Middle East",9642549.1
+2003,"Gas","Middle East",10171973.8
+2004,"Gas","Middle East",11013447.5
+2005,"Gas","Middle East",12459245.1
+2006,"Gas","Middle East",13223808.7
+2007,"Gas","Middle East",13965445.8
+2008,"Gas","Middle East",15004871.5
+2009,"Gas","Middle East",16327338.4
+2010,"Gas","Middle East",18633797
+2011,"Gas","Middle East",20506824.3
+2012,"Gas","Middle East",21642196.9
+2013,"Gas","Middle East",22175416.1
+2014,"Gas","Middle East",22959620.1
+1900,"Gas","North America",265825.5
+1901,"Gas","North America",294581
+1902,"Gas","North America",323336.5
+1903,"Gas","North America",352092
+1904,"Gas","North America",380847.5
+1905,"Gas","North America",409603.1
+1906,"Gas","North America",438358.6
+1907,"Gas","North America",467114.1
+1908,"Gas","North America",495869.6
+1909,"Gas","North America",524625.1
+1910,"Gas","North America",567320.4
+1911,"Gas","North America",597475.2
+1912,"Gas","North America",627630
+1913,"Gas","North America",657784.8
+1914,"Gas","North America",687939.6
+1915,"Gas","North America",718094.3
+1916,"Gas","North America",748249.1
+1917,"Gas","North America",778403.9
+1918,"Gas","North America",808558.7
+1919,"Gas","North America",838713.5
+1920,"Gas","North America",868868.2
+1921,"Gas","North America",899023
+1922,"Gas","North America",929177.8
+1923,"Gas","North America",1087146.5
+1924,"Gas","North America",1245115.3
+1925,"Gas","North America",1403084
+1926,"Gas","North America",1561052.8
+1927,"Gas","North America",1719021.5
+1928,"Gas","North America",1876990.2
+1929,"Gas","North America",1961289.7
+1930,"Gas","North America",2045589.1
+1931,"Gas","North America",2129888.5
+1932,"Gas","North America",2214187.9
+1933,"Gas","North America",2298487.4
+1934,"Gas","North America",2382786.8
+1935,"Gas","North America",2467086.2
+1936,"Gas","North America",2551385.6
+1937,"Gas","North America",2674362.6
+1938,"Gas","North America",2897815
+1939,"Gas","North America",3121267.5
+1940,"Gas","North America",3344719.9
+1941,"Gas","North America",3568172.3
+1942,"Gas","North America",3791624.7
+1943,"Gas","North America",4015077.1
+1944,"Gas","North America",4238529.5
+1945,"Gas","North America",4461982
+1946,"Gas","North America",4685434.4
+1947,"Gas","North America",5173973.2
+1948,"Gas","North America",5808083.3
+1949,"Gas","North America",6112417.2
+1950,"Gas","North America",7058956.8
+1951,"Gas","North America",8387035.6
+1952,"Gas","North America",9017655.5
+1953,"Gas","North America",9456610.9
+1954,"Gas","North America",9862421.5
+1955,"Gas","North America",10646654.9
+1956,"Gas","North America",11414441.7
+1957,"Gas","North America",12159963.6
+1958,"Gas","North America",12746872.1
+1959,"Gas","North America",14002546.5
+1960,"Gas","North America",14936817.9
+1961,"Gas","North America",15564602.4
+1962,"Gas","North America",16602698.1
+1963,"Gas","North America",17792175
+1964,"Gas","North America",18985434.4
+1965,"Gas","North America",19753314.8
+1966,"Gas","North America",20927914.6
+1967,"Gas","North America",22167595.8
+1968,"Gas","North America",23735450.2
+1969,"Gas","North America",25658230.2
+1970,"Gas","North America",27424688.6
+1971,"Gas","North America",28317029.5
+1972,"Gas","North America",28874649.1
+1973,"Gas","North America",29292803.8
+1974,"Gas","North America",28084136.9
+1975,"Gas","North America",26507366.4
+1976,"Gas","North America",26422311.8
+1977,"Gas","North America",26692361.3
+1978,"Gas","North America",26291912.1
+1979,"Gas","North America",27678157.7
+1980,"Gas","North America",24966475.7
+1981,"Gas","North America",24710797.8
+1982,"Gas","North America",23426946.6
+1983,"Gas","North America",21403157.3
+1984,"Gas","North America",23118118.1
+1985,"Gas","North America",22289900
+1986,"Gas","North America",21495177.7
+1987,"Gas","North America",22398962.4
+1988,"Gas","North America",23409507.8
+1989,"Gas","North America",23776678
+1990,"Gas","North America",24512091
+1991,"Gas","North America",24636372.6
+1992,"Gas","North America",25266493.3
+1993,"Gas","North America",25988080.3
+1994,"Gas","North America",27306727.2
+1995,"Gas","North America",27290785.4
+1996,"Gas","North America",27835704.9
+1997,"Gas","North America",27990038.2
+1998,"Gas","North America",28571727.6
+1999,"Gas","North America",28606119.8
+2000,"Gas","North America",29165888.7
+2001,"Gas","North America",29858955.8
+2002,"Gas","North America",29107225.7
+2003,"Gas","North America",29273309.2
+2004,"Gas","North America",28483283.8
+2005,"Gas","North America",28148705.6
+2006,"Gas","North America",29072858.5
+2007,"Gas","North America",29651430.4
+2008,"Gas","North America",30199705.6
+2009,"Gas","North America",30246813.3
+2010,"Gas","North America",30866458
+2011,"Gas","North America",32364209.9
+2012,"Gas","North America",33338271.2
+2013,"Gas","North America",33692389.4
+2014,"Gas","North America",35538636
+1914,"Hydro","Asia and Oceania",4528.8
+1915,"Hydro","Asia and Oceania",5760
+1916,"Hydro","Asia and Oceania",6706.8
+1917,"Hydro","Asia and Oceania",7948.8
+1918,"Hydro","Asia and Oceania",9417.6
+1919,"Hydro","Asia and Oceania",10324.8
+1920,"Hydro","Asia and Oceania",11397.6
+1921,"Hydro","Asia and Oceania",12920.4
+1922,"Hydro","Asia and Oceania",14493.6
+1923,"Hydro","Asia and Oceania",15746.4
+1924,"Hydro","Asia and Oceania",21542.4
+1925,"Hydro","Asia and Oceania",24861.6
+1926,"Hydro","Asia and Oceania",32655.6
+1927,"Hydro","Asia and Oceania",37533.6
+1928,"Hydro","Asia and Oceania",44294.4
+1929,"Hydro","Asia and Oceania",49863.6
+1930,"Hydro","Asia and Oceania",52120.8
+1931,"Hydro","Asia and Oceania",54036
+1932,"Hydro","Asia and Oceania",57283.2
+1933,"Hydro","Asia and Oceania",64774.8
+1934,"Hydro","Asia and Oceania",64695.6
+1935,"Hydro","Asia and Oceania",73440
+1936,"Hydro","Asia and Oceania",78004.8
+1937,"Hydro","Asia and Oceania",90691.2
+1938,"Hydro","Asia and Oceania",91818
+1939,"Hydro","Asia and Oceania",89866.8
+1940,"Hydro","Asia and Oceania",94273.2
+1941,"Hydro","Asia and Oceania",111772.8
+1942,"Hydro","Asia and Oceania",103111.2
+1943,"Hydro","Asia and Oceania",113454
+1944,"Hydro","Asia and Oceania",118357.2
+1945,"Hydro","Asia and Oceania",82638
+1946,"Hydro","Asia and Oceania",121405.3
+1947,"Hydro","Asia and Oceania",126860.4
+1948,"Hydro","Asia and Oceania",149220
+1949,"Hydro","Asia and Oceania",159966
+1950,"Hydro","Asia and Oceania",171410.4
+1951,"Hydro","Asia and Oceania",179179.2
+1952,"Hydro","Asia and Oceania",190195.2
+1953,"Hydro","Asia and Oceania",204296.4
+1954,"Hydro","Asia and Oceania",224334
+1955,"Hydro","Asia and Oceania",242892
+1956,"Hydro","Asia and Oceania",275853.6
+1957,"Hydro","Asia and Oceania",302994
+1958,"Hydro","Asia and Oceania",332730
+1959,"Hydro","Asia and Oceania",356857.2
+1960,"Hydro","Asia and Oceania",369680.4
+1961,"Hydro","Asia and Oceania",420188.4
+1962,"Hydro","Asia and Oceania",415627.2
+1963,"Hydro","Asia and Oceania",468914.4
+1964,"Hydro","Asia and Oceania",495410.4
+1965,"Hydro","Asia and Oceania",556304.4
+1966,"Hydro","Asia and Oceania",593600.4
+1967,"Hydro","Asia and Oceania",555501.6
+1968,"Hydro","Asia and Oceania",592560
+1969,"Hydro","Asia and Oceania",613512
+1970,"Hydro","Asia and Oceania",646160.4
+1971,"Hydro","Asia and Oceania",709628.4
+1972,"Hydro","Asia and Oceania",731955.6
+1973,"Hydro","Asia and Oceania",706878
+1974,"Hydro","Asia and Oceania",789764.4
+1975,"Hydro","Asia and Oceania",843098.4
+1976,"Hydro","Asia and Oceania",895402.8
+1977,"Hydro","Asia and Oceania",837255.6
+1978,"Hydro","Asia and Oceania",884952
+1979,"Hydro","Asia and Oceania",949669.2
+1980,"Hydro","Asia and Oceania",945730.8
+1981,"Hydro","Asia and Oceania",1006336.8
+1982,"Hydro","Asia and Oceania",1007164.8
+1983,"Hydro","Asia and Oceania",1073347.2
+1984,"Hydro","Asia and Oceania",1075597.2
+1985,"Hydro","Asia and Oceania",1138107.6
+1986,"Hydro","Asia and Oceania",1183507.2
+1987,"Hydro","Asia and Oceania",1158663.6
+1988,"Hydro","Asia and Oceania",1302084
+1989,"Hydro","Asia and Oceania",1377910.8
+1990,"Hydro","Asia and Oceania",1448132.4
+1991,"Hydro","Asia and Oceania",1472752.8
+1992,"Hydro","Asia and Oceania",1441566
+1993,"Hydro","Asia and Oceania",1564074
+1994,"Hydro","Asia and Oceania",1599795.1
+1995,"Hydro","Asia and Oceania",1712949.8
+1996,"Hydro","Asia and Oceania",1679910.7
+1997,"Hydro","Asia and Oceania",1735941.1
+1998,"Hydro","Asia and Oceania",1827276.9
+1999,"Hydro","Asia and Oceania",1838454.7
+2000,"Hydro","Asia and Oceania",1859756.4
+2001,"Hydro","Asia and Oceania",2058422.4
+2002,"Hydro","Asia and Oceania",2060841.6
+2003,"Hydro","Asia and Oceania",2159683.2
+2004,"Hydro","Asia and Oceania",2443586.5
+2005,"Hydro","Asia and Oceania",2642281.2
+2006,"Hydro","Asia and Oceania",2891948.5
+2007,"Hydro","Asia and Oceania",3053113.2
+2008,"Hydro","Asia and Oceania",3384522.4
+2009,"Hydro","Asia and Oceania",3496747.3
+2010,"Hydro","Asia and Oceania",3975958.8
+2011,"Hydro","Asia and Oceania",4040640
+2012,"Hydro","Asia and Oceania",4590878.4
+2013,"Hydro","Asia and Oceania",4756181.8
+2014,"Hydro","Asia and Oceania",4725744.1
+1900,"Hydro","Europe",396
+1901,"Hydro","Europe",576
+1902,"Hydro","Europe",792
+1903,"Hydro","Europe",1080
+1904,"Hydro","Europe",1260
+1905,"Hydro","Europe",1440
+1906,"Hydro","Europe",1980
+1907,"Hydro","Europe",2880
+1908,"Hydro","Europe",3510
+1909,"Hydro","Europe",3960
+1910,"Hydro","Europe",4500
+1911,"Hydro","Europe",5400
+1912,"Hydro","Europe",6300
+1913,"Hydro","Europe",7200
+1914,"Hydro","Europe",8370
+1915,"Hydro","Europe",9450
+1916,"Hydro","Europe",11610
+1917,"Hydro","Europe",12150
+1918,"Hydro","Europe",18543.6
+1919,"Hydro","Europe",17478
+1920,"Hydro","Europe",19656
+1921,"Hydro","Europe",18720
+1922,"Hydro","Europe",19404
+1923,"Hydro","Europe",35488.8
+1924,"Hydro","Europe",39438
+1925,"Hydro","Europe",54378
+1926,"Hydro","Europe",64825.2
+1927,"Hydro","Europe",70092
+1928,"Hydro","Europe",76262.4
+1929,"Hydro","Europe",126590.4
+1930,"Hydro","Europe",99946.8
+1931,"Hydro","Europe",134038.8
+1932,"Hydro","Europe",131364
+1933,"Hydro","Europe",140972.4
+1934,"Hydro","Europe",147168
+1935,"Hydro","Europe",178718.4
+1936,"Hydro","Europe",195483.6
+1937,"Hydro","Europe",232513.2
+1938,"Hydro","Europe",232862.4
+1939,"Hydro","Europe",259696.8
+1940,"Hydro","Europe",256932
+1941,"Hydro","Europe",271378.8
+1942,"Hydro","Europe",236851.2
+1943,"Hydro","Europe",281196
+1944,"Hydro","Europe",238442.4
+1945,"Hydro","Europe",230342.4
+1946,"Hydro","Europe",270878.4
+1947,"Hydro","Europe",295261.2
+1948,"Hydro","Europe",344538
+1949,"Hydro","Europe",325231.2
+1950,"Hydro","Europe",360709.2
+1951,"Hydro","Europe",458028
+1952,"Hydro","Europe",485006.4
+1953,"Hydro","Europe",496688.4
+1954,"Hydro","Europe",538506
+1955,"Hydro","Europe",581457.6
+1956,"Hydro","Europe",604666.8
+1957,"Hydro","Europe",653947.2
+1958,"Hydro","Europe",716076
+1959,"Hydro","Europe",731923.2
+1960,"Hydro","Europe",838630.8
+1961,"Hydro","Europe",872553.6
+1962,"Hydro","Europe",892501.2
+1963,"Hydro","Europe",968882.4
+1964,"Hydro","Europe",953186.4
+1965,"Hydro","Europe",1086310.8
+1966,"Hydro","Europe",1171144.8
+1967,"Hydro","Europe",1175878.8
+1968,"Hydro","Europe",1219287.6
+1969,"Hydro","Europe",1205406
+1970,"Hydro","Europe",1258513.2
+1971,"Hydro","Europe",1280282.4
+1972,"Hydro","Europe",1336093.2
+1973,"Hydro","Europe",1354003.2
+1974,"Hydro","Europe",1464638.4
+1975,"Hydro","Europe",1482512.4
+1976,"Hydro","Europe",1383004.8
+1977,"Hydro","Europe",1665979.2
+1978,"Hydro","Europe",1670032.8
+1979,"Hydro","Europe",1761390
+1980,"Hydro","Europe",1648864.8
+1981,"Hydro","Europe",1670958
+1982,"Hydro","Europe",1655571.6
+1983,"Hydro","Europe",1705266
+1984,"Hydro","Europe",1732467.6
+1985,"Hydro","Europe",1716260.4
+1986,"Hydro","Europe",1654326
+1987,"Hydro","Europe",1767906
+1988,"Hydro","Europe",1924261.2
+1989,"Hydro","Europe",1675314
+1990,"Hydro","Europe",1708077.6
+1991,"Hydro","Europe",1711692
+1992,"Hydro","Europe",1822442.4
+1993,"Hydro","Europe",1883563.2
+1994,"Hydro","Europe",1901134.8
+1995,"Hydro","Europe",1945670.4
+1996,"Hydro","Europe",1897013.4
+1997,"Hydro","Europe",1946266.6
+1998,"Hydro","Europe",2012524.2
+1999,"Hydro","Europe",2038199.2
+2000,"Hydro","Europe",2117068.8
+2001,"Hydro","Europe",2103253.9
+2002,"Hydro","Europe",1939494.7
+2003,"Hydro","Europe",1813024.9
+2004,"Hydro","Europe",1947670
+2005,"Hydro","Europe",1947409.2
+2006,"Hydro","Europe",1920196.5
+2007,"Hydro","Europe",1935008.7
+2008,"Hydro","Europe",2028606.9
+2009,"Hydro","Europe",2015382.5
+2010,"Hydro","Europe",2214139.5
+2011,"Hydro","Europe",1943164.8
+2012,"Hydro","Europe",2145549.6
+2013,"Hydro","Europe",2227683.1
+2014,"Hydro","Europe",2244788.1
+1929,"Hydro","Africa",108
+1930,"Hydro","Africa",118.8
+1931,"Hydro","Africa",140.4
+1932,"Hydro","Africa",194.4
+1933,"Hydro","Africa",352.8
+1934,"Hydro","Africa",619.2
+1935,"Hydro","Africa",590.4
+1936,"Hydro","Africa",604.8
+1937,"Hydro","Africa",835.2
+1938,"Hydro","Africa",885.6
+1939,"Hydro","Africa",1036.8
+1940,"Hydro","Africa",1216.8
+1941,"Hydro","Africa",1310.4
+1942,"Hydro","Africa",1342.8
+1943,"Hydro","Africa",986.4
+1944,"Hydro","Africa",1245.6
+1945,"Hydro","Africa",1638
+1946,"Hydro","Africa",108
+1947,"Hydro","Africa",111.6
+1949,"Hydro","Africa",118.8
+1950,"Hydro","Africa",2761.2
+1951,"Hydro","Africa",3081.6
+1952,"Hydro","Africa",2610
+1953,"Hydro","Africa",4410
+1954,"Hydro","Africa",5292
+1955,"Hydro","Africa",6044.4
+1956,"Hydro","Africa",7052.4
+1957,"Hydro","Africa",9993.6
+1958,"Hydro","Africa",10692
+1959,"Hydro","Africa",11826
+1960,"Hydro","Africa",14238
+1961,"Hydro","Africa",18226.8
+1962,"Hydro","Africa",21960
+1963,"Hydro","Africa",22694.4
+1964,"Hydro","Africa",25722
+1965,"Hydro","Africa",27651.6
+1966,"Hydro","Africa",32043.6
+1967,"Hydro","Africa",29700
+1968,"Hydro","Africa",30585.6
+1969,"Hydro","Africa",33094.8
+1970,"Hydro","Africa",46069.2
+1971,"Hydro","Africa",49816.8
+1972,"Hydro","Africa",50882.4
+1973,"Hydro","Africa",54324
+1974,"Hydro","Africa",54500.4
+1975,"Hydro","Africa",56710.8
+1976,"Hydro","Africa",59479.2
+1977,"Hydro","Africa",60505.2
+1978,"Hydro","Africa",58932
+1979,"Hydro","Africa",61477.2
+1980,"Hydro","Africa",216396
+1981,"Hydro","Africa",189309.6
+1982,"Hydro","Africa",186386.4
+1983,"Hydro","Africa",179586
+1984,"Hydro","Africa",161625.6
+1985,"Hydro","Africa",167652
+1986,"Hydro","Africa",177451.2
+1987,"Hydro","Africa",174240
+1988,"Hydro","Africa",184014
+1989,"Hydro","Africa",188265.6
+1990,"Hydro","Africa",197663.9
+1991,"Hydro","Africa",204264
+1992,"Hydro","Africa",201074.4
+1993,"Hydro","Africa",197701.5
+1994,"Hydro","Africa",201042
+1995,"Hydro","Africa",212835.6
+1996,"Hydro","Africa",223274.5
+1997,"Hydro","Africa",229509.7
+1998,"Hydro","Africa",219717.7
+1999,"Hydro","Africa",259530.1
+2000,"Hydro","Africa",268318.8
+2001,"Hydro","Africa",292485.6
+2002,"Hydro","Africa",300222
+2003,"Hydro","Africa",294159.6
+2004,"Hydro","Africa",311509.6
+2005,"Hydro","Africa",318522.5
+2006,"Hydro","Africa",330463
+2007,"Hydro","Africa",338091.6
+2008,"Hydro","Africa",343676.1
+2009,"Hydro","Africa",355442.3
+2010,"Hydro","Africa",394084.8
+2011,"Hydro","Africa",396126
+2012,"Hydro","Africa",406720.8
+2013,"Hydro","Africa",414922.4
+2014,"Hydro","Africa",434920.7
+1900,"Hydro","Central and South America",50.4
+1901,"Hydro","Central and South America",57.6
+1905,"Hydro","Central and South America",226.8
+1906,"Hydro","Central and South America",320.4
+1907,"Hydro","Central and South America",450
+1908,"Hydro","Central and South America",626.4
+1909,"Hydro","Central and South America",882
+1910,"Hydro","Central and South America",1242
+1911,"Hydro","Central and South America",1278
+1913,"Hydro","Central and South America",1512
+1914,"Hydro","Central and South America",1645.2
+1915,"Hydro","Central and South America",1789.2
+1916,"Hydro","Central and South America",1944
+1917,"Hydro","Central and South America",2113.2
+1918,"Hydro","Central and South America",2296.8
+1919,"Hydro","Central and South America",2498.4
+1920,"Hydro","Central and South America",2718
+1921,"Hydro","Central and South America",2926.8
+1922,"Hydro","Central and South America",3060
+1923,"Hydro","Central and South America",3574.8
+1924,"Hydro","Central and South America",3870
+1925,"Hydro","Central and South America",4323.6
+1926,"Hydro","Central and South America",4683.6
+1927,"Hydro","Central and South America",5007.6
+1928,"Hydro","Central and South America",5425.2
+1929,"Hydro","Central and South America",6865.2
+1930,"Hydro","Central and South America",6757.2
+1931,"Hydro","Central and South America",6872.4
+1932,"Hydro","Central and South America",7297.2
+1933,"Hydro","Central and South America",7797.6
+1934,"Hydro","Central and South America",8301.6
+1935,"Hydro","Central and South America",9064.8
+1936,"Hydro","Central and South America",9450
+1937,"Hydro","Central and South America",11714.4
+1938,"Hydro","Central and South America",11995.2
+1939,"Hydro","Central and South America",11653.2
+1940,"Hydro","Central and South America",12510
+1941,"Hydro","Central and South America",14144.4
+1942,"Hydro","Central and South America",15332.4
+1943,"Hydro","Central and South America",16563.6
+1944,"Hydro","Central and South America",17881.2
+1945,"Hydro","Central and South America",19411.2
+1946,"Hydro","Central and South America",22752
+1947,"Hydro","Central and South America",25473.6
+1948,"Hydro","Central and South America",30909.6
+1949,"Hydro","Central and South America",32817.6
+1950,"Hydro","Central and South America",36093.6
+1951,"Hydro","Central and South America",41904
+1952,"Hydro","Central and South America",52016.4
+1953,"Hydro","Central and South America",54172.8
+1954,"Hydro","Central and South America",61599.6
+1955,"Hydro","Central and South America",65728.8
+1956,"Hydro","Central and South America",75200.4
+1957,"Hydro","Central and South America",84895.2
+1958,"Hydro","Central and South America",97135.2
+1959,"Hydro","Central and South America",99882
+1960,"Hydro","Central and South America",105393.6
+1961,"Hydro","Central and South America",111045.6
+1962,"Hydro","Central and South America",120754.8
+1963,"Hydro","Central and South America",126903.6
+1964,"Hydro","Central and South America",137142
+1965,"Hydro","Central and South America",151351.2
+1966,"Hydro","Central and South America",167713.2
+1967,"Hydro","Central and South America",173937.6
+1968,"Hydro","Central and South America",187833.6
+1969,"Hydro","Central and South America",204116.4
+1970,"Hydro","Central and South America",239436
+1971,"Hydro","Central and South America",262584
+1972,"Hydro","Central and South America",296532
+1973,"Hydro","Central and South America",331304.4
+1974,"Hydro","Central and South America",380894.4
+1975,"Hydro","Central and South America",421696.8
+1976,"Hydro","Central and South America",463780.8
+1977,"Hydro","Central and South America",513054
+1978,"Hydro","Central and South America",568519.2
+1979,"Hydro","Central and South America",640119.6
+1980,"Hydro","Central and South America",725367.6
+1981,"Hydro","Central and South America",733784.4
+1982,"Hydro","Central and South America",801057.6
+1983,"Hydro","Central and South America",866977.2
+1984,"Hydro","Central and South America",950544
+1985,"Hydro","Central and South America",1028383.2
+1986,"Hydro","Central and South America",1112637.6
+1987,"Hydro","Central and South America",1161518.4
+1988,"Hydro","Central and South America",1208365.2
+1989,"Hydro","Central and South America",1238392.8
+1990,"Hydro","Central and South America",1305297.8
+1991,"Hydro","Central and South America",1378112.6
+1992,"Hydro","Central and South America",1404212.8
+1993,"Hydro","Central and South America",1513203.6
+1994,"Hydro","Central and South America",1601785.6
+1995,"Hydro","Central and South America",1658242.5
+1996,"Hydro","Central and South America",1728044.4
+1997,"Hydro","Central and South America",1816216.2
+1998,"Hydro","Central and South America",1851374.4
+1999,"Hydro","Central and South America",1857696.4
+2000,"Hydro","Central and South America",1966078
+2001,"Hydro","Central and South America",1838121.7
+2002,"Hydro","Central and South America",1926207.9
+2003,"Hydro","Central and South America",2007144.9
+2004,"Hydro","Central and South America",2093373.4
+2005,"Hydro","Central and South America",2213031.1
+2006,"Hydro","Central and South America",2311698.5
+2007,"Hydro","Central and South America",2386224.7
+2008,"Hydro","Central and South America",2401748.1
+2009,"Hydro","Central and South America",2463301.1
+2010,"Hydro","Central and South America",2474019.4
+2011,"Hydro","Central and South America",2626830
+2012,"Hydro","Central and South America",2575242
+2013,"Hydro","Central and South America",2473330.1
+2014,"Hydro","Central and South America",2469458.6
+1913,"Hydro","Eurasia",126
+1921,"Hydro","Eurasia",36
+1922,"Hydro","Eurasia",43.2
+1923,"Hydro","Eurasia",72
+1924,"Hydro","Eurasia",108
+1925,"Hydro","Eurasia",144
+1926,"Hydro","Eurasia",180
+1927,"Hydro","Eurasia",921.6
+1928,"Hydro","Eurasia",1548
+1929,"Hydro","Eurasia",1663.2
+1930,"Hydro","Eurasia",1998
+1931,"Hydro","Eurasia",2131.2
+1932,"Hydro","Eurasia",2923.2
+1933,"Hydro","Eurasia",4500
+1934,"Hydro","Eurasia",8553.6
+1935,"Hydro","Eurasia",13233.6
+1936,"Hydro","Eurasia",14446.8
+1937,"Hydro","Eurasia",15062.4
+1938,"Hydro","Eurasia",18302.4
+1939,"Hydro","Eurasia",16938
+1940,"Hydro","Eurasia",18406.8
+1945,"Hydro","Eurasia",17427.6
+1946,"Hydro","Eurasia",21765.6
+1947,"Hydro","Eurasia",26218.8
+1948,"Hydro","Eurasia",33728.4
+1949,"Hydro","Eurasia",41443.2
+1950,"Hydro","Eurasia",45687.6
+1951,"Hydro","Eurasia",49399.2
+1952,"Hydro","Eurasia",53668.8
+1953,"Hydro","Eurasia",69123.6
+1954,"Hydro","Eurasia",66819.6
+1955,"Hydro","Eurasia",83430
+1956,"Hydro","Eurasia",104342.4
+1957,"Hydro","Eurasia",141944.4
+1958,"Hydro","Eurasia",167320.8
+1959,"Hydro","Eurasia",171468
+1960,"Hydro","Eurasia",183286.8
+1961,"Hydro","Eurasia",212839.2
+1962,"Hydro","Eurasia",258998.4
+1963,"Hydro","Eurasia",273092.4
+1964,"Hydro","Eurasia",278499.6
+1965,"Hydro","Eurasia",293162.4
+1966,"Hydro","Eurasia",330562.8
+1967,"Hydro","Eurasia",318855.6
+1968,"Hydro","Eurasia",374544
+1969,"Hydro","Eurasia",414651.6
+1970,"Hydro","Eurasia",447757.2
+1971,"Hydro","Eurasia",453956.4
+1972,"Hydro","Eurasia",442436.4
+1973,"Hydro","Eurasia",440442
+1974,"Hydro","Eurasia",475308
+1975,"Hydro","Eurasia",453553.2
+1976,"Hydro","Eurasia",488646
+1977,"Hydro","Eurasia",529250.4
+1978,"Hydro","Eurasia",610923.6
+1979,"Hydro","Eurasia",619282.8
+1980,"Hydro","Eurasia",662490
+1981,"Hydro","Eurasia",665974.8
+1982,"Hydro","Eurasia",631656
+1983,"Hydro","Eurasia",648669.6
+1984,"Hydro","Eurasia",731358
+1985,"Hydro","Eurasia",738165.6
+1986,"Hydro","Eurasia",768517.2
+1987,"Hydro","Eurasia",782877.6
+1988,"Hydro","Eurasia",822643.2
+1989,"Hydro","Eurasia",795592.8
+1990,"Hydro","Eurasia",830412
+1991,"Hydro","Eurasia",837540
+1992,"Hydro","Eurasia",828338.4
+1993,"Hydro","Eurasia",864590.4
+1994,"Hydro","Eurasia",883947.6
+1995,"Hydro","Eurasia",848001.6
+1996,"Hydro","Eurasia",764769.6
+1997,"Hydro","Eurasia",770425.2
+1998,"Hydro","Eurasia",797706
+1999,"Hydro","Eurasia",807724.8
+2000,"Hydro","Eurasia",813524.4
+2001,"Hydro","Eurasia",847126.8
+2002,"Hydro","Eurasia",806497.2
+2003,"Hydro","Eurasia",801097.2
+2004,"Hydro","Eurasia",889308
+2005,"Hydro","Eurasia",878523.1
+2006,"Hydro","Eurasia",875008.8
+2007,"Hydro","Eurasia",877525.1
+2008,"Hydro","Eurasia",845344.9
+2009,"Hydro","Eurasia",871408.8
+2010,"Hydro","Eurasia",876470.4
+2011,"Hydro","Eurasia",862851.6
+2012,"Hydro","Eurasia",863805.6
+2013,"Hydro","Eurasia",905296.1
+2014,"Hydro","Eurasia",887371.3
+1937,"Hydro","Middle East",104.4
+1948,"Hydro","Middle East",198
+1949,"Hydro","Middle East",241.2
+1950,"Hydro","Middle East",230.4
+1951,"Hydro","Middle East",280.8
+1952,"Hydro","Middle East",327.6
+1953,"Hydro","Middle East",399.6
+1954,"Hydro","Middle East",453.6
+1955,"Hydro","Middle East",450
+1956,"Hydro","Middle East",579.6
+1957,"Hydro","Middle East",673.2
+1958,"Hydro","Middle East",615.6
+1959,"Hydro","Middle East",550.8
+1960,"Hydro","Middle East",500.4
+1961,"Hydro","Middle East",799.2
+1962,"Hydro","Middle East",1414.8
+1963,"Hydro","Middle East",2228.4
+1964,"Hydro","Middle East",2502
+1965,"Hydro","Middle East",3229.2
+1966,"Hydro","Middle East",3866.4
+1967,"Hydro","Middle East",4942.8
+1968,"Hydro","Middle East",5983.2
+1969,"Hydro","Middle East",8341.2
+1970,"Hydro","Middle East",9360
+1971,"Hydro","Middle East",13568.4
+1972,"Hydro","Middle East",16545.6
+1973,"Hydro","Middle East",13053.6
+1974,"Hydro","Middle East",17895.6
+1975,"Hydro","Middle East",19965.6
+1976,"Hydro","Middle East",23788.8
+1977,"Hydro","Middle East",24987.6
+1978,"Hydro","Middle East",27277.2
+1979,"Hydro","Middle East",19952.5
+1980,"Hydro","Middle East",34628.4
+1981,"Hydro","Middle East",37144.8
+1982,"Hydro","Middle East",38001.6
+1983,"Hydro","Middle East",36216
+1984,"Hydro","Middle East",38674.8
+1985,"Hydro","Middle East",38743.2
+1986,"Hydro","Middle East",36424.8
+1987,"Hydro","Middle East",37454.4
+1988,"Hydro","Middle East",37828.8
+1989,"Hydro","Middle East",37749.6
+1990,"Hydro","Middle East",34722
+1991,"Hydro","Middle East",37645.2
+1992,"Hydro","Middle East",47991.6
+1993,"Hydro","Middle East",49154.4
+1994,"Hydro","Middle East",40694.4
+1995,"Hydro","Middle East",39614.4
+1996,"Hydro","Middle East",40503.6
+1997,"Hydro","Middle East",39384
+1998,"Hydro","Middle East",39729.6
+1999,"Hydro","Middle East",30866.4
+2000,"Hydro","Middle East",28598.4
+2001,"Hydro","Middle East",33829.2
+2002,"Hydro","Middle East",42069.6
+2003,"Hydro","Middle East",56041.2
+2004,"Hydro","Middle East",58791.6
+2005,"Hydro","Middle East",98211.6
+2006,"Hydro","Middle East",103597.3
+2007,"Hydro","Middle East",99293.9
+2008,"Hydro","Middle East",42080.9
+2009,"Hydro","Middle East",46442.6
+2010,"Hydro","Middle East",63494.4
+2011,"Hydro","Middle East",72597.6
+2012,"Hydro","Middle East",79156.8
+2013,"Hydro","Middle East",83380.5
+2014,"Hydro","Middle East",79524.1
+1900,"Hydro","North America",9849.6
+1901,"Hydro","North America",10908
+1902,"Hydro","North America",12312
+1903,"Hydro","North America",14137.2
+1904,"Hydro","North America",16131.6
+1905,"Hydro","North America",18194.4
+1906,"Hydro","North America",20206.8
+1907,"Hydro","North America",22320
+1908,"Hydro","North America",25106.4
+1909,"Hydro","North America",28252.8
+1910,"Hydro","North America",31053.6
+1911,"Hydro","North America",34048.8
+1912,"Hydro","North America",36957.6
+1913,"Hydro","North America",40395.6
+1914,"Hydro","North America",44024.4
+1915,"Hydro","North America",47660.4
+1916,"Hydro","North America",51771.6
+1917,"Hydro","North America",55407.6
+1918,"Hydro","North America",57506.4
+1919,"Hydro","North America",19270.8
+1920,"Hydro","North America",93747.6
+1921,"Hydro","North America",87048
+1922,"Hydro","North America",100195.2
+1923,"Hydro","North America",112885.2
+1924,"Hydro","North America",119869.2
+1925,"Hydro","North America",129794.4
+1926,"Hydro","North America",152157.6
+1927,"Hydro","North America",170172
+1928,"Hydro","North America",192250.8
+1929,"Hydro","North America",196711.2
+1930,"Hydro","North America",189442.8
+1931,"Hydro","North America",177768
+1932,"Hydro","North America",190767.6
+1933,"Hydro","North America",198774
+1934,"Hydro","North America",209703.6
+1935,"Hydro","North America",240519.6
+1936,"Hydro","North America",250218
+1937,"Hydro","North America",278348.4
+1938,"Hydro","North America",272746.8
+1939,"Hydro","North America",277984.8
+1940,"Hydro","North America",298206
+1941,"Hydro","North America",323726.4
+1942,"Hydro","North America",387388.8
+1943,"Hydro","North America",433648.8
+1944,"Hydro","North America",433980
+1945,"Hydro","North America",445960.8
+1946,"Hydro","North America",453466.8
+1947,"Hydro","North America",458701.2
+1948,"Hydro","North America",469407.6
+1949,"Hydro","North America",502693.2
+1950,"Hydro","North America",538045.2
+1951,"Hydro","North America",575161.2
+1952,"Hydro","North America",610448.4
+1953,"Hydro","North America",617439.6
+1954,"Hydro","North America",637848
+1955,"Hydro","North America",681037.2
+1956,"Hydro","North America",761032.8
+1957,"Hydro","North America",793623.6
+1958,"Hydro","North America",858866.4
+1959,"Hydro","North America",876189.6
+1960,"Hydro","North America",939499.2
+1961,"Hydro","North America",952772.4
+1962,"Hydro","North America",1013918.4
+1963,"Hydro","North America",1003042.8
+1964,"Hydro","North America",1082088
+1965,"Hydro","North America",1162479.6
+1966,"Hydro","North America",1216404
+1967,"Hydro","North America",1327363.2
+1968,"Hydro","North America",1344560.4
+1969,"Hydro","North America",1498035.6
+1970,"Hydro","North America",1520686.8
+1971,"Hydro","North America",1602295.2
+1972,"Hydro","North America",1697245.2
+1973,"Hydro","North America",1743872.4
+1974,"Hydro","North America",1913745.6
+1975,"Hydro","North America",1874480.4
+1976,"Hydro","North America",1860710.4
+1977,"Hydro","North America",1667800.8
+1978,"Hydro","North America",1923253.2
+1979,"Hydro","North America",1954044
+1980,"Hydro","North America",1968890.7
+1981,"Hydro","North America",1984837.2
+1982,"Hydro","North America",2124882
+1983,"Hydro","North America",2229025.9
+1984,"Hydro","North America",2271748.9
+1985,"Hydro","North America",2199879.1
+1986,"Hydro","North America",2237310.8
+1987,"Hydro","North America",2103440.7
+1988,"Hydro","North America",1981932.5
+1989,"Hydro","North America",2102461
+1990,"Hydro","North America",2195884.3
+1991,"Hydro","North America",2217251.5
+1992,"Hydro","North America",2131898.4
+1993,"Hydro","North America",2256519.6
+1994,"Hydro","North America",2183121.8
+1995,"Hydro","North America",2414339.1
+1996,"Hydro","North America",2629371.8
+1997,"Hydro","North America",2627319.6
+1998,"Hydro","North America",2434624.8
+1999,"Hydro","North America",2498724.1
+2000,"Hydro","North America",2387875
+2001,"Hydro","North America",2070590.5
+2002,"Hydro","North America",2289880.2
+2003,"Hydro","North America",2266410
+2004,"Hydro","North America",2270873.9
+2005,"Hydro","North America",2361615.3
+2006,"Hydro","North America",2407173.9
+2007,"Hydro","North America",2298319.1
+2008,"Hydro","North America",2402254.8
+2009,"Hydro","North America",2393478
+2010,"Hydro","North America",2321244
+2011,"Hydro","North America",2617873.2
+2012,"Hydro","North America",2464135.2
+2013,"Hydro","North America",2463508.8
+2014,"Hydro","North America",2423027
+1963,"Nuclear","Asia and Oceania",32.7
+1964,"Nuclear","Asia and Oceania",21.8
+1965,"Nuclear","Asia and Oceania",392.7
+1966,"Nuclear","Asia and Oceania",6370.9
+1967,"Nuclear","Asia and Oceania",6861.8
+1968,"Nuclear","Asia and Oceania",11389.1
+1969,"Nuclear","Asia and Oceania",26410.9
+1970,"Nuclear","Asia and Oceania",76341.8
+1971,"Nuclear","Asia and Oceania",100876.4
+1972,"Nuclear","Asia and Oceania",117741.8
+1973,"Nuclear","Asia and Oceania",138032.7
+1974,"Nuclear","Asia and Oceania",243916.4
+1975,"Nuclear","Asia and Oceania",309349.1
+1976,"Nuclear","Asia and Oceania",413901.8
+1977,"Nuclear","Asia and Oceania",375523.6
+1978,"Nuclear","Asia and Oceania",704465.5
+1979,"Nuclear","Asia and Oceania",834850.9
+1980,"Nuclear","Asia and Oceania",1011567.3
+1981,"Nuclear","Asia and Oceania",1079945.5
+1982,"Nuclear","Asia and Oceania",1235334.5
+1983,"Nuclear","Asia and Oceania",1478596.4
+1984,"Nuclear","Asia and Oceania",1809512.7
+1985,"Nuclear","Asia and Oceania",2162683.6
+1986,"Nuclear","Asia and Oceania",2361065.5
+1987,"Nuclear","Asia and Oceania",2865829.1
+1988,"Nuclear","Asia and Oceania",2688676.4
+1989,"Nuclear","Asia and Oceania",2732487.3
+1990,"Nuclear","Asia and Oceania",3053770.9
+1991,"Nuclear","Asia and Oceania",3222283.6
+1992,"Nuclear","Asia and Oceania",3330600
+1993,"Nuclear","Asia and Oceania",3641052.2
+1994,"Nuclear","Asia and Oceania",3967025.5
+1995,"Nuclear","Asia and Oceania",4294205.6
+1996,"Nuclear","Asia and Oceania",4527567.3
+1997,"Nuclear","Asia and Oceania",4761440.4
+1998,"Nuclear","Asia and Oceania",5027116.4
+1999,"Nuclear","Asia and Oceania",5031403.6
+2000,"Nuclear","Asia and Oceania",5201471.5
+2001,"Nuclear","Asia and Oceania",5250523.4
+2002,"Nuclear","Asia and Oceania",5195149.1
+2003,"Nuclear","Asia and Oceania",4891756.4
+2004,"Nuclear","Asia and Oceania",5403905.5
+2005,"Nuclear","Asia and Oceania",5726889.8
+2006,"Nuclear","Asia and Oceania",5901704.8
+2007,"Nuclear","Asia and Oceania",5675603.1
+2008,"Nuclear","Asia and Oceania",5509591.7
+2009,"Nuclear","Asia and Oceania",5750823.3
+2010,"Nuclear","Asia and Oceania",6065839.5
+2011,"Nuclear","Asia and Oceania",5014652.9
+2012,"Nuclear","Asia and Oceania",3568374.7
+2013,"Nuclear","Asia and Oceania",3560232.1
+2014,"Nuclear","Asia and Oceania",3909656.3
+1956,"Nuclear","Europe",632.7
+1957,"Nuclear","Europe",4461.8
+1958,"Nuclear","Europe",3370.9
+1959,"Nuclear","Europe",13549.1
+1960,"Nuclear","Europe",24098.2
+1961,"Nuclear","Europe",29083.6
+1962,"Nuclear","Europe",45698.2
+1963,"Nuclear","Europe",85647.3
+1964,"Nuclear","Europe",131181.8
+1965,"Nuclear","Europe",227781.8
+1966,"Nuclear","Europe",297360
+1967,"Nuclear","Europe",350890.9
+1968,"Nuclear","Europe",390534.5
+1969,"Nuclear","Europe",462818.2
+1970,"Nuclear","Europe",493614.5
+1971,"Nuclear","Europe",558294.5
+1972,"Nuclear","Europe",734029.1
+1973,"Nuclear","Europe",806869.1
+1974,"Nuclear","Europe",948087.3
+1975,"Nuclear","Europe",1268596.4
+1976,"Nuclear","Europe",1480440
+1977,"Nuclear","Europe",1728261.8
+1978,"Nuclear","Europe",1958509.1
+1979,"Nuclear","Europe",2177094.5
+1980,"Nuclear","Europe",1897821.8
+1981,"Nuclear","Europe",2592021.8
+1982,"Nuclear","Europe",2836276.4
+1983,"Nuclear","Europe",3445101.8
+1984,"Nuclear","Europe",4329632.7
+1985,"Nuclear","Europe",5064338.2
+1986,"Nuclear","Europe",5712196.4
+1987,"Nuclear","Europe",5808850.9
+1988,"Nuclear","Europe",6193494.5
+1989,"Nuclear","Europe",6617683.6
+1990,"Nuclear","Europe",6721298.2
+1991,"Nuclear","Europe",8550349.1
+1992,"Nuclear","Europe",8677928.7
+1993,"Nuclear","Europe",9060021.4
+1994,"Nuclear","Europe",9066250.9
+1995,"Nuclear","Europe",9264198.9
+1996,"Nuclear","Europe",9719794.9
+1997,"Nuclear","Europe",9848740.6
+1998,"Nuclear","Europe",9793374.5
+1999,"Nuclear","Europe",9941214.5
+2000,"Nuclear","Europe",9981141.8
+2001,"Nuclear","Europe",10301214.5
+2002,"Nuclear","Europe",10407949.1
+2003,"Nuclear","Europe",10439880
+2004,"Nuclear","Europe",10587218.9
+2005,"Nuclear","Europe",10472475.7
+2006,"Nuclear","Europe",10457269
+2007,"Nuclear","Europe",9879325.6
+2008,"Nuclear","Europe",9901938
+2009,"Nuclear","Europe",9429158.3
+2010,"Nuclear","Europe",9781143.6
+2011,"Nuclear","Europe",9678986.6
+2012,"Nuclear","Europe",9412363.6
+2013,"Nuclear","Europe",9314824.5
+2014,"Nuclear","Europe",9362450.1
+1984,"Nuclear","Africa",42818.2
+1985,"Nuclear","Africa",57981.8
+1986,"Nuclear","Africa",96032.7
+1987,"Nuclear","Africa",67276.4
+1988,"Nuclear","Africa",114469.1
+1989,"Nuclear","Africa",121080
+1990,"Nuclear","Africa",92170.9
+1991,"Nuclear","Africa",99752.7
+1992,"Nuclear","Africa",101323.6
+1993,"Nuclear","Africa",79145.5
+1994,"Nuclear","Africa",105785.5
+1995,"Nuclear","Africa",123283.6
+1996,"Nuclear","Africa",128454.5
+1997,"Nuclear","Africa",137967.3
+1998,"Nuclear","Africa",148374.5
+1999,"Nuclear","Africa",140040
+2000,"Nuclear","Africa",141927.3
+2001,"Nuclear","Africa",116934.5
+2002,"Nuclear","Africa",130800
+2003,"Nuclear","Africa",138141.8
+2004,"Nuclear","Africa",155781.8
+2005,"Nuclear","Africa",133505.5
+2006,"Nuclear","Africa",109898.2
+2007,"Nuclear","Africa",137464
+2008,"Nuclear","Africa",139066.4
+2009,"Nuclear","Africa",126259.3
+2010,"Nuclear","Africa",140726.6
+2011,"Nuclear","Africa",141147.7
+2012,"Nuclear","Africa",135250.9
+2013,"Nuclear","Africa",148524
+2014,"Nuclear","Africa",160887.3
+1966,"Nuclear","Central and South America",130.9
+1967,"Nuclear","Central and South America",414.5
+1968,"Nuclear","Central and South America",196.4
+1969,"Nuclear","Central and South America",556.4
+1970,"Nuclear","Central and South America",490.9
+1971,"Nuclear","Central and South America",458.2
+1972,"Nuclear","Central and South America",796.4
+1973,"Nuclear","Central and South America",501.8
+1974,"Nuclear","Central and South America",11585.5
+1975,"Nuclear","Central and South America",27730.9
+1976,"Nuclear","Central and South America",28254.5
+1977,"Nuclear","Central and South America",17869.1
+1978,"Nuclear","Central and South America",31592.7
+1979,"Nuclear","Central and South America",29367.3
+1980,"Nuclear","Central and South America",24250.9
+1981,"Nuclear","Central and South America",29181.8
+1982,"Nuclear","Central and South America",19930.9
+1983,"Nuclear","Central and South America",37134.5
+1984,"Nuclear","Central and South America",76636.4
+1985,"Nuclear","Central and South America",91145.5
+1986,"Nuclear","Central and South America",60000
+1987,"Nuclear","Central and South America",76974.5
+1988,"Nuclear","Central and South America",56236.4
+1989,"Nuclear","Central and South America",68727.3
+1990,"Nuclear","Central and South America",97810.9
+1991,"Nuclear","Central and South America",98890.9
+1992,"Nuclear","Central and South America",91723.6
+1993,"Nuclear","Central and South America",84378.3
+1994,"Nuclear","Central and South America",85911.4
+1995,"Nuclear","Central and South America",103250.7
+1996,"Nuclear","Central and South America",100664.2
+1997,"Nuclear","Central and South America",114115.1
+1998,"Nuclear","Central and South America",111927.3
+1999,"Nuclear","Central and South America",114796.4
+2000,"Nuclear","Central and South America",119181.8
+2001,"Nuclear","Central and South America",227007.3
+2002,"Nuclear","Central and South America",209781.8
+2003,"Nuclear","Central and South America",222872.7
+2004,"Nuclear","Central and South America",206323.6
+2005,"Nuclear","Central and South America",169865.5
+2006,"Nuclear","Central and South America",219676.4
+2007,"Nuclear","Central and South America",200407.6
+2008,"Nuclear","Central and South America",220063.6
+2009,"Nuclear","Central and South America",216152.7
+2010,"Nuclear","Central and South America",223261.1
+2011,"Nuclear","Central and South America",225679.6
+2012,"Nuclear","Central and South America",229909.1
+2013,"Nuclear","Central and South America",214306.7
+2014,"Nuclear","Central and South America",230362.9
+1966,"Nuclear","Eurasia",17967.3
+1967,"Nuclear","Eurasia",19636.4
+1968,"Nuclear","Eurasia",27272.7
+1969,"Nuclear","Eurasia",31636.4
+1970,"Nuclear","Eurasia",40320
+1971,"Nuclear","Eurasia",66545.5
+1972,"Nuclear","Eurasia",100363.6
+1973,"Nuclear","Eurasia",152727.3
+1974,"Nuclear","Eurasia",201818.2
+1975,"Nuclear","Eurasia",220418.2
+1976,"Nuclear","Eurasia",287574.5
+1977,"Nuclear","Eurasia",379920
+1978,"Nuclear","Eurasia",425454.5
+1979,"Nuclear","Eurasia",523636.4
+1980,"Nuclear","Eurasia",795039.7
+1981,"Nuclear","Eurasia",698731.5
+1982,"Nuclear","Eurasia",1075879
+1983,"Nuclear","Eurasia",1197008.1
+1984,"Nuclear","Eurasia",1548464.9
+1985,"Nuclear","Eurasia",1854138.7
+1986,"Nuclear","Eurasia",1653303.3
+1987,"Nuclear","Eurasia",1922753.8
+1988,"Nuclear","Eurasia",2222251.1
+1989,"Nuclear","Eurasia",2320274.1
+1990,"Nuclear","Eurasia",2196069.9
+1991,"Nuclear","Eurasia",2198127.3
+1992,"Nuclear","Eurasia",2160818.2
+1993,"Nuclear","Eurasia",2152527.3
+1994,"Nuclear","Eurasia",1810494.5
+1995,"Nuclear","Eurasia",1876909.1
+1996,"Nuclear","Eurasia",2118327.3
+1997,"Nuclear","Eurasia",2099945.5
+1998,"Nuclear","Eurasia",2000356.4
+1999,"Nuclear","Eurasia",2069563.6
+2000,"Nuclear","Eurasia",2218396.4
+2001,"Nuclear","Eurasia",2288814.5
+2002,"Nuclear","Eurasia",2433218.2
+2003,"Nuclear","Eurasia",2557090.9
+2004,"Nuclear","Eurasia",2582323.6
+2005,"Nuclear","Eurasia",2545808.3
+2006,"Nuclear","Eurasia",2620294.7
+2007,"Nuclear","Eurasia",2693483.2
+2008,"Nuclear","Eurasia",2707590.7
+2009,"Nuclear","Eurasia",2654472
+2010,"Nuclear","Eurasia",2679745.5
+2011,"Nuclear","Eurasia",2719299.6
+2012,"Nuclear","Eurasia",2763310.3
+2013,"Nuclear","Eurasia",2635064.9
+2014,"Nuclear","Eurasia",2764756.4
+2011,"Nuclear","Middle East",1068.9
+2012,"Nuclear","Middle East",14487.3
+2013,"Nuclear","Middle East",42476.4
+2014,"Nuclear","Middle East",45163.6
+1957,"Nuclear","North America",109.1
+1958,"Nuclear","North America",1800
+1959,"Nuclear","North America",2050.9
+1960,"Nuclear","North America",5650.9
+1961,"Nuclear","North America",18458.2
+1962,"Nuclear","North America",25003.6
+1963,"Nuclear","North America",35989.1
+1964,"Nuclear","North America",38007.3
+1965,"Nuclear","North America",41203.6
+1966,"Nuclear","North America",61985.5
+1967,"Nuclear","North America",85069.1
+1968,"Nuclear","North America",146029.1
+1969,"Nuclear","North America",157330.9
+1970,"Nuclear","North America",248356.4
+1971,"Nuclear","North America",456949.1
+1972,"Nuclear","North America",662945.5
+1973,"Nuclear","North America",1064618.2
+1974,"Nuclear","North America",1380654.5
+1975,"Nuclear","North America",2011243.6
+1976,"Nuclear","North America",2264050.9
+1977,"Nuclear","North America",3007996.4
+1978,"Nuclear","North America",3336174.5
+1979,"Nuclear","North America",3146509.1
+1980,"Nuclear","North America",3130865.5
+1981,"Nuclear","North America",3386978.2
+1982,"Nuclear","North America",3479356.4
+1983,"Nuclear","North America",3707967.3
+1984,"Nuclear","North America",4111516.4
+1985,"Nuclear","North America",4808574.5
+1986,"Nuclear","North America",5250229.1
+1987,"Nuclear","North America",5761723.6
+1988,"Nuclear","North America",6601625.5
+1989,"Nuclear","North America",6596789.7
+1990,"Nuclear","North America",7078840.1
+1991,"Nuclear","North America",7606670.1
+1992,"Nuclear","North America",7626002.8
+1993,"Nuclear","North America",7691536.6
+1994,"Nuclear","North America",8148096.3
+1995,"Nuclear","North America",8447728.6
+1996,"Nuclear","North America",8403726
+1997,"Nuclear","North America",7815688
+1998,"Nuclear","North America",8184404.7
+1999,"Nuclear","North America",8809877.7
+2000,"Nuclear","North America",9063948.4
+2001,"Nuclear","North America",9272447
+2002,"Nuclear","North America",9393535.5
+2003,"Nuclear","North America",9216596.7
+2004,"Nuclear","North America",9634149.7
+2005,"Nuclear","North America",9590567.7
+2006,"Nuclear","North America",9709687
+2007,"Nuclear","North America",9867981.8
+2008,"Nuclear","North America",9860356.4
+2009,"Nuclear","North America",9753730.9
+2010,"Nuclear","North America",9797029.1
+2011,"Nuclear","North America",9685472.7
+2012,"Nuclear","North America",9456032.7
+2013,"Nuclear","North America",9789440.4
+2014,"Nuclear","North America",9897819.1
+1900,"Oil","Asia and Oceania",23822.9
+1901,"Oil","Asia and Oceania",37262.5
+1902,"Oil","Asia and Oceania",29684.4
+1903,"Oil","Asia and Oceania",52628.1
+1904,"Oil","Asia and Oceania",64225.5
+1905,"Oil","Asia and Oceania",75781.1
+1906,"Oil","Asia and Oceania",79298
+1907,"Oil","Asia and Oceania",93156.3
+1908,"Oil","Asia and Oceania",99185.3
+1909,"Oil","Asia and Oceania",112290
+1910,"Oil","Asia and Oceania",108773.1
+1911,"Oil","Asia and Oceania",117690.9
+1912,"Oil","Asia and Oceania",113378.5
+1913,"Oil","Asia and Oceania",120412.4
+1914,"Oil","Asia and Oceania",124473.6
+1915,"Oil","Asia and Oceania",132302.9
+1916,"Oil","Asia and Oceania",141095.2
+1917,"Oil","Asia and Oceania",140215.9
+1918,"Oil","Asia and Oceania",135987.3
+1919,"Oil","Asia and Oceania",155958.3
+1920,"Oil","Asia and Oceania",167262.7
+1921,"Oil","Asia and Oceania",172831.1
+1922,"Oil","Asia and Oceania",180660.4
+1923,"Oil","Asia and Oceania",203939
+1924,"Oil","Asia and Oceania",209423.7
+1925,"Oil","Asia and Oceania",215452.7
+1926,"Oil","Asia and Oceania",212773.2
+1927,"Oil","Asia and Oceania",241787.7
+1928,"Oil","Asia and Oceania",273146.8
+1929,"Oil","Asia and Oceania",313256.4
+1930,"Oil","Asia and Oceania",304882.8
+1931,"Oil","Asia and Oceania",278966.5
+1932,"Oil","Asia and Oceania",297095.3
+1933,"Oil","Asia and Oceania",319745.9
+1934,"Oil","Asia and Oceania",348551.1
+1935,"Oil","Asia and Oceania",356338.5
+1936,"Oil","Asia and Oceania",373462.6
+1937,"Oil","Asia and Oceania",416084.2
+1938,"Oil","Asia and Oceania",430277.4
+1939,"Oil","Asia and Oceania",459417.6
+1940,"Oil","Asia and Oceania",471015
+1941,"Oil","Asia and Oceania",417214.6
+1942,"Oil","Asia and Oceania",219932.6
+1943,"Oil","Asia and Oceania",329543
+1944,"Oil","Asia and Oceania",191629.8
+1945,"Oil","Asia and Oceania",87378.5
+1946,"Oil","Asia and Oceania",48190.1
+1947,"Oil","Asia and Oceania",142728
+1948,"Oil","Asia and Oceania",321630
+1949,"Oil","Asia and Oceania",432957
+1950,"Oil","Asia and Oceania",513050.5
+1951,"Oil","Asia and Oceania",610937.9
+1952,"Oil","Asia and Oceania",638821.9
+1953,"Oil","Asia and Oceania",711588.5
+1954,"Oil","Asia and Oceania",755131.2
+1955,"Oil","Asia and Oceania",823501.7
+1956,"Oil","Asia and Oceania",888271.5
+1957,"Oil","Asia and Oceania",1018815.9
+1958,"Oil","Asia and Oceania",1068680.7
+1959,"Oil","Asia and Oceania",1228239.6
+1960,"Oil","Asia and Oceania",1376452.4
+1961,"Oil","Asia and Oceania",1416520
+1962,"Oil","Asia and Oceania",1519138.5
+1963,"Oil","Asia and Oceania",1543547.6
+1964,"Oil","Asia and Oceania",1642732.8
+1965,"Oil","Asia and Oceania",1839303.1
+1966,"Oil","Asia and Oceania",2012720.4
+1967,"Oil","Asia and Oceania",2089799.4
+1968,"Oil","Asia and Oceania",2537870.7
+1969,"Oil","Asia and Oceania",2872647.2
+1970,"Oil","Asia and Oceania",3833057.3
+1971,"Oil","Asia and Oceania",4830688
+1972,"Oil","Asia and Oceania",5683539.1
+1973,"Oil","Asia and Oceania",6764152.2
+1974,"Oil","Asia and Oceania",7313209.2
+1975,"Oil","Asia and Oceania",7691235.3
+1976,"Oil","Asia and Oceania",8795336.4
+1977,"Oil","Asia and Oceania",9626625.5
+1978,"Oil","Asia and Oceania",10090104.3
+1979,"Oil","Asia and Oceania",10269466.8
+1980,"Oil","Asia and Oceania",10809213.3
+1981,"Oil","Asia and Oceania",10799352.3
+1982,"Oil","Asia and Oceania",10479094.2
+1983,"Oil","Asia and Oceania",11122594.6
+1984,"Oil","Asia and Oceania",12044745.5
+1985,"Oil","Asia and Oceania",12734590.5
+1986,"Oil","Asia and Oceania",13087442.8
+1987,"Oil","Asia and Oceania",13129673.4
+1988,"Oil","Asia and Oceania",13381876.7
+1989,"Oil","Asia and Oceania",13847455.3
+1990,"Oil","Asia and Oceania",14297959.4
+1991,"Oil","Asia and Oceania",14720925.4
+1992,"Oil","Asia and Oceania",14674874.9
+1993,"Oil","Asia and Oceania",14889112.6
+1994,"Oil","Asia and Oceania",15276578
+1995,"Oil","Asia and Oceania",15921453.2
+1996,"Oil","Asia and Oceania",16429893.8
+1997,"Oil","Asia and Oceania",16867656.1
+1998,"Oil","Asia and Oceania",17068986.2
+1999,"Oil","Asia and Oceania",17135755
+2000,"Oil","Asia and Oceania",17651476.7
+2001,"Oil","Asia and Oceania",17595227.1
+2002,"Oil","Asia and Oceania",17661149.5
+2003,"Oil","Asia and Oceania",17510777.2
+2004,"Oil","Asia and Oceania",17818087.7
+2005,"Oil","Asia and Oceania",17997271.1
+2006,"Oil","Asia and Oceania",18124954.7
+2007,"Oil","Asia and Oceania",18079424.6
+2008,"Oil","Asia and Oceania",18450380.2
+2009,"Oil","Asia and Oceania",18583800
+2010,"Oil","Asia and Oceania",19541594.7
+2011,"Oil","Asia and Oceania",19263114.6
+2012,"Oil","Asia and Oceania",19349980.6
+2013,"Oil","Asia and Oceania",19210398.5
+2014,"Oil","Asia and Oceania",19286736.4
+1900,"Oil","Europe",27172.3
+1901,"Oil","Europe",31484.7
+1902,"Oil","Europe",37806.8
+1903,"Oil","Europe",48315.7
+1904,"Oil","Europe",60792.3
+1905,"Oil","Europe",65607.2
+1906,"Oil","Europe",75362.4
+1907,"Oil","Europe",100106.4
+1908,"Oil","Europe",125980.8
+1909,"Oil","Europe",150306.1
+1910,"Oil","Europe",135861.7
+1911,"Oil","Europe",135359.2
+1912,"Oil","Europe",133517.1
+1913,"Oil","Europe",131800.5
+1914,"Oil","Europe",117649.1
+1915,"Oil","Europe",103162.8
+1916,"Oil","Europe",79800.4
+1917,"Oil","Europe",68914.7
+1918,"Oil","Europe",77246.5
+1919,"Oil","Europe",74734.4
+1920,"Oil","Europe",82856.8
+1921,"Oil","Europe",83108
+1922,"Oil","Europe",92947
+1923,"Oil","Europe",99897
+1924,"Oil","Europe",116393
+1925,"Oil","Europe",138373.7
+1926,"Oil","Europe",177059.8
+1927,"Oil","Europe",191964.8
+1928,"Oil","Europe",218174.1
+1929,"Oil","Europe",239066.3
+1930,"Oil","Europe",282022.8
+1931,"Oil","Europe",323472.2
+1932,"Oil","Europe",345662.2
+1933,"Oil","Europe",347295.1
+1934,"Oil","Europe",395401.4
+1935,"Oil","Europe",395359.5
+1936,"Oil","Europe",410850.7
+1937,"Oil","Europe",348927.9
+1938,"Oil","Europe",336158.2
+1939,"Oil","Europe",336702.5
+1940,"Oil","Europe",351733.1
+1941,"Oil","Europe",335320.8
+1942,"Oil","Europe",366847.4
+1943,"Oil","Europe",367642.9
+1944,"Oil","Europe",291861.8
+1945,"Oil","Europe",274947.2
+1946,"Oil","Europe",287758.8
+1947,"Oil","Europe",280138.8
+1948,"Oil","Europe",304631.6
+1949,"Oil","Europe",357971.4
+1950,"Oil","Europe",410348.3
+1951,"Oil","Europe",504844.3
+1952,"Oil","Europe",628145.6
+1953,"Oil","Europe",727749.6
+1954,"Oil","Europe",816174.8
+1955,"Oil","Europe",934828.7
+1956,"Oil","Europe",988419.7
+1957,"Oil","Europe",1055450.4
+1958,"Oil","Europe",1085888.4
+1959,"Oil","Europe",1143708.2
+1960,"Oil","Europe",1231672.8
+1961,"Oil","Europe",1305402.4
+1962,"Oil","Europe",1373228.5
+1963,"Oil","Europe",1443943.6
+1964,"Oil","Europe",1539528.2
+1965,"Oil","Europe",1598645.8
+1966,"Oil","Europe",1616649.1
+1967,"Oil","Europe",1662871.4
+1968,"Oil","Europe",1687950.3
+1969,"Oil","Europe",1699212.8
+1970,"Oil","Europe",1693518.7
+1971,"Oil","Europe",1679367.3
+1972,"Oil","Europe",1735931
+1973,"Oil","Europe",1739950.3
+1974,"Oil","Europe",1748784.5
+1975,"Oil","Europe",2083226.1
+1976,"Oil","Europe",2685162.3
+1977,"Oil","Europe",3727675.5
+1978,"Oil","Europe",4477154.6
+1979,"Oil","Europe",5537126.7
+1980,"Oil","Europe",6468763.5
+1981,"Oil","Europe",6886383.1
+1982,"Oil","Europe",7733631.2
+1983,"Oil","Europe",8774582.1
+1984,"Oil","Europe",9473692.7
+1985,"Oil","Europe",9843038.9
+1986,"Oil","Europe",10111453
+1987,"Oil","Europe",10220716.1
+1988,"Oil","Europe",10182233.6
+1989,"Oil","Europe",9946266.7
+1990,"Oil","Europe",10226678.7
+1991,"Oil","Europe",10725004.4
+1992,"Oil","Europe",11345645.5
+1993,"Oil","Europe",11889202.1
+1994,"Oil","Europe",8398112.8
+1995,"Oil","Europe",8832834.8
+1996,"Oil","Europe",9606549.6
+1997,"Oil","Europe",9749634.6
+1998,"Oil","Europe",9421425.4
+1999,"Oil","Europe",9398172.7
+2000,"Oil","Europe",9963713.5
+2001,"Oil","Europe",10003902.3
+2002,"Oil","Europe",9897533.8
+2003,"Oil","Europe",9770631.2
+2004,"Oil","Europe",9643367.7
+2005,"Oil","Europe",9199866.8
+2006,"Oil","Europe",8730580.9
+2007,"Oil","Europe",8011597.5
+2008,"Oil","Europe",7710286.9
+2009,"Oil","Europe",7453147.7
+2010,"Oil","Europe",7028605
+2011,"Oil","Europe",6781707.8
+2012,"Oil","Europe",6467780.9
+2013,"Oil","Europe",6296578.4
+2014,"Oil","Europe",6422794.6
+1911,"Oil","Africa",125.6
+1912,"Oil","Africa",1172.3
+1913,"Oil","Africa",544.3
+1914,"Oil","Africa",4186.8
+1915,"Oil","Africa",1256
+1916,"Oil","Africa",2470.2
+1917,"Oil","Africa",5777.8
+1918,"Oil","Africa",11848.6
+1919,"Oil","Africa",9420.3
+1920,"Oil","Africa",6238.3
+1921,"Oil","Africa",7661.8
+1922,"Oil","Africa",7285
+1923,"Oil","Africa",6447.7
+1924,"Oil","Africa",6908.2
+1925,"Oil","Africa",7620
+1926,"Oil","Africa",7285
+1927,"Oil","Africa",7787.4
+1928,"Oil","Africa",11262.5
+1929,"Oil","Africa",11513.7
+1930,"Oil","Africa",12016.1
+1931,"Oil","Africa",12141.7
+1932,"Oil","Africa",11388.1
+1933,"Oil","Africa",10048.3
+1934,"Oil","Africa",9294.7
+1935,"Oil","Africa",7620
+1936,"Oil","Africa",7661.8
+1937,"Oil","Africa",7285
+1938,"Oil","Africa",9587.8
+1939,"Oil","Africa",28093.4
+1940,"Oil","Africa",39104.7
+1941,"Oil","Africa",51372
+1942,"Oil","Africa",49697.3
+1943,"Oil","Africa",54009.7
+1944,"Oil","Africa",56856.7
+1945,"Oil","Africa",56647.4
+1946,"Oil","Africa",53800.4
+1947,"Oil","Africa",55977.5
+1948,"Oil","Africa",79298
+1949,"Oil","Africa",96547.6
+1950,"Oil","Africa",110908.3
+1951,"Oil","Africa",101111.2
+1952,"Oil","Africa",104628.1
+1953,"Oil","Africa",106302.9
+1954,"Oil","Africa",90476.7
+1955,"Oil","Africa",82814.9
+1956,"Oil","Africa",78209.4
+1957,"Oil","Africa",112080.6
+1958,"Oil","Africa",188364.1
+1959,"Oil","Africa",243629.9
+1960,"Oil","Africa",577736.5
+1961,"Oil","Africa",990052.6
+1962,"Oil","Africa",1626362.5
+1963,"Oil","Africa",2395519.5
+1964,"Oil","Africa",3447913.5
+1965,"Oil","Africa",4478620
+1966,"Oil","Africa",5709790.4
+1967,"Oil","Africa",6371053.6
+1968,"Oil","Africa",8155007.2
+1969,"Oil","Africa",10354416.9
+1970,"Oil","Africa",12469462.7
+1971,"Oil","Africa",11858566.7
+1972,"Oil","Africa",11883729.4
+1973,"Oil","Africa",12280805.5
+1974,"Oil","Africa",11285519.4
+1975,"Oil","Africa",10450169.1
+1976,"Oil","Africa",12130876.2
+1977,"Oil","Africa",12814287.6
+1978,"Oil","Africa",12497598
+1979,"Oil","Africa",13789225.8
+1980,"Oil","Africa",13220896.8
+1981,"Oil","Africa",10374657.8
+1982,"Oil","Africa",10361922.9
+1983,"Oil","Africa",10445251.3
+1984,"Oil","Africa",11353118.8
+1985,"Oil","Africa",11883463.7
+1986,"Oil","Africa",11731871.6
+1987,"Oil","Africa",11677570.9
+1988,"Oil","Africa",12397277.3
+1989,"Oil","Africa",13273630.5
+1990,"Oil","Africa",14259547.8
+1991,"Oil","Africa",14766075.4
+1992,"Oil","Africa",15009940.3
+1993,"Oil","Africa",14936705.3
+1994,"Oil","Africa",14939879.6
+1995,"Oil","Africa",15531041.6
+1996,"Oil","Africa",15962620.2
+1997,"Oil","Africa",16576407.7
+1998,"Oil","Africa",16509711.8
+1999,"Oil","Africa",16264335.4
+2000,"Oil","Africa",16561067.3
+2001,"Oil","Africa",16591876.1
+2002,"Oil","Africa",16756967
+2003,"Oil","Africa",17688308
+2004,"Oil","Africa",19052559.4
+2005,"Oil","Africa",20675622.9
+2006,"Oil","Africa",20839723.8
+2007,"Oil","Africa",21275126.2
+2008,"Oil","Africa",21486958.8
+2009,"Oil","Africa",21172455.4
+2010,"Oil","Africa",21624683.1
+2011,"Oil","Africa",18718268.3
+2012,"Oil","Africa",20823570.5
+2013,"Oil","Africa",19218750
+2014,"Oil","Africa",17942925.8
+1900,"Oil","Central and South America",1591
+1901,"Oil","Central and South America",1632.9
+1902,"Oil","Central and South America",1339.8
+1903,"Oil","Central and South America",1549.1
+1904,"Oil","Central and South America",1632.9
+1905,"Oil","Central and South America",2093.4
+1906,"Oil","Central and South America",2972.6
+1907,"Oil","Central and South America",4186.8
+1908,"Oil","Central and South America",5359.1
+1909,"Oil","Central and South America",8331.7
+1910,"Oil","Central and South America",8038.7
+1911,"Oil","Central and South America",9964.6
+1912,"Oil","Central and South America",12769.7
+1913,"Oil","Central and South America",15407.4
+1914,"Oil","Central and South America",16454.1
+1915,"Oil","Central and South America",23069.3
+1916,"Oil","Central and South America",26586.2
+1917,"Oil","Central and South America",32782.6
+1918,"Oil","Central and South America",37262.5
+1919,"Oil","Central and South America",36174
+1920,"Oil","Central and South America",41533.1
+1921,"Oil","Central and South America",57317.3
+1922,"Oil","Central and South America",78921.2
+1923,"Oil","Central and South America",100650.7
+1924,"Oil","Central and South America",155916.4
+1925,"Oil","Central and South America",242625.1
+1926,"Oil","Central and South America",393182.4
+1927,"Oil","Central and South America",600680.2
+1928,"Oil","Central and South America",936377.8
+1929,"Oil","Central and South America",1143247.6
+1930,"Oil","Central and South America",1145299.1
+1931,"Oil","Central and South America",1017224.9
+1932,"Oil","Central and South America",1011907.7
+1933,"Oil","Central and South America",1020909.3
+1934,"Oil","Central and South America",1189595.5
+1935,"Oil","Central and South America",1280951.5
+1936,"Oil","Central and South America",1348484.5
+1937,"Oil","Central and South America",1579302.8
+1938,"Oil","Central and South America",1610955
+1939,"Oil","Central and South America",1737061.5
+1940,"Oil","Central and South America",1637415.6
+1941,"Oil","Central and South America",1871457.7
+1942,"Oil","Central and South America",1329769.5
+1943,"Oil","Central and South America",1539988.8
+1944,"Oil","Central and South America",2054965.2
+1945,"Oil","Central and South America",2431065.4
+1946,"Oil","Central and South America",2793809.8
+1947,"Oil","Central and South America",3097143.4
+1948,"Oil","Central and South America",3435520.6
+1949,"Oil","Central and South America",3408306.4
+1950,"Oil","Central and South America",3831340.7
+1951,"Oil","Central and South America",4340455.6
+1952,"Oil","Central and South America",4586471.9
+1953,"Oil","Central and South America",4510481.5
+1954,"Oil","Central and South America",4831609.1
+1955,"Oil","Central and South America",5450920.5
+1956,"Oil","Central and South America",6204670.1
+1957,"Oil","Central and South America",7001334.4
+1958,"Oil","Central and South America",6655588.5
+1959,"Oil","Central and South America",7174249.3
+1960,"Oil","Central and South America",7548758.5
+1961,"Oil","Central and South America",7838192
+1962,"Oil","Central and South America",8551915.8
+1963,"Oil","Central and South America",8725165.6
+1964,"Oil","Central and South America",9125214.3
+1965,"Oil","Central and South America",9347240.3
+1966,"Oil","Central and South America",9215063.1
+1967,"Oil","Central and South America",9828889.8
+1968,"Oil","Central and South America",10075408.6
+1969,"Oil","Central and South America",10083614.7
+1970,"Oil","Central and South America",10356175.4
+1971,"Oil","Central and South America",10045933.5
+1972,"Oil","Central and South America",9498760.6
+1973,"Oil","Central and South America",10112545.5
+1974,"Oil","Central and South America",9229884.3
+1975,"Oil","Central and South America",7773296.6
+1976,"Oil","Central and South America",7703125.8
+1977,"Oil","Central and South America",7641789.2
+1978,"Oil","Central and South America",7683573.5
+1979,"Oil","Central and South America",8240459.8
+1980,"Oil","Central and South America",8168132.8
+1981,"Oil","Central and South America",8190758.4
+1982,"Oil","Central and South America",7812809.3
+1983,"Oil","Central and South America",7801178.1
+1984,"Oil","Central and South America",8250421.1
+1985,"Oil","Central and South America",8311930.5
+1986,"Oil","Central and South America",8786549.3
+1987,"Oil","Central and South America",8645421.2
+1988,"Oil","Central and South America",9164506
+1989,"Oil","Central and South America",9271256.4
+1990,"Oil","Central and South America",9982405.6
+1991,"Oil","Central and South America",10513405.5
+1992,"Oil","Central and South America",10711910.9
+1993,"Oil","Central and South America",11241104
+1994,"Oil","Central and South America",12039887.9
+1995,"Oil","Central and South America",12990977.8
+1996,"Oil","Central and South America",13851444.7
+1997,"Oil","Central and South America",14902929.4
+1998,"Oil","Central and South America",15104622.5
+1999,"Oil","Central and South America",14865230.6
+2000,"Oil","Central and South America",15521726.4
+2001,"Oil","Central and South America",15319711
+2002,"Oil","Central and South America",14705476.5
+2003,"Oil","Central and South America",14187760
+2004,"Oil","Central and South America",14912030.1
+2005,"Oil","Central and South America",15373244.3
+2006,"Oil","Central and South America",15485255.1
+2007,"Oil","Central and South America",15431170.4
+2008,"Oil","Central and South America",15841817.7
+2009,"Oil","Central and South America",15972435.4
+2010,"Oil","Central and South America",16728745.1
+2011,"Oil","Central and South America",17103066.6
+2012,"Oil","Central and South America",16984404.1
+2013,"Oil","Central and South America",17248015.9
+2014,"Oil","Central and South America",17853063.2
+1900,"Oil","Eurasia",432998.9
+1901,"Oil","Eurasia",484161.6
+1902,"Oil","Eurasia",459878.1
+1903,"Oil","Eurasia",431700.9
+1904,"Oil","Eurasia",448992.4
+1905,"Oil","Eurasia",312251.5
+1906,"Oil","Eurasia",337958.5
+1907,"Oil","Eurasia",358138.9
+1908,"Oil","Eurasia",361195.2
+1909,"Oil","Eurasia",384180.8
+1910,"Oil","Eurasia",399462.6
+1911,"Oil","Eurasia",379114.7
+1912,"Oil","Eurasia",383720.2
+1913,"Oil","Eurasia",377272.5
+1914,"Oil","Eurasia",373881.2
+1915,"Oil","Eurasia",388158.2
+1916,"Oil","Eurasia",413279
+1917,"Oil","Eurasia",366638.1
+1918,"Oil","Eurasia",154492.9
+1919,"Oil","Eurasia",185768.3
+1920,"Oil","Eurasia",163285.2
+1921,"Oil","Eurasia",159098.4
+1922,"Oil","Eurasia",196779.6
+1923,"Oil","Eurasia",221900.4
+1924,"Oil","Eurasia",255394.8
+1925,"Oil","Eurasia",297262.8
+1926,"Oil","Eurasia",347504.4
+1927,"Oil","Eurasia",431240.4
+1928,"Oil","Eurasia",485668.8
+1929,"Oil","Eurasia",573591.6
+1930,"Oil","Eurasia",774558
+1931,"Oil","Eurasia",937843.2
+1932,"Oil","Eurasia",895975.2
+1933,"Oil","Eurasia",900162
+1934,"Oil","Eurasia",1013205.6
+1935,"Oil","Eurasia",1055073.6
+1936,"Oil","Eurasia",1147183.2
+1937,"Oil","Eurasia",1193238
+1938,"Oil","Eurasia",1264413.6
+1939,"Oil","Eurasia",1268600.4
+1940,"Oil","Eurasia",1302094.8
+1941,"Oil","Eurasia",1348191.5
+1942,"Oil","Eurasia",1288738.9
+1943,"Oil","Eurasia",1145508.5
+1944,"Oil","Eurasia",1558913.1
+1945,"Oil","Eurasia",812239.2
+1946,"Oil","Eurasia",910461.5
+1947,"Oil","Eurasia",1089489.1
+1948,"Oil","Eurasia",1224597.1
+1949,"Oil","Eurasia",1400233.4
+1950,"Oil","Eurasia",1585876.1
+1951,"Oil","Eurasia",1769048.6
+1952,"Oil","Eurasia",1980816.9
+1953,"Oil","Eurasia",2209667.4
+1954,"Oil","Eurasia",2481976.9
+1955,"Oil","Eurasia",2963961.3
+1956,"Oil","Eurasia",3508789.6
+1957,"Oil","Eurasia",4117550.3
+1958,"Oil","Eurasia",4740127.5
+1959,"Oil","Eurasia",5424292.5
+1960,"Oil","Eurasia",6190560.6
+1961,"Oil","Eurasia",6952935
+1962,"Oil","Eurasia",7797663.8
+1963,"Oil","Eurasia",8627696.9
+1964,"Oil","Eurasia",9361810.4
+1965,"Oil","Eurasia",10169234.8
+1966,"Oil","Eurasia",11100253.5
+1967,"Oil","Eurasia",12060831
+1968,"Oil","Eurasia",12943492.2
+1969,"Oil","Eurasia",13748320.8
+1970,"Oil","Eurasia",14781036.9
+1971,"Oil","Eurasia",15787376.1
+1972,"Oil","Eurasia",16765621.9
+1973,"Oil","Eurasia",17962921.1
+1974,"Oil","Eurasia",19211048.1
+1975,"Oil","Eurasia",20548856.3
+1976,"Oil","Eurasia",21766210.2
+1977,"Oil","Eurasia",22851512.5
+1978,"Oil","Eurasia",23928859.9
+1979,"Oil","Eurasia",24516686.6
+1980,"Oil","Eurasia",25450597.7
+1981,"Oil","Eurasia",25788071.2
+1982,"Oil","Eurasia",25951501.8
+1983,"Oil","Eurasia",26110687.4
+1984,"Oil","Eurasia",25896317.5
+1985,"Oil","Eurasia",25331739.1
+1986,"Oil","Eurasia",25949594.5
+1987,"Oil","Eurasia",26296446.4
+1988,"Oil","Eurasia",26370792.9
+1989,"Oil","Eurasia",25523883.6
+1990,"Oil","Eurasia",23985959.5
+1991,"Oil","Eurasia",21889964.4
+1992,"Oil","Eurasia",18654583.4
+1993,"Oil","Eurasia",16699139.5
+1994,"Oil","Eurasia",15393727.6
+1995,"Oil","Eurasia",15158311.3
+1996,"Oil","Eurasia",14951118.5
+1997,"Oil","Eurasia",15312132.8
+1998,"Oil","Eurasia",15414690.7
+1999,"Oil","Eurasia",16214933.6
+2000,"Oil","Eurasia",17371813.3
+2001,"Oil","Eurasia",18621895.4
+2002,"Oil","Eurasia",20012452.6
+2003,"Oil","Eurasia",22124875.7
+2004,"Oil","Eurasia",24083591.4
+2005,"Oil","Eurasia",24973456.8
+2006,"Oil","Eurasia",25807474.5
+2007,"Oil","Eurasia",26802162.9
+2008,"Oil","Eurasia",26660410.7
+2009,"Oil","Eurasia",27472187.8
+2010,"Oil","Eurasia",28393433.7
+2011,"Oil","Eurasia",28653071.6
+2012,"Oil","Eurasia",28893582
+2013,"Oil","Eurasia",29261637.5
+2014,"Oil","Eurasia",29524322.7
+1906,"Oil","Middle East",41.9
+1911,"Oil","Middle East",1842.2
+1912,"Oil","Middle East",3433.2
+1913,"Oil","Middle East",11639.3
+1914,"Oil","Middle East",15993.6
+1915,"Oil","Middle East",19133.7
+1916,"Oil","Middle East",27381.7
+1917,"Oil","Middle East",38183.6
+1918,"Oil","Middle East",47059.6
+1919,"Oil","Middle East",58950.1
+1920,"Oil","Middle East",74190.1
+1921,"Oil","Middle East",99017.8
+1922,"Oil","Middle East",125897.1
+1923,"Oil","Middle East",158009.8
+1924,"Oil","Middle East",184344.8
+1925,"Oil","Middle East",193807
+1926,"Oil","Middle East",205530
+1927,"Oil","Middle East",229813.5
+1928,"Oil","Middle East",245220.9
+1929,"Oil","Middle East",237391.6
+1930,"Oil","Middle East",257739.4
+1931,"Oil","Middle East",249658.9
+1932,"Oil","Middle East",279301.4
+1933,"Oil","Middle East",306431.9
+1934,"Oil","Middle East",361362.7
+1935,"Oil","Middle East",474741.3
+1936,"Oil","Middle East",538464.3
+1937,"Oil","Middle East",649456.4
+1938,"Oil","Middle East",657202
+1939,"Oil","Middle East",639408.1
+1940,"Oil","Middle East",541227.6
+1941,"Oil","Middle East",409762.1
+1942,"Oil","Middle East",570032.8
+1943,"Oil","Middle East",627308.2
+1944,"Oil","Middle East",821952.6
+1945,"Oil","Middle East",1071318.4
+1946,"Oil","Middle East",1434942
+1947,"Oil","Middle East",1716922.9
+1948,"Oil","Middle East",2330624.1
+1949,"Oil","Middle East",2868921
+1950,"Oil","Middle East",3593321.1
+1951,"Oil","Middle East",3956107.3
+1952,"Oil","Middle East",4286529.6
+1953,"Oil","Middle East",4993889.4
+1954,"Oil","Middle East",5660721.1
+1955,"Oil","Middle East",6673047.4
+1956,"Oil","Middle East",7107386.1
+1957,"Oil","Middle East",7320787.3
+1958,"Oil","Middle East",8824602.1
+1959,"Oil","Middle East",9511446.6
+1960,"Oil","Middle East",10923319.3
+1961,"Oil","Middle East",11697458.7
+1962,"Oil","Middle East",12838487.3
+1963,"Oil","Middle East",14154482.2
+1964,"Oil","Middle East",15846158.8
+1965,"Oil","Middle East",17340553.3
+1966,"Oil","Middle East",19332883.9
+1967,"Oil","Middle East",20741658.4
+1968,"Oil","Middle East",23287232.8
+1969,"Oil","Middle East",25613377
+1970,"Oil","Middle East",28745898.9
+1971,"Oil","Middle East",33663002.4
+1972,"Oil","Middle East",37478223.9
+1973,"Oil","Middle East",43873477.2
+1974,"Oil","Middle East",45209987.5
+1975,"Oil","Middle East",40580559
+1976,"Oil","Middle East",45987434.4
+1977,"Oil","Middle East",46220387.9
+1978,"Oil","Middle East",44051416.2
+1979,"Oil","Middle East",44643974
+1980,"Oil","Middle East",40377964.4
+1981,"Oil","Middle East",34844672.1
+1982,"Oil","Middle East",28233162.4
+1983,"Oil","Middle East",25938767
+1984,"Oil","Middle East",25514272
+1985,"Oil","Middle East",23349368.7
+1986,"Oil","Middle East",27889975.6
+1987,"Oil","Middle East",28924752.8
+1988,"Oil","Middle East",32453150.1
+1989,"Oil","Middle East",35734924.7
+1990,"Oil","Middle East",37035252.2
+1991,"Oil","Middle East",36196809.1
+1992,"Oil","Middle East",38962701.7
+1993,"Oil","Middle East",40944895
+1994,"Oil","Middle East",42525228.9
+1995,"Oil","Middle East",43342802.5
+1996,"Oil","Middle East",43762105.1
+1997,"Oil","Middle East",45483975.5
+1998,"Oil","Middle East",48309791
+1999,"Oil","Middle East",46937517.7
+2000,"Oil","Middle East",49835067.1
+2001,"Oil","Middle East",48344969.1
+2002,"Oil","Middle East",45719879.1
+2003,"Oil","Middle East",48605910.4
+2004,"Oil","Middle East",52321473
+2005,"Oil","Middle East",54230850.6
+2006,"Oil","Middle East",53477385.8
+2007,"Oil","Middle East",52118557
+2008,"Oil","Middle East",54836390.6
+2009,"Oil","Middle East",51937407.2
+2010,"Oil","Middle East",55697910.6
+2011,"Oil","Middle East",58769390.1
+2012,"Oil","Middle East",59215427.7
+2013,"Oil","Middle East",58350505.1
+2014,"Oil","Middle East",59123842.6
+1900,"Oil","North America",360232.3
+1901,"Oil","North America",391675.1
+1902,"Oil","North America",498689.7
+1903,"Oil","North America",563962
+1904,"Oil","North America",657495.1
+1905,"Oil","North America",757099
+1906,"Oil","North America",712342.2
+1907,"Oil","North America",938052.5
+1908,"Oil","North America",1023002.7
+1909,"Oil","North America",1041634
+1910,"Oil","North America",1193363.6
+1911,"Oil","North America",1310719.6
+1912,"Oil","North America",1338310.6
+1913,"Oil","North America",1532913.1
+1914,"Oil","North America",1603083.9
+1915,"Oil","North America",1754143.6
+1916,"Oil","North America",1906752.5
+1917,"Oil","North America",2218627.2
+1918,"Oil","North America",2386643.5
+1919,"Oil","North America",2725397.5
+1920,"Oil","North America",3624010.3
+1921,"Oil","North America",3923994.6
+1922,"Oil","North America",4343930.6
+1923,"Oil","North America",5153950.8
+1924,"Oil","North America",4999625.4
+1925,"Oil","North America",5120288.9
+1926,"Oil","North America",5035841.2
+1927,"Oil","North America",5579957.7
+1928,"Oil","North America",5478679
+1929,"Oil","North America",6056164.3
+1930,"Oil","North America",5399925.3
+1931,"Oil","North America",5091735
+1932,"Oil","North America",4709228.9
+1933,"Oil","North America",5340389
+1934,"Oil","North America",5383387.4
+1935,"Oil","North America",5889487.8
+1936,"Oil","North America",6476016.6
+1937,"Oil","North America",7531425.2
+1938,"Oil","North America",7138075.3
+1939,"Oil","North America",7456732.7
+1940,"Oil","North America",7967564.1
+1941,"Oil","North America",8247409.8
+1942,"Oil","North America",8111171.4
+1943,"Oil","North America",8781143.1
+1944,"Oil","North America",9777099.1
+1945,"Oil","North America",10002432.7
+1946,"Oil","North America",10146081.8
+1947,"Oil","North America",10885135.7
+1948,"Oil","North America",11847639.2
+1949,"Oil","North America",10866923.1
+1950,"Oil","North America",11755236.5
+1951,"Oil","North America",13439544.3
+1952,"Oil","North America",13760462.5
+1953,"Oil","North America",14217368
+1954,"Oil","North America",14130408.1
+1955,"Oil","North America",15310667.1
+1956,"Oil","North America",16309344.5
+1957,"Oil","North America",16348742.2
+1958,"Oil","North America",15337462.6
+1959,"Oil","North America",16173524.7
+1960,"Oil","North America",16218532.8
+1961,"Oil","North America",16705248.3
+1962,"Oil","North America",17174421.1
+1963,"Oil","North America",17700199.4
+1964,"Oil","North America",17992898.6
+1965,"Oil","North America",18478609.3
+1966,"Oil","North America",19647480.1
+1967,"Oil","North America",20955938.8
+1968,"Oil","North America",21807408.3
+1969,"Oil","North America",22264732.5
+1970,"Oil","North America",23395712.8
+1971,"Oil","North America",23207976.7
+1972,"Oil","North America",23636286.3
+1973,"Oil","North America",23675223.6
+1974,"Oil","North America",22814543.1
+1975,"Oil","North America",21774123.3
+1976,"Oil","North America",21232016.4
+1977,"Oil","North America",21757041.1
+1978,"Oil","North America",23289744.9
+1979,"Oil","North America",23846840.5
+1980,"Oil","North America",31315486.4
+1981,"Oil","North America",31742544.6
+1982,"Oil","North America",32739283.5
+1983,"Oil","North America",32756949.7
+1984,"Oil","North America",33888888.8
+1985,"Oil","North America",34103929
+1986,"Oil","North America",33047797.1
+1987,"Oil","North America",32910339.6
+1988,"Oil","North America",32725955.3
+1989,"Oil","North America",31464583.2
+1990,"Oil","North America",31220282.5
+1991,"Oil","North America",31991475.1
+1992,"Oil","North America",31896189.7
+1993,"Oil","North America",31820451.1
+1994,"Oil","North America",31650780.8
+1995,"Oil","North America",31684807.9
+1996,"Oil","North America",32344361.1
+1997,"Oil","North America",32918621.5
+1998,"Oil","North America",32855973
+1999,"Oil","North America",31796078.5
+2000,"Oil","North America",32412327.8
+2001,"Oil","North America",32565983.4
+2002,"Oil","North America",32994896.5
+2003,"Oil","North America",33295595.6
+2004,"Oil","North America",33343470.4
+2005,"Oil","North America",32272408.7
+2006,"Oil","North America",32517705
+2007,"Oil","North America",32724686.3
+2008,"Oil","North America",32030984.2
+2009,"Oil","North America",32799492.1
+2010,"Oil","North America",34205634.1
+2011,"Oil","North America",35414324.2
+2012,"Oil","North America",38024848.5
+2013,"Oil","North America",41029379.4
+2014,"Oil","North America",44928220.6
+1959,"Other Renewables","Asia and Oceania",21.6
+1960,"Other Renewables","Asia and Oceania",608.4
+1961,"Other Renewables","Asia and Oceania",1382.4
+1962,"Other Renewables","Asia and Oceania",1767.6
+1963,"Other Renewables","Asia and Oceania",2739.6
+1964,"Other Renewables","Asia and Oceania",3614.4
+1965,"Other Renewables","Asia and Oceania",4298.4
+1966,"Other Renewables","Asia and Oceania",4518
+1967,"Other Renewables","Asia and Oceania",5036.4
+1968,"Other Renewables","Asia and Oceania",4500
+1969,"Other Renewables","Asia and Oceania",5144.4
+1970,"Other Renewables","Asia and Oceania",5349.6
+1971,"Other Renewables","Asia and Oceania",5115.6
+1972,"Other Renewables","Asia and Oceania",5119.2
+1973,"Other Renewables","Asia and Oceania",5198.4
+1974,"Other Renewables","Asia and Oceania",5306.4
+1975,"Other Renewables","Asia and Oceania",5857.2
+1976,"Other Renewables","Asia and Oceania",5904
+1977,"Other Renewables","Asia and Oceania",6526.8
+1978,"Other Renewables","Asia and Oceania",6969.6
+1979,"Other Renewables","Asia and Oceania",9381.6
+1980,"Other Renewables","Asia and Oceania",17652.2
+1981,"Other Renewables","Asia and Oceania",19000.4
+1982,"Other Renewables","Asia and Oceania",54505.4
+1983,"Other Renewables","Asia and Oceania",60585.1
+1984,"Other Renewables","Asia and Oceania",66406.7
+1985,"Other Renewables","Asia and Oceania",70335
+1986,"Other Renewables","Asia and Oceania",74115
+1987,"Other Renewables","Asia and Oceania",77914.8
+1988,"Other Renewables","Asia and Oceania",85834.8
+1989,"Other Renewables","Asia and Oceania",93654
+1990,"Other Renewables","Asia and Oceania",82170
+1991,"Other Renewables","Asia and Oceania",86479.2
+1992,"Other Renewables","Asia and Oceania",87453
+1993,"Other Renewables","Asia and Oceania",87059.2
+1994,"Other Renewables","Asia and Oceania",97319.2
+1995,"Other Renewables","Asia and Oceania",118285.6
+1996,"Other Renewables","Asia and Oceania",124585.6
+1997,"Other Renewables","Asia and Oceania",135608.9
+1998,"Other Renewables","Asia and Oceania",144041.9
+1999,"Other Renewables","Asia and Oceania",162509.8
+2000,"Other Renewables","Asia and Oceania",181124.7
+2001,"Other Renewables","Asia and Oceania",191484.1
+2002,"Other Renewables","Asia and Oceania",209981.4
+2003,"Other Renewables","Asia and Oceania",234898.4
+2004,"Other Renewables","Asia and Oceania",253885.2
+2005,"Other Renewables","Asia and Oceania",301428.1
+2006,"Other Renewables","Asia and Oceania",350999.4
+2007,"Other Renewables","Asia and Oceania",390787.7
+2008,"Other Renewables","Asia and Oceania",488914.4
+2009,"Other Renewables","Asia and Oceania",594646.2
+2010,"Other Renewables","Asia and Oceania",732977.6
+2011,"Other Renewables","Asia and Oceania",1000471.3
+2012,"Other Renewables","Asia and Oceania",1233431.3
+2013,"Other Renewables","Asia and Oceania",1453757.1
+2014,"Other Renewables","Asia and Oceania",1660966.3
+1916,"Other Renewables","Europe",43.2
+1917,"Other Renewables","Europe",72
+1918,"Other Renewables","Europe",75.6
+1919,"Other Renewables","Europe",50.4
+1920,"Other Renewables","Europe",25.2
+1921,"Other Renewables","Europe",68.4
+1922,"Other Renewables","Europe",72
+1923,"Other Renewables","Europe",90
+1924,"Other Renewables","Europe",97.2
+1925,"Other Renewables","Europe",111.6
+1926,"Other Renewables","Europe",151.2
+1927,"Other Renewables","Europe",183.6
+1928,"Other Renewables","Europe",212.4
+1929,"Other Renewables","Europe",216
+1930,"Other Renewables","Europe",205.2
+1931,"Other Renewables","Europe",190.8
+1932,"Other Renewables","Europe",180
+1933,"Other Renewables","Europe",273.6
+1934,"Other Renewables","Europe",262.8
+1935,"Other Renewables","Europe",295.2
+1936,"Other Renewables","Europe",334.8
+1937,"Other Renewables","Europe",90
+1938,"Other Renewables","Europe",730.8
+1939,"Other Renewables","Europe",1756.8
+1940,"Other Renewables","Europe",1929.6
+1941,"Other Renewables","Europe",2336.4
+1942,"Other Renewables","Europe",3214.8
+1943,"Other Renewables","Europe",3272.4
+1944,"Other Renewables","Europe",1004.4
+1945,"Other Renewables","Europe",331.2
+1946,"Other Renewables","Europe",860.4
+1947,"Other Renewables","Europe",2419.2
+1948,"Other Renewables","Europe",3157.2
+1949,"Other Renewables","Europe",3801.6
+1950,"Other Renewables","Europe",4600.8
+1951,"Other Renewables","Europe",5706
+1952,"Other Renewables","Europe",6620.4
+1953,"Other Renewables","Europe",6768
+1954,"Other Renewables","Europe",6771.6
+1955,"Other Renewables","Europe",6692.4
+1956,"Other Renewables","Europe",6404.4
+1957,"Other Renewables","Europe",6523.2
+1958,"Other Renewables","Europe",6948
+1959,"Other Renewables","Europe",7484.4
+1960,"Other Renewables","Europe",7574.4
+1961,"Other Renewables","Europe",8251.2
+1962,"Other Renewables","Europe",8445.6
+1963,"Other Renewables","Europe",8737.2
+1964,"Other Renewables","Europe",9097.2
+1965,"Other Renewables","Europe",9273.6
+1966,"Other Renewables","Europe",9478.8
+1967,"Other Renewables","Europe",9396
+1968,"Other Renewables","Europe",9698.4
+1969,"Other Renewables","Europe",9961.2
+1970,"Other Renewables","Europe",9853.2
+1971,"Other Renewables","Europe",9633.6
+1972,"Other Renewables","Europe",9374.4
+1973,"Other Renewables","Europe",9014.4
+1974,"Other Renewables","Europe",9036
+1975,"Other Renewables","Europe",9003.6
+1976,"Other Renewables","Europe",9151.2
+1977,"Other Renewables","Europe",9061.2
+1978,"Other Renewables","Europe",9043.2
+1979,"Other Renewables","Europe",9176.4
+1980,"Other Renewables","Europe",49888.8
+1981,"Other Renewables","Europe",48711.6
+1982,"Other Renewables","Europe",48808.8
+1983,"Other Renewables","Europe",46371.6
+1984,"Other Renewables","Europe",50040
+1985,"Other Renewables","Europe",51217.2
+1986,"Other Renewables","Europe",55368
+1987,"Other Renewables","Europe",63259.2
+1988,"Other Renewables","Europe",64490.4
+1989,"Other Renewables","Europe",67582.1
+1990,"Other Renewables","Europe",90648
+1991,"Other Renewables","Europe",98654.4
+1992,"Other Renewables","Europe",107135.7
+1993,"Other Renewables","Europe",118903.5
+1994,"Other Renewables","Europe",132386.7
+1995,"Other Renewables","Europe",146383.4
+1996,"Other Renewables","Europe",155288.2
+1997,"Other Renewables","Europe",185670
+1998,"Other Renewables","Europe",220562
+1999,"Other Renewables","Europe",235775.4
+2000,"Other Renewables","Europe",310650.4
+2001,"Other Renewables","Europe",359697.3
+2002,"Other Renewables","Europe",427671.9
+2003,"Other Renewables","Europe",499808.2
+2004,"Other Renewables","Europe",609425.9
+2005,"Other Renewables","Europe",726730.7
+2006,"Other Renewables","Europe",892576.6
+2007,"Other Renewables","Europe",1071624.2
+2008,"Other Renewables","Europe",1236450.5
+2009,"Other Renewables","Europe",1419688
+2010,"Other Renewables","Europe",1612361.8
+2011,"Other Renewables","Europe",1828267.2
+2012,"Other Renewables","Europe",2047613
+2013,"Other Renewables","Europe",2312971.3
+2014,"Other Renewables","Europe",2487293.2
+1980,"Other Renewables","Africa",1214.9
+1981,"Other Renewables","Africa",1368.6
+1982,"Other Renewables","Africa",1706.3
+1983,"Other Renewables","Africa",2411.4
+1984,"Other Renewables","Africa",2331.1
+1985,"Other Renewables","Africa",2704.5
+1986,"Other Renewables","Africa",2840.2
+1987,"Other Renewables","Africa",2878.7
+1988,"Other Renewables","Africa",2726.4
+1989,"Other Renewables","Africa",2746.8
+1990,"Other Renewables","Africa",4884.3
+1991,"Other Renewables","Africa",4819.5
+1992,"Other Renewables","Africa",4754.7
+1993,"Other Renewables","Africa",4054.5
+1994,"Other Renewables","Africa",3708.9
+1995,"Other Renewables","Africa",4180.9
+1996,"Other Renewables","Africa",4767.7
+1997,"Other Renewables","Africa",5110
+1998,"Other Renewables","Africa",5963.2
+1999,"Other Renewables","Africa",6733.3
+2000,"Other Renewables","Africa",9138.1
+2001,"Other Renewables","Africa",10294.1
+2002,"Other Renewables","Africa",9847.7
+2003,"Other Renewables","Africa",11874.5
+2004,"Other Renewables","Africa",13801.5
+2005,"Other Renewables","Africa",13815.9
+2006,"Other Renewables","Africa",16713.9
+2007,"Other Renewables","Africa",15795.2
+2008,"Other Renewables","Africa",17451.2
+2009,"Other Renewables","Africa",19749.6
+2010,"Other Renewables","Africa",24145.2
+2011,"Other Renewables","Africa",25418.2
+2012,"Other Renewables","Africa",24256.3
+2013,"Other Renewables","Africa",28351.6
+2014,"Other Renewables","Africa",30792.3
+1975,"Other Renewables","Central and South America",259.2
+1976,"Other Renewables","Central and South America",1008
+1977,"Other Renewables","Central and South America",1440
+1978,"Other Renewables","Central and South America",1407.6
+1979,"Other Renewables","Central and South America",1411.2
+1980,"Other Renewables","Central and South America",94632.9
+1981,"Other Renewables","Central and South America",105610.1
+1982,"Other Renewables","Central and South America",143573.2
+1983,"Other Renewables","Central and South America",188998.6
+1984,"Other Renewables","Central and South America",262127.9
+1985,"Other Renewables","Central and South America",271704.2
+1986,"Other Renewables","Central and South America",245230.5
+1987,"Other Renewables","Central and South America",266814.3
+1988,"Other Renewables","Central and South America",272712
+1989,"Other Renewables","Central and South America",277047.2
+1990,"Other Renewables","Central and South America",281754.7
+1991,"Other Renewables","Central and South America",302530.4
+1992,"Other Renewables","Central and South America",289175.9
+1993,"Other Renewables","Central and South America",278372.9
+1994,"Other Renewables","Central and South America",305465.5
+1995,"Other Renewables","Central and South America",310808.6
+1996,"Other Renewables","Central and South America",344827
+1997,"Other Renewables","Central and South America",377267.6
+1998,"Other Renewables","Central and South America",344700.7
+1999,"Other Renewables","Central and South America",327295
+2000,"Other Renewables","Central and South America",279142.5
+2001,"Other Renewables","Central and South America",305046.4
+2002,"Other Renewables","Central and South America",339214.7
+2003,"Other Renewables","Central and South America",388752.4
+2004,"Other Renewables","Central and South America",396400.7
+2005,"Other Renewables","Central and South America",434027.2
+2006,"Other Renewables","Central and South America",502866.5
+2007,"Other Renewables","Central and South America",646446.6
+2008,"Other Renewables","Central and South America",802045.6
+2009,"Other Renewables","Central and South America",836018.6
+2010,"Other Renewables","Central and South America",948024.7
+2011,"Other Renewables","Central and South America",886108.8
+2012,"Other Renewables","Central and South America",931354.8
+2013,"Other Renewables","Central and South America",1069473.2
+2014,"Other Renewables","Central and South America",1183977.2
+1989,"Other Renewables","Eurasia",93.6
+1990,"Other Renewables","Eurasia",97.2
+1991,"Other Renewables","Eurasia",104.4
+1992,"Other Renewables","Eurasia",6771.6
+1993,"Other Renewables","Eurasia",6422.4
+1994,"Other Renewables","Eurasia",5904
+1995,"Other Renewables","Eurasia",5814
+1996,"Other Renewables","Eurasia",5724
+1997,"Other Renewables","Eurasia",5655.6
+1998,"Other Renewables","Eurasia",5641.2
+1999,"Other Renewables","Eurasia",7642.8
+2000,"Other Renewables","Eurasia",9439.2
+2001,"Other Renewables","Eurasia",10792.8
+2002,"Other Renewables","Eurasia",10922.4
+2003,"Other Renewables","Eurasia",8233.2
+2004,"Other Renewables","Eurasia",9056.2
+2005,"Other Renewables","Eurasia",12822.3
+2006,"Other Renewables","Eurasia",14079.1
+2007,"Other Renewables","Eurasia",12910.7
+2008,"Other Renewables","Eurasia",18364.9
+2009,"Other Renewables","Eurasia",23427.6
+2010,"Other Renewables","Eurasia",25550.3
+2011,"Other Renewables","Eurasia",27315.7
+2012,"Other Renewables","Eurasia",31981.8
+2013,"Other Renewables","Eurasia",31770
+2014,"Other Renewables","Eurasia",37343.1
+1990,"Other Renewables","Middle East",3.6
+1991,"Other Renewables","Middle East",3.6
+1992,"Other Renewables","Middle East",3.6
+1993,"Other Renewables","Middle East",3.6
+1994,"Other Renewables","Middle East",3.6
+1995,"Other Renewables","Middle East",3.6
+1996,"Other Renewables","Middle East",3.6
+1997,"Other Renewables","Middle East",10.8
+1998,"Other Renewables","Middle East",10.8
+1999,"Other Renewables","Middle East",10.8
+2000,"Other Renewables","Middle East",144
+2001,"Other Renewables","Middle East",169.2
+2002,"Other Renewables","Middle East",176.4
+2003,"Other Renewables","Middle East",172.8
+2004,"Other Renewables","Middle East",241.2
+2005,"Other Renewables","Middle East",324
+2006,"Other Renewables","Middle East",518.4
+2007,"Other Renewables","Middle East",594
+2008,"Other Renewables","Middle East",781.2
+2009,"Other Renewables","Middle East",1159.2
+2010,"Other Renewables","Middle East",1299
+2011,"Other Renewables","Middle East",2302.3
+2012,"Other Renewables","Middle East",2712
+2013,"Other Renewables","Middle East",3850.7
+2014,"Other Renewables","Middle East",5275.7
+1960,"Other Renewables","North America",118.8
+1961,"Other Renewables","North America",338.4
+1962,"Other Renewables","North America",360
+1963,"Other Renewables","North America",604.8
+1964,"Other Renewables","North America",734.4
+1965,"Other Renewables","North America",680.4
+1966,"Other Renewables","North America",676.8
+1967,"Other Renewables","North America",1137.6
+1968,"Other Renewables","North America",1569.6
+1969,"Other Renewables","North America",2214
+1970,"Other Renewables","North America",1893.6
+1971,"Other Renewables","North America",1976.4
+1972,"Other Renewables","North America",5234.4
+1973,"Other Renewables","North America",7624.8
+1974,"Other Renewables","North America",10537.2
+1975,"Other Renewables","North America",13453.2
+1976,"Other Renewables","North America",14997.6
+1977,"Other Renewables","North America",14965.2
+1978,"Other Renewables","North America",12873.6
+1979,"Other Renewables","North America",19461.6
+1980,"Other Renewables","North America",27386.1
+1981,"Other Renewables","North America",38216.9
+1982,"Other Renewables","North America",48551.7
+1983,"Other Renewables","North America",68488.1
+1984,"Other Renewables","North America",84948.9
+1985,"Other Renewables","North America",99646.9
+1986,"Other Renewables","North America",117010
+1987,"Other Renewables","North America",133203.1
+1988,"Other Renewables","North America",134737.2
+1989,"Other Renewables","North America",302056.1
+1990,"Other Renewables","North America",337443.3
+1991,"Other Renewables","North America",373434.4
+1992,"Other Renewables","North America",402533.5
+1993,"Other Renewables","North America",426647.9
+1994,"Other Renewables","North America",441508.2
+1995,"Other Renewables","North America",440942.8
+1996,"Other Renewables","North America",411692.6
+1997,"Other Renewables","North America",444347.8
+1998,"Other Renewables","North America",456346.1
+1999,"Other Renewables","North America",476500.8
+2000,"Other Renewables","North America",500629.9
+2001,"Other Renewables","North America",506253.6
+2002,"Other Renewables","North America",573599.3
+2003,"Other Renewables","North America",635052
+2004,"Other Renewables","North America",698345.9
+2005,"Other Renewables","North America",765360.3
+2006,"Other Renewables","North America",894519.1
+2007,"Other Renewables","North America",1099738.8
+2008,"Other Renewables","North America",1414756.7
+2009,"Other Renewables","North America",1615041
+2010,"Other Renewables","North America",1891192.1
+2011,"Other Renewables","North America",2151908.9
+2012,"Other Renewables","North America",2180984
+2013,"Other Renewables","North America",2365121.4
+2014,"Other Renewables","North America",2562705.2
