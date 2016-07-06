@@ -129,7 +129,7 @@ set.seed(594709947L)
 #' 
 #' --------------------------
 #' 
-#' #### Exercise: From Markov chain to ODE 
+#' #### Optional Exercise: From Markov chain to ODE 
 #' Find the expected value of $N_{SI}(t+\delta)-N_{SI}(t)$ and $N_{IR}(t+\delta)-N_{IR}(t)$ given the current state, $S(t)$, $I(t)$ and $R(t)$.
 #' Take the limit as $\delta\to 0$ and show that this gives the ODE model.
 #' 
@@ -215,7 +215,7 @@ set.seed(594709947L)
 #' 
 #' --------------------------
 #' 
-#' #### Exercise: SDE version of the SIR model
+#' #### Optional Exercise: SDE version of the SIR model
 #' 
 #' Write down the Euler-Maruyama method for an SDE representation of the closed-population SIR model. 
 #' Consider some difficulties that might arise with non-negativity constraints, and propose some practical way one might deal with that issue.
@@ -372,13 +372,13 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' 
 #' --------------------------
 #' 
-#' #### Exercise: Explore the SIR model
+#' #### Basic Exercise: Explore the SIR model
 #' 
 #' Fiddle with the parameters to see if you can't find parameters for which the data are a more plausible realization.
 #' 
 #' --------------------------
 #' 
-#' #### Exercise: The SEIR model
+#' #### Basic Exercise: The SEIR model
 #' 
 #' Below is a diagram of the so-called SEIR model.
 #' This differs from the SIR model in that infected individuals must pass a period of latency before becoming infectious.
