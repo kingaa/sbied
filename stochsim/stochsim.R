@@ -389,7 +389,7 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' 
 #' --------------------------
 #' 
-#' #### Exercise: Rethinking the boarding-school flu data
+#' #### Basic Exercise: Rethinking the boarding-school flu data
 #' 
 #' In the preceding, we've been assuming that $B_t$ represents the number of boys *sent* to bed on day $t$.
 #' Actually, this isn't correct at all.

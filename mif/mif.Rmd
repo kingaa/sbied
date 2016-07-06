@@ -114,23 +114,36 @@ Many, many statistical methods have been proposed for inference on POMP models [
 
 ### Summary of POMP inference methodologies
 
-------------------------
+<style>
+td, th {
+	vertical-align: center;
+	horizontal-align: center;
+	text-align: left;
+	padding: 10px;
+	border: 1px solid black;
+}
+.rowhead {
+	transform: rotate(-90deg);
+	text-align: center;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+</style>
 
-|  |                 | __Frequentist__        | __Bayesian__        |
-| --- | ----------------- | ------------------ | ------------- |
-| __Plug-and-play__ | __Full-information__  | iterated filtering | particle MCMC |
-| | __Feature-based__     | simulated moments  | ABC           |
-| |                 | synthetic likelihood  |                 |
-| | | | |
-| __Not-plug-and-play__ | __Full-information__  |EM algorithm       | MCMC |
-| |                  |Kalman filter      |
-| | __Feature-based__     |Yule-Walker        | extended Kalman filter |
-| |                   |extended Kalman filter |
-
------------------------------------------------
+<table>
+<tr><th></th><th></th><th>Frequentist</th><th>Bayesian</th></tr>
+<tr><th rowspan="3" class="rowhead">Plug-and-play</th><th>Full-information</th><td>iterated filtering</td><td>particle MCMC</td></tr>
+<tr><th rowspan="2">Feature-based</th><td>simulated moments</td><td>ABC</td></tr>
+<tr><td>synthetic likelihood</td><td>&nbsp;</td></tr>
+<tr><th rowspan="4" class="rowhead">Not plug-and-play</th><th rowspan="2">Full-information</th><td>EM algorithm</td><td>MCMC</td></tr>
+<tr><td>Kalman filter</td><td>&nbsp;</td></tr>
+<tr><th rowspan="2">Feature-based</th><td>Yule-Walker<sup>1</sup></td><td>extended Kalman filter<sup>2</sup></td></tr>
+<tr><td>extended Kalman filter<sup>2</sup></td><td>&nbsp;</td></tr>
+</table>
 
 1. Yule-Walker is the method of moments for ARMA, a linear Gaussian POMP.
-1. The Kalman filter gives the exact likelihood for a linear Gaussian POMP. The extended Kalman filter gives an approximation for nonlinear models that can be used for quasi-likelihood or quasi-Bayesian inference.
+1. The Kalman filter gives the exact likelihood for a linear Gaussian POMP.
+   The extended Kalman filter gives an approximation for nonlinear models that can be used for quasi-likelihood or quasi-Bayesian inference.
 
 
 ## An iterated filtering algorithm (IF2)
