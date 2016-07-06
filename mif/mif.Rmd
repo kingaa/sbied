@@ -236,8 +236,8 @@ All other individuals are modeled to be initially susceptible.
 Our Markov transmission model is that each individual in $S$ transitions to $I$ at rate $\beta\,I(t)/N$;
 each individual in $I$ transitions at rate $\mu_I$ to $R_1$.
 Subsequently, the individual moves from $R_1$ to $R_2$ at  rate $\mu_{R_1}$, and finally from $R_2$ to $R_3$ at rate $\mu_{R_2}$.
-Therefore, $1/\mu_I$ is the mean infectious time prior to bed-confinement; $1/\mu_{R1}$ is the mean duration of bed-confinement for symptomatic cases;
-$1/\mu_{R2}$ is the mean duration of convalescence for symptomatic cases.
+Therefore, $1/\mu_I$ is the mean infectious time prior to bed-confinement; $1/\mu_{R_1}$ is the mean duration of bed-confinement for symptomatic cases;
+$1/\mu_{R_2}$ is the mean duration of convalescence for symptomatic cases.
 All rates have units $\mathrm{day}^{-1}$. 
 
 This model has limitations and weaknesses, but writing down and fitting a model is a starting point for data analysis, not an end point.
@@ -564,8 +564,8 @@ This gives us some confidence in our maximization procedure.
 
 #### Exercise: Fit more parameters.
 
-Try to estimate $\beta$, $\mu_I$, $\rho$, and $\mu_{R1}$ simultaneously.
-Does your estimate of $\mu_{R1}$ differ from the value we computed from the raw data?
+Try to estimate $\beta$, $\mu_I$, $\rho$, and $\mu_{R_1}$ simultaneously.
+Does your estimate of $\mu_{R_1}$ differ from the value we computed from the raw data?
 How do you interpret the agreement or lack thereof?
 
 --------------------------
