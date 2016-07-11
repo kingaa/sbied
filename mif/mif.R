@@ -25,7 +25,7 @@
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
 library(pomp)
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp")>="1.4.7")
+stopifnot(packageVersion("pomp")>="1.6")
 set.seed(557976883)
 
 #' 

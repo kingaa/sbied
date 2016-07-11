@@ -38,7 +38,7 @@ library(pomp)
 library(ggplot2)
 theme_set(theme_bw())
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp")>="1.4.5")
+stopifnot(packageVersion("pomp")>="1.6")
 set.seed(594709947L)
 
 #' 
@@ -401,12 +401,13 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' Since $1540~\text{boy-da}/512~\text{boy} \approx 3~\text{da}$, we know that the average duration spent in bed was 3&nbsp;da and, since $\sum_t\!C_t=`r sum(bsflu$C)`$, we can infer that the average time spent convalescing was $`r sum(bsflu$C)`~\text{boy-da}/512~\text{boy} \approx `r signif(sum(bsflu$C)/512,2)`~\text{da}$.
 #' 
 #' 
-#' Formulate a model with both confinement and convalescent stages.
+#' Formulate a model with a latent class and both confinement and convalescent stages.
 #' Implement it in **pomp** using a compartmental model like that diagrammed below.
 #' 
 #' 
 #' You will have to give some thought to just how to model the relationship between the data ($B$ and $C$) and the state variables.
-#' How many parameters can reasonably be fixed?  How many must be estimated?
+#' How many parameters can reasonably be fixed?
+#' How many must be estimated?
 #' Obtain some ballpark estimates of the parameters and simulate to see if you can plausibly explain the data as a realization of this model.
 #' 
 #' --------------------------
