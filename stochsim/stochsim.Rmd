@@ -67,7 +67,7 @@ library(pomp)
 library(ggplot2)
 theme_set(theme_bw())
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp")>="1.4.5")
+stopifnot(packageVersion("pomp")>="1.6")
 set.seed(594709947L)
 ```
 
@@ -462,7 +462,7 @@ ggplot(data=melt(bsflu,id="day"),mapping=aes(x=day,y=value,color=variable))+
   geom_line()+geom_point()+labs(color="")+theme(legend.position=c(0.8,0.8))
 ```
 
-Formulate a model with both confinement and convalescent stages.
+Formulate a model with a latent class and both confinement and convalescent stages.
 Implement it in **pomp** using a compartmental model like that diagrammed below.
 
 ```{r sirr-diagram,echo=FALSE,purl=FALSE,fig.height=3/4,fig.width=10.5}
@@ -481,7 +481,8 @@ popViewport()
 ```
 
 You will have to give some thought to just how to model the relationship between the data ($B$ and $C$) and the state variables.
-How many parameters can reasonably be fixed?  How many must be estimated?
+How many parameters can reasonably be fixed?
+How many must be estimated?
 Obtain some ballpark estimates of the parameters and simulate to see if you can plausibly explain the data as a realization of this model.
 
 --------------------------

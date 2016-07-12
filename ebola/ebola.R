@@ -41,7 +41,7 @@ library(plyr)
 library(reshape2)
 library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.4.7")
+stopifnot(packageVersion("pomp")>="1.6")
 
 #' 
 #' ## Objectives
