@@ -47,7 +47,7 @@ opts_chunk$set(
   dev='png',
   dev.args=list(bg='transparent')
 )
-options(keep.source=TRUE,encoding="UTF-8")
+options(keep.source=TRUE,encoding="UTF-8",scipen=6)
 ```
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
 library(pomp)
@@ -62,6 +62,8 @@ set.seed(1221234211)
 ```
 
 ----------------------------
+
+## Model formulation
 
 Formulate a model with a latent class and both confinement and convalescent stages.
 Implement it in **pomp** using a compartmental model like that diagrammed below.
@@ -125,6 +127,42 @@ flu %>%
     geom_line()+
     guides(color=FALSE)
 
+```
+
+## Using the particle filter
+
+```{r pfilter1}
+flu %>% pfilter(Np=1000) -> pf
+logLik(pf)
+
+```
+
+```{r pfilter2}
+library(foreach)
+library(doParallel)
+
+registerDoParallel()
+
+bake(file="pfilter2.rds",seed=594717807L,
+     kind="L'Ecuyer-CMRG",
+     {
+         foreach (nfilt=c(10,100,1000), .combine=rbind,
+                  .options.multicore=list(set.seed=TRUE)) %:%
+         foreach (Np=c(1000,10000,100000), .combine=rbind) %:%
+         foreach (i=1:nfilt, .combine=rbind) %dopar% {
+             flu %>% pfilter(Np=Np) %>% logLik() -> ll
+             data.frame(nfilt=nfilt,Np=Np,loglik=ll)
+         }
+     }
+     ) -> lls
+
+registerDoSEQ()
+
+lls %>%
+  ggplot(aes(x=Np,y=loglik,fill=ordered(nfilt),group=interaction(nfilt,Np)))+
+  geom_violin(draw_quantiles=0.5)+
+  scale_x_log10(breaks=unique(lls$Np))+
+  labs(fill="nfilt")
 ```
 
 ```{r}

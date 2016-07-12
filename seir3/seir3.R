@@ -35,6 +35,8 @@ set.seed(1221234211)
 #' 
 #' ----------------------------
 #' 
+#' ## Model formulation
+#' 
 #' Formulate a model with a latent class and both confinement and convalescent stages.
 #' Implement it in **pomp** using a compartmental model like that diagrammed below.
 #' You will have to give some thought to just how to model the relationship between the data ($B$ and $C$) and the state variables.
@@ -88,7 +90,7 @@ bsflu %>%
 #' 
 #' 
 ## ----simulations---------------------------------------------------------
-coef(flu) <- c(Beta=5,mu_E=0.5,mu_I=2,mu_R1=0.2,mu_R2=0.4,rho=0.9)
+coef(flu) <- c(Beta=6,mu_E=0.5,mu_I=2,mu_R1=0.2,mu_R2=0.5,rho=0.9)
 
 flu %>%
     simulate(nsim=20,as.data.frame=TRUE,include.data=TRUE) %>%
@@ -96,6 +98,63 @@ flu %>%
     ggplot(aes(x=time,y=B,color=(sim=="data"),group=sim))+
     geom_line()+
     guides(color=FALSE)
+
+
+#' 
+#' ## Using the particle filter
+#' 
+## ----pfilter1------------------------------------------------------------
+flu %>% pfilter(Np=1000) -> pf
+logLik(pf)
+
+
+#' 
+## ----pfilter2------------------------------------------------------------
+library(foreach)
+library(doParallel)
+
+registerDoParallel()
+
+bake(file="pfilter2.rds",seed=594717807L,
+     kind="L'Ecuyer-CMRG",
+     {
+         foreach (nfilt=c(10,100,1000), .combine=rbind,
+                  .options.multicore=list(set.seed=TRUE)) %:%
+         foreach (Np=c(1000,10000,100000), .combine=rbind) %:%
+         foreach (i=1:nfilt, .combine=rbind) %dopar% {
+             flu %>% pfilter(Np=Np) %>% logLik() -> ll
+             data.frame(nfilt=nfilt,Np=Np,loglik=ll)
+         }
+     }
+     ) -> lls
+
+registerDoSEQ()
+
+lls %>%
+  ggplot(aes(x=Np,y=loglik,fill=ordered(nfilt),group=interaction(nfilt,Np)))+
+  geom_violin(draw_quantiles=0.5)+
+  scale_x_log10(breaks=unique(lls$Np))+
+  labs(fill="nfilt")
+
+lls %>%
+  ggplot(aes(x=nfilt,y=loglik,fill=ordered(Np),group=interaction(nfilt,Np)))+
+  geom_violin(draw_quantiles=0.5)+
+  scale_x_log10(breaks=unique(lls$nfilt))+
+  labs(fill="Np")
+
+
+lls %>%
+  ddply(~nfilt+Np,
+        summarize,
+        variable=c("loglik","loglik.se"),
+        value=logmeanexp(loglik,se=TRUE)) %>%
+  dcast(Np+nfilt~variable) %>% 
+  melt(id=c("Np","nfilt")) %>%
+  ggplot(aes(x=Np,y=value,color=ordered(nfilt),group=nfilt))+
+  geom_line()+geom_point()+
+  labs(color="nfilt")+
+  scale_x_log10(breaks=unique(lls$Np))+
+  facet_wrap(~variable,ncol=1,scales="free_y")
 
 #' 
 ## ------------------------------------------------------------------------
