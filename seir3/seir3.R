@@ -136,26 +136,6 @@ lls %>%
   scale_x_log10(breaks=unique(lls$Np))+
   labs(fill="nfilt")
 
-lls %>%
-  ggplot(aes(x=nfilt,y=loglik,fill=ordered(Np),group=interaction(nfilt,Np)))+
-  geom_violin(draw_quantiles=0.5)+
-  scale_x_log10(breaks=unique(lls$nfilt))+
-  labs(fill="Np")
-
-
-lls %>%
-  ddply(~nfilt+Np,
-        summarize,
-        variable=c("loglik","loglik.se"),
-        value=logmeanexp(loglik,se=TRUE)) %>%
-  dcast(Np+nfilt~variable) %>% 
-  melt(id=c("Np","nfilt")) %>%
-  ggplot(aes(x=Np,y=value,color=ordered(nfilt),group=nfilt))+
-  geom_line()+geom_point()+
-  labs(color="nfilt")+
-  scale_x_log10(breaks=unique(lls$Np))+
-  facet_wrap(~variable,ncol=1,scales="free_y")
-
 #' 
 ## ------------------------------------------------------------------------
 fixed_params <- with(bsflu,c(mu_R1=1/(sum(B)/512),mu_R2=1/(sum(C)/512)))
