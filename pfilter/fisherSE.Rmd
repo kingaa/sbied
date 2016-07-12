@@ -1,0 +1,112 @@
+---
+title: "Standard errors via the observed Fisher information"
+author: "Aaron A. King and Edward L. Ionides"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+bibliography: ../sbied.bib
+csl: ../ecology.csl
+---
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dd[1]{d{#1}}
+\newcommand\dlta[1]{{\Delta}{#1}}
+\newcommand\lik{\mathcal{L}}
+\newcommand\loglik{\ell}
+
+-----------------------------------
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+Produced in R version `r getRversion()`.
+
+-----------------------------------
+
+```{r knitr-opts,include=FALSE,purl=FALSE}
+library(knitr)
+prefix <- "monteCarlo"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=3,fig.width=4.85,
+  dpi=100,
+  dev='png',
+  dev.args=list(bg='transparent')
+  )
+```
+```{r prelims,include=FALSE,cache=FALSE}
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  encoding="UTF-8"
+  )
+
+set.seed(594709947L)
+library(ggplot2)
+theme_set(theme_bw())
+library(plyr)
+library(reshape2)
+library(magrittr)
+library(pomp)
+stopifnot(packageVersion("pomp")>="1.4.5")
+```
+
+\newcommand\prob{\mathbb{P}}
+\newcommand\E{\mathbb{E}}
+\newcommand\var{\mathrm{Var}}
+\newcommand\cov{\mathrm{Cov}}
+\newcommand\loglik{\ell}
+\newcommand\R{\mathbb{R}}
+\newcommand\data[1]{#1^*}
+\newcommand\params{\, ; \,}
+\newcommand\transpose{\scriptsize{T}}
+\newcommand\eqspace{\quad\quad\quad}
+\newcommand\lik{\mathscr{L}}
+\newcommand\loglik{\ell}
+\newcommand\profileloglik[1]{\ell^\mathrm{profile}_#1}
+
+* Fisher information is a common way to get standard errors in various settings, but is not so suitable for POMP models. 
+
+* We often find ourselves working with complex models having some weakly identified parameters for which the asymptotic assumptions behind these standard errors are inadequate.
+
+* Further, the technique requires evaluation of second derivatives of the log likelihood; a numerically unstable problem when one has the capability to obtain only noisy estimates of the log likelihood.
+
+
+* We suppose that $\theta\in\R^D$ and so we can write $\theta=\theta_{1:D}$.
+
+* The [Hessian matrix](https://en.wikipedia.org/wiki/Hessian_matrix) of a function is the matrix of its second partial derivatives. We write the Hessian matrix of the log likelihood function as $\nabla^2\loglik(\theta)$, a $D\times D$ matrix whose $(i,j)$ element is
+$$ \big[\nabla^2\loglik(\theta)\big]_{ij} =  \frac{\partial^2}{\partial\theta_i\partial\theta_j}\loglik(\theta).$$
+
+* The observed Fisher information is
+$$ \data{I} = - \nabla^2\loglik(\data{\theta}).$$
+
+* A standard asymptotic approximation to the distribution of the MLE for large $N$ is
+$$ \hat\theta(Y_{1:N}) \approx N[\theta, {\data{I}}^{-1}],$$
+where $\theta$ is the true parameter value.
+This asserts that the MLE is asymptotically unbiased, with variance asymptotically attaining the Cramer-Rao lower bound. Thus, we say the MLE is **asymptotically efficient**.
+
+* A corresponding approximate 95% confidence interval for $\theta_d$ is
+$$ \data{\theta_d} \pm 1.96 \big[{\data{I}}^{-1}\big]_{dd}^{1/2}.$$
+
+* We usually only have one time series, with some fixed $N$, and so we cannot in practice take $N\to\infty$. When our time series model is non-stationary it may not even be clear what it would mean to take $N\to\infty$. These asymptotic results should be viewed as nice mathematical reasons to consider computing an MLE, but not a substitute for checking how the MLE behaves for our model and data. 
+

@@ -1,0 +1,137 @@
+---
+title: "Deterministic latent process models and their role in benchmarking POMP models"
+author: "Aaron A. King and Edward L. Ionides"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+bibliography: ../sbied.bib
+csl: ../ecology.csl
+---
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dd[1]{d{#1}}
+\newcommand\dlta[1]{{\Delta}{#1}}
+\newcommand\lik{\mathcal{L}}
+\newcommand\loglik{\ell}
+
+-----------------------------------
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+Produced in R version `r getRversion()`.
+
+-----------------------------------
+
+```{r knitr-opts,include=FALSE,purl=FALSE}
+library(knitr)
+prefix <- "monteCarlo"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=3,fig.width=4.85,
+  dpi=100,
+  dev='png',
+  dev.args=list(bg='transparent')
+  )
+```
+```{r prelims,include=FALSE,cache=FALSE}
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  encoding="UTF-8"
+  )
+
+set.seed(594709947L)
+library(ggplot2)
+theme_set(theme_bw())
+library(plyr)
+library(reshape2)
+library(magrittr)
+library(pomp)
+stopifnot(packageVersion("pomp")>="1.4.5")
+```
+
+## Why fit a deterministic process model?
+
+* We're focusing on biological dynamic systems, which are typically far from perfectly predictable. 
+
+* Deterministic latent process models are perfectly predictable, given the parameter values and initial conditions. One might therefore expect that these determinstic process models are problematic as statistical descriptions of unpredictable systems.
+
+    + Exception: an imperfectly measured chaotic system is both deterministic and unpredictable. However, there has been little success using this class of models for fitting biological systems.
+
+    + Exception: for short time series, the role of dynamic stochasticity may be negligible compared to measurement error, parameter uncertainty and uncertainty about initial values.
+
+* Deterministic latent process models are useful as a **benchmark** when fitting POMP models.
+
+## Benchmarking
+
+* Recall that it is statistically meaningful to compare likelihoods between entirely different classes of models for the same data, for example by AIC.
+
+* A benchmark is a simple model that is fitted with the goal of providing a sanity check on a more sophisticated model. We believe that the complex model should fit the data better, but we want to check!
+
+* Some simple benchmarks can be constructed with relatively little effort:
+
+    + independent, identically distributed observations.
+
+    + ARMA models are appropriate for time series which appear stationary, perhaps after differencing.
+
+    + Regression models, including nonlinear regression models such as ordinary differential equation models for compartment models.
+
+
+## The likelihood for a deterministic latent process
+
+Suppose that the latent process is deterministic.
+In our POMP notation, this lets us write the latent process as
+$$X_{n}=x_n(\theta),$$ 
+so that the latent process is a known and non-random function of $\theta$ for each $n$.
+What is the likelihood?
+
+Since the probability of the observation, $Y_n$, depends only on $X_n$ and $\theta$, and since, in particular $Y_{m}$ and $Y_{n}$ are independent given $X_{m}$ and $X_{n}$, we have 
+$$\lik(\theta) = \prod_{n} f_{Y_n|X_n}\big(y_n^*;x_n(\theta),\theta\big)$$ 
+or 
+$$\ell(\theta) = \log\lik(\theta) = \sum_{n} \log f_{Y_n|X_n}\big(y_n^*;x_n(\theta),\theta\big).$$
+The following diagram illustrates this.
+
+```{r det-example,echo=FALSE,results="hide",purl=FALSE}
+pompExample(bbs)
+x <- trajectory(bbs)
+y <- cbind(as.data.frame(bbs),x=x["cases",1,])
+mutate(y,xlab=sprintf("hat(y)[%d]",time),
+       ylab=sprintf("y[%d]^'*'",time)) -> y
+
+ggplot(data=y,
+       mapping=aes(x=time,xend=time))+
+  geom_point(aes(y=reports),color='black',alpha=0.5)+
+  geom_point(aes(y=x),color='red',alpha=0.5)+
+  geom_line(aes(y=reports),color='black',alpha=0.5)+
+  geom_line(aes(y=x),color='red',alpha=0.5)+
+  geom_text(aes(y=reports,label=ylab,vjust=ifelse(time>=10,2,-1)),parse=TRUE,color='black')+
+  geom_text(aes(y=x,label=xlab,vjust=ifelse(time>=10,-1,2)),parse=TRUE,color='red')+
+  geom_segment(aes(y=x,yend=reports),color='blue',linetype=2,alpha=0.3,
+               arrow=grid::arrow(length=grid::unit(0.02,"npc")))+
+  expand_limits(y=c(-30,330))+
+  labs(y="")
+```
+
+In this diagram, $\hat y_n$ refers to the model prediction, 
+$\hat y_n = \expect{Y_n \vert X_n=x_n(\theta)}$, and $y_n^*$ is data.
