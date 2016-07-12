@@ -22,7 +22,7 @@
 #' \newcommand\R{\mathbb{R}}
 #' \newcommand\data[1]{#1^*}
 #' \newcommand\params{\, ; \,}
-#' \newcommand\profileloglik[1]{\ell^\mathrm{profile}_#1}
+#' \newcommand\profileloglik{\ell_\mathrm{profile}}
 #' 
 #' --------------------------
 #' 
@@ -157,13 +157,8 @@ set.seed(1221234211)
 #' 
 #' * If there are many values of $\theta$ giving the same maximum value of the likelihood, then an MLE still exists but is not unique.
 #'  
-#' <br>
 #' 
-#' -------
-#' 
-#' ------
-#' 
-#' ##### Question: Why are $\arg\max_\theta \lik(\theta)$ and $\arg\max_\theta \loglik(\theta)$ the same?
+#' * Note that $\arg\max_\theta \lik(\theta)$ and $\arg\max_\theta \loglik(\theta)$ are the same. Why?
 #' 
 #' <br>
 #' 
@@ -174,7 +169,7 @@ set.seed(1221234211)
 #' 
 #' ### Standard errors for the MLE
 #' 
-#' * As statisticians, it would be irresponsible to present an estimate without a measure of uncertainty!
+#' * Of course, we have a responsibility to attach a measure of uncertainty to our parameter estimates!
 #' 
 #' * Usually, this means obtaining a confidence interval, or in practice an interval close to a true confidence interval which should formally be called an approximate confidence interval. In practice, the word "approximate" is often dropped!
 #' 
@@ -184,7 +179,7 @@ set.seed(1221234211)
 #' 
 #'     + A computationally quick approach when one has access to satisfactory numerical second derivatives of the log likelihood. 
 #' 
-#'     + The approximation is satisfactory only when $\hat\theta(Y_{1:N})$ is well approximated by a normal distribution. 
+#'     + The approximation is satisfactory only when $\hat\theta$ is well approximated by a normal distribution. 
 #' 
 #'     + Neither of the two requirements above are typically met for POMP models. 
 #' 
@@ -212,16 +207,17 @@ set.seed(1221234211)
 #' 
 #' ### Confidence intervals via the profile likelihood
 #' 
-#' * Let's consider the problem of obtaining a confidence interval for $\theta_d$, the $d$th component of $\theta_{1:D}$. 
+#' * Let's consider the problem of obtaining a confidence interval for the first component of $\theta$. We'll write 
+#' $$\theta=(\phi,\psi).$$
 #' 
-#' * The **profile log likelihood function** of $\theta_d$ is defined to be 
-#' $$ \profileloglik{d}(\theta_d) = \max_{\phi\in\R^D: \phi_d=\theta_d}\loglik(\phi).$$
+#' * The **profile log likelihood function** of $\phi$ is defined to be 
+#' $$ \profileloglik(\phi) = \max_{\psi}\loglik(\phi,\psi).$$
 #' In general, the profile likelihood of one parameter is constructed by maximizing the likelihood function over all other parameters.
 #' 
-#' * Check that $\max_{\theta_d}\profileloglik{d}(\theta_d) = \max_{\theta_{1:D}}\loglik(\theta_{1:D})$. Maximizing the profile likelihood $\profileloglik{d}(\theta_d)$ gives the MLE, $\hat{\theta_d}$.
+#' * Note that, $\max_{\phi}\profileloglik(\phi) = \max_{\theta}\loglik(\theta)$ and that maximizing the profile likelihood $\profileloglik(\phi)$ gives the MLE, $\hat{\theta}$. Why?
 #' 
-#' * An approximate 95% confidence interval for $\theta_d$ is given by
-#' $$ \{\theta_d : \loglik(\data{\theta}) - \profileloglik{d}(\theta_d)\} < 1.92.$$
+#' * An approximate 95% confidence interval for $\phi$ is given by
+#' $$ \big\{\phi : \loglik(\hat\theta) - \profileloglik(\phi)\big\} < 1.92.$$
 #' 
 #' * This is known as a profile likelihood confidence interval. The cutoff $1.92$ is derived using [Wilks's theorem](https://en.wikipedia.org/wiki/Likelihood-ratio_test#Distribution:_Wilks.27s_theorem), which we will discuss in more detail when we develop likelihood ratio tests.
 #' 
@@ -236,6 +232,16 @@ set.seed(1221234211)
 #' 
 #' 
 #' ### Likelihood-based model selection and model diagnostics
+#' 
+#' * For nested hypotheses, we can carry out model selection by likelihood ratio tests.
+#' 
+#' * For non-nested hypotheses, likelihoods can be compared using Akaike's information criterion (AIC) or related methods.
+#' 
+#' <br>
+#' 
+#' ----------
+#' 
+#' ---------
 #' 
 #' #### Likelihood ratio tests for nested hypotheses
 #' 
@@ -279,22 +285,30 @@ set.seed(1221234211)
 #' 
 #' -----
 #' 
-#' #### Exercise: Using a likelihood ratio test to construct profile likelihood confidence intervals
+#' #### The connection between Wilks's theorem and profile likelihood
 #' 
-#' * Recall the duality between hypothesis tests and confidence intervals:
-#' <br><br>
-#' The estimated parameter $\data{\theta}$ does not lead us to reject a null hypothesis of $\theta=\theta^{\langle 0\rangle}$ at the 5% level
-#' $$\Updownarrow$$
-#' $\theta^{\langle 0\rangle}$ is in a 95% confidence interval for $\theta$.
+#' * Suppose we have an MLE, written $\hat\theta=(\hat\phi,\hat\psi)$, and a profile log likelihood for $\phi$, given by $\profileloglik(\phi)$. 
+#' 
+#' * Consider the likelihood ratio for the nested hypotheses 
+#' $$\begin{eqnarray}
+#' H^{\langle 0\rangle} &:& \phi = \phi_0,
+#' \\
+#' H^{\langle 1\rangle} &:& \phi \mathrm{ unconstrained}.
+#' \end{eqnarray}$$
 #' 
 #' * We can check what the 95\% cutoff is for a chi-squared distribution with one degree of freedom,
 ## ----chi_squared---------------------------------------------------------
 qchisq(0.95,df=1)
 
 #' 
-#' * We can now see how the Wilks approximation suggests a confidence interval constructed from parameter values having a profile likelihood withing 1.92 log units of the maximum. 
+#' * Wilks's theorem then gives us a hypothesis test with approximate size $5\%$ that rejects $H^{\langle 0\rangle}$ if $\profileloglik(\hat\phi)-\profileloglik(\phi_0)<3.84/2$.
 #' 
-#' * It is a exercise to write out more details (to your own satisfaction) on how to use the Wilks approximation, together with the duality between hypothesis tests and confidence intervals, to derive a profile likelihood confidence interval.
+#' * It follows that, with probability $95\%$, the true value of $\phi$ falls in the set
+#'  $$\big\{\phi: \profileloglik(\hat\phi)-\profileloglik(\phi)<1.92\big\}.$$
+#' So, we have constructed a profile likelihood confidence interval, consisting of the set of points on the profile likelihood within 1.92 log units of the maximum.
+#' 
+#' * This is an example of [a general duality between confidence intervals and hypothesis tests](http://www.stat.nus.edu.sg/~wloh/lecture17.pdf).
+#' 
 #' 
 #' <br>
 #' 
@@ -318,25 +332,10 @@ qchisq(0.95,df=1)
 #' 
 #' * Viewed as a hypothesis test, AIC may have weak statistical properties. It can be a mistake to interpret AIC by making a claim that the favored model has been shown to provides a superior explanation of the data. However, viewed as a way to select a model with reasonable predictive skill from a range of possibilities, it is often useful.
 #' 
-#' <br>
+#' * AIC does not penalize model complexity beyond the consequence of reduced predictive skill due to overfitting. One can penalize complexity by incorporating a more severe penalty that the $2D$ term above, such as via [BIC](https://en.wikipedia.org/wiki/Bayesian_information_criterion). 
 #' 
-#' --------
+#' * A practical approach is to use AIC, while taking care to view it as a procedure to select a reasonable predictive model and not as a formal hypothesis test.
 #' 
-#' --------
-#' 
-#' #### Exercise: Comparing AIC with likelihood ratio tests
-#' 
-#' * Suppose we are in a situation in which we wish to choose between two nested hypotheses, with dimensions $D^{\langle 0\rangle}< D^{\langle 1\rangle}$. Suppose the Wilks approximation is valid.
-#' 
-#' * Consider the strategy of selecting the model with the lowest AIC value. 
-#' 
-#' * We can view this model selection approach as a formal statistical test. 
-#' 
-#' * Find an expression for the size of this AIC test (i.e, the probability of rejecting the null hypothesis,  $H^{\langle 0\rangle}$, when this null hypothesis is true).
-#' 
-#' * Evaluate this expression for $D^{\langle 1\rangle} - D^{\langle 0\rangle}=1$.
-#' 
-#' <br>
 #' 
 #' ---------------------------------
 #' 
@@ -480,16 +479,16 @@ qchisq(0.95,df=1)
 #' * Fortunately, we can compute the likelihood for a POMP model by a much more efficient algorithm than direct Monte Carlo integration. 
 #' 
 #' * We proceed by factorizing the likelihood in a different way:
-#' 
 #' $$\begin{eqnarray}
 #' \lik(\theta)&=&f_{Y_{1:N}}(y^*_{1:N}; \theta)
 #' \\
 #' &=&
-#' \prod_{n}\,f_{Y_N|Y_{1:N-1}}(y^*_n|y^*_{1:n-1};\theta) 
+#' \prod_{n=1}^N\,f_{Y_n|Y_{1:n-1}}(y^*_n|y^*_{1:n-1};\theta) 
 #' \\
 #' &=&
-#' \prod_{n}\,\int f_{Y_n|X_n}(y^*_n|x_n;\theta)\,f_{X_n|Y_{1:n-1}}(x_n|y^*_{1:n-1};\theta)\, dx_{n}.
+#' \prod_{n=1}^N\,\int f_{Y_n|X_n}(y^*_n|x_n;\theta)\,f_{X_n|Y_{1:n-1}}(x_n|y^*_{1:n-1};\theta)\, dx_{n},
 #' \end{eqnarray}$$
+#' with the understanding that $f_{X_1|Y_{1:0}}=f_{X_1}$. 
 #' 
 #' * The Markov property leads to the **prediction formula:**
 #' 
@@ -511,13 +510,21 @@ qchisq(0.95,df=1)
 #' f_{Y_n|X_n}(y^*_{n}|u_{n};\theta)\,f_{X_n|Y_{1:n-1}}(u_{n}|y^*_{1:n-1};\theta)\, du_n}.
 #' \end{eqnarray}$$
 #' 
-#' * This suggests that we keep track of two key distributions.
-#' We'll refer to the distribution of $X_n | Y_{1:n-1}\equals y^*_{1:n-1}$ as the **prediction distribution** at time $t_n$ and
-#' the distribution of $X_{n} | Y_{1:n}\equals y^*_{1:n}$ as the **filtering distribution** at time $t_n$.
+#' * This suggests that we keep track of two key distributions at each time $t_n$,
 #' 
-#' * Let's use Monte Carlo techniques to estimate the integrals in the prediction and filtering recursion equations.
+#'     + The **prediction distribution** is $f_{X_n | Y_{1:n-1}}(x_n| y^*_{1:n-1})$.
 #' 
-#' * Consider the following Monte Carlo scheme:
+#'     + The **filtering distribution** is $f_{X_{n} | Y_{1:n}}(x_n| y^*_{1:n})$.
+#' 
+#' * The prediction and filtering formulas give us a recursion:
+#' 
+#'     + The prediction formula gives the prediction distribution at time $t_n$ using the filtering distribution at time $t_{n-1}$. 
+#' 
+#'     + The filtering formula gives the filtering distribution at time $t_n$ using the prediction distribution at time $t_n$.
+#' 
+#' * The **particle filter** use Monte Carlo techniques to sequentially estimate the integrals in the prediction and filtering recursions. Hence, the alternative name of **sequential Monte Carlo (SMC)**.
+#' 
+#' * A basic particle filter is described as follows:
 #' 
 #' 1. Suppose $X_{n-1,j}^{F}$, $j=1,\dots,J$ is a set of $J$ points drawn from the filtering distribution at time $n-1$.
 #' 
@@ -553,11 +560,10 @@ qchisq(0.95,df=1)
 #' $$
 #' 
 #' 
-#' * The above procedure is known as the **sequential Monte Carlo** (SMC) algorithm or the **particle filter**. 
-#' Key references include @Kitagawa1987, @Arulampalam2002, and the book by @Doucet2001.
+#' * Key references on the particle filter include @Kitagawa1987, @Arulampalam2002, and the book by @Doucet2001.
 #' Pseudocode for the above is provided by @King2016.
 #' 
-#' * It can be shown that SMC provides an unbiased estimate of the likelihood. This implies a consistent but biased estimate of the log likelihood.
+#' * It can be shown that the particle filter provides an unbiased estimate of the likelihood. This implies a consistent but biased estimate of the log likelihood.
 #' 
 #' 
 #' <br>
@@ -566,13 +572,12 @@ qchisq(0.95,df=1)
 #' 
 #' ---------------------------------
 #'  
-#' ## Sequential Monte Carlo in **pomp**
+#' ## Particle filtering in **pomp**
 #' 
-#' Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our influenza-outbreak case study.
+#' Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our influenza-outbreak case study, using the `bsflu` pomp object created earlier.
 #' 
-#' * First, let's reconstruct the toy SIR model we were working with.
 #' 
-## ----flu-construct-------------------------------------------------------
+## ----flu-construct, echo=FALSE-------------------------------------------
 read.table("http://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
 
 rproc <- Csnippet("
@@ -629,20 +634,26 @@ logmeanexp(ll,se=TRUE)
 #' 
 #' ## The graph of the likelihood function: The likelihood surface
 #' 
-#' It is extremely useful to visualize the geometric surface defined by the likelihood function.
+#' * It is extremely useful to visualize the geometric surface defined by the likelihood function.
 #' 
-#' - If $\Theta$ is two-dimensional, then the surface $\loglik(\theta)$ has features like a landscape.
-#' - Local maxima of $\loglik(\theta)$ are peaks.
-#' - Local minima are valleys.
-#' - Peaks may be separated by a valley or may be joined by a ridge. 
+#'     + If $\Theta$ is two-dimensional, then the surface $\loglik(\theta)$ has features like a landscape.
+#' 
+#'     +  Local maxima of $\loglik(\theta)$ are peaks.
+#' 
+#'     + Local minima are valleys.
+#' 
+#'     + Peaks may be separated by a valley or may be joined by a ridge. 
 #' If you go along the ridge, you may be able to go from one peak to the other without losing much elevation. 
 #' Narrow ridges can be easy to fall off, and hard to get back on to.
-#' - In higher dimensions, one can still think of peaks and valleys and ridges. 
+#' 
+#'     + In higher dimensions, one can still think of peaks and valleys and ridges. 
 #' However, as the dimension increases it quickly becomes hard to imagine the surface.
 #' 
-#' To get an idea of what the likelihood surface looks like in the neighborhood of a point in parameter space, we can construct some likelihood *slices*.
+#' * To get an idea of what the likelihood surface looks like in the neighborhood of a point in parameter space, we can construct some likelihood *slices*.
 #' We'll make slices in the $\beta$ and $\mu_I$ directions.
 #' Both slices will pass through the central point.
+#' 
+#' * What is the difference between a likelihood slice and a profile? What is the consequence of this difference for the statistical interpretation of these plots? How should you decide whether to compute a profile or a slice?
 #' 
 ## ----flu-like-slice,cache=TRUE,results='hide'----------------------------
 sliceDesign(
@@ -667,8 +678,9 @@ foreach (theta=iter(p,"row"),.combine=rbind,
 } -> p
 
 #' 
-#' Note that we've used the **foreach** package with the parallel backend (**doParallel**) to parallelize these computations.
-#' To ensure that we have high-quality random numbers in each parallel *R* session, we use a parallel random number generator (`kind="L'Ecuyer"`, `.options.multicore=list(set.seed=TRUE)`).
+#' - Note that we've used the **foreach** package with the parallel backend (**doParallel**) to parallelize these computations.
+#' 
+#' - To ensure that we have high-quality random numbers in each parallel *R* session, we use a parallel random number generator (`kind="L'Ecuyer"`, `.options.multicore=list(set.seed=TRUE)`).
 #' 
 ## ----flu-like-slice-plot,cache=FALSE,echo=FALSE--------------------------
 library(magrittr)
@@ -684,18 +696,6 @@ p %>%
   labs(x="parameter value",color="")+
   theme_bw()
 
-#' 
-#' 
-#' <br>
-#' 
-#' ---------------------------------
-#' 
-#' ---------------------------------
-#' 
-#' 
-#' #### Exercise: Likelihood slice
-#' 
-#' Add likelihood slices along the $\rho$ direction.
 #' 
 #' 
 #' 
@@ -742,19 +742,27 @@ p %>%
 #' 
 #' In the above, all points with log likelihoods less than 50 units below the maximum are shown in grey.
 #' 
+#' 
+#' 
 #' <br>
 #' 
-#' ------------------------
+#' ---------------------------------
 #' 
-#' ------------------------
+#' ---------------------------------
 #' 
-#' #### Exercise: 2D likelihood slice
+#' 
+#' #### Exercise: one-dimensional likelihood slice
+#' 
+#' Compute likelihood slices along the $\rho$ direction.
+#' 
+#' 
+#' -----------
+#' 
+#' 
+#' #### Exercise: two-dimensional likelihood slice
 #' 
 #' Compute a slice of the likelihood in the $\beta$-$\rho$ plane.
 #' 
-#' <br>
-#' 
-#' ------------------------
 #' 
 #' ------------------------
 #' 
@@ -764,9 +772,6 @@ p %>%
 #' 
 #' Construct likelihood slices through the MLE we just found.
 #' 
-#' <br>
-#' 
-#' --------------------------
 #' 
 #' ------------------------
 #' 
@@ -776,9 +781,6 @@ p %>%
 #' Each group should choose a different slice.
 #' Afterward, we'll compare results across groups.
 #' 
-#' <br>
-#' 
-#' --------------------------
 #' 
 #' ------------------------
 #' 
@@ -787,9 +789,6 @@ p %>%
 #' The Poisson measurement model used here may not seem easy to interpret.
 #' Formulate an alternative measurement model and construct likelihood slices to compare the alternative model.
 #' 
-#' <br>
-#' 
-#' --------------------------
 #' 
 #' ------------------------
 #' 
