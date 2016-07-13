@@ -609,9 +609,20 @@ Moreover, the estimates have comparable likelihoods, despite their considerable 
 This gives us some confidence in our maximization procedure. 
 
 
+### Exercises
+
 --------------------------
 
 #### Basic Exercise: Fitting the SEIR$^3$ model
+
+Following the template above, estimate the parameters and likelihood of the SEIR$^3$ model you implemented in the earlier lessons.
+Specifically, first conduct a local search and then a global search using the multi-stage, multi-start method displayed above.
+
+How does the maximized likelihood compare with what we obtained for the SIR$^3$ model?
+How do the parameter estimates differ?
+
+You will need to tailor the intensity of your search to the computational resources at your disposal.
+In particular, choose the number of starts, number of particles employed, and the number of IF2 iterations to perform in view of the size and speed of your machine.
 
 
 --------------------------
@@ -686,9 +697,11 @@ v_{1,n}^2 & 0 & 0 & \cdots & 0 \\
   the precision of interest is often the second significant figure and there are often order 100 observations (10 monthly obsevations would be too few to fit a mechanistic model;
   1000 would be unusual for an epidemiological system). 
 
+### More exercises
+
 --------------------------
 
-#### Exercise: Assessing and improving algorithmic parameters
+#### Optional Exercise: Assessing and improving algorithmic parameters
 
 Develop your own heuristics to try to improve the performance of `mif2` in the previous example.
 Specifically, for a global optimization procedure carried out using random starting values in the specified box, let
@@ -703,17 +716,11 @@ Computationally, you may not be readily able to run your full procedure, but you
 
 --------------------------
 
-#### Exercise: Finding sharp peaks in the likelihood surface
+#### Optional Exercise: Finding sharp peaks in the likelihood surface
 
 Even in this small, 3 parameter example, it takes a considerable amount of computation to find the global maximum (with values of $\beta$ around 0.004) starting from uniform draws in the specified box.
 The problem is that, on the scale on which "uniform" is defined, the peak around $\beta\approx 0.004$ is very narrow.
 Propose and test a more favorable way to draw starting parameters for the global search, with better scale invariance properties.
-
---------------------------
-
-#### Exercise: Adding a latent class
-
-Modify the model to include a latent period between becoming exposed and becoming infectious. See what effect this has on the maximized likelihood.
 
 --------------------------
 
