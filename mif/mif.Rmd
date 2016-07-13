@@ -600,40 +600,41 @@ In particular, here we plot both the starting values (grey) and the IF2 estimate
 
 ```{r pairs_global,purl=FALSE}
 library(plyr)
-all <- ldply(list(guess=guesses,result=subset(results,loglik>max(loglik)-50)))
-pairs(~loglik+Beta+mu_I+rho,data=all,col=ifelse(all$.id=="guess",grey(0.5),"red"),pch=16)
+all <- ldply( list(guess=guesses, result=subset(results, loglik > max(loglik)-50) ), .id="type")
+pairs(~loglik+Beta+mu_I+rho, data=all, col=ifelse(all$type=="guess", grey(0.5), "red"), pch=16)
 ```
 
-We see that optimization attempts from diverse remote starting points end up with comparable likelihoods, even when the parameter values are quite distinct.
+We see that optimization attempts from diverse remote starting points converge on a particular region in parameter space.
+Moreover, the estimates have comparable likelihoods, despite their considerable variability.
 This gives us some confidence in our maximization procedure. 
 
 
 --------------------------
 
-#### Exercise: Fit more parameters.
+#### Basic Exercise: Fitting the SEIR$^3$ model
 
-Try to estimate $\beta$, $\mu_I$, $\rho$, and $\mu_{R_1}$ simultaneously.
-Does your estimate of $\mu_{R_1}$ differ from the value we computed from the raw data?
-How do you interpret the agreement or lack thereof?
 
 --------------------------
 
-#### Exercise: Modify the measurement model
+#### Extra Exercise: Modify the measurement model
 
 The Poisson measurement model used here may not seem easy to interpret.
 Formulate an alternative measurement model and maximize the likelihood to compare the alternative model.
 
 --------------------------
 
-#### Exercise: Construct a profile likelihood
+#### Extra Exercise: Construct a profile likelihood
 
-How strong is the evidence about the contact rate, $\beta$, given this model and data? Use `mif2` to construct a profile likelihood. Due to time constraints, you may be able to compute only a preliminary version.
+How strong is the evidence about the contact rate, $\beta$, given this model and data?
+Use `mif2` to construct a profile likelihood.
+Due to time constraints, you may be able to compute only a preliminary version.
 
-It is also possible to profile over the basic reproduction number, $R_0=\beta /\mu_I$. Is this more or less well determined that $\beta$ for this model and data?
+It is also possible to profile over the basic reproduction number, $R_0=\beta /\mu_I$.
+Is this more or less well determined that $\beta$ for this model and data?
 
 --------------------------
 
-#### Exercise: Check the model source code.
+#### Extra Exercise: Checking the source code
 
 Check the source code for the `bsflu` `pomp` object.
 Does the code implement the model described?
@@ -641,26 +642,27 @@ Does the code implement the model described?
 For various reasons, it can be surprisingly hard to make sure that the written equations and the code are perfectly matched.
 Here are some things to think about:
 
-1. Papers should be written to be readable to as broad a community as possible.
-Code must be written to run successfully.
-People do not want to clutter papers with numerical details which they hope and belief are scientifically irrelevant.
-What problems can arise due to this, and what solutions are available?
-1. Suppose that there is an error in the coding of `rprocess`.
-Suppose that plug-and-play statistical methodology is used to infer parameters.
-A conscientious researcher carries out a simulation study, using `simulate` to generate some realizations from the fitted model and checking that the inference methodology can successfully recover the known parameters for this model, up to some statistical error.
-Will this procedure help to identify the error in `rprocess`?
-If not, how does one debug `rprocess`?
-What research practices help minimize the risk of errors in simulation code?
+1. Papers should be written to be readable.
+   Code must be written to run successfully.
+   People rarely choose to clutter papers with numerical details which they hope and believe are scientifically irrelevant.
+   What problems can arise due to the conflict between readability and reproducibility?
+   What solutions are available?
+1. Suppose that there is an error in the coding of `rprocess` and suppose that plug-and-play statistical methodology is used to infer parameters.
+   As a conscientious researcher, you carry out a simulation study to check the soundness of your inference methodology on this model.
+   To do this, you use `simulate` to generate realizations from the fitted model and checking that your parameter inference procedure recovers the known parameters, up to some statistical error.
+   Will this procedure help to identify the error in `rprocess`?
+   If not, how might you debug `rprocess`?
+   What research practices help minimize the risk of errors in simulation code?
 
 --------------------------
 
 ## Choosing the algorithmic settings for IF2
 
-* The initial parameter swarm, $\{ \Theta^0_j, j=1,\dots,J\}$, usually consists of $J$ identical replications of some starting parameter vector.
-* $J$ is set to be sufficient for particle filtering. By the time of the last iteration ($m=M$) one should not have effective sample size close to 1. 
-* Perturbations are usually chosen to be Gaussian, with $\sigma_m$ being a scale factor for iteration $m$:
++ The initial parameter swarm, $\{ \Theta^0_j, j=1,\dots,J\}$, usually consists of $J$ identical replications of some starting parameter vector.
++ $J$ is set to be sufficient for particle filtering. By the time of the last iteration ($m=M$) one should not have effective sample size close to 1. 
++ Perturbations are usually chosen to be Gaussian, with $\sigma_m$ being a scale factor for iteration $m$:
 $$h_n(\theta|\varphi;\sigma) \sim N[\varphi, \sigma^2_m V_n].$$
-* $V_n$ is usually taken to be diagonal,
++ $V_n$ is usually taken to be diagonal,
 $$ V_n = \left( \begin{array}{ccccc}
 v_{1,n}^2 & 0 & 0 & \cdots & 0 \\
 0 & v_{2,n}^2 &  0 & \cdots & 0 \\
@@ -669,19 +671,20 @@ v_{1,n}^2 & 0 & 0 & \cdots & 0 \\
 0 & 0 & 0 & \cdots & v_{p,n}^2 \end{array}\right).$$
 + If $\theta_i$ is a parameter that affects the dynamics or observations throughout the timeseries, it is called a __regular parameter__, and it is often appropriate to specify $$v_{i,n} = v_i.$$
 + If $\theta_j$ is a parameter that affects only the initial conditions of the dynamic model, it is called an __initial value parameter__ (IVP) and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=0$} \\0 & \mbox{if $n>0$} \end{array}\right.$$
-+ If $\theta_k$ is a break-point parameter that models how the system changes at time $t_q$ then $\theta_k$ is like an IVP at time $t_q$ and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=q$} \\	0 & \mbox{if $n\neq q$} \end{array}\right.$$
-* $\sigma_{1:M}$ is called a __cooling schedule__, following a thermodynamic analogy popularized by [simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing).
-As $\sigma_m$ becomes small, the system cools toward a "freezing point".
-If the algorithm is working sucessfully, the freezing point should be close to the lowest-energy state of the system, i.e., the MLE.
-* It is generally helpful for optimization to provide transformations of the parameters so that (on the estimation scale) they are real-valued and have uncertainty on the order of 1 unit.
-For example, one typically takes a logarithmic transformation of positive parameters and a logistic transformation of $[0,1]$ valued parameters.
-+ On this scale, it is surprisingly often effective to take $$v_i \sim 0.02$$ for regular parameters (RPs) and $$v_j \sim 0.1$$ for initial value parameters (IVPs).
-* We suppose that $\sigma_1=1$, since the scale of the parameters is addressed by the matrix $V_n$.
-Early on in an investigation, one might take $M=100$ and $\sigma_M=0.1$.
-Later on, consideration of diagnostic plots may suggest refinements. 
-* It is surprising that useful general advice exists for these quantities that could in principle be highly model-specific.
-Here is one possible explanation: the precision of interest is often the second significant figure and there are often order 100 observations (10 monthly obsevations would be too few to fit a mechanistic model;
-1000 would be unusual for an epidemiological system). 
++ If $\theta_k$ is a break-point parameter that models how the system changes at time $t_q$, then $\theta_k$ is like an IVP at time $t_q$ and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=q$} \\	0 & \mbox{if $n\neq q$} \end{array}\right.$$
++ $\sigma_{1:M}$ is called a __cooling schedule__, following a thermodynamic analogy popularized by [simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing).
+  As $\sigma_m$ becomes small, the system cools toward a "freezing point".
+  If the algorithm is working sucessfully, the freezing point should be close to the lowest-energy state of the system, i.e., the MLE.
++ It is generally helpful to transform the parameters so that (on the estimation scale) they are real-valued, unconstrained, and have uncertainty on the order of 1 unit.
+  For example, one typically takes a logarithmic transformation of positive parameters and a logistic transformation of $[0,1]$ valued parameters.
++ On such a scale, it is surprisingly often effective to take $$v_i \sim 0.02$$ for regular parameters (RPs) and $$v_j \sim 0.1$$ for initial value parameters (IVPs).
++ We suppose that $\sigma_1=1$, since the scale of the parameters is addressed by the matrix $V_n$.
+  Early on in an investigation, one might take $M=100$ and $\sigma_M=0.1$.
+  As the investigation proceeds, consideration of diagnostic plots may suggest refinements. 
++ It is remarkable that useful general advice exists for the choice of algorithmic parameters that should in principle be model- and data-specific.
+  Here is one possible explanation:
+  the precision of interest is often the second significant figure and there are often order 100 observations (10 monthly obsevations would be too few to fit a mechanistic model;
+  1000 would be unusual for an epidemiological system). 
 
 --------------------------
 
