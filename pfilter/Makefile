@@ -1,4 +1,4 @@
-default: pfilter.html pfilter.R bootstrap.html bootstrap.R deterministic.html deterministic.R directSimulation.html directSimulation.R fisherSE.html fisherSE.R flu-grid1.rds monteCarlo.html monteCarlo.R pf-in-Nelder-Mead.html pf-in-Nelder-Mead.R
+default: pfilter.html pfilter.R bootstrap.html deterministic.html directSimulation.html directSimulation.R fisherSE.html flu-grid1.rds monteCarlo.html pf-in-Nelder-Mead.html pf-in-Nelder-Mead.R
 ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)
