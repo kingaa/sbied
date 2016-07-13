@@ -1,0 +1,234 @@
+#' ---
+#' title: "Monte Carlo Methods"
+#' author: "Aaron A. King"
+#' output:
+#'   html_document:
+#'     toc: yes
+#'     toc_depth: 4
+#' bibliography: ../sbied.bib
+#' csl: ../ecology.csl
+#' ---
+#' 
+#' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+#' \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+#' \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+#' \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+#' \newcommand\dd[1]{d{#1}}
+#' \newcommand\dlta[1]{{\Delta}{#1}}
+#' \newcommand\lik{\mathcal{L}}
+#' \newcommand\loglik{\ell}
+#' 
+#' -----------------------------------
+#' 
+#' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+#' Please share and remix noncommercially, mentioning its origin.  
+#' ![CC-BY_NC](../graphics/cc-by-nc.png)
+#' 
+#' Produced in R version `r getRversion()`.
+#' 
+#' -----------------------------------
+#' 
+## ----prelims,include=FALSE,cache=FALSE-----------------------------------
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  encoding="UTF-8"
+  )
+
+set.seed(594709947L)
+library(ggplot2)
+theme_set(theme_bw())
+library(plyr)
+library(reshape2)
+library(magrittr)
+library(pomp)
+stopifnot(packageVersion("pomp")>="1.6")
+
+#' 
+#' ## Monte Carlo methods
+#' 
+#' Let's return to considering a general state-space model.
+#' As before, let $y^*_1, \dots, y^*_N$ be the data, $x_1, \dots, x_N$ be the states.
+#' Then the likelihood function is
+#' $$\lik(\theta)=\prob{y^*_{1:N}|\theta}=\sum_{x_1}\cdots\sum_{x_N}\!\prod_{n=1}^{N}\!\prob{y^*_n|x_n,\theta}\,\prob{x_n|x_{n-1},\theta}.$$
+#' Thus, computation of the likelihood requires summing over all possible values of the unobserved process at each time point.
+#' This is very hard to do, in general.
+#' A general class of algorithms for evaluating this and other difficult integrals are the so-called *Monte Carlo* methods.
+#' @Robert2004 is an excellent technical reference on Monte Carlo techniques.
+#' 
+#' ## Simulation
+#' 
+#' Simulation refers to the generation of random variables.
+#' The general problem of simulation is: given a probability distribution $f$, find a procedure that generates random draws from $f$.
+#' This is a very important problem in scientific computing and much thought and effort has gone into producing reliable simulators for many basic random variables.
+#' There are two basic ways of solving this problem: 
+#' 
+#' 1. the transformation method and
+#' 2. the rejection method
+#' 
+#' 
+#' ### The transformation method
+#' 
+#' This method works for discrete or continuous scalar random variables.
+#' Let $f$ be the probability distribution function we seek to draw from (the *target distribution*) and $F$ be the cumulative distribution function, i.e., $F(x) = \int^x\!f(x)\,\dd{x}$.
+#' Let $F^{-1}(u) = \inf\{x: F(x)\,\ge\,u\}$ be the inverse of $F$.
+#' A basic fact is that, if $X\!\sim\!f$, then $F(X)\!\sim\!\dist{Uniform}{0,1}$.
+#' 
+#' [Proof: $\prob{F(X)<u} = \prob{X\,<\,F^{-1}(u)} = F(F^{-1}(u)) = u$.]
+#' 
+#' This suggests that, if we can compute $F^{-1}$, we use the following algorithm to generate $X\!\sim\!f$:
+#' 
+#' 1. draw $U\!\sim\!\dist{Uniform}{0,1}$.
+#' 2. let $X = F^{-1}(U)$.
+#' 
+#' 
+#' ### The rejection method
+#' 
+#' The transformation method is very efficient in that we are guaranteed to obtain a valid $X\!\sim\!f$ for every $U\!\sim\!\dist{Uniform}{0,1}$ we generate.
+#' Sometimes, however, we cannot compute the inverse of the c.d.f., as required by the transformation method.
+#' Under such circumstances, the rejection method offers a less efficient, but more flexible, alternative.
+#' We'll see how and why this method works.
+#' 
+#' Let's suppose that we wish to simulate $X\!\sim\!\dist{Uniform}{D}$, where ${D}\subset{U}$.
+#' If we know how to generate $Y\!\sim\!\mathrm{uniform}(U)$, then we can simply do so until ${Y}\in{D}$, at which point we take $X=Y$.
+#' Since for any $A\subset{D}$, 
+#' $$\prob{X\in A} = \prob{Y\in A|Y\in D} = \frac{\mathrm{area}(A)}{\mathrm{area}(U)}/\frac{\mathrm{area}(D)}{\mathrm{area}(U)} = \frac{\mathrm{area}(A)}{\mathrm{area}(D)},$$
+#' it follows that $Y\!\sim\!\mathrm{uniform}(D)$.
+#' This is akin to throwing darts.
+#' If the darts are thrown in such a way as to be equally likely to land anywhere in $U$, then those that do land in $D$ are equally likely to land anywhere in $D$.
+#' 
+#' -----------------------------------
+#' 
+#' Region $D$ lies within region $U$.
+#' A random variable $X$ is said to be uniformly distributed over a region $D$ ($X\!\sim\!\mathrm{uniform}(D)$) if, for any ${A}\subset{D}$, $\prob{X\in{A}}=\mathrm{area}(A)/\mathrm{area}(D)$.
+#' 
+## ----region-diagram,echo=F-----------------------------------------------
+op <- par(mar=c(0,1,0,1),mgp=c(2,1,0),font=4,family="sans")
+plot(c(0,1),c(0,1),type='n',ann=F,bty='o',tcl=0)
+t <- seq(0,1,by=0.001)
+xyc <- rbind(a=c(0.89,0.64),aa=c(0.63,0.81),b=c(0.67,0.96),c=c(0.21,0.89),d=c(0.35,0.35),
+             e=c(0.03,0.4),f=c(0.28,0.04),g=c(0.75,0.03),h=c(0.6,0.6))
+basis <- periodic.bspline.basis(t,degree=2,nbasis=nrow(xyc),period=1)
+xy <- basis%*%xyc
+lines(xy[,1],xy[,2],lwd=1.5)
+xyc <- rbind(a=c(0.37,0.33),b=c(0.51,0.33),c=c(0.51,0.23),d=c(0.37,0.23))
+basis <- periodic.bspline.basis(t,degree=1,nbasis=nrow(xyc),period=1)
+xy <- basis%*%xyc
+lines(xy[,1],xy[,2],lwd=1.5)
+text(x=c(0.05,0.5,0.9),y=c(0.95,0.75,0.1),labels=c("U","D","A"),cex=1.5)
+arrows(0.88,0.1,0.44,0.28,lwd=1.5,length=0.1)
+par(op)
+
+#' 
+#' -----------------------------------
+#' 
+#' There is another seemingly trivial fact that underlies the rejection method and that @Robert2004 refer to as the *fundamental theorem of simulation*.
+#' Let $h$ be an arbitary positive, integrable function, let $D=\{(x,u): 0{\le}u{\le}h(x)\}$ be the planar region lying under the graph of $h$.
+#' Consider the random point $(X,U)\!\sim\!\mathrm{uniform}(D)$.
+#' What is the marginal distribution of $X$?
+#' $$\int_0^{h(x)}\!\dd{u} = h(x)$$
+#' 
+#' So $h$ is the probability density function for $X$!
+#' 
+#' This suggests the following *rejection method* for simulating an arbitrary random variable.
+#' Let $f$ be the target distribution and $g$ be another distribution function (from which it is easy to simulate) (see the diagram below).
+#' Let $M$ be such that $f(x) \le M\,g(x)$ for all $x$.
+#' The following procedure simulates $X\!\sim\!f$.
+#' 
+#' 1. draw $Y\!\sim\!g$ and $U\!\sim\!\dist{Uniform}{0,M\,g(Y)}$.
+#' 2. if $U\le f(Y)$, then let $X=Y$ else repeat step 1.
+#' 
+#' -----------------------------------
+#' 
+#' Diagram of the rejection method.
+#' $M$ is chosen so that $M\,g>f$ everywhere.
+#' We propose points by drawing them uniformly from the area under the graph of $M\,g$ and accept them if they lie under the graph of $f$.
+#' The $X$-coordinate of the points are then distributed according to $f$.
+#' 
+## ----rejection-method-diagram,echo=F-------------------------------------
+op <- par(mar=c(0,1,0,1),mgp=c(2,1,0),font=4,family="sans")
+x <- seq(-5,10,by=0.01)
+f <- 0.2*dnorm(x,mean=-2,sd=0.5)+0.5*dnorm(x,mean=1,sd=1)+0.3*dnorm(x,mean=6,sd=2)
+g <- dnorm(x,mean=1,sd=5)
+Mg <- 1.1*max(f)/max(g)*g
+xx <- c(6.1,2.6,-4)
+yy <- c(0.16,0.12,0.06)
+plot(x,Mg,type='l',col='red',xlab='x',ylab="pdf",ylim=c(0,1.05*max(Mg)),bty='l',axes=F,
+     frame.plot=TRUE)
+lines(x,g,col='blue')
+lines(x,f,col='black')
+text(xx,yy,labels=c("M g","f","g"),col=c("red","black","blue"),font=3,cex=1.5)
+par(op)
+
+#' 
+#' -----------------------------------
+#' 
+#' ## Monte Carlo integration
+#' 
+#' Monte Carlo integration is a technique developed for evaluating integrals.
+#' First let's look at the example of finding the area of a region, $D\subset\mathbb{R}^n$, with complicated boundaries.
+#' Solution: find some region $U{\supset}D$ and throw darts at $U$.
+#' Count up the darts that land in $D$ and reckon the area of $D$ relative to $U$ as the fraction of darts that land in $D$.
+#' Let $X_k$, $k=1,2,\dots,N$ be $N$ random darts thrown at $U$.
+#' $$\frac{\mathrm{area}(D)}{\mathrm{area}(U)} 
+#' = \frac{\int_{D}\!\dd{x}}{\int_{U}\!\dd{x}} 
+#' = \frac{\int_{U}\!I_D(x)\,\dd{x}}{\int_{U}\!\dd{x}} 
+#' \approx \frac{\sum_{k=1}^{N}\!I_{D}(X_k)}{\sum_{k=1}^{N}\!1} 
+#' = \frac{1}{N}\,\sum_{k=1}^{N}\!I_{D}(X_k)$$
+#' 
+#' In the above, the *indicator function* $I_D$ is defined by
+#' $$I_D(x) = \begin{cases} 1 &x\in{D}\\ 0 &x\notin{D}\end{cases}$$
+#' 
+#' We've just shown that we can evaluate the integral of $I_D$ over $U$.
+#' More generally, we can use this technique to approximate the integral of any integrable function, $h$, on $U$.
+#' $$\frac{\int_{U}\!h(x)\,\dd{x}}{\int_{U}\!\dd{x}} \approx \frac{1}{N}\,\sum_{k=1}^{N}\!h(X_k)$$
+#' 
+#' Here, we're relying on the assumption that the darts fall uniformly on $U$.
+#' More generally still, we can compute an expectation with respect to an arbitrary distribution using Monte Carlo.
+#' This leads to what is known as the *fundamental theorem of Monte Carlo integration*:
+#' Let $f(x)$ be the probability distribution function for $x$ and let $X_k$, $k=1,\dots,N$ be independent random variables, all distributed according to $f$.
+#' We speak of $X_k$ as random samples from $f$.
+#' Let $\overline{h_N}$ be the empirical average of $h$:
+#' $$\overline{h_N} = \frac{1}{N}\,\sum_{k=1}^{N}\!h(X_k).$$
+#' Then $\overline{h_N}$ converges to $\mathbb{E}[h(X)]$ as $N\to\infty$ with probability 1.
+#' Thus
+#' $$\overline{h_N} = \frac{1}{N}\,\sum_{k=1}^{N}\!h(X_k) \approx \expect{h(X)} = \int\!h(x)\,f(x)\,\dd{x},$$
+#' for $N$ sufficiently large.
+#' 
+#' Moreover, we can estimate the error in this approximation, because the empirical variance
+#' $$v_N = \frac{1}{N-1}\,\sum_{k=1}^{N}\!\left(h(X_k)-\overline{h_N}\right)^2$$
+#' approximates the true variance, $\mathrm{Var}[h(X)]=\mathbb{E}[(h(X)-\mathbb{E}[h(X)])^2]$.
+#' This implies that the standard error on the approximation $\overline{h_N}=\mathbb{E}[h(X)]$ is 
+#' $$\sqrt{\frac{v_N}{N}}$$
+#' and that the error is approximately normally distributed:
+#' $$\overline{h_N}-\mathbb{E}[h(X)]\;\sim\;\mathrm{normal}\left(0,\sqrt{\frac{v_N}{N}}\right).$$
+#' 
+#' ## Importance sampling
+#' 
+#' Sometimes it is difficult to sample directly from the distribution of $X$.
+#' In this case, we can often make use of *importance sampling*, in which we generate random samples from another distribution (easier to simulate) and make the appropriate correction.
+#' 
+#' Specifically, suppose we wish to compute $\expect{h(X)}$, where $X\sim{f}$, but that it's difficult or impossible to draw random samples from $f$.
+#' Suppose $g$ is a probability distribution from which it's relatively easy to draw samples and let $Y_k\sim{g}$ for $k=1\,\dots,N$ be i.i.d. random variables drawn from $g$.
+#' Notice that
+#' $$\expect{h(X)} = \int\!h(x)\,f(x)\,\dd{x} = \int\!h(x)\,\frac{f(x)}{g(x)}\,g(x)\,\dd{x}.$$
+#' We can apply the Monte Carlo integration theorem to this integral to conclude that
+#' $$\expect{h(X)} \approx \frac{1}{N}\,\sum_{k=1}^{N}\!h(Y_k)\,\frac{f(Y_k)}{g(Y_k)}.$$
+#' 
+#' Since $\expect{f(Y)/g(Y)}=1$, we can replace the importance sampling rule above with another, which is slightly less accurate but more precise.
+#' Let $w_k=f(Y_k)/g(Y_k)$ be the *importance weights*.
+#' Then we have
+#' $$\expect{h(X)} \approx \overline{h} = \frac{\sum\!w_k\,h(Y_k)}{\sum\!w_k}.$$
+#' The Monte Carlo variance associated with this estimate is
+#' $$\frac{\sum\!w_k\,(h(Y_k)-\overline{h})^2}{\sum\!w_k}.$$
+#' 
+#' Obtaining accurate estimates requires some thought to the importance distribution $g$.
+#' Specifically, if the tails of $g$ are lighter than those of $f$, the Monte Carlo variance will be inflated and the estimates can be unusable.
+#' 
+#' --------------------------
+#' 
+#' ## [Back to course homepage](http://kingaa.github.io/sbied)
+#' 
+#' --------------------------
+#' 
+#' ## References

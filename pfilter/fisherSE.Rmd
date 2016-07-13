@@ -30,7 +30,7 @@ Produced in R version `r getRversion()`.
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 library(knitr)
-prefix <- "monteCarlo"
+prefix <- "fisherSE"
 opts_chunk$set(
   progress=TRUE,
   prompt=FALSE,tidy=FALSE,highlight=TRUE,
@@ -68,7 +68,7 @@ library(plyr)
 library(reshape2)
 library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.4.5")
+stopifnot(packageVersion("pomp")>="1.6")
 ```
 
 \newcommand\prob{\mathbb{P}}

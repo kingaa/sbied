@@ -1,0 +1,234 @@
+#' ---
+#' title: "Direct maximization of the particle filter likelihood"
+#' author: "Aaron A. King and Edward L. Ionides"
+#' output:
+#'   html_document:
+#'     toc: yes
+#'     toc_depth: 4
+#' bibliography: ../sbied.bib
+#' csl: ../ecology.csl
+#' ---
+#' 
+#' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+#' \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+#' \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+#' \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+#' \newcommand\dd[1]{d{#1}}
+#' \newcommand\dlta[1]{{\Delta}{#1}}
+#' \newcommand\lik{\mathcal{L}}
+#' \newcommand\loglik{\ell}
+#' 
+#' -----------------------------------
+#' 
+#' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+#' Please share and remix noncommercially, mentioning its origin.  
+#' ![CC-BY_NC](../graphics/cc-by-nc.png)
+#' 
+#' Produced in R version `r getRversion()`.
+#' 
+#' -----------------------------------
+#' 
+## ----prelims,include=FALSE,cache=FALSE-----------------------------------
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  encoding="UTF-8"
+  )
+
+set.seed(594709947L)
+library(ggplot2)
+theme_set(theme_bw())
+library(plyr)
+library(reshape2)
+library(magrittr)
+library(pomp)
+stopifnot(packageVersion("pomp")>="1.6")
+
+#' 
+#' \newcommand\prob{\mathbb{P}}
+#' \newcommand\E{\mathbb{E}}
+#' \newcommand\var{\mathrm{Var}}
+#' \newcommand\cov{\mathrm{Cov}}
+#' \newcommand\loglik{\ell}
+#' \newcommand\R{\mathbb{R}}
+#' \newcommand\data[1]{#1^*}
+#' \newcommand\params{\, ; \,}
+#' \newcommand\transpose{\scriptsize{T}}
+#' \newcommand\eqspace{\quad\quad\quad}
+#' \newcommand\lik{\mathscr{L}}
+#' \newcommand\loglik{\ell}
+#' \newcommand\profileloglik[1]{\ell^\mathrm{profile}_#1}
+#' 
+#' In the toy example we've been working with, the default parameter set is not particularly close to the MLE.
+#' One way to find the MLE is to try optimizing the estimated likelihood directly.
+#' There are of course many standard optimization algorithms we might use for this.
+#' However, three issues arise immediately:
+#' 
+#' 1. The particle filter gives us a stochastic estimate of the likelihood.
+#' We can reduce this variability by making $J$ larger, but we cannot make it go away.
+#' If we use a deterministic optimizer (i.e., one that assumes the objective function is evaluated deterministically), then we must control this variability somehow.
+#' For example, we can fix the seed of the pseudo-random number generator (RNG).
+#' A side effect will be that the objective function becomes jagged, marked by many small local knolls and pits.
+#' Alternatively, we can use a stochastic optimization algorithm, with which we will be only be able to obtain estimates of our MLE.
+#' This is the trade-off between a rough and a noisy objective function.
+#' 1. Because the particle filter gives us just an estimate of the likelihood and no information about the derivative, we must choose an algorithm that is "derivative-free".
+#' There are many such, but we can expect less efficiency than would be possible with derivative information.
+#' Note that finite differencing is not an especially promising way of constructing derivatives. 
+#' The price would be a $n$-fold increase in cpu time, where $n$ is the dimension of the parameter space.
+#' Also, since the likelihood is noisily estimated, we would expect the derivative estimates to be even noisier.
+#' 1. Finally, the parameters set we must optimize over is not unbounded.
+#' We must have $\beta,\mu_I>0$ and $0<\rho<1$.
+#' We must therefore select an optimizer that can solve this *constrained maximization problem*, or find some of way of turning it into an unconstrained maximization problem.
+#' For example, we can transform the parameters onto a scale on which there are no constraints.
+#' 
+#' Let's try this out on the toy SIR model we were working with, reconstructed as follows.
+#' 
+## ----flu-construct-------------------------------------------------------
+read.table("http://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
+
+rproc <- Csnippet("
+  double N = 763;
+  double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
+  double t2 = rbinom(I,1-exp(-mu_I*dt));
+  double t3 = rbinom(R1,1-exp(-mu_R1*dt));
+  double t4 = rbinom(R2,1-exp(-mu_R2*dt));
+  S  -= t1;
+  I  += t1 - t2;
+  R1 += t2 - t3;
+  R2 += t3 - t4;
+")
+
+init <- Csnippet("
+  S = 762;
+  I = 1;
+  R1 = 0;
+  R2 = 0;
+")
+
+dmeas <- Csnippet("
+  lik = dpois(B,rho*R1+1e-6,give_log);
+")
+
+rmeas <- Csnippet("
+  B = rpois(rho*R1+1e-6);
+")
+
+pomp(subset(bsflu,select=-C),
+     times="day",t0=0,
+     rprocess=euler.sim(rproc,delta.t=1/5),
+     initializer=init,rmeasure=rmeas,dmeasure=dmeas,
+     statenames=c("S","I","R1","R2"),
+     paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
+
+#' 
+#' Here, let's opt for deterministic optimization of a rough function.
+#' We'll try using `optim`'s default method: Nelder-Mead, fixing the random-number generator seed to make the likelihood calculation deterministic.
+#' Since Nelder-Mead is an unconstrained optimizer, we must transform the parameters.
+#' The following `Csnippet`s encode an appropriate transformation and its inverse, and introduce them into the `pomp` object.
+## ----flu-partrans--------------------------------------------------------
+toEst <- Csnippet("
+ TBeta = log(Beta);
+ Tmu_R1 = log(mu_R1);
+ Tmu_I = log(mu_I);
+ Trho = logit(rho);
+")
+
+fromEst <- Csnippet("
+ TBeta = exp(Beta);
+ Tmu_I = exp(mu_I);
+ Tmu_R1 = exp(mu_R1);
+ Trho = expit(rho);
+")
+
+pomp(flu,toEstimationScale=toEst,
+     fromEstimationScale=fromEst,
+     paramnames=c("Beta","mu_I","mu_R1","rho")) -> flu
+
+#' 
+#' Let's fix a reference point in parameter space and insert these parameters into the `pomp` object:
+## ----flu-ref-params------------------------------------------------------
+coef(flu) <- c(Beta=2,mu_I=1,mu_R1=512/sum(bsflu$B),mu_R2=512/sum(bsflu$C),rho=0.9)
+
+#' 
+#' The following constructs a function returning the negative log likelihood of the data at a given point in parameter space.
+#' The parameters to be estimated are named in the `est` argument.
+#' Note how the `freeze` function is used to fix the seed of the RNG.
+#' Note too, how this function returns a large (and therefore bad) value when the particle filter encounters and error.
+#' This behavior makes the objective function more robust.
+#' 
+## ----flu-like-optim-1----------------------------------------------------
+neg.ll <- function (par, est) {
+  allpars <- coef(flu,transform=TRUE)
+  allpars[est] <- par
+  try(
+    freeze(
+      pfilter(flu,params=partrans(flu,allpars,dir="fromEst"),
+              Np=2000),
+      seed=915909831
+    )
+  ) -> pf
+  if (inherits(pf,"try-error")) 1e10 else -logLik(pf)
+}
+
+#' 
+#' Now we call `optim` to minimize this function:
+## ----flu-like-optim-2----------------------------------------------------
+## use Nelder-Mead with fixed RNG seed
+fit <- optim(
+  par=c(log(2), log(1), log(0.9/(1-0.9))),
+  est=c("Beta","mu_I","rho"),
+  fn=neg.ll,
+  method="Nelder-Mead",
+  control=list(maxit=400,trace=0)
+)
+
+mle <- flu
+coef(mle,c("Beta","mu_I","rho"),transform=TRUE) <- fit$par
+coef(mle)
+
+fit$val
+
+lls <- replicate(n=5,logLik(pfilter(mle,Np=20000)))
+ll <- logmeanexp(lls,se=TRUE); ll
+
+#' 
+#' We plot some simulations at these parameters.
+## ----flu-sims------------------------------------------------------------
+simulate(mle,nsim=10,as.data.frame=TRUE,include.data=TRUE) -> sims
+
+#' The data are shown in blue.
+#' The `r max(sims$sim)` simulations are shown in red.
+## ----flu-sims-plot,echo=F------------------------------------------------
+ggplot(data=sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  guides(color=FALSE)+
+  geom_line()
+
+#' 
+#' <br>
+#' 
+#' --------------------------
+#' 
+#' ------------------------
+#' 
+#' #### Exercise: Global maximization
+#' 
+#' The search of parameter space we conducted above was local.
+#' It is possible that we found a local maximum, but that other maxima exist with higher likelihoods.
+#' Conduct a more thorough search by initializing the Nelder-Mead starting points across a wider region of parameter space.
+#' Do you find any other local maxima?
+#' 
+#' <br>
+#' 
+#' --------
+#' 
+#' --------
+#' 
+#' #### Exercise: Fit more parameters.
+#' 
+#' Try to estimate $\beta$, $\mu_I$, $\rho$, and $\mu_{R1}$ simultaneously.
+#' Does your estimate of $\mu_{R1}$ differ from the value we computed from the raw data?
+#' How do you interpret the agreement or lack thereof?
+#' 
+#' --------------------------
+#' 
+#' ------------------------
