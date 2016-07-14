@@ -201,6 +201,66 @@ logmeanexp(ll,se=TRUE)</code></pre>
 <p><br></p>
 <hr />
 <hr />
+</div>
+<div id="more-details-on-combining-log-likelihood-estimates-and-deriving-a-standard-error" class="section level3">
+<h3>More details on combining log likelihood estimates and deriving a standard error</h3>
+<ul>
+<li>Let’s take a better look at <code>logmeanexp</code>, starting by studying the code:</li>
+</ul>
+<pre class="r"><code>logmeanexp</code></pre>
+<pre><code>## function (x, se = FALSE) 
+## {
+##     mx &lt;- max(x)
+##     mean &lt;- mx + log(mean(exp(x - mx)))
+##     if (se) {
+##         n &lt;- length(x)
+##         jk &lt;- vapply(seq_len(n), function(k) logmeanexp(x[-k]), 
+##             numeric(1))
+##         c(mean, se = (n - 1) * sd(jk)/sqrt(n))
+##     }
+##     else {
+##         mean
+##     }
+## }
+## &lt;environment: namespace:pomp&gt;</code></pre>
+<ul>
+<li><p>We see that <code>logmeanexp</code> constructs its standard errors via a <a href="https://en.wikipedia.org/wiki/Jackknife_resampling">jack-knife</a> calculation.</p></li>
+<li><p>The standard errors from this approach are reasonable when the distribution of the likelihoods is not too skewed. However, a largest likelihood many log units higher than the others corresponds to a highly skewed distribution and therefore an unstable standard error. Consider the following examples:</p></li>
+</ul>
+<pre class="r"><code>set.seed(578)
+replicate(10,logmeanexp(rnorm(10,mean=0,sd=5),se=1))</code></pre>
+<pre><code>##        [,1]     [,2]      [,3]      [,4]     [,5]     [,6]     [,7]
+##    6.691991 3.495813 8.7275246 3.1442905 5.458272 6.657885 6.920911
+## se 1.128470 2.781302 0.7860497 0.9732883 3.574835 4.503357 2.139020
+##        [,8]     [,9]    [,10]
+##    1.832581 5.389155 10.38985
+## se 1.016946 2.323833  3.02130</code></pre>
+<ul>
+<li>The true mean value here is about</li>
+</ul>
+<pre class="r"><code>round(mean(replicate(10000,logmeanexp(rnorm(10,mean=0,sd=5)))),2)</code></pre>
+<pre><code>## [1] 5.69</code></pre>
+<ul>
+<li><p>In this case the standard errors are rather unreliable. Some estimates are many SEs from the truth.</p></li>
+<li><p>Now let’s try a smaller Monte Carlo variability on the log likelihood estimates:</p></li>
+</ul>
+<pre class="r"><code>set.seed(578)
+replicate(10,logmeanexp(rnorm(10,mean=0,sd=1),se=1))</code></pre>
+<pre><code>##         [,1]        [,2]      [,3]       [,4]      [,5]      [,6]
+##    0.7936389 -0.00274766 0.8632283 0.01583158 0.3315456 0.3676754
+## se 0.2574898  0.30715431 0.4644193 0.28908355 0.3254587 0.4410459
+##         [,7]       [,8]      [,9]     [,10]
+##    0.8271379 -0.1057142 0.2073267 1.0107089
+## se 0.2404456  0.2203599 0.4056952 0.5396001</code></pre>
+<ul>
+<li>The true mean value here is about</li>
+</ul>
+<pre class="r"><code>round(mean(replicate(10000,logmeanexp(rnorm(10,mean=0,sd=1)))),2)</code></pre>
+<pre><code>## [1] 0.43</code></pre>
+<ul>
+<li><p>In this case the standard errors are considerably more reliable. Most estimates are within 2 SEs of the truth.</p></li>
+<li><p>We can see that the <code>logmeanexp</code> standard errors are much more stable, and a better assessment of the actual Monte Carlo variability, when the standard deviation of the individual log likelihood estimates is smaller.</p></li>
+</ul>
 <div class="references">
 
 </div>

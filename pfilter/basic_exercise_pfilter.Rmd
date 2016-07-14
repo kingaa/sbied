@@ -182,3 +182,47 @@ and so the bias in the log likelihood estimate is approximately half the varianc
 
 -----------
 
+### More details on combining log likelihood estimates and deriving a standard error
+
+- Let's take a better look at `logmeanexp`, starting by studying the code:
+
+```{r logmeanexp}
+logmeanexp
+```
+
+- We see that `logmeanexp` constructs its standard errors via a [jack-knife](https://en.wikipedia.org/wiki/Jackknife_resampling) calculation.
+
+
+- The standard errors from this approach are reasonable when the distribution of the likelihoods is not too skewed. However, a largest likelihood many log units higher than the others corresponds to a highly skewed distribution and therefore an unstable standard error. Consider the following examples:
+
+
+```{r test_e}
+set.seed(578)
+replicate(10,logmeanexp(rnorm(10,mean=0,sd=5),se=1))
+```
+
+- The true mean value here is about
+```{r test_e2}
+round(mean(replicate(10000,logmeanexp(rnorm(10,mean=0,sd=5)))),2)
+```
+
+- In this case the standard errors are rather unreliable. Some estimates are many SEs from the truth.
+
+- Now let's try a smaller Monte Carlo variability on the log likelihood estimates:
+
+```{r test_f}
+set.seed(578)
+replicate(10,logmeanexp(rnorm(10,mean=0,sd=1),se=1))
+```
+
+- The true mean value here is about
+```{r test_f2}
+round(mean(replicate(10000,logmeanexp(rnorm(10,mean=0,sd=1)))),2)
+```
+
+- In this case the standard errors are considerably more reliable. Most estimates are within 2 SEs of the truth.
+
+- We can see that the `logmeanexp` standard errors are much more stable, and a better assessment of the actual Monte Carlo variability, when the standard deviation of the individual log likelihood estimates is smaller.
+
+
+
