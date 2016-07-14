@@ -289,11 +289,11 @@ set.seed(1221234211)
 #' 
 #' * Suppose we have an MLE, written $\hat\theta=(\hat\phi,\hat\psi)$, and a profile log likelihood for $\phi$, given by $\profileloglik(\phi)$. 
 #' 
-#' * Consider the likelihood ratio for the nested hypotheses 
+#' * Consider the likelihood ratio test for the nested hypotheses 
 #' $$\begin{eqnarray}
 #' H^{\langle 0\rangle} &:& \phi = \phi_0,
 #' \\
-#' H^{\langle 1\rangle} &:& \phi \mathrm{ unconstrained}.
+#' H^{\langle 1\rangle} &:& \mbox{$\phi$ unconstrained}.
 #' \end{eqnarray}$$
 #' 
 #' * We can check what the 95\% cutoff is for a chi-squared distribution with one degree of freedom,
@@ -700,7 +700,7 @@ p %>%
 #' 
 #' 
 #' - Slices offer a very limited perspective on the geometry of the likelihood surface.
-#' With just two parameters, we can evaluate the likelihood at a grid of points and visualize the surface directly.
+#' When there are only two unknown parameters, we can evaluate the likelihood at a grid of points and visualize the surface directly.
 ## ----flu-grid1-----------------------------------------------------------
 bake(file="flu-grid1.rds",seed=421776444,kind="L'Ecuyer",{
   
@@ -742,7 +742,13 @@ p %>%
 #' 
 #' In the above, all points with log likelihoods less than 50 units below the maximum are shown in grey.
 #' 
+#' - Notice some features of the log likelihood surface, and its estimate from the particle filter, that can cause difficulties for numerical methods:
 #' 
+#'     1. The surface is wedge-shaped, so its curvature varies considerably. By contrast, asymptotic theory predicts a parabolic surface that has constant curvature.
+#' 
+#'     2. Monte Carlo noise in the likelihood evaluation makes it hard to pick out exactly where the likelihood is maximized. Nevertheless, the major features of the likelihood surface are evident despite the noise.
+#' 
+#' - Wedge-shaped relationships between parameters, and nonlinear relationships, are common features of epidemiological dynamic models. We'll see that in the case studies.
 #' 
 #' <br>
 #' 
@@ -750,8 +756,28 @@ p %>%
 #' 
 #' ---------------------------------
 #' 
+#' #### Basic Exercise: log likelihood estimation by particle filtering
 #' 
-#' #### Exercise: one-dimensional likelihood slice
+#' - Here are some desiderata for a Monte Carlo log likelihood approximation:
+#' 
+#'     + Low Monte Carlo bias and variance. 
+#' 
+#'     + Be presented together with estimates of the bias and variance so that we know the extent of Monte Carlo uncertainty in our results. 
+#' 
+#'     + Be computed in a length of time appropriate for the circumstances.
+#' 
+#' - Set up a likelihood evaluation for the 'flu' model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine.
+#' 
+#' - Provide a Monte Carlo standard error for your estimate.
+#' 
+#' - Comment on the bias of your estimate.
+#' 
+#' - Optionally, take advantage of multiple cores on your computer to improve your estimate.
+#' 
+#' 
+#' -----------
+#' 
+#' #### Optional Exercise: one-dimensional likelihood slice
 #' 
 #' Compute likelihood slices along the $\rho$ direction.
 #' 
@@ -759,38 +785,13 @@ p %>%
 #' -----------
 #' 
 #' 
-#' #### Exercise: two-dimensional likelihood slice
+#' #### Optional Exercise: two-dimensional likelihood slice
 #' 
 #' Compute a slice of the likelihood in the $\beta$-$\rho$ plane.
 #' 
 #' 
 #' ------------------------
 #' 
-#' 
-#' 
-#' #### Exercise: More slices
-#' 
-#' Construct likelihood slices through the MLE we just found.
-#' 
-#' 
-#' ------------------------
-#' 
-#' #### Exercise: Visualizing the likelihood surface
-#' 
-#' Evaluate the likelihood at points on a grid lying in a 2D slice through the MLE we found above.
-#' Each group should choose a different slice.
-#' Afterward, we'll compare results across groups.
-#' 
-#' 
-#' ------------------------
-#' 
-#' #### Exercise: Modify the measurement model
-#' 
-#' The Poisson measurement model used here may not seem easy to interpret.
-#' Formulate an alternative measurement model and construct likelihood slices to compare the alternative model.
-#' 
-#' 
-#' ------------------------
 #' 
 #' ## Maximizing the particle filter likelihood 
 #' 
