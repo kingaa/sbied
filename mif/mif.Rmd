@@ -613,12 +613,12 @@ This gives us some confidence in our maximization procedure.
 
 --------------------------
 
-#### Basic Exercise: Fitting the SEIR$^3$ model
+#### Basic Exercise: Fitting the SEIR^3^ model
 
-Following the template above, estimate the parameters and likelihood of the SEIR$^3$ model you implemented in the earlier lessons.
+Following the template above, estimate the parameters and likelihood of the SEIR^3^ model you implemented in the earlier lessons.
 Specifically, first conduct a local search and then a global search using the multi-stage, multi-start method displayed above.
 
-How does the maximized likelihood compare with what we obtained for the SIR$^3$ model?
+How does the maximized likelihood compare with what we obtained for the SIR^3^ model?
 How do the parameter estimates differ?
 
 You will need to tailor the intensity of your search to the computational resources at your disposal.
@@ -670,8 +670,10 @@ Here are some things to think about:
 ## Choosing the algorithmic settings for IF2
 
 + The initial parameter swarm, $\{ \Theta^0_j, j=1,\dots,J\}$, usually consists of $J$ identical replications of some starting parameter vector.
-+ $J$ is set to be sufficient for particle filtering. By the time of the last iteration ($m=M$) one should not have effective sample size close to 1. 
-+ Perturbations are usually chosen to be Gaussian, with $\sigma_m$ being a scale factor for iteration $m$:
++ $J$ is set to be sufficient for particle filtering.
+  Because the addition of random perturbations acts to combat particle depletion, it is typically possible to take $J$ substantially smaller than the value needed to obtain precise likelihood estimates via `pfilter`.
+  By the time of the last iteration ($m=M$) one should not have effective sample size close to 1. 
++ Perturbations are usually chosen to be multivariate normal, with $\sigma_m$ being a scale factor for iteration $m$:
 $$h_n(\theta|\varphi;\sigma) \sim N[\varphi, \sigma^2_m V_n].$$
 + $V_n$ is usually taken to be diagonal,
 $$ V_n = \left( \begin{array}{ccccc}
@@ -680,12 +682,14 @@ v_{1,n}^2 & 0 & 0 & \cdots & 0 \\
 0 & 0 & v_{3,n}^2 & \cdots & 0 \\
 \vdots & \vdots & \vdots & \ddots & \vdots \\
 0 & 0 & 0 & \cdots & v_{p,n}^2 \end{array}\right).$$
-+ If $\theta_i$ is a parameter that affects the dynamics or observations throughout the timeseries, it is called a __regular parameter__, and it is often appropriate to specify $$v_{i,n} = v_i.$$
++ If $\theta_i$ is a parameter that affects the dynamics or observations throughout the time series, it is called a __regular parameter__, and it is often appropriate to specify $$v_{i,n} = v_i.$$
 + If $\theta_j$ is a parameter that affects only the initial conditions of the dynamic model, it is called an __initial value parameter__ (IVP) and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=0$} \\0 & \mbox{if $n>0$} \end{array}\right.$$
 + If $\theta_k$ is a break-point parameter that models how the system changes at time $t_q$, then $\theta_k$ is like an IVP at time $t_q$ and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=q$} \\	0 & \mbox{if $n\neq q$} \end{array}\right.$$
 + $\sigma_{1:M}$ is called a __cooling schedule__, following a thermodynamic analogy popularized by [simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing).
   As $\sigma_m$ becomes small, the system cools toward a "freezing point".
   If the algorithm is working sucessfully, the freezing point should be close to the lowest-energy state of the system, i.e., the MLE.
+  Typical choices of the cooling schedule are geometric, $\sigma_m = \alpha^m$, and hyperbolic, $\sigma_m \propto 1/(1+\alpha\,m)$.
+  In `mif2`, the cooling schedule is parameterized by $\sigma_{50}$, the cooling fraction after 50 IF2 iterations.
 + It is generally helpful to transform the parameters so that (on the estimation scale) they are real-valued, unconstrained, and have uncertainty on the order of 1 unit.
   For example, one typically takes a logarithmic transformation of positive parameters and a logistic transformation of $[0,1]$ valued parameters.
 + On such a scale, it is surprisingly often effective to take $$v_i \sim 0.02$$ for regular parameters (RPs) and $$v_j \sim 0.1$$ for initial value parameters (IVPs).
