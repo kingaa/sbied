@@ -1,4 +1,4 @@
-default: stochsim.R stochsim.html bsflu_data.txt
+default: stochsim.R stochsim.html bsflu_data.txt seir3_exercise.html
 ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)

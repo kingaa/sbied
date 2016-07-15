@@ -1,0 +1,159 @@
+---
+title: "SEIR3 example"
+author: "Aaron A. King"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+bibliography: ../sbied.bib
+csl: ../ecology.csl
+---
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dlta[1]{{\Delta}{#1}}
+\newcommand\lik{\mathcal{L}}
+\newcommand\loglik{\ell}
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+```{r knitr-opts,include=FALSE,purl=FALSE}
+library(knitr)
+prefix <- "seir3"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  cache.extra=rand_seed,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  dpi=100,
+  dev='png',
+  dev.args=list(bg='transparent')
+)
+options(keep.source=TRUE,encoding="UTF-8",scipen=6)
+```
+```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
+library(pomp)
+stopifnot(packageVersion("pomp")>="1.6")
+library(ggplot2)
+theme_set(theme_bw())
+library(plyr)
+library(reshape2)
+library(magrittr)
+options(stringsAsFactors=FALSE)
+set.seed(1221234211)
+```
+
+----------------------------
+
+## Model formulation
+
+Formulate a model with a latent class and both confinement and convalescent stages.
+Implement it in **pomp** using a compartmental model like that diagrammed below.
+You will have to give some thought to just how to model the relationship between the data ($B$ and $C$) and the state variables.
+
+```{r seir3-diagram,echo=FALSE,purl=FALSE,fig.height=3/4,fig.width=10.5}
+library(grid)
+vp <- viewport(width=unit(0.95,"npc"),height=unit(0.95,"npc"))
+pushViewport(vp)
+fs <- 24
+grid.rect(x=c(1/7,2/7,3/7,4/7,5/7,6/7),y=1/2,width=1/14,height=1,just=c(0.5,0.5),gp=gpar(fill="white",lwd=2))
+grid.text(x=c(1/7,2/7,3/7,4/7,5/7,6/7),y=1/2,label=c(expression(S),expression(E),expression(I),expression(R[1]),expression(R[2]),expression(R[3])),gp=gpar(fontface=3,fontsize=fs))
+grid.lines(x=c(5/28,7/28),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(9/28,11/28),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(13/28,15/28),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(17/28,19/28),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(21/28,23/28),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
+popViewport()
+```
+
+```{r seir3_model}
+read.table("http://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
+
+rproc <- Csnippet("
+  double N = 763;
+  double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
+  double t2 = rbinom(E,1-exp(-mu_E*dt));
+  double t3 = rbinom(I,1-exp(-mu_I*dt));
+  double t4 = rbinom(R1,1-exp(-mu_R1*dt));
+  double t5 = rbinom(R2,1-exp(-mu_R2*dt));
+  S  -= t1;
+  E  += t1 - t2;
+  I  += t2 - t3;
+  R1 += t3 - t4;
+  R2 += t4 - t5;
+")
+
+init <- Csnippet("
+  S  = 762;
+  E  = 0;
+  I  = 1;
+  R1 = 0;
+  R2 = 0;
+")
+
+dmeas <- Csnippet("
+  lik = dpois(B,rho*R1+1e-6,give_log);
+")
+
+rmeas <- Csnippet("
+  B = rpois(rho*R1+1e-6);
+")
+
+bsflu %>%
+    subset(select=-C) %>%
+    pomp(times="day",t0=-6,
+         rprocess=euler.sim(rproc,delta.t=1/5),
+         initializer=init,rmeasure=rmeas,dmeasure=dmeas,
+         statenames=c("S","E","I","R1","R2"),
+         paramnames=c("Beta","mu_E","mu_I","mu_R1","mu_R2","rho")
+         ) -> flu
+```
+
+How many parameters can reasonably be fixed?
+How many must be estimated?
+Obtain some ballpark estimates of the parameters and simulate to see if you can plausibly explain the data as a realization of this model.
+
+$1/\mu_{R_1}$ is the average duration of the bed confinement period and $1/\mu_{R_2}$ is the average duration of convalescence.
+The data can tell us about these quantities:
+```{r fixedparams}
+with(bsflu,c(mu_R1=1/(sum(B)/512),mu_R2=1/(sum(C)/512)))
+
+```
+
+```{r simulations}
+coef(flu) <- c(Beta=5,mu_E=0.5,mu_I=1,mu_R1=0.33,mu_R2=0.55,rho=0.95)
+
+flu %>%
+    simulate(nsim=20,as.data.frame=TRUE,include.data=TRUE) %>%
+    subset(select=c(time,B,sim)) %>%
+    ggplot(aes(x=time,y=B,color=(sim=="data"),group=sim))+
+    geom_line()+
+    guides(color=FALSE)
+
+```
+
+----------------------------
+
+## [Back to Stochastic Simulation lesson](http://kingaa.github.io/sbied/stochsim/stochsim.html)
+
+----------------------------
+
+## References

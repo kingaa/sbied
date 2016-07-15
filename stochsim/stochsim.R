@@ -406,7 +406,7 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' 
 #' 
 #' 
-#' Although in general there is interest in using all of the data to inform the model, in the interests of time, let's focus on the confinement data, $B$.
+#' In general, there is interest in using all of the data to inform the model but in the interest of time, let's focus on the confinement data, $B$.
 #' Give some thought as to how to model the relationship between $B$ and the state variables.
 #' 
 #' Although we might use the data to estimate all the model's parameters, to keep the exercise simple, we'll fix some of the parameters at reasonable values.
