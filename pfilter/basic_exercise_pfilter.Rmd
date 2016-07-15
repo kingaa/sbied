@@ -88,11 +88,11 @@ stopifnot(packageVersion("pomp")>="1.6")
 
 Here are some desiderata for a Monte Carlo log likelihood approximation:
 
-    + Low Monte Carlo bias and variance. 
+- Low Monte Carlo bias and variance. 
 
-    + Be presented together with estimates of the bias and variance so that we know the extent of Monte Carlo uncertainty in our results. 
+- Be presented together with estimates of the bias and variance so that we know the extent of Monte Carlo uncertainty in our results. 
 
-    + Be computed in a length of time appropriate for the circumstances.
+- Be computed in a length of time appropriate for the circumstances.
 
 Set up a likelihood evaluation for the 'flu' model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine. Provide a Monte Carlo standard error for your estimate. Comment on the bias of your estimate. Optionally, take advantage of multiple cores on your computer to improve your estimate.
 
@@ -193,36 +193,35 @@ logmeanexp
 - We see that `logmeanexp` constructs its standard errors via a [jack-knife](https://en.wikipedia.org/wiki/Jackknife_resampling) calculation.
 
 
-- The standard errors from this approach are reasonable when the distribution of the likelihoods is not too skewed. However, a largest likelihood many log units higher than the others corresponds to a highly skewed distribution and therefore an unstable standard error. Consider the following examples:
+- The standard errors from this approach are reasonable when the distribution of the likelihoods is not too skewed. However, a largest likelihood many log units higher than the others corresponds to a highly skewed distribution on the untransformed scale. It is on this untransformed scale that combining likelihood estimates by averaging is justified by the unbiased property of the particle filter. This could therefore lead to unstable standard errors. 
 
+- Let's consider an example for which we suppose that the Monte Carlo estimate of the log likelihood is normally distributed. This assumption has asymptotic justification [@berard14]. We'll consider the two cases when the standard deviation on the log scale is given by sd=5 and sd=1.
 
-```{r test_e}
-set.seed(578)
-replicate(10,logmeanexp(rnorm(10,mean=0,sd=5),se=1))
+```{r test-plot,fig.height=5,fig.width=5}
+set.seed(23)
+sd5 <- replicate(10000,logmeanexp(rnorm(10,mean=0,sd=5),se=TRUE))
+sd1 <- replicate(10000,logmeanexp(rnorm(10,mean=0,sd=1),se=TRUE))
+m5 <- mean(sd5[1,])
+t5 <- (sd5[1,]-m5)/sd5[2,]
+m1 <- mean(sd1[1,])
+t1 <- (sd1[1,]-m1)/sd1[2,]
+x_range <- range(c(t1,t5))
+par(mfrow=c(2,1))
+par(mai=c(0.5,0.5,0.5,0.5))
+hist(t5,breaks=50,xlim=x_range,main="Error in SE units, with sd=5")
+abline(v=c(-2,2),col="red")
+hist(t1,breaks=50,xlim=x_range,main="Error in SE units, with sd=1")
+abline(v=c(-2,2),col="red")
 ```
 
-- The true mean value here is about
-```{r test_e2}
-round(mean(replicate(10000,logmeanexp(rnorm(10,mean=0,sd=5)))),2)
-```
+- The coverage of a simple $\pm 2$ standard error confidence interval for the log likelihood (represented by the vertical red lines in the figure at $\pm 2$ SE units)  is `r sum(abs(t5)<2)/length(t5)*100` percent for the sd=5 case, and `r sum(abs(t1)<2)/length(t1)*100` percent for the sd=1 case.
 
-- In this case the standard errors are rather unreliable. Some estimates are many SEs from the truth.
+- In particular, the left tail is long for the noisy likelihood estimates: when, by chance, you don't observe a high likelihood value, you become over-confident that such values won't happen.
 
-- Now let's try a smaller Monte Carlo variability on the log likelihood estimates:
+- These results suggest that 'logmeanexp' standard errors are reasonably reliable when the standard deviation of the individual log likelihood estimates is around one, but should be interpreted cautiously as that standard deviation increases.
 
-```{r test_f}
-set.seed(578)
-replicate(10,logmeanexp(rnorm(10,mean=0,sd=1),se=1))
-```
+----------
 
-- The true mean value here is about
-```{r test_f2}
-round(mean(replicate(10000,logmeanexp(rnorm(10,mean=0,sd=1)))),2)
-```
-
-- In this case the standard errors are considerably more reliable. Most estimates are within 2 SEs of the truth.
-
-- We can see that the `logmeanexp` standard errors are much more stable, and a better assessment of the actual Monte Carlo variability, when the standard deviation of the individual log likelihood estimates is smaller.
-
+### References
 
 
