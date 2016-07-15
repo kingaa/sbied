@@ -405,10 +405,14 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' Implement it in **pomp** using a compartmental model like that diagrammed below.
 #' 
 #' 
-#' You will have to give some thought to just how to model the relationship between the data ($B$ and $C$) and the state variables.
-#' How many parameters can reasonably be fixed?
-#' How many must be estimated?
-#' Obtain some ballpark estimates of the parameters and simulate to see if you can plausibly explain the data as a realization of this model.
+#' 
+#' Although in general there is interest in using all of the data to inform the model, in the interests of time, let's focus on the confinement data, $B$.
+#' Give some thought as to how to model the relationship between $B$ and the state variables.
+#' 
+#' Although we might use the data to estimate all the model's parameters, to keep the exercise simple, we'll fix some of the parameters at reasonable values.
+#' Which parameters can be estimated from general knowlege of influenza?
+#' Fix these and focus on estimating the remainder.
+#' 
 #' 
 #' --------------------------
 #' 
