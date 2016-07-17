@@ -1,6 +1,6 @@
 ---
 title: "Case study: forecasting Ebola"
-author: "Aaron A. King, Matthieu Domenech de Cell&egrave;s, Felicia M. G. Magpantay, and Pejman Rohani"
+author: "A. A. King, M. Domenech de Cell&egrave;s, F. M. G. Magpantay, P. Rohani, E. Ionides"
 output:
   html_document:
     toc: yes
@@ -72,15 +72,14 @@ stopifnot(packageVersion("pomp")>="1.6")
 
 ## Objectives
 
-1. To demonstrate the use of diagnostic probes for model criticism
-1. To teach some forecasting methods based on POMP models
+1. To explore the use of POMP models in the context of an outbreak of an emerging disease.
+1. To demonstrate the use of diagnostic probes for model criticism.
+1. To illustrate some forecasting methods based on POMP models.
 
 These objectives will be achieved using a recent study [@King2015], all codes for which are available on [datadryad.org](http://dx.doi.org/10.5061/dryad.r5f30).
 
 
-## Model and data
-
-### An emerging infectious disease outbreak
+## An emerging infectious disease outbreak
 
 Let's situate ourselves at the beginning of October 2014.
 The WHO situation report contained data on the number of cases in each of Guinea, Sierra Leone, and Liberia.
@@ -89,6 +88,25 @@ Key questions included:
 1. How fast will the outbreak unfold?
 1. How large will it ultimately prove?
 1. What interventions will be most effective?
+
+As is to be expected in the case of a fast-moving outbreak of a novel pathogen in an underdeveloped country, the answers to these questions were sought in a context far from ideal:
+
+- Case ascertainment is difficult and the case definition itself may be evolving.
+- Surveillance effort is changing on the same timescale as the outbreak itself.
+- The public health and behavioral response to the outbreak is rapidly changing.
+
+The @King2015 paper focused critical attention on the economical and therefore common practice of fitting deterministic transmission models to cumulative incidence data.
+Specifically, @King2015 showed how this practice easily leads to overconfident prediction that, worryingly, can mask their own presence.
+The paper recommended the use of POMP models, for several reasons:
+
+- Such models can accommodate a wide range of hypothetical forms.
+- They can be readily fit to incidence data, especially during the exponential growth phase of an outbreak.
+- Stochastic models afford a more explicit treatment of uncertainty.
+- POMP models come with a number of diagnostic approaches built-in, which can be used to assess model misspecification.
+
+## Data and model
+
+### Situation-report data
 
 Download the data from the WHO Situation Report of 1 October 2014:
 ```{r get-data}
@@ -116,7 +134,7 @@ dat %>%
 ### An SEIR model with gamma-distributed latent and infectious periods
 
 Many of the early modeling efforts used variants on the simple SEIR model.
-Here, we'll focus on a variant that attempts a more accurate description of the duration of the latent period.
+Here, we'll focus on a variant that attempts a more careful description of the duration of the latent period.
 Specifically, this model assumes that the amount of time an infection remains latent is
 $$\mathrm{LP} \sim \dist{Gamma}{m,\frac{1}{m\,\alpha}},$$
 where $m$ is an integer.
@@ -302,19 +320,19 @@ ebolaModel("Liberia") -> lbr
 ## Parameter estimates
 
 @King2015 estimated parameters for this model for each country.
-A large Latin hypercube design was used to initiate a large number of iterated filtering runs.
+A Latin hypercube design was used to initiate a large number of iterated filtering runs.
 Profile likelihoods were computed for each country against the parameters $k$ (the measurement model overdispersion) and $R_0$ (the basic reproductive ratio).
 Full details are given [on the datadryad.org site](http://dx.doi.org/10.5061/dryad.r5f30).
-The following loads the results of these calculations.
+The results of these calculations are loaded and displayed here.
 
-```{r load-profile}
+```{r load-profile,echo=FALSE}
 options(stringsAsFactors=FALSE)
 profs <- read.csv(paste0(base_url,"/ebola/ebola-profiles.csv"))
 ```
 
 The following plots the profile likelihoods.
 The horizontal line represents the critical value of the likelihood ratio test for $p=0.01$.
-```{r profiles-plots,results='hide'}
+```{r profiles-plots,results='hide',echo=FALSE}
 library(reshape2)
 library(plyr)
 library(magrittr)
@@ -339,7 +357,7 @@ Parameter estimation is the process of finding the parameters that are "best", i
 Model selection, likewise, aims at identifying the "best" model, in some sense, from among a set of candidates.
 One can do both of these things more or less well, but no matter how carefully they are done, the best of a bad set of models is still bad.
 
-Lets' investigate the model here, at its maximum-likelihood parameters, to see if we can identify problems.
+Let's investigate the model here, at its maximum-likelihood parameters, to see if we can identify problems.
 The guiding principle in this is that, if the model is "good", then the data are a plausible realization of that model.
 Therefore, we can compare the data directly against model simulations.
 Moreover, we can quantify the agreement between simulations and data in any way we like.
@@ -431,7 +449,7 @@ Discuss the implications of your findings.
 
 ## Forecasting
 
-Up to now, we've primarily focused on using POMP models to answer scientific questions.
+Up to now, we've primarily focused on using POMP models to answer scientific questions, i.e., to compare alternative hypothetical explanations for the data in hand.
 Of course, we can also use them to make forecasts.
 The key issues are to do with quantifying the forecast uncertainty.
 This arises from four sources:
@@ -442,6 +460,14 @@ This arises from four sources:
 1. structural uncertainty
 
 Here, we'll explore how we can account for the first three of these in making forecasts for the Sierra Leone outbreak.
+
+We take an [*empirical Bayes*](https://en.wikipedia.org/wiki/Empirical_Bayes_method) approach:
+
+- We set up a collection of parameter vectors in a neighborhood of the maximum likelihood estimate containing the region of high likelihood.
+- We carry out a particle filter at each parameter vector, which gives us estimates of both the likelihood and the filter distribution at that parameter value.
+- We simulate forward from each filter distribution, up to the desired forecast horizon, to give the prediction distribution for each parameter vector.
+- We sample from these prediction distributions with probability proportional to the estimated likelihood of the parameter vector.
+
 
 ```{r forecasts}
 library(pomp)
