@@ -1,0 +1,154 @@
+---
+title: "Ebola case study: model codes"
+author: "A. A. King, M. Domenech de Cell&egrave;s, F. M. G. Magpantay, P. Rohani"
+output:
+  html_document:
+    toc: yes
+bibliography: ../sbied.bib
+csl: ../ecology.csl
+---
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dlta[1]{{\Delta}{#1}}
+\newcommand\scinot[2]{$#1 \times 10^{#2}$\xspace}
+
+------------------------------------
+
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
+
+------------------------------------
+
+```{r knitr-opts,include=FALSE,purl=FALSE}
+library(knitr)
+prefix <- "model"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  dpi=100,
+  dev='png',
+  dev.args=list(bg='transparent')
+  )
+read_chunk("model.R")
+```
+
+```{r prelims,include=FALSE,cache=FALSE}
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  encoding="UTF-8"
+  )
+
+set.seed(594709947L)
+library(ggplot2)
+theme_set(theme_bw())
+library(plyr)
+library(reshape2)
+library(magrittr)
+library(pomp)
+stopifnot(packageVersion("pomp")>="1.6")
+```
+
+## Objectives
+
+1. To present the **pomp** codes used in the Ebola case study.
+1. To enable reproducibility of the case study and re-application of these codes in other situations.
+
+All codes needed to reproduce the results of the original @King2015 paper are available on [datadryad.org](http://dx.doi.org/10.5061/dryad.r5f30).
+
+
+## Data and model
+
+### Situation-report data
+
+Download the data from the WHO Situation Report of 1 October 2014:
+
+```{r get-data}
+```
+
+Supplementing these data are population estimates for the three countries.
+These are census figures from 2014.
+
+```{r popsizes}
+```
+
+```{r plot-data}
+```
+
+
+### An SEIR model with gamma-distributed latent and infectious periods
+
+Many of the early modeling efforts used variants on the simple SEIR model.
+Here, we'll focus on a variant that attempts a more careful description of the duration of the latent period.
+Specifically, this model assumes that the amount of time an infection remains latent is
+$$\mathrm{LP} \sim \dist{Gamma}{m,\frac{1}{m\,\alpha}},$$
+where $m$ is an integer.
+This means that the latent period has expectation $1/\alpha$ and variance $1/(m\,\alpha)$.
+In this document, we'll fix $m=3$.
+
+We implement Gamma distributions using the so-called *linear chain trick*.
+
+![Model flow diagram.](./model_diagram.png)
+
+### Process model simulator
+
+```{r rproc}
+```
+
+
+### Deterministic skeleton
+
+The deterministic skeleton is a vectorfield (i.e., a system of ordinary differential equations).
+The following C snippet computes the components of this vectorfield as functions of the state variables and parameters.
+
+```{r skel}
+```
+
+###  Measurement model: overdispersed count data
+
+$C_t | H_t$ is negative binomial with $\expect{C_t|H_t} = \rho\,H_t$ and $\var{C_t|H_t} = \rho\,H_t\,(1+k\,\rho\,H_t)$.
+
+```{r measmodel}
+```
+
+### Parameter transformations
+
+```{r partrans}
+```
+
+The following function constructs a `pomp` object to hold the data for any one of the countries.
+It demonstrates one level of abstraction above the basic `pomp` constructor.
+
+```{r pomp-construction}
+```
+
+--------------------------
+
+## [Back to Ebola case study](./ebola.html)
+## [Back to course homepage](http://kingaa.github.io/sbied)
+
+----------------------
+
+## References

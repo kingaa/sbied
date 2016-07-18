@@ -72,9 +72,10 @@ stopifnot(packageVersion("pomp")>="1.6")
 
 ## Objectives
 
-1. To explore the use of POMP models in the context of an outbreak of an emerging disease.
+1. To explore the use of POMP models in the context of an outbreak of an emerging infectious disease.
 1. To demonstrate the use of diagnostic probes for model criticism.
 1. To illustrate some forecasting methods based on POMP models.
+1. To provide an example that can be modified to apply similar approaches to other outbreaks of emerging infectious diseases.
 
 These objectives will be achieved using a recent study [@King2015], all codes for which are available on [datadryad.org](http://dx.doi.org/10.5061/dryad.r5f30).
 
@@ -106,10 +107,14 @@ The paper recommended the use of POMP models, for several reasons:
 
 ## Data and model
 
+The data and **pomp** codes used to represent the transmission models are presented in [a supplement](./model.html).
+
 ### Situation-report data
 
-Download the data from the WHO Situation Report of 1 October 2014:
-```{r get-data}
+The data we focus on here are from the WHO Situation Report of 1 October 2014.
+Supplementing these data are population estimates for the three countries..
+
+```{r get-data,include=FALSE}
 base_url <- "http://kingaa.github.io/sbied/"
 read.csv(paste0(base_url,"ebola/ebola_data.csv"),stringsAsFactors=FALSE,
          colClasses=c(date="Date")) -> dat
@@ -117,19 +122,15 @@ sapply(dat,class)
 head(dat)
 ```
 
-Supplementing these data are population estimates for the three countries.
-
-```{r popsizes}
-## Population sizes in Guinea, Liberia, and Sierra Leone (census 2014)
+```{r popsizes,include=FALSE}
 populations <- c(Guinea=10628972,Liberia=4092310,SierraLeone=6190280)
 ```
 
-```{r plot-data}
+```{r plot-data,echo=FALSE}
 dat %>%
   ggplot(aes(x=date,y=cases,group=country,color=country))+
   geom_line()
 ```
-
 
 ### An SEIR model with gamma-distributed latent and infectious periods
 
@@ -161,9 +162,7 @@ DiagrammeR("digraph SEIR {
 
 ![Model flow diagram.](./model_diagram.png)
 
-### Process model simulator
-
-```{r rproc}
+```{r rproc,include=FALSE}
 rSim <- Csnippet('
   double lambda, beta;
   double *E = &E1;
@@ -207,12 +206,7 @@ rInit <- Csnippet("
 ")
 ```
 
-
-### Deterministic skeleton
-
-The deterministic skeleton is an ODE.
-
-```{r skel}
+```{r skel,include=FALSE}
 skel <- Csnippet('
   double lambda, beta;
   const double *E = &E1;
@@ -233,11 +227,7 @@ skel <- Csnippet('
 ')
 ```
 
-###  Measurement model: overdispersed count data
-
-$C_t | H_t$ is negative binomial with $\expect{C_t|H_t} = \rho\,H_t$ and $\var{C_t|H_t} = \rho\,H_t\,(1+k\,\rho\,H_t)$.
-
-```{r measmodel}
+```{r measmodel,include=FALSE}
 dObs <- Csnippet('
   double f;
   if (k > 0.0)
@@ -255,9 +245,7 @@ rObs <- Csnippet('
   }')
 ```
 
-### Parameter transformations
-
-```{r partrans}
+```{r partrans,include=FALSE}
 toEst <- Csnippet('
   const double *IC = &S_0;
   double *TIC = &TS_0;
@@ -277,9 +265,7 @@ fromEst <- Csnippet('
 ')
 ```
 
-The following function constructs a `pomp` object to hold the data for any one of the countries.
-
-```{r pomp-construction}
+```{r pomp-construction,include=FALSE}
 ebolaModel <- function (country=c("Guinea", "SierraLeone", "Liberia"),
                         timestep = 0.1, nstageE = 3) {
 
@@ -315,7 +301,6 @@ ebolaModel("Guinea") -> gin
 ebolaModel("SierraLeone") -> sle
 ebolaModel("Liberia") -> lbr
 ```
-
 
 ## Parameter estimates
 
@@ -353,23 +338,23 @@ profs %>%
 
 ## Diagnostics
 
-Parameter estimation is the process of finding the parameters that are "best", in some sense, for a given model, from among the set of those that make sense for that model.
-Model selection, likewise, aims at identifying the "best" model, in some sense, from among a set of candidates.
-One can do both of these things more or less well, but no matter how carefully they are done, the best of a bad set of models is still bad.
++ Parameter estimation is the process of finding the parameters that are "best", in some sense, for a given model, from among the set of those that make sense for that model.
++ Model selection, likewise, aims at identifying the "best" model, in some sense, from among a set of candidates.
++ One can do both of these things more or less well, but no matter how carefully they are done, the best of a bad set of models is still bad.
 
-Let's investigate the model here, at its maximum-likelihood parameters, to see if we can identify problems.
-The guiding principle in this is that, if the model is "good", then the data are a plausible realization of that model.
-Therefore, we can compare the data directly against model simulations.
-Moreover, we can quantify the agreement between simulations and data in any way we like.
-Any statistic, or set of statistics, that can be applied to the data can also be applied to simulations.
-Shortcomings of the model should manifest themselves as discrepancies between the model-predicted distribution of such statistics and their value on the data.
++ Let's investigate the model here, at its maximum-likelihood parameters, to see if we can identify problems.
++ The guiding principle in this is that, if the model is "good", then the data are a plausible realization of that model.
++ Therefore, we can compare the data directly against model simulations.
++ Moreover, we can quantify the agreement between simulations and data in any way we like.
++ Any statistic, or set of statistics, that can be applied to the data can also be applied to simulations.
++ Shortcomings of the model should manifest themselves as discrepancies between the model-predicted distribution of such statistics and their value on the data.
 
-**pomp** provides tools to facilitate this process.
-Specifically, the `probe` function applies a set of user-specified *probes* or summary statistics, to the model and the data, and quantifies the degree of disagreement in several ways.
++ **pomp** provides tools to facilitate this process.
++ Specifically, the `probe` function applies a set of user-specified *probes* or summary statistics, to the model and the data, and quantifies the degree of disagreement in several ways.
 
 Let's see how this is done using the model for the Guinean outbreak.
 
-```{r diagnostics1}
+```{r diagnostics1,echo=FALSE}
 library(pomp)
 library(plyr)
 library(reshape2)
@@ -397,6 +382,10 @@ The simulations appear to be growing a bit more quickly than the data.
 Let's try to quantify this.
 First, we'll write a function that estimates the exponential growth rate by linear regression.
 Then, we'll apply it to the data and to 500 simulations.
+
+In the following `gin` is a `pomp` object containing the model and the data from the Guinea outbreak.
+Below, we make use of the **magrittr** package, which provides the very useful `%>%` pipe operator.
+A brief explanation of the syntax is [given here](http://kingaa.github.io/sbied/hadley/munging.html#the-magrittr-syntax).
 
 ```{r diagnostics-growth-rate}
 growth.rate <- function (y) {
@@ -447,7 +436,7 @@ Have a look at the probes provided with **pomp**: `?basic.probes`.
 Try also to come up with some informative probes of your own.
 Discuss the implications of your findings.
 
-## Forecasting
+## Forecasting using POMP models
 
 Up to now, we've primarily focused on using POMP models to answer scientific questions, i.e., to compare alternative hypothetical explanations for the data in hand.
 Of course, we can also use them to make forecasts.
@@ -464,12 +453,8 @@ Here, we'll explore how we can account for the first three of these in making fo
 We take an [*empirical Bayes*](https://en.wikipedia.org/wiki/Empirical_Bayes_method) approach:
 
 - We set up a collection of parameter vectors in a neighborhood of the maximum likelihood estimate containing the region of high likelihood.
-- We carry out a particle filter at each parameter vector, which gives us estimates of both the likelihood and the filter distribution at that parameter value.
-- We simulate forward from each filter distribution, up to the desired forecast horizon, to give the prediction distribution for each parameter vector.
-- We sample from these prediction distributions with probability proportional to the estimated likelihood of the parameter vector.
 
-
-```{r forecasts}
+```{r forecasts1}
 library(pomp)
 library(plyr)
 library(reshape2)
@@ -480,12 +465,6 @@ set.seed(988077383L)
 
 ## forecast horizon
 horizon <- 13
-
-profs %>%
-  subset(country=="SierraLeone") %>%
-  subset(loglik==max(loglik),
-         select=-c(loglik,loglik.se,country,profile)) %>%
-  unlist() -> mle
 
 ## Weighted quantile function
 wquant <- function (x, weights, probs = c(0.025,0.5,0.975)) {
@@ -512,7 +491,13 @@ params <- sobolDesign(lower=ranges[,'min'],
                       upper=ranges[,'max'],
                       nseq=20)
 plot(params)
+```
 
+- We carry out a particle filter at each parameter vector, which gives us estimates of both the likelihood and the filter distribution at that parameter value.
+- We simulate forward from each filter distribution, up to the desired forecast horizon, to give the prediction distribution for each parameter vector.
+- We sample from these prediction distributions with probability proportional to the estimated likelihood of the parameter vector.
+
+```{r forecasts2}
 library(foreach)
 library(doParallel)
 library(iterators)
@@ -525,54 +510,69 @@ foreach(p=iter(params,by='row'),
         .inorder=FALSE,
         .combine=rbind,
         .options.multicore=list(preschedule=TRUE,set.seed=TRUE)
-) %dopar%
-{
-  library(pomp)
-  
-  M1 <- ebolaModel("SierraLeone")
-  pf <- pfilter(M1,params=unlist(p),Np=2000,save.states=TRUE)
-  pf$saved.states %>% tail(1) %>% melt() %>% 
-    dcast(rep~variable,value.var="value") %>%
-    ddply(~rep,summarize,S_0=S,E_0=E1+E2+E3,I_0=I,R_0=R) %>%
-    melt(id="rep") %>% acast(variable~rep) -> x
-  
-  pp <- parmat(unlist(p),ncol(x))
-  
-  simulate(M1,params=pp,obs=TRUE) %>%
-    melt() %>%
-    mutate(time=time(M1)[time],
-           period="calibration",
-           loglik=logLik(pf)) -> calib
+        ) %dopar%
+    {
+        library(pomp)
+        
+        M1 <- ebolaModel("SierraLeone")
 
-    M2 <- M1
-  time(M2) <- max(time(M1))+seq_len(horizon)
-  timezero(M2) <- max(time(M1))
-  
-  pp[rownames(x),] <- x
-  
-  simulate(M2,params=pp,obs=TRUE) %>%
-    melt() %>%
-    mutate(time=time(M2)[time],
-           period="projection",
-           loglik=logLik(pf)) -> proj
-  
-  rbind(calib,proj)
-} %>% subset(variable=="cases",select=-variable) %>%
-  mutate(weight=exp(loglik-mean(loglik))) %>%
-  arrange(time,rep) -> sims
+        pf <- pfilter(M1,params=unlist(p),Np=2000,save.states=TRUE)
 
+        pf$saved.states %>%                 # latent state for each particle
+            tail(1) %>%                     # last timepoint only
+            melt() %>%                      # reshape and rename the state variables
+            dcast(rep~variable,value.var="value") %>%
+            ddply(~rep,summarize,S_0=S,E_0=E1+E2+E3,I_0=I,R_0=R) %>%
+            melt(id="rep") %>%
+            acast(variable~rep) -> x
+        ## the final states are now stored in 'x' as initial conditions
+        
+        ## set up a matrix of parameters
+        pp <- parmat(unlist(p),ncol(x)) 
+        
+        ## generate simulations over the interval for which we have data
+        simulate(M1,params=pp,obs=TRUE) %>%
+            melt() %>%
+            mutate(time=time(M1)[time],
+                   period="calibration",
+                   loglik=logLik(pf)) -> calib
+
+        ## make a new 'pomp' object for the forecast simulations
+        M2 <- M1
+        time(M2) <- max(time(M1))+seq_len(horizon)
+        timezero(M2) <- max(time(M1))
+        
+        ## set the initial conditions to the final states computed above
+        pp[rownames(x),] <- x
+        
+        ## perform forecast simulations
+        simulate(M2,params=pp,obs=TRUE) %>%
+            melt() %>%
+            mutate(time=time(M2)[time],
+                   period="projection",
+                   loglik=logLik(pf)) -> proj
+        
+        rbind(calib,proj)
+    } %>%
+    subset(variable=="cases",select=-variable) %>%
+    mutate(weight=exp(loglik-mean(loglik))) %>%
+    arrange(time,rep) -> sims
+
+## look at effective sample size
 ess <- with(subset(sims,time==max(time)),weight/sum(weight))
 ess <- 1/sum(ess^2); ess
 
-sims %>% ddply(~time+period,summarize,prob=c(0.025,0.5,0.975),
-               quantile=wquant(value,weights=weight,probs=prob)) %>%
-  mutate(prob=mapvalues(prob,from=c(0.025,0.5,0.975),
-                        to=c("lower","median","upper"))) %>%
-  dcast(period+time~prob,value.var='quantile') %>%
-  mutate(date=min(dat$date)+7*(time-1)) -> simq
+## compute quantiles of the forecast incidence
+sims %>%
+    ddply(~time+period,summarize,prob=c(0.025,0.5,0.975),
+          quantile=wquant(value,weights=weight,probs=prob)) %>%
+    mutate(prob=mapvalues(prob,from=c(0.025,0.5,0.975),
+                          to=c("lower","median","upper"))) %>%
+    dcast(period+time~prob,value.var='quantile') %>%
+    mutate(date=min(dat$date)+7*(time-1)) -> simq
 ```
 
-```{r forecast-plots}
+```{r forecast-plots,echo=FALSE}
 simq %>% ggplot(aes(x=date))+
   geom_ribbon(aes(ymin=lower,ymax=upper,fill=period),alpha=0.3,color=NA)+
   geom_line(aes(y=median,color=period))+
