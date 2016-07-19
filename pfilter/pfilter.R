@@ -323,7 +323,7 @@ qchisq(0.95,df=1)
 #' * A more general approach is to compare likelihoods of different models by penalizing the likelihood of each model by a measure of its complexity. 
 #' 
 #' * Akaike's information criterion **AIC** is given by
-#' $$ AIC = -2 \times \loglik(\data{\theta}) + 2D$$
+#' $$ AIC = -2 \times \loglik(\hat{\theta}) + 2D$$
 #' "Minus twice the maximized log likelihood plus twice the number of parameters."
 #' 
 #' * We are invited to select the model with the lowest AIC score.
@@ -453,7 +453,7 @@ qchisq(0.95,df=1)
 #' where the expectation is taken with $X_{0:N}\sim f_{X_{0:N}}(x_{0:N};\theta)$.
 #' 
 #' - Now, using a [law of large numbers](https://en.wikipedia.org/wiki/Law_of_large_numbers), we can approximate an expectation by the average of a Monte Carlo sample. Thus,
-#' $$\lik(\theta) \approx \frac{1}{J} \prod_{n=1}^{N}\!f_{Y_n|X_n}({y^*_n}| X^j_n; \theta),$$
+#' $$\lik(\theta) \approx \frac{1}{J} \sum_{j=1}^{J}\prod_{n=1}^{N}\!f_{Y_n|X_n}({y^*_n}| X^j_n; \theta),$$
 #' where $\{X^j_{0:N}, j=1,\dots,J\}$ is a Monte Carlo sample of size $J$ drawn from $f_{X_{0:N}}(x_{0:N};\theta)$.
 #' 
 #' 
