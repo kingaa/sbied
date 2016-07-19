@@ -445,7 +445,7 @@ So, we have constructed a profile likelihood confidence interval, consisting of 
 * A more general approach is to compare likelihoods of different models by penalizing the likelihood of each model by a measure of its complexity. 
 
 * Akaike's information criterion **AIC** is given by
-$$ AIC = -2 \times \loglik(\hat{\theta}) + 2D$$
+$$ \textrm{AIC} = -2\,\loglik(\hat{\theta}) + 2\,D$$
 "Minus twice the maximized log likelihood plus twice the number of parameters."
 
 * We are invited to select the model with the lowest AIC score.
