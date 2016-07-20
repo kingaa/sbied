@@ -431,7 +431,7 @@ stew(file="pf.rda",{
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
 ```
 
-In `r round(t_pf["elapsed"],2)` seconds, using `r n_pf` cores, we obtain an unbiased likelihood estimate of `r round(L_pf[1],1)` with a Monte Carlo standard error of `r signif(L_pf[2],2)`.
+In `r round(t_pf["elapsed"],2)` seconds, using `r min(n_pf,length(pf))` cores, we obtain an unbiased likelihood estimate of `r round(L_pf[1],1)` with a Monte Carlo standard error of `r signif(L_pf[2],2)`.
 
 ### Building up a picture of the likelihood surface
 
