@@ -342,7 +342,7 @@ simulate(gin,nsim=20,as.data.frame=TRUE,include.data=TRUE) %>%
 #' First, we'll write a function that estimates the exponential growth rate by linear regression.
 #' Then, we'll apply it to the data and to 500 simulations.
 #' 
-#' In the following `gin` is a `pomp` object containing the model and the data from the Guinea outbreak.
+#' In the following, `gin` is a `pomp` object containing the model and the data from the Guinea outbreak.
 #' Below, we make use of the **magrittr** package, which provides the very useful `%>%` pipe operator.
 #' A brief explanation of the syntax is [given here](http://kingaa.github.io/sbied/hadley/munging.html#the-magrittr-syntax).
 #' 
