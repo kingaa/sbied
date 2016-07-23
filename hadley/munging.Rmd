@@ -5,7 +5,7 @@ output:
   html_document:
     toc: yes
     toc_depth: 4
-bibliography: ../course.bib
+bibliography: ../sbied.bib
 csl: ../ecology.csl
 ---
 
