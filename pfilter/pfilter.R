@@ -526,9 +526,9 @@ qchisq(0.95,df=1)
 #' 
 #' * A basic particle filter is described as follows:
 #' 
-#' 1. Suppose $X_{n-1,j}^{F}$, $j=1,\dots,J$ is a set of $J$ points drawn from the filtering distribution at time $n-1$.
+#' 1. Suppose $X_{n-1,j}^{F}$, $j=1,\dots,J$ is a set of $J$ points drawn from the filtering distribution at time $t_{n-1}$.
 #' 
-#' 2. We obtain a sample $X_{n,j}^{P}$ of points drawn from the prediction distribution at time $t$ by simply simulating the process model:
+#' 2. We obtain a sample $X_{n,j}^{P}$ of points drawn from the prediction distribution at time $t_n$ by simply simulating the process model:
 #' $$X_{n,j}^{P} \sim \mathrm{process}(X_{n-1,j}^{F},\theta), \qquad j=1,\dots,J.$$
 #' 
 #' 3. Having obtained $x_{n,j}^{P}$, we obtain a sample of points from the filtering distribution at time $t_n$ by *resampling* from $\big\{X_{n,j}^{P},j\in 1:J\big\}$ with weights 
