@@ -26,7 +26,7 @@ theme_set(theme_bw())
 #' Run the codes shown and study the outputs to learn about these tools.
 #' When questions are posed, do your best to answer them.
 #' 
-#' For your convenience, [the **R** codes for this document are provided in an **R** script](http://raw.githubusercontent.com/kingaa/short-course/gh-pages/hadley/viz.R) which you can download, edit, and run.
+#' For your convenience, [the **R** codes for this document are provided in an **R** script](http://raw.githubusercontent.com/kingaa/short-course/master/hadley/viz.R) which you can download, edit, and run.
 #' 
 #' ## Getting started: **R**'s base graphics
 #' 
@@ -224,6 +224,6 @@ ggplot(data=x,mapping=aes(x=year,y=TJ,fill=source1))+
 #' --------------------------
 #' 
 #' ## [Back to course homepage](http://kingaa.github.io/short-course)
-#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/short-course/gh-pages/hadley/viz.R)
+#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/short-course/master/hadley/viz.R)
 #' 
 #' --------------------------

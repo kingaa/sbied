@@ -602,7 +602,7 @@ m1 %>%
 #' --------------------------
 #' 
 #' ## [Back to course homepage](http://kingaa.github.io/sbied)
-#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/gh-pages/measles/measles.R)
+#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/measles/measles.R)
 #' ## [Profile likelihood computation for this example](./profile.html)
 #' 
 #' ----------------------

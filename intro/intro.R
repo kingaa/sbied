@@ -451,7 +451,7 @@ logLik(pf)
 #' ------------------------------
 #' 
 #' ## [Back to course homepage](http://kingaa.github.io/sbied)
-#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/gh-pages/intro/intro.R)
+#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/intro/intro.R)
 #' 
 #' ----------------------
 #' 

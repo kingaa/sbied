@@ -52,7 +52,7 @@ This is an extremely condensed introduction to **R**'s base graphics and---more 
 Run the codes shown and study the outputs to learn about these tools.
 When questions are posed, do your best to answer them.
 
-For your convenience, [the **R** codes for this document are provided in an **R** script](http://raw.githubusercontent.com/kingaa/short-course/gh-pages/hadley/viz.R) which you can download, edit, and run.
+For your convenience, [the **R** codes for this document are provided in an **R** script](http://raw.githubusercontent.com/kingaa/short-course/master/hadley/viz.R) which you can download, edit, and run.
 
 ## Getting started: **R**'s base graphics
 
@@ -250,6 +250,6 @@ Ask a question regarding one of the datasets shown here and devise a visualizati
 --------------------------
 
 ## [Back to course homepage](http://kingaa.github.io/short-course)
-## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/short-course/gh-pages/hadley/viz.R)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/short-course/master/hadley/viz.R)
 
 --------------------------

@@ -306,7 +306,7 @@ plot(simulate(parus),var="pop")
 #' ----------------------------
 #' 
 #' ## [Back to course homepage](http://kingaa.github.io/sbied)
-#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/gh-pages/intro/ricker.R)
+#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/intro/ricker.R)
 #' 
 #' ----------------------------
 #' 
