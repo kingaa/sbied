@@ -1,5 +1,5 @@
-TARGETS = mif.R mif.html box_search_global.rda box_search_local.rda \
-lik_local.rda pf.rda bsflu_params.csv 
+TARGETS = mif.R mif.html box_search_global.rds box_search_local.rds \
+lik_local.rds pf.rds bsflu_params.csv 
 
 default: $(TARGETS)
 ifneq ($(INSTALLDIR),)

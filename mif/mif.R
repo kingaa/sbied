@@ -358,9 +358,10 @@ registerDoParallel()
 #' We proceed to carry out replicated particle filters at an initial guess of $\beta=2$, $\mu_I=1$, and $\rho=0.9$.
 #' 
 ## ----pf------------------------------------------------------------------
-bake(file="pf.rds",seed=625904618,kind="L'Ecuyer",{
+library(doRNG)
+registerDoRNG(625904618)
+bake(file="pf.rds",{
   foreach(i=1:10,.packages='pomp',
-    .options.multicore=list(set.seed=TRUE),
     .export=c("bsflu","fixed_params")
   ) %dopar% {
     pfilter(bsflu,params=c(Beta=2,mu_I=1,rho=0.9,fixed_params),Np=10000)
@@ -393,11 +394,11 @@ write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 #' We fix `cooling.fraction.50=0.5`, so that after 50 `mif2` iterations, the perturbations are reduced to half their original magnitudes.
 #' 
 ## ----box_search_local----------------------------------------------------
-bake(file="box_search_local.rds",seed=482947940,kind="L'Ecuyer",{
+registerDoRNG(482947940)
+bake(file="box_search_local.rds",{
   foreach(i=1:20,
     .packages='pomp',
     .combine=c, 
-    .options.multicore=list(set.seed=TRUE),
     .export=c("bsflu","fixed_params")
   ) %dopar%  
   {
@@ -431,12 +432,9 @@ bake(file="box_search_local.rds",seed=482947940,kind="L'Ecuyer",{
 #' Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 #' 
 ## ----lik_local-----------------------------------------------------------
-bake(file="lik_local.rds",seed=900242057,kind="L'Ecuyer",{
-  foreach(mf=mifs_local,
-    .packages='pomp',
-    .combine=rbind,
-    .options.multicore=list(set.seed=TRUE)
-  ) %dopar% 
+registerDoRNG(900242057)
+bake(file="lik_local.rds",{
+  foreach(mf=mifs_local,.packages='pomp',.combine=rbind) %dopar% 
   {
     evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
     ll <- logmeanexp(evals,se=TRUE)
@@ -482,31 +480,30 @@ params_box <- rbind(
 #' We are now ready to carry out likelihood maximizations from diverse starting points.
 #' 
 ## ----box_search_global---------------------------------------------------
-stew(file="box_search_global.rda",{
-  n_global <- getDoParWorkers()
-  t_global <- system.time({
-    mf1 <- mifs_local[[1]]
-    guesses <- as.data.frame(apply(params_box,1,function(x)runif(300,x[1],x[2])))
-    results_global <- foreach(guess=iter(guesses,"row"), 
-                              .packages='pomp', 
-                              .combine=rbind,
-                              .options.multicore=list(set.seed=TRUE),
-                              .export=c("mf1","fixed_params")
-    ) %dopar% 
-    {
-      mf <- mif2(mf1,start=c(unlist(guess),fixed_params))
-      mf <- mif2(mf,Nmif=100)
-      ll <- replicate(10,logLik(pfilter(mf,Np=100000)))
-      ll <- logmeanexp(ll,se=TRUE)
-      c(coef(mf),loglik=ll[1],loglik=ll[2])
-    }
-  })
-},seed=1270401374,kind="L'Ecuyer")
+registerDoRNG(1270401374)
+guesses <- as.data.frame(apply(params_box,1,function(x)runif(300,x[1],x[2])))
+mf1 <- mifs_local[[1]]
+bake(file="box_search_global.rds",{
+  foreach(guess=iter(guesses,"row"), 
+    .packages='pomp', 
+    .combine=rbind,
+    .options.multicore=list(set.seed=TRUE),
+    .export=c("mf1","fixed_params")
+  ) %dopar% 
+  {
+    mf <- mif2(mf1,start=c(unlist(guess),fixed_params))
+    mf <- mif2(mf,Nmif=100)
+    ll <- replicate(10,logLik(pfilter(mf,Np=100000)))
+    ll <- logmeanexp(ll,se=TRUE)
+    c(coef(mf),loglik=ll[1],loglik=ll[2])
+  }
+}) -> results_global
+
+## ------------------------------------------------------------------------
 results_global <- as.data.frame(results_global)
 results <- rbind(results,results_global[names(results)])
 write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 
-#' 
 #' The above codes run one search from each of `r nrow(guesses)` starting values.
 #' Each search consissts of an initial run of `r nrow(conv.rec(mf1))` IF2 iterations, followed by another 100 iterations.
 #' These codes exhibit a general **pomp** behavior:
