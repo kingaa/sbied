@@ -53,7 +53,7 @@ options(keep.source=TRUE,encoding="UTF-8")
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
 library(pomp)
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.10.4")
 set.seed(557976883)
 ```
 
@@ -416,22 +416,18 @@ By default, **R** will guess how many cores are available and will run about hal
 We proceed to carry out replicated particle filters at an initial guess of $\beta=2$, $\mu_I=1$, and $\rho=0.9$.
 
 ```{r pf}
-stew(file="pf.rda",{
-  t_pf <- system.time(
-    pf <- foreach(i=1:10,.packages='pomp',
-                  .options.multicore=list(set.seed=TRUE),
-                  .export=c("bsflu","fixed_params")
-    ) %dopar% {
-      pfilter(bsflu,params=c(Beta=2,mu_I=1,rho=0.9,fixed_params),Np=10000)
-    }
-  )
-  n_pf <- getDoParWorkers()
-},seed=625904618,kind="L'Ecuyer")
-
+bake(file="pf.rds",seed=625904618,kind="L'Ecuyer",{
+  foreach(i=1:10,.packages='pomp',
+    .options.multicore=list(set.seed=TRUE),
+    .export=c("bsflu","fixed_params")
+  ) %dopar% {
+    pfilter(bsflu,params=c(Beta=2,mu_I=1,rho=0.9,fixed_params),Np=10000)
+  }
+}) -> pf
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
 ```
 
-In `r round(t_pf["elapsed"],2)` seconds, using `r min(n_pf,length(pf))` cores, we obtain an unbiased likelihood estimate of `r round(L_pf[1],1)` with a Monte Carlo standard error of `r signif(L_pf[2],2)`.
+In `r round(attr(pf,"system.time")["elapsed"],2)` seconds, using `r min(getDoParWorkers(),length(pf))` cores, we obtain an unbiased likelihood estimate of `r round(L_pf[1],1)` with a Monte Carlo standard error of `r signif(L_pf[2],2)`.
 
 ### Building up a picture of the likelihood surface
 
@@ -455,28 +451,26 @@ For simplicity, we'll use the same perturbation size on $\rho$.
 We fix `cooling.fraction.50=0.5`, so that after 50 `mif2` iterations, the perturbations are reduced to half their original magnitudes.
 
 ```{r box_search_local}
-stew(file="box_search_local.rda",{
-  t_local_mif <- system.time({
-    mifs_local <- foreach(i=1:20,
-                          .packages='pomp',
-                          .combine=c, 
-                          .options.multicore=list(set.seed=TRUE),
-                          .export=c("bsflu","fixed_params")
-    ) %dopar%  
-    {
-      mif2(
-        bsflu,
-        start=c(Beta=2,mu_I=1,rho=0.9,fixed_params),
-        Np=2000,
-        Nmif=50,
-        cooling.type="geometric",
-        cooling.fraction.50=0.5,
-        transform=TRUE,
-        rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02)
-      )
-    }
-  })
-},seed=482947940,kind="L'Ecuyer")
+bake(file="box_search_local.rds",seed=482947940,kind="L'Ecuyer",{
+  foreach(i=1:20,
+    .packages='pomp',
+    .combine=c, 
+    .options.multicore=list(set.seed=TRUE),
+    .export=c("bsflu","fixed_params")
+  ) %dopar%  
+  {
+    mif2(
+      bsflu,
+      start=c(Beta=2,mu_I=1,rho=0.9,fixed_params),
+      Np=2000,
+      Nmif=50,
+      cooling.type="geometric",
+      cooling.fraction.50=0.5,
+      transform=TRUE,
+      rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02)
+    )
+  }
+}) -> mifs_local
 ```
 
 We obtain some diagnostic plots with the `plot` command applied to `mifs_local`.
@@ -503,24 +497,27 @@ the errors in `mif2` average out over many iterations of the filtering.
 Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
 ```{r lik_local}
-stew(file="lik_local.rda",{
-  t_local_eval <- system.time({
-    results_local <- foreach(mf=mifs_local,
-                             .packages='pomp',
-                             .combine=rbind,
-                             .options.multicore=list(set.seed=TRUE)
-    ) %dopar% 
-    {
-      evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
-      ll <- logmeanexp(evals,se=TRUE)
-      c(coef(mf),loglik=ll[1],loglik=ll[2])
-    }
-  })
-},seed=900242057,kind="L'Ecuyer")
+bake(file="lik_local.rds",seed=900242057,kind="L'Ecuyer",{
+  foreach(mf=mifs_local,
+    .packages='pomp',
+    .combine=rbind,
+    .options.multicore=list(set.seed=TRUE)
+  ) %dopar% 
+  {
+    evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
+    ll <- logmeanexp(evals,se=TRUE)
+    c(coef(mf),loglik=ll[1],loglik=ll[2])
+  }
+}) -> results_local
+```
+```{r include=FALSE,purl=FALSE}
+t_local <- attr(results_local,"system.time")
+```
+```{r}
 results_local <- as.data.frame(results_local)
 ```
 
-This investigation took  `r round(t_local_mif["elapsed"],0)` sec for the maximization and `r round(t_local_eval["elapsed"],0)` sec for the likelihood evaluation.
+This investigation took  `r round(attr(mifs_local,"system.time")["elapsed"],0)` sec for the maximization and `r round(t_local["elapsed"],0)` sec for the likelihood evaluation.
 These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 
 ```{r pairs_local,purl=FALSE}
