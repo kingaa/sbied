@@ -59,6 +59,7 @@ set.seed(594709947L)
 #' In so doing, we will use notation that generalizes to more complex systems [[@breto09]](http://dx.doi.org/10.1214/08-AOAS201).
 #' 
 #' 
+#' 
 #' - Let $S$, $I$, and $R$ represent, respectively, the number of susceptible hosts, the number of infected (and, by assumption, infectious) hosts, and the number of recovered or removed hosts. 
 #' - We suppose that each arrow has an associated *per capita* rate, so here there is a rate $\mu_{SI}$ at which individuals in $S$ transition to $I$, and $\mu_{IR}$ at which individuals in $I$ transition to $R$. 
 #' - To account for demography (birth/death/migration) we allow the possibility of a source and sink compartment, which is not represented on the flow diagram above.
@@ -75,18 +76,18 @@ set.seed(594709947L)
 #'     - For discrete population compartment models, the flow counting processes are non-decreasing and integer valued.
 #'     - For continuous population compartment models, the flow counting processes are non-decreasing and real valued.
 #' - The number of hosts in each compartment can be computed via these counting processes.
-#'   Ignoring demography, we have:
+#'   Ignoring demography, we have: 
 #' $$\begin{aligned} 
 #' S(t) &= S(0) - N_{SI}(t)\\
 #' I(t) &= I(0) + N_{SI}(t) - N_{IR}(t)\\
-#' R(t) &= R(0) + N_{IR}(t)
+#' R(t) &= R(0) + N_{IR}(t)\\
 #' \end{aligned}$$
-#'   These equations represent a kind of conservation law. 
+#' These equations represent a kind of conservation law. 
 #' - Over any finite time interval $[t,t+\delta)$, we have
 #' $$\begin{aligned} 
 #' \dlta{S} &= -\dlta{N}_{SI}\\
-#' \dlta{I} &= \dlta{N}_{SI}-\dlta{N}_{IR}\\
-#' \dlta{R} &= \dlta{N}_{IR},
+#' \dlta{I} &= \phantom{-}\dlta{N}_{SI}-\dlta{N}_{IR}\\
+#' \dlta{R} &= \phantom{-}\dlta{N}_{IR},
 #' \end{aligned}$$
 #' where the $\Delta$ notation indicates the increment in the corresponding process.
 #' Thus, for example $\dlta{N}_{SI}(t) = N_{SI}(t+\delta)-N_{SI}(t)$.
@@ -125,11 +126,10 @@ set.seed(594709947L)
 #' - We will see later, in the [measles case study](../measles/measles.html), a situation where this extra randomness plays an important role. 
 #'   The representation of the model in terms of counting processes turns out to be useful for this.
 #' 
-#' <!-- ### Demographic vs environmental stochasticity -->
-#' 
 #' --------------------------
 #' 
-#' #### Optional Exercise: From Markov chain to ODE 
+#' #### Optional Exercise: From Markov chain to ODE
+#' 
 #' Find the expected value of $N_{SI}(t+\delta)-N_{SI}(t)$ and $N_{IR}(t+\delta)-N_{IR}(t)$ given the current state, $S(t)$, $I(t)$ and $R(t)$.
 #' Take the limit as $\delta\to 0$ and show that this gives the ODE model.
 #' 
@@ -139,7 +139,7 @@ set.seed(594709947L)
 #' 
 #' - [Euler](https://en.wikipedia.org/wiki/Leonhard_Euler) took the following approach to numeric solution of an ODE:
 #'     + He wanted to investigate an ODE $$\frac{dx}{dt}=h(x,t)$$
-#'       with an initial condition $x(0)=x_0$. 
+#'       with an initial condition $x(t_0)=x_0$. 
 #'       Since, in many cases of interest, the true solution $x(t)$ of this ODE cannot be worked out analytically, Euler wished to find a numerical approximation, $\tilde x(t)$, to $x(t)$.
 #'     + He divided time into small intervals of length $\delta$, with $\tilde t_k=t_0+k\,\delta$.
 #'       He initialized the numerical approximation at the known starting value, $$\tilde x(t_0)=x(t_0)=x_0.$$
@@ -157,7 +157,7 @@ set.seed(594709947L)
 #' 
 #' --------------------------
 #' 
-## ----euler,echo=FALSE,fig.height=3,fig.cap="Euler approximations $\\tilde x(t)$ with stepsize 0.1 (A) and 0.05 (B) are shown in blue. The true solution, $x(t)$, is shown in black."----
+## ----euler,echo=FALSE,fig.height=3,fig.cap="Euler approximations $x=\\tilde x(t)$ with stepsize 0.1 (A) and 0.05 (B) are shown in blue. The true solution, $x=x(t)$, is shown in black."----
 
 library(plyr)
 library(magrittr)
@@ -198,6 +198,7 @@ exdat %>%
     labs(x="t",y="x") -> pl2
 
 plot_grid(pl1,pl2,labels=c("A","B"))
+
 
 #' 
 #' --------------------------
