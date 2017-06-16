@@ -141,7 +141,7 @@ $(document).ready(function () {
 <li>Finally, the parameters set we must optimize over is not unbounded. We must have <span class="math inline">\(\beta,\mu_I&gt;0\)</span> and <span class="math inline">\(0&lt;\rho&lt;1\)</span>. We must therefore select an optimizer that can solve this <em>constrained maximization problem</em>, or find some of way of turning it into an unconstrained maximization problem. For example, we can transform the parameters onto a scale on which there are no constraints.</li>
 </ol>
 <p>Let’s try this out on the toy SIR model we were working with, reconstructed as follows.</p>
-<pre class="r"><code>read.table(&quot;http://kingaa.github.io/sbied/stochsim/bsflu_data.txt&quot;) -&gt; bsflu
+<pre class="r"><code>read.table(&quot;https://kingaa.github.io/sbied/stochsim/bsflu_data.txt&quot;) -&gt; bsflu
 
 rproc &lt;- Csnippet(&quot;
   double N = 763;

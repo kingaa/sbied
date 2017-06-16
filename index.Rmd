@@ -12,7 +12,7 @@ This module introduces statistical inference techniques and computational method
 The course will explore deterministic and stochastic formulations of epidemiological dynamics and develop inference methods appropriate for a range of models.
 Special emphasis will be on exact and approximate likelihood as the key elements in parameter estimation, hypothesis testing, and model selection. Specifically, the course will cover sequential Monte Carlo and synthetic likelihood techniques.
 Students will learn to implement these in R to carry out maximum likelihood and Bayesian inference. Knowledge of the material in Module 1 is assumed.
-Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutorial) before the module.
+Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutorial/) before the module.
 
 ## Course objectives
 
@@ -40,8 +40,7 @@ Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutori
 
 ----------------------
 
-[**pomp** homepage](http://kingaa.github.io/pomp)  
-
+[**pomp** homepage](https://kingaa.github.io/pomp/)  
 [Source code for these notes](http://github.com/kingaa/sbied/)  
 
 ----------------------

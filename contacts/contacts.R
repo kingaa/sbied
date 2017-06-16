@@ -141,7 +141,7 @@ matplot(t(contact_data[1:15,1:4]),
 #' ## Building a pomp object for panel data: Approach 1
 #' 
 #' **pomp** is an **R** package for time series data analysis, focusing on the use of POMP models [@king15]. 
-#' **pomp** is available from [CRAN](http://cran.r-project.org/web/packages/pomp), with development versions available from [github](http://kingaa.github.io/pomp).
+#' **pomp** is available from [CRAN](https://cran.r-project.org/package=pomp), with development versions available from [github](https://kingaa.github.io/pomp/).
 #' Here, we use **pomp** version `r packageVersion("pomp")`
 #' 
 ## ----package-------------------------------------------------------------

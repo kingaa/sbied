@@ -20,7 +20,7 @@
 #' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
 #' Please share and remix noncommercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
-#' This document has its origins in the [Getting Started vignette](http://kingaa.github.io/pomp/vignettes/getting_started.html).
+#' This document has its origins in the [Getting Started vignette](https://kingaa.github.io/pomp/vignettes/getting_started.html).
 #' 
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
 library(pomp)
@@ -40,7 +40,7 @@ stopifnot(packageVersion("pomp")>="1.12")
 #' 
 #' Download and plot the data:
 ## ----parus-data----------------------------------------------------------
-loc <- url("http://kingaa.github.io/sbied/intro/parus.csv")
+loc <- url("https://kingaa.github.io/sbied/intro/parus.csv")
 dat <- read.csv(loc)
 head(dat)
 plot(pop~year,data=dat,type='o')
@@ -89,7 +89,7 @@ plot(pop~year,data=dat,type='o')
 #' Learn about the various things you can do once you have a `pomp` object by doing `methods?pomp` and following the links therein.
 #' Read an overview of the package as a whole with links to its main features by doing `package?pomp`.
 #' A complete index of the functions in **pomp** is returned by the command `library(help=pomp)`.
-#' Finally, the home page for the `pomp` project is http://kingaa.github.io/pomp;
+#' Finally, the home page for the `pomp` project is https://kingaa.github.io/pomp/;
 #' there you have access to the complete source code, tutorials, manuals, a news blog, a facility for reporting issues and making help requests, etc.
 #' 
 #' Now, to construct our `pomp` object:

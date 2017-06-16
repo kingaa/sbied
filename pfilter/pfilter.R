@@ -539,7 +539,7 @@ qchisq(0.95,df=1)
 #' 
 #' 
 ## ----flu-construct, echo=FALSE-------------------------------------------
-read.table("http://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
+read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
 
 rproc <- Csnippet("
   double N = 763;

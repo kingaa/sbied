@@ -89,7 +89,7 @@ stopifnot(packageVersion("pomp")>="1.12")
 #' Supplementing these data are population estimates for the three countries..
 #' 
 ## ----get-data,include=FALSE----------------------------------------------
-base_url <- "http://kingaa.github.io/sbied/"
+base_url <- "https://kingaa.github.io/sbied/"
 read.csv(paste0(base_url,"ebola/ebola_data.csv"),stringsAsFactors=FALSE,
          colClasses=c(date="Date")) -> dat
 sapply(dat,class)
@@ -344,7 +344,7 @@ simulate(gin,nsim=20,as.data.frame=TRUE,include.data=TRUE) %>%
 #' 
 #' In the following, `gin` is a `pomp` object containing the model and the data from the Guinea outbreak.
 #' Below, we make use of the **magrittr** package, which provides the very useful `%>%` pipe operator.
-#' A brief explanation of the syntax is [given here](http://kingaa.github.io/R_Tutorial/munging.html#the-magrittr-syntax).
+#' A brief explanation of the syntax is [given here](https://kingaa.github.io/R_Tutorial/munging.html#the-magrittr-syntax).
 #' 
 ## ----diagnostics-growth-rate---------------------------------------------
 growth.rate <- function (y) {

@@ -23,7 +23,7 @@ In **R**, you can run `Sys.info()` to get a printout of the operating system and
 **R** and **RStudio** are free and open-source.
 You’ll need at least version 3.3.3 of **R**.
 The latest version is 3.4.0, so if you need to update, go ahead and install version 3.4.0.
-Source code and binaries are available on CRAN (http://cran.r-project.org).
+Source code and binaries are available on CRAN (http://cran.r-project.org/).
 Install *the latest version* of **RStudio** from [rstudio.com](http://www.rstudio.com/products/rstudio/download/).
 
 #### Windows users must install **Rtools**
@@ -31,7 +31,7 @@ Install *the latest version* of **RStudio** from [rstudio.com](http://www.rstudi
 If your machine runs Windows, you must install **Rtools**.
 This will give you the ability to compile C code and dynamically link it into an **R** session.
 
-[Download **Rtools** from CRAN](http://cran.r-project.org/bin/windows/Rtools) and install it.
+[Download **Rtools** from CRAN](http://cran.r-project.org/bin/windows/Rtools/) and install it.
 When installing **Rtools**, it is sufficient to choose the “Package authoring installation” option.
 Also during the installation, you must tick the "edit system PATH” box.
 

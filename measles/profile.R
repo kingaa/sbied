@@ -64,7 +64,7 @@ stopifnot(packageVersion("pomp")>="1.12")
 #' we'll treat these variables as covariates.
 #' 
 ## ----load-data-----------------------------------------------------------
-daturl <- "http://kingaa.github.io/pomp/vignettes/twentycities.rda"
+daturl <- "https://kingaa.github.io/pomp/vignettes/twentycities.rda"
 datfile <- file.path(tempdir(),"twentycities.rda")
 download.file(daturl,destfile=datfile,mode="wb")
 load(datfile)

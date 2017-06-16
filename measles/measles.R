@@ -128,9 +128,9 @@
 #' ## Model implementation
 #' 
 #' We'll load the packages we'll need, and set the random seed, to allow reproducibility.
-#' Note that we'll be making heavy use of the data-munging methods in packages **plyr** and **reshape2**, a [tutorial introduction to which is provided here](http://kingaa.github.io/R_Tutorial/munging.html).
-#' Also, we'll be using **ggplot2** for plotting: see [this brief tutorial](http://kingaa.github.io/R_Tutorial/viz.html#a-more-systematic-approach-the-grammar-of-graphics).
-#' Finally, we'll use the convenient **magrittr** syntax, which is explained [here](http://kingaa.github.io/R_Tutorial/munging.html#the-magrittr-syntax).
+#' Note that we'll be making heavy use of the data-munging methods in packages **plyr** and **reshape2**, a [tutorial introduction to which is provided here](https://kingaa.github.io/R_Tutorial/munging.html).
+#' Also, we'll be using **ggplot2** for plotting: see [this brief tutorial](https://kingaa.github.io/R_Tutorial/viz.html#a-more-systematic-approach-the-grammar-of-graphics).
+#' Finally, we'll use the convenient **magrittr** syntax, which is explained [here](https://kingaa.github.io/R_Tutorial/munging.html#the-magrittr-syntax).
 #' 
 ## ----prelims,cache=FALSE-------------------------------------------------
 library(pomp)
@@ -151,7 +151,7 @@ set.seed(594709947L)
 #' we'll treat these variables as covariates.
 #' 
 ## ----load-data-----------------------------------------------------------
-daturl <- "http://kingaa.github.io/pomp/vignettes/twentycities.rda"
+daturl <- "https://kingaa.github.io/pomp/vignettes/twentycities.rda"
 datfile <- file.path(tempdir(),"twentycities.rda")
 download.file(daturl,destfile=datfile,mode="wb")
 load(datfile)

@@ -155,7 +155,7 @@ $(document).ready(function () {
 <div id="situation-report-data" class="section level3">
 <h3>Situation-report data</h3>
 <p>Download the data from the WHO Situation Report of 1 October 2014:</p>
-<pre class="r"><code>base_url &lt;- &quot;http://kingaa.github.io/sbied/&quot;
+<pre class="r"><code>base_url &lt;- &quot;https://kingaa.github.io/sbied/&quot;
 read.csv(paste0(base_url,&quot;ebola/ebola_data.csv&quot;),stringsAsFactors=FALSE,
          colClasses=c(date=&quot;Date&quot;)) -&gt; dat
 sapply(dat,class)</code></pre>

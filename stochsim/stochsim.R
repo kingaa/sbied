@@ -243,7 +243,7 @@ set.seed(594709947L)
 #' <!--- 763 boys were at risk, and ultimately 512 spent time away from class (either confined to bed or in convalescence. --->
 #' Download the data and examine it:
 ## ----flu-data1-----------------------------------------------------------
-read.table("http://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
+read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
 head(bsflu)
 
 #' The variable `B` refers to boys confined to bed and `C` to boys in convalescence.

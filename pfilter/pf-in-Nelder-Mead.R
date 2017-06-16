@@ -84,7 +84,7 @@ stopifnot(packageVersion("pomp")>="1.12")
 #' Let's try this out on the toy SIR model we were working with, reconstructed as follows.
 #' 
 ## ----flu-construct-------------------------------------------------------
-read.table("http://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
+read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
 
 rproc <- Csnippet("
   double N = 763;

@@ -35,7 +35,7 @@ set.seed(557976883)
 #' 
 #' This tutorial covers likelihood estimation via the method of iterated filtering.
 #' It presupposes familiarity with building partially observed Markov process (POMP) objects in the **R** package **pomp** [@King2016]. 
-#' **pomp** is available from [CRAN](http://cran.r-project.org/web/packages/pomp) and [github](http://kingaa.github.io/pomp).
+#' **pomp** is available from [CRAN](https://cran.r-project.org/package=pomp) and [github](https://kingaa.github.io/pomp/).
 #' This tutorial follows on from the [topic of carrying out particle filtering (also known as sequential Monte Carlo) via `pfilter` in **pomp**](../pfilter/pfilter.html). 
 #' 
 #' We have the following goals:
@@ -195,7 +195,7 @@ set.seed(557976883)
 #' First, we read in the data:
 #' 
 ## ----load_bbs------------------------------------------------------------
-bsflu_data <- read.table("http://kingaa.github.io/sbied/stochsim/bsflu_data.txt")
+bsflu_data <- read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt")
 
 #' 
 #' Our model is a variation on a basic SIR Markov chain, with state $X(t)=(S(t),I(t),R_1(t),R_2(t),R_3(t))$ giving the numbers of individuals in the susceptible and infectious categories, and three stages of recovery.

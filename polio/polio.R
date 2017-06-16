@@ -51,7 +51,7 @@ set.seed(5996485L)
 #' The data we study, in consist of `cases`, the monthly reported polio cases; `births`, the  monthly recorded births; `pop`, the annual census; `time`, date in years.
 #' 
 ## ----data----------------------------------------------------------------
-polio_data <- read.table("http://kingaa.github.io/sbied/polio/polio_wisconsin.csv")
+polio_data <- read.table("https://kingaa.github.io/sbied/polio/polio_wisconsin.csv")
 
 #' 
 #' ## A polio transmission model
@@ -109,7 +109,7 @@ polio_data <- read.table("http://kingaa.github.io/sbied/polio/polio_wisconsin.cs
 #' ### Model implementation
 #' 
 #' **pomp** is an **R** package for time series data analysis, focusing on the use of POMP models [@King2016].
-#' pomp is available from [CRAN](http://cran.r-project.org/web/packages/pomp), with development versions available from [github](http://kingaa.github.io/pomp). 
+#' pomp is available from [CRAN](https://cran.r-project.org/package=pomp), with development versions available from [github](https://kingaa.github.io/pomp/). 
 #' Here, we use pomp version `r packageVersion("pomp")`.
 #' 
 ## ----load-package--------------------------------------------------------

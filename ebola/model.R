@@ -15,7 +15,7 @@ library(pomp)
 stopifnot(packageVersion("pomp")>="1.12")
 
 ## ----get-data,include=FALSE----------------------------------------------
-base_url <- "http://kingaa.github.io/sbied/"
+base_url <- "https://kingaa.github.io/sbied/"
 read.csv(paste0(base_url,"ebola/ebola_data.csv"),stringsAsFactors=FALSE,
          colClasses=c(date="Date")) -> dat
 sapply(dat,class)

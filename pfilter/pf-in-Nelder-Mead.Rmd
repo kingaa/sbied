@@ -110,7 +110,7 @@ For example, we can transform the parameters onto a scale on which there are no 
 Let's try this out on the toy SIR model we were working with, reconstructed as follows.
 
 ```{r flu-construct}
-read.table("http://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
+read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
 
 rproc <- Csnippet("
   double N = 763;

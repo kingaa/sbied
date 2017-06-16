@@ -97,7 +97,7 @@ We also have information on the population sizes and birth-rates in these cities
 we'll treat these variables as covariates.
 
 ```{r load-data}
-daturl <- "http://kingaa.github.io/pomp/vignettes/twentycities.rda"
+daturl <- "https://kingaa.github.io/pomp/vignettes/twentycities.rda"
 datfile <- file.path(tempdir(),"twentycities.rda")
 download.file(daturl,destfile=datfile,mode="wb")
 load(datfile)
