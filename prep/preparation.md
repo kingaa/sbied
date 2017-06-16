@@ -74,7 +74,7 @@ Linux distributions typically include this by default but it is not impossible t
 #### MacOSX users:
 
 So that you can compile C code and dynamically link it into an **R** session, you will need to have the **Xcode** app installed before running the `pompTest.R` script above.
-This is gratis and can be installed via the App Store or downloaded from [developer.apple.com](https://developer.apple.com/xcode/downloads/).
+This is gratis and can be installed via the App Store or downloaded from [developer.apple.com](https://developer.apple.com/download/).
 
 If the `pompTest.R` script fails because you cannot load **pomp**, try installing it from source.
 The easiest way to do this is to use the **devtools** package.

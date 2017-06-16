@@ -20,7 +20,7 @@
 #' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
 #' Please share and remix noncommercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
-#' This document has its origins in the [Getting Started vignette](http://kingaa.github.io/vignettes/getting_started.html).
+#' This document has its origins in the [Getting Started vignette](http://kingaa.github.io/pomp/vignettes/getting_started.html).
 #' 
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
 library(pomp)
