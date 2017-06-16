@@ -21,10 +21,10 @@ In **R**, you can run `Sys.info()` to get a printout of the operating system and
 ### Install **R** and **RStudio**
 
 **R** and **RStudio** are free and open-source.
-You’ll need at least version 3.3.0 of **R**.
-The latest version is 3.3.1, so if you need to update, go ahead and install version 3.3.1.
+You’ll need at least version 3.3.3 of **R**.
+The latest version is 3.4.0, so if you need to update, go ahead and install version 3.4.0.
 Source code and binaries are available on CRAN (http://cran.r-project.org).
-Install the latest version of **RStudio** from [rstudio.com](http://www.rstudio.com/products/rstudio/download/).
+Install *the latest version* of **RStudio** from [rstudio.com](http://www.rstudio.com/products/rstudio/download/).
 
 #### Windows users must install **Rtools**
 
@@ -33,10 +33,9 @@ This will give you the ability to compile C code and dynamically link it into an
 
 [Download **Rtools** from CRAN](http://cran.r-project.org/bin/windows/Rtools) and install it.
 When installing **Rtools**, it is sufficient to choose the “Package authoring installation” option.
-Also during the installation, you must tick the “edit system PATH” box.
+Also during the installation, you must tick the "edit system PATH” box.
 
-Briefly, I had some problems with **Rtools33**, but none with the last frozen version (**Rtools32**).
-I also had some difficulties initially with the latest version of **RStudio** but these went away when I installed version 0.98.1103 ([download here](https://support.rstudio.com/hc/en-us/articles/206569407-Older-Versions-of-RStudio-Desktop)) and now I am having no problems with version **RStudio** version 0.99.447.
+***It is critical that you install these programs before the course starts!***
 
 ### Install needed packages
 
@@ -45,7 +44,7 @@ Open a session in **RStudio** and run the following:
 ```
 > update.packages()
 > source("http://kingaa.github.io/sbied/prep/packages.R")
-> source("http://kingaa.github.io/scripts/pompTest.R")
+> source("http://kingaa.github.io/sbied/prep/pompTest.R")
 ```
 
 [The `>` is the command prompt; it is not part of the command.
@@ -60,8 +59,6 @@ The second command runs a script on my website.
 It will install some needed packages if these are not already installed on your system.
 
 The third command will attempt to install **pomp**, the principal **R** package we’ll be using, and will check whether you can work with it.
-The installed **pomp** version is more recent than that which is on CRAN;
-you must install this more recent version.
 
 If the final command fails, try the following:
 ```

@@ -68,7 +68,7 @@ library(plyr)
 library(reshape2)
 library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 ```
 
 ## Why fit a deterministic process model?
@@ -135,3 +135,10 @@ ggplot(data=y,
 
 In this diagram, $\hat y_n$ refers to the model prediction, 
 $\hat y_n = \expect{Y_n \vert X_n=x_n(\theta)}$, and $y_n^*$ is data.
+
+-----------------------
+
+## [Back](./pfilter.html)
+
+--------------------------
+

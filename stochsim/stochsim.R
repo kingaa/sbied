@@ -38,7 +38,7 @@ library(pomp)
 library(ggplot2)
 theme_set(theme_bw())
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 set.seed(594709947L)
 
 #' 
@@ -416,7 +416,7 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' 
 #' --------------------------
 #' 
-#' ## [Back to course homepage](http://kingaa.github.io/sbied)
+#' ## [Back to course homepage](../index.html)
 #' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/stochsim.R)
 #' 
 #' --------------------------

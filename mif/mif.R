@@ -25,7 +25,7 @@
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
 library(pomp)
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp")>="1.10.4")
+stopifnot(packageVersion("pomp")>="1.12")
 set.seed(557976883)
 
 #' 
@@ -645,7 +645,7 @@ write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 #' 
 #' --------------------------
 #' 
-#' ## [Back to course homepage](http://kingaa.github.io/sbied)
+#' ## [Back to course homepage](../index.html)
 #' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R)
 #' 
 #' ----------------------

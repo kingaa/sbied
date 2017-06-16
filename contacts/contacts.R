@@ -473,7 +473,7 @@ stew("mif1.rda",{
 #' 
 #' --------------------------
 #' 
-#' ## [Back to course homepage](http://kingaa.github.io/sbied)
+#' ## [Back to course homepage](../index.html)
 #' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/contacts/contacts.R)
 #' 
 #' ----------------------

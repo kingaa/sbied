@@ -51,7 +51,7 @@ options(keep.source=TRUE,encoding="UTF-8",scipen=6)
 ```
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 library(ggplot2)
 theme_set(theme_bw())
 library(plyr)
@@ -152,7 +152,7 @@ flu %>%
 
 ----------------------------
 
-## [Back to Stochastic Simulation lesson](http://kingaa.github.io/sbied/stochsim/stochsim.html)
+## [Back to Stochastic Simulation lesson](./stochsim.html)
 
 ----------------------------
 

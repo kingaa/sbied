@@ -79,10 +79,10 @@ require(plyr)
 require(reshape2)
 require(magrittr)
 require(pomp)
-stopifnot(packageVersion("pomp")>="0.69-1")
+stopifnot(packageVersion("pomp")>="1.12")
 ```
 
-<big><big><big>Objectives</big></big></big>
+## Objectives
 
 1. To review some basic ideas in Monte Carlo computation and simulating random variables.
 
@@ -90,9 +90,7 @@ stopifnot(packageVersion("pomp")>="0.69-1")
 
 <br>
 
------
-
-------
+-----------
 
 ## Our context: Monte Carlo methods for POMP models.
 
@@ -114,9 +112,7 @@ An excellent technical reference on Monte Carlo techniques is @Robert2004.
 
 <br>
 
------
-
-------
+-----------
 
 ## The fundamental theorem of Monte Carlo integration
 
@@ -160,9 +156,7 @@ $$H_\Nmc -\E[h(X)]\;\sim\;\mathrm{normal}\left(0,\frac{V_\Nmc}{\Nmc}\right).$$
 
 <br>
 
-------
-
-------
+------------
 
 ## Importance sampling
 
@@ -197,9 +191,7 @@ Specifically, if the tails of $g$ are lighter than those of $f$, the Monte Carlo
 
 <br>
 
------
-
-------
+-----------
 
 ## Simulation techniques for general distributions
 
@@ -218,9 +210,7 @@ Specifically, if the tails of $g$ are lighter than those of $f$, the Monte Carlo
 
 <br>
 
------
-
-------
+-----------
 
 ### The transformation method
 
@@ -247,9 +237,7 @@ $$\begin{eqnarray}
 
 <br>
 
------
-
-------
+-----------
 
 
 ### The rejection method
@@ -315,9 +303,7 @@ par(op)
 
 <br>
 
--------
-
--------
+--------------
 
 #### The rejection method for dominated densities
 
@@ -381,10 +367,10 @@ text(xx,yy,labels=c("M g","f"),col=c("red","black"),font=3)
 par(op)
 ```    
 
------------------------------------
+-----------------------
 
-------------
+## [Back](./pfilter.html)
 
+--------------------------
 
 ## References
-

@@ -68,7 +68,7 @@ library(plyr)
 library(reshape2)
 library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 ```
 
 \newcommand\prob{\mathbb{P}}
@@ -115,4 +115,10 @@ $$ \big[\theta^{[j]}_{1,\mathrm lo},\theta^{[j]}_{1,\mathrm hi}\big] = \big[\hat
 <br><br>
 (C) For large $J$, one can empirically calibrate a 95% confidence interval for $\theta_1$ with exactly the claimed coverage in a neighborhood of $\data{\theta}$. For example, using profile methods, one could replace the cutoff 1.92 by a constant $\alpha$ chosen such that 95% of the profile confidence intervals computed for the simulations cover $\data{\theta_1}$.
 
+
+-----------------------
+
+## [Back](./pfilter.html)
+
+--------------------------
 

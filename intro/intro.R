@@ -51,8 +51,6 @@ set.seed(2028866059L)
 #' 
 #' -----
 #' 
-#' -----
-#' 
 #' ### Noisy clockwork: Time series analysis of population fluctuations in animals
 #' 
 #' ##### Six problems of @Bjornstad2001
@@ -70,8 +68,6 @@ set.seed(2028866059L)
 #' 
 #' <br>
 #' 
-#' -------
-#' 
 #' ------
 #' 
 #' ## Objectives
@@ -84,8 +80,6 @@ set.seed(2028866059L)
 #' 1. To provide documented examples for student re-use.
 #' 
 #' <br>
-#' 
-#' --------
 #' 
 #' -------
 #' 
@@ -100,8 +94,6 @@ set.seed(2028866059L)
 #' 
 #' <br>
 #' 
-#' ---------------
-#' 
 #' -------------------------------
 #' 
 #' ## Partially observed Markov process (POMP) models
@@ -113,8 +105,6 @@ set.seed(2028866059L)
 #' * POMP models can include all the features desired by @Bjornstad2001.
 #' 
 #' <br>
-#' 
-#' ----------
 #' 
 #' ------------------------------
 #' 
@@ -129,8 +119,6 @@ set.seed(2028866059L)
 #' 
 #' <br>
 #' 
-#' ------------------------------
-#' 
 #' -------------------
 #' 
 #' #### The Markov assumption
@@ -143,8 +131,6 @@ set.seed(2028866059L)
 #' - An important special case: any system of differential equations is Markovian.
 #' 
 #' <br>
-#' 
-#' ---------------------
 #' 
 #' ------------------------------
 #' 
@@ -161,8 +147,6 @@ set.seed(2028866059L)
 #' $$ f_{Y_{1:N}}(y^*_{1:N};\theta)=\int f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)\, dx_{0:N}.$$
 #' 
 #' <br>
-#' 
-#' ----------------
 #' 
 #' ------------------------------
 #' 
@@ -181,8 +165,6 @@ set.seed(2028866059L)
 #' 
 #' <br>
 #' 
-#' ------------
-#' 
 #' ------------------------------
 #' 
 #' ### Algorithms for POMP models
@@ -197,8 +179,6 @@ set.seed(2028866059L)
 #' 
 #' <br>
 #' 
-#' --------------
-#' 
 #' -------------
 #' 
 #' ### What does it mean for methodology to be __simulation-based__?
@@ -210,8 +190,6 @@ set.seed(2028866059L)
 #' * Much development of simulation-based statistical methodology has occurred in the past decade.
 #' 
 #' <br>
-#' 
-#' ------------
 #' 
 #' ------------
 #' 
@@ -231,8 +209,6 @@ set.seed(2028866059L)
 #' * **pomp** provides a forum for development, modification and sharing of models, methodology and data analysis workflows.
 #' 
 #' <br>
-#' 
-#' ----------
 #' 
 #' ---------
 #' 
@@ -255,8 +231,6 @@ set.seed(2028866059L)
 #' 
 #' ---------
 #' 
-#' --------
-#' 
 #' #### Process noise
 #' 
 #' - We can model process noise in this system by making the growth rate $r$ into a random variable.
@@ -268,8 +242,6 @@ set.seed(2028866059L)
 #' <br>
 #' 
 #' -----------
-#' 
-#' ----------
 #' 
 #' #### Measurement error
 #' 
@@ -291,8 +263,6 @@ set.seed(2028866059L)
 #' 
 #' ------
 #' 
-#' -----
-#' 
 #' ### Working with the Ricker model in **pomp**.
 #' 
 #' - The  **R**  package **pomp** provides facilities for modeling POMPs, a toolbox of statistical inference methods for analyzing data using POMPs, and a development platform for implmenting new POMP inference methods.
@@ -308,7 +278,7 @@ set.seed(2028866059L)
 library(ggplot2)
 library(reshape2)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 
 #' 
 #' - A pre-built `pomp` object encoding the Ricker model comes included with the package. Load it by
@@ -388,8 +358,6 @@ plot(time(ricker),y["N",1,],type="l")
 #' 
 #' -------
 #' 
-#' ------
-#' 
 #' ### Inference algorithms in **pomp**
 #' 
 #' - **pomp** provides a wide range of inference algorithms.
@@ -450,7 +418,7 @@ logLik(pf)
 #' 
 #' ------------------------------
 #' 
-#' ## [Back to course homepage](http://kingaa.github.io/sbied)
+#' ## [Back to course homepage](../index.html)
 #' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/intro/intro.R)
 #' 
 #' ----------------------

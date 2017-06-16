@@ -128,9 +128,9 @@
 #' ## Model implementation
 #' 
 #' We'll load the packages we'll need, and set the random seed, to allow reproducibility.
-#' Note that we'll be making heavy use of the data-munging methods in packages **plyr** and **reshape2**, a [tutorial introduction to which is provided here](http://kingaa.github.io/sbied/hadley/munging.html).
-#' Also, we'll be using **ggplot2** for plotting: see [this brief tutorial](http://kingaa.github.io/sbied/hadley/viz.html#a-more-systematic-approach-the-grammar-of-graphics).
-#' Finally, we'll use the convenient **magrittr** syntax, which is explained [here](http://kingaa.github.io/sbied/hadley/munging.html#the-magrittr-syntax).
+#' Note that we'll be making heavy use of the data-munging methods in packages **plyr** and **reshape2**, a [tutorial introduction to which is provided here](http://kingaa.github.io/R_Tutorial/munging.html).
+#' Also, we'll be using **ggplot2** for plotting: see [this brief tutorial](http://kingaa.github.io/R_Tutorial/viz.html#a-more-systematic-approach-the-grammar-of-graphics).
+#' Finally, we'll use the convenient **magrittr** syntax, which is explained [here](http://kingaa.github.io/R_Tutorial/munging.html#the-magrittr-syntax).
 #' 
 ## ----prelims,cache=FALSE-------------------------------------------------
 library(pomp)
@@ -139,7 +139,7 @@ library(reshape2)
 library(magrittr)
 library(ggplot2)
 theme_set(theme_bw())
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 set.seed(594709947L)
 
 #' 
@@ -156,10 +156,6 @@ datfile <- file.path(tempdir(),"twentycities.rda")
 download.file(daturl,destfile=datfile,mode="wb")
 load(datfile)
 
-#' 
-#' In the following, we'll be using the **plyr**, **reshape2**, and **magrittr** packages.
-#' These provide a number of tools for data munging that are extremely flexible and useful.
-#' [A brief tutorial on these tools is provided here](http://kingaa.github.io/sbied/hadley/munging.html).
 #' 
 #' We select the data for London and pre-process the measles and demography data.
 #' 
@@ -601,7 +597,7 @@ m1 %>%
 #' 
 #' --------------------------
 #' 
-#' ## [Back to course homepage](http://kingaa.github.io/sbied)
+#' ## [Back to course homepage](../index.html)
 #' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/measles/measles.R)
 #' ## [Profile likelihood computation for this example](./profile.html)
 #' 

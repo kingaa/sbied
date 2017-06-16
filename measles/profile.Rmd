@@ -86,7 +86,7 @@ library(plyr)
 library(reshape2)
 library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 ```
 
 ### Data and covariates
@@ -544,7 +544,7 @@ try(detach("package:Rmpi",unload=TRUE),silent=TRUE)
 --------------------------
 
 ## [Back to measles lesson](./measles.html)
-## [Back to course homepage](http://kingaa.github.io/sbied)
+## [Back to course homepage](../index.html)
 ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/measles/measles-profile.R)
 
 ----------------------

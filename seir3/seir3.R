@@ -23,7 +23,7 @@
 #' 
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 library(ggplot2)
 theme_set(theme_bw())
 library(plyr)
@@ -336,7 +336,7 @@ pairs(~loglik+Beta+mu_E+mu_I+rho, data=subset(results,loglik>max(loglik)-10),pch
 #' 
 #' ----------------------------
 #' 
-#' ## [Back to course homepage](http://kingaa.github.io/sbied)
+#' ## [Back to course homepage](../index.html)
 #' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/seir3/seir3.R)
 #' 
 #' ----------------------------

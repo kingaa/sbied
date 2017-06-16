@@ -1,6 +1,6 @@
 ## check to see that the version of R is at least 3.2.1
 print(R.version.string)
-res <- try(stopifnot(getRversion()>="3.2.1"))
+res <- try(stopifnot(getRversion()>="3.3.3"))
 if (inherits(res,"try-error")) {
     cat("Please install a more recent version of R!\n")
 } else {

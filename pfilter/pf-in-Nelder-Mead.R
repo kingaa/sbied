@@ -42,7 +42,7 @@ library(plyr)
 library(reshape2)
 library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 
 #' 
 #' \newcommand\prob{\mathbb{P}}
@@ -208,8 +208,6 @@ ggplot(data=sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' 
 #' --------------------------
 #' 
-#' ------------------------
-#' 
 #' #### Exercise: Global maximization
 #' 
 #' The search of parameter space we conducted above was local.
@@ -221,8 +219,6 @@ ggplot(data=sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' 
 #' --------
 #' 
-#' --------
-#' 
 #' #### Exercise: Fit more parameters.
 #' 
 #' Try to estimate $\beta$, $\mu_I$, $\rho$, and $\mu_{R1}$ simultaneously.
@@ -231,4 +227,6 @@ ggplot(data=sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' 
 #' --------------------------
 #' 
-#' ------------------------
+#' ## [Back](./pfilter.html)
+#' 
+#' --------------------------

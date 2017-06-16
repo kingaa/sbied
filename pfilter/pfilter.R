@@ -37,7 +37,7 @@
 #' 
 ## ----prelims,cache=FALSE,include=FALSE-----------------------------------
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 library(ggplot2)
 theme_set(theme_bw())
 library(plyr)
@@ -56,8 +56,6 @@ set.seed(1221234211)
 #' 1. Be able to explain the tools of likelihood-based statistical inference that become available given numerical accessibility of the likelihood function.
 #' 
 #' <br>
-#' 
-#' ---------------------------------
 #' 
 #' ---------------------------------
 #'  
@@ -79,8 +77,6 @@ set.seed(1221234211)
 #' <br>
 #' 
 #' ---------------------------------
-#' 
-#' ---------------------------------
 #'  
 #' ## The likelihood function
 #' 
@@ -90,9 +86,6 @@ set.seed(1221234211)
 #' - A good general reference on likelihood is @Pawitan2001.
 #' 
 #' <br>
-#' 
-#' 
-#' ---------------------------------
 #' 
 #' ---------------------------------
 #'  
@@ -115,8 +108,6 @@ set.seed(1221234211)
 #' 
 #' ---------
 #' 
-#' -------
-#' 
 #' ### Modeling using discrete and continuous distributions
 #' 
 #' - Recall that the probability distribution $f_{Y_{1:N}}(y_{1:N};\theta)$ defines a random variable $Y_{1:N}$ for which probabilities can be computed as integrals of $f_{Y_{1:N}}(y_{1:N};\theta)$.
@@ -132,8 +123,6 @@ set.seed(1221234211)
 #' <br>
 #' 
 #' ---------------------------------
-#' 
-#' ---------------------------------
 #'  
 #' ## Review of likelihood-based inference
 #' 
@@ -146,8 +135,6 @@ set.seed(1221234211)
 #' <br>
 #' 
 #' ------------
-#' 
-#' -----------
 #' 
 #' ###  The maximum likelihood estimate (MLE)
 #' 
@@ -162,9 +149,7 @@ set.seed(1221234211)
 #' 
 #' <br>
 #' 
-#' -----
-#' 
-#' -----
+#' ----------
 #' 
 #' 
 #' ### Standard errors for the MLE
@@ -201,9 +186,7 @@ set.seed(1221234211)
 #' 
 #' <br>
 #' 
-#' -----------
-#' 
-#' ----------
+#' ---------------------
 #' 
 #' ### Confidence intervals via the profile likelihood
 #' 
@@ -226,9 +209,7 @@ set.seed(1221234211)
 #' 
 #' <br>
 #' 
-#' -------
-#' 
-#' -------
+#' --------------
 #' 
 #' 
 #' ### Likelihood-based model selection and model diagnostics
@@ -239,9 +220,7 @@ set.seed(1221234211)
 #' 
 #' <br>
 #' 
-#' ----------
-#' 
-#' ---------
+#' -------------------
 #' 
 #' #### Likelihood ratio tests for nested hypotheses
 #' 
@@ -281,9 +260,7 @@ set.seed(1221234211)
 #' 
 #' <br>  
 #' 
-#' ------
-#' 
-#' -----
+#' -----------
 #' 
 #' #### The connection between Wilks's theorem and profile likelihood
 #' 
@@ -312,9 +289,7 @@ qchisq(0.95,df=1)
 #' 
 #' <br>
 #' 
-#' -------
-#' 
-#' -------
+#' --------------
 #' 
 #' #### Akaike's information criterion (AIC)
 #' 
@@ -338,8 +313,6 @@ qchisq(0.95,df=1)
 #' 
 #' 
 #' ---------------------------------
-#' 
-#' ---------------------------------
 #'  
 #' 
 #' ## Indirect specification of a statistical model via a simulation procedure
@@ -356,8 +329,6 @@ qchisq(0.95,df=1)
 #' We can still talk about the likelihood function, and develop numerical methods that take advantage of its statistical properties.
 #' 
 #' <br>
-#' 
-#' ---------------------------------
 #' 
 #' ---------------------------------
 #'  
@@ -390,8 +361,6 @@ qchisq(0.95,df=1)
 #' <br>
 #' 
 #' ---------------------------------
-#' 
-#' ---------------------------------
 #'  
 #' #### Special case: deterministic latent process
 #' 
@@ -405,8 +374,6 @@ qchisq(0.95,df=1)
 #' 
 #' 
 #' <br>
-#' 
-#' ---------------------------------
 #' 
 #' ---------------------------------
 #'  
@@ -428,8 +395,6 @@ qchisq(0.95,df=1)
 #' <br>
 #' 
 #' ----------------------------------
-#' 
-#' ---------------------------------
 #'  
 #' 
 #' ## Monte Carlo likelihood by direct simulation
@@ -469,8 +434,6 @@ qchisq(0.95,df=1)
 #' 
 #' 
 #' <br>
-#' 
-#' ---------------------------------
 #' 
 #' ---------------------------------
 #'  
@@ -567,8 +530,6 @@ qchisq(0.95,df=1)
 #' 
 #' 
 #' <br>
-#' 
-#' ---------------------------------
 #' 
 #' ---------------------------------
 #'  
@@ -754,8 +715,6 @@ p %>%
 #' 
 #' ---------------------------------
 #' 
-#' ---------------------------------
-#' 
 #' #### Basic Exercise: log likelihood estimation by particle filtering
 #' 
 #' - Here are some desiderata for a Monte Carlo log likelihood approximation:
@@ -773,7 +732,6 @@ p %>%
 #' - Comment on the bias of your estimate.
 #' 
 #' - Optionally, take advantage of multiple cores on your computer to improve your estimate.
-#' 
 #' 
 #' -----------
 #' 
@@ -812,8 +770,6 @@ p %>%
 #' 
 #' --------------------------
 #' 
-#' ------------------------
-#' 
 #' 
 #' ## Biological interpretation of parameter estimates
 #' 
@@ -832,9 +788,7 @@ p %>%
 #' 
 #' --------------------------
 #' 
-#' ------------------------
-#' 
-#' ## [Back to course homepage](http://kingaa.github.io/sbied)
+#' ## [Back to course homepage](../index.html)
 #' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R)
 #' 
 #' --------------------------

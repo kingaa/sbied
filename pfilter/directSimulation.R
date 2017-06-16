@@ -42,7 +42,7 @@ library(plyr)
 library(reshape2)
 library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 
 #' 
 #' * We're going to demonstrate what happens when we attempt to compute the likelihood for the boarding school flu data by direct simulation from.
@@ -120,3 +120,10 @@ summary(exp(ell))
 #' - This is a consequence of the fact that we are proposing trajectories in a way that is completely unconditional on the data.
 #' 
 #' - The problem will get much worse with longer data sets.
+#' 
+#' -----------------------
+#' 
+#' ## [Back](./pfilter.html)
+#' 
+#' --------------------------
+#' 

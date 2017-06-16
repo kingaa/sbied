@@ -41,7 +41,7 @@ library(plyr)
 library(reshape2)
 library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 
 #' 
 #' ## Objectives
@@ -344,7 +344,7 @@ simulate(gin,nsim=20,as.data.frame=TRUE,include.data=TRUE) %>%
 #' 
 #' In the following, `gin` is a `pomp` object containing the model and the data from the Guinea outbreak.
 #' Below, we make use of the **magrittr** package, which provides the very useful `%>%` pipe operator.
-#' A brief explanation of the syntax is [given here](http://kingaa.github.io/sbied/hadley/munging.html#the-magrittr-syntax).
+#' A brief explanation of the syntax is [given here](http://kingaa.github.io/R_Tutorial/munging.html#the-magrittr-syntax).
 #' 
 ## ----diagnostics-growth-rate---------------------------------------------
 growth.rate <- function (y) {
@@ -542,7 +542,7 @@ simq %>% ggplot(aes(x=date))+
 #' 
 #' --------------------------
 #' 
-#' ## [Back to course homepage](http://kingaa.github.io/sbied)
+#' ## [Back to course homepage](../index.html)
 #' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola.R)
 #' 
 #' ----------------------

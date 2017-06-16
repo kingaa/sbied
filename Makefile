@@ -1,4 +1,4 @@
-MODULES = prep intro stochsim pfilter mif polio ebola measles hadley contacts
+MODULES = prep intro stochsim pfilter mif polio ebola measles contacts
 
 default: index.html modules
 

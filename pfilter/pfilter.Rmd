@@ -66,7 +66,7 @@ options(
 
 ```{r prelims,cache=FALSE,include=FALSE}
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 library(ggplot2)
 theme_set(theme_bw())
 library(plyr)
@@ -85,8 +85,6 @@ Students completing this lesson will:
 1. Be able to explain the tools of likelihood-based statistical inference that become available given numerical accessibility of the likelihood function.
 
 <br>
-
----------------------------------
 
 ---------------------------------
  
@@ -201,8 +199,6 @@ textellipse(elpos[10,], 0.15, 0.1,
 <br>
 
 ---------------------------------
-
----------------------------------
  
 ## The likelihood function
 
@@ -212,9 +208,6 @@ textellipse(elpos[10,], 0.15, 0.1,
 - A good general reference on likelihood is @Pawitan2001.
 
 <br>
-
-
----------------------------------
 
 ---------------------------------
  
@@ -237,8 +230,6 @@ $$\loglik(\theta)= \log \lik(\theta) = \log f_{Y_{1:N}}(y^*_{1:N};\theta).$$
 
 ---------
 
--------
-
 ### Modeling using discrete and continuous distributions
 
 - Recall that the probability distribution $f_{Y_{1:N}}(y_{1:N};\theta)$ defines a random variable $Y_{1:N}$ for which probabilities can be computed as integrals of $f_{Y_{1:N}}(y_{1:N};\theta)$.
@@ -254,8 +245,6 @@ We will use the notation of continuous random variables, but all the methods app
 <br>
 
 ---------------------------------
-
----------------------------------
  
 ## Review of likelihood-based inference
 
@@ -268,8 +257,6 @@ For now, suppose that software exists to evaluate and maximize the likelihood fu
 <br>
 
 ------------
-
------------
 
 ###  The maximum likelihood estimate (MLE)
 
@@ -284,9 +271,7 @@ where $\arg\max_\theta g(\theta)$ means a value of argument $\theta$ at which th
 
 <br>
 
------
-
------
+----------
 
 
 ### Standard errors for the MLE
@@ -323,9 +308,7 @@ where $\arg\max_\theta g(\theta)$ means a value of argument $\theta$ at which th
 
 <br>
 
------------
-
-----------
+---------------------
 
 ### Confidence intervals via the profile likelihood
 
@@ -348,9 +331,7 @@ $$ \big\{\phi : \loglik(\hat\theta) - \profileloglik(\phi)\big\} < 1.92.$$
 
 <br>
 
--------
-
--------
+--------------
 
 
 ### Likelihood-based model selection and model diagnostics
@@ -361,9 +342,7 @@ $$ \big\{\phi : \loglik(\hat\theta) - \profileloglik(\phi)\big\} < 1.92.$$
 
 <br>
 
-----------
-
----------
+-------------------
 
 #### Likelihood ratio tests for nested hypotheses
 
@@ -403,9 +382,7 @@ where $\chi^2_d$ is a chi-squared random variable on $d$ degrees of freedom and 
 
 <br>  
 
-------
-
------
+-----------
 
 #### The connection between Wilks's theorem and profile likelihood
 
@@ -434,9 +411,7 @@ So, we have constructed a profile likelihood confidence interval, consisting of 
 
 <br>
 
--------
-
--------
+--------------
 
 #### Akaike's information criterion (AIC)
 
@@ -460,8 +435,6 @@ $$ \textrm{AIC} = -2\,\loglik(\hat{\theta}) + 2\,D$$
 
 
 ---------------------------------
-
----------------------------------
  
 
 ## Indirect specification of a statistical model via a simulation procedure
@@ -478,8 +451,6 @@ This *implicitly* defines the corresponding density $f_{Y_{1:N}}(y_{1:N};\theta)
 We can still talk about the likelihood function, and develop numerical methods that take advantage of its statistical properties.
 
 <br>
-
----------------------------------
 
 ---------------------------------
  
@@ -568,8 +539,6 @@ $$\lik(\theta) = f_{Y_{1:N}}(y^*_{1:N};\theta)=\int\!f_{X_{0:N},Y_{1:N}}(x_{0:N}
 <br>
 
 ---------------------------------
-
----------------------------------
  
 #### Special case: deterministic latent process
 
@@ -583,8 +552,6 @@ $$\lik(\theta) = f_{Y_{1:N}}(y^*_{1:N};\theta)=\int\!f_{X_{0:N},Y_{1:N}}(x_{0:N}
 
 
 <br>
-
----------------------------------
 
 ---------------------------------
  
@@ -606,8 +573,6 @@ f_{Y_{1:N}}({y^*_{1:N}};\theta)
 <br>
 
 ----------------------------------
-
----------------------------------
  
 
 ## Monte Carlo likelihood by direct simulation
@@ -647,8 +612,6 @@ where $\{X^j_{0:N}, j=1,\dots,J\}$ is a Monte Carlo sample of size $J$ drawn fro
 
 
 <br>
-
----------------------------------
 
 ---------------------------------
  
@@ -745,8 +708,6 @@ Pseudocode for the above is provided by @King2016.
 
 
 <br>
-
----------------------------------
 
 ---------------------------------
  
@@ -932,8 +893,6 @@ In the above, all points with log likelihoods less than 50 units below the maxim
 
 ---------------------------------
 
----------------------------------
-
 #### Basic Exercise: log likelihood estimation by particle filtering
 
 - Here are some desiderata for a Monte Carlo log likelihood approximation:
@@ -951,7 +910,6 @@ In the above, all points with log likelihoods less than 50 units below the maxim
 - Comment on the bias of your estimate.
 
 - Optionally, take advantage of multiple cores on your computer to improve your estimate.
-
 
 -----------
 
@@ -990,8 +948,6 @@ Compute a slice of the likelihood in the $\beta$-$\rho$ plane.
 
 --------------------------
 
-------------------------
-
 
 ## Biological interpretation of parameter estimates
 
@@ -1010,9 +966,7 @@ However, this risks suppressing the warning that the data were trying to give ab
 
 --------------------------
 
-------------------------
-
-## [Back to course homepage](http://kingaa.github.io/sbied)
+## [Back to course homepage](../index.html)
 ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R)
 
 --------------------------

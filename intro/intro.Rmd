@@ -85,8 +85,6 @@ set.seed(2028866059L)
 
 -----
 
------
-
 ### Noisy clockwork: Time series analysis of population fluctuations in animals
 
 ##### Six problems of @Bjornstad2001
@@ -104,8 +102,6 @@ The same issues arise for **epidemiological** modeling and inference via nonline
 
 <br>
 
--------
-
 ------
 
 ## Objectives
@@ -118,8 +114,6 @@ The same issues arise for **epidemiological** modeling and inference via nonline
 1. To provide documented examples for student re-use.
 
 <br>
-
---------
 
 -------
 
@@ -134,8 +128,6 @@ The same issues arise for **epidemiological** modeling and inference via nonline
 
 <br>
 
----------------
-
 -------------------------------
 
 ## Partially observed Markov process (POMP) models
@@ -147,8 +139,6 @@ The same issues arise for **epidemiological** modeling and inference via nonline
 * POMP models can include all the features desired by @Bjornstad2001.
 
 <br>
-
-----------
 
 ------------------------------
 
@@ -181,8 +171,6 @@ popViewport()
 
 <br>
 
-------------------------------
-
 -------------------
 
 #### The Markov assumption
@@ -195,8 +183,6 @@ $$\prob{X_n{=}x_n|X_0,\dots,X_{n-1}}=\prob{X_n={x_n}|X_{n-1}}.$$
 - An important special case: any system of differential equations is Markovian.
 
 <br>
-
----------------------
 
 ------------------------------
 
@@ -213,8 +199,6 @@ $$f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta) = f_{X_0}(x_0;\theta)\,\prod_{n=1}
 $$ f_{Y_{1:N}}(y^*_{1:N};\theta)=\int f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)\, dx_{0:N}.$$
 
 <br>
-
-----------------
 
 ------------------------------
 
@@ -289,8 +273,6 @@ for all $n=1,\dots,N$.
 
 <br>
 
-------------
-
 ------------------------------
 
 ### Algorithms for POMP models
@@ -305,8 +287,6 @@ To think algorithmically, we define some function calls:
 
 <br>
 
---------------
-
 -------------
 
 ### What does it mean for methodology to be __simulation-based__?
@@ -318,8 +298,6 @@ To think algorithmically, we define some function calls:
 * Much development of simulation-based statistical methodology has occurred in the past decade.
 
 <br>
-
-------------
 
 ------------
 
@@ -339,8 +317,6 @@ upper case POMP is a class of models.
 * **pomp** provides a forum for development, modification and sharing of models, methodology and data analysis workflows.
 
 <br>
-
-----------
 
 ---------
 
@@ -363,8 +339,6 @@ $$N_{t+1} = r\,N_{t}\,\exp(-N_{t})$$
 
 ---------
 
---------
-
 #### Process noise
 
 - We can model process noise in this system by making the growth rate $r$ into a random variable.
@@ -376,8 +350,6 @@ where the new parameter $\sigma$ is the standard deviation of the noise process 
 <br>
 
 -----------
-
-----------
 
 #### Measurement error
 
@@ -399,8 +371,6 @@ $$y_{t}\;\sim\;\dist{Poisson}{\phi\,N_{t}}$$
 
 ------
 
------
-
 ### Working with the Ricker model in **pomp**.
 
 - The  **R**  package **pomp** provides facilities for modeling POMPs, a toolbox of statistical inference methods for analyzing data using POMPs, and a development platform for implmenting new POMP inference methods.
@@ -416,7 +386,7 @@ First, we'll load some packages, including **pomp**.
 library(ggplot2)
 library(reshape2)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.6")
+stopifnot(packageVersion("pomp")>="1.12")
 ```
 
 - A pre-built `pomp` object encoding the Ricker model comes included with the package. Load it by
@@ -500,8 +470,6 @@ pompExample()
 
 -------
 
-------
-
 ### Inference algorithms in **pomp**
 
 - **pomp** provides a wide range of inference algorithms.
@@ -562,7 +530,7 @@ In particular, we avoid "simulating a set of differential equations", preferring
 
 ------------------------------
 
-## [Back to course homepage](http://kingaa.github.io/sbied)
+## [Back to course homepage](../index.html)
 ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/intro/intro.R)
 
 ----------------------
