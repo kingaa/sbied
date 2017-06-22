@@ -27,3 +27,5 @@ The schedule is quite full, so it is important that you take a little time to pr
    Even if you have a bit of experience with **R**, this is a useful exercise: at least read through it and make sure all is familiar to you.
 
 There will be no course materials in hardcopy: all the course materials are [available online](https://kingaa.github.io/sbied/).
+
+---Aaron and Ed
