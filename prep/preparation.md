@@ -7,12 +7,12 @@ title: Software installation instructions
 Please read the appropriate sections below, which give specific instructions for installing and testing the software we will be using.
 First follow the instructions for "all users", then those for your specific operating system (OS).
 
-**NB:** If you run into problems, send a note to kingaa@umich.edu with a detailed description of the problem you've encountered.
+**NB:** If you run into problems, send a note to kingaa.sismid@gmail.com with a detailed description of the problem you've encountered.
 In this message, be **certain** to include:
 
 - the operating system you’re running,
 - the version numbers of **R**, **Rstudio**, and **pomp** you’re attempting to install,
-- what command you've executed, and
+- what command(s) you've executed, and
 - what error messages you've received.
 
 In particular, it is often easiest to send a screenshot or transcript showing the commands you've entered and the error messages you've received.
@@ -33,7 +33,7 @@ This will give you the ability to compile C code and dynamically link it into an
 
 [Download **Rtools** from CRAN](http://cran.r-project.org/bin/windows/Rtools/) and install it.
 When installing **Rtools**, it is sufficient to choose the “Package authoring installation” option.
-Also during the installation, you must tick the "edit system PATH” box.
+Also during the installation, **you must tick the "edit system PATH" box**.
 
 ***It is critical that you install these programs before the course starts!***
 
@@ -62,9 +62,9 @@ The third command will attempt to install **pomp**, the principal **R** package 
 
 If the final command fails, try the following:
 ```
-> source("http://kingaa.github.io/scripts/hello.R",echo=TRUE)
+> source("http://kingaa.github.io/scripts/helloC.R",echo=TRUE)
 ```
-If this fails to give the "Hello!" messages, you will need to follow the instructions below that correspond to your OS.
+If this fails to give the "Hello!" message, you will need to follow the instructions below that correspond to your OS.
 
 #### Linux and unix users:
 
@@ -82,7 +82,7 @@ Do
 ```
 install.packages("devtools")
 library(devtools)
-install_git("kingaa/pomp")
+install_github("kingaa/pomp")
 ```
 If, while trying to install from source, you receive the error,
 ```

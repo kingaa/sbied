@@ -16,8 +16,8 @@ if (length(deps) > 0) {
 }
 
 ## install pomp and pompExamples
-cat("Installing",sQuote("pomp"),"and",sQuote("pompExamples"),"....\n")
-install.packages(c("pomp","pompExamples"),lib=lib)
+cat("Installing",sQuote("pomp"),"....\n")
+install.packages(c("pomp"),lib=lib)
 
 ## test pomp
 cat("Testing",sQuote("pomp"),"....\n")

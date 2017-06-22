@@ -1,4 +1,4 @@
-default: preparation.html packages.R
+default: preparation.html packages.R advance.html
 ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)
