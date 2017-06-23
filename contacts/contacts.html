@@ -310,8 +310,8 @@ apply(obs(s1),1,mean)</code></pre>
 },seed=1943810296,kind=&quot;L'Ecuyer&quot;)
 
 (loglik1 &lt;- sapply(pf1,logLik))</code></pre>
-<pre><code>##  [1] -9566.831 -9558.116 -9559.200 -9554.664 -9561.365 -9559.850 -9561.002
-##  [8] -9562.758 -9555.364 -9558.430</code></pre>
+<pre><code>##  [1] -9566.831 -9558.116 -9559.200 -9554.664 -9563.094 -9560.378 -9560.069
+##  [8] -9558.138 -9561.908 -9560.731</code></pre>
 <p>We don’t require parameter transformations to do filtering. However, for optimization, it is useful to set them up as follows:</p>
 <pre class="r"><code>contact_toEstimationScale &lt;- Csnippet(&quot;
   Tmu_X = log(mu_X);
@@ -416,8 +416,8 @@ apply(obs(s2),1,mean)</code></pre>
 },seed=1092903614,kind=&quot;L'Ecuyer&quot;)
 
 (loglik2 &lt;- sapply(pf2,logLik))</code></pre>
-<pre><code>##  [1] -9559.774 -9560.892 -9558.294 -9557.502 -9552.792 -9559.816 -9559.183
-##  [8] -9558.187 -9555.103 -9559.254</code></pre>
+<pre><code>##  [1] -9555.104 -9557.424 -9555.330 -9560.170 -9558.877 -9558.164 -9560.136
+##  [8] -9559.495 -9559.851 -9555.373</code></pre>
 <div id="likelihood-maximization-using-the-if2-algorithm" class="section level3">
 <h3>Likelihood maximization using the IF2 algorithm</h3>
 <p>As an example of an iterated filtering investigation, let’s carry out a local search, starting at the current estimate of the MLE.</p>
@@ -453,14 +453,14 @@ apply(obs(s2),1,mean)</code></pre>
 },seed=354320731,kind=&quot;L'Ecuyer&quot;)
 
 (loglik_new &lt;- logmeanexp(sapply(pf3,logLik),se=TRUE))</code></pre>
-<pre><code>##                          se 
-## -9630.7223014     0.5589939</code></pre>
-<p>This is a relatively quick search, taking only 79.4 seconds. The preliminary likelihood estimated as a consequence of running <code>mif2</code> and extracted here by <code>sapply(m2,logLik)</code> does not correspond to the actual, fixed parameter, model. It is the sequential Monte Carlo estimate of the likelihood from the last filtering iteration, and therefore will have some perturbation of the parameters. Further, one typically requires fewer particles for each filtering iteration than necessary to obtain a good likelihood estimate—stochastic errors can cancel out through the filtering iterations, rather than within any one iteration. For promising new parameter values, it is desirable to put computational effort into evaluating the likelihood sufficient to make the Monte Carlo error small compared to one log unit.</p>
+<pre><code>##                        se 
+## -9653.543874     1.917781</code></pre>
+<p>This is a relatively quick search, taking only 31.5 seconds. The preliminary likelihood estimated as a consequence of running <code>mif2</code> and extracted here by <code>sapply(m2,logLik)</code> does not correspond to the actual, fixed parameter, model. It is the sequential Monte Carlo estimate of the likelihood from the last filtering iteration, and therefore will have some perturbation of the parameters. Further, one typically requires fewer particles for each filtering iteration than necessary to obtain a good likelihood estimate—stochastic errors can cancel out through the filtering iterations, rather than within any one iteration. For promising new parameter values, it is desirable to put computational effort into evaluating the likelihood sufficient to make the Monte Carlo error small compared to one log unit.</p>
 </div>
 </div>
 <div id="comparison-of-approaches-1-and-2" class="section level2">
 <h2>Comparison of Approaches 1 and 2</h2>
-<p>We are most directly interested in which method is best when we wish to carry out inference by iterated filtering. However, a more easily tested proxy for that is to see which method is more compuationally efficient for filtering. For approach 1, the log likelihood estimates had mean -9559.8 and sd 3.5 and took 18.8 seconds. For method 2, the log likelihood estimates had mean -9558.1 and sd 2.4 and took 22.6 seconds.</p>
+<p>We are most directly interested in which method is best when we wish to carry out inference by iterated filtering. However, a more easily tested proxy for that is to see which method is more compuationally efficient for filtering. For approach 1, the log likelihood estimates had mean -9560.3 and sd 3.3 and took 7.1 seconds. For method 2, the log likelihood estimates had mean -9558 and sd 2.1 and took 9.6 seconds.</p>
 <p>For this model, we find that Method 2 and Method 3 are quite comparable. A possible explanation for this is that the main Monte Carlo challenge in this situation is the time-constant random effects for each individual: <span class="math inline">\(D\)</span> is a truly time-constant random effect; the initial choice of <span class="math inline">\(X\)</span> is a slowly varying random effect, since <span class="math inline">\(1/\mu_R\)</span> is on the same timescale as the total observation length. For time-constant random effects, there may be not much additional value to the resampling carried out by method 2 within the time series for each individual. This resampling is the main difference between methods 2 and 3.</p>
 </div>
 <div id="technical-exercise-practical-implications-of-the-unbiasedness-of-the-particle-filter-and-the-concavity-of-the-logarithm" class="section level2">

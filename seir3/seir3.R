@@ -43,7 +43,7 @@ set.seed(1221234211)
 #' 
 #' 
 ## ----seir3_model---------------------------------------------------------
-read.table("http://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
+read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
 
 rproc <- Csnippet("
   double N = 763;
