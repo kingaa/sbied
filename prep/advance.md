@@ -10,7 +10,7 @@ The schedule is quite full, so it is important that you take a little time to pr
 
 **There are two important steps you *must* take to prepare for the course.**
 
-1. Install or update **R**, **Rstudio**, the **pomp** package and the necessary dependent packages and compilers on your laptop.
+1. Install or update **R**, **Rstudio**, the **pomp** package and its dependencies, and the necessary compilers on your laptop.
    **There will be no time for this during the 2.5-day workshop.**
    You should be aware that the *installation instructions depend on the operating system you use*.
    Make sure you follow these instructions *carefully* and *thoroughly*!
