@@ -10,7 +10,7 @@ The schedule is quite full, so it is important that you take a little time to pr
 
 **There are two important steps you *must* take to prepare for the course.**
 
-1. Install or update **R**, **Rstudio**, and the necessary packages on your laptop.
+1. Install or update **R**, **Rstudio**, the **pomp** package and the necessary dependent packages and compilers on your laptop.
    **There will be no time for this during the 2.5-day workshop.**
    You should be aware that the *installation instructions depend on the operating system you use*.
    Make sure you follow these instructions *carefully* and *thoroughly*!
@@ -21,7 +21,7 @@ The schedule is quite full, so it is important that you take a little time to pr
 	**Don't be one of those people!**
 	Prepare your laptop, and contact Aaron (kingaa.sismid@gmail.com) if you run into difficulties you cannot solve.
 
-	[The detailed instructions are here](https://kingaa.github.io/sbied/prep/preparation.html).
+	[The full installation instructions, which you should work through, are here](https://kingaa.github.io/sbied/prep/preparation.html).
 
 2. If you are unfamiliar with **R**, work through the [**R** tutorial](https://kingaa.github.io/R_Tutorial/).
    Even if you have a bit of experience with **R**, this is a useful exercise: at least read through it and make sure all is familiar to you.
