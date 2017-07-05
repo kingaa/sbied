@@ -33,6 +33,10 @@ theme_set(theme_bw())
 set.seed(2028866059L)
 
 #' 
+#' --------
+#' 
+#' --------
+#' 
 #' ## Introduction: ecological and epidemiological dynamics
 #' 
 #' - Ecological systems are complex, open, nonlinear, and nonstationary.
@@ -48,6 +52,8 @@ set.seed(2028866059L)
 #' - Time series are particularly useful sources of data.
 #' 
 #' <br>
+#' 
+#' -----
 #' 
 #' -----
 #' 
@@ -70,6 +76,8 @@ set.seed(2028866059L)
 #' 
 #' ------
 #' 
+#' ------
+#' 
 #' ## Objectives
 #' 
 #' 1. To show how stochastic dynamical systems models can be used as scientific instruments.
@@ -80,6 +88,8 @@ set.seed(2028866059L)
 #' 1. To provide documented examples for student re-use.
 #' 
 #' <br>
+#' 
+#' -------
 #' 
 #' -------
 #' 
@@ -94,17 +104,29 @@ set.seed(2028866059L)
 #' 
 #' <br>
 #' 
-#' -------------------------------
+#' ------------
+#' 
+#' -----------
 #' 
 #' ## Partially observed Markov process (POMP) models
 #' 
 #' * Data $y^*_1,\dots,y^*_N$ collected at times $t_1<\dots<t_N$ are modeled as noisy and incomplete observations of a Markov process $\{X(t), t\ge t_0\}$.
+#' 
 #' * This is a __partially observed Markov process (POMP)__ model, also known as a hidden Markov model or a state space model.
+#' 
 #' * $\{X(t)\}$ is Markov if the history of the process, $\{X(s), s\le t\}$, is uninformative about the future of the process, $\{X(s), s\ge t\}$, given the current value of the process, $X(t)$. 
+#' 
 #' * If all quantities important for the dynamics of the system are placed in the __state__, $X(t)$, then the Markov property holds by construction.
+#' 
+#' * Systems with delays can usually be rewritten as Markovian systems, at least approximately.
+#' 
+#' * An important special case: any system of differential equations is Markovian.
+#' 
 #' * POMP models can include all the features desired by @Bjornstad2001.
 #' 
 #' <br>
+#' 
+#' -----------------
 #' 
 #' ------------------------------
 #' 
@@ -112,27 +134,17 @@ set.seed(2028866059L)
 #' 
 #' - Arrows in the following diagram show causal relations.
 #'    
-#' ![](pomp_schematic1.png)
+#' <img src="pomp_schematic1.png" width="400" />
 #' 
 #' 
 #' - **A key perspective to keep in mind is that the model is to be viewed as the process that generated the data.**
 #' 
-#' <br>
-#' 
-#' -------------------
-#' 
-#' #### The Markov assumption
-#' 
-#' - The Markov property:
-#' $$\prob{X_n{=}x_n|X_0,\dots,X_{n-1}}=\prob{X_n={x_n}|X_{n-1}}.$$
-#' - Interpretation: knowledge of the system's state at any point in time is sufficient to determine the distribution of possible futures.
-#' - Alternative interpretation: the system's state is sufficiently rich so as to encompass all important features of the system's history
-#' - Systems with delays can usually be rewritten as Markovian systems, at least approximately.
-#' - An important special case: any system of differential equations is Markovian.
 #' 
 #' <br>
 #' 
-#' ------------------------------
+#' ---------------------
+#' 
+#' ---------------------
 #' 
 #' #### Notation for partially observed Markov process models
 #' 
@@ -150,6 +162,8 @@ set.seed(2028866059L)
 #' 
 #' ------------------------------
 #' 
+#' ------------------------------
+#' 
 #' ### Another POMP model schematic
 #' 
 #' - In the following diagram, arrows show dependence among model variables:
@@ -164,32 +178,46 @@ set.seed(2028866059L)
 #' for all $n=1,\dots,N$.
 #' 
 #' <br>
+#'  
+#' -----------------
 #' 
-#' ------------------------------
+#' ----------------
 #' 
 #' ### Algorithms for POMP models
 #' 
 #' To think algorithmically, we define some function calls:
 #' 
 #' * `rprocess( )`: a draw from $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
+#' 
 #' * `dprocess( )`: evaluation of $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
+#' 
 #' * `rmeasure( )`: a draw from $f_{Y_n|X_n}(y_n| x_n;\theta)$
+#' 
 #' * `dmeasure( )`: evaluation of $f_{Y_n|X_n}(y_n| x_n;\theta)$
+#' 
 #' * `initializer( )`: a draw from $f_{X_0}(x_0;\theta)$
 #' 
 #' <br>
 #' 
 #' -------------
 #' 
+#' -------------
+#' 
 #' ### What does it mean for methodology to be __simulation-based__?
 #' 
 #' * Simulating random processes is often much easier than evaluating their transition probabilities.
+#' 
 #' * In other words, we may be able to write `rprocess()` but not `dprocess()`.
+#' 
 #' *  __Simulation-based__ methods require the user to specify `rprocess()` but not `dprocess()`.
+#' 
 #' * __Plug-and-play__, __likelihood-free__ and __equation-free__ are alternative terms for "simulation-based" methods.
+#' 
 #' * Much development of simulation-based statistical methodology has occurred in the past decade.
 #' 
 #' <br>
+#' 
+#' ------------
 #' 
 #' ------------
 #' 
@@ -212,6 +240,8 @@ set.seed(2028866059L)
 #' 
 #' ---------
 #' 
+#' ---------
+#' 
 #' ### Example
 #' 
 #' #### The deterministic Ricker map
@@ -228,12 +258,14 @@ set.seed(2028866059L)
 #' - We can view the initial condition, $N_0$ as a special kind of parameter, an *initial-value parameter*.
 #' 
 #' <br>
-#' 
+#'  
 #' ---------
+#' 
+#' --------
 #' 
 #' #### Process noise
 #' 
-#' - We can model process noise in this system by making the growth rate $r$ into a random variable.
+#' - We can model process noise in this system by making the growth rate into a random variable with mean $r$.
 #' 
 #' - For example, if we assume that the intrinsic growth rate is log-normally distributed, $N$ becomes a stochastic process governed by
 #' $$N_{t+1} = r\,N_{t}\,\exp(-N_{t}+\varepsilon_{t}), \qquad \varepsilon_{t}\;\sim\;\dist{Normal}{0,\sigma},$$
@@ -243,25 +275,29 @@ set.seed(2028866059L)
 #' 
 #' -----------
 #' 
+#' ----------
+#' 
 #' #### Measurement error
 #' 
 #' - Let's suppose that the Ricker model is our model for the dynamics of a real population.
 #' 
 #' - However, we cannot know the exact population density at any time, but only estimate it through sampling.
 #' 
-#' - Let's model measurement error by assuming the measurements, $y_t$, are Poisson with mean $\phi\,N_t$:
-#' $$y_{t}\;\sim\;\dist{Poisson}{\phi\,N_{t}}$$
+#' - Let's model measurement error by assuming the observed measurement, $y_t$, is modeled as a realization of a random variable $Y_t$ that is Poisson with mean $\phi\,N_t$:
+#' $$Y_{t}\;\sim\;\dist{Poisson}{\phi\,N_{t}}$$
 #' 
 #' - In this equation,
 #' 
-#' 1. $N_t$ is the true population density at time $t$,
-#' 2. $y_t$ is the number of individuals sampled at time $t$,
+#' 1. $N_t$ models the true population density at time $t$,
+#' 2. $Y_t$ models the number of individuals sampled at time $t$,
 #' 3. the choice of units for $N$ is peculiar and depends on the parameters (e.g., $N=\log(r)$ is the equilibrium of the deterministic model),
 #' 4. the parameter $\phi$ is proportional to our sampling effort, and also has peculiar units.
 #' 
 #' <br>
 #' 
 #' ------
+#' 
+#' -----
 #' 
 #' ### Working with the Ricker model in **pomp**.
 #' 
@@ -358,6 +394,8 @@ plot(time(ricker),y["N",1,],type="l")
 #' 
 #' -------
 #' 
+#' -------
+#' 
 #' ### Inference algorithms in **pomp**
 #' 
 #' - **pomp** provides a wide range of inference algorithms.
@@ -399,11 +437,22 @@ logLik(pf)
 #' 
 #' - Here, the particle filtering has been performed with only `r unique(pf@Np)` particles.
 #' 
+#' <br>
+#' 
+#' -------
+#' 
+#' ------
+#' 
 #' ### Building a custom `pomp` object
 #' 
 #' The usefulness of **pomp** in scientific research hinges on its facilities for implementing the full range of POMP models.
 #' To get started building custom `pomp` models, see this [introductory tutorial](./ricker.html).
 #' 
+#' <br>
+#' 
+#' ------
+#' 
+#' ------
 #' 
 #' #### A note on terminology
 #' 
