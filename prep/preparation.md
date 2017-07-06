@@ -35,6 +35,8 @@ This will give you the ability to compile C code and dynamically link it into an
 When installing **Rtools**, it is sufficient to choose the “Package authoring installation” option.
 Also during the installation, **you must tick the "edit system PATH" box**.
 
+If, having installed the latest version of **Rtools** compatible with your **R**,  the scripts below fail, try installing a "frozen" version of **Rtools**.
+
 ***It is critical that you install these programs before the course starts!***
 
 ### Install needed packages
