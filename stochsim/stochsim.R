@@ -19,8 +19,10 @@
 #' \newcommand\dlta[1]{{\Delta}{#1}}
 #' \newcommand\lik{\mathcal{L}}
 #' \newcommand\loglik{\ell}
+#' \newcommand\Rzero{\mathfrak{R}_0}
 #' 
-#' --------------------------
+#' --------------
+#' 
 #' 
 #' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
 #' Please share and remix noncommercially, mentioning its origin.  
@@ -28,7 +30,9 @@
 #' 
 #' Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 #' 
-#' --------------------------
+#' -------------
+#' 
+#' --------------
 #' 
 #' 
 ## ----prelims,echo=F,cache=F----------------------------------------------
@@ -52,6 +56,12 @@ set.seed(594709947L)
 #' 1. We show how deterministic and stochastic versions of a compartment model are derived and related.
 #' 1. We introduce Euler's method to simulate from dynamic models, and we apply it to both deterministic and stochastic compartment models.
 #' 
+#' <br>
+#' 
+#' ------
+#' 
+#' -----
+#' 
 #' ## Introduction
 #' 
 #' Compartmental models are of great utility in many disciplines and very much so in epidemiology.
@@ -60,10 +70,10 @@ set.seed(594709947L)
 #' 
 #' 
 #' 
-#' - Let $S$, $I$, and $R$ represent, respectively, the number of susceptible hosts, the number of infected (and, by assumption, infectious) hosts, and the number of recovered or removed hosts. 
-#' - We suppose that each arrow has an associated *per capita* rate, so here there is a rate $\mu_{SI}$ at which individuals in $S$ transition to $I$, and $\mu_{IR}$ at which individuals in $I$ transition to $R$. 
+#' - Let $S(t)$, $I(t)$, and $R(t)$ represent, respectively, the number of susceptible hosts, the number of infected (and, by assumption, infectious) hosts, and the number of recovered or removed hosts. This corresponds to placing individuals into one of the compartments S, I and R in the diagram.
+#' - We suppose that each arrow has an associated *per capita* rate, so here there is a rate $\mu_{SI}$ at which each individual in S transitions to I, and $\mu_{IR}$ at which each individual in I transitions to R. 
 #' - To account for demography (birth/death/migration) we allow the possibility of a source and sink compartment, which is not represented on the flow diagram above.
-#'     - We write $\mu_{{\small\bullet} S}$ for a rate of births into $S$.
+#'     - We write $\mu_{{\small\bullet} S}$ for a rate of births into S.
 #'     - Mortality rates are denoted by $\mu_{S{\small\bullet}}$, $\mu_{I{\small\bullet}}$, $\mu_{R{\small\bullet}}$.
 #' - The rates may be either constant or varying. In particular, for a simple SIR model, the recovery rate $\mu_{IR}$ is a constant but the infection rate has the time-varying form $$\mu_{SI}(t)=\beta\,\frac{I(t)}{N(t)},$$ with $\beta$ being the _contact rate_ and $N$ the total size of the host population.
 #'   In the present case, since the population is closed, we set 
@@ -71,7 +81,7 @@ set.seed(594709947L)
 #' - In general, it turns out to be convenient to keep track of the flows between compartments as well as the number of individuals in each compartment. 
 #'   Let $N_{SI}(t)$ count the number of individuals who have transitioned from $S$ to $I$ by time $t$. 
 #'   We say that $N_{SI}(t)$ is a _counting process_. 
-#'   A similarly constructed process $N_{IR}(t)$ counts individuals transitioning from $I$ to $R$.
+#'   A similarly constructed process $N_{IR}(t)$ counts individuals transitioning from I to R.
 #'   To include demography, we could keep track of birth and death events by the counting processes $N_{{\small\bullet} S}(t)$, $N_{S{\small\bullet}}(t)$, $N_{I{\small\bullet}}(t)$, $N_{R{\small\bullet}}(t)$.
 #'     - For discrete population compartment models, the flow counting processes are non-decreasing and integer valued.
 #'     - For continuous population compartment models, the flow counting processes are non-decreasing and real valued.
@@ -92,6 +102,12 @@ set.seed(594709947L)
 #' where the $\Delta$ notation indicates the increment in the corresponding process.
 #' Thus, for example $\dlta{N}_{SI}(t) = N_{SI}(t+\delta)-N_{SI}(t)$.
 #' 
+#' <br>
+#' 
+#' -------
+#' 
+#' ------
+#' 
 #' ## Compartmental models in theory
 #' 
 #' ### The deterministic version of the SIR model
@@ -102,6 +118,8 @@ set.seed(594709947L)
 #' \frac{dN_{SI}}{dt} = \mu_{SI}(t)\,S(t), \qquad
 #' \frac{dN_{IR}}{dt} = \mu_{IR}\,I(t).
 #' \end{gathered}$$
+#' 
+#' -------
 #' 
 #' ### The simple continuous-time Markov chain version of the SIR model
 #' 
@@ -146,7 +164,7 @@ set.seed(594709947L)
 #'       He then reasoned that the gradient, $dx/dt$, is roughly constant over each small time interval $\tilde t_k\le t\le \tilde t_{k+1}$, for $k=1,2,\dots$. 
 #'       Accodingly, he defined $$\tilde{x}(\tilde t_{k+1}) = \tilde{x}(\tilde t_k) + \delta\,h\big(\tilde{x}(\tilde t_{k}),\tilde t_{k}).$$
 #'    + This defines $\tilde x(t)$ only for $t=\tilde t_{k}$, but let's suppose $\tilde x(t)$ is constant between these discrete times (see the figure below).
-#' - We now have a numerical scheme, stepping forwards in time increments of size $\delta$, that can be readily evaluated by computer.
+#' - We now have a numerical scheme stepping forward in time increments of size $\delta$ which can be readily evaluated by computer.
 #' - [Mathematical analysis of Euler's method](https://en.wikipedia.org/wiki/Euler_method) says that, as long as the function $h(x)$ is not too exotic, then $x(t)$ is well approximated by $\tilde x(t)$  when the discretization time-step, $\delta$, is sufficiently small.
 #' - Euler's method is not the only numerical scheme to solve ODEs. 
 #'   More advanced schemes have better convergence properties, meaning that the numerical approximation is closer to $x(t)$.
@@ -201,7 +219,11 @@ plot_grid(pl1,pl2,labels=c("A","B"))
 
 
 #' 
-#' --------------------------
+#' <br>
+#' 
+#' --------
+#' 
+#' --------
 #' 
 #' 
 #' ### Some comments on using continuous-time models and discretized approximations
@@ -220,6 +242,12 @@ plot_grid(pl1,pl2,labels=c("A","B"))
 #'   For continuous-time modeling, we still require that $\delta$ is small compared to the timescale of the process being modeled, and the choice of $\delta$ does not play an explicit role in the interpretation of the model.
 #' - Putting more emphasis on the scientific role of the numerical solution itself reminds you that the numerical solution has to do more than approximate a target model in some asymptotic sense: 
 #'   the numerical solution should be a sensible model in its own right. 
+#' 
+#' <br>
+#' 
+#' -----
+#' 
+#' -----
 #' 
 #' ### Euler's method for a discrete SIR model
 #' 
@@ -246,11 +274,18 @@ plot_grid(pl1,pl2,labels=c("A","B"))
 #'     $$\dlta{\tilde N}_{SI}\;\sim\;\dist{Poisson}{\tilde \mu_{SI}(t)\,\tilde S(t)\,\delta},$$ where $\dist{Poisson}{\mu}$ is the Poisson distribution with mean $\mu$ and $$\tilde\mu_{SI}(t)=\beta\,\frac{\tilde I(t)}{N}.$$
 #'     1. Binomial increments with linear probability:
 #'     $$\dlta{\tilde N}_{SI}\;\sim\;\dist{Binomial}{\tilde{S}(t),\tilde\mu_{SI}(t)\,\delta},$$ where $\dist{Binomial}{n,p}$ is the binomial distribution with mean $n\,p$ and variance $n\,p\,(1-p)$.
-#'     1. $\dlta{\tilde{N}}_{SI}\;\sim\;\dist{Binomial}{\tilde{S}(t),1-e^{-\tilde{\mu}_{SI}(t)\,\delta}}$.
-#' - Note that these schemes agree as $\delta\to 0$.
+#'     1. Binomial increments with exponential decaying probability:
+#'     $$\dlta{\tilde{N}}_{SI}\;\sim\;\dist{Binomial}{\tilde{S}(t),1-e^{-\tilde{\mu}_{SI}(t)\,\delta}}.$$
+#' - Note that these schemes all become equivalent as $\delta\to 0$.
 #' - What are the advantages and disadvantages of these different schemes?
 #'   Conceptually, it is simplest to think of (1) or (2). 
 #'   Numerically, it is usually preferable to implement (3). 
+#' 
+#' <br>
+#' 
+#' ------
+#' 
+#' ------
 #' 
 #' ### Compartmental models via stochastic differential equations (SDE)
 #' 
@@ -262,17 +297,26 @@ plot_grid(pl1,pl2,labels=c("A","B"))
 #' where $Z_1,Z_2,\dots$ is a sequence of independent standard normal random variables, i.e., $Z_k\sim\dist{Normal}{0,1}$. 
 #' Although SDEs are often considered an advanced topic in probability, the Euler approximation doesn't demand much more than familiarity with the normal distribution.
 #' 
-#' --------------------------
+#' <br>
+#' 
+#' --------
+#' 
+#' --------
 #' 
 #' #### Optional Exercise: SDE version of the SIR model
 #' 
 #' Write down the Euler-Maruyama method for an SDE representation of the closed-population SIR model. 
 #' Consider some difficulties that might arise with non-negativity constraints, and propose some practical way one might deal with that issue.
 #' 
-#' --------------------------
 #' 
-#' - A useful method to deal with positivity constraints is to use Gamma noise rather than Brownian noise [@bhadra11,@He2010,@laneri10].
+#' A useful method to deal with positivity constraints is to use Gamma noise rather than Brownian noise [@bhadra11,@He2010,@laneri10].
 #' SDEs driven by Gamma noise can be investigated by Euler solutions simply by replacing the Gaussian noise by an appropriate Gamma distribution.
+#' 
+#' <br>
+#' 
+#' ------
+#' 
+#' -----
 #' 
 #' ### Euler's method vs.&nbsp;Gillspie's algorithm
 #' 
@@ -283,6 +327,12 @@ plot_grid(pl1,pl2,labels=c("A","B"))
 #' - Numerically, Gillespie's algorithm is often approximated using so-called [tau-leaping](https://en.wikipedia.org/wiki/Tau-leaping) methods [@Gillespie2001]. 
 #'   These are closely related to Euler's approach.
 #'   Is it reasonable to call a suitable Euler approach a tau-leaping method?
+#' 
+#' <br>
+#' 
+#' --------
+#' 
+#' -------
 #' 
 #' ## Compartmental models in **pomp**.
 #' 
@@ -301,6 +351,12 @@ head(bsflu)
 ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
 
 #' 
+#' <br>
+#' 
+#' -------
+#' 
+#' ------
+#' 
 #' ### A first POMP model
 #' 
 #' Let's assume that $B$ indicates the number of boys confined to bed the preceding day and that the disease follows the simple SIR model.
@@ -315,10 +371,16 @@ ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
 #' 
 #' 
 #' Let's look at how we can view the SIR as a POMP model.
-#' The unobserved state variables, in this case, are the numbers of individuals, $S$, $I$, $R$ in the S, I, and R compartments, respectively.
-#' It's reasonable in this case to view the population size $N=S+I+R$, as fixed.
+#' The unobserved state variables, in this case, are the numbers of individuals, $S(t)$, $I(t)$, $R(t)$ in the S, I, and R compartments, respectively.
+#' It's reasonable in this case to view the population size $N=S(t)+I(t)+R(t)$, as fixed.
 #' The numbers that actually move from one compartment to another over any particular time interval are modeled as stochastic processes.
 #' In this case, we'll assume that the stochasticity is purely demographic, i.e., that each individual in a compartment at any given time faces the same risk of exiting the compartment.
+#' 
+#' <br>
+#' 
+#' -----
+#' 
+#' -----
 #' 
 #' ### Implementing the model
 #' 
@@ -327,7 +389,8 @@ ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
 #' An attractive option here is to model the number moving from one compartment to the next over a very short time interval as a binomial random variable.
 #' In particular, we model the number, $\dlta{N_{SI}}$, moving from S to I over interval $\dlta{t}$ as $$\dlta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\lambda\dlta{t}}},$$ and the number moving from I to R as $$\dlta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\gamma\dlta{t}}}.$$
 #' 
-#' A `Csnippet` that encodes such a simulator is as follows:
+#' A `Csnippet` is a small piece of C code used to specify a model in **pomp**. A `Csnippet` that encodes a simulator for our SIR model is as follows:
+#' 
 ## ----rproc1--------------------------------------------------------------
 sir_step <- Csnippet("
   double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
@@ -399,6 +462,12 @@ rmeas <- Csnippet("B = rbinom(H,rho);")
 sir <- pomp(sir,rmeasure=rmeas,dmeasure=dmeas,statenames="H",paramnames="rho")
 
 #' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
+#' 
 #' ### Testing the model: simulations
 #' 
 #' Let's perform some simulations, just to verify that our codes are working as intended.
@@ -406,9 +475,11 @@ sir <- pomp(sir,rmeasure=rmeas,dmeasure=dmeas,statenames="H",paramnames="rho")
 #' A little thought will get us some ballpark estimates.
 #' In the data, it looks like there were a total of `r sum(bsflu$B)` infections, so the population size, $N$, must be somewhat in excess of this number.
 #' In fact, we can use the final-size equation
-#' $$R_0 = -\frac{\log{(1-f)}}{f},$$
-#' where $f=R(\infty)/N$ is the final size of the epidemic, together with the idea that $R_0$ for influenza is typically thought to be around 1.5, to estimate that $f\approx 0.6$, whence $N\approx 2600$.
-#' If the infectious period is roughly 1&nbsp;da, then $1/\gamma \approx 1~\text{da}$ and $\beta = \gamma\,R_0 \approx 1.5~\text{da}^{-1}$.
+#' $$\Rzero = -\frac{\log{(1-f)}}{f},$$
+#' where $f=R(\infty)/N$ is the final size of the epidemic and $\Rzero$ is the basic reproduction number giving the expected number of secondary infections from one primary infection in a fully susceptible population.
+#' Typically, $\Rzero$ for influenza is thought to be around 1.5, from which we can estimate that $f\approx 0.6$, whence $N\approx 2600$.
+#' If the infectious period is roughly 1&nbsp;da, then $1/\gamma \approx 1~\text{da}$ and $\beta = \gamma\,\Rzero \approx 1.5~\text{da}^{-1}$.
+#' 
 #' Let's simulate the model at these parameters.
 #' 
 ## ----sir_sim1------------------------------------------------------------
@@ -419,13 +490,21 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
   geom_line()+guides(color=FALSE)
 
 #' 
-#' --------------------------
+#' <br>
+#' 
+#' ------------
+#' 
+#' -----------
 #' 
 #' #### Basic Exercise: Explore the SIR model
 #' 
 #' Fiddle with the parameters to see if you can't find parameters for which the data are a more plausible realization.
 #' 
-#' --------------------------
+#' <br>
+#' 
+#' ----------
+#' 
+#' ----------
 #' 
 #' #### Basic Exercise: The SEIR model
 #' 
@@ -436,7 +515,11 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' Modify the codes above to construct a `pomp` object containing the flu data and an SEIR model.
 #' Perform simulations as above and adjust parameters to get a sense of whether improvement is possible by including a latent period.
 #' 
-#' --------------------------
+#' <br>
+#' 
+#' ------------
+#' 
+#' ------------
 #' 
 #' #### Basic Exercise: Rethinking the boarding-school flu data
 #' 
