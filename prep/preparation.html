@@ -132,11 +132,11 @@ $(document).ready(function () {
 <p>In particular, it is often easiest to send a screenshot or transcript showing the commands you’ve entered and the error messages you’ve received. In <strong>R</strong>, you can run <code>Sys.info()</code> to get a printout of the operating system and software version numbers.</p>
 <div id="install-r-and-rstudio" class="section level3">
 <h3>Install <strong>R</strong> and <strong>RStudio</strong></h3>
-<p><strong>R</strong> and <strong>RStudio</strong> are free and open-source. You’ll need at least version 3.3.3 of <strong>R</strong>. The latest version is 3.4.0, so if you need to update, go ahead and install version 3.4.0. Source code and binaries are available on CRAN (<a href="http://cran.r-project.org/" class="uri">http://cran.r-project.org/</a>). Install <em>the latest version</em> of <strong>RStudio</strong> from <a href="http://www.rstudio.com/products/rstudio/download/">rstudio.com</a>.</p>
+<p><strong>R</strong> and <strong>RStudio</strong> are free and open-source. You’ll need at least version 3.3.3 of <strong>R</strong>. The latest version is 3.4.0, so if you need to update, go ahead and install version 3.4.0. Source code and binaries are available on CRAN (<a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a>). Install <em>the latest version</em> of <strong>RStudio</strong> from <a href="https://www.rstudio.com/products/rstudio/download/">rstudio.com</a>.</p>
 <div id="windows-users-must-install-rtools" class="section level4">
 <h4>Windows users must install <strong>Rtools</strong></h4>
 <p>If your machine runs Windows, you must install <strong>Rtools</strong>. This will give you the ability to compile C code and dynamically link it into an <strong>R</strong> session.</p>
-<p><a href="http://cran.r-project.org/bin/windows/Rtools/">Download <strong>Rtools</strong> from CRAN</a> and install it. When installing <strong>Rtools</strong>, it is sufficient to choose the “Package authoring installation” option. Also during the installation, <strong>you must tick the “edit system PATH” box</strong>.</p>
+<p><a href="https://cran.r-project.org/bin/windows/Rtools/">Download <strong>Rtools</strong> from CRAN</a> and install it. When installing <strong>Rtools</strong>, it is sufficient to choose the “Package authoring installation” option. Also during the installation, <strong>you must tick the “edit system PATH” box</strong>.</p>
 <p><strong><em>It is critical that you install these programs before the course starts!</em></strong></p>
 </div>
 </div>
@@ -144,14 +144,14 @@ $(document).ready(function () {
 <h3>Install needed packages</h3>
 <p>Open a session in <strong>RStudio</strong> and run the following:</p>
 <pre><code>&gt; update.packages()
-&gt; source(&quot;http://kingaa.github.io/sbied/prep/packages.R&quot;)
-&gt; source(&quot;http://kingaa.github.io/sbied/prep/pompTest.R&quot;)</code></pre>
+&gt; source(&quot;https://kingaa.github.io/sbied/prep/packages.R&quot;)
+&gt; source(&quot;https://kingaa.github.io/sbied/prep/pompTest.R&quot;)</code></pre>
 <p>[The <code>&gt;</code> is the command prompt; it is not part of the command. Also, depending on your email client program, you may need to replace the quotation marks with plain keyboard double quotes.]</p>
 <p>The first command updates your installed packages. You may be prompted to specify a CRAN mirror: choose one geographically near you. In <strong>RStudio</strong>, you can also push the “Update” button on the “Packages” tab to accomplish this.</p>
 <p>The second command runs a script on my website. It will install some needed packages if these are not already installed on your system.</p>
 <p>The third command will attempt to install <strong>pomp</strong>, the principal <strong>R</strong> package we’ll be using, and will check whether you can work with it.</p>
 <p>If the final command fails, try the following:</p>
-<pre><code>&gt; source(&quot;http://kingaa.github.io/scripts/helloC.R&quot;,echo=TRUE)</code></pre>
+<pre><code>&gt; source(&quot;https://kingaa.github.io/scripts/helloC.R&quot;,echo=TRUE)</code></pre>
 <p>If this fails to give the “Hello!” message, you will need to follow the instructions below that correspond to your OS.</p>
 <div id="linux-and-unix-users" class="section level4">
 <h4>Linux and unix users:</h4>
@@ -166,7 +166,7 @@ library(devtools)
 install_github(&quot;kingaa/pomp&quot;)</code></pre>
 <p>If, while trying to install from source, you receive the error,</p>
 <pre><code>make: gfortran-4.8: No such file or directory</code></pre>
-<p>or one that otherwise refers to <code>gfortran</code>, then it is likely that you do not have the necessary version of <strong>gfortran</strong> installed. Have a look at <a href="http://kingaa.github.io/mac-fortran.html">these instructions</a> and contact me at the address above if these don’t work for you.</p>
+<p>or one that otherwise refers to <code>gfortran</code>, then it is likely that you do not have the necessary version of <strong>gfortran</strong> installed. Have a look at <a href="https://kingaa.github.io/mac-fortran.html">these instructions</a> and contact me at the address above if these don’t work for you.</p>
 </div>
 <div id="windows-users" class="section level4">
 <h4>Windows users:</h4>

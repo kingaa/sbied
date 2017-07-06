@@ -23,15 +23,15 @@ In **R**, you can run `Sys.info()` to get a printout of the operating system and
 **R** and **RStudio** are free and open-source.
 You’ll need at least version 3.3.3 of **R**.
 The latest version is 3.4.0, so if you need to update, go ahead and install version 3.4.0.
-Source code and binaries are available on CRAN (http://cran.r-project.org/).
-Install *the latest version* of **RStudio** from [rstudio.com](http://www.rstudio.com/products/rstudio/download/).
+Source code and binaries are available on CRAN (https://cran.r-project.org/).
+Install *the latest version* of **RStudio** from [rstudio.com](https://www.rstudio.com/products/rstudio/download/).
 
 #### Windows users must install **Rtools**
 
 If your machine runs Windows, you must install **Rtools**.
 This will give you the ability to compile C code and dynamically link it into an **R** session.
 
-[Download **Rtools** from CRAN](http://cran.r-project.org/bin/windows/Rtools/) and install it.
+[Download **Rtools** from CRAN](https://cran.r-project.org/bin/windows/Rtools/) and install it.
 When installing **Rtools**, it is sufficient to choose the “Package authoring installation” option.
 Also during the installation, **you must tick the "edit system PATH" box**.
 
@@ -43,8 +43,8 @@ Open a session in **RStudio** and run the following:
 
 ```
 > update.packages()
-> source("http://kingaa.github.io/sbied/prep/packages.R")
-> source("http://kingaa.github.io/sbied/prep/pompTest.R")
+> source("https://kingaa.github.io/sbied/prep/packages.R")
+> source("https://kingaa.github.io/sbied/prep/pompTest.R")
 ```
 
 [The `>` is the command prompt; it is not part of the command.
@@ -62,7 +62,7 @@ The third command will attempt to install **pomp**, the principal **R** package 
 
 If the final command fails, try the following:
 ```
-> source("http://kingaa.github.io/scripts/helloC.R",echo=TRUE)
+> source("https://kingaa.github.io/scripts/helloC.R",echo=TRUE)
 ```
 If this fails to give the "Hello!" message, you will need to follow the instructions below that correspond to your OS.
 
@@ -89,7 +89,7 @@ If, while trying to install from source, you receive the error,
 make: gfortran-4.8: No such file or directory
 ```
 or one that otherwise refers to `gfortran`, then it is likely that you do not have the necessary version of **gfortran** installed.
-Have a look at [these instructions](http://kingaa.github.io/mac-fortran.html) and contact me at the address above if these don’t work for you.
+Have a look at [these instructions](https://kingaa.github.io/mac-fortran.html) and contact me at the address above if these don’t work for you.
 
 #### Windows users:
 
