@@ -246,12 +246,16 @@ set.seed(2028866059L)
 #' 
 #' #### The deterministic Ricker map
 #' 
-#' - The Ricker map describes the deterministic dynamics of a simple population:
-#' $$N_{t+1} = r\,N_{t}\,\exp(-N_{t})$$
+#' - The Ricker map describes the deterministic dynamics of a simple population,
+#' $$N_{t+1} = r\,N_{t}\,\exp\big(- N_{t} \big/ c\big).$$
+#'     + $N_t$ is the population density at time $t$.
+#'     + $r$ is a fixed value (a parameter) describing the population's intrinsic capacity to increase in one unit of time.
+#'     + $c$ is a carrying capacity characterizing the population density at which population growth becomes suppressed by density-dependent effects.
+#'     + The equilibrium population is $N_t=c\log(r)$.
+#'     
+#' - $N$ is a *state variable*, $r$ and $c$ are *parameters*. $r$ is dimensionless and $c$ has the same units of density as $N_t$.
 #' 
-#' - Here, $N_t$ is the population density at time $t$ and $r$ is a fixed value (a parameter), related to the population's intrinsic capacity to increase.
-#' 
-#' - $N$ is a *state variable*, $r$ is a *parameter*.
+#' - For simplicity, we will fix $c=1$ and subsequently ignore this parameter.
 #' 
 #' - If we know $r$ and the *initial condition* $N_0$, the deterministic Ricker equation predicts the future population density at all times $t=1,2,\dots$.
 #' 
@@ -290,8 +294,8 @@ set.seed(2028866059L)
 #' 
 #' 1. $N_t$ models the true population density at time $t$,
 #' 2. $Y_t$ models the number of individuals sampled at time $t$,
-#' 3. the choice of units for $N$ is peculiar and depends on the parameters (e.g., $N=\log(r)$ is the equilibrium of the deterministic model),
-#' 4. the parameter $\phi$ is proportional to our sampling effort, and also has peculiar units.
+#' 3. the parameter $\phi$ is proportional to our sampling effort.
+#' 4. $Y_t$ is dimensionless, so $\phi N_t$ must also be dimensionless.
 #' 
 #' <br>
 #' 

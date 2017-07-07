@@ -334,9 +334,15 @@ $(document).ready(function () {
 <div id="the-deterministic-ricker-map" class="section level4">
 <h4>The deterministic Ricker map</h4>
 <ul>
-<li><p>The Ricker map describes the deterministic dynamics of a simple population: <span class="math display">\[N_{t+1} = r\,N_{t}\,\exp(-N_{t})\]</span></p></li>
-<li><p>Here, <span class="math inline">\(N_t\)</span> is the population density at time <span class="math inline">\(t\)</span> and <span class="math inline">\(r\)</span> is a fixed value (a parameter), related to the population’s intrinsic capacity to increase.</p></li>
-<li><p><span class="math inline">\(N\)</span> is a <em>state variable</em>, <span class="math inline">\(r\)</span> is a <em>parameter</em>.</p></li>
+<li>The Ricker map describes the deterministic dynamics of a simple population, <span class="math display">\[N_{t+1} = r\,N_{t}\,\exp\big(- N_{t} \big/ c\big).\]</span>
+<ul>
+<li><span class="math inline">\(N_t\)</span> is the population density at time <span class="math inline">\(t\)</span>.</li>
+<li><span class="math inline">\(r\)</span> is a fixed value (a parameter) describing the population’s intrinsic capacity to increase in one unit of time.</li>
+<li><span class="math inline">\(c\)</span> is a carrying capacity characterizing the population density at which population growth becomes suppressed by density-dependent effects.</li>
+<li>The equilibrium population is <span class="math inline">\(N_t=c\log(r)\)</span>.</li>
+</ul></li>
+<li><p><span class="math inline">\(N\)</span> is a <em>state variable</em>, <span class="math inline">\(r\)</span> and <span class="math inline">\(c\)</span> are <em>parameters</em>. <span class="math inline">\(r\)</span> is dimensionless and <span class="math inline">\(c\)</span> has the same units of density as <span class="math inline">\(N_t\)</span>.</p></li>
+<li><p>For simplicity, we will fix <span class="math inline">\(c=1\)</span> and subsequently ignore this parameter.</p></li>
 <li><p>If we know <span class="math inline">\(r\)</span> and the <em>initial condition</em> <span class="math inline">\(N_0\)</span>, the deterministic Ricker equation predicts the future population density at all times <span class="math inline">\(t=1,2,\dots\)</span>.</p></li>
 <li><p>We can view the initial condition, <span class="math inline">\(N_0\)</span> as a special kind of parameter, an <em>initial-value parameter</em>.</p></li>
 </ul>
@@ -365,8 +371,8 @@ $(document).ready(function () {
 <ol style="list-style-type: decimal">
 <li><span class="math inline">\(N_t\)</span> models the true population density at time <span class="math inline">\(t\)</span>,</li>
 <li><span class="math inline">\(Y_t\)</span> models the number of individuals sampled at time <span class="math inline">\(t\)</span>,</li>
-<li>the choice of units for <span class="math inline">\(N\)</span> is peculiar and depends on the parameters (e.g., <span class="math inline">\(N=\log(r)\)</span> is the equilibrium of the deterministic model),</li>
-<li>the parameter <span class="math inline">\(\phi\)</span> is proportional to our sampling effort, and also has peculiar units.</li>
+<li>the parameter <span class="math inline">\(\phi\)</span> is proportional to our sampling effort.</li>
+<li><span class="math inline">\(Y_t\)</span> is dimensionless, so <span class="math inline">\(\phi N_t\)</span> must also be dimensionless.</li>
 </ol>
 <p><br></p>
 <hr />

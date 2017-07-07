@@ -29,22 +29,56 @@ stopifnot(packageVersion("pomp")>="1.12")
 set.seed(557976883)
 
 #' 
-#' ----------------------------
+#' -----------
+#' 
+#' ----------
 #' 
 #' ## Introduction
 #' 
-#' This tutorial covers likelihood estimation via the method of iterated filtering.
-#' It presupposes familiarity with building partially observed Markov process (POMP) objects in the **R** package **pomp** [@King2016]. 
-#' **pomp** is available from [CRAN](https://cran.r-project.org/package=pomp) and [github](https://kingaa.github.io/pomp/).
-#' This tutorial follows on from the [topic of carrying out particle filtering (also known as sequential Monte Carlo) via `pfilter` in **pomp**](../pfilter/pfilter.html). 
+#' - This tutorial covers likelihood estimation via the method of iterated filtering.
 #' 
-#' We have the following goals:
+#' - It presupposes familiarity with building partially observed Markov process (POMP) objects in the **R** package **pomp** [@King2016]. 
+#' 
+#' - **pomp** is available from [CRAN](https://cran.r-project.org/package=pomp) and [github](https://kingaa.github.io/pomp/).
+#' 
+#' - This tutorial follows on from the [topic of carrying out particle filtering (also known as sequential Monte Carlo) via `pfilter` in **pomp**](../pfilter/pfilter.html). 
+#' 
+#' <br>
+#' 
+#' -----
+#' 
+#' ----
+#' 
+#' ## Objectives
 #' 
 #' 1. Review the available options for inference on POMP models, to put iterated filtering in context.
+#' 
 #' 1. Understand how iterated filtering algorithms carry out repeated particle filtering operations, with randomly perturbed parameter values, in order to maximize the likelihood.
+#' 
 #' 1. Gain experience carrying out statistical investigations using iterated filtering in a relatively simple situation (fitting an SIR model to a boarding school flu outbreak).
 #' 
-#' Many, many statistical methods have been proposed for inference on POMP models [@He2010,@King2016]. The volume of research indicates both the importance and the difficulty of the problem. Let's start by considering three criteria to categorize inference methods: the plug-and-play property; full-information or feature-based; frequentist or Bayesian.
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
+#' 
+#' ## Classification of statistical methods for POMP models
+#' 
+#' - Many, many statistical methods have been proposed for inference on POMP models [@He2010;@King2016].
+#' 
+#' - The volume of research indicates both the importance and the difficulty of the problem.
+#' 
+#' - Let's start by considering three criteria to categorize inference methods:
+#'     + the plug-and-play property.
+#'     + full-information or feature-based
+#'     + frequentist or Bayesian.
+#' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
 #' 
 #' ### Plug-and-play (also called simulation-based) methods
 #' 
@@ -59,6 +93,12 @@ set.seed(557976883)
 #' - Two *non-plug-and-play* methods (expectation-maximization (EM) algorithms and Markov chain Monte Carlo (MCMC)) have theoretical convergence problems for nonlinear POMP models.
 #'   The failures of these two workhorses of statistical computation have prompted development of alternative methodology.
 #' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
+#' 
 #' ### Full-information and feature-based methods
 #' 
 #' - *Full-information* methods are defined to be those based on the likelihood function for the full data (i.e., likelihood-based frequentist inference and Bayesian inference).
@@ -68,7 +108,13 @@ set.seed(557976883)
 #' - However:
 #' 	+ Good low-dimensional summary statistics can be hard to find. 
 #' 	+ When using statistically inefficient methods, it can be hard to know how much information you are losing. 
-#' 	+ Intuition and scientific reasoning can be inadequate tools to derive informative low-dimensional summary statistics [@shrestha11,@ionides11-statSci].
+#' 	+ Intuition and scientific reasoning can be inadequate tools to derive informative low-dimensional summary statistics [@shrestha11;@ionides11-statSci].
+#' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
 #' 
 #' ### Bayesian and frequentist methods
 #' 
@@ -82,12 +128,24 @@ set.seed(557976883)
 #'     + Expert opinion can be treated as data for non-Bayesian analysis.
 #'       However, our primary task is to identify the information in the data under investigation, so it can be helpful to use methods that do not force us to make our conclusions dependent on quantification of prior beliefs.
 #' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
+#' 
 #' ### Full-information, plug-and-play, frequentist methods
 #' 
-#' - Iterated filtering methods [@ionides06,@ionides15] are the only currently available, full-information, plug-and-play, frequentist methods for POMP models.
+#' - Iterated filtering methods [@ionides06;@ionides15] are the only currently available, full-information, plug-and-play, frequentist methods for POMP models.
 #' - Iterated filtering methods have been shown to solve likelihood-based inference problems for epidemiological situations which are computationally intractable for available Bayesian methodology [@ionides15].
 #' 
-#' ### Summary of POMP inference methodologies
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
+#' 
+#' ### Table of POMP inference methodologies
 #' 
 #' <style>
 #' td, th {
@@ -121,6 +179,11 @@ set.seed(557976883)
 #' 1. The Kalman filter gives the exact likelihood for a linear Gaussian POMP.
 #'    The extended Kalman filter gives an approximation for nonlinear models that can be used for quasi-likelihood or quasi-Bayesian inference.
 #' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
 #' 
 #' ## An iterated filtering algorithm (IF2)
 #' 
@@ -133,6 +196,12 @@ set.seed(557976883)
 #' 
 #' In theory, this procedure converges toward the region of parameter space maximizing the maximum likelihood.  
 #' In practice, we can test this claim on examples.
+#' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
 #' 
 #' ### IF2 algorithm pseudocode
 #' 
@@ -174,6 +243,12 @@ set.seed(557976883)
 #' - The superscript $P$ in $\Theta^{P,m}_{n,j}$ and $X^{P,m}_{n,j}$ denote solutions to the _prediction_ problem, with the particles $j=1,\dots,J$ providing a Monte Carlo representation of the conditional distribution at time $n$ given data $y^*_{1:n-1}$ for filtering iteration $m$.
 #' - The _weight_ $w^m_{n,j}$ gives the likelihood of the data at time $n$ for particle $j$ in filtering iteration $m$.
 #' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
+#' 
 #' ### Analogy with evolution by natural selection
 #' 
 #' - The parameters characterize the *genotype*.
@@ -185,6 +260,11 @@ set.seed(557976883)
 #' - IF2 increases the *fitness* of the population of particles.
 #' - However, because our scientific interest focuses on the model without the artificial perturbations, we decrease the intensity of the latter with successive iterations.
 #' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
 #' 
 #' ## Applying IF2 to the boarding school influenza outbreak
 #' 
@@ -299,6 +379,11 @@ pomp(
 ) -> bsflu
 
 #' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
 #' 
 #' ### Testing the codes.
 #' 
@@ -323,6 +408,12 @@ pf <- pfilter(bsflu,params=params,Np=1000)
 
 #' 
 #' The above plot shows the data (`B`), along with the *effective sample size* of the particle filter (`ess`) and the log likelihood of each observation conditional on the preceding ones (`cond.logLik`).
+#' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
 #' 
 #' ### Setting up the estimation problem.
 #' 
@@ -372,6 +463,12 @@ bake(file="pf.rds",{
 #' 
 #' In `r round(attr(pf,"system.time")["elapsed"],2)` seconds, using `r min(getDoParWorkers(),length(pf))` cores, we obtain an unbiased likelihood estimate of `r round(L_pf[1],1)` with a Monte Carlo standard error of `r signif(L_pf[2],2)`.
 #' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
+#' 
 #' ### Building up a picture of the likelihood surface
 #' 
 #' Given a model and a set of data, the likelihood surface is well defined, though it may be difficult to visualize.
@@ -384,6 +481,12 @@ bake(file="pf.rds",{
 results <- as.data.frame(as.list(c(coef(pf[[1]]),loglik=L_pf[1],loglik=L_pf[2])))
 write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 
+#' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
 #' 
 #' ### A local search of the likelihood surface
 #' 
@@ -458,6 +561,12 @@ results <- rbind(results,results_local[names(results)])
 write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 
 #' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
+#' 
 #' ### A global search of the likelihood surface using randomized starting values
 #' 
 #' When carrying out parameter estimation for dynamic systems, we need to specify beginning values for both the dynamic system (in the state space) and the parameters (in the parameter space).
@@ -525,6 +634,11 @@ write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 #' Moreover, the estimates have comparable likelihoods, despite their considerable variability.
 #' This gives us some confidence in our maximization procedure. 
 #' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
 #' 
 #' ### Exercises
 #' 
@@ -575,6 +689,7 @@ write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 #'    People rarely choose to clutter papers with numerical details which they hope and believe are scientifically irrelevant.
 #'    What problems can arise due to the conflict between readability and reproducibility?
 #'    What solutions are available?
+#' 
 #' 1. Suppose that there is an error in the coding of `rprocess` and suppose that plug-and-play statistical methodology is used to infer parameters.
 #'    As a conscientious researcher, you carry out a simulation study to check the soundness of your inference methodology on this model.
 #'    To do this, you use `simulate` to generate realizations from the fitted model and checking that your parameter inference procedure recovers the known parameters, up to some statistical error.
@@ -582,7 +697,12 @@ write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 #'    If not, how might you debug `rprocess`?
 #'    What research practices help minimize the risk of errors in simulation code?
 #' 
-#' --------------------------
+#' <br>
+#' 
+#' 
+#' --------
+#' 
+#' -------
 #' 
 #' ## Choosing the algorithmic settings for IF2
 #' 
@@ -617,6 +737,12 @@ write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 #'   Here is one possible explanation:
 #'   the precision of interest is often the second significant figure and there are often order 100 observations (10 monthly obsevations would be too few to fit a mechanistic model;
 #'   1000 would be unusual for an epidemiological system). 
+#' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
 #' 
 #' ### More exercises
 #' 
