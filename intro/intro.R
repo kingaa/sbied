@@ -247,13 +247,13 @@ set.seed(2028866059L)
 #' #### The deterministic Ricker map
 #' 
 #' - The Ricker map describes the deterministic dynamics of a simple population,
-#' $$N_{t+1} = r\,N_{t}\,\exp\big(- N_{t} \big/ c\big).$$
+#' $$N_{t+1} = r\,N_{t}\,\exp\big(-c\,N_{t}\big).$$
 #'     + $N_t$ is the population density at time $t$.
 #'     + $r$ is a fixed value (a parameter) describing the population's intrinsic capacity to increase in one unit of time.
-#'     + $c$ is a carrying capacity characterizing the population density at which population growth becomes suppressed by density-dependent effects.
-#'     + The equilibrium population is $N_t=c\log(r)$.
+#'     + The parameter $c$ scales the density-dependent population regulation.
+#'     + The equilibrium population is $N_t=\log(r)/c$.
 #'     
-#' - $N$ is a *state variable*, $r$ and $c$ are *parameters*. $r$ is dimensionless and $c$ has the same units of density as $N_t$.
+#' - $N$ is a *state variable*, $r$ and $c$ are *parameters*. $r$ is dimensionless and $c$ has units of inverse density.
 #' 
 #' - For simplicity, we will fix $c=1$ and subsequently ignore this parameter.
 #' 
@@ -272,7 +272,7 @@ set.seed(2028866059L)
 #' - We can model process noise in this system by making the growth rate into a random variable with mean $r$.
 #' 
 #' - For example, if we assume that the intrinsic growth rate is log-normally distributed, $N$ becomes a stochastic process governed by
-#' $$N_{t+1} = r\,N_{t}\,\exp(-N_{t}+\varepsilon_{t}), \qquad \varepsilon_{t}\;\sim\;\dist{Normal}{0,\sigma},$$
+#' $$N_{t+1} = r\,N_{t}\,\exp(-c\,N_{t}+\varepsilon_{t}), \qquad \varepsilon_{t}\;\sim\;\dist{Normal}{0,\sigma},$$
 #' where the new parameter $\sigma$ is the standard deviation of the noise process $\varepsilon$.
 #' 
 #' <br>
@@ -394,6 +394,19 @@ plot(time(ricker),y["N",1,],type="l")
 #' - More examples can be found in the **pompExamples** package:
 #' 
 #' 
+#' We can extract or set the parameters in the `pomp` object using `coef`:
+#' 
+## ----coef----------------------------------------------------------------
+coef(ricker)
+coef(ricker,"phi")
+coef(ricker) <- c(phi=20,c=1,r=44,sigma=0.3,N.0=10,e.0=0)
+coef(ricker)
+coef(ricker,c("phi","c")) <- c(10,2)
+coef(ricker)
+
+#' 
+#' Note that the order in which the parameters is irrelevant.
+#' 
 #' <br>
 #' 
 #' -------
@@ -408,6 +421,11 @@ plot(time(ricker),y["N",1,],type="l")
 #' - The `pfilter` function runs a simple particle filter.
 #' It can be used to evaluate the likelihood at a particular set of parameters.
 #' One uses the `Np` argument to specify the number of particles to use:
+#' 
+## ----reset-ricker,include=FALSE------------------------------------------
+pompExample(ricker)
+
+#' 
 #' 
 ## ----pfilter1------------------------------------------------------------
 pf <- pfilter(ricker,Np=1000)
