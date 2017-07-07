@@ -57,7 +57,9 @@ set.seed(1221234211)
 #' 
 #' <br>
 #' 
-#' ---------------------------------
+#' -----------
+#' 
+#' ----------
 #'  
 #' ## Overview
 #' 
@@ -76,18 +78,25 @@ set.seed(1221234211)
 #' 
 #' <br>
 #' 
-#' ---------------------------------
+#' ----------
+#' 
+#' -----------
 #'  
 #' ## The likelihood function
 #' 
 #' - The basis for modern frequentist, Bayesian, and information-theoretic inference.
+#' 
 #' - Method of maximum likelihood introduced by @Fisher1922.
-#' - The function itself is a representation of the what the data have to say about the parameters.
+#' 
+#' - The likelihood function itself is a representation of the what the data have to say about the parameters.
+#' 
 #' - A good general reference on likelihood is @Pawitan2001.
 #' 
 #' <br>
 #' 
-#' ---------------------------------
+#' -------------
+#' 
+#' -------------
 #'  
 #' ### Definition of the likelihood function
 #' 
@@ -108,6 +117,8 @@ set.seed(1221234211)
 #' 
 #' ---------
 #' 
+#' --------
+#' 
 #' ### Modeling using discrete and continuous distributions
 #' 
 #' - Recall that the probability distribution $f_{Y_{1:N}}(y_{1:N};\theta)$ defines a random variable $Y_{1:N}$ for which probabilities can be computed as integrals of $f_{Y_{1:N}}(y_{1:N};\theta)$.
@@ -122,7 +133,9 @@ set.seed(1221234211)
 #' 
 #' <br>
 #' 
-#' ---------------------------------
+#' -----------
+#' 
+#' ----------
 #'  
 #' ## Review of likelihood-based inference
 #' 
@@ -133,6 +146,8 @@ set.seed(1221234211)
 #' * Likelihood-based inference often (but not always) has favorable theoretical properties. Here, we are not especially concerned with the underlying theory of likelihood-based inference. On any practical problem, we can check the properties of a statistical procedure by simulation experiments.
 #' 
 #' <br>
+#' 
+#' ------------
 #' 
 #' ------------
 #' 
@@ -151,6 +166,7 @@ set.seed(1221234211)
 #' 
 #' ----------
 #' 
+#' ---------
 #' 
 #' ### Standard errors for the MLE
 #' 
@@ -186,7 +202,9 @@ set.seed(1221234211)
 #' 
 #' <br>
 #' 
-#' ---------------------
+#' -------------
+#' 
+#' ------------
 #' 
 #' ### Confidence intervals via the profile likelihood
 #' 
@@ -209,7 +227,9 @@ set.seed(1221234211)
 #' 
 #' <br>
 #' 
-#' --------------
+#' ---------
+#' 
+#' --------
 #' 
 #' 
 #' ### Likelihood-based model selection and model diagnostics
@@ -220,7 +240,9 @@ set.seed(1221234211)
 #' 
 #' <br>
 #' 
-#' -------------------
+#' ---------
+#' 
+#' --------
 #' 
 #' #### Likelihood ratio tests for nested hypotheses
 #' 
@@ -262,6 +284,8 @@ set.seed(1221234211)
 #' 
 #' -----------
 #' 
+#' -----------
+#' 
 #' #### The connection between Wilks's theorem and profile likelihood
 #' 
 #' * Suppose we have an MLE, written $\hat\theta=(\hat\phi,\hat\psi)$, and a profile log likelihood for $\phi$, given by $\profileloglik(\phi)$. 
@@ -289,7 +313,9 @@ qchisq(0.95,df=1)
 #' 
 #' <br>
 #' 
-#' --------------
+#' ----------
+#' 
+#' ----------
 #' 
 #' #### Akaike's information criterion (AIC)
 #' 
@@ -311,8 +337,11 @@ qchisq(0.95,df=1)
 #' 
 #' * A practical approach is to use AIC, while taking care to view it as a procedure to select a reasonable predictive model and not as a formal hypothesis test.
 #' 
+#' <br>
 #' 
-#' ---------------------------------
+#' --------
+#' 
+#' --------
 #'  
 #' 
 #' ## Indirect specification of a statistical model via a simulation procedure
@@ -330,12 +359,14 @@ qchisq(0.95,df=1)
 #' 
 #' <br>
 #' 
-#' ---------------------------------
+#' -----------
+#' 
+#' ----------
 #'  
 #' ## The likelihood for a POMP model
 #' 
 #' 
-#' - The following schematic diagram shows dependence among variables in a POMP model.
+#' - Recall the following schematic diagram, showing dependence among variables in a POMP model.
 #'     + Measurements, $Y_n$, at time $t_n$ depend on the latent process, $X_n$, at that time.
 #'     + The Markov property asserts that latent process variables depend on their value at the previous timestep.
 #'     + To be more precise, the distribution of the state $X_{n+1}$, conditional on $X_{n}$, is independent of the values of $X_{k}$, $k<n$ and $Y_{k}$, $k\le n$.
@@ -360,7 +391,9 @@ qchisq(0.95,df=1)
 #' 
 #' <br>
 #' 
-#' ---------------------------------
+#' ------------
+#' 
+#' ------------
 #'  
 #' #### Special case: deterministic latent process
 #' 
@@ -375,7 +408,9 @@ qchisq(0.95,df=1)
 #' 
 #' <br>
 #' 
-#' ---------------------------------
+#' --------
+#' 
+#' --------
 #'  
 #' #### General case: stochastic unobserved state process
 #' 
@@ -394,8 +429,9 @@ qchisq(0.95,df=1)
 #' 
 #' <br>
 #' 
-#' ----------------------------------
+#' --------
 #'  
+#' -------
 #' 
 #' ## Monte Carlo likelihood by direct simulation
 #' 
@@ -435,7 +471,9 @@ qchisq(0.95,df=1)
 #' 
 #' <br>
 #' 
-#' ---------------------------------
+#' --------
+#' 
+#' --------
 #'  
 #' ## Sequential Monte Carlo: The particle filter
 #' 
@@ -531,7 +569,9 @@ qchisq(0.95,df=1)
 #' 
 #' <br>
 #' 
-#' ---------------------------------
+#' ------
+#' 
+#' -----
 #'  
 #' ## Particle filtering in **pomp**
 #' 
@@ -713,7 +753,9 @@ p %>%
 #' 
 #' <br>
 #' 
-#' ---------------------------------
+#' -------
+#' 
+#' ------
 #' 
 #' #### Basic Exercise: log likelihood estimation by particle filtering
 #' 
@@ -747,8 +789,11 @@ p %>%
 #' 
 #' Compute a slice of the likelihood in the $\beta$-$\rho$ plane.
 #' 
+#'  <br>
+#'  
+#' --------
 #' 
-#' ------------------------
+#' --------
 #' 
 #' 
 #' ## Maximizing the particle filter likelihood 
@@ -768,7 +813,9 @@ p %>%
 #' 
 #' <br>
 #' 
-#' --------------------------
+#' ------
+#' 
+#' ------
 #' 
 #' 
 #' ## Biological interpretation of parameter estimates
@@ -786,11 +833,11 @@ p %>%
 #' 
 #' <br>
 #' 
-#' --------------------------
+#' -----------
 #' 
 #' ## [Back to course homepage](../index.html)
 #' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R)
 #' 
-#' --------------------------
+#' -----------
 #' 
 #' ## References

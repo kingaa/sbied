@@ -86,14 +86,16 @@ Students completing this lesson will:
 
 <br>
 
----------------------------------
+-----------
+
+----------
  
 ## Overview
 
 * The following schematic diagram represents conceptual links between different components of the methodological approach we're developing for statistical inference on epidemiological dynamics. 
 
 
-```{r flow-diagram,echo=FALSE,results="hide",purl=FALSE}
+```{r flow-diagram,fig.width=4.5,fig.align="center",echo=FALSE,results="hide",purl=FALSE}
 library("diagram")
 par(mar = c(1, 1, 1, 1))
 openplotmat()
@@ -124,7 +126,7 @@ for (i in 1:nr)
   from = elpos[fromto[i, 1], ],
   lwd = 2, arr.pos = 0.6, arr.length = 0.5)
 
-my_cex = 1.2
+my_cex = 0.9
 
 colorTab=matrix(ncol=2,byrow=TRUE,
   data = c(
@@ -172,7 +174,7 @@ textrect (elpos[6,], 0.1, 0.08,
   shadow.col = colorTab[6,2], shadow.size = 0.005, cex = my_cex)
 
 textrect(elpos[7,], 0.12, 0.08, 
-  lab = c("model","comparison: AIC"),
+  lab = c("AIC for model","comparison"),
   box.col = colorTab[7,1],
   shadow.col = colorTab[7,2], shadow.size = 0.005, cex = my_cex)
 
@@ -198,18 +200,25 @@ textellipse(elpos[10,], 0.15, 0.1,
 
 <br>
 
----------------------------------
+----------
+
+-----------
  
 ## The likelihood function
 
 - The basis for modern frequentist, Bayesian, and information-theoretic inference.
+
 - Method of maximum likelihood introduced by @Fisher1922.
-- The function itself is a representation of the what the data have to say about the parameters.
+
+- The likelihood function itself is a representation of the what the data have to say about the parameters.
+
 - A good general reference on likelihood is @Pawitan2001.
 
 <br>
 
----------------------------------
+-------------
+
+-------------
  
 ### Definition of the likelihood function
 
@@ -230,6 +239,8 @@ $$\loglik(\theta)= \log \lik(\theta) = \log f_{Y_{1:N}}(y^*_{1:N};\theta).$$
 
 ---------
 
+--------
+
 ### Modeling using discrete and continuous distributions
 
 - Recall that the probability distribution $f_{Y_{1:N}}(y_{1:N};\theta)$ defines a random variable $Y_{1:N}$ for which probabilities can be computed as integrals of $f_{Y_{1:N}}(y_{1:N};\theta)$.
@@ -244,7 +255,9 @@ We will use the notation of continuous random variables, but all the methods app
 
 <br>
 
----------------------------------
+-----------
+
+----------
  
 ## Review of likelihood-based inference
 
@@ -255,6 +268,8 @@ For now, suppose that software exists to evaluate and maximize the likelihood fu
 * Likelihood-based inference often (but not always) has favorable theoretical properties. Here, we are not especially concerned with the underlying theory of likelihood-based inference. On any practical problem, we can check the properties of a statistical procedure by simulation experiments.
 
 <br>
+
+------------
 
 ------------
 
@@ -273,6 +288,7 @@ where $\arg\max_\theta g(\theta)$ means a value of argument $\theta$ at which th
 
 ----------
 
+---------
 
 ### Standard errors for the MLE
 
@@ -308,7 +324,9 @@ where $\arg\max_\theta g(\theta)$ means a value of argument $\theta$ at which th
 
 <br>
 
----------------------
+-------------
+
+------------
 
 ### Confidence intervals via the profile likelihood
 
@@ -331,7 +349,9 @@ $$ \big\{\phi : \loglik(\hat\theta) - \profileloglik(\phi)\big\} < 1.92.$$
 
 <br>
 
---------------
+---------
+
+--------
 
 
 ### Likelihood-based model selection and model diagnostics
@@ -342,7 +362,9 @@ $$ \big\{\phi : \loglik(\hat\theta) - \profileloglik(\phi)\big\} < 1.92.$$
 
 <br>
 
--------------------
+---------
+
+--------
 
 #### Likelihood ratio tests for nested hypotheses
 
@@ -384,6 +406,8 @@ where $\chi^2_d$ is a chi-squared random variable on $d$ degrees of freedom and 
 
 -----------
 
+-----------
+
 #### The connection between Wilks's theorem and profile likelihood
 
 * Suppose we have an MLE, written $\hat\theta=(\hat\phi,\hat\psi)$, and a profile log likelihood for $\phi$, given by $\profileloglik(\phi)$. 
@@ -411,7 +435,9 @@ So, we have constructed a profile likelihood confidence interval, consisting of 
 
 <br>
 
---------------
+----------
+
+----------
 
 #### Akaike's information criterion (AIC)
 
@@ -433,8 +459,11 @@ $$ \textrm{AIC} = -2\,\loglik(\hat{\theta}) + 2\,D$$
 
 * A practical approach is to use AIC, while taking care to view it as a procedure to select a reasonable predictive model and not as a formal hypothesis test.
 
+<br>
 
----------------------------------
+--------
+
+--------
  
 
 ## Indirect specification of a statistical model via a simulation procedure
@@ -452,12 +481,14 @@ We can still talk about the likelihood function, and develop numerical methods t
 
 <br>
 
----------------------------------
+-----------
+
+----------
  
 ## The likelihood for a POMP model
 
 
-- The following schematic diagram shows dependence among variables in a POMP model.
+- Recall the following schematic diagram, showing dependence among variables in a POMP model.
     + Measurements, $Y_n$, at time $t_n$ depend on the latent process, $X_n$, at that time.
     + The Markov property asserts that latent process variables depend on their value at the previous timestep.
     + To be more precise, the distribution of the state $X_{n+1}$, conditional on $X_{n}$, is independent of the values of $X_{k}$, $k<n$ and $Y_{k}$, $k\le n$.
@@ -538,7 +569,9 @@ $$\lik(\theta) = f_{Y_{1:N}}(y^*_{1:N};\theta)=\int\!f_{X_{0:N},Y_{1:N}}(x_{0:N}
 
 <br>
 
----------------------------------
+------------
+
+------------
  
 #### Special case: deterministic latent process
 
@@ -553,7 +586,9 @@ $$\lik(\theta) = f_{Y_{1:N}}(y^*_{1:N};\theta)=\int\!f_{X_{0:N},Y_{1:N}}(x_{0:N}
 
 <br>
 
----------------------------------
+--------
+
+--------
  
 #### General case: stochastic unobserved state process
 
@@ -572,8 +607,9 @@ f_{Y_{1:N}}({y^*_{1:N}};\theta)
 
 <br>
 
-----------------------------------
+--------
  
+-------
 
 ## Monte Carlo likelihood by direct simulation
 
@@ -613,7 +649,9 @@ where $\{X^j_{0:N}, j=1,\dots,J\}$ is a Monte Carlo sample of size $J$ drawn fro
 
 <br>
 
----------------------------------
+--------
+
+--------
  
 ## Sequential Monte Carlo: The particle filter
 
@@ -709,7 +747,9 @@ Pseudocode for the above is provided by @King2016.
 
 <br>
 
----------------------------------
+------
+
+-----
  
 ## Particle filtering in **pomp**
 
@@ -891,7 +931,9 @@ In the above, all points with log likelihoods less than 50 units below the maxim
 
 <br>
 
----------------------------------
+-------
+
+------
 
 #### Basic Exercise: log likelihood estimation by particle filtering
 
@@ -925,8 +967,11 @@ Compute likelihood slices along the $\rho$ direction.
 
 Compute a slice of the likelihood in the $\beta$-$\rho$ plane.
 
+ <br>
+ 
+--------
 
-------------------------
+--------
 
 
 ## Maximizing the particle filter likelihood 
@@ -946,7 +991,9 @@ Compute a slice of the likelihood in the $\beta$-$\rho$ plane.
 
 <br>
 
---------------------------
+------
+
+------
 
 
 ## Biological interpretation of parameter estimates
@@ -964,11 +1011,11 @@ However, this risks suppressing the warning that the data were trying to give ab
 
 <br>
 
---------------------------
+-----------
 
 ## [Back to course homepage](../index.html)
 ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R)
 
---------------------------
+-----------
 
 ## References
