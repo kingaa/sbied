@@ -54,9 +54,9 @@ plot(pop~year,data=dat,type='o')
 #' #### The deterministic Ricker map
 #' 
 #' The Ricker map describes the deterministic dynamics of a simple population:
-#' $$N_{t+1} = r\,N_{t}\,\exp(-N_{t}).$$
-#' Here, $N_t$ is the population density at time $t$ and $r$ is a fixed value (a parameter), related to the population's intrinsic capacity to increase.
-#' $N$ is a *state variable*, $r$ is a *parameter*.
+#' $$N_{t+1} = r\,N_{t}\,\exp(-c\,N_{t}).$$
+#' Here, $N_t$ is the population density at time $t$ and $r$ is a fixed value, related to the population's intrinsic capacity to increase.
+#' $N$ is a *state variable*, $r$ and $c$ are *parameters*.
 #' If we know $r$ and the *initial condition* $N_0$, the deterministic Ricker equation predicts the future population density at all times $t=1,2,\dots$.
 #' We can view the initial condition, $N_0$ as a special kind of parameter, an *initial-value parameter*.
 #' 
@@ -64,7 +64,7 @@ plot(pop~year,data=dat,type='o')
 #' 
 #' We can model process noise in this system by making the growth rate $r$ into a random variable.
 #' For example, if we assume that the intrinsic growth rate is log-normally distributed, $N$ becomes a stochastic process governed by
-#' $$N_{t+1} = r\,N_{t}\,\exp(-N_{t}+\varepsilon_{t}), \qquad \varepsilon_{t}\;\sim\;\dist{Normal}{0,\sigma},$$
+#' $$N_{t+1} = r\,N_{t}\,\exp(-c\,N_{t}+\varepsilon_{t}), \qquad \varepsilon_{t}\;\sim\;\dist{Normal}{0,\sigma},$$
 #' where the new parameter $\sigma$ is the standard deviation of the noise process $\varepsilon$.
 #' 
 #' #### Measurement error
@@ -79,7 +79,7 @@ plot(pop~year,data=dat,type='o')
 #' 
 #' 1. $N_t$ is the true population density at time $t$,
 #' 2. $y_t$ is the number of individuals sampled at time $t$,
-#' 3. the choice of units for $N$ is peculiar and depends on the parameters (e.g., $N=\log(r)$ is the equilibrium of the deterministic model),
+#' 3. the choice of units for $N$ is peculiar and depends on the parameters (e.g., $N=\log(r)/c$ is the equilibrium of the deterministic model),
 #' 4. the parameter $\phi$ is proportional to our sampling effort, and also has peculiar units.
 #' 
 #' ## Implementing the Ricker model in **pomp**
@@ -113,10 +113,10 @@ plot(parus)
 ## ----parus-sim-defn------------------------------------------------------
 stochStep <- Csnippet("
   e = rnorm(0,sigma);
-  N = r*N*exp(-N+e);
+  N = r*N*exp(-c*N+e);
 ")
 pomp(parus,rprocess=discrete.time.sim(step.fun=stochStep,delta.t=1),
-     paramnames=c("r","sigma"),statenames=c("N","e")) -> parus
+     paramnames=c("r","c","sigma"),statenames=c("N","e")) -> parus
 
 #' Note that in the above, we use the `exp` and `rnorm` functions from the [**R** API](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#The-R-API).
 #' In general any C function provided by **R** is available to you.
@@ -127,7 +127,7 @@ pomp(parus,rprocess=discrete.time.sim(step.fun=stochStep,delta.t=1),
 #' 
 #' At this point, we have what we need to simulate the state process:
 ## ----ricker-first-sim----------------------------------------------------
-sim <- simulate(parus,params=c(N.0=1,e.0=0,r=12,sigma=0.5),
+sim <- simulate(parus,params=c(N.0=1,e.0=0,r=12,c=1,sigma=0.5),
                 as.data.frame=TRUE,states=TRUE)
 plot(N~time,data=sim,type='o')
 
@@ -153,7 +153,7 @@ pomp(parus,rmeasure=rmeas,dmeasure=dmeas,statenames=c("N"),paramnames=c("phi")) 
 #' Now we can simulate the whole POMP.
 #' First, let's add some parameters:
 ## ----ricker-add-params---------------------------------------------------
-coef(parus) <- c(N.0=1,e.0=0,r=20,sigma=0.1,phi=200)
+coef(parus) <- c(N.0=1,e.0=0,r=20,c=1,sigma=0.1,phi=200)
 
 ## ----ricker-second-sim,results='markup'----------------------------------
 library(ggplot2)
@@ -166,14 +166,14 @@ ggplot(data=sims,mapping=aes(x=time,y=pop))+geom_line()+
 #' 
 #' We can add the Ricker model deterministic skeleton to the `parus` `pomp` object.
 #' Since the Ricker model is a discrete-time model, its skeleton is a map that takes $N_t$ to $N_{t+1}$ according to the Ricker model equation
-#' $$N_{t+1} = r\,N_{t}\,\exp(-N_{t}).$$
+#' $$N_{t+1} = r\,N_{t}\,\exp(-c\,N_{t}).$$
 #' The following implements this.
 ## ----parus-skel-defn-----------------------------------------------------
-skel <- Csnippet("DN = r*N*exp(-N);")
+skel <- Csnippet("DN = r*N*exp(-c*N);")
 
 #' We then add this to the `pomp` object:
 ## ----parus-add-skel------------------------------------------------------
-parus <- pomp(parus,skeleton=map(skel),paramnames=c("r"),statenames=c("N"))
+parus <- pomp(parus,skeleton=map(skel),paramnames=c("r","c"),statenames=c("N"))
 
 #' Note that we have to inform **pomp** as to which of the variables we've referred to in `skel` is a state variable (`statenames`) and which is a parameter (`paramnames`).
 #' In writing a `Csnippet` for the deterministic skeleton, we use `D` to designate the map's value.
@@ -182,7 +182,7 @@ parus <- pomp(parus,skeleton=map(skel),paramnames=c("r"),statenames=c("N"))
 #' With just the skeleton defined, we are in a position to compute the trajectories of the deterministic skeleton at any point in parameter space.
 #' For example, here we compute the trajectory and superimpose it on a plot of one simulation:
 ## ----parus-first-traj,results='markup'-----------------------------------
-traj <- trajectory(parus,params=c(N.0=1,r=12),as.data.frame=TRUE)
+traj <- trajectory(parus,params=c(N.0=1,r=12,c=1),as.data.frame=TRUE)
 plot(N~time,data=sim,type='o')
 lines(N~time,data=traj,type='l',col='red')
 
@@ -284,8 +284,8 @@ plot(simulate(parus),var="pop")
 #' --------------------------
 #' 
 #' #### Exercise: Reformulating the Ricker model
-#' Reparameterize the Ricker model so that the scaling of $N$ is explicit:
-#' $$N_{t+1} = r\,N_{t}\,\exp\left(-\frac{N_{t}}{K}+\varepsilon_t\right).$$
+#' One can reparameterize the Ricker model according to
+#' $$N_{t+1} = N_{t}\,e^{r\,\left(1-\frac{N_{t}}{K}\right)+\varepsilon_t}.$$
 #' 
 #' Modify the `pomp` object we created above to reflect this reparameterization.
 #' 

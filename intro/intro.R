@@ -40,8 +40,8 @@ set.seed(2028866059L)
 #' ## Introduction: ecological and epidemiological dynamics
 #' 
 #' - Ecological systems are complex, open, nonlinear, and nonstationary.
-#' - It is useful to model them as stochastic systems.
 #' - "Laws of Nature" are unavailable except in the most general form.
+#' - It is useful to model them as stochastic systems.
 #' - For any observable phenomenon, multiple competing explanations are possible.
 #' - Central scientific goals:
 #'     - Which explanations are most favored by the data?
@@ -72,6 +72,8 @@ set.seed(2028866059L)
 #' 
 #' The same issues arise for **epidemiological** modeling and inference via nonlinear mechanistic models.
 #' 
+#' The *partially observed Markov process* modeling framework we focus on in this course addresses most of these problems effectively.
+#' 
 #' <br>
 #' 
 #' ------
@@ -81,11 +83,11 @@ set.seed(2028866059L)
 #' ## Objectives
 #' 
 #' 1. To show how stochastic dynamical systems models can be used as scientific instruments.
-#' 1. To give students the ability to formulate models of their own.
 #' 1. To teach statistically and computationally efficient approaches for performing scientific inference using POMP models.
+#' 1. To give students the ability to formulate models of their own.
 #' 1. To give students opportunities to work with such inference methods.
 #' 1. To familiarize students with the **pomp** package.
-#' 1. To provide documented examples for student re-use.
+#' 1. To provide documented examples for adaptation and re-use.
 #' 
 #' <br>
 #' 
@@ -101,6 +103,9 @@ set.seed(2028866059L)
 #' 2. [What is the contribution to the HIV epidemic of dynamic variation in sexual behavior of an individual over time? How does this compare to the role of heterogeneity between individuals?](http://dx.doi.org/10.1093/aje/kwv044)
 #' 5. [What explains the interannual variability of malaria?](http://dx.doi.org/10.1371/journal.pcbi.1000898)
 #' 6. [What will happen next in an Ebola outbreak?](http://dx.doi.org/10.1098/rspb.2015.0347)
+#' 1. [How does vaccine-induced immunity fail?](http://doi.org/10.1017/S0031182015000979)
+#' 1. [Can hydrology explain the seasonality of cholera?](http://doi.org/10.1016/j.advwatres.2016.11.012)
+#' 1. [What is the contribution of adults to polio transmission?](http://doi.org/10.1073/pnas.1323688111)
 #' 
 #' <br>
 #' 
@@ -110,7 +115,7 @@ set.seed(2028866059L)
 #' 
 #' ## Partially observed Markov process (POMP) models
 #' 
-#' * Data $y^*_1,\dots,y^*_N$ collected at times $t_1<\dots<t_N$ are modeled as noisy and incomplete observations of a Markov process $\{X(t), t\ge t_0\}$.
+#' * Data $y^*_1,\dots,y^*_N$ collected at times $t_1<\dots<t_N$ are modeled as noisy, incomplete, and indirect observations of a Markov process $\{X(t), t\ge t_0\}$.
 #' 
 #' * This is a __partially observed Markov process (POMP)__ model, also known as a hidden Markov model or a state space model.
 #' 
@@ -137,7 +142,7 @@ set.seed(2028866059L)
 #' <img src="pomp_schematic1.png" width="400" />
 #' 
 #' 
-#' - **A key perspective to keep in mind is that the model is to be viewed as the process that generated the data.**
+#' - A key perspective to keep in mind is that **the model is to be viewed as the process that generated the data**.
 #' 
 #' 
 #' <br>
@@ -173,7 +178,7 @@ set.seed(2028866059L)
 #' 
 #' $$f_{X_n|X_{0:n-1},Y_{1:n-1}}(x_n|x_{0:n-1},y_{1:n-1})=f_{X_n|X_{n-1}}(x_n|x_{n-1}).$$
 #' 
-#' - Moreover, the measurable random variable, $Y_n$, depend only on the state at that time:
+#' - Moreover, the measurable random variable, $Y_n$, depends only on the state at that time:
 #' $$f_{Y_n|X_{0:N},Y_{1:n-1}}(y_n|x_{0:n},y_{1:n-1})=f_{Y_n|X_{n}}(y_n|x_n),$$
 #' for all $n=1,\dots,N$.
 #' 
@@ -255,7 +260,7 @@ set.seed(2028866059L)
 #'     
 #' - $N$ is a *state variable*, $r$ and $c$ are *parameters*. $r$ is dimensionless and $c$ has units of inverse density.
 #' 
-#' - For simplicity, we will fix $c=1$ and subsequently ignore this parameter.
+#' - For simplicity, we will fix $c=1$ for the remainder of this document.
 #' 
 #' - If we know $r$ and the *initial condition* $N_0$, the deterministic Ricker equation predicts the future population density at all times $t=1,2,\dots$.
 #' 
@@ -305,13 +310,13 @@ set.seed(2028866059L)
 #' 
 #' ### Working with the Ricker model in **pomp**.
 #' 
-#' - The  **R**  package **pomp** provides facilities for modeling POMPs, a toolbox of statistical inference methods for analyzing data using POMPs, and a development platform for implmenting new POMP inference methods.
+#' - The  **R**  package **pomp** provides facilities for modeling POMPs, a toolbox of statistical inference methods for analyzing data using POMPs, and a development platform for implementing new POMP inference methods.
 #' 
-#' - The basic data-structure provided by **pomp** is the *object of class* `pomp`, alternatively known as a `pomp` object.
+#' - The basic data-structure provided by **pomp** is the *object of class* `pomp`, alternatively known as a "pomp object".
 #' 
 #' - It is a container that holds real or simulated data and a POMP model, possibly together with other information such as model parameters, that may be needed to do things with the model and data.
 #' 
-#' - Let's see what can be done with a `pomp` object.
+#' Let's see what can be done with a pomp object.
 #' First, we'll load some packages, including **pomp**.
 #' 
 ## ----prelims,cache=F-----------------------------------------------------
@@ -321,33 +326,35 @@ library(pomp)
 stopifnot(packageVersion("pomp")>="1.12")
 
 #' 
-#' - A pre-built `pomp` object encoding the Ricker model comes included with the package. Load it by
+#' A pre-built pomp object encoding the Ricker model comes included with the package. Load it by
+#' 
 ## ----load-ricker,cache=FALSE,results="hide"------------------------------
 pompExample(ricker)
 
 #' 
-#' - This has the effect of creating a `pomp` object named `ricker` in your workspace.
+#' This has the effect of creating a pomp object named `ricker` in your workspace.
 #' We can plot the data by doing
 #' 
 ## ----plot-ricker---------------------------------------------------------
 plot(ricker)
 
-#' - We can simulate by doing
+#' 
+#' We can simulate by doing
 #' 
 ## ----sim-ricker1---------------------------------------------------------
 x <- simulate(ricker)
 
 #' 
-#' - What kind of object have we created?
+#' What kind of object have we created?
 #' 
 ## ------------------------------------------------------------------------
 class(x)
 plot(x)
 
 #' 
-#' - Why do we see more time series in the simulated `pomp` object?
+#' Why do we see more time series in the simulated pomp object than in the original?
 #' 
-#' - We can turn a `pomp` object into a data frame:
+#' We can turn a pomp object into a data frame:
 #' 
 ## ------------------------------------------------------------------------
 y <- as.data.frame(ricker)
@@ -355,7 +362,7 @@ head(y)
 head(simulate(ricker,as.data.frame=TRUE))
 
 #' 
-#' - We can also run multiple simulations simultaneously:
+#' We can also run multiple simulations simultaneously:
 #' 
 ## ------------------------------------------------------------------------
 x <- simulate(ricker,nsim=10)
@@ -366,7 +373,8 @@ head(x)
 str(x)
 
 #' 
-#' - Also,
+#' It's often useful to plot several simulations from a model against the actual data.
+#' One way to accomplish this is as follows.
 #' 
 ## ----fig.height=8--------------------------------------------------------
 x <- simulate(ricker,nsim=9,as.data.frame=TRUE,include.data=TRUE)
@@ -375,9 +383,10 @@ ggplot(data=x,aes(x=time,y=y,group=sim,color=(sim=="data")))+
   facet_wrap(~sim,ncol=2)
 
 #' 
-#' - We refer to the deterministic map as the "skeleton" of the stochastic map.
+#' We refer to the deterministic map as the "skeleton" of the stochastic map.
 #' 
-#' - We can compute a trajectory of the the deterministic skeleton using `trajectory`:
+#' We can compute a trajectory of the the deterministic skeleton using `trajectory`:
+#' 
 ## ----traj-ricker---------------------------------------------------------
 y <- trajectory(ricker)
 dim(y)
@@ -386,15 +395,7 @@ plot(time(ricker),y["N",1,],type="l")
 
 #' 
 #' 
-#' - More information on manipulating and extracting information from `pomp` objects can be viewed in the help pages (`methods?pomp`).
-#' 
-#' - There are a number of other examples included with the package.
-#' Do `pompExample()` to see a list of these.
-#' 
-#' - More examples can be found in the **pompExamples** package:
-#' 
-#' 
-#' We can extract or set the parameters in the `pomp` object using `coef`:
+#' We can extract or set the parameters in the pomp object using `coef`:
 #' 
 ## ----coef----------------------------------------------------------------
 coef(ricker)
@@ -405,7 +406,15 @@ coef(ricker,c("phi","c")) <- c(10,2)
 coef(ricker)
 
 #' 
-#' Note that the order in which the parameters is irrelevant.
+#' Note that the order in which the parameters appear is irrelevant.
+#' 
+#' More information on manipulating and extracting information from pomp objects can be viewed in the help pages (`methods?pomp`).
+#' 
+#' There are a number of other examples included with the package.
+#' Do `pompExample()` to see a list of these.
+#' 
+#' More examples can be found in the **pompExamples** package:
+#' 
 #' 
 #' <br>
 #' 
@@ -415,10 +424,10 @@ coef(ricker)
 #' 
 #' ### Inference algorithms in **pomp**
 #' 
-#' - **pomp** provides a wide range of inference algorithms.
+#' **pomp** provides a wide range of inference algorithms.
 #' We'll learn about these in detail soon, but for now, let's just look at some of their general features.
 #' 
-#' - The `pfilter` function runs a simple particle filter.
+#' The `pfilter` function runs a simple particle filter.
 #' It can be used to evaluate the likelihood at a particular set of parameters.
 #' One uses the `Np` argument to specify the number of particles to use:
 #' 
@@ -434,30 +443,32 @@ plot(pf)
 logLik(pf)
 
 #' 
-#' - Note that `pfilter` returns an object of class `pfilterd.pomp`.
-#' This is the general rule: inference algorithms return objects that are `pomp` objects with additional information.
+#' Note that `pfilter` returns an object of class `pfilterd.pomp`.
+#' This is the general rule: inference algorithms return objects that are pomp objects with additional information.
 #' 
-#' - The package provides tools to extract this information.
+#' The package provides tools to extract this information.
 #' We can run the particle filter again by doing
+#' 
 ## ----pfilter2------------------------------------------------------------
 pf <- pfilter(pf)
 logLik(pf)
 
 #' 
-#' -This the result of running the same computation again.
+#' This the result of running the same computation again.
 #' Note that, because the particle filter is a Monte Carlo algorithm, we get a slightly different estimate of the log likelihood.
 #' 
-#' - Note that, by default, running `pfilter` on a `pfilterd.pomp` object causes the computation to be re-run with the same parameters as before.
+#' Note that, by default, running `pfilter` on a `pfilterd.pomp` object causes the computation to be re-run with the same parameters as before.
 #' Any additional arguments we add override these defaults.
 #' 
-#' - This is the general rule in **pomp**.
+#' This is the general rule in **pomp**.
 #' For example,
+#' 
 ## ----pfilter3------------------------------------------------------------
 pf <- pfilter(pf,Np=100)
 logLik(pf)
 
 #' 
-#' - Here, the particle filtering has been performed with only `r unique(pf@Np)` particles.
+#' Here, the particle filtering has been performed with only `r unique(pf@Np)` particles.
 #' 
 #' <br>
 #' 
@@ -465,7 +476,7 @@ logLik(pf)
 #' 
 #' ------
 #' 
-#' ### Building a custom `pomp` object
+#' ### Building a custom pomp object
 #' 
 #' The usefulness of **pomp** in scientific research hinges on its facilities for implementing the full range of POMP models.
 #' To get started building custom `pomp` models, see this [introductory tutorial](./ricker.html).
