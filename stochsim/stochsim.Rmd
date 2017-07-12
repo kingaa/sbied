@@ -205,7 +205,7 @@ Take the limit as $\delta\to 0$ and show that this gives the ODE model.
     + He divided time into small intervals of length $\delta$, with $\tilde t_k=t_0+k\,\delta$.
       He initialized the numerical approximation at the known starting value, $$\tilde x(t_0)=x(t_0)=x_0.$$
       He then reasoned that the gradient, $dx/dt$, is roughly constant over each small time interval $\tilde t_k\le t\le \tilde t_{k+1}$, for $k=1,2,\dots$. 
-      Accodingly, he defined $$\tilde{x}(\tilde t_{k+1}) = \tilde{x}(\tilde t_k) + \delta\,h\big(\tilde{x}(\tilde t_{k}),\tilde t_{k}).$$
+      Accordingly, he defined $$\tilde{x}(\tilde t_{k+1}) = \tilde{x}(\tilde t_k) + \delta\,h\big(\tilde{x}(\tilde t_{k}),\tilde t_{k}).$$
    + This defines $\tilde x(t)$ only for $t=\tilde t_{k}$, but let's suppose $\tilde x(t)$ is constant between these discrete times (see the figure below).
 - We now have a numerical scheme stepping forward in time increments of size $\delta$ which can be readily evaluated by computer.
 - [Mathematical analysis of Euler's method](https://en.wikipedia.org/wiki/Euler_method) says that, as long as the function $h(x)$ is not too exotic, then $x(t)$ is well approximated by $\tilde x(t)$  when the discretization time-step, $\delta$, is sufficiently small.
@@ -300,7 +300,7 @@ $$\begin{aligned}
 \prob{N_{IR}(t+\delta)=N_{IR}(t)+1} &= \mu_{IR}\,I(t)\,\delta + o(\delta).
 \end{aligned}$$
 
-- We look for a numerical solution with state variables $\tilde S(k\delta)$, $\tilde I(k\delta)$, $\tilde R(k\delta)$. 
+- We look for a numerical solution with state variables $\tilde S(t_k)$, $\tilde I(t_k)$, $\tilde R(t_k)$. 
 
 - The counting processes for the flows between compartments are $\tilde N_{SI}(t)$ and $\tilde N_{IR}(t)$. The counting processes are related to the numbers of individuals in the compartments by the same flow equations we had before:
 $$\begin{aligned} 
