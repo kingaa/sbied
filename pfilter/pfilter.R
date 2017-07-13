@@ -545,7 +545,7 @@ qchisq(0.95,df=1)
 #' \end{eqnarray}
 #' $$
 #' is approximated by
-#' $$\hat\lik_n(\theta)  \approx \frac{1}{N}\,\sum_j\, f_{Y_n|X_n}(y^*_{n}|X_{n,j}^{P};\theta),$$
+#' $$\hat\lik_n(\theta)  \approx \frac{1}{J}\,\sum_j\, f_{Y_n|X_n}(y^*_{n}|X_{n,j}^{P};\theta),$$
 #' since $X_{n,j}^{P}$ is approximately a draw from $f_{X_n|Y_{1:n-1}}(x_{n}|y^*_{1:n-1};\theta)$.
 #' 
 #' 5. We can iterate this procedure through the data, one step at a time, alternately simulating and resampling, until we reach $n=N$.
