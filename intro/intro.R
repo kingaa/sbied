@@ -266,6 +266,9 @@ set.seed(2028866059L)
 #' 
 #' - We can view the initial condition, $N_0$ as a special kind of parameter, an *initial-value parameter*.
 #' 
+#' Although the Ricker model is not an epidemiological model, it is perhaps the simplest useful nonlinear population dynamics model.
+#' As such, it allows us to introduce the basic features of the **pomp** package with a minimum amount of distracting complexity.
+#' 
 #' <br>
 #'  
 #' ---------
@@ -301,6 +304,14 @@ set.seed(2028866059L)
 #' 2. $Y_t$ models the number of individuals sampled at time $t$,
 #' 3. the parameter $\phi$ is proportional to our sampling effort.
 #' 4. $Y_t$ is dimensionless, so $\phi N_t$ must also be dimensionless.
+#' 
+#' 
+#' To map this model onto the general framework discussed [above](#partially-observed-markov-process-pomp-models), we have
+#' $$\begin{gathered}
+#' X_t = (N_t) \qquad \text{or} \qquad X_t = (N_t, \varepsilon_t), \\
+#' Y_t = Y_t, \qquad \theta = (r, c, \phi, N_0)
+#' \end{gathered}$$
+#' 
 #' 
 #' <br>
 #' 

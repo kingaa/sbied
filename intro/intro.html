@@ -350,6 +350,7 @@ $(document).ready(function () {
 <li><p>If we know <span class="math inline">\(r\)</span> and the <em>initial condition</em> <span class="math inline">\(N_0\)</span>, the deterministic Ricker equation predicts the future population density at all times <span class="math inline">\(t=1,2,\dots\)</span>.</p></li>
 <li><p>We can view the initial condition, <span class="math inline">\(N_0\)</span> as a special kind of parameter, an <em>initial-value parameter</em>.</p></li>
 </ul>
+<p>Although the Ricker model is not an epidemiological model, it is perhaps the simplest useful nonlinear population dynamics model. As such, it allows us to introduce the basic features of the <strong>pomp</strong> package with a minimum amount of distracting complexity.</p>
 <p><br></p>
 <hr />
 <hr />
@@ -378,6 +379,10 @@ $(document).ready(function () {
 <li>the parameter <span class="math inline">\(\phi\)</span> is proportional to our sampling effort.</li>
 <li><span class="math inline">\(Y_t\)</span> is dimensionless, so <span class="math inline">\(\phi N_t\)</span> must also be dimensionless.</li>
 </ol>
+<p>To map this model onto the general framework discussed <a href="#partially-observed-markov-process-pomp-models">above</a>, we have <span class="math display">\[\begin{gathered}
+X_t = (N_t) \qquad \text{or} \qquad X_t = (N_t, \varepsilon_t), \\
+Y_t = Y_t, \qquad \theta = (r, c, \phi, N_0)
+\end{gathered}\]</span></p>
 <p><br></p>
 <hr />
 <hr />
