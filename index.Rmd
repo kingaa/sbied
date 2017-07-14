@@ -33,9 +33,9 @@ Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutori
 1. [Simulation of stochastic stochastic dynamic models](./stochsim/stochsim.html)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/stochsim.R)
 1. [Likelihood for POMPs: theory and practice](./pfilter/pfilter.html)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R)
 1. [Iterated filtering: theory and practice](./mif/mif.html)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R)
+1. [Case study: measles.](./measles/measles.html)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/measles/measles.R)
 1. [Case study: polio.](./polio/polio.html)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/polio/polio.R)
 1. [Case study: Ebola and forecasting](./ebola/ebola.html)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola.R)
-1. [Case study: measles.](./measles/measles.html)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/measles/measles.R)
 1. [Case study: sexual contacts panel data](./contacts/contacts.html)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/contacts/contacts.R)
 
 ----------------------

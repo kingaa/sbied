@@ -4,7 +4,14 @@
 #' output:
 #'   html_document:
 #'     toc: yes
-#'     toc_depth: 3
+#'     toc_depth: 4
+#'     toc_float:
+#'       collapsed: FALSE
+#'       smooth_scroll: TRUE
+#'     code_folding: hide
+#'     highlight: haddock
+#'     number_sections: FALSE
+#'     df_print: kable
 #' bibliography: ../sbied.bib
 #' csl: ../ecology.csl
 #' 
@@ -36,12 +43,12 @@
 #' 
 #' ## Objectives
 #' 
-#' 1. To display a published case study using plug-and-play methods with non-trivial model complexities
-#' 1. To show how extra-demographic stochasticity can be modeled
-#' 1. To demonstrate the use of covariates in **pomp**
-#' 1. To demonstrate the use of profile likelihood in scientific inference
-#' 1. To discuss the interpretation of parameter estimates
-#' 1. To emphasize the potential need for extra sources of stochasticity in modeling
+#' 1. To display a published case study using plug-and-play methods with non-trivial model complexities.
+#' 1. To show how extra-demographic stochasticity can be modeled.
+#' 1. To demonstrate the use of covariates in **pomp**.
+#' 1. To demonstrate the use of profile likelihood in scientific inference.
+#' 1. To discuss the interpretation of parameter estimates.
+#' 1. To emphasize the potential need for extra sources of stochasticity in modeling.
 #' 
 #' ## Measles revisited
 #' 
@@ -61,10 +68,11 @@
 #' - Measles is the paradigm for a nonlinear ecological system that can be well described by low-dimensional nonlinear dynamics.
 #' - A tradition of careful modeling studies have proposed and found evidence for a number of specific mechanisms, including
 #'     - a high value of $R_0$ (c. 15--20)
-#'     - seasonality in transmission rates associated with school terms
-#'     - a birth cohort effect
-#'     - response to changing birth rates
 #'     - under-reporting
+#'     - seasonality in transmission rates associated with school terms
+#'     - response to changing birth rates
+#'     - a birth-cohort effect
+#'     - metapopulation dynamics
 #'     - fadeouts and reintroductions that scale with city size
 #'     - spatial traveling waves
 #' - Much of this evidence has been amassed from fitting models to data, using a variety of methods.
@@ -101,31 +109,33 @@
 #' 
 #' 
 #' 
-#' #### Continuous-time Markov process model
+#' ## Model and implementation
 #' 
-#' Diagram of the model:
+#' 
+#' ### Continuous-time Markov process model
 #' 
 #' 
 #' ![](./model_diagram.png)
 #' 
-#' - $B(t) = \text{birth rate, from data}$
-#' - $N(t) = \text{population size, from data}$
-#' - Overdispersed binomial measurement model: $\mathrm{cases}_t\,\vert\,\dlta{N}_{IR}=z_t \sim \dist{Normal}{\rho\,z_t,\rho\,(1-\rho)\,z_t+(\psi\,\rho\,z_t)^2}$
+#' - Covariates:
+#'     - $B(t) = \text{birth rate, from data}$
+#'     - $N(t) = \text{population size, from data}$
 #' 
 #' - Entry into susceptible class:
 #' $$\mu_{BS}(t) = (1-c)\,B(t-\tau)+c\,\delta(t-t_0)\,\int_{t-1}^{t}\,B(t-\tau-s)\,ds$$
+#'     - $c = \text{cohort effect}$  
+#'     - $\tau = \text{school-entry delay}$  
 #' 
-#' - Force of infection
+#' - Force of infection:
 #' $$\mu_{SE}(t) = \tfrac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
+#'     - school-term transmission:
+#' $$\beta(t) = \begin{cases}\beta_0\,(1+a) &\text{during term}\\\beta_0\,(1-a) &\text{during vacation}\end{cases}$$  
+#'     - $\iota = \text{imported infections}$
+#'     - $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ [@He2010,@bhadra11]
 #' 
-#' - $c = \text{cohort effect}$  
-#' - $\tau = \text{school-entry delay}$  
-#' - $\beta(t) = \text{school-term transmission} = \begin{cases}\beta_0\,(1+a) &\text{during term}\\\beta_0\,(1-a) &\text{during vacation}\end{cases}$  
-#' - $\iota = \text{imported infections}$
-#' - $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ [@He2010,@bhadra11]
+#' - Overdispersed binomial measurement model: $\mathrm{cases}_t\,\vert\,\dlta{N}_{IR}=z_t \sim \dist{Normal}{\rho\,z_t,\rho\,(1-\rho)\,z_t+(\psi\,\rho\,z_t)^2}$
 #' 
-#' 
-#' ## Model implementation
+#' ### Implementation in **pomp**
 #' 
 #' We'll load the packages we'll need, and set the random seed, to allow reproducibility.
 #' Note that we'll be making heavy use of the data-munging methods in packages **plyr** and **reshape2**, a [tutorial introduction to which is provided here](https://kingaa.github.io/R_Tutorial/munging.html).
@@ -418,11 +428,10 @@ paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
                 "rho","sigmaSE","psi","cohort","amplitude",
                 "S_0","E_0","I_0","R_0")
 mle %>% extract(paramnames) %>% unlist() -> theta
-mle %>% subset(select=-c(S_0,E_0,I_0,R_0)) %>%
-  knitr::kable(row.names=FALSE)
+mle %>% subset(select=-c(S_0,E_0,I_0,R_0))
 
 #' 
-#' Verify that we get the same likelihood as @He2010.
+#' We verify that we get the same likelihood as @He2010.
 #' 
 ## ----pfilter1------------------------------------------------------------
 library(foreach)
