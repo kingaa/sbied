@@ -4,6 +4,14 @@ author: "A. A. King, M. Domenech de Cell&egrave;s, F. M. G. Magpantay, P. Rohani
 output:
   html_document:
     toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: FALSE
+      smooth_scroll: TRUE
+    code_folding: hide
+    highlight: haddock
+    number_sections: FALSE
+    df_print: kable
 bibliography: ../sbied.bib
 csl: ../ecology.csl
 ---
@@ -147,6 +155,8 @@ It demonstrates one level of abstraction above the basic `pomp` constructor.
 --------------------------
 
 ## [Back to Ebola case study](./ebola.html)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/model.R)
+
 
 ----------------------
 

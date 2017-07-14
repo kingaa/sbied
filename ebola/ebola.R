@@ -4,6 +4,14 @@
 #' output:
 #'   html_document:
 #'     toc: yes
+#'     toc_depth: 4
+#'     toc_float:
+#'       collapsed: FALSE
+#'       smooth_scroll: TRUE
+#'     code_folding: hide
+#'     highlight: haddock
+#'     number_sections: FALSE
+#'     df_print: kable
 #' bibliography: ../sbied.bib
 #' csl: ../ecology.csl
 #' ---
@@ -186,6 +194,11 @@ skel <- Csnippet('
 ')
 
 #' 
+#' The observations are modeled as a negative binomial process conditional on the number of infections.
+#' That is, if $C_t$ are the reported cases at week $t$ and $H_t$ is the true incidence, then we postulate that $C_t | H_t$ is negative binomial with $$\expect{C_t|H_t} = \rho\,H_t$$ and $$\var{C_t|H_t} = \rho\,H_t\,(1+k\,\rho\,H_t).$$
+#' The negative binomial process allows for overdispersion in the counts.
+#' This overdispersion is controlled by parameter $k$.
+#' 
 ## ----measmodel,include=FALSE---------------------------------------------
 dObs <- Csnippet('
   double f;
@@ -295,7 +308,7 @@ profs %>%
   labs(y=expression(l))
 
 #' 
-#' ## Diagnostics
+#' ## Diagnostics *or* Model Criticism
 #' 
 #' + Parameter estimation is the process of finding the parameters that are "best", in some sense, for a given model, from among the set of those that make sense for that model.
 #' + Model selection, likewise, aims at identifying the "best" model, in some sense, from among a set of candidates.
@@ -397,7 +410,7 @@ probe(gin,probes=list(
 #' 
 #' ## Forecasting using POMP models
 #' 
-#' Up to now, we've primarily focused on using POMP models to answer scientific questions, i.e., to compare alternative hypothetical explanations for the data in hand.
+#' To this point in the course, we've focused on using POMP models to answer scientific questions, i.e., to compare alternative hypothetical explanations for the data in hand.
 #' Of course, we can also use them to make forecasts.
 #' The key issues are to do with quantifying the forecast uncertainty.
 #' This arises from four sources:
@@ -544,6 +557,7 @@ simq %>% ggplot(aes(x=date))+
 #' 
 #' ## [Back to course homepage](../index.html)
 #' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola.R)
+#' ## [Detailed model supplement](model.html)
 #' 
 #' ----------------------
 #' 
