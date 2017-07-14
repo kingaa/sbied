@@ -17,7 +17,7 @@ csl: ../ecology.csl
 \newcommand\loglik{\ell}
 
 [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
+Please share and remix non-commercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
 Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
@@ -310,7 +310,7 @@ Our model is a variation on a basic SIR Markov chain, with state $X(t)=(S(t),I(t
 The recovery stages, $R_1$, $R_2$ and $R_3$, are all modeled to be non-contagious.
 $R_1$ consists of individuals who are bed-confined if they showed symptoms;
 $R_2$ consists of individuals who are convalescent if they showed symptoms;
-$R_3$ consists of recovered individuals who have returned to school-work if they were symtomatic.
+$R_3$ consists of recovered individuals who have returned to school-work if they were symptomatic.
 The observation on day $n$ of the observed epidemic (with $t_1$ being 22 January) consists of the numbers of children who are bed-confined and convalescent.
 Ten individuals received antibiotics for secondary infections, and they had longer bed-confinement and convalescence times.
 Partly for this reason, and because our primary interest is in parameters related to transmission, we'll narrow our focus to the bed-confinement numbers, $B_n$, modeling these as $B_n\sim\dist{Poisson}{\rho R_1(t_n)}$, where $\rho$ is a reporting rate corresponding to the chance an infected boy is symptomatic.
@@ -595,7 +595,7 @@ Filtering failures at the MLE are an indication that the model, at its best, is 
 
 We see that the likelihood generally increases as the iterations proceed, though there is considerable variability due to the stochastic nature of this Monte Carlo algorithm.
 Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference.
-Partly, this is because parameter perturbations are applied in the last filtering iteration, so that the likelhood shown here is not identical to that of the model of interest.
+Partly, this is because parameter perturbations are applied in the last filtering iteration, so that the likelihood shown here is not identical to that of the model of interest.
 Partly, this is because `mif2` is usually carried out with fewer particles than are needed for a good likelihood evaluation:
 the errors in `mif2` average out over many iterations of the filtering.
 Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
@@ -690,7 +690,7 @@ results <- rbind(results,results_global[names(results)])
 write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 ```
 The above codes run one search from each of `r nrow(guesses)` starting values.
-Each search consissts of an initial run of `r nrow(conv.rec(mf1))` IF2 iterations, followed by another 100 iterations.
+Each search consists of an initial run of `r nrow(conv.rec(mf1))` IF2 iterations, followed by another 100 iterations.
 These codes exhibit a general **pomp** behavior:
 re-running a command on an object (i.e., `mif2` on `mf1`) created by the same command preserves the algorithmic arguments.
 In particular, running `mif2` on the result of a `mif2` computation re-runs IF2 from the endpoint of the first run.
@@ -805,7 +805,7 @@ v_{1,n}^2 & 0 & 0 & \cdots & 0 \\
 + If $\theta_k$ is a break-point parameter that models how the system changes at time $t_q$, then $\theta_k$ is like an IVP at time $t_q$ and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=q$} \\	0 & \mbox{if $n\neq q$} \end{array}\right.$$
 + $\sigma_{1:M}$ is called a __cooling schedule__, following a thermodynamic analogy popularized by [simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing).
   As $\sigma_m$ becomes small, the system cools toward a "freezing point".
-  If the algorithm is working sucessfully, the freezing point should be close to the lowest-energy state of the system, i.e., the MLE.
+  If the algorithm is working successfully, the freezing point should be close to the lowest-energy state of the system, i.e., the MLE.
   Typical choices of the cooling schedule are geometric, $\sigma_m = \alpha^m$, and hyperbolic, $\sigma_m \propto 1/(1+\alpha\,m)$.
   In `mif2`, the cooling schedule is parameterized by $\sigma_{50}$, the cooling fraction after 50 IF2 iterations.
 + It is generally helpful to transform the parameters so that (on the estimation scale) they are real-valued, unconstrained, and have uncertainty on the order of 1 unit.
@@ -816,7 +816,7 @@ v_{1,n}^2 & 0 & 0 & \cdots & 0 \\
   As the investigation proceeds, consideration of diagnostic plots may suggest refinements. 
 + It is remarkable that useful general advice exists for the choice of algorithmic parameters that should in principle be model- and data-specific.
   Here is one possible explanation:
-  the precision of interest is often the second significant figure and there are often order 100 observations (10 monthly obsevations would be too few to fit a mechanistic model;
+  the precision of interest is often the second significant figure and there are often order 100 observations (10 monthly observations would be too few to fit a mechanistic model;
   1000 would be unusual for an epidemiological system). 
 
 <br>

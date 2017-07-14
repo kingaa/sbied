@@ -27,7 +27,7 @@ csl: ../ecology.csl
 --------------------------
 
 [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
+Please share and remix non-commercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
 Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
