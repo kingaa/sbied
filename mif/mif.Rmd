@@ -296,7 +296,7 @@ __Remarks__:
 
 ## Applying IF2 to the boarding school influenza outbreak
 
-For a relatively simple epidemiological example of IF2, we consider fitting a stochastic SIR model to an influenza outbreak in a British boarding school [@anonymous78].
+For a relatively simple epidemiological example of IF2, we consider fitting a stochastic SIR model to an influenza outbreak in a British boarding school [@Anonymous1978].
 Reports consist of the number of children confined to bed for each of the 14 days of the outbreak.
 The total number of children at the school was 763, and a total of 512 children spent time away from class.
 Only one adult developed influenza-like illness, so adults are omitted from the data and model.
