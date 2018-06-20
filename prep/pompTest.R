@@ -7,7 +7,8 @@ dir.create(lib,recursive=TRUE,showWarnings=FALSE)
 cat("Checking whether dependencies are installed....\n")
 ## install dependencies if necessary
 deps <- setdiff(
-    c("digest","mvtnorm","deSolve","coda","subplex","nloptr"),
+    c("digest","mvtnorm","deSolve","coda","subplex","nloptr",
+      "magrittr","plyr","reshape2","ggplot2","knitr"),
     rownames(installed.packages())
     )
 if (length(deps) > 0) {
