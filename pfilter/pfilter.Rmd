@@ -991,10 +991,11 @@ Compute a slice of the likelihood in the $\beta$-$\rho$ plane.
 
 <br>
 
-------
+<!---
 
 ------
 
+------
 
 ## Biological interpretation of parameter estimates
 
@@ -1010,6 +1011,8 @@ However, this risks suppressing the warning that the data were trying to give ab
 - This issue will be discussed further in connection with the case studies.
 
 <br>
+
+--->
 
 -----------
 

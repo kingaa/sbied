@@ -813,10 +813,11 @@ p %>%
 #' 
 #' <br>
 #' 
-#' ------
+#' <!---
 #' 
 #' ------
 #' 
+#' ------
 #' 
 #' ## Biological interpretation of parameter estimates
 #' 
@@ -832,6 +833,8 @@ p %>%
 #' - This issue will be discussed further in connection with the case studies.
 #' 
 #' <br>
+#' 
+#' --->
 #' 
 #' -----------
 #' 
