@@ -1,11 +1,6 @@
 ## TEST SCRIPT
 ## If this script runs without errors, pomp is usable on your system.
 
-minRversion <- "3.4.3"
-rv <- getRversion()
-if (rv < minRversion)
-    stop("R version >= ",minRversion," is required",call.=FALSE)
-
 lib <- Sys.getenv("R_LIBS_USER")
 dir.create(lib,recursive=TRUE,showWarnings=FALSE)
 

@@ -1,11 +1,8 @@
-## check to see that the version of R is at least 3.2.1
-print(R.version.string)
-res <- try(stopifnot(getRversion()>="3.3.3"))
-if (inherits(res,"try-error")) {
-    cat("Please install a more recent version of R!\n")
-} else {
-    cat("Your version of R is sufficiently recent.\n")
-}    
+## check to see that the version of R is sufficiently recent
+minRversion <- "3.4.3"
+rv <- getRversion()
+if (rv < minRversion)
+  stop("R version >= ",minRversion," is required",call.=FALSE)
 
 ## get list of packages to install
 pkglist <- scan(
@@ -14,6 +11,7 @@ pkglist <- scan(
 bbmle
 coda
 colorspace
+cowplot
 deSolve
 foreach
 doParallel
@@ -30,6 +28,7 @@ RColorBrewer
 reshape2
 sos
 stringr
+stringi
 subplex
 xtable
 "
