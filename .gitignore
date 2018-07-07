@@ -5,4 +5,7 @@ www
 **/*\.o
 **/*\.so
 roster.*
-admin
+admin/roster*
+admin/eval*
+admin/list.csv
+admin/spam.sh
