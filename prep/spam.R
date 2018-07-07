@@ -1,4 +1,3 @@
-library(aakmisc)
 library(magrittr)
 library(plyr)
 library(readr)
@@ -9,7 +8,7 @@ replyto <- "kingaa.sismid@gmail.com"
 subject <- "SISMID Module 7 Advance Instructions"
 cmd <- 'REPLYTO=%s mutt -s "%s" -b %s %s < msg.txt\n'
 
-read_csv("list.csv") %>%
+read_csv("list.csv",col_types="cc") %>%
   mutate(
     batch=1+seq_along(email)%/%batchsize,
     firstname=stri_replace_first_regex(registrant,"(\\w+),\\s+(\\w+)","$2"),

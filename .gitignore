@@ -4,8 +4,6 @@ papers
 www
 **/*\.o
 **/*\.so
-roster.*
-admin/roster*
-admin/eval*
-admin/list.csv
-admin/spam.sh
+admin
+prep/list.csv
+prep/spam.sh
