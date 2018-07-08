@@ -23,9 +23,13 @@ The schedule is quite full, so it is important that you take a little time befor
 
 	[The full installation instructions, which you should work through, are here](https://kingaa.github.io/sbied/prep/preparation.html).
 
+	Please fill out [this online form](https://goo.gl/forms/rRnsF33ZPDA17o8c2) to give us information about your computing system.
+
 2. If you are unfamiliar with **R**, work through the [**R** tutorial](https://kingaa.github.io/R_Tutorial/).
    Even if you have a bit of experience with **R**, this is a useful exercise: at least read through it and make sure all is familiar to you.
 
 There will be no course materials in hardcopy: all the course materials are [available online](https://kingaa.github.io/sbied/).
+
+We are looking forward to seeing you in Seattle!
 
 ---Aaron and Ed
