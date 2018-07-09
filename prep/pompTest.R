@@ -48,9 +48,9 @@ gomp2 <- pomp(
               )
 
 gomp2 <- simulate(gomp2)
-plot(gomp2)
-
 p <- pfilter(gomp2,Np=1000)
+
+plot(gomp2)
 plot(p)
 
 cat("Success!\n")
