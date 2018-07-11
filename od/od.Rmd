@@ -4,6 +4,7 @@ author: "Edward Ionides"
 output:
   html_document:
     toc: yes
+    code_folding: hide
 bibliography: ../sbied.bib
 csl: ../ecology.csl
 ---
@@ -83,33 +84,48 @@ set.seed(557976883)
 
 4. Think about scientific interpretations of overdispersion if it is statistically evident.
 
+5. Demonstrate an investigation integrating data analysis and statistical reasoning using **pomp**.
+
 <br>
 
 ----
 
 ----
 
-## Adding overdispersion to the basic SIR model
+## Adding overdispersion to the basic SIR model 
 
 
-Recall the data on an influenza outbreak in a British boarding school [@anonymous78].
-Reports consist of the number of children confined to bed for each of the 14 days of the outbreak.
-The total number of children at the school was 763, and a total of 512 children spent time away from class.
-Only one adult developed influenza-like illness, so adults are omitted from the data and model.
-First, we read in the data:
+* Recall the data on an influenza outbreak in a British boarding school [@Anonymous1978].
+
+* Reports consist of the number of children confined to bed for each of the 14 days of the outbreak.
+
+* The total number of children at the school was 763, and a total of 512 children spent time away from class.
+
+* Only one adult developed influenza-like illness, so adults are omitted from the data and model.
+
+* The dataset is the same as we looked at previously. 
 
 ```{r load_bbs}
 bsflu_data <- read.table("bsflu_data.txt")
 ```
 
-Our model is a variation on a basic SIR Markov chain, with state $X(t)=(S(t),I(t),R_1(t),R_2(t),R_3(t))$ giving the numbers of individuals in the susceptible and infectious categories, and three stages of recovery.
-The recovery stages, $R_1$, $R_2$ and $R_3$, are all modeled to be non-contagious.
+### Specification of a basic SIR model
+
+* Our model is a variation on a basic SIR Markov chain, with state $X(t)=(S(t),I(t),R_1(t),R_2(t),R_3(t))$ giving the numbers of individuals in the susceptible and infectious categories, and three stages of recovery.
+
+* The recovery stages, $R_1$, $R_2$ and $R_3$, are all modeled to be non-contagious.
+
 $R_1$ consists of individuals who are bed-confined if they showed symptoms;
+
 $R_2$ consists of individuals who are convalescent if they showed symptoms;
+
 $R_3$ consists of recovered individuals who have returned to school-work if they were symtomatic.
-The observation on day $n$ of the observed epidemic (with $t_1$ being 22 January) consists of the numbers of children who are bed-confined and convalescent.
-Ten individuals received antibiotics for secondary infections, and they had longer bed-confinement and convalescence times.
-Partly for this reason, and because our primary interest is in parameters related to transmission, we'll narrow our focus to the bed-confinement numbers, $B_n$, modeling these as $B_n\sim\dist{Poisson}{\rho R_1(t_n)}$, where $\rho$ is a reporting rate corresponding to the chance an infected boy is symptomatic.
+
+* The observation on day $n$ of the observed epidemic (with $t_1$ being 22 January) consists of the numbers of children who are bed-confined and convalescent.
+
+* Ten individuals received antibiotics for secondary infections, and they had longer bed-confinement and convalescence times.
+
+* Partly for this reason, and because our primary interest is in parameters related to transmission, we'll narrow our focus to the bed-confinement numbers, $B_n$, modeling these as $B_n\sim\dist{Poisson}{\rho R_1(t_n)}$, where $\rho$ is a reporting rate corresponding to the chance an infected boy is symptomatic.
 
 ```{r sirr-diagram,echo=FALSE,purl=FALSE,fig.height=3/4,fig.width=9,fig.cap="Model flow diagram."}
 library(grid)
@@ -125,43 +141,62 @@ grid.lines(x=c(17/24,19/24),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lw
 popViewport()
 ```
 
-The index case for the epidemic was purportedly a boy recently returned from Hong Kong, who was reported to have a transient febrile illness from 15 to 18 January.
-It would therefore be reasonable to initialize the epidemic at $t_0=-6$ with $I(t_0)=1$.
-This is a little tricky to reconcile with the rest of the data;
-for the moment, we avoid this issue by instead initializing with $I(t_0)=1$ at $t_0=0$.
-All other individuals are modeled to be initially susceptible.
+* The index case for the epidemic was purportedly a boy recently returned from Hong Kong, who was reported to have a transient febrile illness from 15 to 18 January.
 
-Our previous Markov transmission model is that each individual in $S$ transitions to $I$ at rate $\beta\,I(t)/N$.
-We are going to extend this to include stochastic variation by incorporating multiplicative noise,
+* It would therefore be reasonable to initialize the epidemic at $t_0=-6$ with $I(t_0)=1$.
+
+* This is a little tricky to reconcile with the rest of the data;
+for the moment, we avoid this issue by instead initializing with $I(t_0)=1$ at $t_0=0$.
+
+* All other individuals are modeled to be initially susceptible.
+
+* Our previous Markov transmission model is that each individual in $S$ transitions to $I$ at rate $\beta\,I(t)/N$.
+
+### Adding overdispersion to the latent stochastic process
+
+* We are going to extend the basic model to include stochastic variation by incorporating multiplicative noise,
 $$\mu_{SI}=\beta\frac{I(t)}{N}d\Gamma/dt.$$
 
-* Here, $\Gamma(t)$ is a gamma process with $\E[\Gamma(t)]=t$ and $\var[\Gamma(t)]=\sigma^2 t$.
+* Here, $\Gamma(t)$ is a gamma process with $\expect{\Gamma(t)}=t$ and $\var{\Gamma(t)}=\sigma^2 t$.
 
 Thus, $\sigma^2$ is the __infinitesimal variance parameter__ of the noise process, which we will call the __extrademographic process noise__ parameter.
 
-* Why do we use multiplicative noise, rather than additive noise such as 
+Question: Why do we use multiplicative noise, rather than additive noise such as 
 $$\mu_{SI}^\prime=\beta\frac{I(t)}{N} + d\Gamma/dt?$$
 
 * The gamma process has the property of being non-negative, which is the main reason it may be preferable to Gaussian noise.
 
 * The gamma process is a pure jump process, constant between jumps. There are an infinite number of jumps in any finite time interval, but almost all of them are negligibly small. Thus, the derivative of the gamma process doesn't exist in the usual sense, but one can still give formal meaning to $d\Gamma/dt$. All this is similar to Gaussian noise, which can also be considered as the formal derivative of a non-differentiable process (Brownian motion).
 
-Over-dispersion in the measurement model may be appropriate for similar reasons. Measurement over-dispersion might be considered together with, or in place of, dynamic over-dispersion. 
+### Adding over-dispersion to the measurement model
+
+* Over-dispersion in the measurement model may be appropriate for similar reasons. Measurement over-dispersion might be considered together with, or in place of, dynamic over-dispersion. 
 
 * Adding gamma noise to a Poisson measurement model leads to a negative binomial measurement model. The overdispersion parameter is $\psi$, with the variance for mean $\mu$ being $\mu+\mu^2/\psi$ and the Poisson model being recovered in the limit as $\psi\to\infty$.
 
-The remainder of the model is unchanged, with each individual in $I$ transitioning at rate $\mu_I$ to $R_1$, subsequently moving from $R_1$ to $R_2$ at  rate $\mu_{R_1}$, and finally from $R_2$ to $R_3$ at rate $\mu_{R_2}$.
-Therefore, $1/\mu_I$ is the mean infectious time prior to bed-confinement; $1/\mu_{R_1}$ is the mean duration of bed-confinement for symptomatic cases;
+### Keeping equidispersion in other parts of the latent process 
+
+* The remainder of the model is unchanged, with each individual in $I$ transitioning at rate $\mu_I$ to $R_1$, subsequently moving from $R_1$ to $R_2$ at  rate $\mu_{R_1}$, and finally from $R_2$ to $R_3$ at rate $\mu_{R_2}$.
+
+* Therefore, $1/\mu_I$ is the mean infectious time prior to bed-confinement; $1/\mu_{R_1}$ is the mean duration of bed-confinement for symptomatic cases;
 $1/\mu_{R_2}$ is the mean duration of convalescence for symptomatic cases.
-All rates have units $\mathrm{day}^{-1}$. 
 
-We do not need a representation of $R_3$ since this variable has consequences neither for the dynamics of the state process nor for the data.
-Since we are confining ourselves for the present to fitting only the $B_n$ data, we need not track $R_2$.
-We enumerate the state variables ($S$, $I$, $R_1$) and the parameters ($\beta$, $\mu_I$, $\rho$, $\mu_{R_1}$, $\sigma$, $\psi$) as follows:
+* All rates have units $\mathrm{day}^{-1}$. 
 
-```{r bsflu_names}
+* We do not need a representation of $R_3$ since this variable has consequences neither for the dynamics of the state process nor for the data.
+
+* Since we are confining ourselves for the present to fitting only the $B_n$ data, we need not track $R_2$.
+
+* We code the state variables ($S$, $I$, $R_1$) as follows:
+```{r bsflu_statenames}
 statenames <- c("S","I","R1")
+statenames
+```
+
+* Similarly, the parameters ($\beta$, $\mu_I$, $\rho$, $\mu_{R_1}$, $\sigma$, $\psi$) are:
+```{r bsflu_paramnames}
 paramnames <- c("Beta","mu_I","mu_R1","rho","sigma","psi")
+paramnames
 ```
 
 In the codes below, we'll refer to the data variables by their names ($B$, $C$), as given in the `bsflu_data` data-frame:
@@ -169,17 +204,16 @@ In the codes below, we'll refer to the data variables by their names ($B$, $C$),
 colnames(bsflu_data)
 ```
 
-Now, we write the model code:
-
+The model code is available for inspection:
 ```{r csnippets_bsflu}
-### for comparison, here is the redundant equidispersed model
+##### for comparison, here is the redundant equidispersed model
 dmeas <- Csnippet("
   lik = dpois(B,rho*R1+1e-6,give_log);
 ")
 rmeas <- Csnippet("
   B = rpois(rho*R1+1e-6);
 ")
-########
+#####
 
 dmeas <- Csnippet("
   lik = dnbinom(B, psi, psi/(psi+rho*R1+1e-6), give_log);
@@ -278,19 +312,20 @@ the particle filter depends on the `rprocess` and `dmeasure` codes and so is a c
 
 We need to find, by trial and error, a suitable number of particles making a compromise between (i) accuracy, which depends also on the model and data; (ii) computational resources; (iii) the timescale on which we want an answer. 
 ```{r np}
-NP <- 2000
+NP <- 5000
 ```
 It is helpful for debugging to have a flag that switches the algorithmic parameters to makes the code run quickly.
 For code development, it is also helpful to have a flag that gives algorithmic settings which run in a convenient time, say 30 minutes.
 ```{r debug-np, include=TRUE}
-SHORT_RUN <- TRUE
+#SHORT_RUN <- TRUE
+SHORT_RUN <- FALSE
 if(SHORT_RUN) NP <- 1000
 #DEBUG <- TRUE
 DEBUG <- FALSE
 if(DEBUG) NP <- 50
 ```
 
-We will not report the debugging values of subsequent parameters.
+We will not report the debugging and short-run values of subsequent parameters.
 Now we compute the likelihood at our parameter guess.
 ```{r init_pfilter}
 pf <- pfilter(bsflu,params=params,Np=NP)
@@ -338,15 +373,15 @@ By default, **R** will guess how many cores are available and will run about hal
 
 ### Running a particle filter.
 
-We proceed to carry out replicated particle filters at an initial guess of $\beta=2$, $\mu_I=1$, $\rho=0.9$ and $\sigma=0.2$.
-
 
 ```{r pf}
-library(doRNG)
-registerDoRNG(625904618)
+set.seed(43789123,kind="L'Ecuyer")
+N_LIK_REPS <- 10
 bake(file="pf.rds",{
-  foreach(i=1:10,.packages='pomp',
-    .export=c("bsflu","fixed_params")
+  foreach(i=1:N_LIK_REPS,.packages='pomp',
+    .export=c("bsflu","fixed_params"),
+    .inorder=FALSE,
+    .options.multicore=list(set.seed=TRUE)
   ) %dopar% {
     pfilter(bsflu,params=c(Beta=2,mu_I=1,rho=0.9,sigma=0.2,psi=20,fixed_params),Np=NP)
   }
@@ -354,7 +389,9 @@ bake(file="pf.rds",{
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
 ```
 
-In `r round(attr(pf,"system.time")["elapsed"],2)` seconds, using `r min(getDoParWorkers(),length(pf))` cores, we obtain an unbiased likelihood estimate of `r round(L_pf[1],1)` with a Monte Carlo standard error of `r signif(L_pf[2],2)`.
+* We proceed to carry out `r N_LIK_REPS` replicated particle filters, each with `r NP` particles, with the parameter vector set to at an initial guess of $\beta=2$, $\mu_I=1$, $\rho=0.9$ and $\sigma=0.2$, $\psi=20$.
+
+* In `r round(attr(pf,"system.time")["elapsed"],2)` seconds, using `r min(getDoParWorkers(),length(pf))` cores, we obtain an unbiased likelihood estimate of `r round(L_pf[1],1)` with a Monte Carlo standard error of `r signif(L_pf[2],2)`.
 
 <br>
 
@@ -370,29 +407,29 @@ Since $\beta$ and $\mu_I$ will be estimated on the log scale, and we expect that
 For simplicity, we'll use the same perturbation size on $\rho$.
 We fix `cooling.fraction.50=0.5`, so that after 50 `mif2` iterations, the perturbations are reduced to half their original magnitudes.
 
-```{r nmif}
+```{r box_search_local}
 NMIF <- 100
 NP_MIF <- NP/2
-```
-```{r debug-nmif, include=FALSE}
+
 if(SHORT_RUN){
-  NP_MIF <- NP/2
-  NMIF <- 50
+  NP_MIF <- NP_MIF/2
+  NMIF <- NMIF/2
 }
+
 if(DEBUG) {
   NP_MIF <- 50
   NMIF <- 5
 }
-```
 
-```{r box_search_local}
-registerDoRNG(482947940)
+set.seed(8944688,kind="L'Ecuyer")
 bake(file="box_search_local.rds",{
 foreach(i=1:20,
     .packages='pomp',
     .combine=c, 
-    .export=c("bsflu","fixed_params")
-  ) %dopar% {
+    .export=c("bsflu","fixed_params"),
+    .inorder=FALSE,
+    .options.multicore=list(set.seed=TRUE)
+    ) %dopar% {
     mif2(
       bsflu,
       start=c(Beta=2,mu_I=1,rho=0.9,sigma=0.2,psi=20,fixed_params),
@@ -407,8 +444,7 @@ foreach(i=1:20,
 }) -> mifs_local
 ```
 
-We obtain some diagnostic plots with the `plot` command applied to `mifs_local`.
-Here is a way to get a prettier version:
+* We can obtain some diagnostic plots with the `plot` command applied to `mifs_local`, but `ggplot` gives a prettier version:
 
 ```{r box_search_local_plot,purl=FALSE}
 ggplot(data=melt(conv.rec(mifs_local)),
@@ -419,37 +455,43 @@ ggplot(data=melt(conv.rec(mifs_local)),
   theme_bw()
 ```
 
-No filtering failures (`nfail`) are generated at any point, which is comforting.
-In general, we expect to see filtering failures whenever our initial guess (`start`) is incompatible with one or more of the observations.
-Filtering failures at the MLE are an indication that the model, at its best, is incompatible with one or more of the data.
+* No filtering failures (`nfail`) are generated at any point, which is comforting.
 
-We see that the likelihood generally increases as the iterations proceed, though there is considerable variability due to the stochastic nature of this Monte Carlo algorithm.
-Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference.
-Partly, this is because parameter perturbations are applied in the last filtering iteration, so that the likelhood shown here is not identical to that of the model of interest.
+* In general, we expect to see filtering failures whenever our initial guess (`start`) is incompatible with one or more of the observations.
+
+* Filtering failures at the MLE are an indication that the model, at its best, is incompatible with one or more of the data.
+
+* We see that the likelihood generally increases as the iterations proceed, though there is considerable variability due to the stochastic nature of this Monte Carlo algorithm.
+
+* Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference.
+
+* Partly, this is because parameter perturbations are applied in the last filtering iteration, so that the likelhood shown here is not identical to that of the model of interest.
 Partly, this is because `mif2` is usually carried out with fewer particles than are needed for a good likelihood evaluation:
 the errors in `mif2` average out over many iterations of the filtering.
-Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
+
+* Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
 ```{r lik_local}
-registerDoRNG(900242057)
+set.seed(7774282,kind="L'Ecuyer")
 bake(file="lik_local.rds",{
-  foreach(mf=mifs_local,.packages='pomp',.combine=rbind) %dopar% 
+  foreach(mf=mifs_local,.packages='pomp',
+    .combine=rbind,
+    .inorder=FALSE,
+    .options.multicore=list(set.seed=TRUE)
+  ) %dopar% 
   {
-    evals <- replicate(10, logLik(pfilter(mf,Np=NP)))
+    evals <- replicate(N_LIK_REPS, logLik(pfilter(mf,Np=NP)))
     ll <- logmeanexp(evals,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
   }
 }) -> results_local
-```
-```{r include=FALSE,purl=FALSE}
 t_local <- attr(results_local,"system.time")
-```
-```{r}
 results_local <- as.data.frame(results_local)
 ```
 
-This investigation took  `r round(attr(mifs_local,"system.time")["elapsed"],0)` sec for the maximization and `r round(t_local["elapsed"],0)` sec for the likelihood evaluation.
-These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
+* This investigation took  `r round(attr(mifs_local,"system.time")["elapsed"],0)` sec for the maximization and `r round(t_local["elapsed"],0)` sec for the likelihood evaluation.
+
+* These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 
 ```{r pairs_local,purl=FALSE}
 pairs(~loglik+Beta+mu_I+rho+sigma,data=results_local,pch=16)
@@ -500,13 +542,15 @@ if(DEBUG) {
 ```
 
 ```{r box_search_global}
-registerDoRNG(1270401374)
+
+set.seed(8211297,kind="L'Ecuyer")
 guesses <- as.data.frame(apply(params_box,1,function(x)runif(NGLOBAL,x[1],x[2])))
 mf1 <- mifs_local[[1]]
 bake(file="box_search_global.rds",{
   foreach(guess=iter(guesses,"row"), 
     .packages='pomp', 
     .combine=rbind,
+    .inorder=FALSE,
     .options.multicore=list(set.seed=TRUE),
     .export=c("mf1","fixed_params")
   ) %dopar% 
@@ -564,7 +608,7 @@ Let's try with only $\sigma$.
 ```{r box_search_global_sigma}
 params_box_sigma <- params_box[c("Beta","mu_I","rho","sigma"),]
 fixed_params_sigma <- c(fixed_params,psi=1e6)
-registerDoRNG(1270401374)
+set.seed(4397288,kind="L'Ecuyer")
 guesses <- as.data.frame(apply(params_box_sigma,1,function(x)runif(NGLOBAL,x[1],x[2])))
 mf1 <- mifs_local[[1]]
 bake(file="box_search_global_sigma.rds",{
@@ -572,6 +616,7 @@ bake(file="box_search_global_sigma.rds",{
     .packages='pomp', 
     .combine=rbind,
     .options.multicore=list(set.seed=TRUE),
+    .inorder=FALSE,
     .export=c("mf1","fixed_params_sigma")
   ) %dopar% 
   {
@@ -597,7 +642,7 @@ Now let's try with only $\psi$.
 ```{r box_search_global_psi}
 params_box_psi <- params_box[c("Beta","mu_I","rho","psi"),]
 fixed_params_psi <- c(fixed_params,sigma=1e-6)
-registerDoRNG(1270401374)
+set.seed(29127834,kind="L'Ecuyer")
 guesses <- as.data.frame(apply(params_box_psi,1,function(x)runif(NGLOBAL,x[1],x[2])))
 mf1 <- mifs_local[[1]]
 bake(file="box_search_global_psi.rds",{
@@ -605,6 +650,7 @@ bake(file="box_search_global_psi.rds",{
     .packages='pomp', 
     .combine=rbind,
     .options.multicore=list(set.seed=TRUE),
+    .inorder=FALSE,
     .export=c("mf1","fixed_params_psi")
   ) %dopar% 
   {
@@ -653,17 +699,31 @@ lines(pred.mean(pf_sigma)["R1",]*mle_sigma["rho"],lty="dotted",col="red")
 
 ```
 
-We see that the MLE found for $H_\sigma$ cannot explain how the cases drop off so fast, particularly on day 12.
-The fit for $H_\psi$ may appear superficially worse, but is objectively better by the standards of likelihood.
-We should not be entirely satisfied with either model $H_\psi$ or $H_\sigma$; a better model might be able to capture the peak as well as the early and late epidemic.
-However, the late epidemic is perhaps of less interest, since the initial transmission and peak incidence of the epidemic may be of primary interest for disease control.
+* We see that the MLE found for $H_\sigma$ cannot explain how the cases drop off so fast, particularly on day 12.
+
+* The fit for $H_\psi$ may appear superficially worse, but is objectively better by the standards of likelihood.
+
+
+## Conclusions
+
+* We should not be entirely satisfied with any of the models we have considered so far.
+
+* A better model might be able to capture the peak as well as the early and late epidemic.
+
+* Perhaps a non-exponential infectious period, or the inclusion of a latent period, could help to explain why the number of cases was able to drop so fast.
+
+* There is scope for more modeling. Within the POMP framework, we can consider other extensions to the model and assess the consequences.
+
+* No model is perfect. It is a sign of due diligence that we have found at least some weaknesses in our model.
+
+* Beyond the observation that there is probably scope for an even better model, what can be gained from developing models such as these?
 
 
 --------------------------
 
 
 ## [Back to course homepage](../index.html)
-## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R)
+## [**R** codes for this document](od.R)
 
 ----------------------
 
