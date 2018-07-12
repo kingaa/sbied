@@ -673,10 +673,11 @@ results_global_psi <- as.data.frame(results_global_psi)
 The best result of this search had a likelihood of `r round(max(results_global_psi$loglik),1)` with a standard error of `r round(results_global_psi$loglik.se[which.max(results_global_psi$loglik)],2)`.
 So, measurement overdispersion substantially improves the fit, and also greatly reduces the filtering error.
 
-To understand what is going on, let's look at the fitted MLE models under these different constraints
+To understand what is going on, let's look at the fitted MLE models under these different hypotheses:
 ```{r MLEs}
-mle_psi <- unlist(results_global_psi[which.max(results_global_psi$loglik),paramnames])
-mle_sigma <- unlist(results_global_sigma[which.max(results_global_sigma$loglik),paramnames])
+mle_sigma_psi <- unlist(results_global[which.max(results_global$loglik),paramnames])
+mle_dot_psi <- unlist(results_global_psi[which.max(results_global_psi$loglik),paramnames])
+mle_sigma_dot <- unlist(results_global_sigma[which.max(results_global_sigma$loglik),paramnames])
 cbind(mle_psi,mle_sigma)
 ```
 Call $H_\sigma$ the process overdispersion model and $H_\psi$ the observation overdispersion model.
@@ -717,6 +718,8 @@ lines(pred.mean(pf_sigma)["R1",]*mle_sigma["rho"],lty="dotted",col="red")
 * No model is perfect. It is a sign of due diligence that we have found at least some weaknesses in our model.
 
 * Beyond the observation that there is probably scope for an even better model, what can be gained from developing models such as these?
+
+* Adequate modeling of stochasticity is critical for the statistical validity of the model, even when the topic is not of direct scientific interest.
 
 
 --------------------------
