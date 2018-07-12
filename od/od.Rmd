@@ -152,6 +152,12 @@ for the moment, we avoid this issue by instead initializing with $I(t_0)=1$ at $
 
 * Our previous Markov transmission model is that each individual in $S$ transitions to $I$ at rate $\beta\,I(t)/N$.
 
+<br>
+
+-----
+
+-----
+
 ### Adding overdispersion to the latent stochastic process
 
 * We are going to extend the basic model to include stochastic variation by incorporating multiplicative noise,
@@ -159,7 +165,7 @@ $$\mu_{SI}=\beta\frac{I(t)}{N}d\Gamma/dt.$$
 
 * Here, $\Gamma(t)$ is a gamma process with $\expect{\Gamma(t)}=t$ and $\var{\Gamma(t)}=\sigma^2 t$.
 
-Thus, $\sigma^2$ is the __infinitesimal variance parameter__ of the noise process, which we will call the __extrademographic process noise__ parameter.
+* Thus, $\sigma^2$ is the __infinitesimal variance parameter__ of the noise process, which we will call the __extrademographic process noise__ parameter.
 
 Question: Why do we use multiplicative noise, rather than additive noise such as 
 $$\mu_{SI}^\prime=\beta\frac{I(t)}{N} + d\Gamma/dt?$$
@@ -288,35 +294,28 @@ plot(bsflu,main="")
 
 To develop and debug code, it is useful to have testing codes that run quickly and fail if the codes are not working correctly.
 As such a test, here we run some simulations and a particle filter.
-We'll use the following parameters, derived from our earlier explorations:
+We'll use parameters derived from our earlier explorations:
 ```{r start_params}
 params <- c(Beta=2,mu_I=1,rho=0.9,mu_R1=1/3,mu_R2=1/2,sigma=0.2,psi=20)
 ```
 
-Now to run and plot some simulations:
+Now we run and plot some simulations:
 ```{r init_sim}
 y <- simulate(bsflu,params=params,nsim=10,as.data.frame=TRUE)
-```
-```{r init_sim_plot,purl=F}
 library(ggplot2)
 theme_set(theme_bw())
 library(reshape2)
-
 ggplot(data=y,mapping=aes(x=time,y=B,group=sim))+
     geom_line()
 ```
 
-Before engaging in iterated filtering, it is a good idea to check that the basic particle filter is working since iterated filtering builds on this technique.
-The simulations above check the `rprocess` and `rmeasure` codes;
-the particle filter depends on the `rprocess` and `dmeasure` codes and so is a check of the latter.
+* Before engaging in iterated filtering, it is a good idea to check that the basic particle filter is working since iterated filtering builds on this technique.
 
-We need to find, by trial and error, a suitable number of particles making a compromise between (i) accuracy, which depends also on the model and data; (ii) computational resources; (iii) the timescale on which we want an answer. 
+* The simulations above check the `rprocess` and `rmeasure` codes; the particle filter depends on the `rprocess` and `dmeasure` codes and so is a check of the latter.
+
+* We need to find, by trial and error, a suitable number of particles making a compromise between (i) accuracy, which depends also on the model and data; (ii) computational resources; (iii) the timescale on which we want an answer. 
 ```{r np}
 NP <- 5000
-```
-It is helpful for debugging to have a flag that switches the algorithmic parameters to makes the code run quickly.
-For code development, it is also helpful to have a flag that gives algorithmic settings which run in a convenient time, say 30 minutes.
-```{r debug-np, include=TRUE}
 #SHORT_RUN <- TRUE
 SHORT_RUN <- FALSE
 if(SHORT_RUN) NP <- 1000
@@ -325,16 +324,21 @@ DEBUG <- FALSE
 if(DEBUG) NP <- 50
 ```
 
-We will not report the debugging and short-run values of subsequent parameters.
-Now we compute the likelihood at our parameter guess.
+* Here, we use $J=`r NP`$ particles.
+
+* For debugging, we also set up a flag that switches the algorithmic parameters to makes the code run in seconds.
+
+* For code development, we set up another flag that gives algorithmic settings which run in a convenient time, say 30 minutes.
+
+* Now we compute the likelihood at our parameter guess.
 ```{r init_pfilter}
 pf <- pfilter(bsflu,params=params,Np=NP)
 ```
+
+* `plot(pf)` shows the data (`B`), along with the *effective sample size* of the particle filter (`ess`) and the log likelihood of each observation conditional on the preceding ones (`cond.logLik`).
 ```{r init_pfilter_plot,purl=F,fig.width=4,fig.height=6}
 plot(pf)
 ```
-
-The above plot shows the data (`B`), along with the *effective sample size* of the particle filter (`ess`) and the log likelihood of each observation conditional on the preceding ones (`cond.logLik`).
 
 <br>
 
@@ -472,6 +476,7 @@ the errors in `mif2` average out over many iterations of the filtering.
 * Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate:
 
 ```{r lik_local}
+NP_LIK <- NP
 set.seed(7774282,kind="L'Ecuyer")
 bake(file="lik_local.rds",{
   foreach(mf=mifs_local,.packages='pomp',
@@ -480,7 +485,7 @@ bake(file="lik_local.rds",{
     .options.multicore=list(set.seed=TRUE)
   ) %dopar% 
   {
-    evals <- replicate(N_LIK_REPS, logLik(pfilter(mf,Np=NP)))
+    evals <- replicate(N_LIK_REPS, logLik(pfilter(mf,Np=NP_LIK)))
     ll <- logmeanexp(evals,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
   }
@@ -526,23 +531,15 @@ params_box <- rbind(
 )
 ```
 
-We are now ready to carry out likelihood maximizations from
-```{r nglobal}
+We are now ready to carry out likelihood maximizations from diverse starting points.
+```{r box_search_global}
 NGLOBAL <- 300
-```
-diverse starting points.
-
-```{r debug-nglobal, include=FALSE}
 if(SHORT_RUN){
   NGLOBAL <- 100
 }
 if(DEBUG) {
   NGLOBAL <- 10
 }
-```
-
-```{r box_search_global}
-
 set.seed(8211297,kind="L'Ecuyer")
 guesses <- as.data.frame(apply(params_box,1,function(x)runif(NGLOBAL,x[1],x[2])))
 mf1 <- mifs_local[[1]]
@@ -555,36 +552,32 @@ bake(file="box_search_global.rds",{
     .export=c("mf1","fixed_params")
   ) %dopar% 
   {
-    mf <- mif2(mf1,start=c(unlist(guess),fixed_params))
-    mf <- mif2(mf,Nmif=NMIF)
-    ll <- replicate(10,logLik(pfilter(mf,Np=NP_MIF)))
+    mf <- mif2(mf1,start=c(unlist(guess),fixed_params),Nmif=NMIF)
+    ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_LIK)))
     ll <- logmeanexp(ll,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
   }
 }) -> results_global
-```
-```{r purl=FALSE,include=FALSE}
 n_global <- getDoParWorkers()
 t_global <- attr(results_global,"system.time")
-```
-```{r}
 results_global <- as.data.frame(results_global)
 ```
-The above codes run one search from each of `r nrow(guesses)` starting values.
-Each search consissts of an initial run of `r nrow(conv.rec(mf1))` IF2 iterations, followed by another 100 iterations.
-These codes exhibit a general **pomp** behavior:
-re-running a command on an object (i.e., `mif2` on `mf1`) created by the same command preserves the algorithmic arguments.
-In particular, running `mif2` on the result of a `mif2` computation re-runs IF2 from the endpoint of the first run.
-In the second computation, by default, all algorithmic parameters are preserved;
-here we overrode the default choice of `Nmif`.
 
-Following the `mif2` computations, the particle filter is used to evaluate the likelihood, as before.
-In contract to the local-search codes above, here we return only the endpoint of the search, together with the likelihood estimate and its standard error in a named vector.
-The best result of this search had a likelihood of `r round(max(results_global$loglik),1)` with a standard error of `r round(results_global$loglik.se[which.max(results_global$loglik)],2)`.
-This took `r round(t_global["elapsed"]/60,1)` minutes altogether using `r n_global` processors.
+* Specifically, we carry out independent Monte Carlo searches from each of `r nrow(guesses)` starting values.
 
-Again, we attempt to visualize the global geometry of the likelihood surface using a scatterplot matrix.
-In particular, here we plot both the starting values (grey) and the IF2 estimates (red).
+* Each search consists of an initial run of `r NMIF` IF2 iterations.
+
+* Following the `mif2` maximization, `r N_LIK_REPS` replications of the particle filter, each with `r NP_LIK` particles, was used to evaluate the likelihood.
+
+* In contrast to the local search codes above, here we return only the endpoint of the search, together with the likelihood estimate and its standard error in a named vector.
+
+* The best result of this search had a likelihood of `r round(max(results_global$loglik),1)` with a standard error of `r round(results_global$loglik.se[which.max(results_global$loglik)],2)`.
+
+* This took `r round(t_global["elapsed"]/60,1)` minutes altogether using `r n_global` processors.
+
+* We visualize the global geometry of the likelihood surface using a scatterplot matrix.
+
+* We plot both the starting values (grey) and the IF2 estimates (red).
 
 ```{r pairs_global,purl=FALSE}
 library(plyr)
@@ -592,9 +585,9 @@ all <- ldply( list(guess=guesses, result=subset(results_global, loglik > max(log
 pairs(~loglik+Beta+mu_I+rho+sigma+psi, data=all, col=ifelse(all$type=="guess", grey(0.5), "red"), pch=16)
 ```
 
-We see that optimization attempts from diverse remote starting points converge on a particular region in parameter space.
-Moreover, the estimates have comparable likelihoods, despite their considerable variability.
-This gives us some confidence in our maximization procedure. 
+* We see that optimization attempts from diverse remote starting points converge on a particular region in parameter space.
+
+* When the Monte Carlo optimization points have a clear pattern, with many searches clustering around a maximum, we have some confidence that we have explored the neighborhood of the MLE.
 
 <br>
 
@@ -602,9 +595,17 @@ This gives us some confidence in our maximization procedure.
 
 ----
 
-### Do we need both dynamic noise and measurement noise?
+## Do we need both dynamic noise and measurement noise?
 
-Let's try with only $\sigma$.
+* Let's call $H_{\sigma\psi}$ the hypothesis that $\sigma\neq 0$ and $\psi\neq 0$. Write $H_{\sigma\bullet}$ for the nested hypothesis having $\psi=0$, $H_{\bullet\psi}$ having $\sigma=0$, and $H_{\bullet\bullet}$ having both $\sigma=0$ and $\psi=0$.
+
+<br>
+
+----
+
+### Dynamic noise only
+
+* We fit $H_{\sigma\bullet}$ using the same algorithmic parameters we used for $H_{\sigma\psi}$.
 ```{r box_search_global_sigma}
 params_box_sigma <- params_box[c("Beta","mu_I","rho","sigma"),]
 fixed_params_sigma <- c(fixed_params,psi=1e6)
@@ -625,20 +626,25 @@ bake(file="box_search_global_sigma.rds",{
 	Nmif=NMIF,
 	rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02,sigma=0.02)
     )
-    ll <- replicate(10,logLik(pfilter(mf,Np=NP_MIF)))
+    ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_MIF)))
     ll <- logmeanexp(ll,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
   }
 }) -> results_global_sigma
-```
-
-```{r, include=FALSE}
 results_global_sigma <- as.data.frame(results_global_sigma)
 ```
 
-The best result of this search had a likelihood of `r round(max(results_global_sigma$loglik),1)` with a standard error of `r round(results_global_sigma$loglik.se[which.max(results_global_sigma$loglik)],2)`. We see that dynamic overdispersion, by itself, gives negligible improvement in model fit.
+* The best result of this search had a likelihood of `r round(max(results_global_sigma$loglik),1)` with a standard error of `r round(results_global_sigma$loglik.se[which.max(results_global_sigma$loglik)],2)`.
 
-Now let's try with only $\psi$.
+* We see that dynamic overdispersion, by itself, gives substantially less improvement in model fit.
+
+<br>
+
+------
+
+### Measurement overdispersion only
+
+Now let's try fitting $H_{\bullet\psi}$.
 ```{r box_search_global_psi}
 params_box_psi <- params_box[c("Beta","mu_I","rho","psi"),]
 fixed_params_psi <- c(fixed_params,sigma=1e-6)
@@ -659,38 +665,45 @@ bake(file="box_search_global_psi.rds",{
 	Nmif=NMIF,
 	rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02,psi=0.02)
     )
-    ll <- replicate(10,logLik(pfilter(mf,Np=NP_MIF)))
+    ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_MIF)))
     ll <- logmeanexp(ll,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
   }
 }) -> results_global_psi
-```
-
-```{r, include=FALSE}
 results_global_psi <- as.data.frame(results_global_psi)
 ```
 
-The best result of this search had a likelihood of `r round(max(results_global_psi$loglik),1)` with a standard error of `r round(results_global_psi$loglik.se[which.max(results_global_psi$loglik)],2)`.
-So, measurement overdispersion substantially improves the fit, and also greatly reduces the filtering error.
+* The best result of this search had a likelihood of `r round(max(results_global_psi$loglik),1)` with a standard error of `r round(results_global_psi$loglik.se[which.max(results_global_psi$loglik)],2)`.
 
-To understand what is going on, let's look at the fitted MLE models under these different constraints
+* measurement overdispersion alone is apparently sufficient to improve the fit over $H_{\bullet\bullet}$. It also greatly reduces the filtering error.
+
+<br>
+
+-----
+
+### Interpreting the comparative results for these models
+
+* Let's look at the fitted MLE models under these different constraints
 ```{r MLEs}
 mle_psi <- unlist(results_global_psi[which.max(results_global_psi$loglik),paramnames])
 mle_sigma <- unlist(results_global_sigma[which.max(results_global_sigma$loglik),paramnames])
 cbind(mle_psi,mle_sigma)
 ```
-Call $H_\sigma$ the process overdispersion model and $H_\psi$ the observation overdispersion model.
-We see that the main difference is a lower reporting rate estimate for $H_\psi$.
-Let's see which data points are primarily responsible for the improvement in the likelihood
+
+* We see that a main difference is a lower reporting rate estimate for $H_{\psi\bullet}$.
+
+* Let's see which data points are primarily responsible for the improvement in the likelihood
 ```{r fitted-models}
 pf_psi <- pfilter(bsflu,params=mle_psi,Np=5*NP,pred.mean=TRUE)
 pf_sigma <- pfilter(bsflu,params=mle_sigma,Np=5*NP,pred.mean=TRUE)
 plot(cond.logLik(pf_psi)-cond.logLik(pf_sigma))
 ```
 
-We see that the big gain for $H_\psi$ is at the end of the time series.
-Around the main peak of incidence, $H_\sigma$ actually fits better.
-To better understand what is going on, let's look at the one-step prediction means. The differences between these and the observations are the residuals.
+* We see that the big gain for $H_\psi$ is at the end of the time series.
+
+* Around the main peak of incidence, $H_\sigma$ actually fits better.
+
+* To better understand what is going on, let's look at the one-step prediction means. The differences between these and the observations are the residuals.
 
 ```{r predictions}
 plot(obs(bsflu)["B",])
@@ -699,10 +712,15 @@ lines(pred.mean(pf_sigma)["R1",]*mle_sigma["rho"],lty="dotted",col="red")
 
 ```
 
-* We see that the MLE found for $H_\sigma$ cannot explain how the cases drop off so fast, particularly on day 12.
+* We see that the MLE found for $H_{\sigma\bullet}$ cannot explain how the cases drop off so fast, particularly on day 12.
 
-* The fit for $H_\psi$ may appear superficially worse, but is objectively better by the standards of likelihood.
+* The fit for $H_{\bullet\psi}$ may appear superficially worse, but is objectively better by the standards of likelihood.
 
+<br>
+
+------
+
+------
 
 ## Conclusions
 
@@ -718,6 +736,7 @@ lines(pred.mean(pf_sigma)["R1",]*mle_sigma["rho"],lty="dotted",col="red")
 
 * Beyond the observation that there is probably scope for an even better model, what can be gained from developing models such as these?
 
+* This is just a toy example on a small dataset. The underlying issue of overdispersion, and its effect on parameter estimates and their confidence intervals, needs consideration in any inference using count data.
 
 --------------------------
 
