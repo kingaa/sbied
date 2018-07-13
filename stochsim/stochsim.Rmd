@@ -352,7 +352,7 @@ Write down the Euler-Maruyama method for an SDE representation of the closed-pop
 Consider some difficulties that might arise with non-negativity constraints, and propose some practical way one might deal with that issue.
 
 
-A useful method to deal with positivity constraints is to use Gamma noise rather than Brownian noise [@bhadra11,@He2010,@laneri10].
+A useful method to deal with positivity constraints is to use Gamma noise rather than Brownian noise [@bhadra11;@He2010;@laneri10].
 SDEs driven by Gamma noise can be investigated by Euler solutions simply by replacing the Gaussian noise by an appropriate Gamma distribution.
 
 <br>
@@ -361,9 +361,9 @@ SDEs driven by Gamma noise can be investigated by Euler solutions simply by repl
 
 -----
 
-### Euler's method vs.&nbsp;Gillspie's algorithm
+### Euler's method vs.&nbsp;Gillespie's algorithm
 
-- A widely used, exact simulation method for continuous time Markov chains is [Gillspie's algorithm](https://en.wikipedia.org/wiki/Gillespie_algorithm) [@Gillespie1977a].
+- A widely used, exact simulation method for continuous time Markov chains is [Gillespie's algorithm](https://en.wikipedia.org/wiki/Gillespie_algorithm) [@Gillespie1977a].
   We do not put much emphasis on Gillespie's algorithm here. 
   Why?
   When would you prefer an implementation of Gillespie's algorithm to an Euler solution?
