@@ -1,5 +1,5 @@
 ---
-title: "Overdispersion on the boarding school flu data"
+title: "Modeling stochasticity: Overdispersion in the boarding school flu data"
 author: "Edward Ionides"
 output:
   html_document:
@@ -66,7 +66,10 @@ set.seed(557976883)
 
 - This tutorial investigates the consequences of modeling dynamic overdispersion on the boarding school flu dataset.
 
-- It extends the example applying `mif` to the flu data in the [iterated filtering tutorial](../mif/mif.html).
+- More broadly, we consider the question of whether the model has sufficient stochasticity to explain the data.
+
+- We extend the example applying `mif` to the flu data in the [iterated filtering tutorial](../mif/mif.html).
+
 
 <br>
 
@@ -296,7 +299,7 @@ To develop and debug code, it is useful to have testing codes that run quickly a
 As such a test, here we run some simulations and a particle filter.
 We'll use parameters derived from our earlier explorations:
 ```{r start_params}
-params <- c(Beta=2,mu_I=1,rho=0.9,mu_R1=1/3,mu_R2=1/2,sigma=0.2,psi=20)
+params <- c(Beta=2,mu_I=1,rho=0.9,mu_R1=1/3,sigma=0.2,psi=5)
 ```
 
 Now we run and plot some simulations:
@@ -348,35 +351,36 @@ plot(pf)
 
 ### Setting up the estimation problem.
 
-Let's treat $\mu_{R_1}$ and  $\mu_{R_2}$ as known, and fix these parameters at the empirical means of the bed-confinement and convalescence times for symptomatic cases, respectively:
-
+* Let's treat $\mu_{R_1}$ as known, fixed at the empirical means of the bed-confinement times:
 ```{r fixed_params}
-(fixed_params <- with(bsflu_data,c(mu_R1=1/(sum(B)/512),mu_R2=1/(sum(C)/512))))
+(fixed_params <- with(bsflu_data,c(mu_R1=1/(sum(B)/512))))
 ```
 
-We will estimate $\beta$, $\mu_I$, $\rho$ and $\sigma$.
+* We will estimate $\beta$, $\mu_I$, $\rho$ and $\sigma$.
 
-It will be helpful to parallelize most of the computations.
-Most machines nowadays have multiple cores and using this computational capacity is as simple as:
+* It will be helpful to parallelize most of the computations.
+
+* Most machines nowadays have multiple cores and using this computational capacity is as simple as:
 
 i. letting **R** know you plan to use multiple processors;
 i. using the parallel for loop provided by the **foreach** package; and
 i. paying proper attention to the use of parallel random number generators.
 
-For example:
+* For example:
 
 ```{r parallel-setup,cache=FALSE}
 library(foreach)
 library(doParallel)
-registerDoParallel()
+registerDoParallel(20)
 ```
 
-The first two lines above load the **foreach** and **doParallel** packages, the latter being a "backend" for the **foreach** package.
-The next line tells **foreach** that we will use the **doParallel** backend.
-By default, **R** will guess how many cores are available and will run about half this number of concurrent **R** processes.
+* The first two lines above load the **foreach** and **doParallel** packages, the latter being a "backend" for the **foreach** package.
+
+* The next line tells **foreach** that we will use the **doParallel** backend.
+
+* By default, **R** will guess how many cores are available and will run about half this number of concurrent **R** processes.
 
 ### Running a particle filter.
-
 
 ```{r pf}
 set.seed(43789123,kind="L'Ecuyer")
@@ -527,7 +531,7 @@ params_box <- rbind(
   mu_I=c(0.5,3),
   rho = c(0.5,1),
   sigma = c(0.01,0.2),
-  psi = c(1,20)
+  psi = c(1,10)
 )
 ```
 
@@ -552,7 +556,7 @@ bake(file="box_search_global.rds",{
     .export=c("mf1","fixed_params")
   ) %dopar% 
   {
-    mf <- mif2(mf1,start=c(unlist(guess),fixed_params),Nmif=NMIF)
+    mf <- mif2(mf1,start=c(unlist(guess),fixed_params),Nmif=NMIF,Np=NP_MIF)
     ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_LIK)))
     ll <- logmeanexp(ll,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
@@ -623,10 +627,10 @@ bake(file="box_search_global_sigma.rds",{
   {
     mf <- mif2(mf1,
         start=c(unlist(guess),fixed_params_sigma),
-	Nmif=NMIF,
+	Nmif=NMIF,  Np=NP_MIF,
 	rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02,sigma=0.02)
     )
-    ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_MIF)))
+    ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_LIK)))
     ll <- logmeanexp(ll,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
   }
@@ -654,10 +658,10 @@ bake(file="box_search_global_dot_dot.rds",{
   {
     mf <- mif2(mf1,
         start=c(unlist(guess),fixed_params_dot_dot),
-	Nmif=NMIF,
+	Nmif=NMIF,  Np=NP_MIF,
 	rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02)
     )
-    ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_MIF)))
+    ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_LIK)))
     ll <- logmeanexp(ll,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
   }
@@ -668,6 +672,7 @@ results_global_dot_dot <- as.data.frame(results_global_dot_dot)
 * The best result of this search had a likelihood of `r round(max(results_global_dot_dot$loglik),1)` with a standard error of `r round(results_global_dot_dot$loglik.se[which.max(results_global_dot_dot$loglik)],2)`.
 
 * We see that dynamic overdispersion, by itself, gives substantially less improvement in model fit compared to $H_{\sigma\psi}$ (for which we found a maximized likelihood of `r round(max(results_global$loglik),1)`).
+
 
 <br>
 
@@ -693,10 +698,10 @@ bake(file="box_search_global_psi.rds",{
   {
     mf <- mif2(mf1,
         start=c(unlist(guess),fixed_params_psi),
-	Nmif=NMIF,
+	Nmif=NMIF, Np=NP_MIF,
 	rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02,psi=0.02)
     )
-    ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_MIF)))
+    ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_LIK)))
     ll <- logmeanexp(ll,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
   }
@@ -706,11 +711,27 @@ results_global_psi <- as.data.frame(results_global_psi)
 
 * The best result of this search had a likelihood of `r round(max(results_global_psi$loglik),1)` with a standard error of `r round(results_global_psi$loglik.se[which.max(results_global_psi$loglik)],2)`.
 
-* measurement overdispersion alone is apparently sufficient to improve the fit over $H_{\bullet\bullet}$. It also greatly reduces the filtering error.
+* Measurement overdispersion alone is apparently sufficient to improve the fit over $H_{\bullet\bullet}$. 
+
+* Note that both $H_{\sigma\bullet}$ and $H_{\bullet\bullet}$ have high uncertainty on their likelihood evaluations for this level of Monte Carlo effort ($J=`r NP_LIK`$ particles).
+
+* The models with $\psi\neq 0$ have much lower uncertainty.
+
+* If we wanted to pay careful attention to the models with $\psi=0$ we would need many more particles.
 
 <br>
 
------
+#### Exercise: Interpretation of filtering error
+
+* It is convenient to work with a model having low filtering error. We can use fewer particles, saving computational effort. Here, the difference is several orders of magnitude. 
+
+* What (if anything) is the _scientific_ logic for preferring a model with low filtering error?
+
+<br>
+
+------
+
+------
 
 ### Interpreting the comparative results for these models
 
@@ -726,6 +747,8 @@ cbind(mle_sigma_psi,mle_dot_psi,mle_sigma_dot,mle_dot_dot)
 * We see that a main difference is a lower reporting rate estimate for $H_{\psi\bullet}$.
 
 * Let's see which data points are primarily responsible for the improvement in the likelihood
+
+* A useful technique is to plot the difference in conditional log liklihoods between the two hypotheses, for each data point. 
 ```{r fitted-models}
 pf_psi <- pfilter(bsflu,params=mle_psi,Np=5*NP,pred.mean=TRUE)
 pf_sigma <- pfilter(bsflu,params=mle_sigma,Np=5*NP,pred.mean=TRUE)
@@ -773,8 +796,110 @@ lines(pred.mean(pf_sigma)["R1",]*mle_sigma["rho"],lty="dotted",col="red")
 
 * This is just a toy example on a small dataset. The underlying issue of overdispersion, and its effect on parameter estimates and their confidence intervals, needs consideration in any inference using count data.
 
+
+<br>
+
 --------------------------
 
+----------------------
+
+## A likelihood profile
+
+* The boarding school flu example with measurement overdispersion is very quick to filter. It has only 14 data points, and order 1000 particles are sufficient for SMC filtering.
+
+* Let's use this **pomp** as an exercise for constructing likelihood profiles.
+
+* We may be curious about the lack of convergence points to the left of the maximum for the reporting rate. Is this a result of a sharp cliff in the likelihood surface, or some artifact of the maximization procedure? Computing a profile likelihood over $\rho$ will help us to find out.
+
+* First, we set up an array of starting points for each profile point.
+
+* This is similar to the array of random starting values used for the global paramter search, but with `rho` varying systematically.
+
+* The **pomp** function `profileDesign` is useful for constructing this array. 
+```{r profile_design}
+PROFILE_REPLICATES <- 10 
+PROFILE_POINTS <- 10
+non_profile_pars <- setdiff(paramnames,"rho")
+
+# theta.t.hi <- partrans(bsflu,c(params_box[,2],params["mu_R1"]),"toEstimationScale")
+# theta.t.lo <- partrans(bsflu,c(params_box[,1],params["mu_R1"]),"toEstimationScale")
+
+theta.t.hi <- c(params_box[,2],params["mu_R1"])
+theta.t.lo <- c(params_box[,1],params["mu_R1"])
+
+profileDesign(
+  rho=seq(from=0.5,to=0.95,length=PROFILE_POINTS),
+  lower=theta.t.lo[non_profile_pars],upper=theta.t.hi[non_profile_pars],nprof=PROFILE_REPLICATES
+) -> pd
+```
+
+* Now, we maximize from each of the `r PROFILE_REPLICATES` starting values at each of the `r PROFILE_POINTS` points along the profile.
+
+```{r compute_profile}
+NMIF_PROFILE <- 50
+NP_MIF_PROFILE <- 1000
+NP_LIK_PROFILE <- 1000
+N_LIK_REPS_PROFILE <- 3
+set.seed(8827162,kind="L'Ecuyer") 
+mf1 <- mifs_local[[1]]
+bake(file="profile_rho.rds",{
+  foreach(guess=iter(pd,"row"), 
+    .packages='pomp', 
+    .combine=rbind,
+    .options.multicore=list(set.seed=TRUE),
+    .inorder=FALSE,
+    .export=c("mf1","fixed_params_psi")
+  ) %dopar% 
+  {
+    mf <- mif2(mf1,
+        start=unlist(guess),
+	Nmif=NMIF_PROFILE,
+        Np=NP_MIF_PROFILE,
+	rw.sd=rw.sd(Beta=0.02,mu_I=0.02,sigma=0.02,psi=0.02)
+    )
+    ll <- replicate(N_LIK_REPS_PROFILE,logLik(pfilter(mf,Np=NP_MIF_PROFILE)))
+    ll <- logmeanexp(ll,se=TRUE)
+    c(coef(mf),loglik=ll[1],loglik=ll[2])
+  } 
+}) -> results_profile_rho
+t_profile_rho <- attr(results_profile_rho,"system.time")
+results_profile_rho <- as.data.frame(results_profile_rho)
+```
+
+* This took `r round(t_profile_rho["elapsed"]/60,1)` minutes altogether using `r n_global` processors.
+
+* The best result of this search had a likelihood of `r round(max(results_profile_rho$loglik),1)` with a standard error of `r round(results_profile_rho$loglik.se[which.max(results_profile_rho$loglik)],2)`.
+
+
+```{r pairs_profile}
+library(plyr)  
+all <- ldply( list(guess=pd, result=subset(results_profile_rho, loglik > max(loglik)-50) ), .id="type")  
+pairs(~loglik+Beta+mu_I+rho+sigma+psi, data=all, col=ifelse(all$type=="guess", grey(0.5), "red"), pch=16)
+```
+
+* We may conclude that the profile likelihood for $\rho$ to the left of the MLE is not sharp enough to explain why the original search didn't pay much attention to this region of parameter space.
+
+* Fitting a 5 parameter model to 14 data points, it is not surprising to find at least one weakly identified parameter. Perhaps it is more suprising that the data can identify some of the parameters fairly accurately.
+
+<br>
+
+--------
+
+#### Exercise. A profile over $\sigma$.
+
+* Is there evidence for the inclusion of overdispersion on the latent process?
+
+* The profile for $\rho$ shows very little pattern for $\sigma$, which could be because the amount of information about $\sigma$ is small in the context of this model (i.e., the profile has low curvature -- it is close to flat).
+
+* Construct a profile likelihood for $\sigma$ to investigate whether this is the case. 
+
+* You'll have to work out a suitable range of $\sigma$ for the profile. The above figure suggests that the interval used for $\sigma$ in the profile for $\rho$ may be too narrow.
+
+<br>
+
+---------
+
+---------
 
 ## [Back to course homepage](../index.html)
 ## [**R** codes for this document](od.R)
