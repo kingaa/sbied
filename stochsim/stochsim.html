@@ -141,7 +141,7 @@ $(document).ready(function () {
 <li><a href="#compartmental-models-via-stochastic-differential-equations-sde">Compartmental models via stochastic differential equations (SDE)</a><ul>
 <li><a href="#optional-exercise-sde-version-of-the-sir-model">Optional Exercise: SDE version of the SIR model</a></li>
 </ul></li>
-<li><a href="#eulers-method-vs.gillspies-algorithm">Euler’s method vs. Gillspie’s algorithm</a></li>
+<li><a href="#eulers-method-vs.gillespies-algorithm">Euler’s method vs. Gillespie’s algorithm</a></li>
 </ul></li>
 <li><a href="#compartmental-models-in-pomp.">Compartmental models in <strong>pomp</strong>.</a><ul>
 <li><a href="#the-boarding-school-flu-outbreak">The boarding-school flu outbreak</a></li>
@@ -334,8 +334,8 @@ Euler approximations <span class="math inline">\(x=\tilde x(t)\)</span> with ste
 <hr />
 </div>
 </div>
-<div id="eulers-method-vs.gillspies-algorithm" class="section level3">
-<h3>Euler’s method vs. Gillspie’s algorithm</h3>
+<div id="eulers-method-vs.gillespies-algorithm" class="section level3">
+<h3>Euler’s method vs. Gillespie’s algorithm</h3>
 <ul>
 <li>A widely used, exact simulation method for continuous time Markov chains is <a href="https://en.wikipedia.org/wiki/Gillespie_algorithm">Gillespie’s algorithm</a> <span class="citation">(Gillespie 1977)</span>. We do not put much emphasis on Gillespie’s algorithm here. Why? When would you prefer an implementation of Gillespie’s algorithm to an Euler solution?</li>
 <li>Numerically, Gillespie’s algorithm is often approximated using so-called <a href="https://en.wikipedia.org/wiki/Tau-leaping">tau-leaping</a> methods <span class="citation">(Gillespie 2001)</span>. These are closely related to Euler’s approach. Is it reasonable to call a suitable Euler approach a tau-leaping method?</li>

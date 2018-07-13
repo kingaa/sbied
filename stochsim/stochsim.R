@@ -318,7 +318,7 @@ plot_grid(pl1,pl2,labels=c("A","B"))
 #' 
 #' -----
 #' 
-#' ### Euler's method vs.&nbsp;Gillspie's algorithm
+#' ### Euler's method vs.&nbsp;Gillespie's algorithm
 #' 
 #' - A widely used, exact simulation method for continuous time Markov chains is [Gillespie's algorithm](https://en.wikipedia.org/wiki/Gillespie_algorithm) [@Gillespie1977a].
 #'   We do not put much emphasis on Gillespie's algorithm here. 
