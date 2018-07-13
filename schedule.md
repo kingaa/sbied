@@ -43,13 +43,14 @@ csl: ecology.csl
 - 12:00pm: LUNCH
 - 1:30am: measles (AK)
 - 3:00: BREAK
-- 3:30: polio (EI)
+- 3:30: overdispersion in dynamic models (EI)
 - 5:00: ADJOURN
 
 ---------------------
 
-## Wednesday 8:30am-5:00pm
+## Wednesday 8:30am-12:00pm
 
+- 3:30: polio (EI)
 - 8:30am: ebola (AK)
 - 10:00: BREAK
 - 10:30: contacts (EI)
