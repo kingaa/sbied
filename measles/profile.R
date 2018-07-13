@@ -5,9 +5,6 @@
 #'   html_document:
 #'     toc: yes
 #'     toc_depth: 4
-#'     toc_float:
-#'       collapsed: FALSE
-#'       smooth_scroll: TRUE
 #'     code_folding: hide
 #'     highlight: haddock
 #'     number_sections: FALSE
