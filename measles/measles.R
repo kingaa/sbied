@@ -146,7 +146,7 @@ library(reshape2)
 library(magrittr)
 library(ggplot2)
 theme_set(theme_bw())
-stopifnot(packageVersion("pomp")>="1.12")
+stopifnot(packageVersion("pomp")>="1.18")
 set.seed(594709947L)
 
 #' 

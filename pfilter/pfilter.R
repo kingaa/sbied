@@ -37,7 +37,7 @@
 #' 
 ## ----prelims,cache=FALSE,include=FALSE-----------------------------------
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.12")
+stopifnot(packageVersion("pomp")>="1.18")
 library(ggplot2)
 theme_set(theme_bw())
 library(plyr)

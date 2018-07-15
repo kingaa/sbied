@@ -54,7 +54,7 @@ options(keep.source=TRUE,encoding="UTF-8")
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
 library(pomp)
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp")>="1.12")
+stopifnot(packageVersion("pomp")>="1.18")
 set.seed(557976883)
 ```
 
