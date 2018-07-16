@@ -453,7 +453,7 @@ ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
 #' 
 #' * An attractive option here is to model the number moving from one compartment to the next over a very short time interval as a binomial random variable.
 #' 
-#' * In particular, we model the number, $\dlta{N_{SI}}$, moving from S to I over interval $\dlta{t}$ as $$\dlta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\lambda\dlta{t}}},$$ and the number moving from I to R as $$\dlta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\gamma\dlta{t}}}.$$
+#' * In particular, we model the number, $\dlta{N_{SI}}$, moving from S to I over interval $\dlta{t}$ as $$\dlta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\beta\,I/N\dlta{t}}},$$ and the number moving from I to R as $$\dlta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\gamma\dlta{t}}}.$$
 #' 
 #' A C snippet is a small piece of C code used to specify a model in **pomp**.
 #' A C snippet that encodes a simulator for our SIR model is as follows:

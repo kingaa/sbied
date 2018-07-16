@@ -432,7 +432,7 @@ head(bsflu)</code></pre>
 <li><p>To implement the model in <strong>pomp</strong>, the first thing we need is a stochastic simulator for the unobserved state process.</p></li>
 <li><p>We’ve seen that there are several ways of approximating the process just described for numerical purposes.</p></li>
 <li><p>An attractive option here is to model the number moving from one compartment to the next over a very short time interval as a binomial random variable.</p></li>
-<li><p>In particular, we model the number, <span class="math inline">\({{\Delta}{N_{SI}}}\)</span>, moving from S to I over interval <span class="math inline">\({{\Delta}{t}}\)</span> as <span class="math display">\[{{\Delta}{N_{SI}}} \sim {\mathrm{Binomial}\left(S,1-e^{-\lambda{{\Delta}{t}}}\right)},\]</span> and the number moving from I to R as <span class="math display">\[{{\Delta}{N_{IR}}} \sim {\mathrm{Binomial}\left(I,1-e^{-\gamma{{\Delta}{t}}}\right)}.\]</span></p></li>
+<li><p>In particular, we model the number, <span class="math inline">\({{\Delta}{N_{SI}}}\)</span>, moving from S to I over interval <span class="math inline">\({{\Delta}{t}}\)</span> as <span class="math display">\[{{\Delta}{N_{SI}}} \sim {\mathrm{Binomial}\left(S,1-e^{-\beta\,I/N{{\Delta}{t}}}\right)},\]</span> and the number moving from I to R as <span class="math display">\[{{\Delta}{N_{IR}}} \sim {\mathrm{Binomial}\left(I,1-e^{-\gamma{{\Delta}{t}}}\right)}.\]</span></p></li>
 </ul>
 <p>A C snippet is a small piece of C code used to specify a model in <strong>pomp</strong>. A C snippet that encodes a simulator for our SIR model is as follows:</p>
 <pre class="r"><code>sir_step &lt;- Csnippet(&quot;
