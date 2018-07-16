@@ -81,9 +81,9 @@ This tutorial develops some classes of dynamic models of relevance in biological
 We have the following goals:
 
 1. Dynamic systems can often be represented in terms of _flows_ between _compartments_.
-We will develop the concept of a _compartment model_ for which we specify _rates_ for the flows between compartments.
-1. We show how deterministic and stochastic versions of a compartment model are derived and related.
-1. We introduce Euler's method to simulate from dynamic models, and we apply it to both deterministic and stochastic compartment models.
+We will develop the concept of a _compartmental model_ for which we specify _rates_ for the flows between compartments.
+1. We show how deterministic and stochastic versions of a compartmental model are derived and related.
+1. We introduce Euler's method to simulate from dynamic models, and we apply it to both deterministic and stochastic compartmental models.
 
 <br>
 
@@ -140,7 +140,8 @@ popViewport()
     - For continuous population compartment models, the flow counting processes are non-decreasing and real valued.
     
 * The number of hosts in each compartment can be computed via these counting processes.
-  Ignoring demography, we have: 
+
+Ignoring demography, we have: 
 $$\begin{aligned} 
 S(t) &= S(0) - N_{SI}(t)\\
 I(t) &= I(0) + N_{SI}(t) - N_{IR}(t)\\
@@ -218,9 +219,7 @@ $$\begin{aligned}
 Find the expected value of $N_{SI}(t+\delta)-N_{SI}(t)$ and $N_{IR}(t+\delta)-N_{IR}(t)$ given the current state, $S(t)$, $I(t)$ and $R(t)$.
 Take the limit as $\delta\to 0$ and show that this gives the ODE model.
 
-<br>
-
------------
+[Worked solution to the Optional Exercise](./exer_ctmc_ode.html#optional-exercise-from-markov-chain-to-ode)
 
 --------------------------
 
@@ -400,6 +399,8 @@ Consider some difficulties that might arise with non-negativity constraints, and
 A useful method to deal with positivity constraints is to use Gamma noise rather than Brownian noise [@bhadra11;@He2010;@laneri10].
 SDEs driven by Gamma noise can be investigated by Euler solutions simply by replacing the Gaussian noise by an appropriate Gamma distribution.
 
+[Worked solution to the Optional Exercise](./exer_ctmc_ode.html#optional-exercise-sde-version-of-the-sir-model)
+
 <br>
 
 ------
@@ -499,7 +500,8 @@ R, recovered and immune hosts.
 
 * In particular, we model the number, $\dlta{N_{SI}}$, moving from S to I over interval $\dlta{t}$ as $$\dlta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\lambda\dlta{t}}},$$ and the number moving from I to R as $$\dlta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\gamma\dlta{t}}}.$$
 
-* A `Csnippet` is a small piece of C code used to specify a model in **pomp**. A `Csnippet` that encodes a simulator for our SIR model is as follows:
+A C snippet is a small piece of C code used to specify a model in **pomp**.
+A C snippet that encodes a simulator for our SIR model is as follows:
 
 ```{r rproc1}
 sir_step <- Csnippet("
@@ -512,7 +514,8 @@ sir_step <- Csnippet("
 ```
 * At day zero, we'll assume that $I=1$ and $R=0$, but we don't know how big the school is, so we treat $N$ as a parameter to be estimated and let $S(0)=N-1$.
 
-* Thus an initializer `Csnippet` is
+* Thus an initializer C snippet is
+
 ```{r init1}
 sir_init <- Csnippet("
   S = N-1;
@@ -520,7 +523,9 @@ sir_init <- Csnippet("
   R = 0;
 ")
 ```
-* We fold these `Csnippets`, with the data, into a `pomp` object thus:
+
+* We fold these C snippets, with the data, into a `pomp` object thus:
+
 ```{r rproc1-pomp}
 pomp(bsflu,time="day",t0=0,rprocess=euler.sim(sir_step,delta.t=1/6),
      initializer=sir_init,paramnames=c("N","Beta","gamma"),
@@ -533,6 +538,12 @@ pomp(bsflu,time="day",t0=0,rprocess=euler.sim(sir_step,delta.t=1/6),
 
 * We need a variable to track these daily counts.
 Let's modify our `Csnippet` above, adding a variable $H$ to tally the incidence.
+=======
+Now let's assume that the case reports, $B$, result from a process by which new infections result in confinement with probability $\rho$, which we can think of as the probability that an infection is severe enough to be noticed by the school authorities.
+Since confined cases have, presumably, a much lower transmission rate, let's treat $B$ as being a count of the number of boys who have moved from I to R over the course of the past day.
+We need a variable to track this.
+Let's modify our C snippet above, adding a variable $H$ to track the incidence.
+>>>>>>> link in seir3 soln
 We'll then replace the `rprocess` with the new one.
 
 ```{r rproc2}
@@ -688,7 +699,6 @@ grid.lines(x=c(21/28,23/28),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lw
 popViewport()
 ```
 
-
 In general, there is interest in using all of the data to inform the model but in the interest of time, let's focus on the confinement data, $B$.
 Give some thought as to how to model the relationship between $B$ and the state variables.
 
@@ -696,9 +706,7 @@ Although we might use the data to estimate all the model's parameters, to keep t
 Which parameters can be estimated from general knowlege of influenza?
 Fix these and focus on estimating the remainder.
 
-<br>
-
-------------
+[Partially worked solution to the Exercise](./seir3_exercise.html)
 
 --------------------------
 

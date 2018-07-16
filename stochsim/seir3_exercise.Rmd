@@ -1,5 +1,5 @@
 ---
-title: "SEIR3 example"
+title: 'Partially worked solution to the "Rethinking the boarding school flu" exercise'
 author: "Aaron A. King"
 output:
   html_document:
@@ -59,11 +59,21 @@ library(reshape2)
 library(magrittr)
 options(stringsAsFactors=FALSE)
 set.seed(1221234211)
+read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
 ```
 
 ----------------------------
 
-## Model formulation
+## Basic Exercise: Rethinking the boarding-school flu data
+
+In the preceding, we've been assuming that $B_t$ represents the number of boys *sent* to bed on day $t$.
+Actually, this isn't correct at all.
+As described in the report [@Anonymous1978], $B_t$ represents the total number of boys *in* bed on day $t$.
+Since boys were potentially confined for more than one day, the data count each infection multiple times.
+On the other hand, we have information about the total number of boys at risk and the total number who were infected.
+In fact, we know that $N=763$ boys were at risk and 512 boys in total spent between 3 and 7 days away from class (either in bed or convalescent).
+Moreover, we have data on the number of boys, $C_t$, convalescent at day $t$.
+Since $1540~\text{boy-da}/512~\text{boy} \approx 3~\text{da}$, we know that the average duration spent in bed was 3&nbsp;da and, since $\sum_t\!C_t=`r sum(bsflu$C)`$, we can infer that the average time spent convalescing was $`r sum(bsflu$C)`~\text{boy-da}/512~\text{boy} \approx `r signif(sum(bsflu$C)/512,2)`~\text{da}$.
 
 Formulate a model with a latent class and both confinement and convalescent stages.
 Implement it in **pomp** using a compartmental model like that diagrammed below.
