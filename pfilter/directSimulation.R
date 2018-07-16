@@ -42,7 +42,7 @@ library(plyr)
 library(reshape2)
 library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.12")
+stopifnot(packageVersion("pomp")>="1.18")
 
 #' 
 #' * We're going to demonstrate what happens when we attempt to compute the likelihood for the boarding school flu data by direct simulation from.

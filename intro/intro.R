@@ -334,7 +334,7 @@ set.seed(2028866059L)
 library(ggplot2)
 library(reshape2)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.12")
+stopifnot(packageVersion("pomp")>="1.18")
 
 #' 
 #' A pre-built pomp object encoding the Ricker model comes included with the package. Load it by

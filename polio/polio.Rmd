@@ -56,7 +56,7 @@ options(
 
 ```{r prelims,include=FALSE}
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.12")
+stopifnot(packageVersion("pomp")>="1.18")
 set.seed(5996485L)
 ```
 

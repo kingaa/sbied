@@ -12,7 +12,7 @@ library(plyr)
 library(reshape2)
 library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.12")
+stopifnot(packageVersion("pomp")>="1.18")
 
 ## ----get-data,include=FALSE----------------------------------------------
 base_url <- "https://kingaa.github.io/sbied/"
