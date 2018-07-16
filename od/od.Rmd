@@ -95,6 +95,30 @@ set.seed(557976883)
 
 ----
 
+## Some background on mean-variance relationships and over-dispersion
+
+* A good statistical model should describe both the mean (center) and variance (spread) of the data.
+
+* In the language of forecasting, we want point predictions and uncertainty estimates.
+
+* Appropriate modeling of uncertainty in the data is closely linked to appropriate assessment of uncertainty in parameter estimates (confidence intervals and hypothesis tests).
+
+* Some basic models (especially for count data) constrain the variance as a function of the mean.
+
+* A famous example arises in Poisson regression. The Poisson distribution has variance equal to its mean.
+What if the data have higher variance than its mean?
+This so-called _overdispersion_ is common. Checking and correcting for it are standard practice in generalized linear model regression analysis.
+
+* Overdispersion is also common in dynamic models. It can be natural to write down models building on Poisson or binomial increments, which therefore include specific mean-variance assumptions.
+
+* These dynamic models may contain nonlinearities that complicate the mean-variance relationship, but the underlying issue remains. 
+
+<br>
+
+-----
+
+-----
+
 ## Adding overdispersion to the basic SIR model 
 
 
@@ -170,8 +194,15 @@ $$\mu_{SI}=\beta\frac{I(t)}{N}d\Gamma/dt.$$
 
 * Thus, $\sigma^2$ is the __infinitesimal variance parameter__ of the noise process, which we will call the __extrademographic process noise__ parameter.
 
-Question: Why do we use multiplicative noise, rather than additive noise such as 
-$$\mu_{SI}^\prime=\beta\frac{I(t)}{N} + d\Gamma/dt?$$
+---------
+
+#### Question: Why do we use multiplicative noise?
+
+What difficulties arise if we use additive noise such as 
+$$\mu_{SI}^\prime=\beta\frac{I(t)}{N} + dW/dt$$
+Where $dW/dt$ is some white noise process?
+
+--------
 
 * The gamma process has the property of being non-negative, which is the main reason it may be preferable to Gaussian noise.
 
@@ -750,8 +781,8 @@ cbind(mle_sigma_psi,mle_dot_psi,mle_sigma_dot,mle_dot_dot)
 
 * A useful technique is to plot the difference in conditional log liklihoods between the two hypotheses, for each data point. 
 ```{r fitted-models}
-pf_psi <- pfilter(bsflu,params=mle_psi,Np=5*NP,pred.mean=TRUE)
-pf_sigma <- pfilter(bsflu,params=mle_sigma,Np=5*NP,pred.mean=TRUE)
+pf_psi <- pfilter(bsflu,params=mle_dot_psi,Np=5*NP,pred.mean=TRUE)
+pf_sigma <- pfilter(bsflu,params=mle_sigma_dot,Np=5*NP,pred.mean=TRUE)
 plot(cond.logLik(pf_psi)-cond.logLik(pf_sigma))
 ```
 
@@ -763,8 +794,8 @@ plot(cond.logLik(pf_psi)-cond.logLik(pf_sigma))
 
 ```{r predictions}
 plot(obs(bsflu)["B",])
-lines(pred.mean(pf_psi)["R1",]*mle_psi["rho"],lty="dashed",col="blue")
-lines(pred.mean(pf_sigma)["R1",]*mle_sigma["rho"],lty="dotted",col="red")
+lines(pred.mean(pf_psi)["R1",]*mle_dot_psi["rho"],lty="dashed",col="blue")
+lines(pred.mean(pf_sigma)["R1",]*mle_sigma_dot["rho"],lty="dotted",col="red")
 
 ```
 
