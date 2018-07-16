@@ -57,7 +57,7 @@ The existing code may be modified as follows:
 ```{r}
 seir_step <- Csnippet("
   double dN_SE = rbinom(S,1-exp(-Beta*I/N*dt));
-  double dN_EI = rbinom(I,1-exp(-mu_EI*dt));
+  double dN_EI = rbinom(E,1-exp(-mu_EI*dt));
   double dN_IR = rbinom(I,1-exp(-gamma*dt));
   S -= dN_SE;
   E += dN_SE - dN_EI;
