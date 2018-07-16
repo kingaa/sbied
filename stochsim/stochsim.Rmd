@@ -537,13 +537,7 @@ pomp(bsflu,time="day",t0=0,rprocess=euler.sim(sir_step,delta.t=1/6),
 * Since confined cases have, presumably, a much lower transmission rate, let's treat $B$ as being a count of the number of boys who have moved from I to R over the course of the past day.
 
 * We need a variable to track these daily counts.
-Let's modify our `Csnippet` above, adding a variable $H$ to tally the incidence.
-=======
-Now let's assume that the case reports, $B$, result from a process by which new infections result in confinement with probability $\rho$, which we can think of as the probability that an infection is severe enough to be noticed by the school authorities.
-Since confined cases have, presumably, a much lower transmission rate, let's treat $B$ as being a count of the number of boys who have moved from I to R over the course of the past day.
-We need a variable to track this.
-Let's modify our C snippet above, adding a variable $H$ to track the incidence.
->>>>>>> link in seir3 soln
+Let's modify our C snippet above, adding a variable $H$ to tally the incidence.
 We'll then replace the `rprocess` with the new one.
 
 ```{r rproc2}
