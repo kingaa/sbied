@@ -309,7 +309,7 @@ set.seed(2028866059L)
 #' To map this model onto the general framework discussed [above](#partially-observed-markov-process-pomp-models), we have
 #' $$\begin{gathered}
 #' X_t = (N_t) \qquad \text{or} \qquad X_t = (N_t, \varepsilon_t), \\
-#' Y_t = Y_t, \qquad \theta = (r, c, \phi, N_0)
+#' Y_t = Y_t, \qquad \theta = (r, c, \phi, \sigma, N_0)
 #' \end{gathered}$$
 #' 
 #' 
