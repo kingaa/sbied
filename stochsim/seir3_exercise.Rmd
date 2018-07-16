@@ -3,7 +3,7 @@ title: 'Partially worked solution to the "Rethinking the boarding school flu" ex
 author: "Aaron A. King"
 output:
   html_document:
-    toc: yes
+    toc: no
     toc_depth: 4
 bibliography: ../sbied.bib
 csl: ../ecology.csl
@@ -142,10 +142,9 @@ How many must be estimated?
 Obtain some ballpark estimates of the parameters and simulate to see if you can plausibly explain the data as a realization of this model.
 
 $1/\mu_{R_1}$ is the average duration of the bed confinement period and $1/\mu_{R_2}$ is the average duration of convalescence.
-The data can tell us about these quantities:
+As discussed above, the data can tell us something about the rough magnitude of these quantities:
 ```{r fixedparams}
 with(bsflu,c(mu_R1=1/(sum(B)/512),mu_R2=1/(sum(C)/512)))
-
 ```
 
 ```{r simulations}
@@ -154,15 +153,22 @@ coef(flu) <- c(Beta=5,mu_E=0.5,mu_I=1,mu_R1=0.33,mu_R2=0.55,rho=0.95)
 flu %>%
     simulate(nsim=20,as.data.frame=TRUE,include.data=TRUE) %>%
     subset(select=c(time,B,sim)) %>%
-    ggplot(aes(x=time,y=B,color=(sim=="data"),group=sim))+
-    geom_line()+
+    ggplot(aes(x=time,y=B,color=(sim=="data"),size=(sim=="data"),group=sim))+
+	geom_line()+
+	scale_color_manual(values=c(`TRUE`="red",`FALSE`="black"))+
+	scale_size_manual(values=c(`TRUE`=1,`FALSE`=0.5))+
     guides(color=FALSE)
-
 ```
+
+How do these simulations compare to the ones from earlier models?
+
+How are they improved?
+
+In what ways do they still leave something to be desired?
 
 ----------------------------
 
-## [Back to Stochastic Simulation lesson](./stochsim.html)
+### [Back to Stochastic Simulation lesson](./stochsim.html)
 
 ----------------------------
 

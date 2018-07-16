@@ -3,13 +3,12 @@ title: "Simulation of stochastic dynamic models: Optional exercises"
 author: "Carles Bretó"
 output:
   html_document:
-    toc: yes
+    toc: no
     toc_depth: 4
 bibliography: ../sbied.bib
 csl: ../ecology.csl
 ---
 
-$$
 \newcommand\prob[1]{\mathbb{P}\big[{#1}\big]}
 \newcommand\expect[1]{\mathbb{E}\big[{#1}\big]}
 \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
@@ -17,7 +16,6 @@ $$
 \newcommand\dlta[1]{{\Delta}{#1}}
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\ell}
-$$
 
 [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
 Please share and remix noncommercially, mentioning its origin.  

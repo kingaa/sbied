@@ -604,7 +604,7 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' 
 #' In the preceding, we've been assuming that $B_t$ represents the number of boys *sent* to bed on day $t$.
 #' Actually, this isn't correct at all.
-#' As described in the report [@Anonymous1978], $B_t$ represents the total number of boys *in* bed on day $t$.
+#' As described in the report [@Anonymous1978], $B_t$ represents the total number of boys *in bed* on day $t$, not the number of new infections on day $t$, i.e., the incidence, as we've been assuming.
 #' Since boys were potentially confined for more than one day, the data count each infection multiple times.
 #' On the other hand, we have information about the total number of boys at risk and the total number who were infected.
 #' In fact, we know that $N=763$ boys were at risk and 512 boys in total spent between 3 and 7 days away from class (either in bed or convalescent).
@@ -616,7 +616,7 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' Implement it in **pomp** using a compartmental model like that diagrammed below.
 #' 
 #' 
-#' In general, there is interest in using all of the data to inform the model but in the interest of time, let's focus on the confinement data, $B$.
+#' In general, there is interest in using all of the data to inform the model but to economize time, let's focus on the confinement data, $B$.
 #' Give some thought as to how to model the relationship between $B$ and the state variables.
 #' 
 #' Although we might use the data to estimate all the model's parameters, to keep the exercise simple, we'll fix some of the parameters at reasonable values.
