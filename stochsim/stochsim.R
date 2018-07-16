@@ -579,6 +579,8 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' 
 #' Fiddle with the parameters to see if you can't find parameters for which the data are a more plausible realization.
 #' 
+#' [Worked solution to the Exercise](./exercises.html#Basic-Exercise:-Explore-the-SIR-model)
+#' 
 #' <br>
 #' 
 #' ----------
@@ -593,6 +595,8 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' 
 #' Modify the codes above to construct a `pomp` object containing the flu data and an SEIR model.
 #' Perform simulations as above and adjust parameters to get a sense of whether improvement is possible by including a latent period.
+#' 
+#' [Worked solution to the Exercise](./exercises.html#Basic-Exercise:-The-SEIR-model)
 #' 
 #' <br>
 #' 

@@ -1,0 +1,114 @@
+#' ---
+#' title: "Worked solutions to basic exercises"
+#' author: "Carles Bretó"
+#' output:
+#'   html_document:
+#'     toc: yes
+#'     toc_depth: 4
+#' bibliography: ../sbied.bib
+#' csl: ../ecology.csl
+#' ---
+#' 
+#' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+#' Please share and remix noncommercially, mentioning its origin.  
+#' ![CC-BY_NC](../graphics/cc-by-nc.png)
+#' 
+#' 
+## ----include=FALSE-------------------------------------------------------
+source("https://kingaa.github.io/sbied/stochsim/stochsim.R")
+
+#' 
+#' ## Basic Exercise: Explore the SIR model
+#' 
+#' The simulated data seem to fail to capture different aspects of the data. In particular, the simulated data appear to peak substantially later (if at all) than the observed data. This in turn results in simulated valleys that arrive (again, if at all) much later. To attempt to simulate data for which the observed data is a more plausible realization, one could try increasing the force of infection.
+#' 
+## ------------------------------------------------------------------------
+sims2 <- simulate(sir,params=c(Beta=2.5,gamma=1,rho=0.9,N=2600),
+                 nsim=20,as.data.frame=TRUE,include.data=TRUE)
+
+ggplot(sims2,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  geom_line()+guides(color=FALSE)
+
+#' 
+#' Increasing the force of infection improves in one direction but now the peak is too tall. To counteract this, one could try reducing the population size.
+#' 
+## ------------------------------------------------------------------------
+sims3 <- simulate(sir,params=c(Beta=2.5,gamma=1,rho=0.9,N=1500),
+                 nsim=20,as.data.frame=TRUE,include.data=TRUE)
+
+ggplot(sims3,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  geom_line()+guides(color=FALSE)
+
+#' 
+#' And even perhaps increase the duration of immunity.
+#' 
+## ------------------------------------------------------------------------
+sims4 <- simulate(sir,params=c(Beta=2.5,gamma=1.5,rho=0.9,N=1500),
+                 nsim=20,as.data.frame=TRUE,include.data=TRUE)
+
+ggplot(sims4,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  geom_line()+guides(color=FALSE)
+
+#' 
+#' ## Basic Exercise: The SEIR model
+#' 
+#' The existing code may be modified as follows:
+#' 
+## ------------------------------------------------------------------------
+seir_step <- Csnippet("
+  double dN_SE = rbinom(S,1-exp(-Beta*I/N*dt));
+  double dN_EI = rbinom(E,1-exp(-mu_EI*dt));
+  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  S -= dN_SE;
+  E += dN_SE - dN_EI;
+  I += dN_EI - dN_IR;
+  R += dN_IR;
+  H += dN_IR;
+")
+
+seir_init <- Csnippet("
+  S = N-1;
+  E = 1;
+  I = 0;
+  R = 0;
+  H = 0;
+")
+
+pomp(bsflu,time="day",t0=0,rprocess=euler.sim(seir_step,delta.t=1/6),
+     initializer=seir_init,paramnames=c("N","Beta","mu_EI","gamma"),
+     statenames=c("S","E","I","R","H")) -> seir
+
+pomp(seir,zeronames="H") -> seir
+dmeas <- Csnippet("lik = dbinom(B,H,rho,give_log);")
+rmeas <- Csnippet("B = rbinom(H,rho);")
+seir <- pomp(sir,rmeasure=rmeas,dmeasure=dmeas,statenames="H",paramnames="rho")
+
+#' 
+#' One possibility is to split the original rate $\mu_{SI}$ into $\mu_{SE}$ and $\mu_{EI}=\gamma$. 
+#' 
+## ------------------------------------------------------------------------
+sims <- simulate(seir,params=c(Beta=2.5,mu_EI=0.75,gamma=0.75,rho=0.9,N=1500),
+                 nsim=20,as.data.frame=TRUE,include.data=TRUE)
+
+ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  geom_line()+guides(color=FALSE)
+
+#' 
+#' An asymetric split doesn't seem to improve the match. 
+#' 
+## ------------------------------------------------------------------------
+sims <- simulate(seir,params=c(Beta=2.5,mu_EI=0.25,gamma=1.25,rho=0.9,N=1500),
+                 nsim=20,as.data.frame=TRUE,include.data=TRUE)
+
+ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  geom_line()+guides(color=FALSE)
+
+#' 
+#' 
+#' ----------------------------
+#' 
+#' ## [Back to Stochastic Simulation lesson](./stochsim.html)
+#' 
+#' ----------------------------
+#' 
+#' ## References
