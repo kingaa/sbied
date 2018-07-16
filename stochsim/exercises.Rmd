@@ -52,30 +52,57 @@ ggplot(sims4,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 
 ## Basic Exercise: The SEIR model
 
-Since the only element that needs to be changed is the `rprocess`, one can extend the existing `sir_step` Csnippet by adding a new compartment and updating the `pomp` object by replacing the SIR Cnisppet:
+The existing code may be modified as follows:
 
-```{r rproc2}
-sir_step <- Csnippet("
-  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
+```{r}
+seir_step <- Csnippet("
+  double dN_SE = rbinom(S,1-exp(-Beta*I/N*dt));
+  double dN_EI = rbinom(I,1-exp(-mu_EI*dt));
   double dN_IR = rbinom(I,1-exp(-gamma*dt));
-  S -= dN_SI;
-  I += dN_SI - dN_IR;
+  S -= dN_SE;
+  E += dN_SE - dN_EI;
+  I += dN_EI - dN_IR;
   R += dN_IR;
   H += dN_IR;
 ")
 
-sir_init <- Csnippet("
+seir_init <- Csnippet("
   S = N-1;
-  I = 1;
+  E = 1;
+  I = 0;
   R = 0;
   H = 0;
 ")
 
-pomp(sir,rprocess=euler.sim(sir_step,delta.t=1/6),initializer=sir_init,
-     paramnames=c("Beta","gamma","N"),statenames=c("S","I","R","H")) -> sir
+pomp(bsflu,time="day",t0=0,rprocess=euler.sim(seir_step,delta.t=1/6),
+     initializer=seir_init,paramnames=c("N","Beta","mu_EI","gamma"),
+     statenames=c("S","E","I","R","H")) -> seir
+
+pomp(seir,zeronames="H") -> seir
+dmeas <- Csnippet("lik = dbinom(B,H,rho,give_log);")
+rmeas <- Csnippet("B = rbinom(H,rho);")
+seir <- pomp(sir,rmeasure=rmeas,dmeasure=dmeas,statenames="H",paramnames="rho")
 ```
 
-Modify the codes above to construct a pomp object containing the flu data and an SEIR model. Perform simulations as above and adjust parameters to get a sense of whether improvement is possible by including a latent period.
+One possibility is to split the original rate $\mu_{SI}$ into $\mu_{SE}$ and $\mu_{EI}=\gamma$. 
+
+```{r}
+sims <- simulate(seir,params=c(Beta=2.5,mu_EI=0.75,gamma=0.75,rho=0.9,N=1500),
+                 nsim=20,as.data.frame=TRUE,include.data=TRUE)
+
+ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  geom_line()+guides(color=FALSE)
+```
+
+An asymetric split doesn't seem to improve the match. 
+
+```{r}
+sims <- simulate(seir,params=c(Beta=2.5,mu_EI=0.25,gamma=1.25,rho=0.9,N=1500),
+                 nsim=20,as.data.frame=TRUE,include.data=TRUE)
+
+ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+  geom_line()+guides(color=FALSE)
+```
 
 
 ----------------------------
