@@ -153,6 +153,7 @@ $(document).ready(function () {
 <li><a href="#sequential-monte-carlo-the-particle-filter">Sequential Monte Carlo: The particle filter</a></li>
 <li><a href="#particle-filtering-in-pomp">Particle filtering in <strong>pomp</strong></a></li>
 <li><a href="#the-graph-of-the-likelihood-function-the-likelihood-surface">The graph of the likelihood function: The likelihood surface</a><ul>
+<li><a href="#basic-exercise-estimating-the-expense-of-a-particle-filter-calculation">Basic Exercise: estimating the expense of a particle-filter calculation</a></li>
 <li><a href="#basic-exercise-log-likelihood-estimation-by-particle-filtering">Basic Exercise: log likelihood estimation by particle filtering</a></li>
 <li><a href="#optional-exercise-one-dimensional-likelihood-slice">Optional Exercise: one-dimensional likelihood slice</a></li>
 <li><a href="#optional-exercise-two-dimensional-likelihood-slice">Optional Exercise: two-dimensional likelihood slice</a></li>
@@ -204,7 +205,7 @@ $(document).ready(function () {
 <li><p>The basis for modern frequentist, Bayesian, and information-theoretic inference.</p></li>
 <li><p>Method of maximum likelihood introduced by <span class="citation">Fisher (1922)</span>.</p></li>
 <li><p>The likelihood function itself is a representation of the what the data have to say about the parameters.</p></li>
-<li><p>A good general reference on likelihood is <span class="citation">Pawitan (2001)</span>.</p></li>
+<li><p>A good general reference on likelihood is by <span class="citation">Pawitan (2001)</span>.</p></li>
 </ul>
 <p><br></p>
 <hr />
@@ -248,9 +249,9 @@ $(document).ready(function () {
 <div id="the-maximum-likelihood-estimate-mle" class="section level3">
 <h3>The maximum likelihood estimate (MLE)</h3>
 <ul>
-<li><p>A maximum likelihood estimate (MLE) is <span class="math display">\[ \hat\theta = \arg\max_\theta {\ell}(\theta),\]</span> where <span class="math inline">\(\arg\max_\theta g(\theta)\)</span> means a value of argument <span class="math inline">\(\theta\)</span> at which the maximum of the function <span class="math inline">\(g\)</span> is attained, so <span class="math inline">\(g\big(\arg\max_\theta g(\theta)\big) = \max_\theta g(\theta)\)</span>.</p></li>
+<li><p>A maximum likelihood estimate (MLE) is <span class="math display">\[ \hat\theta = \underset{\theta}{\arg\max} {\ell}(\theta),\]</span> where <span class="math inline">\(\underset{\theta}{\arg\max} g(\theta)\)</span> means a value of argument <span class="math inline">\(\theta\)</span> at which the maximum of the function <span class="math inline">\(g\)</span> is attained, so <span class="math inline">\(g\big(\underset{\theta}{\arg\max} g(\theta)\big) = \max_\theta g(\theta)\)</span>.</p></li>
 <li><p>If there are many values of <span class="math inline">\(\theta\)</span> giving the same maximum value of the likelihood, then an MLE still exists but is not unique.</p></li>
-<li><p>Note that <span class="math inline">\(\arg\max_\theta {\mathcal{L}}(\theta)\)</span> and <span class="math inline">\(\arg\max_\theta {\ell}(\theta)\)</span> are the same. Why?</p></li>
+<li><p>Note that <span class="math inline">\(\underset{\theta}{\arg\max} {\mathcal{L}}(\theta)\)</span> and <span class="math inline">\(\underset{\theta}{\arg\max} {\ell}(\theta)\)</span> are the same. Why?</p></li>
 </ul>
 <p><br></p>
 <hr />
@@ -643,16 +644,22 @@ foreach (theta=iter(p,&quot;row&quot;),.combine=rbind,
 <p><br></p>
 <hr />
 <hr />
+<div id="basic-exercise-estimating-the-expense-of-a-particle-filter-calculation" class="section level4">
+<h4>Basic Exercise: estimating the expense of a particle-filter calculation</h4>
+<p>How much computer processing time does a particle filter take, and how does this scale with the number of particles?</p>
+<p>First, form a conjecture based upon the description above. Then, test your conjeture by running a sequence of particle filter operations, increasing the number of particles (<code>Np</code>) and measuring the time taken using <code>system.time</code>. Plot your results to test your conjecture.</p>
+<hr />
+</div>
 <div id="basic-exercise-log-likelihood-estimation-by-particle-filtering" class="section level4">
 <h4>Basic Exercise: log likelihood estimation by particle filtering</h4>
 <ul>
 <li><p>Here are some desiderata for a Monte Carlo log likelihood approximation:</p>
 <ul>
-<li><p>Low Monte Carlo bias and variance.</p></li>
-<li><p>Be presented together with estimates of the bias and variance so that we know the extent of Monte Carlo uncertainty in our results.</p></li>
-<li><p>Be computed in a length of time appropriate for the circumstances.</p></li>
+<li><p>It should have low Monte Carlo bias and variance.</p></li>
+<li><p>It should be presented together with estimates of the bias and variance so that we know the extent of Monte Carlo uncertainty in our results.</p></li>
+<li><p>It should be computed in a length of time appropriate for the circumstances.</p></li>
 </ul></li>
-<li><p>Set up a likelihood evaluation for the ‘flu’ model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine.</p></li>
+<li><p>Set up a likelihood evaluation for the flu model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine.</p></li>
 <li><p>Provide a Monte Carlo standard error for your estimate.</p></li>
 <li><p>Comment on the bias of your estimate.</p></li>
 <li><p>Optionally, take advantage of multiple cores on your computer to improve your estimate.</p></li>
@@ -661,7 +668,7 @@ foreach (theta=iter(p,&quot;row&quot;),.combine=rbind,
 </div>
 <div id="optional-exercise-one-dimensional-likelihood-slice" class="section level4">
 <h4>Optional Exercise: one-dimensional likelihood slice</h4>
-<p>Compute likelihood slices along the <span class="math inline">\(\rho\)</span> direction.</p>
+<p>Compute several likelihood slices in the <span class="math inline">\(\rho\)</span> direction.</p>
 <hr />
 </div>
 <div id="optional-exercise-two-dimensional-likelihood-slice" class="section level4">

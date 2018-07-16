@@ -212,7 +212,7 @@ textellipse(elpos[10,], 0.15, 0.1,
 
 - The likelihood function itself is a representation of the what the data have to say about the parameters.
 
-- A good general reference on likelihood is @Pawitan2001.
+- A good general reference on likelihood is by @Pawitan2001.
 
 <br>
 
@@ -276,13 +276,13 @@ For now, suppose that software exists to evaluate and maximize the likelihood fu
 ###  The maximum likelihood estimate (MLE)
 
 * A maximum likelihood estimate (MLE) is
-$$ \hat\theta = \arg\max_\theta \loglik(\theta),$$
-where $\arg\max_\theta g(\theta)$ means a value of argument $\theta$ at which the maximum of the function $g$ is attained, so $g\big(\arg\max_\theta g(\theta)\big) = \max_\theta g(\theta)$.
+$$ \hat\theta = \underset{\theta}{\arg\max} \loglik(\theta),$$
+where $\underset{\theta}{\arg\max} g(\theta)$ means a value of argument $\theta$ at which the maximum of the function $g$ is attained, so $g\big(\underset{\theta}{\arg\max} g(\theta)\big) = \max_\theta g(\theta)$.
 
 * If there are many values of $\theta$ giving the same maximum value of the likelihood, then an MLE still exists but is not unique.
  
 
-* Note that $\arg\max_\theta \lik(\theta)$ and $\arg\max_\theta \loglik(\theta)$ are the same. Why?
+* Note that $\underset{\theta}{\arg\max} \lik(\theta)$ and $\underset{\theta}{\arg\max} \loglik(\theta)$ are the same. Why?
 
 <br>
 
@@ -935,17 +935,27 @@ In the above, all points with log likelihoods less than 50 units below the maxim
 
 ------
 
+#### Basic Exercise: estimating the expense of a particle-filter calculation
+
+How much computer processing time does a particle filter take, and how does this scale with the number of particles?
+
+First, form a conjecture based upon the description above.
+Then, test your conjeture by running a sequence of particle filter operations, increasing the number of particles (`Np`) and measuring the time taken using `system.time`.
+Plot your results to test your conjecture.
+
+-----------
+
 #### Basic Exercise: log likelihood estimation by particle filtering
 
 - Here are some desiderata for a Monte Carlo log likelihood approximation:
 
-    + Low Monte Carlo bias and variance. 
+    + It should have low Monte Carlo bias and variance. 
 
-    + Be presented together with estimates of the bias and variance so that we know the extent of Monte Carlo uncertainty in our results. 
+    + It should be presented together with estimates of the bias and variance so that we know the extent of Monte Carlo uncertainty in our results. 
 
-    + Be computed in a length of time appropriate for the circumstances.
+    + It should be computed in a length of time appropriate for the circumstances.
 
-- Set up a likelihood evaluation for the 'flu' model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine.
+- Set up a likelihood evaluation for the flu model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine.
 
 - Provide a Monte Carlo standard error for your estimate.
 
@@ -957,7 +967,7 @@ In the above, all points with log likelihoods less than 50 units below the maxim
 
 #### Optional Exercise: one-dimensional likelihood slice
 
-Compute likelihood slices along the $\rho$ direction.
+Compute several likelihood slices in the $\rho$ direction.
 
 
 -----------
