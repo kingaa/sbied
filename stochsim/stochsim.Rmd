@@ -435,7 +435,7 @@ SDEs driven by Gamma noise can be investigated by Euler solutions simply by repl
 
 * Download the data and examine it:
 ```{r flu-data1}
-read.table("bsflu_data.txt") -> bsflu
+read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
 head(bsflu)
 ```
 

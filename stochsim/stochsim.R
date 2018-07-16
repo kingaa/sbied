@@ -392,7 +392,7 @@ plot_grid(pl1,pl2,labels=c("A","B"))
 #' 
 #' * Download the data and examine it:
 ## ----flu-data1-----------------------------------------------------------
-read.table("bsflu_data.txt") -> bsflu
+read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
 head(bsflu)
 
 #' 
