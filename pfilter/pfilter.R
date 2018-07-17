@@ -784,7 +784,7 @@ p %>%
 #' 
 #' - Optionally, take advantage of multiple cores on your computer to improve your estimate.
 #' 
-#' [Worked solution to the Exercise](./loglikest.R)
+#' <!--- [Worked solution to the Exercise](./loglikest.R) --->
 #' 
 #' -----------
 #' 
