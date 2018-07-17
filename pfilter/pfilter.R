@@ -298,9 +298,6 @@ set.seed(1221234211)
 #' \end{eqnarray}$$
 #' 
 #' * We can check what the 95\% cutoff is for a chi-squared distribution with one degree of freedom,
-## ----chi_squared---------------------------------------------------------
-qchisq(0.95,df=1)
-
 #' 
 #' * Wilks's theorem then gives us a hypothesis test with approximate size $5\%$ that rejects $H^{\langle 0\rangle}$ if $\profileloglik(\hat\phi)-\profileloglik(\phi_0)<3.84/2$.
 #' 
@@ -765,6 +762,8 @@ p %>%
 #' Then, test your conjeture by running a sequence of particle filter operations, increasing the number of particles (`Np`) and measuring the time taken using `system.time`.
 #' Plot your results to test your conjecture.
 #' 
+#' [Worked solution to the Exercise](./expense.R)
+#' 
 #' -----------
 #' 
 #' #### Basic Exercise: log likelihood estimation by particle filtering
@@ -784,6 +783,8 @@ p %>%
 #' - Comment on the bias of your estimate.
 #' 
 #' - Optionally, take advantage of multiple cores on your computer to improve your estimate.
+#' 
+#' [Worked solution to the Exercise](./loglikest.R)
 #' 
 #' -----------
 #' 

@@ -96,7 +96,7 @@ Students completing this lesson will:
 
 
 ```{r flow-diagram,fig.width=4.5,fig.align="center",echo=FALSE,results="hide",purl=FALSE}
-library("diagram")
+library(diagram)
 par(mar = c(1, 1, 1, 1))
 openplotmat()
 
@@ -420,7 +420,7 @@ H^{\langle 1\rangle} &:& \mbox{$\phi$ unconstrained}.
 \end{eqnarray}$$
 
 * We can check what the 95\% cutoff is for a chi-squared distribution with one degree of freedom,
-```{r chi_squared}
+```{r chi_squared,purl=FALSE}
 qchisq(0.95,df=1)
 ```
 
@@ -943,6 +943,8 @@ First, form a conjecture based upon the description above.
 Then, test your conjeture by running a sequence of particle filter operations, increasing the number of particles (`Np`) and measuring the time taken using `system.time`.
 Plot your results to test your conjecture.
 
+[Worked solution to the Exercise](./expense.R)
+
 -----------
 
 #### Basic Exercise: log likelihood estimation by particle filtering
@@ -962,6 +964,8 @@ Plot your results to test your conjecture.
 - Comment on the bias of your estimate.
 
 - Optionally, take advantage of multiple cores on your computer to improve your estimate.
+
+[Worked solution to the Exercise](./loglikest.R)
 
 -----------
 

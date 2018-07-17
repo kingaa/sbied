@@ -211,49 +211,6 @@ set.seed(594709947L)
 #' 
 #' --------------------------
 #' 
-## ----euler,echo=FALSE,fig.height=3,fig.cap="Euler approximations $x=\\tilde x(t)$ with stepsize 0.1 (A) and 0.05 (B) are shown in blue. The true solution, $x=x(t)$, is shown in black."----
-
-library(plyr)
-library(magrittr)
-library(ggplot2)
-library(cowplot)
-
-data.frame(t=seq(from=0,to=2,by=0.01)) %>%
-    mutate(x=exp(1-cos(t+2))) -> exdat
-
-delta <- 0.1
-data.frame(t=seq(from=0,to=2,by=delta)) %>%
-    mutate(x=NA) -> axdat
-axdat$x[1] = exp(1-cos(2))
-for (j in seq(from=2,to=nrow(axdat))) {
-    axdat$x[j] = axdat$x[j-1]*(1+delta*sin(axdat$t[j-1]+2))
-}
-
-delta <- 0.05
-data.frame(t=seq(from=0,to=2,by=delta)) %>%
-    mutate(x=NA) -> axdat2
-axdat2$x[1] = exp(1-cos(2))
-for (j in seq(from=2,to=nrow(axdat2))) {
-    axdat2$x[j] = axdat2$x[j-1]*(1+delta*sin(axdat2$t[j-1]+2))
-}
-
-exdat %>%
-    ggplot()+
-    geom_line(aes(x=t,y=x),color='black')+
-    geom_step(data=axdat,aes(x=t,y=x),color='blue')+
-    theme_cowplot()+
-    labs(x="t",y="x") -> pl1
-
-exdat %>%
-    ggplot()+
-    geom_line(aes(x=t,y=x),color='black')+
-    geom_step(data=axdat2,aes(x=t,y=x),color='blue')+
-    theme_cowplot()+
-    labs(x="t",y="x") -> pl2
-
-plot_grid(pl1,pl2,labels=c("A","B"))
-
-
 #' 
 #' <br>
 #' 

@@ -254,7 +254,7 @@ Take the limit as $\delta\to 0$ and show that this gives the ODE model.
 
 --------------------------
 
-```{r euler,echo=FALSE,fig.height=3,fig.cap="Euler approximations $x=\\tilde x(t)$ with stepsize 0.1 (A) and 0.05 (B) are shown in blue. The true solution, $x=x(t)$, is shown in black."}
+```{r euler,purl=FALSE,echo=FALSE,fig.height=3,fig.cap="Euler approximations $x=\\tilde x(t)$ with stepsize 0.1 (A) and 0.05 (B) are shown in blue. The true solution, $x=x(t)$, is shown in black."}
 
 library(plyr)
 library(magrittr)
