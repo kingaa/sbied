@@ -1,27 +1,55 @@
-#' ---
-#' title: 'Worked solution to "log likelihood estimation" Exercise'
-#' author: "Aaron A. King"
-#' output:
-#'   html_document:
-#'     toc: no
-#'     toc_depth: 4
-#' bibliography: ../sbied.bib
-#' csl: ../ecology.csl
-#' ---
-#' 
-#' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-#' \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
-#' \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-#' \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-#' \newcommand\dlta[1]{{\Delta}{#1}}
-#' \newcommand\lik{\mathcal{L}}
-#' \newcommand\loglik{\ell}
-#' 
-#' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-#' Please share and remix noncommercially, mentioning its origin.  
-#' ![CC-BY_NC](../graphics/cc-by-nc.png)
-#' 
-## ----prelims,purl=TRUE,cache=FALSE---------------------------------------
+---
+title: 'Worked solution to "log likelihood estimation" Exercise'
+author: "Aaron A. King"
+output:
+  html_document:
+    toc: no
+    toc_depth: 4
+bibliography: ../sbied.bib
+csl: ../ecology.csl
+---
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dlta[1]{{\Delta}{#1}}
+\newcommand\lik{\mathcal{L}}
+\newcommand\loglik{\ell}
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+```{r knitr-opts,include=FALSE,purl=FALSE}
+library(knitr)
+prefix <- "loglikest"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  cache.extra=rand_seed,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  dpi=100,
+  dev='png',
+  dev.args=list(bg='transparent')
+)
+options(keep.source=TRUE,encoding="UTF-8",scipen=6)
+```
+```{r prelims,purl=TRUE,cache=FALSE}
 library(pomp)
 stopifnot(packageVersion("pomp")>="1.18")
 library(ggplot2)
@@ -29,11 +57,11 @@ theme_set(theme_bw())
 library(plyr)
 options(stringsAsFactors=FALSE)
 set.seed(1221234211)
+```
 
-#' 
-#' Model implementation
-#' 
-## ----model---------------------------------------------------------------
+Model implementation
+
+```{r model}
 read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
 
 rproc <- Csnippet("
@@ -82,19 +110,19 @@ ggplot(data=simdat,
        mapping=aes(x=time,y=B,color=(sim=="data"),group=sim))+
   geom_line()+
   guides(color=FALSE)
+```
 
-#' 
-#' Testing the particle filter:
-#' 
-## ----test----------------------------------------------------------------
+Testing the particle filter:
+
+```{r test}
 pfilter(flu,Np=1000) -> pf
 logLik(pf)
+```
 
-#' 
-#' Now, we evaluate the dependence of log likelihood estimates 
-#' on particle size and number of independent filters
-#' 
-## ----comps---------------------------------------------------------------
+Now, we evaluate the dependence of log likelihood estimates 
+on particle size and number of independent filters
+
+```{r comps}
 library(foreach)
 library(doParallel)
 
@@ -116,24 +144,24 @@ bake(file="loglikest-pfilter.rds",seed=594717807L,
 ) -> lls
 
 registerDoSEQ()
+```
 
-#' 
-#' Violin plots are cute.
-#' 
-## ----plots---------------------------------------------------------------
+Violin plots are cute.
+
+```{r plots}
 ggplot(data=lls,
        mapping=aes(x=Np,y=loglik,fill=ordered(nfilt),
                    group=interaction(nfilt,Np)))+
   geom_violin(draw_quantiles=c(0.1,0.5,0.9),alpha=0.7)+
   scale_x_log10(breaks=unique(lls$Np))+
   labs(fill="nfilt")
+```
 
-#' 
-#' -----------
-#' 
-#' ## [Back to main lesson](./pfilter.html)
-#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/loglikest.R)
-#' 
-#' -----------
-#' 
-#' ## References
+-----------
+
+## [Back to main lesson](./pfilter.html)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/loglikest.R)
+
+-----------
+
+## References
