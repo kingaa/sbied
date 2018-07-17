@@ -81,7 +81,7 @@ pomp(bsflu,time="day",t0=0,rprocess=euler.sim(seir_step,delta.t=1/6),
 pomp(seir,zeronames="H") -> seir
 dmeas <- Csnippet("lik = dbinom(B,H,rho,give_log);")
 rmeas <- Csnippet("B = rbinom(H,rho);")
-seir <- pomp(sir,rmeasure=rmeas,dmeasure=dmeas,statenames="H",paramnames="rho")
+seir <- pomp(seir,rmeasure=rmeas,dmeasure=dmeas,statenames="H",paramnames="rho")
 
 #' 
 #' One possibility is to split the original rate $\mu_{SI}$ into $\mu_{SE}$ and $\mu_{EI}=\gamma$. 
@@ -94,10 +94,10 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
   geom_line()+guides(color=FALSE)
 
 #' 
-#' An asymetric split doesn't seem to improve the match. 
+#' Again one can increase the force of infection. 
 #' 
 ## ------------------------------------------------------------------------
-sims <- simulate(seir,params=c(Beta=2.5,mu_EI=0.25,gamma=1.25,rho=0.9,N=1500),
+sims <- simulate(seir,params=c(Beta=15,mu_EI=0.75,gamma=0.75,rho=0.9,N=1500),
                  nsim=20,as.data.frame=TRUE,include.data=TRUE)
 
 ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
