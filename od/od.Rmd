@@ -256,11 +256,11 @@ rmeas <- Csnippet("
 #####
 
 dmeas <- Csnippet("
-  lik = dnbinom(B, psi, psi/(psi+rho*R1+1e-6), give_log);
+  lik = dnbinom_mu(B, psi, rho*R1+1e-6, give_log);
 ")
 
 rmeas <- Csnippet("
-  B = rnbinom(psi, psi/(psi+rho*R1+1e-6));
+  B = rnbinom_mu(psi, rho*R1+1e-6);
 ")
 
 rproc <- Csnippet("
