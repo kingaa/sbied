@@ -573,7 +573,9 @@ pomp(m1,toEstimationScale=toEst,
 ## ----sims2---------------------------------------------------------------
 m1 %>% 
   simulate(params=theta,nsim=100,as.data.frame=TRUE,include.data=TRUE) %>%
-  subset(select=c(time,sim,cases)) %>%
+  subset(select=c(time,sim,cases)) -> simdat
+
+simdat %>%
   mutate(data=sim=="data") %>%
   ddply(~time+data,summarize,
         p=c(0.05,0.5,0.95),q=quantile(cases,prob=p,names=FALSE)) %>%
@@ -581,7 +583,15 @@ m1 %>%
          data=mapvalues(data,from=c(TRUE,FALSE),to=c("data","simulation"))) %>%
   dcast(time+data~p,value.var='q') %>%
   ggplot(aes(x=time,y=med,color=data,fill=data,ymin=lo,ymax=hi))+
-  geom_ribbon(alpha=0.2)
+  geom_ribbon(alpha=0.2)+
+  guides(data=FALSE)
+
+simdat %>%
+  subset(sim=="data" | sim <= "5") %>%
+  mutate(data=sim=="data") %>%
+  ggplot(aes(x=time,y=cases,group=sim,color=data))+
+  geom_line()+
+  guides(color=FALSE)
 
 #' 
 #' ## Exercises
