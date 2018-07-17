@@ -15,6 +15,7 @@ cowplot
 deSolve
 foreach
 doParallel
+doRNG
 ggplot2
 gridExtra
 gtable
@@ -27,10 +28,7 @@ plyr
 RColorBrewer
 reshape2
 sos
-stringr
-stringi
 subplex
-xtable
 "
 )
 

@@ -1,56 +1,64 @@
 ## TEST SCRIPT
 ## If this script runs without errors, pomp is usable on your system.
 
+pomp.version <- "1.18"
+
 lib <- Sys.getenv("R_LIBS_USER")
 dir.create(lib,recursive=TRUE,showWarnings=FALSE)
 
 cat("Checking whether dependencies are installed....\n")
 ## install dependencies if necessary
 deps <- setdiff(
-    c("digest","mvtnorm","deSolve","coda","subplex","nloptr",
-      "magrittr","plyr","reshape2","ggplot2","knitr"),
-    rownames(installed.packages())
-    )
+  c("digest","mvtnorm","deSolve","coda","subplex","nloptr",
+    "magrittr","plyr","reshape2","ggplot2","knitr",
+    "foreach","doParallel","doRNG","pomp"),
+  rownames(installed.packages())
+)
 if (length(deps) > 0) {
-    cat("Installing dependencies....\n")
-    install.packages(deps,lib=lib)
+  cat("Installing dependencies....\n")
+  install.packages(deps,lib=lib)
 }
 
-## install pomp and pompExamples
-cat("Installing",sQuote("pomp"),"....\n")
-install.packages(c("pomp"),lib=lib)
+if (packageVersion("pomp") < pomp.version) {
+  update.packages("pomp",lib.loc=lib,ask=FALSE)
+}
 
 ## test pomp
 cat("Testing",sQuote("pomp"),"....\n")
 library(pomp,lib.loc=lib)
 
-gomp2 <- pomp(
-              data=data.frame(time=1:50,Y=NA),
-              times="time",
-              t0=0,
-              rmeasure=Csnippet('
-   Y = rlnorm(log(X),tau);
-'),
-              dmeasure=Csnippet('
-   lik = dlnorm(Y,log(X),tau,give_log);
-'),
-              rprocess=discrete.time.sim(
-                step.fun=Csnippet('
-  double S = exp(-r*dt);
-  double eps = rlnorm(0,sigma);
-  X = pow(K,(1-S))*pow(X,S)*eps;
-'),
-                delta.t=1
-                ),
-              paramnames=c("sigma","tau","r","K"),
-              statenames="X",
-              params=c(r=0.1,K=1,sigma=0.1,tau=0.1,X.0=1)
-              )
-
-gomp2 <- simulate(gomp2)
-p <- pfilter(gomp2,Np=1000)
-
-plot(gomp2)
-plot(p)
-
-cat("Success!\n")
+tryCatch(
+  {
+    gomp2 <- pomp(
+      data=data.frame(time=1:50,Y=NA),
+      times="time",
+      t0=0,
+      rmeasure=Csnippet('
+                      Y = rlnorm(log(X),tau);
+                      '),
+      dmeasure=Csnippet('
+                      lik = dlnorm(Y,log(X),tau,give_log);
+                      '),
+      rprocess=discrete.time.sim(
+        step.fun=Csnippet('
+                        double S = exp(-r*dt);
+                        double eps = rlnorm(0,sigma);
+                        X = pow(K,(1-S))*pow(X,S)*eps;
+                        '),
+        delta.t=1
+      ),
+      paramnames=c("sigma","tau","r","K"),
+      statenames="X",
+      params=c(r=0.1,K=1,sigma=0.1,tau=0.1,X.0=1)
+    )
+    
+    gomp2 <- simulate(gomp2)
+    p <- pfilter(gomp2,Np=1000)
+    
+    cat("Success!\n")
+  },
+  error=function (e) {
+    stop("pomp installation failure! Consult the instructions!",
+         conditionMessage(e),call.=FALSE)
+  }
+)
