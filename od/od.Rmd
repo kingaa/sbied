@@ -1,6 +1,6 @@
 ---
 title: "Modeling stochasticity: Overdispersion in the boarding school flu data"
-author: "Edward Ionides"
+author: "Edward Ionides and Aaron King"
 output:
   html_document:
     toc: yes
@@ -936,5 +936,11 @@ pairs(~loglik+Beta+mu_I+rho+sigma+psi, data=all, col=ifelse(all$type=="guess", g
 ## [**R** codes for this document](od.R)
 
 ----------------------
+
+## Acknowledgments
+
+Carles Breto contributed edits to the SISMID 2018 course. 
+
+----------
 
 ## References
