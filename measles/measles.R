@@ -33,8 +33,22 @@
 #' Please share and remix noncommercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
-#' Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
+#' Produced in **R** version `r getRversion()` using **pomp2** version `r packageVersion("pomp2")`.
 #' 
+## ----opts,include=FALSE,cache=FALSE,purl=TRUE----------------------------
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  encoding="UTF-8"
+)
+
+library(pomp2)
+library(plyr)
+library(tidyverse)
+theme_set(theme_bw())
+
+set.seed(1109529108L)
+
 #' 
 #' ----------------------------------
 #' 
@@ -42,7 +56,7 @@
 #' 
 #' 1. To display a published case study using plug-and-play methods with non-trivial model complexities.
 #' 1. To show how extra-demographic stochasticity can be modeled.
-#' 1. To demonstrate the use of covariates in **pomp**.
+#' 1. To demonstrate the use of covariates in **pomp2**.
 #' 1. To demonstrate the use of profile likelihood in scientific inference.
 #' 1. To discuss the interpretation of parameter estimates.
 #' 1. To emphasize the potential need for extra sources of stochasticity in modeling.
@@ -54,24 +68,24 @@
 #' - Understanding, forecasting, managing epidemiological systems increasingly depends on models.
 #' - Dynamic models can be used to test causal hypotheses.
 #' - Real epidemiological systems:
-#'     - are nonlinear
-#'     - are stochastic
-#'     - are nonstationary
-#'     - evolve in continuous time
-#'     - have hidden variables
-#'     - can be measured only with (large) error
+#' - are nonlinear
+#' - are stochastic
+#' - are nonstationary
+#' - evolve in continuous time
+#' - have hidden variables
+#' - can be measured only with (large) error
 #' - Dynamics of infectious disease outbreaks illustrate this well.
 #' 
 #' - Measles is the paradigm for a nonlinear ecological system that can be well described by low-dimensional nonlinear dynamics.
 #' - A tradition of careful modeling studies have proposed and found evidence for a number of specific mechanisms, including
-#'     - a high value of $R_0$ (c. 15--20)
-#'     - under-reporting
-#'     - seasonality in transmission rates associated with school terms
-#'     - response to changing birth rates
-#'     - a birth-cohort effect
-#'     - metapopulation dynamics
-#'     - fadeouts and reintroductions that scale with city size
-#'     - spatial traveling waves
+#' - a high value of $R_0$ (c. 15--20)
+#' - under-reporting
+#' - seasonality in transmission rates associated with school terms
+#' - response to changing birth rates
+#' - a birth-cohort effect
+#' - metapopulation dynamics
+#' - fadeouts and reintroductions that scale with city size
+#' - spatial traveling waves
 #' - Much of this evidence has been amassed from fitting models to data, using a variety of methods.
 #' - See @Rohani2010 for a review of some of the high points.
 #' 
@@ -80,14 +94,14 @@
 #' 
 #' - We revisit a classic measles data set, weekly case reports in 954 urban centers in England and Wales during the pre-vaccine era (1950--1963).
 #' - We examine questions regarding:
-#'     - measles extinction and recolonization
-#'     - transmission rates
-#'     - seasonality
-#'     - resupply of susceptibles
+#' - measles extinction and recolonization
+#' - transmission rates
+#' - seasonality
+#' - resupply of susceptibles
 #' - We use a model that 
-#'     1. expresses our current understanding of measles dynamics
-#'     1. includes a long list of mechanisms that have been proposed and demonstrated in the literature
-#'     1. cannot be fit by existing likelihood-based methods
+#' 1. expresses our current understanding of measles dynamics
+#' 1. includes a long list of mechanisms that have been proposed and demonstrated in the literature
+#' 1. cannot be fit by existing likelihood-based methods
 #' - We examine data from large and small towns using the same model, something no existing methods have been able to do.
 #' - We ask: does our perspective on this disease change when we expect the models to explain the data in detail?
 #' - What bigger lessons can we learn regarding inference for dynamical systems?
@@ -97,8 +111,8 @@
 #' #### Data sets
 #' 
 #' - Twenty towns, including
-#'     - 10 largest
-#'     - 10 smaller, chosen at random
+#' - 10 largest
+#' - 10 smaller, chosen at random
 #' - Population sizes: 2k--3.4M
 #' - Weekly case reports, 1950--1963
 #' - Annual birth records and population sizes, 1944--1963
@@ -115,38 +129,36 @@
 #' ![](./model_diagram.png)
 #' 
 #' - Covariates:
-#'     - $B(t) = \text{birth rate, from data}$
-#'     - $N(t) = \text{population size, from data}$
+#' - $B(t) = \text{birth rate, from data}$
+#' - $N(t) = \text{population size, from data}$
 #' 
 #' - Entry into susceptible class:
 #' $$\mu_{BS}(t) = (1-c)\,B(t-\tau)+c\,\delta(t-t_0)\,\int_{t-1}^{t}\,B(t-\tau-s)\,ds$$
-#'     - $c = \text{cohort effect}$  
-#'     - $\tau = \text{school-entry delay}$  
+#' - $c = \text{cohort effect}$  
+#' - $\tau = \text{school-entry delay}$  
 #' 
 #' - Force of infection:
 #' $$\mu_{SE}(t) = \tfrac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
-#'     - school-term transmission:
+#' - school-term transmission:
 #' $$\beta(t) = \begin{cases}\beta_0\,(1+a) &\text{during term}\\\beta_0\,(1-a) &\text{during vacation}\end{cases}$$  
-#'     - $\iota = \text{imported infections}$
-#'     - $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ [@He2010,@bhadra11]
+#' - $\iota = \text{imported infections}$
+#' - $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ [@He2010,@bhadra11]
 #' 
 #' - Overdispersed binomial measurement model: $\mathrm{cases}_t\,\vert\,\dlta{N}_{IR}=z_t \sim \dist{Normal}{\rho\,z_t,\rho\,(1-\rho)\,z_t+(\psi\,\rho\,z_t)^2}$
 #' 
-#' ### Implementation in **pomp**
+#' ### Implementation in **pomp2**
 #' 
 #' We'll load the packages we'll need, and set the random seed, to allow reproducibility.
-#' Note that we'll be making heavy use of the data-munging methods in packages **plyr** and **reshape2**, a [tutorial introduction to which is provided here](https://kingaa.github.io/R_Tutorial/munging.html).
+#' Note that we'll be making heavy use of the **tidyverse** methods.
 #' Also, we'll be using **ggplot2** for plotting: see [this brief tutorial](https://kingaa.github.io/R_Tutorial/viz.html#a-more-systematic-approach-the-grammar-of-graphics).
 #' Finally, we'll use the convenient **magrittr** syntax, which is explained [here](https://kingaa.github.io/R_Tutorial/munging.html#the-magrittr-syntax).
 #' 
 ## ----prelims,cache=FALSE-------------------------------------------------
-library(pomp)
+library(pomp2)
 library(plyr)
-library(reshape2)
-library(magrittr)
-library(ggplot2)
+library(tidyverse)
 theme_set(theme_bw())
-stopifnot(packageVersion("pomp")>="1.18")
+stopifnot(packageVersion("pomp2")>="2.0.9.1")
 set.seed(594709947L)
 
 #' 
@@ -169,17 +181,25 @@ load(datfile)
 ## ----plot-data-----------------------------------------------------------
 measles %>% 
   mutate(year=as.integer(format(date,"%Y"))) %>%
-  subset(town=="London" & year>=1950 & year<1964) %>%
-  mutate(time=(julian(date,origin=as.Date("1950-01-01")))/365.25+1950) %>%
-  subset(time>1950 & time<1964, select=c(time,cases)) -> dat
-demog %>% subset(town=="London",select=-town) -> demogLondon
+  filter(town=="London" & year>=1950 & year<1964) %>%
+  mutate(
+    time=(julian(date,origin=as.Date("1950-01-01")))/365.25+1950
+  ) %>%
+  filter(time>1950 & time<1964) %>%
+  select(time,cases) -> dat
+
+demog %>%
+  filter(town=="London") %>%
+  select(-town) -> demogLondon
 
 #' 
 #' We plot the data and covariates.
 #' 
 ## ----data-plot-----------------------------------------------------------
 dat %>% ggplot(aes(x=time,y=cases))+geom_line()
-demogLondon %>% melt(id="year") %>%
+
+demogLondon %>%
+  gather(variable,value,-year) %>%
   ggplot(aes(x=year,y=value))+geom_point()+
   facet_wrap(~variable,ncol=1,scales="free_y")
 
@@ -189,7 +209,7 @@ demogLondon %>% melt(id="year") %>%
 #' 
 ## ----prep-covariates-----------------------------------------------------
 demogLondon %>% 
-  summarize(
+  plyr::summarize(
     time=seq(from=min(year),to=max(year),by=1/12),
     pop=predict(smooth.spline(x=year,y=pop),x=time)$y,
     birthrate=predict(smooth.spline(x=year+0.5,y=births),x=time-4)$y
@@ -305,7 +325,7 @@ rproc <- Csnippet("
 #' The following codes assume that the fraction of the population in each of the four compartments is known.
 #' 
 ## ----initializer---------------------------------------------------------
-initlz <- Csnippet("
+rinit <- Csnippet("
   double m = pop/(S_0+E_0+I_0+R_0);
   S = nearbyint(m*S_0);
   E = nearbyint(m*E_0);
@@ -366,26 +386,26 @@ rmeas <- Csnippet("
 ## ----pomp-construction---------------------------------------------------
 dat %>% 
   pomp(t0=with(dat,2*time[1]-time[2]),
-       time="time",
-       rprocess=euler.sim(rproc,delta.t=1/365.25),
-       initializer=initlz,
-       dmeasure=dmeas,
-       rmeasure=rmeas,
-       covar=covar,
-       tcovar="time",
-       zeronames=c("C","W"),
-       statenames=c("S","E","I","R","C","W"),
-       paramnames=c("R0","mu","sigma","gamma","alpha","iota",
-                    "rho","sigmaSE","psi","cohort","amplitude",
-                    "S_0","E_0","I_0","R_0")
+    time="time",
+    rprocess=euler(rproc,delta.t=1/365.25),
+    rinit=rinit,
+    dmeasure=dmeas,
+    rmeasure=rmeas,
+    covar=covariate_table(covar,times="time"),
+    accumvars=c("C","W"),
+    statenames=c("S","E","I","R","C","W"),
+    paramnames=c("R0","mu","sigma","gamma","alpha","iota",
+      "rho","sigmaSE","psi","cohort","amplitude",
+      "S_0","E_0","I_0","R_0")
   ) -> m1
 
 #' 
 #' The following codes plot the data and covariates together.
 #' 
 ## ----plot-pomp-----------------------------------------------------------
-m1 %>% as.data.frame() %>% 
-  melt(id="time") %>%
+m1 %>%
+  as.data.frame() %>%
+  gather(variable,value,-time) %>%
   ggplot(aes(x=time,y=value))+
   geom_line()+
   facet_grid(variable~.,scales="free_y")
@@ -420,12 +440,12 @@ Sheffield,-2810.7,0.21,0.02,4,54.3,62.2,0.649,33.1,0.313,1.02,0.853,0.225,0.175,
 ",stringsAsFactors=FALSE) -> mles
 
 ## ----mle-----------------------------------------------------------------
-mles %>% subset(town=="London") -> mle
+mles %>% filter(town=="London") -> mle
 paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
-                "rho","sigmaSE","psi","cohort","amplitude",
-                "S_0","E_0","I_0","R_0")
-mle %>% extract(paramnames) %>% unlist() -> theta
-mle %>% subset(select=-c(S_0,E_0,I_0,R_0))
+  "rho","sigmaSE","psi","cohort","amplitude",
+  "S_0","E_0","I_0","R_0")
+mle[paramnames] %>% unlist() -> theta
+mle %>% select(-S_0,-E_0,-I_0,-R_0)
 
 #' 
 #' We verify that we get the same likelihood as @He2010.
@@ -433,15 +453,12 @@ mle %>% subset(select=-c(S_0,E_0,I_0,R_0))
 ## ----pfilter1------------------------------------------------------------
 library(foreach)
 library(doParallel)
+library(doRNG)
 
 registerDoParallel()
+registerDoRNG(998468235L)
 
-set.seed(998468235L,kind="L'Ecuyer")
-
-foreach(i=1:4,
-        .packages="pomp",
-        .options.multicore=list(set.seed=TRUE)
-) %dopar% {
+foreach(i=1:4,.packages="pomp2") %dopar% {
   pfilter(m1,Np=10000,params=theta)
 } -> pfs
 logmeanexp(sapply(pfs,logLik),se=TRUE)
@@ -451,56 +468,33 @@ logmeanexp(sapply(pfs,logLik),se=TRUE)
 #' 
 ## ----sims1,fig.height=8--------------------------------------------------
 m1 %>% 
-  simulate(params=theta,nsim=9,as.data.frame=TRUE,include.data=TRUE) %>%
-  ggplot(aes(x=time,y=cases,group=sim,color=(sim=="data")))+
+  simulate(params=theta,nsim=9,format="d",include.data=TRUE) %>%
+  ggplot(aes(x=time,y=cases,group=.id,color=(.id=="data")))+
   guides(color=FALSE)+
-  geom_line()+facet_wrap(~sim,ncol=2)
+  geom_line()+facet_wrap(~.id,ncol=2)
 
 #' 
 #' #### Parameter transformations
 #' 
 #' The parameters are constrained to be positive, and some of them are constrained to lie between $0$ and $1$.
 #' We can turn the likelihood maximization problem into an unconstrained maximization problem by transforming the parameters.
-#' The following Csnippets implement such a transformation and its inverse.
+#' Specifically, to enforce positivity, we long transform,
+#' to constrain parameters to the unit interval, we logit transform,
+#' and to confine parameters to the unit simplex, we use the log-barycentric transformation.
 #' 
 ## ----transforms----------------------------------------------------------
-toEst <- Csnippet("
-  Tmu = log(mu);
-  Tsigma = log(sigma);
-  Tgamma = log(gamma);
-  Talpha = log(alpha);
-  Tiota = log(iota);
-  Trho = logit(rho);
-  Tcohort = logit(cohort);
-  Tamplitude = logit(amplitude);
-  TsigmaSE = log(sigmaSE);
-  Tpsi = log(psi);
-  TR0 = log(R0);
-  to_log_barycentric (&TS_0, &S_0, 4);
-")
+pt <- parameter_trans(
+  log=c("sigma","gamma","sigmaSE","psi","R0"),
+  logit=c("cohort","amplitude"),
+  barycentric=c("S_0","E_0","I_0","R_0")
+)
 
-fromEst <- Csnippet("
-  Tmu = exp(mu);
-  Tsigma = exp(sigma);
-  Tgamma = exp(gamma);
-  Talpha = exp(alpha);
-  Tiota = exp(iota);
-  Trho = expit(rho);
-  Tcohort = expit(cohort);
-  Tamplitude = expit(amplitude);
-  TsigmaSE = exp(sigmaSE);
-  Tpsi = exp(psi);
-  TR0 = exp(R0);
-  from_log_barycentric (&TS_0, &S_0, 4);
-")
-
-
-pomp(m1,toEstimationScale=toEst,
-     fromEstimationScale=fromEst,
-     statenames=c("S","E","I","R","C","W"),
-     paramnames=c("R0","mu","sigma","gamma","alpha","iota",
-                  "rho","sigmaSE","psi","cohort","amplitude",
-                  "S_0","E_0","I_0","R_0")) -> m1
+m1 %>%
+  pomp(partrans=pt,
+    statenames=c("S","E","I","R","C","W"),
+    paramnames=c("R0","mu","sigma","gamma","alpha","iota",
+      "rho","sigmaSE","psi","cohort","amplitude",
+      "S_0","E_0","I_0","R_0")) -> m1
 
 #' 
 #' ### Construction of a likelihood profile
@@ -572,24 +566,26 @@ pomp(m1,toEstimationScale=toEst,
 #' 
 ## ----sims2---------------------------------------------------------------
 m1 %>% 
-  simulate(params=theta,nsim=100,as.data.frame=TRUE,include.data=TRUE) %>%
-  subset(select=c(time,sim,cases)) -> simdat
+  simulate(params=theta,nsim=100,format="d",include.data=TRUE) %>%
+  select(time,.id,cases) -> simdat
 
 simdat %>%
-  mutate(data=sim=="data") %>%
-  ddply(~time+data,summarize,
-        p=c(0.05,0.5,0.95),q=quantile(cases,prob=p,names=FALSE)) %>%
+  mutate(data=.id=="data") %>%
+  ddply(~time+data,plyr::summarize,
+    p=c(0.05,0.5,0.95),
+    q=quantile(cases,prob=p,names=FALSE)
+  ) %>%
   mutate(p=mapvalues(p,from=c(0.05,0.5,0.95),to=c("lo","med","hi")),
-         data=mapvalues(data,from=c(TRUE,FALSE),to=c("data","simulation"))) %>%
-  dcast(time+data~p,value.var='q') %>%
+    data=mapvalues(data,from=c(TRUE,FALSE),to=c("data","simulation"))) %>%
+  spread(p,q) %>%
   ggplot(aes(x=time,y=med,color=data,fill=data,ymin=lo,ymax=hi))+
   geom_ribbon(alpha=0.2)+
   guides(data=FALSE)
 
 simdat %>%
-  subset(sim=="data" | sim <= "5") %>%
-  mutate(data=sim=="data") %>%
-  ggplot(aes(x=time,y=cases,group=sim,color=data))+
+  filter(.id=="data" | .id <= "5") %>%
+  mutate(data=.id=="data") %>%
+  ggplot(aes(x=time,y=cases,group=.id,color=data))+
   geom_line()+
   guides(color=FALSE)
 

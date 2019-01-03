@@ -33,7 +33,7 @@
 #' Please share and remix noncommercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
-#' Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
+#' Produced in **R** version `r getRversion()` using **pomp2** version `r packageVersion("pomp2")`.
 #' 
 #' 
 #' ## Build the `pomp` object
@@ -51,13 +51,11 @@ registerDoMPI(cl)
 #' Load the packages we'll need, and set the random seed, to allow reproducibility.
 ## ----prelims,cache=FALSE-------------------------------------------------
 set.seed(594709947L)
-library(ggplot2)
-theme_set(theme_bw())
 library(plyr)
-library(reshape2)
-library(magrittr)
-library(pomp)
-stopifnot(packageVersion("pomp")>="1.18")
+library(tidyverse)
+theme_set(theme_bw())
+library(pomp2)
+stopifnot(packageVersion("pomp2")>="2.0.9.1")
 
 #' 
 #' ### Data and covariates
@@ -70,24 +68,32 @@ stopifnot(packageVersion("pomp")>="1.18")
 ## ----load-data-----------------------------------------------------------
 daturl <- "https://kingaa.github.io/pomp/vignettes/twentycities.rda"
 datfile <- file.path(tempdir(),"twentycities.rda")
+
 download.file(daturl,destfile=datfile,mode="wb")
 load(datfile)
+
 measles %>% 
   mutate(year=as.integer(format(date,"%Y"))) %>%
-  subset(town=="London" & year>=1950 & year<1964) %>%
-  mutate(time=(julian(date,origin=as.Date("1950-01-01")))/365.25+1950) %>%
-  subset(time>1950 & time<1964, select=c(time,cases)) -> dat
-demog %>% subset(town=="London",select=-town) -> demog
+  filter(town=="London" & year>=1950 & year<1964) %>%
+  mutate(
+    time=(julian(date,origin=as.Date("1950-01-01")))/365.25+1950
+  ) %>%
+  filter(time>1950 & time<1964) %>%
+  select(time,cases) -> dat
+
+demog %>% 
+  filter(town=="London") %>%
+  select(-town) -> demog
 
 #' 
 #' 
 ## ----prep-covariates-----------------------------------------------------
 demog %>% 
-  summarize(
+  plyr::summarize(
     time=seq(from=min(year),to=max(year),by=1/12),
     pop=predict(smooth.spline(x=year,y=pop),x=time)$y,
     birthrate=predict(smooth.spline(x=year+0.5,y=births),x=time-4)$y
-    ) -> covar
+  ) -> covar
 
 #' 
 #' ### The (unobserved) process model
@@ -147,7 +153,7 @@ rproc <- Csnippet("
 #' The following codes assume that the fraction of the population in each of the four compartments is known.
 #' 
 ## ----initializer---------------------------------------------------------
-initlz <- Csnippet("
+rinit <- Csnippet("
   double m = pop/(S_0+E_0+I_0+R_0);
   S = nearbyint(m*S_0);
   E = nearbyint(m*E_0);
@@ -199,6 +205,7 @@ rmeas <- Csnippet("
   }
 ")
 
+#' 
 #' ### Parameter transformations
 #' 
 #' The parameters are constrained to be positive, and some of them are constrained to lie between $0$ and $1$.
@@ -206,27 +213,11 @@ rmeas <- Csnippet("
 #' The following Csnippets implement such a transformation and its inverse.
 #' 
 ## ----transforms----------------------------------------------------------
-toEst <- Csnippet("
-  Tsigma = log(sigma);
-  Tgamma = log(gamma);
-  Tcohort = logit(cohort);
-  Tamplitude = logit(amplitude);
-  TsigmaSE = log(sigmaSE);
-  Tpsi = log(psi);
-  TR0 = log(R0);
-  to_log_barycentric (&TS_0, &S_0, 4);
-")
-
-fromEst <- Csnippet("
- Tsigma = exp(sigma);
-  Tgamma = exp(gamma);
-  Tcohort = expit(cohort);
-  Tamplitude = expit(amplitude);
-  TsigmaSE = exp(sigmaSE);
-  Tpsi = exp(psi);
-  TR0 = exp(R0);
-  from_log_barycentric (&TS_0, &S_0, 4);
-")
+pt <- parameter_trans(
+  log=c("sigma","gamma","sigmaSE","psi","R0"),
+  logit=c("cohort","amplitude"),
+  barycentric=c("S_0","E_0","I_0","R_0")
+)
 
 #' 
 #' ### ML point estimates
@@ -260,11 +251,11 @@ Sheffield,-2810.7,0.21,0.02,4,54.3,62.2,0.649,33.1,0.313,1.02,0.853,0.225,0.175,
 ",stringsAsFactors=FALSE) -> mles
 
 ## ----mle-----------------------------------------------------------------
-mles %>% subset(town=="London") -> mle
+mles %>% filter(town=="London") -> mle
 paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
-                "rho","sigmaSE","psi","cohort","amplitude",
-                "S_0","E_0","I_0","R_0")
-mle %>% extract(paramnames) %>% unlist() -> theta
+  "rho","sigmaSE","psi","cohort","amplitude",
+  "S_0","E_0","I_0","R_0")
+mle[paramnames] %>% unlist() -> theta
 
 #' 
 #' ### Construct and verify the `pomp` object
@@ -272,21 +263,19 @@ mle %>% extract(paramnames) %>% unlist() -> theta
 ## ----pomp-construct------------------------------------------------------
 dat %>% 
   pomp(t0=with(dat,2*time[1]-time[2]),
-       time="time",
-       params=theta,
-       rprocess=euler.sim(rproc,delta.t=1/365.25),
-       initializer=initlz,
-       dmeasure=dmeas,
-       rmeasure=rmeas,
-       toEstimationScale=toEst,
-       fromEstimationScale=fromEst,
-       covar=covar,
-       tcovar="time",
-       zeronames=c("C","W"),
-       statenames=c("S","E","I","R","C","W"),
-       paramnames=c("R0","mu","sigma","gamma","alpha","iota",
-                    "rho","sigmaSE","psi","cohort","amplitude",
-                    "S_0","E_0","I_0","R_0")
+    time="time",
+    params=theta,
+    rprocess=euler(rproc,delta.t=1/365.25),
+    rinit=rinit,
+    dmeasure=dmeas,
+    rmeasure=rmeas,
+    partrans=pt,
+    covar=covariate_table(covar,times="time"),
+    accumvars=c("C","W"),
+    statenames=c("S","E","I","R","C","W"),
+    paramnames=c("R0","mu","sigma","gamma","alpha","iota",
+      "rho","sigmaSE","psi","cohort","amplitude",
+      "S_0","E_0","I_0","R_0")
   ) -> m1
 
 #' 
@@ -308,7 +297,7 @@ estpars <- setdiff(names(theta),c("sigmaSE","mu","alpha","rho","iota"))
 
 theta["alpha"] <- 1
 
-theta.t <- partrans(m1,theta,"toEstimationScale")
+theta.t <- partrans(m1,theta,"toEst")
 
 theta.t.hi <- theta.t.lo <- theta.t
 theta.t.lo[estpars] <- theta.t[estpars]-log(2)
@@ -316,65 +305,47 @@ theta.t.hi[estpars] <- theta.t[estpars]+log(2)
 
 profileDesign(
   sigmaSE=seq(from=log(0.02),to=log(0.2),length=20),
-  lower=theta.t.lo,upper=theta.t.hi,nprof=40
+  lower=theta.t.lo,
+  upper=theta.t.hi,
+  nprof=40
 ) -> pd
 
 dim(pd)
 
-pd <- as.data.frame(t(partrans(m1,t(pd),"fromEstimationScale")))
+pd <- as.data.frame(t(partrans(m1,t(pd),"fromEst")))
 
 pairs(~sigmaSE+R0+mu+sigma+gamma+S_0+E_0,data=pd)
 
 #' 
-#' **pomp** provides two functions, `bake` and `stew`, that save the results of expensive computations.
+#' **pomp2** provides two functions, `bake` and `stew`, that save the results of expensive computations.
 #' We'll run the profile computations on a cluster using MPI.
 #' Note that again, care must be taken with the parallel random number generator.
 #' 
 ## ----sigmaSE-prof-round1,eval=TRUE,cache=FALSE---------------------------
 bake("sigmaSE-profile1.rds",{
- 
+  
   foreach (p=iter(pd,"row"),
-           .combine=rbind,
-           .errorhandling="remove",
-           .inorder=FALSE,
-           .options.mpi=list(chunkSize=1,seed=1598260027L,info=TRUE)
+    .combine=rbind,
+    .errorhandling="remove",
+    .inorder=FALSE,
+    .options.mpi=list(chunkSize=1,seed=1598260027L,info=TRUE)
   ) %dopar% {
     
     tic <- Sys.time()
     
-    library(magrittr)
-    library(plyr)
-    library(reshape2)
-    library(pomp)
+    library(pomp2)
     
-    options(stringsAsFactors=FALSE)
-    
-    dat %>% 
-      pomp(t0=with(dat,2*time[1]-time[2]),
-           time="time",
-           rprocess=euler.sim(rproc,delta.t=1/365.25),
-           initializer=initlz,
-           dmeasure=dmeas,
-           rmeasure=rmeas,
-           toEstimationScale=toEst,
-           fromEstimationScale=fromEst,
-           covar=covar,
-           tcovar="time",
-           zeronames=c("C","W"),
-           statenames=c("S","E","I","R","C","W"),
-           paramnames=c("R0","mu","sigma","gamma","alpha","iota",
-                        "rho","sigmaSE","psi","cohort","amplitude",
-                        "S_0","E_0","I_0","R_0")
-      ) %>% 
-      mif2(start = unlist(p),
-           Nmif = 50, 
-           rw.sd = rw.sd(
-             R0=0.02,sigma=0.02,gamma=0.02,psi=0.02,cohort=0.02,amplitude=0.02,
-             S_0=ivp(0.02),E_0=ivp(0.02),I_0=ivp(0.02),R_0=ivp(0.02)),
-           Np = 1000,
-           cooling.type = "geometric",
-           cooling.fraction.50 = 0.1,
-           transform = TRUE) %>%
+    m1 %>% 
+      mif2(
+        params=p,
+        Nmif = 50, 
+        rw.sd = rw.sd(
+          R0=0.02,sigma=0.02,gamma=0.02,psi=0.02,cohort=0.02,amplitude=0.02,
+          S_0=ivp(0.02),E_0=ivp(0.02),I_0=ivp(0.02),R_0=ivp(0.02)),
+        Np = 1000,
+        cooling.type = "geometric",
+        cooling.fraction.50 = 0.1,
+        transform = TRUE) %>%
       mif2() -> mf
     
     ## Runs 10 particle filters to assess Monte Carlo error in likelihood
@@ -386,13 +357,15 @@ bake("sigmaSE-profile1.rds",{
     toc <- Sys.time()
     etime <- toc-tic
     units(etime) <- "hours"
-
-    data.frame(as.list(coef(mf)),
-               loglik = ll[1],
-               loglik.se = ll[2],
-               nfail.min = min(nfail),
-               nfail.max = max(nfail),
-               etime = as.numeric(etime))
+    
+    data.frame(
+      as.list(coef(mf)),
+      loglik = ll[1],
+      loglik.se = ll[2],
+      nfail.min = min(nfail),
+      nfail.max = max(nfail),
+      etime = as.numeric(etime)
+    )
   }
 }) -> sigmaSE_prof
 
@@ -413,50 +386,31 @@ sigmaSE_prof %>%
 bake("sigmaSE-profile2.rds",{
   
   foreach (p=iter(pd,"row"),
-           .combine=rbind,
-           .errorhandling="remove",
-           .inorder=FALSE,
-           .options.mpi=list(chunkSize=1,seed=1598260027L,info=TRUE)
+    .combine=rbind,
+    .errorhandling="remove",
+    .inorder=FALSE,
+    .options.mpi=list(chunkSize=1,seed=1598260027L,info=TRUE)
   ) %dopar% {
     
     tic <- Sys.time()
     
-    library(magrittr)
-    library(plyr)
-    library(reshape2)
-    library(pomp)
+    library(pomp2)
     
     options(stringsAsFactors=FALSE)
-
-    dat %>% 
-      pomp(t0=with(dat,2*time[1]-time[2]),
-           time="time",
-           rprocess=euler.sim(rproc,delta.t=1/365.25),
-           initializer=initlz,
-           dmeasure=dmeas,
-           rmeasure=rmeas,
-           toEstimationScale=toEst,
-           fromEstimationScale=fromEst,
-           covar=covar,
-           tcovar="time",
-           zeronames=c("C","W"),
-           statenames=c("S","E","I","R","C","W"),
-           paramnames=c("R0","mu","sigma","gamma","alpha","iota",
-                        "rho","sigmaSE","psi","cohort","amplitude",
-                        "S_0","E_0","I_0","R_0")
-      ) %>% 
-      mif2(start = unlist(p),
-           Nmif = 50, 
-           rw.sd = rw.sd(
-             R0=0.02,sigma=0.02,gamma=0.02,psi=0.02,cohort=0.02,amplitude=0.02,
-             S_0=ivp(0.02),E_0=ivp(0.02),I_0=ivp(0.02),R_0=ivp(0.02)),
-           Np = 5000,
-           cooling.type = "geometric",
-           cooling.fraction.50 = 0.1,
-           transform = TRUE) %>%
-      mif2() -> mf
     
-    ## Runs 10 particle filters to assess Monte Carlo error in likelihood
+    m1 %>% 
+      mif2(
+        params = p,
+        Nmif = 50, 
+        rw.sd = rw.sd(
+          R0=0.02,sigma=0.02,gamma=0.02,psi=0.02,cohort=0.02,amplitude=0.02,
+          S_0=ivp(0.02),E_0=ivp(0.02),I_0=ivp(0.02),R_0=ivp(0.02)),
+        Np = 5000,
+        cooling.type = "geometric",
+        cooling.fraction.50 = 0.1,
+        transform = TRUE) %>%
+      mif2() -> mf
+
     pf <- replicate(10, pfilter(mf, Np = 5000))
     ll <- sapply(pf,logLik)
     ll <- logmeanexp(ll, se = TRUE)
@@ -465,13 +419,14 @@ bake("sigmaSE-profile2.rds",{
     toc <- Sys.time()
     etime <- toc-tic
     units(etime) <- "hours"
- 
-    data.frame(as.list(coef(mf)),
-               loglik = ll[1],
-               loglik.se = ll[2],
-               nfail.min = min(nfail),
-               nfail.max = max(nfail),
-               etime = as.numeric(etime))
+    
+    data.frame(
+      as.list(coef(mf)),
+      loglik = ll[1],
+      loglik.se = ll[2],
+      nfail.min = min(nfail),
+      nfail.max = max(nfail),
+      etime = as.numeric(etime))
   }
 }) -> sigmaSE_prof
 
