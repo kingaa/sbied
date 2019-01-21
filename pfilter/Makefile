@@ -1,7 +1,7 @@
 default: pfilter.html pfilter.R bootstrap.html deterministic.html \
 directSimulation.html directSimulation.R fisherSE.html flu-grid1.rds \
 monteCarlo.html pf-in-Nelder-Mead.html pf-in-Nelder-Mead.R \
-loglikest.html loglikest.R expense.R
+loglikest.html loglikest.R expense.R basic_exercise_pfilter.html basic_exercise_pfilter.R
 ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)

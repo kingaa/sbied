@@ -1,5 +1,5 @@
-library(pomp)
-stopifnot(packageVersion("pomp")>="1.18")
+library(pomp2)
+stopifnot(packageVersion("pomp2")>"2.0.9")
 options(stringsAsFactors=FALSE)
 
 read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
@@ -31,28 +31,26 @@ rmeas <- Csnippet("
   B = rpois(rho*R1+1e-6);
 ")
 
-pomp(subset(bsflu,select=-C),
-     times="day",t0=0,
-     rprocess=euler.sim(rproc,delta.t=1/5),
-     initializer=init,rmeasure=rmeas,dmeasure=dmeas,
-     statenames=c("S","I","R1","R2"),
-     paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
-
-system.time(pf <- pfilter(flu,Np=50,params10^seq(1,5,by=0.2))))
-system.time(pf <- pfilter(flu,Np=500,params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9)))
-system.time(pf <- pfilter(flu,Np=5000,params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9)))
-system.time(pf <- pfilter(flu,Np=50000,params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9)))
+bsflu %>%
+  subset(select=-C) %>%
+  pomp(times="day",t0=0,
+    rprocess=euler(rproc,delta.t=1/5),
+    rinit=init,rmeasure=rmeas,dmeasure=dmeas,
+    statenames=c("S","I","R1","R2"),
+    paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
 
 Nps <- ceiling(10^seq(1,5,by=0.2))
 times <- c()
 for (np in Nps) {
   times <- c(times,
-             system.time(
-               pfilter(flu,Np=np,
-                       params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9)))[[3]])
+    system.time(
+      pfilter(flu,Np=np,
+        params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9)))[[3]])
 }
 
 plot(Nps,times)
 lm(times~Nps) -> fit
 summary(fit)
-abline(fit)
+stats::coef(fit) -> ab
+abline(a=ab[1],b=ab[2])
+

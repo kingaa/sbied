@@ -30,14 +30,14 @@
 #' Please share and remix non-commercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
-#' Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
+#' Produced with **R** version `r getRversion()` and **pomp2** version `r packageVersion("pomp2")`.
 #' 
 #' --------------------------
 #' 
 #' 
 ## ----prelims,cache=FALSE,include=FALSE-----------------------------------
-library(pomp)
-stopifnot(packageVersion("pomp")>="1.18")
+library(pomp2)
+stopifnot(packageVersion("pomp2")>"2.0.9")
 library(ggplot2)
 theme_set(theme_bw())
 library(plyr)
@@ -570,7 +570,7 @@ set.seed(1221234211)
 #' 
 #' -----
 #'  
-#' ## Particle filtering in **pomp**
+#' ## Particle filtering in **pomp2**
 #' 
 #' Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our influenza-outbreak case study, using the `bsflu` pomp object created earlier.
 #' 
@@ -605,15 +605,16 @@ rmeas <- Csnippet("
   B = rpois(rho*R1+1e-6);
 ")
 
-pomp(subset(bsflu,select=-C),
-     times="day",t0=0,
-     rprocess=euler.sim(rproc,delta.t=1/5),
-     initializer=init,rmeasure=rmeas,dmeasure=dmeas,
+bsflu %>%
+  subset(select=-C) %>%
+  pomp(times="day",t0=0,
+     rprocess=euler(rproc,delta.t=1/5),
+     rinit=init,rmeasure=rmeas,dmeasure=dmeas,
      statenames=c("S","I","R1","R2"),
      paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
 
 #' 
-#' In **pomp**, the basic particle filter is implemented in the command `pfilter`.
+#' In **pomp2**, the basic particle filter is implemented in the command `pfilter`.
 #' We must choose the number of particles to use by setting the `Np` argument.
 #' 
 ## ----flu-pfilter-1,cache=T-----------------------------------------------
@@ -669,7 +670,7 @@ foreach (theta=iter(p,"row"),.combine=rbind,
          .inorder=FALSE,
          .options.multicore=list(set.seed=TRUE)
 ) %dopar% {
-  library(pomp)
+  library(pomp2)
   pfilter(flu,params=unlist(theta),Np=5000) -> pf
   theta$loglik <- logLik(pf)
   theta
@@ -716,7 +717,7 @@ bake(file="flu-grid1.rds",seed=421776444,kind="L'Ecuyer",{
            .options.multicore=list(set.seed=TRUE)
   ) %dopar% 
   {
-    library(pomp)
+    library(pomp2)
     pfilter(flu,params=unlist(theta),Np=5000) -> pf
     theta$loglik <- logLik(pf)
     theta

@@ -50,8 +50,8 @@ opts_chunk$set(
 options(keep.source=TRUE,encoding="UTF-8",scipen=6)
 ```
 ```{r prelims,purl=TRUE,cache=FALSE}
-library(pomp)
-stopifnot(packageVersion("pomp")>="1.18")
+library(pomp2)
+stopifnot(packageVersion("pomp2")>"2.0.9")
 library(ggplot2)
 theme_set(theme_bw())
 library(plyr)
@@ -94,20 +94,20 @@ rmeas <- Csnippet("
                   B = rpois(rho*R1+1e-6);
                   ")
 
-pomp(data=subset(bsflu,select=-C),
-     times="day",t0=-6,
-     rprocess=euler.sim(rproc,delta.t=1/5),
-     initializer=init,rmeasure=rmeas,dmeasure=dmeas,
-     statenames=c("S","E","I","R1","R2"),
-     paramnames=c("Beta","mu_E","mu_I","mu_R1","mu_R2","rho")
+bsflu %>%
+  subset(select=-C) %>%
+  pomp(times="day",t0=-6,
+    rprocess=euler(rproc,delta.t=1/5),
+    rinit=init,rmeasure=rmeas,dmeasure=dmeas,
+    statenames=c("S","E","I","R1","R2"),
+    paramnames=c("Beta","mu_E","mu_I","mu_R1","mu_R2","rho")
 ) -> flu
 
 coef(flu) <- c(Beta=6,mu_E=0.5,mu_I=2,mu_R1=0.2,mu_R2=0.5,rho=0.9)
 
-simdat <- simulate(flu,nsim=20,as.data.frame=TRUE,include.data=TRUE)
-
-ggplot(data=simdat,
-       mapping=aes(x=time,y=B,color=(sim=="data"),group=sim))+
+flu %>%
+  simulate(nsim=20,format="data.frame",include.data=TRUE) %>%
+  ggplot(aes(x=day,y=B,color=(.id=="data"),group=.id))+
   geom_line()+
   guides(color=FALSE)
 ```
@@ -149,9 +149,9 @@ registerDoSEQ()
 Violin plots are cute.
 
 ```{r plots}
-ggplot(data=lls,
-       mapping=aes(x=Np,y=loglik,fill=ordered(nfilt),
-                   group=interaction(nfilt,Np)))+
+lls %>%
+  ggplot(aes(x=Np,y=loglik,fill=ordered(nfilt),
+    group=interaction(nfilt,Np)))+
   geom_violin(draw_quantiles=c(0.1,0.5,0.9),alpha=0.7)+
   scale_x_log10(breaks=unique(lls$Np))+
   labs(fill="nfilt")

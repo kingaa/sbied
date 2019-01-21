@@ -67,8 +67,8 @@ theme_set(theme_bw())
 library(plyr)
 library(reshape2)
 library(magrittr)
-library(pomp)
-stopifnot(packageVersion("pomp")>="1.18")
+library(pomp2)
+stopifnot(packageVersion("pomp2")>"2.0.9")
 ```
 
 \newcommand\prob{\mathbb{P}}
@@ -139,10 +139,11 @@ rmeas <- Csnippet("
   B = rpois(rho*R1+1e-6);
 ")
 
-pomp(subset(bsflu,select=-C),
-     times="day",t0=0,
-     rprocess=euler.sim(rproc,delta.t=1/5),
-     initializer=init,rmeasure=rmeas,dmeasure=dmeas,
+bsflu %>%
+  subset(select=-C) %>%
+pomp(times="day",t0=0,
+     rprocess=euler(rproc,delta.t=1/5),
+     rinit=init,rmeasure=rmeas,dmeasure=dmeas,
      statenames=c("S","I","R1","R2"),
      paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
 ```
@@ -150,25 +151,10 @@ pomp(subset(bsflu,select=-C),
 Here, let's opt for deterministic optimization of a rough function.
 We'll try using `optim`'s default method: Nelder-Mead, fixing the random-number generator seed to make the likelihood calculation deterministic.
 Since Nelder-Mead is an unconstrained optimizer, we must transform the parameters.
-The following `Csnippet`s encode an appropriate transformation and its inverse, and introduce them into the `pomp` object.
+The following introduces such a transformation into the `pomp` object.
 ```{r flu-partrans}
-toEst <- Csnippet("
- TBeta = log(Beta);
- Tmu_R1 = log(mu_R1);
- Tmu_I = log(mu_I);
- Trho = logit(rho);
-")
-
-fromEst <- Csnippet("
- TBeta = exp(Beta);
- Tmu_I = exp(mu_I);
- Tmu_R1 = exp(mu_R1);
- Trho = expit(rho);
-")
-
-pomp(flu,toEstimationScale=toEst,
-     fromEstimationScale=fromEst,
-     paramnames=c("Beta","mu_I","mu_R1","rho")) -> flu
+pomp(flu,partrans=parameter_trans(log=c("Beta","mu_R1","mu_I"),logit="rho"),
+  paramnames=c("Beta","mu_I","mu_R1","rho")) -> flu
 ```
 
 Let's fix a reference point in parameter space and insert these parameters into the `pomp` object:
@@ -220,12 +206,13 @@ ll <- logmeanexp(lls,se=TRUE); ll
 
 We plot some simulations at these parameters.
 ```{r flu-sims}
-simulate(mle,nsim=10,as.data.frame=TRUE,include.data=TRUE) -> sims
+simulate(mle,nsim=10,format="data.frame",include.data=TRUE) -> sims
 ```
 The data are shown in blue.
 The `r max(sims$sim)` simulations are shown in red.
 ```{r flu-sims-plot,echo=F}
-ggplot(data=sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+sims %>%
+ggplot(aes(x=day,y=B,group=.id,color=.id=="data"))+
   guides(color=FALSE)+
   geom_line()
 ```

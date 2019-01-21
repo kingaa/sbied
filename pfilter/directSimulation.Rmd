@@ -52,14 +52,14 @@ opts_chunk$set(
   dpi=100,
   dev='png',
   dev.args=list(bg='transparent')
-  )
+)
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
 options(
   keep.source=TRUE,
   stringsAsFactors=FALSE,
   encoding="UTF-8"
-  )
+)
 
 set.seed(594709947L)
 library(ggplot2)
@@ -67,8 +67,8 @@ theme_set(theme_bw())
 library(plyr)
 library(reshape2)
 library(magrittr)
-library(pomp)
-stopifnot(packageVersion("pomp")>="1.18")
+library(pomp2)
+stopifnot(packageVersion("pomp2")>"2.0.9")
 ```
 
 * We're going to demonstrate what happens when we attempt to compute the likelihood for the boarding school flu data by direct simulation from.
@@ -105,27 +105,28 @@ rmeas <- Csnippet("
   B = rpois(rho*R1+1e-6);
 ")
 
-pomp(subset(bsflu,select=-C),
-     times="day",t0=0,
-     rprocess=euler.sim(rproc,delta.t=1/5),
-     initializer=init,rmeasure=rmeas,dmeasure=dmeas,
-     statenames=c("S","I","R1","R2"),
-     paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
+bsflu %>%
+  subset(select=-C) %>%
+  pomp(times="day",t0=0,
+    rprocess=euler(rproc,delta.t=1/5),
+    rinit=init,rmeasure=rmeas,dmeasure=dmeas,
+    statenames=c("S","I","R1","R2"),
+    paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
 ```
 
 Let's generate a large number of simulated trajectories at some particular point in parameter space.
 ```{r bbs-mc-like-2}
 simulate(flu,params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9),
-         nsim=5000,states=TRUE) -> x
-matplot(time(flu),t(x["R1",1:50,]),type='l',lty=1,
-        xlab="time",ylab=expression(R[1]),bty='l',col='blue')
+  nsim=5000,format="arrays") -> x
+matplot(time(flu),t(x$states["R1",1:50,]),type='l',lty=1,
+  xlab="time",ylab=expression(R[1]),bty='l',col='blue')
 lines(time(flu),obs(flu,"B"),lwd=2,col='black')
 ```
 
 We can use the function `dmeasure` to evaluate the log likelihood of the data given the states, the model, and the parameters:
 ```{r bbs-mc-like-3,cache=T}
-ell <- dmeasure(flu,y=obs(flu),x=x,times=time(flu),log=TRUE,
-                params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9))
+ell <- dmeasure(flu,y=obs(flu),x=x$states,times=time(flu),log=TRUE,
+  params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9))
 dim(ell)
 ```
 According to the general equation for likelihood by direct simulation, we should sum up the log likelihoods across time:
