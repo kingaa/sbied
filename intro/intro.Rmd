@@ -24,7 +24,7 @@ nocite: |
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
-Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
+Produced in **R** version `r getRversion()` using **pomp2** version `r packageVersion("pomp2")`.
 
 ```{r knitr-opts,include=FALSE,purl=FALSE,cache=FALSE}
 library(knitr)
@@ -334,293 +334,107 @@ To think algorithmically, we define some function calls:
 
 ------------
 
-## The **pomp** package for POMP models
+## The **pomp2** package for POMP models
 
-* **pomp** is an  **R**  package for data analysis using partially observed Markov process (POMP) models.
+* **pomp2** is an  **R**  package for data analysis using partially observed Markov process (POMP) models.
 
-* Note the distinction: lower case **pomp** is a software package; 
-upper case POMP is a class of models.
+* Note the distinction: lower case '**pomp2**' is a software package; upper case 'POMP' is a class of models.
 
-* **pomp** builds methodology for POMP models in terms of arbitrary user-specified `rprocess()`, `dprocess()`, `rmeasure()`, and `dmeasure()` functions.
+* **pomp2** builds methodology for POMP models in terms of arbitrary user-specified POMP models.
  
-* Following modern practice, most methodology in **pomp** is simulation-based, so does not require specification of `dprocess()`.
-
-* **pomp** has facilities to help construct `rprocess()`, `rmeasure()`, and `dmeasure()` functions for model classes of epidemiological interest.
-
-* **pomp** provides a forum for development, modification and sharing of models, methodology and data analysis workflows.
-
-<br>
-
----------
-
----------
-
-### Example
-
-#### The deterministic Ricker map
-
-- The Ricker map describes the deterministic dynamics of a simple population,
-$$N_{t+1} = r\,N_{t}\,\exp\big(-c\,N_{t}\big).$$
-    + $N_t$ is the population density at time $t$.
-    + $r$ is a fixed value (a parameter) describing the population's intrinsic capacity to increase in one unit of time.
-    + The parameter $c$ scales the density-dependent population regulation.
-    + The equilibrium population is $N_t=\log(r)/c$.
-    
-- $N$ is a *state variable*, $r$ and $c$ are *parameters*. $r$ is dimensionless and $c$ has units of inverse density.
-
-- For simplicity, we will fix $c=1$ for the remainder of this document.
-
-- If we know $r$ and the *initial condition* $N_0$, the deterministic Ricker equation predicts the future population density at all times $t=1,2,\dots$.
-
-- We can view the initial condition, $N_0$ as a special kind of parameter, an *initial-value parameter*.
-
-Although the Ricker model is not an epidemiological model, it is perhaps the simplest useful nonlinear population dynamics model.
-As such, it allows us to introduce the basic features of the **pomp** package with a minimum amount of distracting complexity.
-
-<br>
+* **pomp2** provides tools, documentation, and examples to help users specify POMP models.
  
+* **pomp2** provides a platform for modification and sharing of models, data-analysis workflows, and methodological development.
+
+<br>
+
 ---------
 
---------
+---------
 
-#### Process noise
+### Basic model components and workhorses
 
-- We can model process noise in this system by making the growth rate into a random variable with mean $r$.
+It is useful to divide the **pomp2** package functionality into different levels.
 
-- For example, if we assume that the intrinsic growth rate is log-normally distributed, $N$ becomes a stochastic process governed by
-$$N_{t+1} = r\,N_{t}\,\exp(-c\,N_{t}+\varepsilon_{t}), \qquad \varepsilon_{t}\;\sim\;\dist{Normal}{0,\sigma},$$
-where the new parameter $\sigma$ is the standard deviation of the noise process $\varepsilon$.
+*Basic model components* are user-specified procedures that perform the elementary computations that specify a POMP model.
+There are nine of these:
 
-<br>
+- `rinit`: simulator for the initial-state distribution, i.e., the distribution of the latent state at time `t0`.
+- `rprocess` and `dprocess`: simulator and density evaluation procedure, respectively, for the process model.
+- `rmeasure` and `dmeasure`: simulator and density evaluation procedure, respectively, for the measurement model.
+- `rprior` and `dprior`: simulator and density evaluation procedure, respectively, for the prior distribution.
+- `skeleton`: evaluation of the deterministic skeleton.
+- `partrans`: parameter transformations.
 
------------
+The term *basic model component* is meant to refer to the procedure itself, as distinct from the execution of the procedure.
+The user specifies the procedure (in one of several forms);
+the package decides when and where to execute the procedure.
 
-----------
-
-#### Measurement error
-
-- Let's suppose that the Ricker model is our model for the dynamics of a real population.
-
-- However, we cannot know the exact population density at any time, but only estimate it through sampling.
-
-- Let's model measurement error by assuming the observed measurement, $y_t$, is modeled as a realization of a random variable $Y_t$ that is Poisson with mean $\phi\,N_t$:
-$$Y_{t}\;\sim\;\dist{Poisson}{\phi\,N_{t}}$$
-
-- In this equation,
-
-1. $N_t$ models the true population density at time $t$,
-2. $Y_t$ models the number of individuals sampled at time $t$,
-3. the parameter $\phi$ is proportional to our sampling effort.
-4. $Y_t$ is dimensionless, so $\phi N_t$ must also be dimensionless.
-
-
-To map this model onto the general framework discussed [above](#partially-observed-markov-process-pomp-models), we have
-$$\begin{gathered}
-X_t = (N_t) \qquad \text{or} \qquad X_t = (N_t, \varepsilon_t), \\
-Y_t = Y_t, \qquad \theta = (r, c, \phi, \sigma, N_0)
-\end{gathered}$$
-
+*Workhorses* are **R** functions, built into the package, that cause the basic model component procedures to be executed.
+Each workhorse has a name that matches that of the corresponding basic model component.
+In addition, there is the `trajectory` workhorse, which iterates or integrates the deterministic skeleton (according to whether it is a map or a vectorfield, respectively) to obtain state trajectories. 
 
 <br>
 
-------
+---------
 
------
+---------
 
-### Working with the Ricker model in **pomp**.
+### Elementary POMP algorithms
 
-- The  **R**  package **pomp** provides facilities for modeling POMPs, a toolbox of statistical inference methods for analyzing data using POMPs, and a development platform for implementing new POMP inference methods.
+These are algorithms that interrogate the model or the model/data confrontation without attempting to estimate parameters.
+There are currently four of these:
 
-- The basic data-structure provided by **pomp** is the *object of class* `pomp`, alternatively known as a "pomp object".
-
-- It is a container that holds real or simulated data and a POMP model, possibly together with other information such as model parameters, that may be needed to do things with the model and data.
-
-Let's see what can be done with a pomp object.
-First, we'll load some packages, including **pomp**.
-
-```{r prelims,cache=F}
-library(ggplot2)
-library(reshape2)
-library(pomp)
-stopifnot(packageVersion("pomp")>="1.18")
-```
-
-A pre-built pomp object encoding the Ricker model comes included with the package. Load it by
-
-```{r load-ricker,cache=FALSE,results="hide"}
-pompExample(ricker)
-```
-
-This has the effect of creating a pomp object named `ricker` in your workspace.
-We can plot the data by doing
-
-```{r plot-ricker}
-plot(ricker)
-```
-
-We can simulate by doing
-
-```{r sim-ricker1}
-x <- simulate(ricker)
-```
-
-What kind of object have we created?
-
-```{r}
-class(x)
-plot(x)
-```
-
-Why do we see more time series in the simulated pomp object than in the original?
-
-We can turn a pomp object into a data frame:
-
-```{r}
-y <- as.data.frame(ricker)
-head(y)
-head(simulate(ricker,as.data.frame=TRUE))
-```
-
-We can also run multiple simulations simultaneously:
-
-```{r}
-x <- simulate(ricker,nsim=10)
-class(x)
-sapply(x,class)
-x <- simulate(ricker,nsim=10,as.data.frame=TRUE)
-head(x)
-str(x)
-```
-
-It's often useful to plot several simulations from a model against the actual data.
-One way to accomplish this is as follows.
-
-```{r fig.height=8}
-x <- simulate(ricker,nsim=9,as.data.frame=TRUE,include.data=TRUE)
-ggplot(data=x,aes(x=time,y=y,group=sim,color=(sim=="data")))+
-  geom_line()+guides(color=FALSE)+
-  facet_wrap(~sim,ncol=2)
-```
-
-We refer to the deterministic map as the "skeleton" of the stochastic map.
-
-We can compute a trajectory of the the deterministic skeleton using `trajectory`:
-
-```{r traj-ricker}
-y <- trajectory(ricker)
-dim(y)
-dimnames(y)
-plot(time(ricker),y["N",1,],type="l")
-```
-
-
-We can extract or set the parameters in the pomp object using `coef`:
-
-```{r coef}
-coef(ricker)
-coef(ricker,"phi")
-coef(ricker) <- c(phi=20,c=1,r=44,sigma=0.3,N.0=10,e.0=0)
-coef(ricker)
-coef(ricker,c("phi","c")) <- c(10,2)
-coef(ricker)
-```
-
-Note that the order in which the parameters appear is irrelevant.
-
-More information on manipulating and extracting information from pomp objects can be viewed in the help pages (`methods?pomp`).
-
-There are a number of other examples included with the package.
-Do `pompExample()` to see a list of these.
-
-More examples can be found in the **pompExamples** package:
-
-```{r pompExamples,eval=F,purl=F}
-install.packages("pompExamples",repos="https://kingaa.github.io")
-library(pompExamples)
-pompExample()
-```
+- `simulate` performs simulations of the POMP model, i.e., it samples from the joint distribution of latent states and observables.
+- `pfilter` runs a sequential Monte Carlo (particle filter) algorithm to compute the likelihood and (optionally) estimate the prediction and filtering distributions of the latent state process.
+- `probe` computes one or more uni- or multi-variate summary statistics on both actual and simulated data.
+- `spect` estimates the power spectral density functions for the actual and simulated data.
 
 <br>
 
--------
+---------
 
--------
+---------
 
-### Inference algorithms in **pomp**
+## POMP estimation algorithms
 
-**pomp** provides a wide range of inference algorithms.
-We'll learn about these in detail soon, but for now, let's just look at some of their general features.
+These are procedures that build on the elementary algorithms and are used for estimation of parameters and other inferential tasks.
+There are currently ten of these:
 
-The `pfilter` function runs a simple particle filter.
-It can be used to evaluate the likelihood at a particular set of parameters.
-One uses the `Np` argument to specify the number of particles to use:
+- `abc`: approximate Bayesian computation
+- `bsmc2`: Liu-West algorithm for Bayesian SMC
+- `pmcmc`: a particle MCMC algorithm
+- `mif2`: iterated filtering (IF2)
+- `enkf`: ensemble Kalman filter
+- `eakf`: ensemble adjusted Kalman filter
+- `traj_objfun`: trajectory matching
+- `spect_objfun`: power spectrum matching
+- `probe_objfun`: probe matching
+- `nlf_objfun`: nonlinear forecasting
 
-```{r reset-ricker,include=FALSE}
-pompExample(ricker)
-```
-
-
-```{r pfilter1}
-pf <- pfilter(ricker,Np=1000)
-class(pf)
-plot(pf)
-logLik(pf)
-```
-
-Note that `pfilter` returns an object of class `pfilterd.pomp`.
-This is the general rule: inference algorithms return objects that are pomp objects with additional information.
-
-The package provides tools to extract this information.
-We can run the particle filter again by doing
-
-```{r pfilter2}
-pf <- pfilter(pf)
-logLik(pf)
-```
-
-This the result of running the same computation again.
-Note that, because the particle filter is a Monte Carlo algorithm, we get a slightly different estimate of the log likelihood.
-
-Note that, by default, running `pfilter` on a `pfilterd.pomp` object causes the computation to be re-run with the same parameters as before.
-Any additional arguments we add override these defaults.
-
-This is the general rule in **pomp**.
-For example,
-
-```{r pfilter3}
-pf <- pfilter(pf,Np=100)
-logLik(pf)
-```
-
-Here, the particle filtering has been performed with only `r unique(pf@Np)` particles.
+- *Objective function methods*: 
+among the estimation algorithms just listed, four are methods that construct stateful objective functions that can be optimized using general-purpose numerical optimization algorithms such as `optim`, `subplex`, or the optimizers in the **nloptr** package.
+These have certain new features that will be described below.
 
 <br>
 
--------
+---------
 
-------
+---------
 
-### Building a custom pomp object
+### **pomp2** vs **pomp**
 
-The usefulness of **pomp** in scientific research hinges on its facilities for implementing the full range of POMP models.
-To get started building custom `pomp` models, see this [introductory tutorial](./ricker.html).
+Because **pomp2** contains changes that are not backward-incompatible with **pomp** versions <2, it is being made available initially in source and binary formats as a separate package via the https://kingaa.github.io/ package repository.
+Thus it is possible for users to have both **pomp** (version <2) and **pomp2** installed simultaneously as they transition their workflows to the new version.
+It is anticipated that, around the middle of 2019, **pomp2** will be renamed **pomp** and uploaded to CRAN as version 2.1.
+From that point forward, **pomp2** will be discontinued as a separate package and there will be no ongoing support for older versions of **pomp**.
 
 <br>
 
-------
+---------
 
-------
+---------
 
-#### A note on terminology
-
-If we know the state, $x(t_0)$, of the system at time $t_0$, it makes sense to speak about the entire trajectory of the system for all $t>t_0$.
-This is true whether we are thinking of the system as deterministic or stochastic.
-Of course, in the former case, the trajectory is uniquely determined by $x(t_0)$, while in the stochastic case, only the probability distribution of $x(t)$, $t>t_0$ is determined.
-To avoid confusion, we use the term "trajectory" exclusively to refer to *trajectories of a deterministic process*.
-Thus, the `trajectory` command iterates or integrates the deterministic skeleton forward in time, returning the unique trajectory determined by the specified parameters.
-When we want to speak about sample paths of a stochastic process, we use the term *simulation*.
-Accordingly, the `simulate` command always returns individual sample paths from the POMP.
-In particular, we avoid "simulating a set of differential equations", preferring instead to speak of "integrating" the equations, or "computing trajectories".
 
 ------------------------------
 
