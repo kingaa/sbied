@@ -1,5 +1,5 @@
 ## check to see that the version of R is sufficiently recent
-minRversion <- "3.4.3"
+minRversion <- "3.5.1"
 rv <- getRversion()
 if (rv < minRversion)
   stop("R version >= ",minRversion," is required",call.=FALSE)
@@ -13,6 +13,7 @@ coda
 colorspace
 cowplot
 deSolve
+dplyr
 foreach
 doParallel
 doRNG
@@ -29,6 +30,7 @@ RColorBrewer
 reshape2
 sos
 subplex
+tidyverse
 "
 )
 
