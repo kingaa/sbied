@@ -20,12 +20,12 @@
 #' Please share and remix non-commercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
-#' Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
+#' Produced with **R** version `r getRversion()` and **pomp2** version `r packageVersion("pomp2")`.
 #' 
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
-library(pomp)
+library(pomp2)
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp")>="1.18")
+stopifnot(packageVersion("pomp2")>"2.0.9")
 set.seed(557976883)
 
 #' 
@@ -37,11 +37,9 @@ set.seed(557976883)
 #' 
 #' - This tutorial covers likelihood estimation via the method of iterated filtering.
 #' 
-#' - It presupposes familiarity with building partially observed Markov process (POMP) objects in the **R** package **pomp** [@King2016]. 
+#' - It presupposes familiarity with building partially observed Markov process (POMP) objects in the **R** package **pomp2** [@King2016]. 
 #' 
-#' - **pomp** is available from [CRAN](https://cran.r-project.org/package=pomp) and [github](https://kingaa.github.io/pomp/).
-#' 
-#' - This tutorial follows on from the [topic of carrying out particle filtering (also known as sequential Monte Carlo) via `pfilter` in **pomp**](../pfilter/pfilter.html). 
+#' - This tutorial follows on from the [topic of carrying out particle filtering (also known as sequential Monte Carlo) via `pfilter` in **pomp2**](../pfilter/pfilter.html). 
 #' 
 #' <br>
 #' 
@@ -337,22 +335,22 @@ rproc <- Csnippet("
   R1 += t2 - t3;
 ")
 
-init <- Csnippet("
+rinit <- Csnippet("
  S = 762;
  I = 1;
  R1 = 0;
 ")
 
-fromEst <- Csnippet("
- TBeta = exp(Beta);
- Tmu_I = exp(mu_I);
- Trho = expit(rho);
+toEst <- Csnippet("
+ T_Beta = log(Beta);
+ T_mu_I = log(mu_I);
+ T_rho = logit(rho);
 ")
 
-toEst <- Csnippet("
- TBeta = log(Beta);
- Tmu_I = log(mu_I);
- Trho = logit(rho);
+fromEst <- Csnippet("
+ Beta = exp(T_Beta);
+ mu_I = exp(T_mu_I);
+ rho = expit(T_rho);
 ")
 
 #' 
@@ -362,18 +360,18 @@ toEst <- Csnippet("
 #' 
 #' The `fromEst` and `toEst` C snippets implement parameter transformations that we'll want soon.
 #' 
-#' Now we build the `pomp` object:
+#' Now we build the pomp object:
 #' 
 ## ----pomp_bsflu----------------------------------------------------------
-library(pomp)
+library(pomp2)
 
 pomp(
   data=subset(bsflu_data,select=-C),
   times="day",t0=0,
   rmeasure=rmeas,dmeasure=dmeas,
-  rprocess=euler.sim(rproc,delta.t=1/12),
-  initializer=init,
-  fromEstimationScale=fromEst,toEstimationScale=toEst,
+  rprocess=euler(rproc,delta.t=1/12),
+  rinit=rinit,
+  partrans=parameter_trans(fromEst=fromEst,toEst=toEst),
   statenames=statenames,
   paramnames=paramnames
 ) -> bsflu
@@ -396,7 +394,7 @@ params <- c(Beta=2,mu_I=1,rho=0.9,mu_R1=1/3,mu_R2=1/2)
 #' 
 #' Now to run and plot some simulations:
 ## ----init_sim------------------------------------------------------------
-y <- simulate(bsflu,params=params,nsim=10,as.data.frame=TRUE)
+y <- simulate(bsflu,params=params,nsim=10,format="data.frame")
 
 #' 
 #' Before engaging in iterated filtering, it is a good idea to check that the basic particle filter is working since iterated filtering builds on this technique.
@@ -452,7 +450,7 @@ registerDoParallel()
 library(doRNG)
 registerDoRNG(625904618)
 bake(file="pf.rds",{
-  foreach(i=1:10,.packages='pomp',
+  foreach(i=1:10,.packages='pomp2',
     .export=c("bsflu","fixed_params")
   ) %dopar% {
     pfilter(bsflu,params=c(Beta=2,mu_I=1,rho=0.9,fixed_params),Np=10000)
@@ -500,19 +498,17 @@ write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 registerDoRNG(482947940)
 bake(file="box_search_local.rds",{
   foreach(i=1:20,
-    .packages='pomp',
+    .packages='pomp2',
     .combine=c, 
     .export=c("bsflu","fixed_params")
   ) %dopar%  
   {
     mif2(
       bsflu,
-      start=c(Beta=2,mu_I=1,rho=0.9,fixed_params),
+      params=c(Beta=2,mu_I=1,rho=0.9,fixed_params),
       Np=2000,
       Nmif=50,
-      cooling.type="geometric",
       cooling.fraction.50=0.5,
-      transform=TRUE,
       rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02)
     )
   }
@@ -537,7 +533,7 @@ bake(file="box_search_local.rds",{
 ## ----lik_local-----------------------------------------------------------
 registerDoRNG(900242057)
 bake(file="lik_local.rds",{
-  foreach(mf=mifs_local,.packages='pomp',.combine=rbind) %dopar% 
+  foreach(mf=mifs_local,.packages='pomp2',.combine=rbind) %dopar% 
   {
     evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
     ll <- logmeanexp(evals,se=TRUE)
@@ -549,7 +545,7 @@ bake(file="lik_local.rds",{
 results_local <- as.data.frame(results_local)
 
 #' 
-#' This investigation took  `r round(attr(mifs_local,"system.time")["elapsed"],0)` sec for the maximization and `r round(t_local["elapsed"],0)` sec for the likelihood evaluation.
+#' This investigation took `r round(attr(mifs_local,"system.time")["elapsed"],0)` sec for the maximization and `r round(t_local["elapsed"],0)` sec for the likelihood evaluation.
 #' These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 #' 
 #' 
@@ -594,13 +590,13 @@ guesses <- as.data.frame(apply(params_box,1,function(x)runif(300,x[1],x[2])))
 mf1 <- mifs_local[[1]]
 bake(file="box_search_global.rds",{
   foreach(guess=iter(guesses,"row"), 
-    .packages='pomp', 
+    .packages='pomp2', 
     .combine=rbind,
     .options.multicore=list(set.seed=TRUE),
     .export=c("mf1","fixed_params")
   ) %dopar% 
   {
-    mf <- mif2(mf1,start=c(unlist(guess),fixed_params))
+    mf <- mif2(mf1,params=c(unlist(guess),fixed_params))
     mf <- mif2(mf,Nmif=100)
     ll <- replicate(10,logLik(pfilter(mf,Np=100000)))
     ll <- logmeanexp(ll,se=TRUE)
@@ -614,8 +610,8 @@ results <- rbind(results,results_global[names(results)])
 write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 
 #' The above codes run one search from each of `r nrow(guesses)` starting values.
-#' Each search consists of an initial run of `r nrow(conv.rec(mf1))` IF2 iterations, followed by another 100 iterations.
-#' These codes exhibit a general **pomp** behavior:
+#' Each search consists of an initial run of `r nrow(traces(mf1))` IF2 iterations, followed by another 100 iterations.
+#' These codes exhibit a general **pomp2** behavior:
 #' re-running a command on an object (i.e., `mif2` on `mf1`) created by the same command preserves the algorithmic arguments.
 #' In particular, running `mif2` on the result of a `mif2` computation re-runs IF2 from the endpoint of the first run.
 #' In the second computation, by default, all algorithmic parameters are preserved;
@@ -678,7 +674,7 @@ write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 #' 
 #' #### Extra Exercise: Checking the source code
 #' 
-#' Check the source code for the `bsflu` `pomp` object.
+#' Check the source code for the `bsflu` pomp object.
 #' Does the code implement the model described?
 #' 
 #' For various reasons, it can be surprisingly hard to make sure that the written equations and the code are perfectly matched.
