@@ -50,8 +50,8 @@ opts_chunk$set(
 options(keep.source=TRUE,encoding="UTF-8",scipen=6)
 ```
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
-library(pomp)
-stopifnot(packageVersion("pomp")>="1.18")
+library(pomp2)
+stopifnot(packageVersion("pomp2")>"2.0.9")
 library(ggplot2)
 theme_set(theme_bw())
 library(plyr)
@@ -127,12 +127,13 @@ rmeas <- Csnippet("
   B = rpois(rho*R1+1e-6);
 ")
 
-pomp(bsflu[c("day","B")],times="day",t0=-6,
-     rprocess=euler.sim(rproc,delta.t=1/5),
-     initializer=init,rmeasure=rmeas,dmeasure=dmeas,
-     statenames=c("S","E","I","R1","R2"),
-     paramnames=c("Beta","mu_E","mu_I","mu_R1","mu_R2","rho")
-         ) -> flu
+bsflu[c("day","B")] %>%
+  pomp(times="day",t0=-6,
+    rprocess=euler(rproc,delta.t=1/5),
+    rinit=init,rmeasure=rmeas,dmeasure=dmeas,
+    statenames=c("S","E","I","R1","R2"),
+    paramnames=c("Beta","mu_E","mu_I","mu_R1","mu_R2","rho")
+  ) -> flu
 ```
 
 How many parameters can reasonably be fixed?
@@ -148,10 +149,11 @@ with(bsflu,c(mu_R1=1/(sum(B)/512),mu_R2=1/(sum(C)/512)))
 ```{r simulations}
 coef(flu) <- c(Beta=5,mu_E=0.5,mu_I=1,mu_R1=0.33,mu_R2=0.55,rho=0.95)
 
-simulate(flu,nsim=20,as.data.frame=TRUE,include.data=TRUE) -> simdat
-ggplot(data=subset(simdat,select=c(time,B,sim)),
-       mapping=aes(x=time,y=B,color=(sim=="data"),
-                   size=(sim=="data"),group=sim))+
+simulate(flu,nsim=20,format="data.frame",include.data=TRUE) -> simdat
+
+simdat %>%
+  subset(select=c(day,B,.id)) %>%
+  ggplot(aes(x=day,y=B,color=(.id=="data"),size=(.id=="data"),group=.id))+
   geom_line()+
   scale_color_manual(values=c(`TRUE`="red",`FALSE`="black"))+
   scale_size_manual(values=c(`TRUE`=1,`FALSE`=0.5))+

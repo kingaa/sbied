@@ -15,7 +15,7 @@
 #' 
 #' 
 ## ----include=FALSE-------------------------------------------------------
-source("https://kingaa.github.io/sbied/stochsim/stochsim.R")
+source("stochsim.R")
 
 #' 
 #' ## Basic Exercise: Explore the SIR model
@@ -24,19 +24,20 @@ source("https://kingaa.github.io/sbied/stochsim/stochsim.R")
 #' 
 ## ------------------------------------------------------------------------
 sims2 <- simulate(sir,params=c(Beta=2.5,gamma=1,rho=0.9,N=2600),
-                 nsim=20,as.data.frame=TRUE,include.data=TRUE)
+  nsim=20,format="data.frame",include.data=TRUE)
 
-ggplot(sims2,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
-  geom_line()+guides(color=FALSE)
+ggplot(sims2,mapping=aes(x=day,y=B,group=.id,color=.id=="data"))+
+  geom_line()+
+  guides(color=FALSE)
 
 #' 
 #' Increasing the force of infection improves in one direction but now the peak is too tall. To counteract this, one could try reducing the population size.
 #' 
 ## ------------------------------------------------------------------------
 sims3 <- simulate(sir,params=c(Beta=2.5,gamma=1,rho=0.9,N=1500),
-                 nsim=20,as.data.frame=TRUE,include.data=TRUE)
+  nsim=20,format="data.frame",include.data=TRUE)
 
-ggplot(sims3,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+ggplot(sims3,mapping=aes(x=day,y=B,group=.id,color=.id=="data"))+
   geom_line()+guides(color=FALSE)
 
 #' 
@@ -44,9 +45,9 @@ ggplot(sims3,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' 
 ## ------------------------------------------------------------------------
 sims4 <- simulate(sir,params=c(Beta=2.5,gamma=1.5,rho=0.9,N=1500),
-                 nsim=20,as.data.frame=TRUE,include.data=TRUE)
+  nsim=20,format="data.frame",include.data=TRUE)
 
-ggplot(sims4,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+ggplot(sims4,mapping=aes(x=day,y=B,group=.id,color=.id=="data"))+
   geom_line()+guides(color=FALSE)
 
 #' 
@@ -74,23 +75,20 @@ seir_init <- Csnippet("
   H = 0;
 ")
 
-pomp(bsflu,time="day",t0=0,rprocess=euler.sim(seir_step,delta.t=1/6),
-     initializer=seir_init,paramnames=c("N","Beta","mu_EI","gamma"),
-     statenames=c("S","E","I","R","H")) -> seir
-
-pomp(seir,zeronames="H") -> seir
-dmeas <- Csnippet("lik = dbinom(B,H,rho,give_log);")
-rmeas <- Csnippet("B = rbinom(H,rho);")
-seir <- pomp(seir,rmeasure=rmeas,dmeasure=dmeas,statenames="H",paramnames="rho")
+pomp(bsflu,times="day",t0=0,rprocess=euler(seir_step,delta.t=1/6),
+  rinit=seir_init,paramnames=c("N","Beta","mu_EI","gamma","rho"),
+  statenames=c("S","E","I","R","H"),accumvars="H",
+  dmeasure=Csnippet("lik = dbinom(B,H,rho,give_log);"),
+  rmeasure=Csnippet("B = rbinom(H,rho);")) -> seir
 
 #' 
 #' One possibility is to split the original rate $\mu_{SI}$ into $\mu_{SE}$ and $\mu_{EI}=\gamma$. 
 #' 
 ## ------------------------------------------------------------------------
 sims <- simulate(seir,params=c(Beta=2.5,mu_EI=0.75,gamma=0.75,rho=0.9,N=1500),
-                 nsim=20,as.data.frame=TRUE,include.data=TRUE)
+  nsim=20,format="data.frame",include.data=TRUE)
 
-ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+ggplot(sims,mapping=aes(x=day,y=B,group=.id,color=.id=="data"))+
   geom_line()+guides(color=FALSE)
 
 #' 
@@ -98,9 +96,9 @@ ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
 #' 
 ## ------------------------------------------------------------------------
 sims <- simulate(seir,params=c(Beta=15,mu_EI=0.75,gamma=0.75,rho=0.9,N=1500),
-                 nsim=20,as.data.frame=TRUE,include.data=TRUE)
+  nsim=20,format="data.frame",include.data=TRUE)
 
-ggplot(sims,mapping=aes(x=time,y=B,group=sim,color=sim=="data"))+
+ggplot(sims,mapping=aes(x=day,y=B,group=.id,color=.id=="data"))+
   geom_line()+guides(color=FALSE)
 
 #' 
