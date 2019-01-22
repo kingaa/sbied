@@ -1,8 +1,7 @@
+library(tidyverse)
 library(pomp2)
-stopifnot(packageVersion("pomp2")>"2.0.9")
+stopifnot(packageVersion("pomp2")>="2.0.9.2")
 options(stringsAsFactors=FALSE)
-
-read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
 
 rproc <- Csnippet("
   double N = 763;
@@ -32,10 +31,12 @@ rmeas <- Csnippet("
 ")
 
 bsflu %>%
-  subset(select=-C) %>%
+  select(day,B) %>%
   pomp(times="day",t0=0,
     rprocess=euler(rproc,delta.t=1/5),
-    rinit=init,rmeasure=rmeas,dmeasure=dmeas,
+    rinit=init,
+    rmeasure=rmeas,
+    dmeasure=dmeas,
     statenames=c("S","I","R1","R2"),
     paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
 
@@ -51,6 +52,4 @@ for (np in Nps) {
 plot(Nps,times)
 lm(times~Nps) -> fit
 summary(fit)
-stats::coef(fit) -> ab
-abline(a=ab[1],b=ab[2])
-
+abline(fit)

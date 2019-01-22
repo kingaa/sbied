@@ -22,20 +22,18 @@
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
 ## ----prelims,purl=TRUE,cache=FALSE---------------------------------------
+library(plyr)
+library(tidyverse)
+theme_set(theme_bw())
+options(stringsAsFactors=FALSE)
 library(pomp2)
 stopifnot(packageVersion("pomp2")>"2.0.9")
-library(ggplot2)
-theme_set(theme_bw())
-library(plyr)
-options(stringsAsFactors=FALSE)
 set.seed(1221234211)
 
 #' 
 #' Model implementation
 #' 
 ## ----model---------------------------------------------------------------
-read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
-
 rproc <- Csnippet("
                   double N = 763;
                   double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
@@ -67,7 +65,7 @@ rmeas <- Csnippet("
                   ")
 
 bsflu %>%
-  subset(select=-C) %>%
+  select(day,B) %>%
   pomp(times="day",t0=-6,
     rprocess=euler(rproc,delta.t=1/5),
     rinit=init,rmeasure=rmeas,dmeasure=dmeas,
@@ -87,7 +85,7 @@ flu %>%
 #' Testing the particle filter:
 #' 
 ## ----test----------------------------------------------------------------
-pfilter(flu,Np=1000) -> pf
+flu %>% pfilter(Np=1000) -> pf
 logLik(pf)
 
 #' 
@@ -100,18 +98,18 @@ library(doParallel)
 
 registerDoParallel()
 
-bake(file="loglikest-pfilter.rds",seed=594717807L,
-     kind="L'Ecuyer-CMRG",
-     {
-       foreach (nfilt=c(10,100,1000), .combine=rbind,
-                .inorder=FALSE,
-                .options.multicore=list(set.seed=TRUE)) %:%
-         foreach (Np=c(1000,10000,100000), .combine=rbind) %:%
-         foreach (i=1:nfilt, .combine=rbind) %dopar% {
-           pfilter(flu,Np=Np) -> pf
-           logLik(pf) -> ll
-           data.frame(nfilt=nfilt,Np=Np,loglik=ll)
-         }
+bake(file="loglikest-pfilter.rds",
+  seed=594717807L,kind="L'Ecuyer-CMRG",
+  {
+    foreach (nfilt=c(10,100,1000),
+      .combine=rbind,.inorder=FALSE,
+      .options.multicore=list(set.seed=TRUE)) %:%
+      foreach (Np=c(1000,10000,100000), .combine=rbind) %:%
+      foreach (i=1:nfilt, .combine=rbind) %dopar% {
+        flu %>% pfilter(Np=Np) -> pf
+        logLik(pf) -> ll
+        data.frame(nfilt=nfilt,Np=Np,loglik=ll)
+      }
      }
 ) -> lls
 

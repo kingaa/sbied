@@ -204,9 +204,7 @@ $(document).ready(function () {
 <li><p>We’re going to demonstrate what happens when we attempt to compute the likelihood for the boarding school flu data by direct simulation from.</p></li>
 <li><p>First, let’s reconstruct the toy SIR model we were working with.</p></li>
 </ul>
-<pre class="r"><code>read.table(&quot;https://kingaa.github.io/sbied/stochsim/bsflu_data.txt&quot;) -&gt; bsflu
-
-rproc &lt;- Csnippet(&quot;
+<pre class="r"><code>rproc &lt;- Csnippet(&quot;
   double N = 763;
   double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
   double t2 = rbinom(I,1-exp(-mu_I*dt));
@@ -234,15 +232,16 @@ rmeas &lt;- Csnippet(&quot;
 &quot;)
 
 bsflu %&gt;%
-  subset(select=-C) %&gt;%
+  select(day,B) %&gt;%
   pomp(times=&quot;day&quot;,t0=0,
     rprocess=euler(rproc,delta.t=1/5),
     rinit=init,rmeasure=rmeas,dmeasure=dmeas,
     statenames=c(&quot;S&quot;,&quot;I&quot;,&quot;R1&quot;,&quot;R2&quot;),
     paramnames=c(&quot;Beta&quot;,&quot;mu_I&quot;,&quot;mu_R1&quot;,&quot;mu_R2&quot;,&quot;rho&quot;)) -&gt; flu</code></pre>
 <p>Let’s generate a large number of simulated trajectories at some particular point in parameter space.</p>
-<pre class="r"><code>simulate(flu,params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9),
-  nsim=5000,format=&quot;arrays&quot;) -&gt; x
+<pre class="r"><code>flu %&gt;%
+  simulate(params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9),
+    nsim=5000,format=&quot;arrays&quot;) -&gt; x
 matplot(time(flu),t(x$states[&quot;R1&quot;,1:50,]),type='l',lty=1,
   xlab=&quot;time&quot;,ylab=expression(R[1]),bty='l',col='blue')
 lines(time(flu),obs(flu,&quot;B&quot;),lwd=2,col='black')</code></pre>

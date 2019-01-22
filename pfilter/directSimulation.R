@@ -35,14 +35,12 @@ options(
   encoding="UTF-8"
 )
 
-set.seed(594709947L)
-library(ggplot2)
-theme_set(theme_bw())
 library(plyr)
-library(reshape2)
-library(magrittr)
+library(tidyverse)
+theme_set(theme_bw())
 library(pomp2)
 stopifnot(packageVersion("pomp2")>"2.0.9")
+set.seed(594709947L)
 
 #' 
 #' * We're going to demonstrate what happens when we attempt to compute the likelihood for the boarding school flu data by direct simulation from.
@@ -50,8 +48,6 @@ stopifnot(packageVersion("pomp2")>"2.0.9")
 #' * First, let's reconstruct the toy SIR model we were working with.
 #' 
 ## ----flu-construct-------------------------------------------------------
-read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
-
 rproc <- Csnippet("
   double N = 763;
   double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
@@ -80,7 +76,7 @@ rmeas <- Csnippet("
 ")
 
 bsflu %>%
-  subset(select=-C) %>%
+  select(day,B) %>%
   pomp(times="day",t0=0,
     rprocess=euler(rproc,delta.t=1/5),
     rinit=init,rmeasure=rmeas,dmeasure=dmeas,
@@ -90,8 +86,9 @@ bsflu %>%
 #' 
 #' Let's generate a large number of simulated trajectories at some particular point in parameter space.
 ## ----bbs-mc-like-2-------------------------------------------------------
-simulate(flu,params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9),
-  nsim=5000,format="arrays") -> x
+flu %>%
+  simulate(params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9),
+    nsim=5000,format="arrays") -> x
 matplot(time(flu),t(x$states["R1",1:50,]),type='l',lty=1,
   xlab="time",ylab=expression(R[1]),bty='l',col='blue')
 lines(time(flu),obs(flu,"B"),lwd=2,col='black')
@@ -127,4 +124,3 @@ summary(exp(ell))
 #' ## [Back](./pfilter.html)
 #' 
 #' --------------------------
-#' 

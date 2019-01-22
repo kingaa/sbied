@@ -35,14 +35,12 @@ options(
   encoding="UTF-8"
   )
 
-set.seed(594709947L)
-library(ggplot2)
-theme_set(theme_bw())
 library(plyr)
-library(reshape2)
-library(magrittr)
+library(tidyverse)
+theme_set(theme_bw())
 library(pomp2)
 stopifnot(packageVersion("pomp2")>"2.0.9")
+set.seed(594709947L)
 
 #' 
 #' \newcommand\prob{\mathbb{P}}
@@ -84,8 +82,6 @@ stopifnot(packageVersion("pomp2")>"2.0.9")
 #' Let's try this out on the toy SIR model we were working with, reconstructed as follows.
 #' 
 ## ----flu-construct-------------------------------------------------------
-read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
-
 rproc <- Csnippet("
   double N = 763;
   double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
@@ -114,12 +110,12 @@ rmeas <- Csnippet("
 ")
 
 bsflu %>%
-  subset(select=-C) %>%
-pomp(times="day",t0=0,
-     rprocess=euler(rproc,delta.t=1/5),
-     rinit=init,rmeasure=rmeas,dmeasure=dmeas,
-     statenames=c("S","I","R1","R2"),
-     paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
+  select(day,B) %>%
+  pomp(times="day",t0=0,
+    rprocess=euler(rproc,delta.t=1/5),
+    rinit=init,rmeasure=rmeas,dmeasure=dmeas,
+    statenames=c("S","I","R1","R2"),
+    paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
 
 #' 
 #' Here, let's opt for deterministic optimization of a rough function.
@@ -127,8 +123,9 @@ pomp(times="day",t0=0,
 #' Since Nelder-Mead is an unconstrained optimizer, we must transform the parameters.
 #' The following introduces such a transformation into the `pomp` object.
 ## ----flu-partrans--------------------------------------------------------
-pomp(flu,partrans=parameter_trans(log=c("Beta","mu_R1","mu_I"),logit="rho"),
-  paramnames=c("Beta","mu_I","mu_R1","rho")) -> flu
+flu %>%
+  pomp(partrans=parameter_trans(log=c("Beta","mu_R1","mu_I"),logit="rho"),
+    paramnames=c("Beta","mu_I","mu_R1","rho")) -> flu
 
 #' 
 #' Let's fix a reference point in parameter space and insert these parameters into the `pomp` object:
@@ -148,8 +145,7 @@ neg.ll <- function (par, est) {
   allpars[est] <- par
   try(
     freeze(
-      pfilter(flu,params=partrans(flu,allpars,dir="fromEst"),
-              Np=2000),
+      pfilter(flu,params=partrans(flu,allpars,dir="fromEst"),Np=2000),
       seed=915909831
     )
   ) -> pf
@@ -160,13 +156,13 @@ neg.ll <- function (par, est) {
 #' Now we call `optim` to minimize this function:
 ## ----flu-like-optim-2----------------------------------------------------
 ## use Nelder-Mead with fixed RNG seed
-fit <- optim(
+optim(
   par=c(log(2), log(1), log(0.9/(1-0.9))),
   est=c("Beta","mu_I","rho"),
   fn=neg.ll,
   method="Nelder-Mead",
   control=list(maxit=400,trace=0)
-)
+) -> fit
 
 mle <- flu
 coef(mle,c("Beta","mu_I","rho"),transform=TRUE) <- fit$par
@@ -180,13 +176,13 @@ ll <- logmeanexp(lls,se=TRUE); ll
 #' 
 #' We plot some simulations at these parameters.
 ## ----flu-sims------------------------------------------------------------
-simulate(mle,nsim=10,format="data.frame",include.data=TRUE) -> sims
+mle %>% simulate(nsim=10,format="data.frame",include.data=TRUE) -> sims
 
 #' The data are shown in blue.
 #' The `r max(sims$sim)` simulations are shown in red.
 ## ----flu-sims-plot,echo=F------------------------------------------------
 sims %>%
-ggplot(aes(x=day,y=B,group=.id,color=.id=="data"))+
+  ggplot(aes(x=day,y=B,group=.id,color=.id=="data"))+
   guides(color=FALSE)+
   geom_line()
 

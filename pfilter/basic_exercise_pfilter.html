@@ -266,8 +266,8 @@ logmeanexp(ll,se=TRUE)</code></pre>
 <pre><code>##                      se 
 ## -200.733235    2.018502</code></pre>
 <ul>
-<li><p>This took 0.39 minutes</p></li>
-<li><p>Since the time taken is approximately linear in <code>NP</code> and <code>REPLICATES</code>, we get a formula (for this machine) of <span class="math display">\[ \mbox{Runtime}\approx \frac{ \mathrm{NP}}{5\times 10^{4}} \times \frac{\mathrm{REPLICATES}}{ 10} \times 0.39 \mbox{ minutes}.\]</span></p></li>
+<li><p>This took 0.38 minutes</p></li>
+<li><p>Since the time taken is approximately linear in <code>NP</code> and <code>REPLICATES</code>, we get a formula (for this machine) of <span class="math display">\[ \mbox{Runtime}\approx \frac{ \mathrm{NP}}{5\times 10^{4}} \times \frac{\mathrm{REPLICATES}}{ 10} \times 0.38 \mbox{ minutes}.\]</span></p></li>
 <li><p>We can use this formula to select <code>NP</code> and <code>REPLICATES</code> to give an appropriate runtime.</p></li>
 <li><p><code>logmeanexp</code> averages the replications on the untransformed scale, not the log scale. It provides a standard error.</p></li>
 <li><p>On the untransformed scale, the particle filter gives an unbiased likelihood estimate, so <code>logmeanexp</code> gives an asymptotically consistent estimate of the log likelihood as <code>REPLICATES</code> increases toward infinity.</p></li>
@@ -299,7 +299,7 @@ logmeanexp(ll,se=TRUE)</code></pre>
 ##         mean
 ##     }
 ## }
-## &lt;bytecode: 0x5a13e20&gt;
+## &lt;bytecode: 0x5f6fca0&gt;
 ## &lt;environment: namespace:pomp2&gt;</code></pre>
 <ul>
 <li><p>We see that <code>logmeanexp</code> constructs its standard errors via a <a href="https://en.wikipedia.org/wiki/Jackknife_resampling">jack-knife</a> calculation.</p></li>

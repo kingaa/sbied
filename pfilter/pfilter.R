@@ -36,12 +36,11 @@
 #' 
 #' 
 ## ----prelims,cache=FALSE,include=FALSE-----------------------------------
+library(plyr)
+library(tidyverse)
 library(pomp2)
 stopifnot(packageVersion("pomp2")>"2.0.9")
-library(ggplot2)
 theme_set(theme_bw())
-library(plyr)
-library(reshape2)
 options(stringsAsFactors=FALSE)
 set.seed(1221234211)
 
@@ -576,7 +575,8 @@ set.seed(1221234211)
 #' 
 #' 
 ## ----flu-construct, echo=FALSE-------------------------------------------
-read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
+library(tidyverse)
+library(pomp2)
 
 rproc <- Csnippet("
   double N = 763;
@@ -606,10 +606,12 @@ rmeas <- Csnippet("
 ")
 
 bsflu %>%
-  subset(select=-C) %>%
+  select(day,B) %>%
   pomp(times="day",t0=0,
      rprocess=euler(rproc,delta.t=1/5),
-     rinit=init,rmeasure=rmeas,dmeasure=dmeas,
+     rinit=init,
+     rmeasure=rmeas,
+     dmeasure=dmeas,
      statenames=c("S","I","R1","R2"),
      paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
 
@@ -618,16 +620,17 @@ bsflu %>%
 #' We must choose the number of particles to use by setting the `Np` argument.
 #' 
 ## ----flu-pfilter-1,cache=T-----------------------------------------------
-pf <- pfilter(flu,Np=5000,params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9))
+flu %>%
+  pfilter(Np=5000,params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9)) -> pf
 logLik(pf)
 
 #' 
 #' We can run a few particle filters to get an estimate of the Monte Carlo variability:
 ## ----flu-pfilter-2,cache=T-----------------------------------------------
-pf <- replicate(10,
-                pfilter(flu,Np=5000,
-                        params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9)))
-ll <- sapply(pf,logLik)
+replicate(10,
+  flu %>% pfilter(Np=5000,params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9))
+) -> pf
+ll <- sapply(pf,logLik); ll
 logmeanexp(ll,se=TRUE)
 
 #' 
@@ -658,36 +661,37 @@ logmeanexp(ll,se=TRUE)
 sliceDesign(
   center=c(Beta=2,mu_I=1,mu_R1=1/4,mu_R2=1/1.8,rho=0.9),
   Beta=rep(seq(from=0.5,to=4,length=40),each=3),
-  mu_I=rep(seq(from=0.5,to=2,length=40),each=3)) -> p
+  mu_I=rep(seq(from=0.5,to=2,length=40),each=3)
+) -> p
 
 library(foreach)
 library(doParallel)
+library(doRNG)
+
 registerDoParallel()
+registerDoRNG(108028909)
 
-set.seed(108028909,kind="L'Ecuyer")
+foreach (theta=iter(p,"row"),
+  .combine=rbind,.inorder=FALSE) %dopar% {
+    library(pomp2)
 
-foreach (theta=iter(p,"row"),.combine=rbind,
-         .inorder=FALSE,
-         .options.multicore=list(set.seed=TRUE)
-) %dopar% {
-  library(pomp2)
-  pfilter(flu,params=unlist(theta),Np=5000) -> pf
-  theta$loglik <- logLik(pf)
-  theta
-} -> p
+    flu %>% pfilter(params=unlist(theta),Np=5000) -> pf
+
+    theta$loglik <- logLik(pf)
+    theta
+  } -> p
 
 #' 
 #' - Note that we've used the **foreach** package with the parallel backend (**doParallel**) to parallelize these computations.
 #' 
-#' - To ensure that we have high-quality random numbers in each parallel *R* session, we use a parallel random number generator (`kind="L'Ecuyer"`, `.options.multicore=list(set.seed=TRUE)`).
+#' - To ensure that we have high-quality random numbers in each parallel *R* session, we use a parallel random number generator provided by the **doRNG** package and initialized by the `registerDoRNG` call.
 #' 
 ## ----flu-like-slice-plot,cache=FALSE,echo=FALSE--------------------------
-library(magrittr)
-library(reshape2)
-library(ggplot2)
+library(tidyverse)
+
 p %>% 
-  melt(measure=c("Beta","mu_I")) %>%
-  subset(variable==slice) %>%
+  gather(variable,value,Beta,mu_I) %>%
+  filter(variable==slice) %>%
   ggplot(aes(x=value,y=loglik,color=variable))+
   geom_point()+
   facet_grid(~variable,scales="free_x")+
@@ -696,40 +700,40 @@ p %>%
   theme_bw()
 
 #' 
-#' 
-#' 
 #' - Slices offer a very limited perspective on the geometry of the likelihood surface.
 #' When there are only two unknown parameters, we can evaluate the likelihood at a grid of points and visualize the surface directly.
 ## ----flu-grid1-----------------------------------------------------------
-bake(file="flu-grid1.rds",seed=421776444,kind="L'Ecuyer",{
+bake(file="flu-grid1.rds",{
   
-  expand.grid(Beta=seq(from=1.5,to=5,length=50),
-              mu_I=seq(from=0.7,to=4,length=50),
-              mu_R1=1/4,mu_R2=1/1.8,
-              rho=0.9) -> p
+  expand.grid(
+    Beta=seq(from=1.5,to=5,length=50),
+    mu_I=seq(from=0.7,to=4,length=50),
+    mu_R1=1/4,mu_R2=1/1.8,
+    rho=0.9
+  ) -> p
   
   library(foreach)
   library(doParallel)
+  library(doRNG)
+
   registerDoParallel()
+  registerDoRNG(421776444)
   
   ## Now we do the computation
-  foreach (theta=iter(p,"row"),.combine=rbind,.inorder=FALSE,
-           .options.multicore=list(set.seed=TRUE)
-  ) %dopar% 
-  {
-    library(pomp2)
-    pfilter(flu,params=unlist(theta),Np=5000) -> pf
-    theta$loglik <- logLik(pf)
-    theta
-  }
+  foreach (theta=iter(p,"row"),
+    .combine=rbind,.inorder=FALSE) %dopar% {
+      library(pomp2)
+      
+      flu %>% pfilter(params=unlist(theta),Np=5000) -> pf
+
+      theta$loglik <- logLik(pf)
+      theta
+    }
   
 })-> p
 
 ## ----flu-grid1-plot,echo=F,purl=T----------------------------------------
-library(magrittr)
-library(reshape2)
-library(plyr)
-p %<>% arrange(Beta,mu_I,mu_R1,mu_R2,rho)
+p %>% arrange(Beta,mu_I,mu_R1,mu_R2,rho) -> p
 saveRDS(p,file="flu-grid1.rds")
 p %>% 
   mutate(loglik=ifelse(loglik>max(loglik)-50,loglik,NA)) %>%
