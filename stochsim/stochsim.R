@@ -37,9 +37,8 @@
 #' 
 ## ----prelims,echo=F,cache=F----------------------------------------------
 library(plyr)
-library(reshape2)
+library(tidyverse)
 library(pomp2)
-library(ggplot2)
 theme_set(theme_bw())
 options(stringsAsFactors=FALSE)
 stopifnot(packageVersion("pomp2")>"2.0.9")
@@ -349,7 +348,10 @@ set.seed(594709947L)
 #' 
 #' * Download the data and examine it:
 ## ----flu-data1-----------------------------------------------------------
-read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
+library(plyr)
+library(tidyverse)
+library(pomp2)
+
 head(bsflu)
 
 #' 
@@ -358,7 +360,10 @@ head(bsflu)
 #' * Let's restrict our attention for the moment to the `B` variable.
 #' 
 ## ----flu-data2,echo=F----------------------------------------------------
-ggplot(data=bsflu,aes(x=day,y=B))+geom_line()+geom_point()
+bsflu %>%
+  ggplot(aes(x=day,y=B))+
+  geom_line()+
+  geom_point()
 
 #' 
 #' <br>
@@ -439,9 +444,13 @@ sir_init <- Csnippet("
 #' * We fold these C snippets, with the data, into a `pomp` object thus:
 #' 
 ## ----rproc1-pomp---------------------------------------------------------
-pomp(bsflu,time="day",t0=0,rprocess=euler(sir_step,delta.t=1/6),
-  rinit=sir_init,paramnames=c("N","Beta","gamma"),
-  statenames=c("S","I","R")) -> sir
+bsflu %>%
+  pomp(times="day",t0=0,
+    rprocess=euler(sir_step,delta.t=1/6),
+    rinit=sir_init,
+    paramnames=c("N","Beta","gamma"),
+    statenames=c("S","I","R")
+  ) -> sir
 
 #' 
 #' * Now let's assume that the case reports, $B$, result from a process by which new infections result in confinement with probability $\rho$, which we can think of as the probability that an infection is severe enough to be noticed by the school authorities.
@@ -469,8 +478,10 @@ sir_init <- Csnippet("
   H = 0;
 ")
 
-pomp(sir,rprocess=euler(sir_step,delta.t=1/6),rinit=sir_init,
-  paramnames=c("Beta","gamma","N"),statenames=c("S","I","R","H")) -> sir
+sir %>%
+  pomp(rprocess=euler(sir_step,delta.t=1/6),rinit=sir_init,
+    paramnames=c("Beta","gamma","N"),statenames=c("S","I","R","H")
+  ) -> sir
 
 #' 
 #' * Now, we'll model the data, $B$, as a binomial process,
@@ -482,7 +493,7 @@ pomp(sir,rprocess=euler(sir_step,delta.t=1/6),rinit=sir_init,
 #' 
 #' * We do this by setting the `accumvars` argument to `pomp`:
 ## ----zero1---------------------------------------------------------------
-pomp(sir,accumvars="H") -> sir
+sir %>% pomp(accumvars="H") -> sir
 
 #' 
 #' * Now, to include the observations in the model, we must write both a `dmeasure` and an `rmeasure` component:
@@ -492,7 +503,7 @@ rmeas <- Csnippet("B = rbinom(H,rho);")
 
 #' * We then put these into our `pomp` object:
 ## ----add-meas-model------------------------------------------------------
-sir <- pomp(sir,rmeasure=rmeas,dmeasure=dmeas,statenames="H",paramnames="rho")
+sir %>% pomp(rmeasure=rmeas,dmeasure=dmeas,statenames="H",paramnames="rho") -> sir
 
 #' 
 #' <br>
@@ -519,11 +530,14 @@ sir <- pomp(sir,rmeasure=rmeas,dmeasure=dmeas,statenames="H",paramnames="rho")
 #' 
 #' * Let's simulate the model at these parameters.
 ## ----sir_sim1------------------------------------------------------------
-sims <- simulate(sir,params=c(Beta=1.5,gamma=1,rho=0.9,N=2600),
-  nsim=20,format="data.frame",include.data=TRUE)
+sir %>%
+  simulate(params=c(Beta=1.5,gamma=1,rho=0.9,N=2600),
+    nsim=20,format="data.frame",include.data=TRUE) -> sims
 
-ggplot(sims,mapping=aes(x=day,y=B,group=.id,color=.id=="data"))+
-  geom_line()+guides(color=FALSE)
+sims %>%
+  ggplot(aes(x=day,y=B,group=.id,color=.id=="data"))+
+  geom_line()+
+  guides(color=FALSE)
 
 #' 
 #' <br>
@@ -536,7 +550,7 @@ ggplot(sims,mapping=aes(x=day,y=B,group=.id,color=.id=="data"))+
 #' 
 #' Fiddle with the parameters to see if you can't find parameters for which the data are a more plausible realization.
 #' 
-#' [Worked solution to the Exercise](./exercises.html#Basic-Exercise:-Explore-the-SIR-model)
+#' [Worked solution to the Exercise](./exercises.html#basic-exercise-explore-the-sir-model)
 #' 
 #' <br>
 #' 
@@ -553,7 +567,7 @@ ggplot(sims,mapping=aes(x=day,y=B,group=.id,color=.id=="data"))+
 #' Modify the codes above to construct a `pomp` object containing the flu data and an SEIR model.
 #' Perform simulations as above and adjust parameters to get a sense of whether improvement is possible by including a latent period.
 #' 
-#' [Worked solution to the Exercise](./exercises.html#Basic-Exercise:-The-SEIR-model)
+#' [Worked solution to the Exercise](./exercises.html#basic-exercise-the-seir-model)
 #' 
 #' <br>
 #' 

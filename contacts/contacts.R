@@ -69,7 +69,7 @@ matplot(t(contact_data[1:15,1:4]),
 #' $$C_{ij}= \alpha^{j-1}\int_{t_{j-1}}^{t_j} X_i(t)\, dt,$$
 #' where $\alpha$ is an additional secular trend that accounts for the observed decline in reported contacts.
 #' A basic stochastic model for homogeneous count data would model $y_{ij}$ as a Poisson random variable with mean and variance equal to $C_{ij}$
-#' [@keeling09].
+#' [@Keeling2009].
 #' However, the variance in the data are much higher than the mean of the data [@romero-severson12-scid].
 #' To account for this we assume that the data are negative binomially distributed [@breto11], which is a generalization of a Poisson distribution that allows for increased variance for a fixed mean, leading to the model
 #' $$y_{ij}\sim \mathrm{NegBin}\, \left(C_{ij},D_{i}\right),$$
@@ -105,6 +105,8 @@ matplot(t(contact_data[1:15,1:4]),
 #' For all situations, the per contact probability of transmission was set to 1/120, the average length of infection was set to 10 years, and the infection-free equilibrium population size was set to 3000. The per contact probability was selected such that the basic reproduction number in the the 'Homogeneous' case was 1.53. In the 'Homogeneous', 'Between Heterogeneity', `Within+Between Heterogeneity' cases respectively 239/500 and 172/500, 95/500 simulations died out before the 100 year mark.
 #' 
 #' ## Three ways to represent a longitudinal model as a POMP.
+#' 
+#' ### Note: the new [panelPomp](https://github.com/cbreto/panelPomp) package provides facilities for this
 #' 
 #' Partially observed Markov process (POMP) models provide a general framework for mechanistic modeling of time series data [@breto09].
 #' 

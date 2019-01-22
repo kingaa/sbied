@@ -97,6 +97,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -104,14 +107,74 @@ button.code-folding-btn:focus {
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -147,7 +210,7 @@ $(document).ready(function () {
 <h2>Schedule of Topics</h2>
 <ol start="0" style="list-style-type: decimal">
 <li><a href="./prep/preparation.html">Instructions for preparing your laptop for the course exercises</a></li>
-<li><a href="./intro/intro.html">Introduction: What is “Simulation-based Inference for Epidemiological Dynamics?”</a>   <a href="http://raw.githubusercontent.com/kingaa/sbied/master/intro/intro.R">(<strong>R</strong> script)</a></li>
+<li><a href="./intro/intro.html">Introduction: What is “Simulation-based Inference for Epidemiological Dynamics?”</a></li>
 <li><a href="./stochsim/stochsim.html">Simulation of stochastic dynamic models</a>   <a href="http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/stochsim.R">(<strong>R</strong> script)</a></li>
 <li><a href="./pfilter/pfilter.html">Likelihood for POMPs: theory and practice</a>   <a href="http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R">(<strong>R</strong> script)</a></li>
 <li><a href="./mif/mif.html">Iterated filtering: theory and practice</a>   <a href="http://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R">(<strong>R</strong> script)</a></li>

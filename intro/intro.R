@@ -97,13 +97,14 @@ set.seed(2028866059L)
 #' 
 #' ## Questions and answers
 #' 
+#' 1. [How to explain the resurgence of pertussis in countries with sustained high vaccine coverage?](https://doi.org/10.1126/scitranslmed.aaj1748)
 #' 1. [What roles are played by asymptomatic infection and waning immunity in cholera epidemics?](http://dx.doi.org/10.1038/nature07084)
-#' 7. [Do subclinical infections of pertussis play an important epidemiological role?](http://dx.doi.org/10.1371/journal.pone.0072086)
+#' 1. [How long does pertussis vaccine protection last and how does it fail?](https://doi.org/10.1017/S0031182015000979)
 #' 3. [What explains the seasonality of measles?](http://dx.doi.org/10.1098/rsif.2009.0151)
+#' 7. [Do subclinical infections of pertussis play an important epidemiological role?](http://dx.doi.org/10.1371/journal.pone.0072086)
 #' 2. [What is the contribution to the HIV epidemic of dynamic variation in sexual behavior of an individual over time? How does this compare to the role of heterogeneity between individuals?](http://dx.doi.org/10.1093/aje/kwv044)
 #' 5. [What explains the interannual variability of malaria?](http://dx.doi.org/10.1371/journal.pcbi.1000898)
 #' 6. [What will happen next in an Ebola outbreak?](http://dx.doi.org/10.1098/rspb.2015.0347)
-#' 1. [How does vaccine-induced immunity fail?](http://doi.org/10.1017/S0031182015000979)
 #' 1. [Can hydrology explain the seasonality of cholera?](http://doi.org/10.1016/j.advwatres.2016.11.012)
 #' 1. [What is the contribution of adults to polio transmission?](http://doi.org/10.1073/pnas.1323688111)
 #' 
@@ -233,10 +234,16 @@ set.seed(2028866059L)
 #' * Note the distinction: lower case '**pomp2**' is a software package; upper case 'POMP' is a class of models.
 #' 
 #' * **pomp2** builds methodology for POMP models in terms of arbitrary user-specified POMP models.
-#'  
+#' 
 #' * **pomp2** provides tools, documentation, and examples to help users specify POMP models.
-#'  
+#' 
 #' * **pomp2** provides a platform for modification and sharing of models, data-analysis workflows, and methodological development.
+#' 
+#' * It is useful to divide the **pomp2** package functionality into different levels:
+#' 	- basic model components
+#' 	- workhorses
+#' 	- elementary POMP algorithms
+#' 	- estimation algorithms
 #' 
 #' <br>
 #' 
@@ -245,8 +252,6 @@ set.seed(2028866059L)
 #' ---------
 #' 
 #' ### Basic model components and workhorses
-#' 
-#' It is useful to divide the **pomp2** package functionality into different levels.
 #' 
 #' *Basic model components* are user-specified procedures that perform the elementary computations that specify a POMP model.
 #' There are nine of these:
@@ -297,8 +302,7 @@ set.seed(2028866059L)
 #' - `bsmc2`: Liu-West algorithm for Bayesian SMC
 #' - `pmcmc`: a particle MCMC algorithm
 #' - `mif2`: iterated filtering (IF2)
-#' - `enkf`: ensemble Kalman filter
-#' - `eakf`: ensemble adjusted Kalman filter
+#' - `enkf`, `eakf` ensemble and ensemble adjusted Kalman filters
 #' - `traj_objfun`: trajectory matching
 #' - `spect_objfun`: power spectrum matching
 #' - `probe_objfun`: probe matching
@@ -331,7 +335,6 @@ set.seed(2028866059L)
 #' ------------------------------
 #' 
 #' ## [Back to course homepage](../index.html)
-#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/intro/intro.R)
 #' 
 #' ----------------------
 #' 
