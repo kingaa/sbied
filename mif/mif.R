@@ -23,6 +23,8 @@
 #' Produced with **R** version `r getRversion()` and **pomp2** version `r packageVersion("pomp2")`.
 #' 
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
+library(plyr)
+library(tidyverse)
 library(pomp2)
 options(stringsAsFactors=FALSE)
 stopifnot(packageVersion("pomp2")>"2.0.9")
@@ -270,10 +272,10 @@ set.seed(557976883)
 #' Reports consist of the number of children confined to bed for each of the 14 days of the outbreak.
 #' The total number of children at the school was 763, and a total of 512 children spent time away from class.
 #' Only one adult developed influenza-like illness, so adults are omitted from the data and model.
-#' First, we read in the data:
+#' The data are provided with the package in the `bsflu` object:
 #' 
 ## ----load_bbs------------------------------------------------------------
-bsflu_data <- read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt")
+head(bsflu)
 
 #' 
 #' Our model is a variation on a basic SIR Markov chain, with state $X(t)=(S(t),I(t),R_1(t),R_2(t),R_3(t))$ giving the numbers of individuals in the susceptible and infectious categories, and three stages of recovery.
@@ -312,7 +314,7 @@ statenames <- c("S","I","R1")
 paramnames <- c("Beta","mu_I","mu_R1","rho")
 
 #' 
-#' In the codes below, we'll refer to the data variables by their names ($B$, $C$), as given in the `bsflu_data` data-frame:
+#' In the codes below, we'll refer to the data variables by their names ($B$, $C$), as given in the `bsflu` data-frame:
 #' 
 #' Now, we write the model code:
 #' 
@@ -363,18 +365,22 @@ fromEst <- Csnippet("
 #' Now we build the pomp object:
 #' 
 ## ----pomp_bsflu----------------------------------------------------------
+library(plyr)
+library(tidyverse)
 library(pomp2)
 
-pomp(
-  data=subset(bsflu_data,select=-C),
-  times="day",t0=0,
-  rmeasure=rmeas,dmeasure=dmeas,
-  rprocess=euler(rproc,delta.t=1/12),
-  rinit=rinit,
-  partrans=parameter_trans(fromEst=fromEst,toEst=toEst),
-  statenames=statenames,
-  paramnames=paramnames
-) -> bsflu
+bsflu %>%
+  select(day,B) %>%
+  pomp(
+    times="day",t0=0,
+    rmeasure=rmeas,
+    dmeasure=dmeas,
+    rprocess=euler(rproc,delta.t=1/12),
+    rinit=rinit,
+    partrans=parameter_trans(fromEst=fromEst,toEst=toEst),
+    statenames=statenames,
+    paramnames=paramnames
+  ) -> flu
 
 #' 
 #' <br>
@@ -394,7 +400,7 @@ params <- c(Beta=2,mu_I=1,rho=0.9,mu_R1=1/3,mu_R2=1/2)
 #' 
 #' Now to run and plot some simulations:
 ## ----init_sim------------------------------------------------------------
-y <- simulate(bsflu,params=params,nsim=10,format="data.frame")
+flu %>% simulate(params=params,nsim=10,format="data.frame") -> y
 
 #' 
 #' Before engaging in iterated filtering, it is a good idea to check that the basic particle filter is working since iterated filtering builds on this technique.
@@ -402,7 +408,7 @@ y <- simulate(bsflu,params=params,nsim=10,format="data.frame")
 #' the particle filter depends on the `rprocess` and `dmeasure` codes and so is a check of the latter.
 #' 
 ## ----init_pfilter--------------------------------------------------------
-pf <- pfilter(bsflu,params=params,Np=1000)
+flu %>% pfilter(params=params,Np=1000) -> pf
 
 #' 
 #' The above plot shows the data (`B`), along with the *effective sample size* of the particle filter (`ess`) and the log likelihood of each observation conditional on the preceding ones (`cond.logLik`).
@@ -418,7 +424,8 @@ pf <- pfilter(bsflu,params=params,Np=1000)
 #' Let's treat $\mu_{R_1}$ and  $\mu_{R_2}$ as known, and fix these parameters at the empirical means of the bed-confinement and convalescence times for symptomatic cases, respectively:
 #' 
 ## ----fixed_params--------------------------------------------------------
-(fixed_params <- with(bsflu_data,c(mu_R1=1/(sum(B)/512),mu_R2=1/(sum(C)/512))))
+with(bsflu,c(mu_R1=1/(sum(B)/512),mu_R2=1/(sum(C)/512))) -> fixed_params
+fixed_params
 
 #' 
 #' We will estimate $\beta$, $\mu_I$, and $\rho$.
@@ -451,9 +458,9 @@ library(doRNG)
 registerDoRNG(625904618)
 bake(file="pf.rds",{
   foreach(i=1:10,.packages='pomp2',
-    .export=c("bsflu","fixed_params")
+    .export=c("flu","fixed_params")
   ) %dopar% {
-    pfilter(bsflu,params=c(Beta=2,mu_I=1,rho=0.9,fixed_params),Np=10000)
+    flu %>% pfilter(params=c(Beta=2,mu_I=1,rho=0.9,fixed_params),Np=10000)
   }
 }) -> pf
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
@@ -500,11 +507,11 @@ bake(file="box_search_local.rds",{
   foreach(i=1:20,
     .packages='pomp2',
     .combine=c, 
-    .export=c("bsflu","fixed_params")
+    .export=c("flu","fixed_params")
   ) %dopar%  
   {
+    flu %>%
     mif2(
-      bsflu,
       params=c(Beta=2,mu_I=1,rho=0.9,fixed_params),
       Np=2000,
       Nmif=50,
@@ -592,13 +599,13 @@ bake(file="box_search_global.rds",{
   foreach(guess=iter(guesses,"row"), 
     .packages='pomp2', 
     .combine=rbind,
-    .options.multicore=list(set.seed=TRUE),
     .export=c("mf1","fixed_params")
   ) %dopar% 
   {
-    mf <- mif2(mf1,params=c(unlist(guess),fixed_params))
-    mf <- mif2(mf,Nmif=100)
-    ll <- replicate(10,logLik(pfilter(mf,Np=100000)))
+    mf1 %>%
+      mif2(params=c(unlist(guess),fixed_params)) %>%
+      mif2(Nmif=100) -> mf
+    ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
     ll <- logmeanexp(ll,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
   }
@@ -674,7 +681,7 @@ write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 #' 
 #' #### Extra Exercise: Checking the source code
 #' 
-#' Check the source code for the `bsflu` pomp object.
+#' Check the source code for the `flu` pomp object.
 #' Does the code implement the model described?
 #' 
 #' For various reasons, it can be surprisingly hard to make sure that the written equations and the code are perfectly matched.

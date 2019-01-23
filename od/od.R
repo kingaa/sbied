@@ -1,6 +1,6 @@
 #' ---
 #' title: "Modeling stochasticity: Overdispersion in the boarding school flu data"
-#' author: "Edward Ionides"
+#' author: "Edward Ionides and Aaron King"
 #' output:
 #'   html_document:
 #'     toc: yes
@@ -24,9 +24,11 @@
 #' Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 #' 
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
-library(pomp)
+library(plyr)
+library(tidyverse)
+library(pomp2)
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp")>="1.18")
+stopifnot(packageVersion("pomp2")>"2.0.9")
 set.seed(557976883)
 
 #' 
@@ -59,7 +61,7 @@ set.seed(557976883)
 #' 
 #' 4. Think about scientific interpretations of overdispersion if it is statistically evident.
 #' 
-#' 5. Demonstrate an investigation integrating data analysis and statistical reasoning using **pomp**.
+#' 5. Demonstrate an investigation integrating data analysis and statistical reasoning using **pomp2**.
 #' 
 #' <br>
 #' 
@@ -105,7 +107,7 @@ set.seed(557976883)
 #' * The dataset is the same as we looked at previously. 
 #' 
 ## ----load_bbs------------------------------------------------------------
-bsflu_data <- read.table("bsflu_data.txt")
+head(bsflu)
 
 #' 
 #' ### Specification of a basic SIR model
@@ -198,7 +200,7 @@ paramnames <- c("Beta","mu_I","mu_R1","rho","sigma","psi")
 paramnames
 
 #' 
-#' In the codes below, we'll refer to the data variables by their names ($B$, $C$), as given in the `bsflu_data` data-frame:
+#' In the codes below, we'll refer to the data variables by their names ($B$, $C$), as given in the `bsflu` data-frame:
 #' 
 #' The model code is available for inspection:
 ## ----csnippets_bsflu-----------------------------------------------------
@@ -237,38 +239,23 @@ init <- Csnippet("
  R1 = 0;
 ")
 
-fromEst <- Csnippet("
- TBeta = exp(Beta);
- Tmu_I = exp(mu_I);
- Trho = expit(rho);
- Tsigma = exp(sigma);
- Tpsi = exp(psi);
-")
-
-toEst <- Csnippet("
- TBeta = log(Beta);
- Tmu_I = log(mu_I);
- Trho = logit(rho);
- Tsigma = log(sigma);
- Tpsi = log(psi);
-")
-
 #' 
 #' Now we build the `pomp` object:
 #' 
 ## ----pomp_bsflu----------------------------------------------------------
-library(pomp)
+library(pomp2)
 
-pomp(
-  data=subset(bsflu_data,select=-C),
-  times="day",t0=0,
-  rmeasure=rmeas,dmeasure=dmeas,
-  rprocess=euler.sim(rproc,delta.t=1/12),
-  initializer=init,
-  fromEstimationScale=fromEst,toEstimationScale=toEst,
-  statenames=statenames,
-  paramnames=paramnames
-) -> bsflu
+bsflu %>%
+  select(day,B) %>%
+  pomp(
+    times="day",t0=0,
+    rmeasure=rmeas,dmeasure=dmeas,
+    rprocess=euler(rproc,delta.t=1/12),
+    rinit=init,
+    partrans=parameter_trans(log=c("Beta","mu_I","sigma","psi"),logit="rho"),
+    statenames=statenames,
+    paramnames=paramnames
+  ) -> flu
 
 #' 
 #' <br>
@@ -288,12 +275,14 @@ params <- c(Beta=2,mu_I=1,rho=0.9,mu_R1=1/3,sigma=0.2,psi=5)
 #' 
 #' Now we run and plot some simulations:
 ## ----init_sim------------------------------------------------------------
-y <- simulate(bsflu,params=params,nsim=10,as.data.frame=TRUE)
+flu %>% simulate(params=params,nsim=10,format="data.frame") -> y
+
 library(ggplot2)
 theme_set(theme_bw())
-library(reshape2)
-ggplot(data=y,mapping=aes(x=time,y=B,group=sim))+
-    geom_line()
+
+y %>%
+  ggplot(aes(x=day,y=B,group=.id))+
+  geom_line()
 
 #' 
 #' * Before engaging in iterated filtering, it is a good idea to check that the basic particle filter is working since iterated filtering builds on this technique.
@@ -305,10 +294,10 @@ ggplot(data=y,mapping=aes(x=time,y=B,group=sim))+
 NP <- 5000
 #SHORT_RUN <- TRUE
 SHORT_RUN <- FALSE
-if(SHORT_RUN) NP <- 1000
+if (SHORT_RUN) NP <- 1000
 #DEBUG <- TRUE
 DEBUG <- FALSE
-if(DEBUG) NP <- 50
+if (DEBUG) NP <- 50
 
 #' 
 #' * Here, we use $J=`r NP`$ particles.
@@ -319,7 +308,7 @@ if(DEBUG) NP <- 50
 #' 
 #' * Now we compute the likelihood at our parameter guess.
 ## ----init_pfilter--------------------------------------------------------
-pf <- pfilter(bsflu,params=params,Np=NP)
+flu %>% pfilter(params=params,Np=NP) -> pf
 
 #' 
 #' * `plot(pf)` shows the data (`B`), along with the *effective sample size* of the particle filter (`ess`) and the log likelihood of each observation conditional on the preceding ones (`cond.logLik`).
@@ -334,7 +323,7 @@ pf <- pfilter(bsflu,params=params,Np=NP)
 #' 
 #' * Let's treat $\mu_{R_1}$ as known, fixed at the empirical means of the bed-confinement times:
 ## ----fixed_params--------------------------------------------------------
-(fixed_params <- with(bsflu_data,c(mu_R1=1/(sum(B)/512))))
+(fixed_params <- with(bsflu,c(mu_R1=1/(sum(B)/512))))
 
 #' 
 #' * We will estimate $\beta$, $\mu_I$, $\rho$ and $\sigma$.
@@ -352,7 +341,7 @@ pf <- pfilter(bsflu,params=params,Np=NP)
 ## ----parallel-setup,cache=FALSE------------------------------------------
 library(foreach)
 library(doParallel)
-registerDoParallel(20)
+registerDoParallel()
 
 #' 
 #' * The first two lines above load the **foreach** and **doParallel** packages, the latter being a "backend" for the **foreach** package.
@@ -364,18 +353,17 @@ registerDoParallel(20)
 #' ### Running a particle filter.
 #' 
 ## ----pf------------------------------------------------------------------
-set.seed(43789123,kind="L'Ecuyer")
 N_LIK_REPS <- 10
-bake(file="pf.rds",{
-  foreach(i=1:N_LIK_REPS,.packages='pomp',
-    .export=c("bsflu","fixed_params"),
+bake(file="pf.rds",seed=43789123,kind="L'Ecuyer",{
+  foreach(i=1:N_LIK_REPS,.packages='pomp2',
+    .export=c("flu","fixed_params"),
     .inorder=FALSE,
     .options.multicore=list(set.seed=TRUE)
   ) %dopar% {
-    pfilter(bsflu,params=c(Beta=2,mu_I=1,rho=0.9,sigma=0.2,psi=20,fixed_params),Np=NP)
+    flu %>% pfilter(params=c(Beta=2,mu_I=1,rho=0.9,sigma=0.2,psi=20,fixed_params),Np=NP)
   }
 }) -> pf
-(L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
+(pf %>% sapply(logLik) %>% logmeanexp(se=TRUE) -> L_pf)
 
 #' 
 #' * We proceed to carry out `r N_LIK_REPS` replicated particle filters, each with `r NP` particles, with the parameter vector set to at an initial guess of $\beta=2$, $\mu_I=1$, $\rho=0.9$ and $\sigma=0.2$, $\psi=20$.
@@ -400,35 +388,32 @@ bake(file="pf.rds",{
 NMIF <- 100
 NP_MIF <- NP/2
 
-if(SHORT_RUN){
+if (SHORT_RUN) {
   NP_MIF <- NP_MIF/2
   NMIF <- NMIF/2
 }
 
-if(DEBUG) {
+if (DEBUG) {
   NP_MIF <- 50
   NMIF <- 5
 }
 
-set.seed(8944688,kind="L'Ecuyer")
-bake(file="box_search_local.rds",{
-foreach(i=1:20,
-    .packages='pomp',
+bake(file="box_search_local.rds",seed=8944688,kind="L'Ecuyer",{
+  foreach(i=1:20,
+    .packages='pomp2',
     .combine=c, 
     .export=c("bsflu","fixed_params"),
     .inorder=FALSE,
     .options.multicore=list(set.seed=TRUE)
-    ) %dopar% {
-    mif2(
-      bsflu,
-      start=c(Beta=2,mu_I=1,rho=0.9,sigma=0.2,psi=20,fixed_params),
-      Np=NP_MIF,
-      Nmif=NMIF,
-      cooling.type="geometric",
-      cooling.fraction.50=0.5,
-      transform=TRUE,
-      rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02,sigma=0.02,psi=0.02)
-    )
+  ) %dopar% {
+    flu %>%
+      mif2(
+        params=c(Beta=2,mu_I=1,rho=0.9,sigma=0.2,psi=20,fixed_params),
+        Np=NP_MIF,
+        Nmif=NMIF,
+        cooling.fraction.50=0.5,
+        rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02,sigma=0.02,psi=0.02)
+      )
   } 
 }) -> mifs_local
 
@@ -438,7 +423,7 @@ foreach(i=1:20,
 #' 
 #' * No filtering failures (`nfail`) are generated at any point, which is comforting.
 #' 
-#' * In general, we expect to see filtering failures whenever our initial guess (`start`) is incompatible with one or more of the observations.
+#' * In general, we expect to see filtering failures whenever our initial guess (`params`) is incompatible with one or more of the observations.
 #' 
 #' * Filtering failures at the MLE are an indication that the model, at its best, is incompatible with one or more of the data.
 #' 
@@ -454,9 +439,8 @@ foreach(i=1:20,
 #' 
 ## ----lik_local-----------------------------------------------------------
 NP_LIK <- NP
-set.seed(7774282,kind="L'Ecuyer")
-bake(file="lik_local.rds",{
-  foreach(mf=mifs_local,.packages='pomp',
+bake(file="lik_local.rds",seed=7774282,kind="L'Ecuyer",{
+  foreach(mf=mifs_local,.packages='pomp2',
     .combine=rbind,
     .inorder=FALSE,
     .options.multicore=list(set.seed=TRUE)
@@ -508,25 +492,29 @@ params_box <- rbind(
 #' We are now ready to carry out likelihood maximizations from diverse starting points.
 ## ----box_search_global---------------------------------------------------
 NGLOBAL <- 300
-if(SHORT_RUN){
+if (SHORT_RUN) {
   NGLOBAL <- 100
 }
-if(DEBUG) {
+if (DEBUG) {
   NGLOBAL <- 10
 }
-set.seed(8211297,kind="L'Ecuyer")
-guesses <- as.data.frame(apply(params_box,1,function(x)runif(NGLOBAL,x[1],x[2])))
+
+params_box %>%
+  apply(1,function(x)runif(NGLOBAL,x[1],x[2])) %>%
+  as.data.frame() -> guesses
+
 mf1 <- mifs_local[[1]]
-bake(file="box_search_global.rds",{
+
+bake(file="box_search_global.rds",seed=8211297,kind="L'Ecuyer",{
   foreach(guess=iter(guesses,"row"), 
-    .packages='pomp', 
+    .packages='pomp2', 
     .combine=rbind,
     .inorder=FALSE,
     .options.multicore=list(set.seed=TRUE),
     .export=c("mf1","fixed_params")
   ) %dopar% 
   {
-    mf <- mif2(mf1,start=c(unlist(guess),fixed_params),Nmif=NMIF,Np=NP_MIF)
+    mf1 %>% mif2(params=c(unlist(guess),fixed_params),Nmif=NMIF,Np=NP_MIF) -> mf
     ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_LIK)))
     ll <- logmeanexp(ll,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
@@ -578,23 +566,27 @@ results_global <- as.data.frame(results_global)
 ## ----box_search_global_sigma---------------------------------------------
 params_box_sigma <- params_box[c("Beta","mu_I","rho","sigma"),]
 fixed_params_sigma <- c(fixed_params,psi=1e6)
-set.seed(4397288,kind="L'Ecuyer")
-guesses <- as.data.frame(apply(params_box_sigma,1,function(x)runif(NGLOBAL,x[1],x[2])))
+
+params_box_sigma %>%
+  apply(1,function(x)runif(NGLOBAL,x[1],x[2])) %>%
+  as.data.frame() -> guesses
+
 mf1 <- mifs_local[[1]]
-bake(file="box_search_global_sigma.rds",{
+
+bake(file="box_search_global_sigma.rds",seed=4397288,kind="L'Ecuyer",{
   foreach(guess=iter(guesses,"row"), 
-    .packages='pomp', 
+    .packages='pomp2', 
     .combine=rbind,
     .options.multicore=list(set.seed=TRUE),
     .inorder=FALSE,
     .export=c("mf1","fixed_params_sigma")
   ) %dopar% 
   {
-    mf <- mif2(mf1,
-        start=c(unlist(guess),fixed_params_sigma),
-	Nmif=NMIF,  Np=NP_MIF,
-	rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02,sigma=0.02)
-    )
+    mf1 %>% mif2(
+              params=c(unlist(guess),fixed_params_sigma),
+              Nmif=NMIF,  Np=NP_MIF,
+              rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02,sigma=0.02)
+            ) -> mf
     ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_LIK)))
     ll <- logmeanexp(ll,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
@@ -609,23 +601,27 @@ results_global_sigma <- as.data.frame(results_global_sigma)
 ## ----box_search_global_dot_dot-------------------------------------------
 params_box_dot_dot <- params_box[c("Beta","mu_I","rho"),]
 fixed_params_dot_dot <- c(fixed_params,psi=1e6,sigma=1e-6)
-set.seed(348876,kind="L'Ecuyer")
-guesses <- as.data.frame(apply(params_box_dot_dot,1,function(x)runif(NGLOBAL,x[1],x[2])))
+
+params_box_dot_dot %>%
+  apply(1,function(x)runif(NGLOBAL,x[1],x[2])) %>%
+  as.data.frame() -> guesses
+
 mf1 <- mifs_local[[1]]
-bake(file="box_search_global_dot_dot.rds",{
+
+bake(file="box_search_global_dot_dot.rds",seed=348876,kind="L'Ecuyer",{
   foreach(guess=iter(guesses,"row"), 
-    .packages='pomp', 
+    .packages='pomp2', 
     .combine=rbind,
     .options.multicore=list(set.seed=TRUE),
     .inorder=FALSE,
     .export=c("mf1","fixed_params_dot_dot")
   ) %dopar% 
   {
-    mf <- mif2(mf1,
-        start=c(unlist(guess),fixed_params_dot_dot),
-	Nmif=NMIF,  Np=NP_MIF,
-	rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02)
-    )
+    mf1 %>% mif2(
+              params=c(unlist(guess),fixed_params_dot_dot),
+              Nmif=NMIF,  Np=NP_MIF,
+              rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02)
+            ) -> mf
     ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_LIK)))
     ll <- logmeanexp(ll,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
@@ -649,23 +645,27 @@ results_global_dot_dot <- as.data.frame(results_global_dot_dot)
 ## ----box_search_global_psi-----------------------------------------------
 params_box_psi <- params_box[c("Beta","mu_I","rho","psi"),]
 fixed_params_psi <- c(fixed_params,sigma=1e-6)
-set.seed(29127834,kind="L'Ecuyer")
-guesses <- as.data.frame(apply(params_box_psi,1,function(x)runif(NGLOBAL,x[1],x[2])))
+
+params_box_psi %>%
+  apply(1,function(x)runif(NGLOBAL,x[1],x[2])) %>%
+  as.data.frame() -> guesses
+
 mf1 <- mifs_local[[1]]
-bake(file="box_search_global_psi.rds",{
+
+bake(file="box_search_global_psi.rds",seed=29127834,kind="L'Ecuyer",{
   foreach(guess=iter(guesses,"row"), 
-    .packages='pomp', 
+    .packages='pomp2', 
     .combine=rbind,
     .options.multicore=list(set.seed=TRUE),
     .inorder=FALSE,
     .export=c("mf1","fixed_params_psi")
   ) %dopar% 
   {
-    mf <- mif2(mf1,
-        start=c(unlist(guess),fixed_params_psi),
-	Nmif=NMIF, Np=NP_MIF,
-	rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02,psi=0.02)
-    )
+    mf1 %>% mif2(
+              params=c(unlist(guess),fixed_params_psi),
+              Nmif=NMIF, Np=NP_MIF,
+              rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02,psi=0.02)
+            ) -> mf
     ll <- replicate(N_LIK_REPS,logLik(pfilter(mf,Np=NP_LIK)))
     ll <- logmeanexp(ll,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
@@ -715,8 +715,8 @@ cbind(mle_sigma_psi,mle_dot_psi,mle_sigma_dot,mle_dot_dot)
 #' 
 #' * A useful technique is to plot the difference in conditional log liklihoods between the two hypotheses, for each data point. 
 ## ----fitted-models-------------------------------------------------------
-pf_psi <- pfilter(bsflu,params=mle_dot_psi,Np=5*NP,pred.mean=TRUE)
-pf_sigma <- pfilter(bsflu,params=mle_sigma_dot,Np=5*NP,pred.mean=TRUE)
+pf_psi <- pfilter(flu,params=mle_dot_psi,Np=5*NP,pred.mean=TRUE)
+pf_sigma <- pfilter(flu,params=mle_sigma_dot,Np=5*NP,pred.mean=TRUE)
 plot(cond.logLik(pf_psi)-cond.logLik(pf_sigma))
 
 #' 
@@ -727,7 +727,7 @@ plot(cond.logLik(pf_psi)-cond.logLik(pf_sigma))
 #' * To better understand what is going on, let's look at the one-step prediction means. The differences between these and the observations are the residuals.
 #' 
 ## ----predictions---------------------------------------------------------
-plot(obs(bsflu)["B",])
+plot(obs(flu)["B",])
 lines(pred.mean(pf_psi)["R1",]*mle_dot_psi["rho"],lty="dashed",col="blue")
 lines(pred.mean(pf_sigma)["R1",]*mle_sigma_dot["rho"],lty="dotted",col="red")
 
@@ -772,7 +772,7 @@ lines(pred.mean(pf_sigma)["R1",]*mle_sigma_dot["rho"],lty="dotted",col="red")
 #' 
 #' * The boarding school flu example with measurement overdispersion is very quick to filter. It has only 14 data points, and order 1000 particles are sufficient for SMC filtering.
 #' 
-#' * Let's use this **pomp** as an exercise for constructing likelihood profiles.
+#' * Let's use this **pomp2** as an exercise for constructing likelihood profiles.
 #' 
 #' * We may be curious about the lack of convergence points to the left of the maximum for the reporting rate. Is this a result of a sharp cliff in the likelihood surface, or some artifact of the maximization procedure? Computing a profile likelihood over $\rho$ will help us to find out.
 #' 
@@ -780,7 +780,7 @@ lines(pred.mean(pf_sigma)["R1",]*mle_sigma_dot["rho"],lty="dotted",col="red")
 #' 
 #' * This is similar to the array of random starting values used for the global paramter search, but with `rho` varying systematically.
 #' 
-#' * The **pomp** function `profileDesign` is useful for constructing this array. 
+#' * The **pomp2** function `profileDesign` is useful for constructing this array. 
 ## ----profile_design------------------------------------------------------
 PROFILE_REPLICATES <- 10 
 PROFILE_POINTS <- 10
@@ -805,23 +805,26 @@ NMIF_PROFILE <- 50
 NP_MIF_PROFILE <- 1000
 NP_LIK_PROFILE <- 1000
 N_LIK_REPS_PROFILE <- 3
+
 set.seed(8827162,kind="L'Ecuyer") 
+
 mf1 <- mifs_local[[1]]
+
 bake(file="profile_rho.rds",{
   foreach(guess=iter(pd,"row"), 
-    .packages='pomp', 
+    .packages='pomp2', 
     .combine=rbind,
     .options.multicore=list(set.seed=TRUE),
     .inorder=FALSE,
     .export=c("mf1","fixed_params_psi")
   ) %dopar% 
   {
-    mf <- mif2(mf1,
-        start=unlist(guess),
-	Nmif=NMIF_PROFILE,
-        Np=NP_MIF_PROFILE,
-	rw.sd=rw.sd(Beta=0.02,mu_I=0.02,sigma=0.02,psi=0.02)
-    )
+    mf1 %>% mif2(
+              params=guess,
+              Nmif=NMIF_PROFILE,
+              Np=NP_MIF_PROFILE,
+              rw.sd=rw.sd(Beta=0.02,mu_I=0.02,sigma=0.02,psi=0.02)
+            ) -> mf
     ll <- replicate(N_LIK_REPS_PROFILE,logLik(pfilter(mf,Np=NP_MIF_PROFILE)))
     ll <- logmeanexp(ll,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
@@ -837,9 +840,14 @@ results_profile_rho <- as.data.frame(results_profile_rho)
 #' 
 #' 
 ## ----pairs_profile-------------------------------------------------------
-library(plyr)  
-all <- ldply( list(guess=pd, result=subset(results_profile_rho, loglik > max(loglik)-50) ), .id="type")  
-pairs(~loglik+Beta+mu_I+rho+sigma+psi, data=all, col=ifelse(all$type=="guess", grey(0.5), "red"), pch=16)
+list(
+  guess=pd,
+  result=filter(results_profile_rho, loglik > max(loglik)-50)
+) %>%
+  ldply(.id="type") -> all
+
+pairs(~loglik+Beta+mu_I+rho+sigma+psi, data=all,
+  col=ifelse(all$type=="guess", grey(0.5), "red"), pch=16)
 
 #' 
 #' * We may conclude that the profile likelihood for $\rho$ to the left of the MLE is not sharp enough to explain why the original search didn't pay much attention to this region of parameter space.
@@ -870,5 +878,11 @@ pairs(~loglik+Beta+mu_I+rho+sigma+psi, data=all, col=ifelse(all$type=="guess", g
 #' ## [**R** codes for this document](od.R)
 #' 
 #' ----------------------
+#' 
+#' ## Acknowledgments
+#' 
+#' Carles Breto contributed edits to the SISMID 2018 course. 
+#' 
+#' ----------
 #' 
 #' ## References
