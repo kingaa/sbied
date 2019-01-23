@@ -21,7 +21,7 @@
 #' Please share and remix noncommercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
-#' Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
+#' Produced with **R** version `r getRversion()` and **pomp2** version `r packageVersion("pomp2")`.
 #' 
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
 library(plyr)
