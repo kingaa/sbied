@@ -34,35 +34,35 @@ set.seed(1221234211)
 #' Model implementation
 #' 
 ## ----model---------------------------------------------------------------
-rproc <- Csnippet("
-                  double N = 763;
-                  double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
-                  double t2 = rbinom(E,1-exp(-mu_E*dt));
-                  double t3 = rbinom(I,1-exp(-mu_I*dt));
-                  double t4 = rbinom(R1,1-exp(-mu_R1*dt));
-                  double t5 = rbinom(R2,1-exp(-mu_R2*dt));
-                  S  -= t1;
-                  E  += t1 - t2;
-                  I  += t2 - t3;
-                  R1 += t3 - t4;
-                  R2 += t4 - t5;
-                  ")
+Csnippet("
+    double N = 763;
+    double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
+    double t2 = rbinom(E,1-exp(-mu_E*dt));
+    double t3 = rbinom(I,1-exp(-mu_I*dt));
+    double t4 = rbinom(R1,1-exp(-mu_R1*dt));
+    double t5 = rbinom(R2,1-exp(-mu_R2*dt));
+    S  -= t1;
+    E  += t1 - t2;
+    I  += t2 - t3;
+    R1 += t3 - t4;
+    R2 += t4 - t5;"
+) -> rproc
 
-init <- Csnippet("
-                 S  = 762;
-                 E  = 0;
-                 I  = 1;
-                 R1 = 0;
-                 R2 = 0;
-                 ")
+Csnippet("
+    S  = 762;
+    E  = 0;
+    I  = 1;
+    R1 = 0;
+    R2 = 0;"
+) -> init
 
-dmeas <- Csnippet("
-                  lik = dpois(B,rho*R1+1e-6,give_log);
-                  ")
+Csnippet("
+    lik = dpois(B,rho*R1+1e-6,give_log);"
+) -> dmeas
 
-rmeas <- Csnippet("
-                  B = rpois(rho*R1+1e-6);
-                  ")
+Csnippet("
+    B = rpois(rho*R1+1e-6);"
+) -> rmeas
 
 bsflu %>%
   select(day,B) %>%
@@ -71,7 +71,7 @@ bsflu %>%
     rinit=init,rmeasure=rmeas,dmeasure=dmeas,
     statenames=c("S","E","I","R1","R2"),
     paramnames=c("Beta","mu_E","mu_I","mu_R1","mu_R2","rho")
-) -> flu
+  ) -> flu
 
 coef(flu) <- c(Beta=6,mu_E=0.5,mu_I=2,mu_R1=0.2,mu_R2=0.5,rho=0.9)
 
@@ -92,15 +92,32 @@ logLik(pf)
 #' Now, we evaluate the dependence of log likelihood estimates 
 #' on particle size and number of independent filters
 #' 
-## ----comps---------------------------------------------------------------
-library(foreach)
-library(doParallel)
+## ----comps,eval=FALSE----------------------------------------------------
+## library(foreach)
+## library(doParallel)
+## 
+## registerDoParallel()
+## 
+## foreach (nfilt=c(10,100,1000),
+##   .combine=rbind,.inorder=FALSE,
+##   .options.multicore=list(set.seed=TRUE)) %:%
+##   foreach (Np=c(1000,10000,100000), .combine=rbind) %:%
+##   foreach (i=1:nfilt, .combine=rbind) %dopar% {
+##     flu %>% pfilter(Np=Np) -> pf
+##     logLik(pf) -> ll
+##     data.frame(nfilt=nfilt,Np=Np,loglik=ll)
+##   } -> lls
+## 
+## registerDoSEQ()
 
-registerDoParallel()
-
+## ----comps-eval,include=FALSE--------------------------------------------
 bake(file="loglikest-pfilter.rds",
-  seed=594717807L,kind="L'Ecuyer-CMRG",
-  {
+  seed=594717807L,kind="L'Ecuyer-CMRG",{
+    library(foreach)
+    library(doParallel)
+    
+    registerDoParallel()
+    
     foreach (nfilt=c(10,100,1000),
       .combine=rbind,.inorder=FALSE,
       .options.multicore=list(set.seed=TRUE)) %:%
@@ -109,11 +126,10 @@ bake(file="loglikest-pfilter.rds",
         flu %>% pfilter(Np=Np) -> pf
         logLik(pf) -> ll
         data.frame(nfilt=nfilt,Np=Np,loglik=ll)
-      }
-     }
-) -> lls
-
-registerDoSEQ()
+      } -> lls
+    
+    registerDoSEQ()
+  }) -> lls
 
 #' 
 #' Violin plots are cute.

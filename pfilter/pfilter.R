@@ -7,7 +7,6 @@
 #'     toc_depth: 4
 #' bibliography: ../sbied.bib
 #' csl: ../ecology.csl
-#' 
 #' ---
 #' 
 #' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
@@ -59,7 +58,7 @@ set.seed(1221234211)
 #' -----------
 #' 
 #' ----------
-#'  
+#' 
 #' ## Overview
 #' 
 #' * The following schematic diagram represents conceptual links between different components of the methodological approach we're developing for statistical inference on epidemiological dynamics. 
@@ -80,7 +79,7 @@ set.seed(1221234211)
 #' ----------
 #' 
 #' -----------
-#'  
+#' 
 #' ## The likelihood function
 #' 
 #' - The basis for modern frequentist, Bayesian, and information-theoretic inference.
@@ -96,7 +95,7 @@ set.seed(1221234211)
 #' -------------
 #' 
 #' -------------
-#'  
+#' 
 #' ### Definition of the likelihood function
 #' 
 #' - Data are a sequence of $N$ observations, denoted $y_{1:N}^*$.
@@ -135,7 +134,7 @@ set.seed(1221234211)
 #' -----------
 #' 
 #' ----------
-#'  
+#' 
 #' ## Review of likelihood-based inference
 #' 
 #' For now, suppose that software exists to evaluate and maximize the likelihood function, up to a tolerable numerical error, for the dynamic models of interest. Our immediate task is to think about how to use that capability.
@@ -157,7 +156,7 @@ set.seed(1221234211)
 #' where $\underset{\theta}{\arg\max} g(\theta)$ means a value of argument $\theta$ at which the maximum of the function $g$ is attained, so $g\big(\underset{\theta}{\arg\max} g(\theta)\big) = \max_\theta g(\theta)$.
 #' 
 #' * If there are many values of $\theta$ giving the same maximum value of the likelihood, then an MLE still exists but is not unique.
-#'  
+#' 
 #' 
 #' * Note that $\underset{\theta}{\arg\max} \lik(\theta)$ and $\underset{\theta}{\arg\max} \loglik(\theta)$ are the same. Why?
 #' 
@@ -177,27 +176,27 @@ set.seed(1221234211)
 #' 
 #' 1. The Fisher information. 
 #' 
-#'     + A computationally quick approach when one has access to satisfactory numerical second derivatives of the log likelihood. 
+#' + A computationally quick approach when one has access to satisfactory numerical second derivatives of the log likelihood. 
 #' 
-#'     + The approximation is satisfactory only when $\hat\theta$ is well approximated by a normal distribution. 
+#' + The approximation is satisfactory only when $\hat\theta$ is well approximated by a normal distribution. 
 #' 
-#'     + Neither of the two requirements above are typically met for POMP models. 
+#' + Neither of the two requirements above are typically met for POMP models. 
 #' 
-#'     + A review of standard errors via Fisher information is provided as a [supplement](fisherSE.html).
+#' + A review of standard errors via Fisher information is provided as a [supplement](fisherSE.html).
 #' 
 #' 2. Profile likelihood estimation. This approach is generally preferable to the Fisher information for POMP models.
 #' 
 #' 3. A simulation study, also known as a bootstrap. 
 #' 
-#'     + If done carefully and well, this can be the best approach.
+#' + If done carefully and well, this can be the best approach.
 #' 
-#'     + A confidence interval is a claim about reproducibility. You claim, so far as your model is correct, that on 95% of realizations from the model, a 95% confidence interval you have constructed will cover the true value of the parameter.
+#' + A confidence interval is a claim about reproducibility. You claim, so far as your model is correct, that on 95% of realizations from the model, a 95% confidence interval you have constructed will cover the true value of the parameter.
 #' 
-#'     + A simulation study can check this claim fairly directly, but requires the most effort. 
+#' + A simulation study can check this claim fairly directly, but requires the most effort. 
 #' 
-#'     + The simulation study takes time for you to develop and debug, time for you to explain, and time for the reader to understand and check what you have done. We usually carry out simulation studies to check our main conclusions only.
+#' + The simulation study takes time for you to develop and debug, time for you to explain, and time for the reader to understand and check what you have done. We usually carry out simulation studies to check our main conclusions only.
 #' 
-#'     + Further discussion of bootstrap methods for POMP models is provided as a [supplement](bootstrap.html).
+#' + Further discussion of bootstrap methods for POMP models is provided as a [supplement](bootstrap.html).
 #' 
 #' <br>
 #' 
@@ -301,7 +300,7 @@ set.seed(1221234211)
 #' * Wilks's theorem then gives us a hypothesis test with approximate size $5\%$ that rejects $H^{\langle 0\rangle}$ if $\profileloglik(\hat\phi)-\profileloglik(\phi_0)<3.84/2$.
 #' 
 #' * It follows that, with probability $95\%$, the true value of $\phi$ falls in the set
-#'  $$\big\{\phi: \profileloglik(\hat\phi)-\profileloglik(\phi)<1.92\big\}.$$
+#' $$\big\{\phi: \profileloglik(\hat\phi)-\profileloglik(\phi)<1.92\big\}.$$
 #' So, we have constructed a profile likelihood confidence interval, consisting of the set of points on the profile likelihood within 1.92 log units of the maximum.
 #' 
 #' * This is an example of [a general duality between confidence intervals and hypothesis tests](http://www.stat.nus.edu.sg/~wloh/lecture17.pdf).
@@ -338,7 +337,7 @@ set.seed(1221234211)
 #' --------
 #' 
 #' --------
-#'  
+#' 
 #' 
 #' ## Indirect specification of a statistical model via a simulation procedure
 #' 
@@ -358,15 +357,15 @@ set.seed(1221234211)
 #' -----------
 #' 
 #' ----------
-#'  
+#' 
 #' ## The likelihood for a POMP model
 #' 
 #' 
 #' - Recall the following schematic diagram, showing dependence among variables in a POMP model.
-#'     + Measurements, $Y_n$, at time $t_n$ depend on the latent process, $X_n$, at that time.
-#'     + The Markov property asserts that latent process variables depend on their value at the previous timestep.
-#'     + To be more precise, the distribution of the state $X_{n+1}$, conditional on $X_{n}$, is independent of the values of $X_{k}$, $k<n$ and $Y_{k}$, $k\le n$.
-#'     + Moreover, the distribution of the measurement $Y_{n}$, conditional on $X_{n}$, is independent of all other variables.
+#' + Measurements, $Y_n$, at time $t_n$ depend on the latent process, $X_n$, at that time.
+#' + The Markov property asserts that latent process variables depend on their value at the previous timestep.
+#' + To be more precise, the distribution of the state $X_{n+1}$, conditional on $X_{n}$, is independent of the values of $X_{k}$, $k<n$ and $Y_{k}$, $k\le n$.
+#' + Moreover, the distribution of the measurement $Y_{n}$, conditional on $X_{n}$, is independent of all other variables.
 #' 
 #' 
 #' - The latent process $X(t)$ may be defined at all times, but we are particulary interested in its value at observation times. Therefore, we write 
@@ -390,7 +389,7 @@ set.seed(1221234211)
 #' ------------
 #' 
 #' ------------
-#'  
+#' 
 #' #### Special case: deterministic latent process
 #' 
 #' * When the latent process is non-random, the log likelihood for a POMP model closely resembles a nonlinear regression model. 
@@ -407,7 +406,7 @@ set.seed(1221234211)
 #' --------
 #' 
 #' --------
-#'  
+#' 
 #' #### General case: stochastic unobserved state process
 #' 
 #' - For a POMP model, the likelihood takes the form of an integral:
@@ -426,7 +425,7 @@ set.seed(1221234211)
 #' <br>
 #' 
 #' --------
-#'  
+#' 
 #' -------
 #' 
 #' ## Monte Carlo likelihood by direct simulation
@@ -470,7 +469,7 @@ set.seed(1221234211)
 #' --------
 #' 
 #' --------
-#'  
+#' 
 #' ## Sequential Monte Carlo: The particle filter
 #' 
 #' * Fortunately, we can compute the likelihood for a POMP model by a much more efficient algorithm than direct Monte Carlo integration. 
@@ -509,15 +508,15 @@ set.seed(1221234211)
 #' 
 #' * This suggests that we keep track of two key distributions at each time $t_n$,
 #' 
-#'     + The **prediction distribution** is $f_{X_n | Y_{1:n-1}}(x_n| y^*_{1:n-1})$.
+#' + The **prediction distribution** is $f_{X_n | Y_{1:n-1}}(x_n| y^*_{1:n-1})$.
 #' 
-#'     + The **filtering distribution** is $f_{X_{n} | Y_{1:n}}(x_n| y^*_{1:n})$.
+#' + The **filtering distribution** is $f_{X_{n} | Y_{1:n}}(x_n| y^*_{1:n})$.
 #' 
 #' * The prediction and filtering formulas give us a recursion:
 #' 
-#'     + The prediction formula gives the prediction distribution at time $t_n$ using the filtering distribution at time $t_{n-1}$. 
+#' + The prediction formula gives the prediction distribution at time $t_n$ using the filtering distribution at time $t_{n-1}$. 
 #' 
-#'     + The filtering formula gives the filtering distribution at time $t_n$ using the prediction distribution at time $t_n$.
+#' + The filtering formula gives the filtering distribution at time $t_n$ using the prediction distribution at time $t_n$.
 #' 
 #' * The **particle filter** use Monte Carlo techniques to sequentially estimate the integrals in the prediction and filtering recursions. Hence, the alternative name of **sequential Monte Carlo (SMC)**.
 #' 
@@ -568,7 +567,7 @@ set.seed(1221234211)
 #' ------
 #' 
 #' -----
-#'  
+#' 
 #' ## Particle filtering in **pomp2**
 #' 
 #' Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our influenza-outbreak case study, using the `bsflu` pomp object created earlier.
@@ -608,12 +607,12 @@ rmeas <- Csnippet("
 bsflu %>%
   select(day,B) %>%
   pomp(times="day",t0=0,
-     rprocess=euler(rproc,delta.t=1/5),
-     rinit=init,
-     rmeasure=rmeas,
-     dmeasure=dmeas,
-     statenames=c("S","I","R1","R2"),
-     paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
+    rprocess=euler(rproc,delta.t=1/5),
+    rinit=init,
+    rmeasure=rmeas,
+    dmeasure=dmeas,
+    statenames=c("S","I","R1","R2"),
+    paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
 
 #' 
 #' In **pomp2**, the basic particle filter is implemented in the command `pfilter`.
@@ -638,17 +637,17 @@ logmeanexp(ll,se=TRUE)
 #' 
 #' * It is extremely useful to visualize the geometric surface defined by the likelihood function.
 #' 
-#'     + If $\Theta$ is two-dimensional, then the surface $\loglik(\theta)$ has features like a landscape.
+#' + If $\Theta$ is two-dimensional, then the surface $\loglik(\theta)$ has features like a landscape.
 #' 
-#'     +  Local maxima of $\loglik(\theta)$ are peaks.
+#' +  Local maxima of $\loglik(\theta)$ are peaks.
 #' 
-#'     + Local minima are valleys.
+#' + Local minima are valleys.
 #' 
-#'     + Peaks may be separated by a valley or may be joined by a ridge. 
+#' + Peaks may be separated by a valley or may be joined by a ridge. 
 #' If you go along the ridge, you may be able to go from one peak to the other without losing much elevation. 
 #' Narrow ridges can be easy to fall off, and hard to get back on to.
 #' 
-#'     + In higher dimensions, one can still think of peaks and valleys and ridges. 
+#' + In higher dimensions, one can still think of peaks and valleys and ridges. 
 #' However, as the dimension increases it quickly becomes hard to imagine the surface.
 #' 
 #' * To get an idea of what the likelihood surface looks like in the neighborhood of a point in parameter space, we can construct some likelihood *slices*.
@@ -674,9 +673,9 @@ registerDoRNG(108028909)
 foreach (theta=iter(p,"row"),
   .combine=rbind,.inorder=FALSE) %dopar% {
     library(pomp2)
-
+    
     flu %>% pfilter(params=unlist(theta),Np=5000) -> pf
-
+    
     theta$loglik <- logLik(pf)
     theta
   } -> p
@@ -702,9 +701,34 @@ p %>%
 #' 
 #' - Slices offer a very limited perspective on the geometry of the likelihood surface.
 #' When there are only two unknown parameters, we can evaluate the likelihood at a grid of points and visualize the surface directly.
-## ----flu-grid1-----------------------------------------------------------
+## ----flu-grid1,eval=FALSE------------------------------------------------
+## expand.grid(
+##   Beta=seq(from=1.5,to=5,length=50),
+##   mu_I=seq(from=0.7,to=4,length=50),
+##   mu_R1=1/4,mu_R2=1/1.8,
+##   rho=0.9
+## ) -> p
+## 
+## library(foreach)
+## library(doParallel)
+## library(doRNG)
+## 
+## registerDoParallel()
+## registerDoRNG(421776444)
+## 
+## ## Now we do the computation
+## foreach (theta=iter(p,"row"),
+##   .combine=rbind,.inorder=FALSE) %dopar% {
+##     library(pomp2)
+## 
+##     flu %>% pfilter(params=unlist(theta),Np=5000) -> pf
+## 
+##     theta$loglik <- logLik(pf)
+##     theta
+##   } -> p
+
+## ----flu-grid1-eval,include=FALSE----------------------------------------
 bake(file="flu-grid1.rds",{
-  
   expand.grid(
     Beta=seq(from=1.5,to=5,length=50),
     mu_I=seq(from=0.7,to=4,length=50),
@@ -715,7 +739,7 @@ bake(file="flu-grid1.rds",{
   library(foreach)
   library(doParallel)
   library(doRNG)
-
+  
   registerDoParallel()
   registerDoRNG(421776444)
   
@@ -725,11 +749,10 @@ bake(file="flu-grid1.rds",{
       library(pomp2)
       
       flu %>% pfilter(params=unlist(theta),Np=5000) -> pf
-
+      
       theta$loglik <- logLik(pf)
       theta
-    }
-  
+    } -> p
 })-> p
 
 ## ----flu-grid1-plot,echo=F,purl=T----------------------------------------
@@ -747,9 +770,9 @@ p %>%
 #' 
 #' - Notice some features of the log likelihood surface, and its estimate from the particle filter, that can cause difficulties for numerical methods:
 #' 
-#'     1. The surface is wedge-shaped, so its curvature varies considerably. By contrast, asymptotic theory predicts a parabolic surface that has constant curvature.
+#' 1. The surface is wedge-shaped, so its curvature varies considerably. By contrast, asymptotic theory predicts a parabolic surface that has constant curvature.
 #' 
-#'     2. Monte Carlo noise in the likelihood evaluation makes it hard to pick out exactly where the likelihood is maximized. Nevertheless, the major features of the likelihood surface are evident despite the noise.
+#' 2. Monte Carlo noise in the likelihood evaluation makes it hard to pick out exactly where the likelihood is maximized. Nevertheless, the major features of the likelihood surface are evident despite the noise.
 #' 
 #' - Wedge-shaped relationships between parameters, and nonlinear relationships, are common features of epidemiological dynamic models. We'll see that in the case studies.
 #' 
@@ -775,11 +798,11 @@ p %>%
 #' 
 #' - Here are some desiderata for a Monte Carlo log likelihood approximation:
 #' 
-#'     + It should have low Monte Carlo bias and variance. 
+#' + It should have low Monte Carlo bias and variance. 
 #' 
-#'     + It should be presented together with estimates of the bias and variance so that we know the extent of Monte Carlo uncertainty in our results. 
+#' + It should be presented together with estimates of the bias and variance so that we know the extent of Monte Carlo uncertainty in our results. 
 #' 
-#'     + It should be computed in a length of time appropriate for the circumstances.
+#' + It should be computed in a length of time appropriate for the circumstances.
 #' 
 #' - Set up a likelihood evaluation for the flu model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine.
 #' 
@@ -805,8 +828,8 @@ p %>%
 #' 
 #' Compute a slice of the likelihood in the $\beta$-$\rho$ plane.
 #' 
-#'  <br>
-#'  
+#' <br>
+#' 
 #' --------
 #' 
 #' --------

@@ -5,6 +5,7 @@
 #'   html_document:
 #'     toc: yes
 #'     toc_depth: 4
+#' df_print: paged
 #' bibliography: ../sbied.bib
 #' csl: ../ecology.csl
 #' nocite: >
@@ -328,7 +329,7 @@ set.seed(594709947L)
 #' 
 #' - When would you prefer an implementation of Gillespie's algorithm to an Euler solution?
 #' 
-#' - Numerically, Gillespie's algorithm is often approximated using so-called [tau-leaping](https://en.wikipedia.org/wiki/Tau-leaping) methods [@Gillespie2001], which are closely related to Euler's approach with $\delta$ being tau.
+#' - Numerically, Gillespie's algorithm is often approximated using so-called [$\tau$-leaping](https://en.wikipedia.org/wiki/Tau-leaping) methods [@Gillespie2001], which are closely related to Euler's approach with $\delta$ being $\tau$.
 #' 
 #' - Indeed, an Euler solution for a continuous time Markov chain is sometimes called a Gillespie tau-leaping method.
 #' 
@@ -346,13 +347,14 @@ set.seed(594709947L)
 #' 
 #' <!--- 763 boys were at risk, and ultimately 512 spent time away from class (either confined to bed or in convalescence. --->
 #' 
-#' * Download the data and examine it:
+#' * The data are provided in the package.
+#' Examine them:
 ## ----flu-data1-----------------------------------------------------------
 library(plyr)
 library(tidyverse)
 library(pomp2)
 
-head(bsflu)
+bsflu
 
 #' 
 #' * The variable `B` refers to boys confined to bed and `C` to boys in convalescence.
@@ -417,39 +419,32 @@ bsflu %>%
 #' 
 #' * In particular, we model the number, $\dlta{N_{SI}}$, moving from S to I over interval $\dlta{t}$ as $$\dlta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\beta\,I/N\dlta{t}}},$$ and the number moving from I to R as $$\dlta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\gamma\dlta{t}}}.$$
 #' 
-#' A C snippet is a small piece of C code used to specify a model in **pomp2**.
-#' A C snippet that encodes a simulator for our SIR model is as follows:
-#' 
-## ----rproc1--------------------------------------------------------------
-sir_step <- Csnippet("
-  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
-  double dN_IR = rbinom(I,1-exp(-gamma*dt));
-  S -= dN_SI;
-  I += dN_SI - dN_IR;
-  R += dN_IR;
-")
+## ----rproc1R-------------------------------------------------------------
+sir_step <- function (S, I, R, N, delta.t, Beta, gamma, ...) {
+  dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
+  dN_IR <- rbinom(n=1,size=I,prob=1-exp(-gamma*delta.t))
+  S <- S - dN_SI
+  I <- I + dN_SI - dN_IR
+  R <- R + dN_IR
+  c(S = S, I = I, R = R)
+}
 
+#' 
 #' * At day zero, we'll assume that $I=1$ and $R=0$, but we don't know how big the school is, so we treat $N$ as a parameter to be estimated and let $S(0)=N-1$.
 #' 
-#' * Thus an rinit C snippet is
-#' 
-## ----init1---------------------------------------------------------------
-sir_init <- Csnippet("
-  S = N-1;
-  I = 1;
-  R = 0;
-")
+## ----init1R--------------------------------------------------------------
+sir_init <- function(N, ...) {
+  c(S = N-1, I = 1, R = 0)
+}
 
 #' 
-#' * We fold these C snippets, with the data, into a `pomp` object thus:
+#' * We fold these basic model components, with the data, into a `pomp` object thus:
 #' 
-## ----rproc1-pomp---------------------------------------------------------
+## ----pomp1R--------------------------------------------------------------
 bsflu %>%
   pomp(times="day",t0=0,
     rprocess=euler(sir_step,delta.t=1/6),
-    rinit=sir_init,
-    paramnames=c("N","Beta","gamma"),
-    statenames=c("S","I","R")
+    rinit=sir_init
   ) -> sir
 
 #' 
@@ -458,10 +453,75 @@ bsflu %>%
 #' * Since confined cases have, presumably, a much lower transmission rate, let's treat $B$ as being a count of the number of boys who have moved from I to R over the course of the past day.
 #' 
 #' * We need a variable to track these daily counts.
-#' Let's modify our C snippet above, adding a variable $H$ to tally the incidence.
-#' We'll then replace the `rprocess` with the new one.
+#' Let's modify our rprocess function above, adding a variable $H$ to tally the incidence.
+#' We'll then replace the rprocess component in `sir` with the new one.
+#' In **pomp2** terminology, $H$ is an *accumulator variable*.
 #' 
-## ----rproc2--------------------------------------------------------------
+## ----rproc2R-------------------------------------------------------------
+sir_step <- function (S, I, R, H, N, delta.t, Beta, gamma, ...) {
+  dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
+  dN_IR <- rbinom(n=1,size=I,prob=1-exp(-gamma*delta.t))
+  S <- S - dN_SI
+  I <- I + dN_SI - dN_IR
+  R <- R + dN_IR
+  H <- H + dN_IR;
+  c(S = S, I = I, R = R, H = H)
+}
+
+sir_init <- function (N, ...) {
+  c(S = N-1, I = 1, R = 0, H = 0)
+}
+
+sir %>%
+  pomp(rprocess=euler(sir_step,delta.t=1/6),rinit=sir_init) -> sir
+
+#' 
+#' * Now, we'll model the data, $B$, as a binomial process,
+#' $$B_t \sim \dist{Binomial}{H(t)-H(t-1),\rho}.$$
+#' 
+#' * We have a problem: at time $t$, the variable `H` we've defined will contain $H(t)$, not $H(t)-H(t-1)$.
+#' 
+#' * We can overcome this by telling `pomp` that we want `H` to be set to zero immediately following each observation.
+#' 
+#' * We accomplish this using the `accumvars` argument to `pomp`:
+#' 
+## ----zero1R--------------------------------------------------------------
+sir %>% pomp(accumvars="H") -> sir
+
+#' 
+#' * Now, to include the observations in the model, we must write both a `dmeasure` and an `rmeasure` component:
+#' 
+## ----meas-modelR---------------------------------------------------------
+dmeas <- function (B, H, rho, log, ...) {
+ dbinom(x=B, size=H, prob=rho, log=log)
+}
+
+rmeas <- function (H, rho, ...) {
+  c(B=rbinom(n=1, size=H, prob=rho))
+}
+
+#' 
+#' * We then put these into our `pomp` object:
+#' 
+## ----add-meas-modelR-----------------------------------------------------
+sir %>% pomp(rmeasure=rmeas,dmeasure=dmeas) -> sir
+
+#' 
+## ----test_R_pomp,include=FALSE-------------------------------------------
+sir %>% simulate(params=c(Beta=1.5,gamma=1,rho=0.9,N=2600))
+
+#' 
+#' #### Using C snippets
+#' 
+#' * Although we can always specify basic model components using **R** functions, as above, we'll typically want the computational speed up that we can obtain only by using compiled native code.
+#' 
+#' * **pomp2** provides a facility for doing so with ease, using *C snippets*.
+#' 
+#' * A C snippet is a small piece of C code used to specify a basic model component.
+#' 
+#' * For example, C snippets that encode the basic model components in `sir` are as follows.
+#' 
+## ----csnips--------------------------------------------------------------
 sir_step <- Csnippet("
   double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
   double dN_IR = rbinom(I,1-exp(-gamma*dt));
@@ -478,33 +538,23 @@ sir_init <- Csnippet("
   H = 0;
 ")
 
-sir %>%
-  pomp(rprocess=euler(sir_step,delta.t=1/6),rinit=sir_init,
-    paramnames=c("Beta","gamma","N"),statenames=c("S","I","R","H")
-  ) -> sir
+dmeas <- Csnippet("
+  lik = dbinom(B,H,rho,give_log);
+")
+
+rmeas <- Csnippet("
+  B = rbinom(H,rho);
+")
 
 #' 
-#' * Now, we'll model the data, $B$, as a binomial process,
-#' $$B_t \sim \dist{Binomial}{H(t)-H(t-1),\rho}.$$
+#' * A call to `pomp` replaces the basic model components with these, much faster, implementations:
 #' 
-#' * We have a problem: at time $t$, the variable `H` we've defined will contain $H(t)$, not $H(t)-H(t-1)$.
-#' 
-#' * We can overcome this by telling `pomp` that we want `H` to be set to zero immediately following each observation.
-#' 
-#' * We do this by setting the `accumvars` argument to `pomp`:
-## ----zero1---------------------------------------------------------------
-sir %>% pomp(accumvars="H") -> sir
+## sir %>%
 
 #' 
-#' * Now, to include the observations in the model, we must write both a `dmeasure` and an `rmeasure` component:
-## ----meas-model----------------------------------------------------------
-dmeas <- Csnippet("lik = dbinom(B,H,rho,give_log);")
-rmeas <- Csnippet("B = rbinom(H,rho);")
-
-#' * We then put these into our `pomp` object:
-## ----add-meas-model------------------------------------------------------
-sir %>% pomp(rmeasure=rmeas,dmeasure=dmeas,statenames="H",paramnames="rho") -> sir
-
+#' * Note that, when using C snippets, one has to tell `pomp` which of the variables referenced in the C snippets are state variables and which are parameters.
+#' This is accomplished using the `statenames` and `paramnames` arguments.
+#' 
 #' 
 #' <br>
 #' 
