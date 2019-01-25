@@ -507,9 +507,6 @@ rmeas <- function (H, rho, ...) {
 sir %>% pomp(rmeasure=rmeas,dmeasure=dmeas) -> sir
 
 #' 
-## ----test_R_pomp,include=FALSE-------------------------------------------
-sir %>% simulate(params=c(Beta=1.5,gamma=1,rho=0.9,N=2600))
-
 #' 
 #' #### Using C snippets
 #' 
@@ -549,7 +546,16 @@ rmeas <- Csnippet("
 #' 
 #' * A call to `pomp` replaces the basic model components with these, much faster, implementations:
 #' 
-## sir %>%
+## ----sir_pomp2-----------------------------------------------------------
+sir %>%
+  pomp(rprocess=euler(sir_step,delta.t=1/6),
+    rinit=sir_init,
+    rmeasure=rmeas,
+    dmeasure=dmeas,
+    accumvars="H",
+    statenames=c("S","I","R","H"),
+    paramnames=c("Beta","gamma","N","rho")
+  ) -> sir
 
 #' 
 #' * Note that, when using C snippets, one has to tell `pomp` which of the variables referenced in the C snippets are state variables and which are parameters.
