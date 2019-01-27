@@ -68,24 +68,24 @@ set.seed(1109529108L)
 #' - Understanding, forecasting, managing epidemiological systems increasingly depends on models.
 #' - Dynamic models can be used to test causal hypotheses.
 #' - Real epidemiological systems:
-#' - are nonlinear
-#' - are stochastic
-#' - are nonstationary
-#' - evolve in continuous time
-#' - have hidden variables
-#' - can be measured only with (large) error
+#'     - are nonlinear
+#'     - are stochastic
+#'     - are nonstationary
+#'     - evolve in continuous time
+#'     - have hidden variables
+#'     - can be measured only with (large) error
 #' - Dynamics of infectious disease outbreaks illustrate this well.
 #' 
 #' - Measles is the paradigm for a nonlinear ecological system that can be well described by low-dimensional nonlinear dynamics.
 #' - A tradition of careful modeling studies have proposed and found evidence for a number of specific mechanisms, including
-#' - a high value of $R_0$ (c. 15--20)
-#' - under-reporting
-#' - seasonality in transmission rates associated with school terms
-#' - response to changing birth rates
-#' - a birth-cohort effect
-#' - metapopulation dynamics
-#' - fadeouts and reintroductions that scale with city size
-#' - spatial traveling waves
+#'     - a high value of $R_0$ (c. 15--20)
+#'     - under-reporting
+#'     - seasonality in transmission rates associated with school terms
+#'     - response to changing birth rates
+#'     - a birth-cohort effect
+#'     - metapopulation dynamics
+#'     - fadeouts and reintroductions that scale with city size
+#'     - spatial traveling waves
 #' - Much of this evidence has been amassed from fitting models to data, using a variety of methods.
 #' - See @Rohani2010 for a review of some of the high points.
 #' 
@@ -94,14 +94,14 @@ set.seed(1109529108L)
 #' 
 #' - We revisit a classic measles data set, weekly case reports in 954 urban centers in England and Wales during the pre-vaccine era (1950--1963).
 #' - We examine questions regarding:
-#' - measles extinction and recolonization
-#' - transmission rates
-#' - seasonality
-#' - resupply of susceptibles
+#'     - measles extinction and recolonization
+#'     - transmission rates
+#'     - seasonality
+#'     - resupply of susceptibles
 #' - We use a model that 
-#' 1. expresses our current understanding of measles dynamics
-#' 1. includes a long list of mechanisms that have been proposed and demonstrated in the literature
-#' 1. cannot be fit by existing likelihood-based methods
+#'     1. expresses our current understanding of measles dynamics
+#'     1. includes a long list of mechanisms that have been proposed and demonstrated in the literature
+#'     1. cannot be fit by existing likelihood-based methods
 #' - We examine data from large and small towns using the same model, something no existing methods have been able to do.
 #' - We ask: does our perspective on this disease change when we expect the models to explain the data in detail?
 #' - What bigger lessons can we learn regarding inference for dynamical systems?
@@ -111,8 +111,8 @@ set.seed(1109529108L)
 #' #### Data sets
 #' 
 #' - Twenty towns, including
-#' - 10 largest
-#' - 10 smaller, chosen at random
+#'     - 10 largest
+#'     - 10 smaller, chosen at random
 #' - Population sizes: 2k--3.4M
 #' - Weekly case reports, 1950--1963
 #' - Annual birth records and population sizes, 1944--1963
@@ -129,20 +129,20 @@ set.seed(1109529108L)
 #' ![](./model_diagram.png)
 #' 
 #' - Covariates:
-#' - $B(t) = \text{birth rate, from data}$
-#' - $N(t) = \text{population size, from data}$
+#'     - $B(t) = \text{birth rate, from data}$
+#'     - $N(t) = \text{population size, from data}$
 #' 
 #' - Entry into susceptible class:
 #' $$\mu_{BS}(t) = (1-c)\,B(t-\tau)+c\,\delta(t-t_0)\,\int_{t-1}^{t}\,B(t-\tau-s)\,ds$$
-#' - $c = \text{cohort effect}$  
-#' - $\tau = \text{school-entry delay}$  
+#'     - $c = \text{cohort effect}$  
+#'     - $\tau = \text{school-entry delay}$  
 #' 
 #' - Force of infection:
 #' $$\mu_{SE}(t) = \tfrac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
-#' - school-term transmission:
+#'     - school-term transmission:
 #' $$\beta(t) = \begin{cases}\beta_0\,(1+a) &\text{during term}\\\beta_0\,(1-a) &\text{during vacation}\end{cases}$$  
-#' - $\iota = \text{imported infections}$
-#' - $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ [@He2010,@bhadra11]
+#'     - $\iota = \text{imported infections}$
+#'     - $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ [@He2010,@bhadra11]
 #' 
 #' - Overdispersed binomial measurement model: $\mathrm{cases}_t\,\vert\,\dlta{N}_{IR}=z_t \sim \dist{Normal}{\rho\,z_t,\rho\,(1-\rho)\,z_t+(\psi\,\rho\,z_t)^2}$
 #' 
@@ -542,8 +542,8 @@ m1 %>%
 #' 
 #' - Recall that $R_0$ is the basic reproduction number: a measure of how communicable an infection is.
 #' - Existing estimates of $R_0$ (c. 15--20) come from two sources:
-#' - serology surveys
-#' - models fit to data using feature-based methods
+#'     - serology surveys
+#'     - models fit to data using feature-based methods
 #' 
 #' 
 #' #### Parameter estimates
