@@ -1,4 +1,4 @@
-default: contacts.html contacts.R contacts.csv contacts2.csv mif1.rda pfilter1.rda pfilter2.rda
+default: contacts.html contacts.R
 ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)
