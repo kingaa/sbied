@@ -6,7 +6,7 @@ library(stringi)
 batchsize <- 60
 replyto <- "kingaa.sismid@gmail.com"
 subject <- "SISMID Module 7 Advance Instructions"
-cmd <- 'REPLYTO=%s mutt -s "%s" -b %s -- %s < msg.txt\n'
+cmd <- 'REPLYTO=%s mutt -s "%s" -b %s -- %s < advance.html\n'
 
 read_csv("list.csv",col_types="cc") %>%
   mutate(

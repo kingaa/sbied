@@ -2,13 +2,29 @@
 title: Software installation instructions
 ---
 
+<style type="text/css">
+div .nb {
+	background-color: #ffeca3;
+	border-style: solid;
+	border-width: 2;
+	border-color: #00274c;
+	padding: 1em;
+}
+hr {
+	border-width: 3;
+	border-color: #00274c;
+}
+</style>
+
 ------------------------------
 
 Please read the appropriate sections below, which give specific instructions for installing and testing the software we will be using.
 First follow the instructions for "all users", then those for your specific operating system (OS).
 
-**NB:** If you run into problems, send a note to kingaa.sismid@gmail.com with a detailed description of the problem you've encountered.
-In this message, be **certain** to include:
+<div class="nb"> 
+
+**Important note:** If you run into problems, send a note to kingaa.sismid@gmail.com with a detailed description of the problem you've encountered.
+In this message, **be certain to include all of the following information**:
 
 - the operating system you’re running,
 - the version numbers of **R**, **Rstudio**, and **pomp** you’re attempting to install,
@@ -18,15 +34,41 @@ In this message, be **certain** to include:
 In particular, it is often easiest to send a screenshot or transcript showing the commands you've entered and the error messages you've received.
 In **R**, you can run `Sys.info()` to get a printout of the operating system and software version numbers.
 
+</div>
+
+## All users
+
 ### Install **R** and **RStudio**
 
 **R** and **RStudio** are free and open-source.
 You’ll need at least version 3.5.1 of **R**.
-The latest version is 3.5.2, so if you need to update, go ahead and install version 3.5.2.
+The latest version is 3.6.0, so if you need to update, go ahead and install version 3.6.0.
 Source code and binaries are available on CRAN (https://cran.r-project.org/).
 Install *the latest version* of **RStudio** from [rstudio.com](https://www.rstudio.com/products/rstudio/download/).
 
-#### Windows users must install **Rtools**
+### Install needed packages
+
+Open a session in **RStudio** and run the following:
+
+```
+> update.packages()
+> source("https://kingaa.github.io/sbied/prep/packages.R")
+```
+
+*[The `>` is the command prompt; it is not part of the command.
+Also, depending on your email client program, you may need to replace the quotation marks with plain keyboard double quotes.]*
+
+The first command updates your installed packages.
+You may be prompted to specify a CRAN mirror:
+choose one geographically near you.
+In **RStudio**, you can also push the "Update" button on the "Packages" tab to accomplish this.
+
+The second command runs a script on my website.
+It will install some needed packages if these are not already installed on your system.
+
+-------------------------------
+
+## Windows users
 
 If your machine runs Windows, you must install **Rtools**.
 This will give you the ability to compile C code and dynamically link it into an **R** session.
@@ -39,44 +81,37 @@ If, having installed the latest version of **Rtools** compatible with your **R**
 
 ***It is critical that you install these programs before the course starts!***
 
-### Install needed packages
+-------------------------------
+
+## MacOSX users
+
+So that you can compile C code and dynamically link it into an **R** session, you will need to have the **Xcode** app installed.
+This is gratis and can be installed via the App Store or downloaded from [developer.apple.com](https://developer.apple.com/download/).
+
+------------------------------------
+
+## All users
+
+### Test **pomp**
 
 Open a session in **RStudio** and run the following:
-
 ```
-> update.packages()
-> source("https://kingaa.github.io/sbied/prep/packages.R")
 > source("https://kingaa.github.io/sbied/prep/pompTest.R")
 ```
+This will check whether you can work with **pomp**.
 
-[The `>` is the command prompt; it is not part of the command.
-Also, depending on your email client program, you may need to replace the quotation marks with plain keyboard double quotes.]
-
-The first command updates your installed packages.
-You may be prompted to specify a CRAN mirror:
-choose one geographically near you.
-In **RStudio**, you can also push the "Update" button on the "Packages" tab to accomplish this.
-
-The second command runs a script on my website.
-It will install some needed packages if these are not already installed on your system.
-
-The third command will attempt to install **pomp**, the principal **R** package we’ll be using, and will check whether you can work with it.
-
-If the final command fails, try the following:
+If it fails, try the following:
 ```
 > source("https://kingaa.github.io/scripts/helloC.R",echo=TRUE)
 ```
-If this fails to give the "Hello!" message, you will need to follow the instructions below that correspond to your OS.
+If this fails to give the "Hello!" message, you will need to follow the instructions below that correspond to your OS before re-trying the `pompTest.R` script.
 
-#### Linux and unix users:
+### Linux and unix
 
-If you have trouble with any of the scripts above, make sure you have the GNU compiler collection (GCC), including **gfortran** installed on your computer.
+If you have trouble with any of the scripts above, make sure you have the GNU compiler collection (GCC), including **gfortran**, installed on your computer.
 Linux distributions typically include this by default but it is not impossible that you have somehow avoided this.
 
-#### MacOSX users:
-
-So that you can compile C code and dynamically link it into an **R** session, you will need to have the **Xcode** app installed before running the `pompTest.R` script above.
-This is gratis and can be installed via the App Store or downloaded from [developer.apple.com](https://developer.apple.com/download/).
+### MacOSX
 
 If the `pompTest.R` script fails because you cannot load **pomp**, try installing it from source.
 The easiest way to do this is to use the **devtools** package.
@@ -93,10 +128,16 @@ make: gfortran-4.8: No such file or directory
 or one that otherwise refers to `gfortran`, then it is likely that you do not have the necessary version of **gfortran** installed.
 Have a look at [these instructions](https://kingaa.github.io/mac-fortran.html) and contact me at the address above if these don’t work for you.
 
-#### Windows users:
+### Windows
 
 You have probably failed to install the **Rtools** correctly.
-Revisit the [instructions above](#windows-users-must-install-rtools).
+Revisit the [instructions above](#windows-users).
+
+---------------------------
+
+## Once you've finished...
+
+...please fill out [this online form](https://docs.google.com/forms/d/1mPYOdqjCS2V3E80uLww8IZxJIKuvnTmcaAcHJgQtO48) to help us prepare.
 
 ------------------------------
 

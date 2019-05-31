@@ -69,9 +69,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type="text/css">
 .main-container {
@@ -102,8 +100,6 @@ summary {
 </style>
 
 
-
-<div class="container-fluid main-container">
 
 <!-- tabsets -->
 
@@ -178,6 +174,15 @@ $(document).ready(function () {
 
 
 
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
 
 <div class="fluid-row" id="header">
 
@@ -188,9 +193,23 @@ $(document).ready(function () {
 </div>
 
 
+<style type="text/css">
+div .nb {
+    background-color: #ffeca3;
+    border-style: solid;
+    border-width: 2;
+    border-color: #00274c;
+    padding: 1em;
+}
+hr {
+    border-width: 3;
+    border-color: #00274c;
+}
+</style>
 <hr />
 <p>Please read the appropriate sections below, which give specific instructions for installing and testing the software we will be using. First follow the instructions for “all users”, then those for your specific operating system (OS).</p>
-<p><strong>NB:</strong> If you run into problems, send a note to <a href="mailto:kingaa.sismid@gmail.com">kingaa.sismid@gmail.com</a> with a detailed description of the problem you’ve encountered. In this message, be <strong>certain</strong> to include:</p>
+<div class="nb">
+<p><strong>Important note:</strong> If you run into problems, send a note to <a href="mailto:kingaa.sismid@gmail.com">kingaa.sismid@gmail.com</a> with a detailed description of the problem you’ve encountered. In this message, <strong>be certain to include all of the following information</strong>:</p>
 <ul>
 <li>the operating system you’re running,</li>
 <li>the version numbers of <strong>R</strong>, <strong>Rstudio</strong>, and <strong>pomp</strong> you’re attempting to install,</li>
@@ -198,37 +217,54 @@ $(document).ready(function () {
 <li>what error messages you’ve received.</li>
 </ul>
 <p>In particular, it is often easiest to send a screenshot or transcript showing the commands you’ve entered and the error messages you’ve received. In <strong>R</strong>, you can run <code>Sys.info()</code> to get a printout of the operating system and software version numbers.</p>
+</div>
+<div id="all-users" class="section level2">
+<h2>All users</h2>
 <div id="install-r-and-rstudio" class="section level3">
 <h3>Install <strong>R</strong> and <strong>RStudio</strong></h3>
-<p><strong>R</strong> and <strong>RStudio</strong> are free and open-source. You’ll need at least version 3.5.1 of <strong>R</strong>. The latest version is 3.5.2, so if you need to update, go ahead and install version 3.5.2. Source code and binaries are available on CRAN (<a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a>). Install <em>the latest version</em> of <strong>RStudio</strong> from <a href="https://www.rstudio.com/products/rstudio/download/">rstudio.com</a>.</p>
-<div id="windows-users-must-install-rtools" class="section level4">
-<h4>Windows users must install <strong>Rtools</strong></h4>
-<p>If your machine runs Windows, you must install <strong>Rtools</strong>. This will give you the ability to compile C code and dynamically link it into an <strong>R</strong> session.</p>
-<p><a href="https://cran.r-project.org/bin/windows/Rtools/">Download <strong>Rtools</strong> from CRAN</a> and install it. When installing <strong>Rtools</strong>, it is sufficient to choose the “Package authoring installation” option. Also during the installation, <strong>you must tick the “edit system PATH” box</strong>.</p>
-<p>If, having installed the latest version of <strong>Rtools</strong> compatible with your <strong>R</strong>, the scripts below fail, try installing a “frozen” version of <strong>Rtools</strong>.</p>
-<p><strong><em>It is critical that you install these programs before the course starts!</em></strong></p>
-</div>
+<p><strong>R</strong> and <strong>RStudio</strong> are free and open-source. You’ll need at least version 3.5.1 of <strong>R</strong>. The latest version is 3.6.0, so if you need to update, go ahead and install version 3.6.0. Source code and binaries are available on CRAN (<a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a>). Install <em>the latest version</em> of <strong>RStudio</strong> from <a href="https://www.rstudio.com/products/rstudio/download/">rstudio.com</a>.</p>
 </div>
 <div id="install-needed-packages" class="section level3">
 <h3>Install needed packages</h3>
 <p>Open a session in <strong>RStudio</strong> and run the following:</p>
 <pre><code>&gt; update.packages()
-&gt; source(&quot;https://kingaa.github.io/sbied/prep/packages.R&quot;)
-&gt; source(&quot;https://kingaa.github.io/sbied/prep/pompTest.R&quot;)</code></pre>
-<p>[The <code>&gt;</code> is the command prompt; it is not part of the command. Also, depending on your email client program, you may need to replace the quotation marks with plain keyboard double quotes.]</p>
+&gt; source(&quot;https://kingaa.github.io/sbied/prep/packages.R&quot;)</code></pre>
+<p><em>[The <code>&gt;</code> is the command prompt; it is not part of the command. Also, depending on your email client program, you may need to replace the quotation marks with plain keyboard double quotes.]</em></p>
 <p>The first command updates your installed packages. You may be prompted to specify a CRAN mirror: choose one geographically near you. In <strong>RStudio</strong>, you can also push the “Update” button on the “Packages” tab to accomplish this.</p>
 <p>The second command runs a script on my website. It will install some needed packages if these are not already installed on your system.</p>
-<p>The third command will attempt to install <strong>pomp</strong>, the principal <strong>R</strong> package we’ll be using, and will check whether you can work with it.</p>
-<p>If the final command fails, try the following:</p>
-<pre><code>&gt; source(&quot;https://kingaa.github.io/scripts/helloC.R&quot;,echo=TRUE)</code></pre>
-<p>If this fails to give the “Hello!” message, you will need to follow the instructions below that correspond to your OS.</p>
-<div id="linux-and-unix-users" class="section level4">
-<h4>Linux and unix users:</h4>
-<p>If you have trouble with any of the scripts above, make sure you have the GNU compiler collection (GCC), including <strong>gfortran</strong> installed on your computer. Linux distributions typically include this by default but it is not impossible that you have somehow avoided this.</p>
+<hr />
 </div>
-<div id="macosx-users" class="section level4">
-<h4>MacOSX users:</h4>
-<p>So that you can compile C code and dynamically link it into an <strong>R</strong> session, you will need to have the <strong>Xcode</strong> app installed before running the <code>pompTest.R</code> script above. This is gratis and can be installed via the App Store or downloaded from <a href="https://developer.apple.com/download/">developer.apple.com</a>.</p>
+</div>
+<div id="windows-users" class="section level2">
+<h2>Windows users</h2>
+<p>If your machine runs Windows, you must install <strong>Rtools</strong>. This will give you the ability to compile C code and dynamically link it into an <strong>R</strong> session.</p>
+<p><a href="https://cran.r-project.org/bin/windows/Rtools/">Download <strong>Rtools</strong> from CRAN</a> and install it. When installing <strong>Rtools</strong>, it is sufficient to choose the “Package authoring installation” option. Also during the installation, <strong>you must tick the “edit system PATH” box</strong>.</p>
+<p>If, having installed the latest version of <strong>Rtools</strong> compatible with your <strong>R</strong>, the scripts below fail, try installing a “frozen” version of <strong>Rtools</strong>.</p>
+<p><strong><em>It is critical that you install these programs before the course starts!</em></strong></p>
+<hr />
+</div>
+<div id="macosx-users" class="section level2">
+<h2>MacOSX users</h2>
+<p>So that you can compile C code and dynamically link it into an <strong>R</strong> session, you will need to have the <strong>Xcode</strong> app installed. This is gratis and can be installed via the App Store or downloaded from <a href="https://developer.apple.com/download/">developer.apple.com</a>.</p>
+<hr />
+</div>
+<div id="all-users-1" class="section level2">
+<h2>All users</h2>
+<div id="test-pomp" class="section level3">
+<h3>Test <strong>pomp</strong></h3>
+<p>Open a session in <strong>RStudio</strong> and run the following:</p>
+<pre><code>&gt; source(&quot;https://kingaa.github.io/sbied/prep/pompTest.R&quot;)</code></pre>
+<p>This will check whether you can work with <strong>pomp</strong>.</p>
+<p>If it fails, try the following:</p>
+<pre><code>&gt; source(&quot;https://kingaa.github.io/scripts/helloC.R&quot;,echo=TRUE)</code></pre>
+<p>If this fails to give the “Hello!” message, you will need to follow the instructions below that correspond to your OS before re-trying the <code>pompTest.R</code> script.</p>
+</div>
+<div id="linux-and-unix" class="section level3">
+<h3>Linux and unix</h3>
+<p>If you have trouble with any of the scripts above, make sure you have the GNU compiler collection (GCC), including <strong>gfortran</strong>, installed on your computer. Linux distributions typically include this by default but it is not impossible that you have somehow avoided this.</p>
+</div>
+<div id="macosx" class="section level3">
+<h3>MacOSX</h3>
 <p>If the <code>pompTest.R</code> script fails because you cannot load <strong>pomp</strong>, try installing it from source. The easiest way to do this is to use the <strong>devtools</strong> package. Do</p>
 <pre><code>install.packages(&quot;devtools&quot;)
 library(devtools)
@@ -237,11 +273,16 @@ install_github(&quot;kingaa/pomp&quot;)</code></pre>
 <pre><code>make: gfortran-4.8: No such file or directory</code></pre>
 <p>or one that otherwise refers to <code>gfortran</code>, then it is likely that you do not have the necessary version of <strong>gfortran</strong> installed. Have a look at <a href="https://kingaa.github.io/mac-fortran.html">these instructions</a> and contact me at the address above if these don’t work for you.</p>
 </div>
-<div id="windows-users" class="section level4">
-<h4>Windows users:</h4>
-<p>You have probably failed to install the <strong>Rtools</strong> correctly. Revisit the <a href="#windows-users-must-install-rtools">instructions above</a>.</p>
+<div id="windows" class="section level3">
+<h3>Windows</h3>
+<p>You have probably failed to install the <strong>Rtools</strong> correctly. Revisit the <a href="#windows-users">instructions above</a>.</p>
 <hr />
 </div>
+</div>
+<div id="once-youve-finished" class="section level2">
+<h2>Once you’ve finished…</h2>
+<p>…please fill out <a href="https://docs.google.com/forms/d/1mPYOdqjCS2V3E80uLww8IZxJIKuvnTmcaAcHJgQtO48">this online form</a> to help us prepare.</p>
+<hr />
 <div id="back-to-course-homepage" class="section level4">
 <h4><a href="../">Back to course homepage</a></h4>
 <hr />

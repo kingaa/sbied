@@ -1,7 +1,7 @@
 ## TEST SCRIPT
 ## If this script runs without errors, pomp is usable on your system.
 
-pomp.version <- "2.0.9.1"
+pomp.version <- "2.0.14.1"
 
 lib <- Sys.getenv("R_LIBS_USER")
 dir.create(lib,recursive=TRUE,showWarnings=FALSE)
@@ -10,8 +10,7 @@ cat("Checking whether dependencies are installed....\n")
 ## install dependencies if necessary
 deps <- setdiff(
   c("digest","mvtnorm","deSolve","coda","subplex","nloptr",
-    "magrittr","plyr","reshape2","ggplot2","knitr","tidyr","dplyr",
-    "foreach","doParallel","doRNG","pomp2"),
+    "magrittr","plyr","reshape2","pomp2"),
   rownames(installed.packages())
 )
 if (length(deps) > 0) {
