@@ -9,15 +9,6 @@ bibliography: ../sbied.bib
 csl: ../ecology.csl
 ---
 
-\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
-\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-\newcommand\dd[1]{d{#1}}
-\newcommand\dlta[1]{{\Delta}{#1}}
-\newcommand\lik{\mathcal{L}}
-\newcommand\loglik{\ell}
-
 -----------------------------------
 
 [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
@@ -67,15 +58,12 @@ theme_set(theme_bw())
 library(plyr)
 library(reshape2)
 library(magrittr)
-library(pomp2)
-stopifnot(packageVersion("pomp2")>"2.0.9")
 ```
 
 \newcommand\prob{\mathbb{P}}
 \newcommand\E{\mathbb{E}}
 \newcommand\var{\mathrm{Var}}
 \newcommand\cov{\mathrm{Cov}}
-\newcommand\loglik{\ell}
 \newcommand\R{\mathbb{R}}
 \newcommand\data[1]{#1^*}
 \newcommand\params{\, ; \,}
@@ -84,6 +72,7 @@ stopifnot(packageVersion("pomp2")>"2.0.9")
 \newcommand\lik{\mathscr{L}}
 \newcommand\loglik{\ell}
 \newcommand\profileloglik[1]{\ell^\mathrm{profile}_#1}
+
 
 * Fisher information is a common way to get standard errors in various settings, but is not so suitable for POMP models. 
 
@@ -112,7 +101,12 @@ $$ \data{\theta_d} \pm 1.96 \big[{\data{I}}^{-1}\big]_{dd}^{1/2}.$$
 
 -----------------------
 
-## [Back](./pfilter.html)
+<a href="#" onclick="goBack()">Back</a>
+
+<script>
+function goBack() {
+  window.history.back();
+}
+</script>
 
 --------------------------
-

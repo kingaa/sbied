@@ -1973,7 +1973,7 @@ as.data.frame(meas)</code></pre>
   pomp(times=&quot;week&quot;,t0=0,
     rprocess=euler(sir_step,delta.t=1/6),
     rinit=sir_init
-  ) -&gt; sir</code></pre>
+  ) -&gt; measSIR</code></pre>
 <ul>
 <li><p>Now let’s assume that the case reports result from a process by which new infections are diagnosed and reported with probability <span class="math inline">\(\rho\)</span>, which we can think of as the probability that a child’s parents take the child to the doctor, who recognizes measles and reports it to the authorities.</p></li>
 <li><p>Since measles symptoms tend to be quite recognizable, and children with measles tend to be confined to bed, diagnosed cases have, presumably, a much lower transmission rate. Accordingly, let’s treat each week’s <code>reports</code> as being related to the number of individuals who have moved from I to R over the course of that week.</p></li>
@@ -1995,8 +1995,11 @@ sir_init &lt;- function (N, eta, ...) {
 <ul>
 <li>In <strong>pomp</strong> terminology, <span class="math inline">\(H\)</span> is an <em>accumulator variable</em>. Since we want <span class="math inline">\(H\)</span> to tally only the incidence over the week, we’ll need to reset it to zero at the beginning of each week. We accomplish this using the <code>accumvars</code> argument to <code>pomp</code>:</li>
 </ul>
-<pre class="r"><code>sir %&gt;% pomp(rprocess=euler(sir_step,delta.t=1/6),
-  rinit=sir_init,accumvars=&quot;H&quot;) -&gt; sir</code></pre>
+<pre class="r"><code>measSIR %&gt;% 
+  pomp(
+    rprocess=euler(sir_step,delta.t=1/6),
+    rinit=sir_init,accumvars=&quot;H&quot;
+  ) -&gt; measSIR</code></pre>
 <ul>
 <li><p>Now, we’ll model the data as a binomial process, <span class="math display">\[\mathrm{reports}_t \sim \mathrm{Binomial}\left(H(t)-H(t-1),\rho\right).\]</span></p></li>
 <li><p>Now, to include the observations in the model, we must write either a <code>dmeasure</code> or an <code>rmeasure</code> component, or both:</p></li>
@@ -2011,7 +2014,7 @@ rmeas &lt;- function (H, rho, ...) {
 <ul>
 <li>We then put these into our <code>pomp</code> object:</li>
 </ul>
-<pre class="r"><code>sir %&gt;% pomp(rmeasure=rmeas,dmeasure=dmeas) -&gt; sir</code></pre>
+<pre class="r"><code>measSIR %&gt;% pomp(rmeasure=rmeas,dmeasure=dmeas) -&gt; measSIR</code></pre>
 <div id="using-c-snippets" class="section level4">
 <h4>Using C snippets</h4>
 <ul>
@@ -2046,7 +2049,7 @@ rmeas &lt;- Csnippet(&quot;
 <ul>
 <li>A call to <code>pomp</code> replaces the basic model components with these, much faster, implementations:</li>
 </ul>
-<pre class="r"><code>sir %&gt;%
+<pre class="r"><code>measSIR %&gt;%
   pomp(rprocess=euler(sir_step,delta.t=1/6),
     rinit=sir_init,
     rmeasure=rmeas,
@@ -2054,7 +2057,7 @@ rmeas &lt;- Csnippet(&quot;
     accumvars=&quot;H&quot;,
     statenames=c(&quot;S&quot;,&quot;I&quot;,&quot;R&quot;,&quot;H&quot;),
     paramnames=c(&quot;Beta&quot;,&quot;gamma&quot;,&quot;N&quot;,&quot;eta&quot;,&quot;rho&quot;)
-  ) -&gt; sir</code></pre>
+  ) -&gt; measSIR</code></pre>
 <ul>
 <li>Note that, when using C snippets, one has to tell <code>pomp</code> which of the variables referenced in the C snippets are state variables and which are parameters. This is accomplished using the <code>statenames</code> and <code>paramnames</code> arguments.</li>
 </ul>
@@ -2074,7 +2077,7 @@ rmeas &lt;- Csnippet(&quot;
 <li><p>If the infectious period is roughly 2 wk, then <span class="math inline">\(1/\gamma \approx 2~\text{wk}\)</span> and <span class="math inline">\(\beta = \gamma\,\mathfrak{R}_0\approx 7.5~\text{wk}^{-1}\)</span>.</p></li>
 <li><p>Let’s simulate the model at these parameters.</p></li>
 </ul>
-<pre class="r"><code>sir %&gt;%
+<pre class="r"><code>measSIR %&gt;%
   simulate(params=c(Beta=7.5,gamma=0.5,rho=0.5,eta=0.03,N=38000),
     nsim=20,format=&quot;data.frame&quot;,include.data=TRUE) -&gt; sims
 

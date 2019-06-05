@@ -446,7 +446,7 @@ meas %>%
   pomp(times="week",t0=0,
     rprocess=euler(sir_step,delta.t=1/6),
     rinit=sir_init
-  ) -> sir
+  ) -> measSIR
 
 #' 
 #' - Now let's assume that the case reports result from a process by which new infections are diagnosed and reported with probability $\rho$, which we can think of as the probability that a child's parents take the child to the doctor, who recognizes measles and reports it to the authorities.
@@ -478,8 +478,11 @@ sir_init <- function (N, eta, ...) {
 #'   We accomplish this using the `accumvars` argument to `pomp`:
 #' 
 ## ----zero1R--------------------------------------------------------------
-sir %>% pomp(rprocess=euler(sir_step,delta.t=1/6),
-  rinit=sir_init,accumvars="H") -> sir
+measSIR %>% 
+  pomp(
+    rprocess=euler(sir_step,delta.t=1/6),
+    rinit=sir_init,accumvars="H"
+  ) -> measSIR
 
 #' 
 #' - Now, we'll model the data as a binomial process,
@@ -500,7 +503,7 @@ rmeas <- function (H, rho, ...) {
 #' - We then put these into our `pomp` object:
 #' 
 ## ----add-meas-modelR-----------------------------------------------------
-sir %>% pomp(rmeasure=rmeas,dmeasure=dmeas) -> sir
+measSIR %>% pomp(rmeasure=rmeas,dmeasure=dmeas) -> measSIR
 
 #' 
 
@@ -544,7 +547,7 @@ rmeas <- Csnippet("
 #' - A call to `pomp` replaces the basic model components with these, much faster, implementations:
 #' 
 ## ----sir_pomp------------------------------------------------------------
-sir %>%
+measSIR %>%
   pomp(rprocess=euler(sir_step,delta.t=1/6),
     rinit=sir_init,
     rmeasure=rmeas,
@@ -552,7 +555,7 @@ sir %>%
     accumvars="H",
     statenames=c("S","I","R","H"),
     paramnames=c("Beta","gamma","N","eta","rho")
-  ) -> sir
+  ) -> measSIR
 
 #' 
 #' - Note that, when using C snippets, one has to tell `pomp` which of the variables referenced in the C snippets are state variables and which are parameters.
@@ -590,7 +593,7 @@ sir %>%
 #' - Let's simulate the model at these parameters.
 #' 
 ## ----sir_sim1------------------------------------------------------------
-sir %>%
+measSIR %>%
   simulate(params=c(Beta=7.5,gamma=0.5,rho=0.5,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) -> sims
 

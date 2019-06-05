@@ -24,7 +24,7 @@ source("stochsim.R")
 #' To attempt to simulate data for which the observed data is a more plausible realization, we might try increasing the force of infection.
 #' 
 ## ------------------------------------------------------------------------
-sir %>%
+measSIR %>%
   simulate(params=c(Beta=20,gamma=0.5,rho=0.5,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
@@ -35,7 +35,7 @@ sir %>%
 #' Taking it farther....
 #' 
 ## ------------------------------------------------------------------------
-sir %>%
+measSIR %>%
   simulate(params=c(Beta=40,gamma=0.5,rho=0.5,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
@@ -47,7 +47,7 @@ sir %>%
 #' To counteract this, we might try reducing the recovery rate.
 #' 
 ## ------------------------------------------------------------------------
-sir %>%
+measSIR %>%
   simulate(params=c(Beta=40,gamma=0.2,rho=0.5,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
@@ -59,7 +59,7 @@ sir %>%
 #' It's possible to get something not too awful to contemplate by just manipulating $\eta$, in fact:
 #' 
 ## ------------------------------------------------------------------------
-sir %>%
+measSIR %>%
   simulate(params=c(Beta=15,gamma=0.5,rho=0.5,eta=0.06,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
@@ -94,19 +94,19 @@ seir_init <- Csnippet("
   H = 0;
 ")
 
-sir %>%
+measSIR %>%
   pomp(
     rprocess=euler(seir_step,delta.t=1/6),
     rinit=seir_init,
     paramnames=c("N","Beta","sigma","gamma","rho","eta"),
     statenames=c("S","E","I","R","H")
-  ) -> seir
+  ) -> measSEIR
 
 #' 
 #' Using the rough estimate that the latent period in measles is 8--10da, we take $\sigma\sim 0.8$wk^-1^ and $\gamma\sim 1.3$wk^-1^ (so as to have roughly the same generation time as before).
 #' 
 ## ------------------------------------------------------------------------
-seir %>%
+measSEIR %>%
   simulate(params=c(Beta=15,sigma=0.8,gamma=1.3,rho=0.5,eta=0.06,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
@@ -117,7 +117,7 @@ seir %>%
 #' Again one can increase the force of infection: 
 #' 
 ## ------------------------------------------------------------------------
-seir %>% 
+measSEIR %>% 
   simulate(params=c(Beta=40,sigma=0.8,gamma=1.3,rho=0.5,eta=0.06,N=38000),
   nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+

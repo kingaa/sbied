@@ -21,13 +21,14 @@
 #' Please share and remix noncommercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
+
 ## ----prelims,purl=TRUE,cache=FALSE---------------------------------------
 library(plyr)
 library(tidyverse)
 theme_set(theme_bw())
 options(stringsAsFactors=FALSE)
-library(pomp2)
-stopifnot(packageVersion("pomp2")>"2.0.9")
+library(pomp)
+stopifnot(packageVersion("pomp")>"2.0.9")
 set.seed(1221234211)
 
 #' 
@@ -107,8 +108,6 @@ logLik(pf)
 ##     logLik(pf) -> ll
 ##     data.frame(nfilt=nfilt,Np=Np,loglik=ll)
 ##   } -> lls
-## 
-## registerDoSEQ()
 
 ## ----comps-eval,include=FALSE--------------------------------------------
 bake(file="loglikest-pfilter.rds",
@@ -127,9 +126,9 @@ bake(file="loglikest-pfilter.rds",
         logLik(pf) -> ll
         data.frame(nfilt=nfilt,Np=Np,loglik=ll)
       } -> lls
-    
     registerDoSEQ()
-  }) -> lls
+    lls
+ }) -> lls
 
 #' 
 #' Violin plots are cute.

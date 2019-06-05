@@ -28,6 +28,7 @@
 #' 
 #' -----------------------------------
 #' 
+
 ## ----prelims,include=FALSE,cache=FALSE-----------------------------------
 options(
   keep.source=TRUE,
@@ -38,8 +39,8 @@ options(
 library(plyr)
 library(tidyverse)
 theme_set(theme_bw())
-library(pomp2)
-stopifnot(packageVersion("pomp2")>"2.0.9")
+library(pomp)
+stopifnot(packageVersion("pomp")>"2.0.9")
 set.seed(594709947L)
 
 #' 
@@ -121,6 +122,12 @@ summary(exp(ell))
 #' 
 #' -----------------------
 #' 
-#' ## [Back](./pfilter.html)
+#' <a href="#" onclick="goBack()">Back</a>
+#' 
+#' <script>
+#' function goBack() {
+#'   window.history.back();
+#' }
+#' </script>
 #' 
 #' --------------------------

@@ -64,8 +64,8 @@ options(
 library(plyr)
 library(tidyverse)
 theme_set(theme_bw())
-library(pomp2)
-stopifnot(packageVersion("pomp2")>"2.0.9")
+library(pomp)
+stopifnot(packageVersion("pomp")>"2.0.9")
 set.seed(594709947L)
 ```
 
@@ -147,6 +147,12 @@ While the calculation is "correct" in that it will converge to the true likeliho
 
 -----------------------
 
-## [Back](./pfilter.html)
+<a href="#" onclick="goBack()">Back</a>
+
+<script>
+function goBack() {
+  window.history.back();
+}
+</script>
 
 --------------------------

@@ -3,20 +3,11 @@ title: "Bootstrap methods for constructing standard errors and confidence interv
 author: "Aaron A. King and Edward L. Ionides"
 output:
   html_document:
-    toc: yes
+    toc: no
     toc_depth: 4
 bibliography: ../sbied.bib
 csl: ../ecology.csl
 ---
-
-\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
-\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-\newcommand\dd[1]{d{#1}}
-\newcommand\dlta[1]{{\Delta}{#1}}
-\newcommand\lik{\mathcal{L}}
-\newcommand\loglik{\ell}
 
 -----------------------------------
 
@@ -60,15 +51,6 @@ options(
   stringsAsFactors=FALSE,
   encoding="UTF-8"
   )
-
-set.seed(594709947L)
-library(ggplot2)
-theme_set(theme_bw())
-library(plyr)
-library(reshape2)
-library(magrittr)
-library(pomp2)
-stopifnot(packageVersion("pomp2")>"2.0.9")
 ```
 
 \newcommand\prob{\mathbb{P}}
@@ -85,19 +67,19 @@ stopifnot(packageVersion("pomp2")>"2.0.9")
 \newcommand\loglik{\ell}
 \newcommand\profileloglik[1]{\ell^\mathrm{profile}_#1}
 
-* Suppose we want to know the statistical behavior of the estimator $\hat\theta({y_{1:N}})$
+- Suppose we want to know the statistical behavior of the estimator $\hat\theta({y_{1:N}})$
 for models in a neighborhood of the MLE, $\data{\theta}=\hat\theta(\data{y_{1:N}})$.
 
-* In particular, let's consider the problem of estimating uncertainty about $\theta_1$. We want to assess the behavior of the maximum likelihood estimator, $\hat\theta({y_{1:N}})$, and possibly the coverage of an associated confidence interval estimator, $\big[\hat\theta_{1,\mathrm lo}({y_{1:N}}),\hat\theta_{1,\mathrm hi}({y_{1:N}})\big]$. The confidence interval estimator could be constructed using either the Fisher information method or the profile likelihood approach.
+- In particular, let's consider the problem of estimating uncertainty about $\theta_1$. We want to assess the behavior of the maximum likelihood estimator, $\hat\theta({y_{1:N}})$, and possibly the coverage of an associated confidence interval estimator, $\big[\hat\theta_{1,\mathrm lo}({y_{1:N}}),\hat\theta_{1,\mathrm hi}({y_{1:N}})\big]$. The confidence interval estimator could be constructed using either the Fisher information method or the profile likelihood approach.
 
 
-* The following simulation study lets us address the following goals: 
+- The following simulation study lets us address the following goals: 
 <br><br>
-(A) Evaluate the coverage of a proposed confidence interval estimator, $[\hat\theta_{1,\mathrm lo},\hat\theta_{1,\mathrm hi}]$,
+    (A) Evaluate the coverage of a proposed confidence interval estimator, $[\hat\theta_{1,\mathrm lo},\hat\theta_{1,\mathrm hi}]$,
 <br><br>
-(B) Construct a standard error for $\data{\theta_1}$,
+    (B) Construct a standard error for $\data{\theta_1}$,
 <br><br>
-(C) Construct a confidence interval for $\theta_1$ with exact local coverage.
+    (C) Construct a confidence interval for $\theta_1$ with exact local coverage.
 
 1. Generate $J$ independent Monte Carlo simulations, 
 $$Y_{1:N}^{[j]} \sim f_{Y_{1:N}}(y_{1:N}\params\data{\theta})\mbox{ for } j\in 1:J.$$
@@ -107,18 +89,22 @@ $$ \theta^{[j]} = \hat\theta\big(Y_{1:N}^{[j]}\big)\mbox{ for } j\in 1:J,$$
 and, if desired, the confidence interval estimator,
 $$ \big[\theta^{[j]}_{1,\mathrm lo},\theta^{[j]}_{1,\mathrm hi}\big] = \big[\hat\theta_{1,\mathrm lo}({X^{[j]}_{1:N}}),\hat\theta_{1,\mathrm hi}({X^{[j]}_{1:N}})\big].$$
 
-3. We can use these simulations to obtain solutions to our goals for uncertainty assessment:
-<br><br>
-(A) For large $J$, the coverage of the proposed confidence interval estimator is well approximated, for models in a neighborhood of $\data{\theta}$, by the proportion of the intervals $\big[\theta^{[j]}_{1,\mathrm lo},\theta^{[j]}_{1,\mathrm hi}\big]$ that include $\data{\theta_1}$.
-<br><br>
-(B) The sample standard deviation of $\{ \theta^{[j]}_1, j\in 1:J\}$ is a natural standard error to associate with $\data{\theta_1}.
-<br><br>
-(C) For large $J$, one can empirically calibrate a 95% confidence interval for $\theta_1$ with exactly the claimed coverage in a neighborhood of $\data{\theta}$. For example, using profile methods, one could replace the cutoff 1.92 by a constant $\alpha$ chosen such that 95% of the profile confidence intervals computed for the simulations cover $\data{\theta_1}$.
+3. We can use these simulations to obtain solutions to our goals for uncertainty assessment:<br><br>
+    (A) For large $J$, the coverage of the proposed confidence interval estimator is well approximated, for models in a neighborhood of $\data{\theta}$, by the proportion of the intervals $\big[\theta^{[j]}_{1,\mathrm lo},\theta^{[j]}_{1,\mathrm hi}\big]$ that include $\data{\theta_1}$.<br><br>
+    (B) The sample standard deviation of $\{ \theta^{[j]}_1, j\in 1:J\}$ is a natural standard error to associate with $\data{\theta_1}.<br><br>
+    (C) For large $J$, one can empirically calibrate a 95% confidence interval for $\theta_1$ with exactly the claimed coverage in a neighborhood of $\data{\theta}$. For example, using profile methods, one could replace the cutoff 1.92 by a constant $\alpha$ chosen such that 95% of the profile confidence intervals computed for the simulations cover $\data{\theta_1}$.
 
 
 -----------------------
 
-## [Back](./pfilter.html)
+<a href="#" onclick="goBack()">Back</a>
+
+<script>
+function goBack() {
+  window.history.back();
+}
+</script>
+
 
 --------------------------
 

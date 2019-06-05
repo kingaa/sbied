@@ -29,16 +29,16 @@
 #' Please share and remix non-commercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
-#' Produced with **R** version `r getRversion()` and **pomp2** version `r packageVersion("pomp2")`.
+#' Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 #' 
 #' --------------------------
 #' 
+
 #' 
 ## ----prelims,cache=FALSE,include=FALSE-----------------------------------
-library(plyr)
 library(tidyverse)
-library(pomp2)
-stopifnot(packageVersion("pomp2")>"2.0.9")
+library(pomp)
+stopifnot(packageVersion("pomp")>="2.1")
 theme_set(theme_bw())
 options(stringsAsFactors=FALSE)
 set.seed(1221234211)
@@ -64,6 +64,7 @@ set.seed(1221234211)
 #' * The following schematic diagram represents conceptual links between different components of the methodological approach we're developing for statistical inference on epidemiological dynamics. 
 #' 
 #' 
+
 #' 
 #' * In this lesson, we're going to discuss the orange compartments.
 #' 
@@ -296,6 +297,7 @@ set.seed(1221234211)
 #' \end{eqnarray}$$
 #' 
 #' * We can check what the 95\% cutoff is for a chi-squared distribution with one degree of freedom,
+
 #' 
 #' * Wilks's theorem then gives us a hypothesis test with approximate size $5\%$ that rejects $H^{\langle 0\rangle}$ if $\profileloglik(\hat\phi)-\profileloglik(\phi_0)<3.84/2$.
 #' 
@@ -367,6 +369,7 @@ set.seed(1221234211)
 #' + To be more precise, the distribution of the state $X_{n+1}$, conditional on $X_{n}$, is independent of the values of $X_{k}$, $k<n$ and $Y_{k}$, $k\le n$.
 #' + Moreover, the distribution of the measurement $Y_{n}$, conditional on $X_{n}$, is independent of all other variables.
 #' 
+
 #' 
 #' - The latent process $X(t)$ may be defined at all times, but we are particulary interested in its value at observation times. Therefore, we write 
 #' $$X_n=X(t_n).$$ 
@@ -568,66 +571,68 @@ set.seed(1221234211)
 #' 
 #' -----
 #' 
-#' ## Particle filtering in **pomp2**
+#' ## Particle filtering in **pomp**
 #' 
-#' Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our influenza-outbreak case study, using the `bsflu` pomp object created earlier.
+#' Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our measles-outbreak case study.
+#' Here, we simply repeat the construction of the SIR model we looked at earlier.
 #' 
 #' 
-## ----flu-construct, echo=FALSE-------------------------------------------
+## ----measles-construct, echo=FALSE---------------------------------------
 library(tidyverse)
-library(pomp2)
+library(pomp)
 
-rproc <- Csnippet("
-  double N = 763;
-  double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
-  double t2 = rbinom(I,1-exp(-mu_I*dt));
-  double t3 = rbinom(R1,1-exp(-mu_R1*dt));
-  double t4 = rbinom(R2,1-exp(-mu_R2*dt));
-  S  -= t1;
-  I  += t1 - t2;
-  R1 += t2 - t3;
-  R2 += t3 - t4;
+sir_step <- Csnippet("
+  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
+  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  R += dN_IR;
+  H += dN_IR;
 ")
 
-init <- Csnippet("
-  S = 762;
+sir_init <- Csnippet("
+  S = nearbyint(eta*N);
   I = 1;
-  R1 = 0;
-  R2 = 0;
+  R = nearbyint((1-eta)*N);
+  H = 0;
 ")
 
 dmeas <- Csnippet("
-  lik = dpois(B,rho*R1+1e-6,give_log);
+  lik = dbinom(reports,H,rho,give_log);
 ")
 
 rmeas <- Csnippet("
-  B = rpois(rho*R1+1e-6);
+  reports = rbinom(H,rho);
 ")
 
-bsflu %>%
-  select(day,B) %>%
-  pomp(times="day",t0=0,
-    rprocess=euler(rproc,delta.t=1/5),
-    rinit=init,
+read_csv("https://kingaa.github.io/sbied/stochsim/Measles_Consett_1948.csv") %>%
+  select(week,reports=cases) %>%
+  pomp(
+    times="week",t0=0,
+    rprocess=euler(sir_step,delta.t=1/6),
+    rinit=sir_init,
     rmeasure=rmeas,
     dmeasure=dmeas,
-    statenames=c("S","I","R1","R2"),
-    paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
+    accumvars="H",
+    statenames=c("S","I","R","H"),
+    paramnames=c("Beta","gamma","eta","rho","N"),
+    params=c(Beta=15,gamma=0.5,rho=0.5,eta=0.06,N=38000)
+  ) -> measSIR
 
 #' 
-#' In **pomp2**, the basic particle filter is implemented in the command `pfilter`.
+#' In **pomp**, the basic particle filter is implemented in the command `pfilter`.
 #' We must choose the number of particles to use by setting the `Np` argument.
 #' 
 ## ----flu-pfilter-1,cache=T-----------------------------------------------
-flu %>%
-  pfilter(Np=5000,params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9)) -> pf
+measSIR %>%
+  pfilter(Np=5000) -> pf
 logLik(pf)
 
 #' 
 #' We can run a few particle filters to get an estimate of the Monte Carlo variability:
 ## ----flu-pfilter-2,cache=T-----------------------------------------------
 replicate(10,
-  flu %>% pfilter(Np=5000,params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9))
+  measSIR %>% pfilter(Np=5000)
 ) -> pf
 ll <- sapply(pf,logLik); ll
 logmeanexp(ll,se=TRUE)
@@ -658,9 +663,9 @@ logmeanexp(ll,se=TRUE)
 #' 
 ## ----flu-like-slice,cache=TRUE,results='hide'----------------------------
 sliceDesign(
-  center=c(Beta=2,mu_I=1,mu_R1=1/4,mu_R2=1/1.8,rho=0.9),
-  Beta=rep(seq(from=0.5,to=4,length=40),each=3),
-  mu_I=rep(seq(from=0.5,to=2,length=40),each=3)
+  center=coef(measSIR),
+  Beta=rep(seq(from=5,to=20,length=40),each=3),
+  gamma=rep(seq(from=0.2,to=2,length=40),each=3)
 ) -> p
 
 library(foreach)
@@ -672,9 +677,9 @@ registerDoRNG(108028909)
 
 foreach (theta=iter(p,"row"),
   .combine=rbind,.inorder=FALSE) %dopar% {
-    library(pomp2)
+    library(pomp)
     
-    flu %>% pfilter(params=unlist(theta),Np=5000) -> pf
+    measSIR %>% pfilter(params=theta,Np=5000) -> pf
     
     theta$loglik <- logLik(pf)
     theta
@@ -689,7 +694,7 @@ foreach (theta=iter(p,"row"),
 library(tidyverse)
 
 p %>% 
-  gather(variable,value,Beta,mu_I) %>%
+  gather(variable,value,Beta,gamma) %>%
   filter(variable==slice) %>%
   ggplot(aes(x=value,y=loglik,color=variable))+
   geom_point()+
@@ -701,12 +706,11 @@ p %>%
 #' 
 #' - Slices offer a very limited perspective on the geometry of the likelihood surface.
 #' When there are only two unknown parameters, we can evaluate the likelihood at a grid of points and visualize the surface directly.
-## ----flu-grid1,eval=FALSE------------------------------------------------
+## ----pfilter-grid1,eval=FALSE--------------------------------------------
 ## expand.grid(
-##   Beta=seq(from=1.5,to=5,length=50),
-##   mu_I=seq(from=0.7,to=4,length=50),
-##   mu_R1=1/4,mu_R2=1/1.8,
-##   rho=0.9
+##   Beta=rep(seq(from=10,to=30,length=40),each=3),
+##   gamma=rep(seq(from=0.4,to=1.5,length=40),each=3),
+##   rho=0.5,eta=0.06,N=38000
 ## ) -> p
 ## 
 ## library(foreach)
@@ -719,21 +723,20 @@ p %>%
 ## ## Now we do the computation
 ## foreach (theta=iter(p,"row"),
 ##   .combine=rbind,.inorder=FALSE) %dopar% {
-##     library(pomp2)
+##     library(pomp)
 ## 
-##     flu %>% pfilter(params=unlist(theta),Np=5000) -> pf
+##     measSIR %>% pfilter(params=theta,Np=5000) -> pf
 ## 
 ##     theta$loglik <- logLik(pf)
 ##     theta
 ##   } -> p
 
-## ----flu-grid1-eval,include=FALSE----------------------------------------
-bake(file="flu-grid1.rds",{
+## ----pfilter-grid1-eval,include=FALSE------------------------------------
+bake(file="pfilter-grid1.rds",{
   expand.grid(
-    Beta=seq(from=1.5,to=5,length=50),
-    mu_I=seq(from=0.7,to=4,length=50),
-    mu_R1=1/4,mu_R2=1/1.8,
-    rho=0.9
+    Beta=rep(seq(from=10,to=30,length=40),each=3),
+    gamma=rep(seq(from=0.4,to=1.5,length=40),each=3),
+    rho=0.5,eta=0.06,N=38000
   ) -> p
   
   library(foreach)
@@ -746,24 +749,23 @@ bake(file="flu-grid1.rds",{
   ## Now we do the computation
   foreach (theta=iter(p,"row"),
     .combine=rbind,.inorder=FALSE) %dopar% {
-      library(pomp2)
+      library(pomp)
       
-      flu %>% pfilter(params=unlist(theta),Np=5000) -> pf
+      measSIR %>% pfilter(params=theta,Np=5000) -> pf
       
       theta$loglik <- logLik(pf)
       theta
     } -> p
+  p %>% arrange(Beta,gamma)
 })-> p
 
-## ----flu-grid1-plot,echo=F,purl=T----------------------------------------
-p %>% arrange(Beta,mu_I,mu_R1,mu_R2,rho) -> p
-saveRDS(p,file="flu-grid1.rds")
+## ----pfilter-grid1-plot,echo=F,purl=T------------------------------------
 p %>% 
   mutate(loglik=ifelse(loglik>max(loglik)-50,loglik,NA)) %>%
-  ggplot(aes(x=Beta,y=mu_I,z=loglik,fill=loglik))+
+  ggplot(aes(x=Beta,y=gamma,z=loglik,fill=loglik))+
   geom_tile(color=NA)+
   scale_fill_gradient()+
-  labs(x=expression(beta),y=expression(mu[I]))
+  labs(x=expression(beta),y=expression(gamma))
 
 #' 
 #' In the above, all points with log likelihoods less than 50 units below the maximum are shown in grey.
@@ -781,6 +783,8 @@ p %>%
 #' -------
 #' 
 #' ------
+#' 
+#' ## Exercises
 #' 
 #' #### Basic Exercise: estimating the expense of a particle-filter calculation
 #' 
