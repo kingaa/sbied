@@ -21,11 +21,12 @@
 #' Please share and remix noncommercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
+
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
 library(plyr)
 library(tidyverse)
-library(pomp2)
-stopifnot(packageVersion("pomp2")>"2.0.9")
+library(pomp)
+stopifnot(packageVersion("pomp")>"2.0.9")
 theme_set(theme_bw())
 options(stringsAsFactors=FALSE)
 set.seed(1221234211)
@@ -49,11 +50,12 @@ set.seed(1221234211)
 #' Implement it in **pomp** using a compartmental model like that diagrammed below.
 #' You will have to give some thought to just how to model the relationship between the data ($B$ and $C$) and the state variables.
 #' 
+
 #' 
 ## ----seir3_model---------------------------------------------------------
 library(plyr)
 library(tidyverse)
-library(pomp2)
+library(pomp)
 
 bsflu %>%
   select(day,B) %>%

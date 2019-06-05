@@ -22,20 +22,21 @@
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' This document has its origins in the [Getting Started vignette](https://kingaa.github.io/pomp/vignettes/getting_started.html).
 #' 
+
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
-library(pomp2)
+library(pomp)
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp2")>="2.0.9.1")
+stopifnot(packageVersion("pomp")>="2.0.9.1")
 
 #' 
 #' ----------------------------
 #' 
 #' ## Introduction
 #' 
-#' The  **R**  package **pomp2** provides facilities for modeling POMPs, a toolbox of statistical inference methods for analyzing data using POMPs, and a development platform for implmenting new POMP inference methods.
-#' The basic data-structure provided by **pomp2** is the *object of class* `pomp`, alternatively known as a `pomp` object.
+#' The  **R**  package **pomp** provides facilities for modeling POMPs, a toolbox of statistical inference methods for analyzing data using POMPs, and a development platform for implmenting new POMP inference methods.
+#' The basic data-structure provided by **pomp** is the *object of class* `pomp`, alternatively known as a `pomp` object.
 #' It is a container that holds real or simulated data and a POMP model, possibly together with other information such as model parameters, that may be needed to do things with the model and data.
-#' A real **pomp2** data analysis begins with constructing one or more `pomp` objects to hold the data and the model or models under consideration.
+#' A real **pomp** data analysis begins with constructing one or more `pomp` objects to hold the data and the model or models under consideration.
 #' Here, we'll illustrate this process a dataset of *Parus major* abundance in Wytham Wood, near Oxford [@McCleery1991].
 #' 
 #' Download and plot the data:
@@ -82,19 +83,19 @@ plot(pop~year,data=dat,type='o')
 #' 3. the choice of units for $N$ is peculiar and depends on the parameters (e.g., $N=\log(r)/c$ is the equilibrium of the deterministic model),
 #' 4. the parameter $\phi$ is proportional to our sampling effort, and also has peculiar units.
 #' 
-#' ## Implementing the Ricker model in **pomp2**
+#' ## Implementing the Ricker model in **pomp**
 #' 
 #' The call to construct a `pomp` object is, naturally enough, `pomp`.
 #' Documentation on this function can be had by doing `?pomp`. 
 #' Learn about the various things you can do once you have a `pomp` object by doing `methods?pomp` and following the links therein.
 #' Read an overview of the package as a whole with links to its main features by doing `package?pomp`.
-#' A complete index of the functions in **pomp2** is returned by the command `library(help=pomp2)`.
+#' A complete index of the functions in **pomp** is returned by the command `library(help=pomp)`.
 #' Finally, the home page for the `pomp` project is https://kingaa.github.io/pomp/;
 #' there you have access to the complete source code, tutorials, manuals, a news blog, a facility for reporting issues and making help requests, etc.
 #' 
 #' Now, to construct our `pomp` object:
 ## ----parus-pomp1---------------------------------------------------------
-library(pomp2)
+library(pomp)
 parus <- pomp(dat,times="year",t0=1959)
 
 #' The `times` argument specifies that the column of `dat` labelled "year" gives the measurement times;
@@ -120,7 +121,7 @@ pomp(parus,rprocess=discrete_time(step.fun=stochStep,delta.t=1),
 
 #' Note that in the above, we use the `exp` and `rnorm` functions from the [**R** API](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#The-R-API).
 #' In general any C function provided by **R** is available to you.
-#' **pomp2** also provides a number of C functions that are documented in the header file, `pomp.h`, that is installed with the package.
+#' **pomp** also provides a number of C functions that are documented in the header file, `pomp.h`, that is installed with the package.
 #' See the `Csnippet` documentation (`?Csnippet`) to read more about how to write them.
 #' Note too that we use `discrete.time.sim` here because the model is a stochastic map.
 #' We specify that the time step of the discrete-time process is `delta.t`, here, 1&nbsp;yr.
@@ -175,9 +176,9 @@ skel <- Csnippet("DN = r*N*exp(-c*N);")
 ## ----parus-add-skel------------------------------------------------------
 parus <- pomp(parus,skeleton=map(skel),paramnames=c("r","c"),statenames=c("N"))
 
-#' Note that we have to inform **pomp2** as to which of the variables we've referred to in `skel` is a state variable (`statenames`) and which is a parameter (`paramnames`).
+#' Note that we have to inform **pomp** as to which of the variables we've referred to in `skel` is a state variable (`statenames`) and which is a parameter (`paramnames`).
 #' In writing a `Csnippet` for the deterministic skeleton, we use `D` to designate the map's value.
-#' The `map` call tells **pomp2** that the skeleton is a discrete-time dynamical system (a map) rather than a continuous-time system (a vectorfield).
+#' The `map` call tells **pomp** that the skeleton is a discrete-time dynamical system (a map) rather than a continuous-time system (a vectorfield).
 #' 
 #' With just the skeleton defined, we are in a position to compute the trajectories of the deterministic skeleton at any point in parameter space.
 #' For example, here we compute the trajectory and superimpose it on a plot of one simulation:
@@ -187,7 +188,7 @@ plot(N~year,data=sim,type='o')
 lines(N~year,data=traj,type='l',col='red')
 
 #' 
-#' ## Working with the Ricker model in **pomp2**.
+#' ## Working with the Ricker model in **pomp**.
 #' 
 #' Let's see what can be done with a `pomp` object.
 #' 

@@ -24,8 +24,9 @@
 #' Please share and remix noncommercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
-#' Produced in **R** version `r getRversion()` using **pomp2** version `r packageVersion("pomp2")`.
+#' Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 #' 
+
 ## ----opts,include=FALSE,cache=FALSE--------------------------------------
 options(stringsAsFactors=FALSE)
 library(ggplot2)
@@ -142,6 +143,7 @@ set.seed(2028866059L)
 #'    
 #' <img src="pomp_schematic1.png" width="400" />
 #' 
+
 #' 
 #' - A key perspective to keep in mind is that **the model is to be viewed as the process that generated the data**.
 #' 
@@ -174,6 +176,7 @@ set.seed(2028866059L)
 #' 
 #' - In the following diagram, arrows show dependence among model variables:
 #' 
+
 #' 
 #' - The state process, $X_n$, is Markovian, i.e.,
 #' 
@@ -227,19 +230,19 @@ set.seed(2028866059L)
 #' 
 #' ------------
 #' 
-#' ## The **pomp2** package for POMP models
+#' ## The **pomp** package for POMP models
 #' 
-#' * **pomp2** is an  **R**  package for data analysis using partially observed Markov process (POMP) models.
+#' * **pomp** is an  **R**  package for data analysis using partially observed Markov process (POMP) models.
 #' 
-#' * Note the distinction: lower case '**pomp2**' is a software package; upper case 'POMP' is a class of models.
+#' * Note the distinction: lower case '**pomp**' is a software package; upper case 'POMP' is a class of models.
 #' 
-#' * **pomp2** builds methodology for POMP models in terms of arbitrary user-specified POMP models.
+#' * **pomp** builds methodology for POMP models in terms of arbitrary user-specified POMP models.
 #' 
-#' * **pomp2** provides tools, documentation, and examples to help users specify POMP models.
+#' * **pomp** provides tools, documentation, and examples to help users specify POMP models.
 #' 
-#' * **pomp2** provides a platform for modification and sharing of models, data-analysis workflows, and methodological development.
+#' * **pomp** provides a platform for modification and sharing of models, data-analysis workflows, and methodological development.
 #' 
-#' * It is useful to divide the **pomp2** package functionality into different levels:
+#' * It is useful to divide the **pomp** package functionality into different levels:
 #' 	- basic model components
 #' 	- workhorses
 #' 	- elementary POMP algorithms
@@ -316,23 +319,9 @@ set.seed(2028866059L)
 #' 
 #' ---------
 #' 
-#' ---------
-#' 
-#' ### **pomp2** vs **pomp**
-#' 
-#' Because **pomp2** contains changes that are not backward-incompatible with **pomp** versions <2, it is being made available initially in source and binary formats as a separate package via the https://kingaa.github.io/ package repository.
-#' Thus it is possible for users to have both **pomp** (version <2) and **pomp2** installed simultaneously as they transition their workflows to the new version.
-#' It is anticipated that, around the middle of 2019, **pomp2** will be renamed **pomp** and uploaded to CRAN as version 2.1.
-#' From that point forward, **pomp2** will be discontinued as a separate package and there will be no ongoing support for older versions of **pomp**.
-#' 
-#' <br>
 #' 
 #' ---------
 #' 
-#' ---------
-#' 
-#' 
-#' ------------------------------
 #' 
 #' ## [Back to course homepage](../index.html)
 #' 
