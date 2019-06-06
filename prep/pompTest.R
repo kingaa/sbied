@@ -1,7 +1,7 @@
 ## TEST SCRIPT
 ## If this script runs without errors, pomp is usable on your system.
 
-pomp.version <- "2.0.14.1"
+pomp.version <- "2.1"
 
 lib <- Sys.getenv("R_LIBS_USER")
 dir.create(lib,recursive=TRUE,showWarnings=FALSE)
@@ -10,7 +10,7 @@ cat("Checking whether dependencies are installed....\n")
 ## install dependencies if necessary
 deps <- setdiff(
   c("digest","mvtnorm","deSolve","coda","subplex","nloptr",
-    "magrittr","plyr","reshape2","pomp2"),
+    "magrittr","plyr","reshape2","pomp"),
   rownames(installed.packages())
 )
 if (length(deps) > 0) {
@@ -18,13 +18,13 @@ if (length(deps) > 0) {
   install.packages(deps,lib=lib)
 }
 
-if (packageVersion("pomp2") < pomp.version) {
-  update.packages("pomp2",lib.loc=lib,ask=FALSE)
+if (packageVersion("pomp") < pomp.version) {
+  update.packages("pomp",lib.loc=lib,ask=FALSE)
 }
 
 ## test pomp
-cat("Testing",sQuote("pomp2"),"....\n")
-library(pomp2,lib.loc=lib)
+cat("Testing",sQuote("pomp"),"....\n")
+library(pomp,lib.loc=lib)
 
 tryCatch(
   {
@@ -56,7 +56,7 @@ tryCatch(
     cat("Success!\n")
   },
   error=function (e) {
-    stop("pomp2 installation failure! Consult the instructions!",
+    stop("pomp installation failure! Consult the instructions!",
       conditionMessage(e),call.=FALSE)
   }
 )
