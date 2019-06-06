@@ -1,55 +1,57 @@
 library(tidyverse)
-library(pomp2)
-stopifnot(packageVersion("pomp2")>="2.0.9.2")
+library(pomp)
+stopifnot(packageVersion("pomp")>="2.1")
 options(stringsAsFactors=FALSE)
 
-rproc <- Csnippet("
-  double N = 763;
-  double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
-  double t2 = rbinom(I,1-exp(-mu_I*dt));
-  double t3 = rbinom(R1,1-exp(-mu_R1*dt));
-  double t4 = rbinom(R2,1-exp(-mu_R2*dt));
-  S  -= t1;
-  I  += t1 - t2;
-  R1 += t2 - t3;
-  R2 += t3 - t4;
+sir_step <- Csnippet("
+  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
+  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  R += dN_IR;
+  H += dN_IR;
 ")
 
-init <- Csnippet("
-  S = 762;
+sir_init <- Csnippet("
+  S = nearbyint(eta*N);
   I = 1;
-  R1 = 0;
-  R2 = 0;
+  R = nearbyint((1-eta)*N);
+  H = 0;
 ")
 
 dmeas <- Csnippet("
-  lik = dpois(B,rho*R1+1e-6,give_log);
+  lik = dbinom(reports,H,rho,give_log);
 ")
 
 rmeas <- Csnippet("
-  B = rpois(rho*R1+1e-6);
+  reports = rbinom(H,rho);
 ")
 
-bsflu %>%
-  select(day,B) %>%
-  pomp(times="day",t0=0,
-    rprocess=euler(rproc,delta.t=1/5),
-    rinit=init,
+read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
+  select(week,reports=cases) %>%
+  filter(week<=42) %>%
+  pomp(
+    times="week",t0=0,
+    rprocess=euler(sir_step,delta.t=1/6),
+    rinit=sir_init,
     rmeasure=rmeas,
     dmeasure=dmeas,
-    statenames=c("S","I","R1","R2"),
-    paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
+    accumvars="H",
+    statenames=c("S","I","R","H"),
+    paramnames=c("Beta","gamma","eta","rho","N"),
+    params=c(Beta=15,gamma=0.5,rho=0.5,eta=0.06,N=38000)
+  ) -> measSIR
 
 Nps <- ceiling(10^seq(1,5,by=0.2))
 times <- c()
 for (np in Nps) {
-  times <- c(times,
-    system.time(
-      pfilter(flu,Np=np,
-        params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9)))[[3]])
+  times <- c(
+    times,
+    system.time(measSIR %>% pfilter(Np=np))[3]
+  )
 }
 
 plot(Nps,times)
 lm(times~Nps) -> fit
-summary(fit)
 abline(fit)
+summary(fit)

@@ -1,5 +1,5 @@
 ---
-title: "Likelihood by direct simulation: boarding school flu"
+title: "Likelihood by direct simulation: Consett measles example"
 author: "Aaron A. King and Edward L. Ionides"
 output:
   html_document:
@@ -69,66 +69,74 @@ stopifnot(packageVersion("pomp")>"2.0.9")
 set.seed(594709947L)
 ```
 
-* We're going to demonstrate what happens when we attempt to compute the likelihood for the boarding school flu data by direct simulation from.
+We're going to demonstrate what happens when we attempt to compute the likelihood for the Consett measles outbreak data by direct simulation from.
 
-* First, let's reconstruct the toy SIR model we were working with.
+First, let's reconstruct the toy SIR model we were working with.
 
-```{r flu-construct}
-rproc <- Csnippet("
-  double N = 763;
-  double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
-  double t2 = rbinom(I,1-exp(-mu_I*dt));
-  double t3 = rbinom(R1,1-exp(-mu_R1*dt));
-  double t4 = rbinom(R2,1-exp(-mu_R2*dt));
-  S  -= t1;
-  I  += t1 - t2;
-  R1 += t2 - t3;
-  R2 += t3 - t4;
+```{r model-construct}
+library(tidyverse)
+library(pomp)
+
+sir_step <- Csnippet("
+  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
+  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  R += dN_IR;
+  H += dN_IR;
 ")
 
-init <- Csnippet("
-  S = 762;
+sir_init <- Csnippet("
+  S = nearbyint(eta*N);
   I = 1;
-  R1 = 0;
-  R2 = 0;
+  R = nearbyint((1-eta)*N);
+  H = 0;
 ")
 
 dmeas <- Csnippet("
-  lik = dpois(B,rho*R1+1e-6,give_log);
+  lik = dbinom(reports,H,rho,give_log);
 ")
 
 rmeas <- Csnippet("
-  B = rpois(rho*R1+1e-6);
+  reports = rbinom(H,rho);
 ")
 
-bsflu %>%
-  select(day,B) %>%
-  pomp(times="day",t0=0,
-    rprocess=euler(rproc,delta.t=1/5),
-    rinit=init,rmeasure=rmeas,dmeasure=dmeas,
-    statenames=c("S","I","R1","R2"),
-    paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
+read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
+  select(week,reports=cases) %>%
+  filter(week<=42) %>%
+  pomp(
+    times="week",t0=0,
+    rprocess=euler(sir_step,delta.t=1/6),
+    rinit=sir_init,
+    rmeasure=rmeas,
+    dmeasure=dmeas,
+    accumvars="H",
+    statenames=c("S","I","R","H"),
+    paramnames=c("Beta","gamma","eta","rho","N"),
+    params=c(Beta=15,gamma=0.5,rho=0.5,eta=0.06,N=38000)
+  ) -> measSIR
 ```
 
 Let's generate a large number of simulated trajectories at some particular point in parameter space.
 ```{r bbs-mc-like-2}
-flu %>%
-  simulate(params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9),
-    nsim=5000,format="arrays") -> x
-matplot(time(flu),t(x$states["R1",1:50,]),type='l',lty=1,
-  xlab="time",ylab=expression(R[1]),bty='l',col='blue')
-lines(time(flu),obs(flu,"B"),lwd=2,col='black')
+measSIR %>%
+  simulate(nsim=5000,format="arrays") -> x
+sims <- coef(measSIR,"rho")*x$states["H",,]
+matplot(time(measSIR),t(sims[1:50,]),type='l',lty=1,
+  xlab="time",ylab=expression(rho*H),bty='l',col='blue')
+lines(time(measSIR),obs(measSIR,"reports"),lwd=2,col='black')
 ```
 
 We can use the function `dmeasure` to evaluate the log likelihood of the data given the states, the model, and the parameters:
 ```{r bbs-mc-like-3,cache=T}
-ell <- dmeasure(flu,y=obs(flu),x=x$states,times=time(flu),log=TRUE,
-  params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9))
+ell <- dmeasure(measSIR,y=obs(measSIR),x=x$states,times=time(measSIR),log=TRUE,
+  params=coef(measSIR))
 dim(ell)
 ```
 According to the general equation for likelihood by direct simulation, we should sum up the log likelihoods across time:
 ```{r bbs-mc-like-4}
 ell <- apply(ell,1,sum)
+summary(ell)
 summary(exp(ell))
 ```
 

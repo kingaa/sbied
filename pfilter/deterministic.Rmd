@@ -74,7 +74,8 @@ set.seed(594709947L)
 
 * Deterministic latent process models are perfectly predictable, given the parameter values and initial conditions. One might therefore expect that these determinstic process models are problematic as statistical descriptions of unpredictable systems.
 
-    + Exception: an imperfectly measured chaotic system is both deterministic and unpredictable. However, there has been little success using this class of models for fitting biological systems.
+    + Exception: an imperfectly measured chaotic system is both deterministic and unpredictable. 
+	However, there has been little success using this class of models for fitting biological systems.
 
     + Exception: for short time series, the role of dynamic stochasticity may be negligible compared to measurement error, parameter uncertainty and uncertainty about initial values.
 
@@ -84,7 +85,8 @@ set.seed(594709947L)
 
 * Recall that it is statistically meaningful to compare likelihoods between entirely different classes of models for the same data, for example by AIC.
 
-* A benchmark is a simple model that is fitted with the goal of providing a sanity check on a more sophisticated model. We believe that the complex model should fit the data better, but we want to check!
+* A benchmark is a simple model that is fitted with the goal of providing a sanity check on a more sophisticated model.
+  We believe that the complex model should fit the data better, but we want to check!
 
 * Some simple benchmarks can be constructed with relatively little effort:
 

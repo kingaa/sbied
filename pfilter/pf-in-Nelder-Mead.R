@@ -9,15 +9,6 @@
 #' csl: ../ecology.csl
 #' ---
 #' 
-#' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-#' \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
-#' \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-#' \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-#' \newcommand\dd[1]{d{#1}}
-#' \newcommand\dlta[1]{{\Delta}{#1}}
-#' \newcommand\lik{\mathcal{L}}
-#' \newcommand\loglik{\ell}
-#' 
 #' -----------------------------------
 #' 
 #' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
@@ -28,6 +19,7 @@
 #' 
 #' -----------------------------------
 #' 
+
 ## ----prelims,include=FALSE,cache=FALSE-----------------------------------
 options(
   keep.source=TRUE,
@@ -38,8 +30,8 @@ options(
 library(plyr)
 library(tidyverse)
 theme_set(theme_bw())
-library(pomp2)
-stopifnot(packageVersion("pomp2")>"2.0.9")
+library(pomp)
+stopifnot(packageVersion("pomp")>="2.1")
 set.seed(594709947L)
 
 #' 
@@ -56,6 +48,7 @@ set.seed(594709947L)
 #' \newcommand\lik{\mathscr{L}}
 #' \newcommand\loglik{\ell}
 #' \newcommand\profileloglik[1]{\ell^\mathrm{profile}_#1}
+#' \newcommand\Rzero{\mathfrak{R}_0}
 #' 
 #' In the toy example we've been working with, the default parameter set is not particularly close to the MLE.
 #' One way to find the MLE is to try optimizing the estimated likelihood directly.
@@ -75,78 +68,87 @@ set.seed(594709947L)
 #' The price would be a $n$-fold increase in cpu time, where $n$ is the dimension of the parameter space.
 #' Also, since the likelihood is noisily estimated, we would expect the derivative estimates to be even noisier.
 #' 1. Finally, the parameters set we must optimize over is not unbounded.
-#' We must have $\beta,\mu_I>0$ and $0<\rho<1$.
+#' In particular, we must have $\beta,\gamma>0$ and $0<\rho,\eta<1$.
 #' We must therefore select an optimizer that can solve this *constrained maximization problem*, or find some of way of turning it into an unconstrained maximization problem.
 #' For example, we can transform the parameters onto a scale on which there are no constraints.
 #' 
 #' Let's try this out on the toy SIR model we were working with, reconstructed as follows.
 #' 
-## ----flu-construct-------------------------------------------------------
-rproc <- Csnippet("
-  double N = 763;
-  double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
-  double t2 = rbinom(I,1-exp(-mu_I*dt));
-  double t3 = rbinom(R1,1-exp(-mu_R1*dt));
-  double t4 = rbinom(R2,1-exp(-mu_R2*dt));
-  S  -= t1;
-  I  += t1 - t2;
-  R1 += t2 - t3;
-  R2 += t3 - t4;
+## ----model-construct-----------------------------------------------------
+library(tidyverse)
+library(pomp)
+
+sir_step <- Csnippet("
+  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
+  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  R += dN_IR;
+  H += dN_IR;
 ")
 
-init <- Csnippet("
-  S = 762;
+sir_init <- Csnippet("
+  S = nearbyint(eta*N);
   I = 1;
-  R1 = 0;
-  R2 = 0;
+  R = nearbyint((1-eta)*N);
+  H = 0;
 ")
 
 dmeas <- Csnippet("
-  lik = dpois(B,rho*R1+1e-6,give_log);
+  lik = dbinom(reports,H,rho,give_log);
 ")
 
 rmeas <- Csnippet("
-  B = rpois(rho*R1+1e-6);
+  reports = rbinom(H,rho);
 ")
 
-bsflu %>%
-  select(day,B) %>%
-  pomp(times="day",t0=0,
-    rprocess=euler(rproc,delta.t=1/5),
-    rinit=init,rmeasure=rmeas,dmeasure=dmeas,
-    statenames=c("S","I","R1","R2"),
-    paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
+read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
+  select(week,reports=cases) %>%
+  pomp(
+    times="week",t0=0,
+    rprocess=euler(sir_step,delta.t=1/6),
+    rinit=sir_init,
+    rmeasure=rmeas,
+    dmeasure=dmeas,
+    accumvars="H",
+    statenames=c("S","I","R","H"),
+    paramnames=c("Beta","gamma","eta","rho","N"),
+    params=c(Beta=15,gamma=0.5,rho=0.5,eta=0.06,N=38000)
+  ) -> measSIR
 
 #' 
 #' Here, let's opt for deterministic optimization of a rough function.
 #' We'll try using `optim`'s default method: Nelder-Mead, fixing the random-number generator seed to make the likelihood calculation deterministic.
 #' Since Nelder-Mead is an unconstrained optimizer, we must transform the parameters.
 #' The following introduces such a transformation into the `pomp` object.
-## ----flu-partrans--------------------------------------------------------
-flu %>%
-  pomp(partrans=parameter_trans(log=c("Beta","mu_R1","mu_I"),logit="rho"),
-    paramnames=c("Beta","mu_I","mu_R1","rho")) -> flu
+## ----partrans------------------------------------------------------------
+measSIR %>%
+  pomp(partrans=parameter_trans(log=c("Beta","gamma"),logit=c("rho","eta")),
+    paramnames=c("Beta","gamma","eta","rho")) -> measSIR
 
 #' 
-#' Let's fix a reference point in parameter space and insert these parameters into the `pomp` object:
-## ----flu-ref-params------------------------------------------------------
-coef(flu) <- c(Beta=2,mu_I=1,mu_R1=512/sum(bsflu$B),mu_R2=512/sum(bsflu$C),rho=0.9)
+#' We can think of the parameters that we furnished when creating `measSIR` as a kind of reference point in parameter space.
+## ----ref-params----------------------------------------------------------
+coef(measSIR)
 
 #' 
 #' The following constructs a function returning the negative log likelihood of the data at a given point in parameter space.
-#' The parameters to be estimated are named in the `est` argument.
+#' The parameters to be estimated are named in the `est` argument;
+#' the others will remain fixed at the reference values.
 #' Note how the `freeze` function is used to fix the seed of the RNG.
 #' Note too, how this function returns a large (and therefore bad) value when the particle filter encounters and error.
 #' This behavior makes the objective function more robust.
 #' 
-## ----flu-like-optim-1----------------------------------------------------
+## ----like-optim-1--------------------------------------------------------
 neg.ll <- function (par, est) {
-  allpars <- coef(flu,transform=TRUE)
-  allpars[est] <- par
   try(
-    freeze(
-      pfilter(flu,params=partrans(flu,allpars,dir="fromEst"),Np=2000),
-      seed=915909831
+    freeze({
+      allpars <- coef(measSIR,transform=TRUE)
+      allpars[est] <- par
+      theta <- partrans(measSIR,allpars,dir="fromEst")
+      pfilter(measSIR,params=theta,Np=2000)
+    },
+    seed=915909831
     )
   ) -> pf
   if (inherits(pf,"try-error")) 1e10 else -logLik(pf)
@@ -154,18 +156,19 @@ neg.ll <- function (par, est) {
 
 #' 
 #' Now we call `optim` to minimize this function:
-## ----flu-like-optim-2----------------------------------------------------
+## ----like-optim-2--------------------------------------------------------
 ## use Nelder-Mead with fixed RNG seed
+estpars <- c("Beta","gamma","eta")
 optim(
-  par=c(log(2), log(1), log(0.9/(1-0.9))),
-  est=c("Beta","mu_I","rho"),
+  par=coef(measSIR,estpars,transform=TRUE),
+  est=estpars,
   fn=neg.ll,
   method="Nelder-Mead",
   control=list(maxit=400,trace=0)
 ) -> fit
 
-mle <- flu
-coef(mle,c("Beta","mu_I","rho"),transform=TRUE) <- fit$par
+mle <- measSIR
+coef(mle,estpars,transform=TRUE) <- fit$par
 coef(mle)
 
 fit$val
@@ -175,14 +178,14 @@ ll <- logmeanexp(lls,se=TRUE); ll
 
 #' 
 #' We plot some simulations at these parameters.
-## ----flu-sims------------------------------------------------------------
+## ----sims1---------------------------------------------------------------
 mle %>% simulate(nsim=10,format="data.frame",include.data=TRUE) -> sims
 
 #' The data are shown in blue.
-#' The `r max(sims$sim)` simulations are shown in red.
-## ----flu-sims-plot,echo=F------------------------------------------------
+#' The `r max(sims$.id)` simulations are shown in red.
+## ----sims1-plot,echo=F---------------------------------------------------
 sims %>%
-  ggplot(aes(x=day,y=B,group=.id,color=.id=="data"))+
+  ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   guides(color=FALSE)+
   geom_line()
 
@@ -204,12 +207,18 @@ sims %>%
 #' 
 #' #### Exercise: Fit more parameters.
 #' 
-#' Try to estimate $\beta$, $\mu_I$, $\rho$, and $\mu_{R1}$ simultaneously.
-#' Does your estimate of $\mu_{R1}$ differ from the value we computed from the raw data?
+#' Try to estimate $\beta$, $\gamma$, $\rho$, and $\eta$ simultaneously.
+#' Does your estimate of $\Rzero$ differ from the value we computed from the raw data?
 #' How do you interpret the agreement or lack thereof?
 #' 
 #' --------------------------
 #' 
-#' ## [Back](./pfilter.html)
+#' <a href="#" onclick="goBack()">Back</a>
+#' 
+#' <script>
+#' function goBack() {
+#'   window.history.back();
+#' }
+#' </script>
 #' 
 #' --------------------------

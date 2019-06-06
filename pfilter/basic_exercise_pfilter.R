@@ -9,15 +9,6 @@
 #' csl: ../ecology.csl
 #' ---
 #' 
-#' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-#' \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
-#' \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-#' \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-#' \newcommand\dd[1]{d{#1}}
-#' \newcommand\dlta[1]{{\Delta}{#1}}
-#' \newcommand\lik{\mathcal{L}}
-#' \newcommand\loglik{\ell}
-#' 
 #' -----------------------------------
 #' 
 #' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
@@ -28,6 +19,7 @@
 #' 
 #' -----------------------------------
 #' 
+
 ## ----prelims,include=FALSE,cache=FALSE-----------------------------------
 options(
   keep.source=TRUE,
@@ -41,22 +33,24 @@ theme_set(theme_bw())
 library(plyr)
 library(reshape2)
 library(magrittr)
-library(pomp2)
-stopifnot(packageVersion("pomp2")>"2.0.9")
+library(pomp)
+stopifnot(packageVersion("pomp")>"2.0.9")
 
 #' 
-#' \newcommand\prob{\mathbb{P}}
-#' \newcommand\E{\mathbb{E}}
-#' \newcommand\var{\mathrm{Var}}
-#' \newcommand\cov{\mathrm{Cov}}
+#' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+#' \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+#' \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+#' \newcommand\cov[2]{\mathrm{Cov}\left[{#1},{#2}\right]}
+#' \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+#' \newcommand\dd[1]{d{#1}}
+#' \newcommand\dlta[1]{{\Delta}{#1}}
+#' \newcommand\lik{\mathcal{L}}
 #' \newcommand\loglik{\ell}
 #' \newcommand\R{\mathbb{R}}
 #' \newcommand\data[1]{#1^*}
 #' \newcommand\params{\, ; \,}
 #' \newcommand\transpose{\scriptsize{T}}
 #' \newcommand\eqspace{\quad\quad\quad}
-#' \newcommand\lik{\mathscr{L}}
-#' \newcommand\loglik{\ell}
 #' \newcommand\profileloglik[1]{\ell^\mathrm{profile}_#1}
 #' 
 #' 
@@ -68,7 +62,9 @@ stopifnot(packageVersion("pomp2")>"2.0.9")
 #' 
 #' - Be computed in a length of time appropriate for the circumstances.
 #' 
-#' Set up a likelihood evaluation for the 'flu' model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine. Provide a Monte Carlo standard error for your estimate. Comment on the bias of your estimate. Optionally, take advantage of multiple cores on your computer to improve your estimate.
+#' Set up a likelihood evaluation for the `measSIR` model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine.
+#' Provide a Monte Carlo standard error for your estimate. Comment on the bias of your estimate.
+#' Optionally, take advantage of multiple cores on your computer to improve your estimate.
 #' 
 #' <br>
 #' 
@@ -80,54 +76,60 @@ stopifnot(packageVersion("pomp2")>"2.0.9")
 #' 
 #' - First, let's reconstruct the toy SIR model we were working with:
 #' 
-## ----flu-construct-------------------------------------------------------
-read.table("https://kingaa.github.io/sbied/stochsim/bsflu_data.txt") -> bsflu
+## ----model-construct-----------------------------------------------------
+library(tidyverse)
+library(pomp)
 
-rproc <- Csnippet("
-  double N = 763;
-  double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
-  double t2 = rbinom(I,1-exp(-mu_I*dt));
-  double t3 = rbinom(R1,1-exp(-mu_R1*dt));
-  double t4 = rbinom(R2,1-exp(-mu_R2*dt));
-  S  -= t1;
-  I  += t1 - t2;
-  R1 += t2 - t3;
-  R2 += t3 - t4;
+sir_step <- Csnippet("
+  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
+  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  R += dN_IR;
+  H += dN_IR;
 ")
 
-init <- Csnippet("
-  S = 762;
+sir_init <- Csnippet("
+  S = nearbyint(eta*N);
   I = 1;
-  R1 = 0;
-  R2 = 0;
+  R = nearbyint((1-eta)*N);
+  H = 0;
 ")
 
 dmeas <- Csnippet("
-  lik = dpois(B,rho*R1+1e-6,give_log);
+  lik = dbinom(reports,H,rho,give_log);
 ")
 
 rmeas <- Csnippet("
-  B = rpois(rho*R1+1e-6);
+  reports = rbinom(H,rho);
 ")
 
-bsflu %>%
-  subset(select=-C) %>%
-pomp(times="day",t0=0,
-     rprocess=euler(rproc,delta.t=1/5),
-     rinit=init,rmeasure=rmeas,dmeasure=dmeas,
-     statenames=c("S","I","R1","R2"),
-     paramnames=c("Beta","mu_I","mu_R1","mu_R2","rho")) -> flu
+read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
+  select(week,reports=cases) %>%
+  filter(week<=42) %>%
+  pomp(
+    times="week",t0=0,
+    rprocess=euler(sir_step,delta.t=1/6),
+    rinit=sir_init,
+    rmeasure=rmeas,
+    dmeasure=dmeas,
+    accumvars="H",
+    statenames=c("S","I","R","H"),
+    paramnames=c("Beta","gamma","eta","rho","N"),
+    params=c(Beta=15,gamma=0.5,rho=0.5,eta=0.06,N=38000)
+  ) -> measSIR
 
 #' 
 #' - Now, borrow code from the notes:
 #' 
-## ----flu-pfilter-loglik,cache=T------------------------------------------
+## ----pfilter-loglik,cache=T----------------------------------------------
 NP <- 50000
 REPLICATES <- 10
 timer <- system.time(
-  pf <- replicate(REPLICATES,
-     pfilter(flu,Np=NP,
-        params=c(Beta=3,mu_I=1/2,mu_R1=1/4,mu_R2=1/1.8,rho=0.9)))
+  pf <- replicate(
+    REPLICATES,
+    measSIR %>% pfilter(Np=NP)
+  )
 )
 ll <- sapply(pf,logLik)
 logmeanexp(ll,se=TRUE)
@@ -136,7 +138,7 @@ logmeanexp(ll,se=TRUE)
 #' - This took `r round(timer["elapsed"]/60,2)` minutes
 #' 
 #' - Since the time taken is approximately linear in `NP` and `REPLICATES`, we get a formula (for this machine) of
-#' $$ \mbox{Runtime}\approx \frac{ \mathrm{NP}}{`r NP`} \times \frac{\mathrm{REPLICATES}}{ `r REPLICATES`} \times `r round(timer["elapsed"]/60,2)` \mbox{ minutes}.$$
+#' $$\mbox{Runtime}\approx \frac{ \mathrm{NP}}{`r NP`} \times \frac{\mathrm{REPLICATES}}{ `r REPLICATES`} \times `r round(timer["elapsed"]/60,2)` \mbox{ minutes}.$$
 #' 
 #' - We can use this formula to select  `NP` and `REPLICATES` to give an appropriate runtime.
 #' 

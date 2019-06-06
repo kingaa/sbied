@@ -22,6 +22,7 @@
 #' \newcommand\data[1]{#1^*}
 #' \newcommand\params{\, ; \,}
 #' \newcommand\profileloglik{\ell_\mathrm{profile}}
+#' \newcommand\Rzero{\mathfrak{R}_0}
 #' 
 #' --------------------------
 #' 
@@ -460,11 +461,15 @@ set.seed(1221234211)
 #' 
 #' * We get the **plug-and-play** property that our algorithm depends on `rprocess` but does not require `dprocess`.
 #' 
-#' - However, this naive approach scales poorly with dimension. It requires a Monte Carlo effort that scales exponentially with the length of the time series, and so is infeasible on anything but a short data set.
+#' - However, this naive approach scales poorly with dimension.
+#' It requires a Monte Carlo effort that scales exponentially with the length of the time series, and so is infeasible on anything but a short data set.
 #' 
-#' - One way to see this is to notice that, once a simulated trajectory diverges from the data, it will seldom come back. Simulations that lose track of the data will make a negligible contribution to the likelihood estimate. When simulating a long time series, almost all the simulated trajectories will eventually lose track of the data.
+#' - One way to see this is to notice that, once a simulated trajectory diverges from the data, it will seldom come back. 
+#' Simulations that lose track of the data will make a negligible contribution to the likelihood estimate.
+#' When simulating a long time series, almost all the simulated trajectories will eventually lose track of the data.
 #' 
-#' - We can see this happening in practice for the boarding school influenza outbreak data: [supplementary material](directSimulation.html)
+#' - We can see this happening in practice for the measles outbreak data:
+#' [supplementary material](directSimulation.html)
 #' 
 #' 
 #' <br>
@@ -576,8 +581,7 @@ set.seed(1221234211)
 #' Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our measles-outbreak case study.
 #' Here, we simply repeat the construction of the SIR model we looked at earlier.
 #' 
-#' 
-## ----measles-construct, echo=FALSE---------------------------------------
+## ----model-construct, echo=FALSE-----------------------------------------
 library(tidyverse)
 library(pomp)
 
@@ -605,8 +609,9 @@ rmeas <- Csnippet("
   reports = rbinom(H,rho);
 ")
 
-read_csv("https://kingaa.github.io/sbied/stochsim/Measles_Consett_1948.csv") %>%
+read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
   select(week,reports=cases) %>%
+  filter(week<=42) %>%
   pomp(
     times="week",t0=0,
     rprocess=euler(sir_step,delta.t=1/6),
@@ -623,14 +628,14 @@ read_csv("https://kingaa.github.io/sbied/stochsim/Measles_Consett_1948.csv") %>%
 #' In **pomp**, the basic particle filter is implemented in the command `pfilter`.
 #' We must choose the number of particles to use by setting the `Np` argument.
 #' 
-## ----flu-pfilter-1,cache=T-----------------------------------------------
+## ----pfilter-1,cache=T---------------------------------------------------
 measSIR %>%
   pfilter(Np=5000) -> pf
 logLik(pf)
 
 #' 
 #' We can run a few particle filters to get an estimate of the Monte Carlo variability:
-## ----flu-pfilter-2,cache=T-----------------------------------------------
+## ----pfilter-2,cache=T---------------------------------------------------
 replicate(10,
   measSIR %>% pfilter(Np=5000)
 ) -> pf
@@ -661,7 +666,7 @@ logmeanexp(ll,se=TRUE)
 #' 
 #' * What is the difference between a likelihood slice and a profile? What is the consequence of this difference for the statistical interpretation of these plots? How should you decide whether to compute a profile or a slice?
 #' 
-## ----flu-like-slice,cache=TRUE,results='hide'----------------------------
+## ----like-slice,cache=TRUE,results='hide'--------------------------------
 sliceDesign(
   center=coef(measSIR),
   Beta=rep(seq(from=5,to=20,length=40),each=3),
@@ -690,7 +695,7 @@ foreach (theta=iter(p,"row"),
 #' 
 #' - To ensure that we have high-quality random numbers in each parallel *R* session, we use a parallel random number generator provided by the **doRNG** package and initialized by the `registerDoRNG` call.
 #' 
-## ----flu-like-slice-plot,cache=FALSE,echo=FALSE--------------------------
+## ----like-slice-plot,cache=FALSE,echo=FALSE------------------------------
 library(tidyverse)
 
 p %>% 
@@ -771,12 +776,10 @@ p %>%
 #' In the above, all points with log likelihoods less than 50 units below the maximum are shown in grey.
 #' 
 #' - Notice some features of the log likelihood surface, and its estimate from the particle filter, that can cause difficulties for numerical methods:
-#' 
-#' 1. The surface is wedge-shaped, so its curvature varies considerably. By contrast, asymptotic theory predicts a parabolic surface that has constant curvature.
-#' 
-#' 2. Monte Carlo noise in the likelihood evaluation makes it hard to pick out exactly where the likelihood is maximized. Nevertheless, the major features of the likelihood surface are evident despite the noise.
-#' 
-#' - Wedge-shaped relationships between parameters, and nonlinear relationships, are common features of epidemiological dynamic models. We'll see that in the case studies.
+#' 	1. The surface is wedge-shaped, so its curvature varies considerably. By contrast, asymptotic theory predicts a parabolic surface that has constant curvature.
+#' 	1. Monte Carlo noise in the likelihood evaluation makes it hard to pick out exactly where the likelihood is maximized. Nevertheless, the major features of the likelihood surface are evident despite the noise.
+#' - Wedge-shaped relationships between parameters, and nonlinear relationships, are common features of epidemiological dynamic models. 
+#' We'll see this in the case studies.
 #' 
 #' <br>
 #' 
@@ -794,13 +797,13 @@ p %>%
 #' Then, test your conjeture by running a sequence of particle filter operations, increasing the number of particles (`Np`) and measuring the time taken using `system.time`.
 #' Plot your results to test your conjecture.
 #' 
-#' [Worked solution to the Exercise](./expense.R)
+#' [Worked solution to the Exercise](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/expense.R)
 #' 
 #' -----------
 #' 
 #' #### Basic Exercise: log likelihood estimation by particle filtering
 #' 
-#' - Here are some desiderata for a Monte Carlo log likelihood approximation:
+#' Here are some desiderata for a Monte Carlo log likelihood approximation:
 #' 
 #' + It should have low Monte Carlo bias and variance. 
 #' 
@@ -808,13 +811,13 @@ p %>%
 #' 
 #' + It should be computed in a length of time appropriate for the circumstances.
 #' 
-#' - Set up a likelihood evaluation for the flu model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine.
+#' Set up a likelihood evaluation for the flu model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine.
 #' 
 #' - Provide a Monte Carlo standard error for your estimate.
 #' 
 #' - Comment on the bias of your estimate.
 #' 
-#' - Optionally, take advantage of multiple cores on your computer to improve your estimate.
+#' - Optionally, use **doParallel** to take advantage of multiple cores on your computer to improve your estimate.
 #' 
 #' [Worked solution to the Exercise](./loglikest.html) 
 #' 
@@ -822,7 +825,7 @@ p %>%
 #' 
 #' #### Optional Exercise: one-dimensional likelihood slice
 #' 
-#' Compute several likelihood slices in the $\rho$ direction.
+#' Compute several likelihood slices in the $\eta$ direction.
 #' 
 #' 
 #' -----------
@@ -830,7 +833,7 @@ p %>%
 #' 
 #' #### Optional Exercise: two-dimensional likelihood slice
 #' 
-#' Compute a slice of the likelihood in the $\beta$-$\rho$ plane.
+#' Compute a slice of the likelihood in the $\beta$-$\eta$ plane.
 #' 
 #' <br>
 #' 
