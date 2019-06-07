@@ -528,7 +528,7 @@ bake(file="lik_local.rds",{
 #' 
 
 #' 
-#' This plot shows hints of ridges in the likelihood surface (cf. the $\beta$-$\eta$ and $\beta$-$\rho$ panels).
+#' This plot shows hints of ridges in the likelihood surface (cf. the $\beta$-$\eta$, $\beta$-$\rho$, and $\eta$-$\rho$ panels).
 #' However, the sampling is still too sparse to give a clear picture.
 #' 
 #' We add these newly explored points to our database:
@@ -612,6 +612,9 @@ results %>%
 #' Moreover, the estimates have comparable likelihoods, despite their considerable variability.
 #' This gives us some confidence in our maximization procedure. 
 #' 
+#' ### Profile likelihood
+#' 
+#' #### Profile over $\eta$
 #' 
 ## ----eta_profile---------------------------------------------------------
 registerDoRNG(830007657)
@@ -655,16 +658,102 @@ results %>%
 
 ## ------------------------------------------------------------------------
 read_csv("measles_params.csv") %>%
-  filter(loglik>max(loglik)-50) -> all
+  filter(loglik>max(loglik)-10) -> all
 
-pairs(~loglik+Beta+gamma+eta+rho, data=all,
-      col=ifelse(all$type=="guess",grey(0.5),"red"),pch=16)
+pairs(~loglik+Beta+gamma+eta+rho, data=all,pch=16)
 
-all %>%
-  filter(loglik>max(loglik)-10) %>%
+results %>%
   ggplot(aes(x=eta,y=loglik))+
   geom_point()
 
+results %>%
+  group_by(round(eta,5)) %>%
+  filter(rank(-loglik)<3) %>%
+  ungroup() %>%
+  ggplot(aes(x=eta,y=loglik))+
+  geom_point()+
+  geom_smooth(method="loess",span=0.25)
+
+results %>%
+  group_by(round(eta,5)) %>%
+  filter(rank(-loglik)<3) %>%
+  ungroup() %>%
+  ggplot(aes(x=eta,y=gamma))+
+  geom_point()
+
+
+#' 
+#' 
+#' #### Profile over $\gamma$
+#' 
+## ----gamma_profile-------------------------------------------------------
+registerDoRNG(2105684752)
+
+results %>%
+  filter(loglik>max(loglik)-20,loglik.se<2,gamma<10) %>%
+  sapply(range) -> box
+box
+
+results %>% 
+  filter(loglik>max(loglik)-10) %>%
+  select(Beta,eta,rho,gamma) %>%
+  bind_rows(
+    profileDesign(
+      gamma=seq(0.7,7,length=20),
+      lower=box[1,c("Beta","eta","rho")],
+      upper=box[2,c("Beta","eta","rho")],
+      nprof=15
+    )
+) -> guesses
+
+mf1 <- mifs_local[[1]]
+
+bake(file="gamma_profile.rds",{
+  foreach(guess=iter(guesses,"row"), 
+    .packages='pomp', 
+    .combine=rbind,
+    .export=c("mf1","fixed_params")
+  ) %dopar% 
+  {
+    mf1 %>%
+      mif2(
+        params=c(unlist(guess),fixed_params),
+        partrans=parameter_trans(log="Beta",logit=c("eta","rho")),
+        paramnames=c("Beta","eta","rho"),
+        rw.sd=rw.sd(Beta=0.02,eta=0.02,rho=0.02)
+      ) %>%
+      mif2(Nmif=100,cooling.fraction.50=0.3) %>%
+      mif2() -> mf
+    ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
+    ll <- logmeanexp(ll,se=TRUE)
+    mf %>% coef() %>% bind_rows() %>%
+        bind_cols(loglik=ll[1],loglik.se=ll[2])
+  }
+}) -> results
+
+
+## ------------------------------------------------------------------------
+results %>%
+  write_csv(path="measles_params.csv",append=TRUE)
+
+## ------------------------------------------------------------------------
+pairs(~loglik+Beta+gamma+eta+rho,data=results,pch=16)
+
+results %>%
+  filter(loglik.se<1,loglik>max(loglik)-10) %>%
+  ggplot(aes(x=gamma,y=loglik))+
+  geom_point()
+
+results %>%
+  filter(loglik>max(loglik)-10,loglik.se<1) %>%
+  group_by(round(gamma,1)) %>%
+  filter(rank(-loglik)<3) %>%
+  ungroup() %>%
+  ggplot(aes(x=gamma,y=loglik))+
+  geom_point()+
+  geom_smooth(method="loess")
+
+#' 
 #' 
 #' <br>
 #' 

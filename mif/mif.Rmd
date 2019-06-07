@@ -686,6 +686,9 @@ We see that optimization attempts from diverse remote starting points converge o
 Moreover, the estimates have comparable likelihoods, despite their considerable variability.
 This gives us some confidence in our maximization procedure. 
 
+### Profile likelihood
+
+#### Profile over $\eta$
 
 ```{r eta_profile}
 registerDoRNG(830007657)
@@ -756,6 +759,81 @@ results %>%
   geom_point()
 
 ```
+
+
+#### Profile over $\gamma$
+
+```{r gamma_profile}
+registerDoRNG(2105684752)
+
+results %>%
+  filter(loglik>max(loglik)-20,loglik.se<2,gamma<10) %>%
+  sapply(range) -> box
+box
+
+results %>% 
+  filter(loglik>max(loglik)-10) %>%
+  select(Beta,eta,rho,gamma) %>%
+  bind_rows(
+    profileDesign(
+      gamma=seq(0.7,7,length=20),
+      lower=box[1,c("Beta","eta","rho")],
+      upper=box[2,c("Beta","eta","rho")],
+      nprof=15
+    )
+) -> guesses
+
+mf1 <- mifs_local[[1]]
+
+bake(file="gamma_profile.rds",{
+  foreach(guess=iter(guesses,"row"), 
+    .packages='pomp', 
+    .combine=rbind,
+    .export=c("mf1","fixed_params")
+  ) %dopar% 
+  {
+    mf1 %>%
+      mif2(
+        params=c(unlist(guess),fixed_params),
+        partrans=parameter_trans(log="Beta",logit=c("eta","rho")),
+        paramnames=c("Beta","eta","rho"),
+        rw.sd=rw.sd(Beta=0.02,eta=0.02,rho=0.02)
+      ) %>%
+      mif2(Nmif=100,cooling.fraction.50=0.3) %>%
+      mif2() -> mf
+    ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
+    ll <- logmeanexp(ll,se=TRUE)
+    mf %>% coef() %>% bind_rows() %>%
+        bind_cols(loglik=ll[1],loglik.se=ll[2])
+  }
+}) -> results
+```
+```{r purl=FALSE,include=FALSE}
+n_eta <- getDoParWorkers()
+t_eta <- attr(results,"system.time")
+```
+```{r}
+results %>%
+  write_csv(path="measles_params.csv",append=TRUE)
+```
+```{r}
+pairs(~loglik+Beta+gamma+eta+rho,data=results,pch=16)
+
+results %>%
+  filter(loglik.se<1,loglik>max(loglik)-10) %>%
+  ggplot(aes(x=gamma,y=loglik))+
+  geom_point()
+
+results %>%
+  filter(loglik>max(loglik)-10,loglik.se<1) %>%
+  group_by(round(gamma,1)) %>%
+  filter(rank(-loglik)<3) %>%
+  ungroup() %>%
+  ggplot(aes(x=gamma,y=loglik))+
+  geom_point()+
+  geom_smooth(method="loess")
+```
+
 
 <br>
 
