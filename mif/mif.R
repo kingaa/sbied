@@ -20,14 +20,15 @@
 #' Please share and remix non-commercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
-#' Produced with **R** version `r getRversion()` and **pomp2** version `r packageVersion("pomp2")`.
+#' Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 #' 
+
 ## ----prelims,include=FALSE,purl=TRUE,cache=FALSE-------------------------
-library(plyr)
 library(tidyverse)
-library(pomp2)
+library(pomp)
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp2")>"2.0.9")
+stopifnot(packageVersion("pomp")>="2.1")
+theme_set(theme_bw())
 set.seed(557976883)
 
 #' 
@@ -39,9 +40,9 @@ set.seed(557976883)
 #' 
 #' - This tutorial covers likelihood estimation via the method of iterated filtering.
 #' 
-#' - It presupposes familiarity with building partially observed Markov process (POMP) objects in the **R** package **pomp2** [@King2016]. 
+#' - It presupposes familiarity with building partially observed Markov process (POMP) objects in the **R** package **pomp** [@King2016]. 
 #' 
-#' - This tutorial follows on from the [topic of carrying out particle filtering (also known as sequential Monte Carlo) via `pfilter` in **pomp2**](../pfilter/pfilter.html). 
+#' - This tutorial follows on from the [topic of carrying out particle filtering (also known as sequential Monte Carlo) via `pfilter` in **pomp**](../pfilter/pfilter.html). 
 #' 
 #' <br>
 #' 
@@ -55,7 +56,7 @@ set.seed(557976883)
 #' 
 #' 1. Understand how iterated filtering algorithms carry out repeated particle filtering operations, with randomly perturbed parameter values, in order to maximize the likelihood.
 #' 
-#' 1. Gain experience carrying out statistical investigations using iterated filtering in a relatively simple situation (fitting an SIR model to a boarding school flu outbreak).
+#' 1. Gain experience carrying out statistical investigations using iterated filtering in a relatively simple situation (fitting an SIR model to data from a measles outbreak).
 #' 
 #' <br>
 #' 
@@ -119,8 +120,8 @@ set.seed(557976883)
 #' ### Bayesian and frequentist methods
 #' 
 #' - Recently, plug-and-play Bayesian methods have been discovered:
-#'     + particle Markov chain Monte Carlo (PMCMC) [@andrieu10].
-#'     + approximate Bayesian computation (ABC) [@toni09].
+#'     + particle Markov chain Monte Carlo (PMCMC) [@Andrieu2010].
+#'     + approximate Bayesian computation (ABC) [@Toni2009].
 #' - Prior belief specification is both the strength and weakness of Bayesian methodology:
 #'     + The likelihood surface for nonlinear POMP models often contains nonlinear ridges and variations in curvature. 
 #'     + These situations bring into question the appropriateness of independent priors derived from expert opinion on marginal distributions of parameters.
@@ -266,122 +267,86 @@ set.seed(557976883)
 #' 
 #' ----
 #' 
-#' ## Applying IF2 to the boarding school influenza outbreak
+#' ## Applying IF2 to the Consett measles outbreak
 #' 
-#' For a relatively simple epidemiological example of IF2, we consider fitting a stochastic SIR model to an influenza outbreak in a British boarding school [@Anonymous1978].
-#' Reports consist of the number of children confined to bed for each of the 14 days of the outbreak.
-#' The total number of children at the school was 763, and a total of 512 children spent time away from class.
-#' Only one adult developed influenza-like illness, so adults are omitted from the data and model.
-#' The data are provided with the package in the `bsflu` object:
+#' To apply IF2 to a relatively simple epidemiological example, we consider fitting a stochastic SIR model to data from a measles outbreak in the small English town of Consett.
+#' Reports consist of the number of cases for each week of the year.
+#' The population of the town was approximately 38,000 and, since the outbreak is confined to less than one year, we will ignore births and deaths.
+#' The data are available on the course website:
 #' 
-## ----load_bbs------------------------------------------------------------
-head(bsflu)
+## ----load_data-----------------------------------------------------------
+library(tidyverse)
+read_csv("https://kingaa.github.io/sbied/mif/Measles_Consett_1948.csv") %>%
+  select(week,reports=cases) %>%
+  filter(week<=42) -> dat
+
+dat %>%
+  ggplot(aes(x=week,y=reports))+
+  geom_line()
 
 #' 
-#' Our model is a variation on a basic SIR Markov chain, with state $X(t)=(S(t),I(t),R_1(t),R_2(t),R_3(t))$ giving the numbers of individuals in the susceptible and infectious categories, and three stages of recovery.
-#' The recovery stages, $R_1$, $R_2$ and $R_3$, are all modeled to be non-contagious.
-#' $R_1$ consists of individuals who are bed-confined if they showed symptoms;
-#' $R_2$ consists of individuals who are convalescent if they showed symptoms;
-#' $R_3$ consists of recovered individuals who have returned to school-work if they were symptomatic.
-#' The observation on day $n$ of the observed epidemic (with $t_1$ being 22 January) consists of the numbers of children who are bed-confined and convalescent.
-#' Ten individuals received antibiotics for secondary infections, and they had longer bed-confinement and convalescence times.
-#' Partly for this reason, and because our primary interest is in parameters related to transmission, we'll narrow our focus to the bed-confinement numbers, $B_n$, modeling these as $B_n\sim\dist{Poisson}{\rho R_1(t_n)}$, where $\rho$ is a reporting rate corresponding to the chance an infected boy is symptomatic.
+#' Our model is a variation on a basic SIR Markov chain, with state $X(t)=(S(t),I(t),R(t))$ giving the numbers of individuals in the susceptible and infectious categories, and three stages of recovery.
 #' 
+
 #' 
-#' The index case for the epidemic was purportedly a boy recently returned from Hong Kong, who was reported to have a transient febrile illness from 15 to 18 January.
-#' It would therefore be reasonable to initialize the epidemic at $t_0=-6$ with $I(t_0)=1$.
-#' This is a little tricky to reconcile with the rest of the data;
-#' for the moment, we avoid this issue by instead initializing with $I(t_0)=1$ at $t_0=0$.
-#' All other individuals are modeled to be initially susceptible.
-#' 
+#' We'll assume that there was a single infection in week 0, i.e., that $I(0)=1$.
 #' Our Markov transmission model is that each individual in $S$ transitions to $I$ at rate $\beta\,I(t)/N$;
-#' each individual in $I$ transitions at rate $\mu_I$ to $R_1$.
-#' Subsequently, the individual moves from $R_1$ to $R_2$ at  rate $\mu_{R_1}$, and finally from $R_2$ to $R_3$ at rate $\mu_{R_2}$.
-#' Therefore, $1/\mu_I$ is the mean infectious time prior to bed-confinement; $1/\mu_{R_1}$ is the mean duration of bed-confinement for symptomatic cases;
-#' $1/\mu_{R_2}$ is the mean duration of convalescence for symptomatic cases.
-#' All rates have units $\mathrm{day}^{-1}$. 
+#' and each individual in $I$ transitions at rate $\gamma$ to $R$.
+#' Therefore, $1/\gamma$ is the mean infectious period.
+#' All rates have units wk^-1^. 
 #' 
 #' This model has limitations and weaknesses, but writing down and fitting a model is a starting point for data analysis, not an end point.
 #' In particular, having fit one model, one should certainly try variations on that model.
 #' For example, one could include a latency period for infections, or one could modify the model to give a better description of the bed-confinement and convalescence processes.
 #' 
-#' We do not need a representation of $R_3$ since this variable has consequences neither for the dynamics of the state process nor for the data.
-#' Since we are confining ourselves for the present to fitting only the $B_n$ data, we need not track $R_2$.
-#' We enumerate the state variables ($S$, $I$, $R_1$) and the parameters ($\beta$, $\mu_I$, $\rho$, $\mu_{R_1}$) as follows:
+#' Notice that we do not need a representation of $R$ since this variable has consequences neither for the dynamics of the state process nor for the data.
 #' 
-## ----bsflu_names---------------------------------------------------------
-statenames <- c("S","I","R1")
-paramnames <- c("Beta","mu_I","mu_R1","rho")
+#' Now, we write the model code using C snippets:
+#' 
+## ----csnippets-----------------------------------------------------------
+library(tidyverse)
+library(pomp)
 
-#' 
-#' In the codes below, we'll refer to the data variables by their names ($B$, $C$), as given in the `bsflu` data-frame:
-#' 
-#' Now, we write the model code:
-#' 
-## ----csnippets_bsflu-----------------------------------------------------
+sir_step <- Csnippet("
+  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
+  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  H += dN_IR;
+")
+
+sir_init <- Csnippet("
+  S = nearbyint(eta*N);
+  I = 1;
+  H = 0;
+")
+
 dmeas <- Csnippet("
-  lik = dpois(B,rho*R1+1e-6,give_log);
+  lik = dbinom(reports,H,rho,give_log);
 ")
 
 rmeas <- Csnippet("
-  B = rpois(rho*R1+1e-6);
+  reports = rbinom(H,rho);
 ")
 
-rproc <- Csnippet("
-  double N = 763;
-  double t1 = rbinom(S,1-exp(-Beta*I/N*dt));
-  double t2 = rbinom(I,1-exp(-mu_I*dt));
-  double t3 = rbinom(R1,1-exp(-mu_R1*dt));
-  S  -= t1;
-  I  += t1 - t2;
-  R1 += t2 - t3;
-")
-
-rinit <- Csnippet("
- S = 762;
- I = 1;
- R1 = 0;
-")
-
-toEst <- Csnippet("
- T_Beta = log(Beta);
- T_mu_I = log(mu_I);
- T_rho = logit(rho);
-")
-
-fromEst <- Csnippet("
- Beta = exp(T_Beta);
- mu_I = exp(T_mu_I);
- rho = expit(T_rho);
-")
+dat %>%
+  pomp(
+    times="week",t0=0,
+    rprocess=euler(sir_step,delta.t=1/6),
+    rinit=sir_init,
+    rmeasure=rmeas,
+    dmeasure=dmeas,
+    accumvars="H",
+    statenames=c("S","I","H"),
+    paramnames=c("Beta","gamma","eta","rho","N")
+  ) -> measSIR
 
 #' 
+#' <!---
 #' Note that, in our measurement model, we've added a small positive number ($10^{-6}$) to the expected number of cases.
 #' Why is this useful?
 #' What complications does it introduce in the interpretation of results?
-#' 
-#' The `fromEst` and `toEst` C snippets implement parameter transformations that we'll want soon.
-#' 
-#' Now we build the pomp object:
-#' 
-## ----pomp_bsflu----------------------------------------------------------
-library(plyr)
-library(tidyverse)
-library(pomp2)
-
-bsflu %>%
-  select(day,B) %>%
-  pomp(
-    times="day",t0=0,
-    rmeasure=rmeas,
-    dmeasure=dmeas,
-    rprocess=euler(rproc,delta.t=1/12),
-    rinit=rinit,
-    partrans=parameter_trans(fromEst=fromEst,toEst=toEst),
-    statenames=statenames,
-    paramnames=paramnames
-  ) -> flu
-
+#' --->
 #' 
 #' <br>
 #' 
@@ -395,23 +360,27 @@ bsflu %>%
 #' As such a test, here we run some simulations and a particle filter.
 #' We'll use the following parameters, derived from our earlier explorations:
 ## ----start_params--------------------------------------------------------
-params <- c(Beta=2,mu_I=1,rho=0.9,mu_R1=1/3,mu_R2=1/2)
+params <- c(Beta=15,gamma=0.5,rho=0.5,eta=0.06,N=38000)
 
 #' 
 #' Now to run and plot some simulations:
 ## ----init_sim------------------------------------------------------------
-flu %>% simulate(params=params,nsim=10,format="data.frame") -> y
+measSIR %>%
+  simulate(params=params,nsim=10,format="data.frame") -> y
+
 
 #' 
-#' Before engaging in iterated filtering, it is a good idea to check that the basic particle filter is working since iterated filtering builds on this technique.
+#' Before engaging in iterated filtering, it is a good idea to check that the basic particle filter is working since we can't iterate a filter unless we can run a filter.
 #' The simulations above check the `rprocess` and `rmeasure` codes;
 #' the particle filter depends on the `rprocess` and `dmeasure` codes and so is a check of the latter.
 #' 
 ## ----init_pfilter--------------------------------------------------------
-flu %>% pfilter(params=params,Np=1000) -> pf
+measSIR %>%
+  pfilter(Np=1000,params=params) -> pf
+
 
 #' 
-#' The above plot shows the data (`B`), along with the *effective sample size* of the particle filter (`ess`) and the log likelihood of each observation conditional on the preceding ones (`cond.logLik`).
+#' The above plot shows the data (`reports`), along with the *effective sample size* of the particle filter (`ess`) and the log likelihood of each observation conditional on the preceding ones (`cond.logLik`).
 #' 
 #' <br>
 #' 
@@ -421,14 +390,14 @@ flu %>% pfilter(params=params,Np=1000) -> pf
 #' 
 #' ### Setting up the estimation problem.
 #' 
-#' Let's treat $\mu_{R_1}$ and  $\mu_{R_2}$ as known, and fix these parameters at the empirical means of the bed-confinement and convalescence times for symptomatic cases, respectively:
+#' Let's assume that the population size, $N$, is known accurately.
+#' We'll fix that parameter.
 #' 
 ## ----fixed_params--------------------------------------------------------
-with(bsflu,c(mu_R1=1/(sum(B)/512),mu_R2=1/(sum(C)/512))) -> fixed_params
-fixed_params
+fixed_params <- params[c("N")]; fixed_params
 
 #' 
-#' We will estimate $\beta$, $\mu_I$, and $\rho$.
+#' We will estimate $\beta$, $\gamma$, $\eta$, and $\rho$.
 #' 
 #' It will be helpful to parallelize most of the computations.
 #' Most machines nowadays have multiple cores and using this computational capacity is as simple as:
@@ -457,10 +426,8 @@ registerDoParallel()
 library(doRNG)
 registerDoRNG(625904618)
 bake(file="pf.rds",{
-  foreach(i=1:10,.packages='pomp2',
-    .export=c("flu","fixed_params")
-  ) %dopar% {
-    flu %>% pfilter(params=c(Beta=2,mu_I=1,rho=0.9,fixed_params),Np=10000)
+  foreach(i=1:10,.packages='pomp') %dopar% {
+    measSIR %>% pfilter(params=params,Np=10000)
   }
 }) -> pf
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
@@ -484,7 +451,7 @@ bake(file="pf.rds",{
 #' Let's store this point, together with the estimated likelihood and our estimate of the standard error on that likelihood, in a CSV file:
 ## ----init_csv------------------------------------------------------------
 results <- as.data.frame(as.list(c(coef(pf[[1]]),loglik=L_pf[1],loglik=L_pf[2])))
-write.csv(results,file="bsflu_params.csv",row.names=FALSE)
+write.csv(results,file="measles_params.csv",row.names=FALSE)
 
 #' 
 #' <br>
@@ -497,26 +464,24 @@ write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 #' 
 #' Let's carry out a local search using `mif2` around this point in parameter space. 
 #' To do so, we need to choose the `rw.sd` and `cooling.fraction.50` algorithmic parameters.
-#' Since $\beta$ and $\mu_I$ will be estimated on the log scale, and we expect that multiplicative perturbations of these parameters will have roughly similar effects on the likelihood, we'll use a perturbation size of $0.02$, which we imagine will have a small but non-negligible effect.
+#' Since $\beta$ and $\gamma$ will be estimated on the log scale, and we expect that multiplicative perturbations of these parameters will have roughly similar effects on the likelihood, we'll use a perturbation size of $0.02$, which we imagine will have a small but non-negligible effect.
 #' For simplicity, we'll use the same perturbation size on $\rho$.
 #' We fix `cooling.fraction.50=0.5`, so that after 50 `mif2` iterations, the perturbations are reduced to half their original magnitudes.
 #' 
-## ----box_search_local----------------------------------------------------
+## ----local_search--------------------------------------------------------
 registerDoRNG(482947940)
-bake(file="box_search_local.rds",{
-  foreach(i=1:20,
-    .packages='pomp2',
-    .combine=c, 
-    .export=c("flu","fixed_params")
-  ) %dopar%  
+bake(file="local_search.rds",{
+  foreach(i=1:20,.packages='pomp',.combine=c) %dopar%  
   {
-    flu %>%
+    measSIR %>%
     mif2(
-      params=c(Beta=2,mu_I=1,rho=0.9,fixed_params),
+      params=params,
+      partrans=parameter_trans(log=c("Beta","gamma"),logit=c("rho","eta")),
+      paramnames=c("Beta","gamma","rho","eta"),
       Np=2000,
       Nmif=50,
       cooling.fraction.50=0.5,
-      rw.sd=rw.sd(Beta=0.02,mu_I=0.02,rho=0.02)
+      rw.sd=rw.sd(Beta=0.02,gamma=0.02,rho=0.02,eta=0.02)
     )
   }
 }) -> mifs_local
@@ -525,12 +490,14 @@ bake(file="box_search_local.rds",{
 #' We obtain some diagnostic plots with the `plot` command applied to `mifs_local`.
 #' Here is a way to get a prettier version:
 #' 
+
 #' 
-#' No filtering failures (`nfail`) are generated at any point, which is comforting.
+#' No filtering failures (`nfail`) are generated after about 15 iterations, which is comforting.
 #' In general, we expect to see filtering failures whenever our initial guess (`start`) is incompatible with one or more of the observations.
 #' Filtering failures at the MLE are an indication that the model, at its best, is incompatible with one or more of the data.
 #' 
-#' We see that the likelihood generally increases as the iterations proceed, though there is considerable variability due to the stochastic nature of this Monte Carlo algorithm.
+#' We see that the likelihood eventually increases as the iterations proceed, though there is considerable variability due to the poorness of our starting guess and the stochastic nature of this Monte Carlo algorithm.
+#' 
 #' Although the filtering carried out by `mif2` in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not usually good enough for reliable inference.
 #' Partly, this is because parameter perturbations are applied in the last filtering iteration, so that the likelihood shown here is not identical to that of the model of interest.
 #' Partly, this is because `mif2` is usually carried out with fewer particles than are needed for a good likelihood evaluation:
@@ -540,13 +507,14 @@ bake(file="box_search_local.rds",{
 ## ----lik_local-----------------------------------------------------------
 registerDoRNG(900242057)
 bake(file="lik_local.rds",{
-  foreach(mf=mifs_local,.packages='pomp2',.combine=rbind) %dopar% 
+  foreach(mf=mifs_local,.packages='pomp',.combine=rbind) %dopar% 
   {
     evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
     ll <- logmeanexp(evals,se=TRUE)
     c(coef(mf),loglik=ll[1],loglik=ll[2])
   }
 }) -> results_local
+
 
 ## ------------------------------------------------------------------------
 results_local <- as.data.frame(results_local)
@@ -555,13 +523,15 @@ results_local <- as.data.frame(results_local)
 #' This investigation took `r round(attr(mifs_local,"system.time")["elapsed"],0)` sec for the maximization and `r round(t_local["elapsed"],0)` sec for the likelihood evaluation.
 #' These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 #' 
+
 #' 
-#' Although this plot some hints of ridges in the likelihood surface (cf. the $\beta$-$\mu_I$ panel), the sampling is still too sparse to give a clear picture.
+#' This plot shows hints of ridges in the likelihood surface (cf. the $\beta$-$\eta$ and $\beta$-$\rho$ panels).
+#' However, the sampling is still too sparse to give a clear picture.
 #' 
 #' We add these newly explored points to our database:
 ## ----local_database------------------------------------------------------
 results <- rbind(results,results_local[names(results)])
-write.csv(results,file="bsflu_params.csv",row.names=FALSE)
+write.csv(results,file="measles_params.csv",row.names=FALSE)
 
 #' 
 #' <br>
@@ -580,24 +550,21 @@ write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 #' If an estimation method gives stable conclusions with starting values drawn randomly from this box, this gives some confidence that an adequate global search has been carried out. 
 #' 
 #' For our flu model, a box containing reasonable parameter values might be
-#' 
-## ----box_global----------------------------------------------------------
-params_box <- rbind(
-  Beta=c(1,5),
-  mu_I=c(0.5,3),
-  rho = c(0.5,1)
-)
-
+#' $\beta\in (10,80)$, $\gamma\in (0.3,2)$, $\rho\in (0.2,0.9)$, $\eta\in (0,0.2)$.
 #' 
 #' We are now ready to carry out likelihood maximizations from diverse starting points.
 #' 
-## ----box_search_global---------------------------------------------------
+## ----global_search-------------------------------------------------------
 registerDoRNG(1270401374)
-guesses <- as.data.frame(apply(params_box,1,function(x)runif(300,x[1],x[2])))
+guesses <- runifDesign(
+  lower=c(Beta=10,gamma=0.3,rho=0.2,eta=0),
+  upper=c(Beta=80,gamma=2,rho=0.9,eta=0.2),
+  nseq=300
+)
 mf1 <- mifs_local[[1]]
-bake(file="box_search_global.rds",{
+bake(file="global_search.rds",{
   foreach(guess=iter(guesses,"row"), 
-    .packages='pomp2', 
+    .packages='pomp', 
     .combine=rbind,
     .export=c("mf1","fixed_params")
   ) %dopar% 
@@ -607,18 +574,21 @@ bake(file="box_search_global.rds",{
       mif2(Nmif=100) -> mf
     ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
     ll <- logmeanexp(ll,se=TRUE)
-    c(coef(mf),loglik=ll[1],loglik=ll[2])
+    mf %>% coef() %>% rbind() %>%
+      cbind(loglik=ll[1],loglik.se=ll[2]) %>%
+      as.data.frame()
   }
 }) -> results_global
 
-## ------------------------------------------------------------------------
-results_global <- as.data.frame(results_global)
-results <- rbind(results,results_global[names(results)])
-write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 
+## ------------------------------------------------------------------------
+results <- rbind(results,results_global[names(results)])
+write.csv(results,file="measles_params.csv",row.names=FALSE)
+
+#' 
 #' The above codes run one search from each of `r nrow(guesses)` starting values.
 #' Each search consists of an initial run of `r nrow(traces(mf1))` IF2 iterations, followed by another 100 iterations.
-#' These codes exhibit a general **pomp2** behavior:
+#' These codes exhibit a general **pomp** behavior:
 #' re-running a command on an object (i.e., `mif2` on `mf1`) created by the same command preserves the algorithmic arguments.
 #' In particular, running `mif2` on the result of a `mif2` computation re-runs IF2 from the endpoint of the first run.
 #' In the second computation, by default, all algorithmic parameters are preserved;
@@ -632,6 +602,7 @@ write.csv(results,file="bsflu_params.csv",row.names=FALSE)
 #' Again, we attempt to visualize the global geometry of the likelihood surface using a scatterplot matrix.
 #' In particular, here we plot both the starting values (grey) and the IF2 estimates (red).
 #' 
+
 #' 
 #' We see that optimization attempts from diverse remote starting points converge on a particular region in parameter space.
 #' Moreover, the estimates have comparable likelihoods, despite their considerable variability.
