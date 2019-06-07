@@ -33,8 +33,9 @@
 #' Please share and remix noncommercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
-#' Produced in **R** version `r getRversion()` using **pomp2** version `r packageVersion("pomp2")`.
+#' Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 #' 
+
 ## ----opts,include=FALSE,cache=FALSE,purl=TRUE----------------------------
 options(
   keep.source=TRUE,
@@ -42,8 +43,8 @@ options(
   encoding="UTF-8"
 )
 
-library(pomp2)
-library(plyr)
+library(pomp)
+stopifnot(packageVersion("pomp")>="2.1")
 library(tidyverse)
 theme_set(theme_bw())
 
@@ -56,7 +57,7 @@ set.seed(1109529108L)
 #' 
 #' 1. To display a published case study using plug-and-play methods with non-trivial model complexities.
 #' 1. To show how extra-demographic stochasticity can be modeled.
-#' 1. To demonstrate the use of covariates in **pomp2**.
+#' 1. To demonstrate the use of covariates in **pomp**.
 #' 1. To demonstrate the use of profile likelihood in scientific inference.
 #' 1. To discuss the interpretation of parameter estimates.
 #' 1. To emphasize the potential need for extra sources of stochasticity in modeling.
@@ -89,6 +90,8 @@ set.seed(1109529108L)
 #' - Much of this evidence has been amassed from fitting models to data, using a variety of methods.
 #' - See @Rohani2010 for a review of some of the high points.
 #' 
+
+
 #' 
 #' ### Outline
 #' 
@@ -117,7 +120,9 @@ set.seed(1109529108L)
 #' - Weekly case reports, 1950--1963
 #' - Annual birth records and population sizes, 1944--1963
 #' 
+
 #' 
+
 #' 
 #' 
 #' ## Model and implementation
@@ -125,6 +130,7 @@ set.seed(1109529108L)
 #' 
 #' ### Continuous-time Markov process model
 #' 
+
 #' 
 #' ![](./model_diagram.png)
 #' 
@@ -146,7 +152,7 @@ set.seed(1109529108L)
 #' 
 #' - Overdispersed binomial measurement model: $\mathrm{cases}_t\,\vert\,\dlta{N}_{IR}=z_t \sim \dist{Normal}{\rho\,z_t,\rho\,(1-\rho)\,z_t+(\psi\,\rho\,z_t)^2}$
 #' 
-#' ### Implementation in **pomp2**
+#' ### Implementation in **pomp**
 #' 
 #' We'll load the packages we'll need, and set the random seed, to allow reproducibility.
 #' Note that we'll be making heavy use of the **tidyverse** methods.
@@ -154,11 +160,9 @@ set.seed(1109529108L)
 #' Finally, we'll use the convenient **magrittr** syntax, which is explained [here](https://kingaa.github.io/R_Tutorial/munging.html#the-magrittr-syntax).
 #' 
 ## ----prelims,cache=FALSE-------------------------------------------------
-library(pomp2)
-library(plyr)
+library(pomp)
 library(tidyverse)
 theme_set(theme_bw())
-stopifnot(packageVersion("pomp2")>="2.0.9.1")
 set.seed(594709947L)
 
 #' 
@@ -458,7 +462,7 @@ library(doRNG)
 registerDoParallel()
 registerDoRNG(998468235L)
 
-foreach(i=1:4,.packages="pomp2") %dopar% {
+foreach(i=1:4,.packages="pomp") %dopar% {
   pfilter(m1,Np=10000,params=theta)
 } -> pfs
 logmeanexp(sapply(pfs,logLik),se=TRUE)
@@ -510,31 +514,39 @@ m1 %>%
 #' - We obtained point estimates of all parameters for 20 cities.
 #' - We constructed profile likelihoods to quantify uncertainty in London and Hastings.
 #' 
+
+
 #' 
 #' #### Imported infections
 #' 
 #' $$\text{force of infection} = \mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
 #' 
+
 #' 
 #' 
 #' #### Seasonality
 #' 
+
 #' 
 #' 
 #' ### Notable findings
 #' 
 #' #### Cohort effect
 #' 
+
 #' 
 #' 
 #' #### Birth delay
 #' 
+
 #' 
 #' #### Reporting rate
 #' 
+
 #' 
 #' #### Predicted vs observed critical community size
 #' 
+
 #' 
 #' ### Problematic results
 #' 
@@ -545,9 +557,11 @@ m1 %>%
 #'     - serology surveys
 #'     - models fit to data using feature-based methods
 #' 
+
 #' 
 #' #### Parameter estimates
 #' 
+
 #' 
 #' $r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
 #' 
@@ -555,6 +569,7 @@ m1 %>%
 #' 
 #' $$\mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
 #' 
+
 #' 
 #' ### Questions
 #' 
@@ -571,12 +586,12 @@ m1 %>%
 
 simdat %>%
   mutate(data=.id=="data") %>%
-  ddply(~time+data,plyr::summarize,
+  plyr::ddply(~time+data,plyr::summarize,
     p=c(0.05,0.5,0.95),
     q=quantile(cases,prob=p,names=FALSE)
   ) %>%
-  mutate(p=mapvalues(p,from=c(0.05,0.5,0.95),to=c("lo","med","hi")),
-    data=mapvalues(data,from=c(TRUE,FALSE),to=c("data","simulation"))) %>%
+  mutate(p=plyr::mapvalues(p,from=c(0.05,0.5,0.95),to=c("lo","med","hi")),
+         data=plyr::mapvalues(data,from=c(TRUE,FALSE),to=c("data","simulation"))) %>%
   spread(p,q) %>%
   ggplot(aes(x=time,y=med,color=data,fill=data,ymin=lo,ymax=hi))+
   geom_ribbon(alpha=0.2)+
