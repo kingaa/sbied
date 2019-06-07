@@ -1,5 +1,5 @@
 TARGETS = mif.R mif.html global_search.rds local_search.rds \
-lik_local.rds pf.rds measles_params.csv 
+lik_local.rds measles_params.csv 
 
 default: $(TARGETS)
 ifneq ($(INSTALLDIR),)

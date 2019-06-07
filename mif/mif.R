@@ -290,18 +290,18 @@ dat %>%
 
 #' 
 #' We'll assume that there was a single infection in week 0, i.e., that $I(0)=1$.
-#' Our Markov transmission model is that each individual in $S$ transitions to $I$ at rate $\beta\,I(t)/N$;
+#' Our Markov transmission model is that each individual in $S$ transitions to $I$ at rate $\lambda=\beta\,I(t)/N$;
 #' and each individual in $I$ transitions at rate $\gamma$ to $R$.
 #' Therefore, $1/\gamma$ is the mean infectious period.
-#' All rates have units wk^-1^. 
+#' All rates will have units wk^-1^. 
 #' 
 #' This model has limitations and weaknesses, but writing down and fitting a model is a starting point for data analysis, not an end point.
-#' In particular, having fit one model, one should certainly try variations on that model.
-#' For example, one could include a latency period for infections, or one could modify the model to give a better description of the bed-confinement and convalescence processes.
+#' In particular, having fit one model, one should certainly examine alternative models.
+#' For example, one could include a latency period for infections, or one could modify the model to give a better description of the diagnosis, bed-confinement, and convalescence processes.
 #' 
-#' Notice that we do not need a representation of $R$ since this variable has consequences neither for the dynamics of the state process nor for the data.
+#' Notice that we do not need to track $R$ since this variable has consequences neither for the dynamics of the state process nor for the data.
 #' 
-#' Now, we write the model code using C snippets:
+#' Now, as before, we code the model using C snippets:
 #' 
 ## ----csnippets-----------------------------------------------------------
 library(tidyverse)
@@ -370,7 +370,7 @@ measSIR %>%
 
 
 #' 
-#' Before engaging in iterated filtering, it is a good idea to check that the basic particle filter is working since we can't iterate a filter unless we can run a filter.
+#' Before engaging in iterated filtering, it is a good idea to check that the basic particle filter is working since we can't iterate something unless we can run it once!
 #' The simulations above check the `rprocess` and `rmeasure` codes;
 #' the particle filter depends on the `rprocess` and `dmeasure` codes and so is a check of the latter.
 #' 
@@ -420,20 +420,24 @@ registerDoParallel()
 #' 
 #' ### Running a particle filter.
 #' 
-#' We proceed to carry out replicated particle filters at an initial guess of $\beta=2$, $\mu_I=1$, and $\rho=0.9$.
+#' We proceed to carry out replicated particle filters at an initial guess of $\beta=`r params["Beta"]`$, $\gamma=`r params["gamma"]`$, $\eta=`r params["eta"]`$, and $\rho=`r params["rho"]`$.
 #' 
 ## ----pf------------------------------------------------------------------
 library(doRNG)
 registerDoRNG(625904618)
-bake(file="pf.rds",{
-  foreach(i=1:10,.packages='pomp') %dopar% {
-    measSIR %>% pfilter(params=params,Np=10000)
-  }
-}) -> pf
+
+tic <- Sys.time()
+
+foreach(i=1:10,.packages='pomp') %dopar% {
+  measSIR %>% pfilter(params=params,Np=10000)
+} -> pf
+
 (L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
 
+toc <- Sys.time()
+
 #' 
-#' In `r round(attr(pf,"system.time")["elapsed"],2)` seconds, using `r min(getDoParWorkers(),length(pf))` cores, we obtain an unbiased likelihood estimate of `r round(L_pf[1],1)` with a Monte Carlo standard error of `r signif(L_pf[2],2)`.
+#' In `r round(toc-tic,2)` seconds, using `r min(getDoParWorkers(),length(pf))` cores, we obtain an unbiased likelihood estimate of `r round(L_pf[1],1)` with a Monte Carlo standard error of `r signif(L_pf[2],2)`.
 #' 
 #' <br>
 #' 
@@ -450,8 +454,9 @@ bake(file="pf.rds",{
 #' At this point, we've computed the likelihood at a single point.
 #' Let's store this point, together with the estimated likelihood and our estimate of the standard error on that likelihood, in a CSV file:
 ## ----init_csv------------------------------------------------------------
-results <- as.data.frame(as.list(c(coef(pf[[1]]),loglik=L_pf[1],loglik=L_pf[2])))
-write.csv(results,file="measles_params.csv",row.names=FALSE)
+pf[[1]] %>% coef() %>% bind_rows() %>%
+  bind_cols(loglik=L_pf[1],loglik.se=L_pf[2]) %>%
+  write_csv(path="measles_params.csv")
 
 #' 
 #' <br>
@@ -511,13 +516,11 @@ bake(file="lik_local.rds",{
   {
     evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
     ll <- logmeanexp(evals,se=TRUE)
-    c(coef(mf),loglik=ll[1],loglik=ll[2])
+    mf %>% coef() %>% bind_rows() %>%
+        bind_cols(loglik=ll[1],loglik.se=ll[2])
   }
-}) -> results_local
+}) -> results
 
-
-## ------------------------------------------------------------------------
-results_local <- as.data.frame(results_local)
 
 #' 
 #' This investigation took `r round(attr(mifs_local,"system.time")["elapsed"],0)` sec for the maximization and `r round(t_local["elapsed"],0)` sec for the likelihood evaluation.
@@ -530,8 +533,8 @@ results_local <- as.data.frame(results_local)
 #' 
 #' We add these newly explored points to our database:
 ## ----local_database------------------------------------------------------
-results <- rbind(results,results_local[names(results)])
-write.csv(results,file="measles_params.csv",row.names=FALSE)
+results %>%
+  write_csv(path="measles_params.csv",append=TRUE)
 
 #' 
 #' <br>
@@ -561,7 +564,9 @@ guesses <- runifDesign(
   upper=c(Beta=80,gamma=2,rho=0.9,eta=0.2),
   nseq=300
 )
+
 mf1 <- mifs_local[[1]]
+
 bake(file="global_search.rds",{
   foreach(guess=iter(guesses,"row"), 
     .packages='pomp', 
@@ -574,16 +579,15 @@ bake(file="global_search.rds",{
       mif2(Nmif=100) -> mf
     ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
     ll <- logmeanexp(ll,se=TRUE)
-    mf %>% coef() %>% rbind() %>%
-      cbind(loglik=ll[1],loglik.se=ll[2]) %>%
-      as.data.frame()
+    mf %>% coef() %>% bind_rows() %>%
+        bind_cols(loglik=ll[1],loglik.se=ll[2])
   }
-}) -> results_global
+}) -> results
 
 
 ## ------------------------------------------------------------------------
-results <- rbind(results,results_global[names(results)])
-write.csv(results,file="measles_params.csv",row.names=FALSE)
+results %>%
+  write_csv(path="measles_params.csv",append=TRUE)
 
 #' 
 #' The above codes run one search from each of `r nrow(guesses)` starting values.
@@ -596,7 +600,7 @@ write.csv(results,file="measles_params.csv",row.names=FALSE)
 #' 
 #' Following the `mif2` computations, the particle filter is used to evaluate the likelihood, as before.
 #' In contract to the local-search codes above, here we return only the endpoint of the search, together with the likelihood estimate and its standard error in a named vector.
-#' The best result of this search had a likelihood of `r round(max(results_global$loglik),1)` with a standard error of `r round(results_global$loglik.se[which.max(results_global$loglik)],2)`.
+#' The best result of this search had a likelihood of `r round(max(results$loglik),1)` with a standard error of `r round(results$loglik.se[which.max(results$loglik)],2)`.
 #' This took `r round(t_global["elapsed"]/60,1)` minutes altogether using `r n_global` processors.
 #' 
 #' Again, we attempt to visualize the global geometry of the likelihood surface using a scatterplot matrix.
@@ -607,6 +611,60 @@ write.csv(results,file="measles_params.csv",row.names=FALSE)
 #' We see that optimization attempts from diverse remote starting points converge on a particular region in parameter space.
 #' Moreover, the estimates have comparable likelihoods, despite their considerable variability.
 #' This gives us some confidence in our maximization procedure. 
+#' 
+#' 
+## ----eta_profile---------------------------------------------------------
+registerDoRNG(830007657)
+
+read_csv("measles_params.csv") %>%
+  filter(loglik>max(loglik)-20,loglik.se<2) %>%
+  sapply(range) -> box
+box
+
+guesses <- profileDesign(
+  eta=seq(0.01,0.85,length=20),
+  lower=box[1,c("Beta","gamma","rho")],
+  upper=box[2,c("Beta","gamma","rho")],
+  nprof=15
+)
+
+mf1 <- mifs_local[[1]]
+
+bake(file="eta_profile.rds",{
+  foreach(guess=iter(guesses,"row"), 
+    .packages='pomp', 
+    .combine=rbind,
+    .export=c("mf1","fixed_params")
+  ) %dopar% 
+  {
+    mf1 %>%
+      mif2(params=c(unlist(guess),fixed_params),
+           rw.sd=rw.sd(Beta=0.02,gamma=0.02,rho=0.02)) %>%
+      mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
+    ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
+    ll <- logmeanexp(ll,se=TRUE)
+    mf %>% coef() %>% bind_rows() %>%
+        bind_cols(loglik=ll[1],loglik.se=ll[2])
+  }
+}) -> results
+
+
+## ------------------------------------------------------------------------
+results %>%
+  write_csv(path="measles_params.csv",append=TRUE)
+
+## ------------------------------------------------------------------------
+read_csv("measles_params.csv") %>%
+  filter(loglik>max(loglik)-50) -> all
+
+pairs(~loglik+Beta+gamma+eta+rho, data=all,
+      col=ifelse(all$type=="guess",grey(0.5),"red"),pch=16)
+
+all %>%
+  filter(loglik>max(loglik)-10) %>%
+  ggplot(aes(x=eta,y=loglik))+
+  geom_point()
+
 #' 
 #' <br>
 #' 
@@ -645,7 +703,7 @@ write.csv(results,file="measles_params.csv",row.names=FALSE)
 #' Use `mif2` to construct a profile likelihood.
 #' Due to time constraints, you may be able to compute only a preliminary version.
 #' 
-#' It is also possible to profile over the basic reproduction number, $R_0=\beta /\mu_I$.
+#' It is also possible to profile over the basic reproduction number, $R_0=\beta /\gamma$.
 #' Is this more or less well determined that $\beta$ for this model and data?
 #' 
 #' --------------------------
