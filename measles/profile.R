@@ -5,10 +5,10 @@
 #'   html_document:
 #'     toc: yes
 #'     toc_depth: 4
-#'     code_folding: hide
+#'     code_folding: show
 #'     highlight: haddock
 #'     number_sections: FALSE
-#'     df_print: kable
+#'     df_print: paged
 #' bibliography: ../sbied.bib
 #' csl: ../ecology.csl
 #' 
@@ -33,8 +33,10 @@
 #' Please share and remix noncommercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
-#' Produced in **R** version `r getRversion()` using **pomp2** version `r packageVersion("pomp2")`.
+#' Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 #' 
+
+
 #' 
 #' ## Build the `pomp` object
 #' 
@@ -42,20 +44,24 @@
 #' 
 ## ----mpi-setup,include=FALSE,purl=TRUE,cache=FALSE-----------------------
 library(foreach)
-library(doMPI)
-
-cl <- startMPIcluster()
-registerDoMPI(cl)
+if (file.exists("CLUSTER")) {
+ library(doMPI)
+  scan("CLUSTER",what=1L) -> ncpus
+  cl <- startMPIcluster(ncpus,verbose=TRUE,logdir="/tmp")
+  registerDoMPI(cl)
+} else {
+  library(doMC)
+  registerDoMC()
+}
 
 #' 
 #' Load the packages we'll need, and set the random seed, to allow reproducibility.
 ## ----prelims,cache=FALSE-------------------------------------------------
 set.seed(594709947L)
-library(plyr)
 library(tidyverse)
 theme_set(theme_bw())
-library(pomp2)
-stopifnot(packageVersion("pomp2")>="2.0.9.1")
+library(pomp)
+stopifnot(packageVersion("pomp")>="2.1")
 
 #' 
 #' ### Data and covariates
@@ -278,6 +284,7 @@ dat %>%
       "S_0","E_0","I_0","R_0")
   ) -> m1
 
+
 #' 
 #' ## Profile over $\sigma_{SE}$
 #' 
@@ -317,8 +324,8 @@ pd <- as.data.frame(t(partrans(m1,t(pd),"fromEst")))
 pairs(~sigmaSE+R0+mu+sigma+gamma+S_0+E_0,data=pd)
 
 #' 
-#' **pomp2** provides two functions, `bake` and `stew`, that save the results of expensive computations.
-#' We'll run the profile computations on a cluster using MPI.
+#' **pomp** provides two functions, `bake` and `stew`, that save the results of expensive computations.
+#' We'll run the profile computations in parallel.
 #' Note that again, care must be taken with the parallel random number generator.
 #' 
 ## ----sigmaSE-prof-round1,eval=TRUE,cache=FALSE---------------------------
@@ -333,7 +340,7 @@ bake("sigmaSE-profile1.rds",{
     
     tic <- Sys.time()
     
-    library(pomp2)
+    library(pomp)
     
     m1 %>% 
       mif2(
@@ -344,8 +351,8 @@ bake("sigmaSE-profile1.rds",{
           S_0=ivp(0.02),E_0=ivp(0.02),I_0=ivp(0.02),R_0=ivp(0.02)),
         Np = 1000,
         cooling.type = "geometric",
-        cooling.fraction.50 = 0.1,
-        transform = TRUE) %>%
+        cooling.fraction.50 = 0.1
+      ) %>%
       mif2() -> mf
     
     ## Runs 10 particle filters to assess Monte Carlo error in likelihood
@@ -373,6 +380,7 @@ bake("sigmaSE-profile1.rds",{
 #' The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r signif(mean(sigmaSE_prof$etime)*3600/120,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.
 #' Let's examine the results.
 #' 
+
 #' 
 #' Next, we'll skim off the top 20 likelihoods for each value of the $\sigma_{SE}$ parameter.
 #' We'll put these through another round of miffing.
@@ -380,8 +388,10 @@ bake("sigmaSE-profile1.rds",{
 ## ----sigmaSE-prof-round2,cache=FALSE-------------------------------------
 sigmaSE_prof %>%
   mutate(sigmaSE=exp(signif(log(sigmaSE),5))) %>%
-  ddply(~sigmaSE,subset,rank(-loglik)<=20) %>%
-  subset(nfail.max==0,select=paramnames) -> pd
+  group_by(sigmaSE) %>%
+  filter(rank(-loglik)<=20) %>%
+  ungroup() %>%
+  filter(nfail.max==0) -> pd
 
 bake("sigmaSE-profile2.rds",{
   
@@ -394,7 +404,7 @@ bake("sigmaSE-profile2.rds",{
     
     tic <- Sys.time()
     
-    library(pomp2)
+    library(pomp)
     
     options(stringsAsFactors=FALSE)
     
@@ -407,8 +417,8 @@ bake("sigmaSE-profile2.rds",{
           S_0=ivp(0.02),E_0=ivp(0.02),I_0=ivp(0.02),R_0=ivp(0.02)),
         Np = 5000,
         cooling.type = "geometric",
-        cooling.fraction.50 = 0.1,
-        transform = TRUE) %>%
+        cooling.fraction.50 = 0.1
+      ) %>%
       mif2() -> mf
 
     pf <- replicate(10, pfilter(mf, Np = 5000))
@@ -433,22 +443,17 @@ bake("sigmaSE-profile2.rds",{
 #' 
 #' The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r signif(mean(sigmaSE_prof$etime)/550*3600,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.
 #' 
+
 #' 
-#' Plot profile traces, which show the trade-off between intensity of extra-demographic stochasticity and duration of the infectious and latent periods.
+#' Plot profile traces, which show the relationships between intensity of extra-demographic stochasticity, $R_0$, and durations of the infectious and latent periods.
 #' 
-#' 
-## ----include=FALSE,cache=FALSE,eval=TRUE,purl=TRUE-----------------------
-closeCluster(cl)
-try(detach("package:doMPI",unload=TRUE),silent=TRUE)
-if (exists("mpi.exit")) mpi.exit()
-try(detach("package:Rmpi",unload=TRUE),silent=TRUE)
 
 #' 
 #' --------------------------
 #' 
 #' ## [Back to measles lesson](./measles.html)
 #' ## [Back to course homepage](../index.html)
-#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/measles/measles-profile.R)
+#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/measles/profile.R)
 #' 
 #' ----------------------
 #' 
