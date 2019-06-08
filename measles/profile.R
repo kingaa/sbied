@@ -382,6 +382,8 @@ bake("sigmaSE-profile1.rds",{
 #' 
 
 #' 
+#' ### Refining the estimates
+#' 
 #' Next, we'll skim off the top 20 likelihoods for each value of the $\sigma_{SE}$ parameter.
 #' We'll put these through another round of miffing.
 #' 
@@ -445,7 +447,8 @@ bake("sigmaSE-profile2.rds",{
 #' 
 
 #' 
-#' Plot profile traces, which show the relationships between intensity of extra-demographic stochasticity, $R_0$, and durations of the infectious and latent periods.
+#' It is useful to plot profile traces, which show how the other parameters vary along the profile.
+#' In this case, these display clear relationships between intensity of extra-demographic stochasticity, $R_0$, and durations of the infectious and latent periods.
 #' 
 
 #' 
