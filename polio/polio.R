@@ -5,6 +5,7 @@
 #'   html_document:
 #'     toc: yes
 #'     toc_depth: 4
+#'     df_print: paged
 #' bibliography: ../sbied.bib
 #' csl: ../ecology.csl
 #' ---
@@ -24,10 +25,11 @@
 #' Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 #' 
 #' 
+
 #' 
 ## ----prelims,include=FALSE-----------------------------------------------
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.18")
+stopifnot(packageVersion("pomp")>="2.1")
 set.seed(5996485L)
 
 #' 
@@ -51,7 +53,11 @@ set.seed(5996485L)
 #' The data we study, in consist of `cases`, the monthly reported polio cases; `births`, the  monthly recorded births; `pop`, the annual census; `time`, date in years.
 #' 
 ## ----data----------------------------------------------------------------
-polio_data <- read.table("https://kingaa.github.io/sbied/polio/polio_wisconsin.csv")
+library(tidyverse)
+
+read_csv("https://kingaa.github.io/sbied/polio/polio_wisconsin.csv",comment="#")  -> polio_data
+
+
 
 #' 
 #' ## A polio transmission model
@@ -121,9 +127,11 @@ packageVersion("pomp")
 #' Since our model is in discrete time, we only really need to consider the discrete time state process,. 
 #' However, the model and POMP methods extend naturally to the possibility of a continuous-time model specification. 
 #' We code the list of state variables, and the choice of $t_0$, as
+#' 
 ## ----statenames----------------------------------------------------------
 statenames <- c("SB1","SB2","SB3","SB4","SB5","SB6","IB","SO","IO")
-t0 <- 1932+4/12
+t0 <- polio_data$time[16]
+t0
 
 #' 
 #' We do not explictly code $R$, since it is defined implicitly as the total population minus the sum of the other compartments. 
@@ -134,24 +142,25 @@ t0 <- 1932+4/12
 #' `P` is a smoothed interpolation of the annual census. 
 #' `B` is monthly births. 
 #' The B-spline basis is coded as `xi1,...,xi6`.
+#' 
 ## ----covariates----------------------------------------------------------
-bspline_basis <- periodic.bspline.basis(
-  polio_data$time,nbasis=6,degree=3,period=1,names="xi%d")
-covartable <- data.frame(
-  time=polio_data$time,
+covariate_table(
+  t=polio_data$time,
   B=polio_data$births,
-  P=predict(smooth.spline(x=1931:1954,y=polio_data$pop[12*(1:24)]),
-            x=polio_data$time)$y,
-  bspline_basis
-)
+  P=predict(smooth.spline(x=1931:1954,y=polio_data$pop[seq(12,24*12,by=12)]))$y,
+  periodic.bspline.basis(t,nbasis=6,degree=3,period=1,names="xi%d"),
+  times="t"
+) -> covartab
 
 #' 
 #' The parameters $b_1,\dots,b_6,\psi,\rho,\tau,\sigma_\mathrm{dem}, \sigma_\mathrm{env}$  in the model above are _regular parameters_ (RPs), meaning that they are real-valued parameters that affect the dynamics and/or the measurement of the process.
+#' 
 ## ----rp_names------------------------------------------------------------
 rp_names <- c("b1","b2","b3","b4","b5","b6","psi","rho","tau","sigma_dem","sigma_env")
 
 #' 
 #' The _initial value parameters_ (IVPs), $\tilde I^O_{0}$ and  $\tilde S^O_{0}$, are coded for each state named by adding `_0` to the state name:
+#' 
 ## ----ivp_names-----------------------------------------------------------
 ivp_names <- c("SO_0","IO_0")
 
@@ -162,20 +171,24 @@ ivp_names <- c("SO_0","IO_0")
 #' We initialize these using the first 6 months of data:
 #' 
 ## ----fixed_params--------------------------------------------------------
-i <- which(abs(covartable$time-t0)<0.01)
-initial_births <- as.numeric(covartable$B[i-0:5])
-names(initial_births) <- c("SB1_0","SB2_0","SB3_0","SB4_0","SB5_0","SB6_0") 
+covartab %>%
+  lookup(polio_data$time[11:16]) %>%
+  pull(B) %>%
+  set_names(c("SB1_0","SB2_0","SB3_0","SB4_0","SB5_0","SB6_0")) -> initial_births
+
 fixed_params <- c(delta=1/60,initial_births)
-fp_names <- c("delta","SB1_0","SB2_0","SB3_0","SB4_0","SB5_0","SB6_0")
+fp_names <- names(fixed_params)
 
 #' 
 #' To begin with, we'll use a crude estimate of the parameters, based on earlier work.
+#' 
 ## ----param_guess---------------------------------------------------------
 params <- c(b1=3,b2=0,b3=1.5,b4=6,b5=5,b6=3,psi=0.002,rho=0.01,tau=0.001,
             sigma_dem=0.04,sigma_env=0.5,SO_0=0.12,IO_0=0.001,fixed_params)
 
 #' 
-#' The process model is implemented by a `Csnippet` that simulates a single step from time `t` to time `t+dt`:
+#' The process model is implemented by a C snippet that simulates a single step from time `t` to time `t+dt`:
+#' 
 ## ----rprocess------------------------------------------------------------
 rproc <- Csnippet("
   double beta = exp(dot_product(K, &xi1, &b1));
@@ -220,7 +233,7 @@ rmeas <- Csnippet("
 ")
 
 #' 
-#' The map from the initial value parameters to the initial value of the states at time $t_0$ is coded by the initializer function:
+#' The map from the initial value parameters to the initial value of the states at time $t_0$ is coded by the rinit snippet:
 #' 
 ## ----initializer---------------------------------------------------------
 init <- Csnippet("
@@ -239,117 +252,69 @@ init <- Csnippet("
 #' To carry out parameter estimation, it is also helpful to have transformations that map each parameter into the whole real line:
 #' 
 ## ----trans---------------------------------------------------------------
-toEst <- Csnippet("
- Tpsi = log(psi);
- Trho = logit(rho);
- Ttau = log(tau);
- Tsigma_dem = log(sigma_dem);
- Tsigma_env = log(sigma_env);
- TSO_0 =  logit(SO_0);
- TIO_0 = logit(IO_0);
-")
-
-fromEst <- Csnippet("
- Tpsi = exp(psi);
- Trho = expit(rho);
- Ttau = exp(tau);
- Tsigma_dem = exp(sigma_dem);
- Tsigma_env = exp(sigma_env);
- TSO_0 =  expit(SO_0);
- TIO_0 = expit(IO_0);
-")
+partransform <- parameter_trans(
+  log=c("psi","rho","tau","sigma_dem","sigma_env"),
+  logit=c("SO_0","IO_0")
+)
 
 #' 
 #' We can now put these pieces together into a pomp object. 
 #' 
 #' 
 ## ----pomp----------------------------------------------------------------
-polio <- pomp(
-  data=subset(polio_data, 
-              (time > t0 + 0.01) & (time < 1953+1/12+0.01),	
-              select=c("cases","time")),
-  times="time",
-  t0=t0,
-  params=params,
-  rprocess = euler.sim(step.fun = rproc, delta.t=1/12),
-  rmeasure = rmeas,
-  dmeasure = dmeas,
-  covar=covartable,
-  tcovar="time",
-  statenames = statenames,
-  paramnames = c(rp_names,ivp_names,fp_names),
-  initializer=init,
-  toEstimationScale=toEst, 
-  fromEstimationScale=fromEst,
-  globals="int K = 6;"
-)
+polio_data %>%
+  filter(time>t0,time<1953+2/12) %>%
+  select(cases,time) %>%
+  pomp(
+    times="time",
+    t0=t0,
+    params=params,
+    rinit=init,
+    rprocess = euler(step.fun = rproc, delta.t=1/12),
+    rmeasure = rmeas,
+    dmeasure = dmeas,
+    partrans=partransform,
+    covar=covartab,
+    statenames = statenames,
+    paramnames = c(rp_names,ivp_names,fp_names),
+    globals="int K = 6;"
+  ) -> polio
 
 #' 
+
 #' 
-## ----first_sim,include=FALSE---------------------------------------------
-library(reshape2)
-library(ggplot2)
-nsim <- 9
-x <- simulate(polio,nsim=nsim,as.data.frame=TRUE,include.data=TRUE)
-ggplot(data=x,mapping=aes(x=time,y=cases,group=sim,color=(sim=="data")))+
-  geom_line()+
-  scale_color_manual(values=c(`TRUE`="blue",`FALSE`="red"))+
-  guides(color=FALSE)+
-  facet_wrap(~sim,ncol=2)+
-  scale_y_sqrt()+
-  theme_bw()+theme(strip.text=element_blank()) -> pl
 
 #' 
 #' To test the codes, let's run some simulations.
 #' In the following, we plot the data (in blue) and `r nsim` simulations.
 #' 
+
+#' 
 #' To test the `dmeasure` portion of the likelihood, we'll run a particle filter.
 #' This will compute the likelihood at our parameter guess.
-## ----first_pf------------------------------------------------------------
-pf <- pfilter(polio,Np=1000)
-logLik(pf)
+#' 
 
 #' 
 #' To get an idea of the Monte Carlo error in this estimate, we can run several realization of the particle filter.
 #' Since most modern machines have multiple cores, it is easy to do this in parallel.
 #' We accomplish this via the **doParallel** and **foreach** packages.
+#' 
 ## ----parallel-setup,cache=FALSE------------------------------------------
 library(foreach)
 library(doParallel)
+library(doRNG)
 registerDoParallel()
+registerDoRNG(493536993)
 
 #' 
-## ----pf1-----------------------------------------------------------------
-set.seed(493536993,kind="L'Ecuyer")
-t1 <- system.time(
-  pf1 <- foreach(i=1:10,.packages='pomp',
-                 .options.multicore=list(set.seed=TRUE)
-  ) %dopar% {
-    pfilter(polio,Np=5000)
-  }
-)
-(L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE))
 
+#' 
 #' Notice that we set up a parallel random number generator (RNG).
 #' In particular, we use the L'Ecuyer RNG, which is recommended for use with **doParallel**.
 #' Note, too, that the replications are averaged using the `logmeanexp` function, which counteracts Jensen's inequality.
 #' It is helpful to plot the *effective sample size* and conditional log likelihoods:
-## ----pf1-plot,echo=FALSE-------------------------------------------------
-library(plyr)
-library(reshape2)
-library(magrittr)
-library(ggplot2)
-pf1 %>% 
-  setNames(seq_along(pf1)) %>% 
-  ldply(as.data.frame,.id='rep') %>%
-  subset(select=c(time,rep,ess,cond.loglik)) %>% 
-  melt(id=c('time','rep')) %>%
-  ggplot(aes(x=time,y=value,group=variable))+
-  geom_line()+
-  facet_wrap(~variable,ncol=1,scales='free_y')+
-  guides(color=FALSE)+
-  theme_bw()
 
+#' 
 #' These calculations took only `r round(t1[3],0)` sec and produced a log likelihood estimate with a standard error of `r round(L1[2],2)`.
 #' 
 #' ## Parameter estimation
@@ -358,45 +323,60 @@ pf1 %>%
 #' 
 #' Now, let us see if we can improve on our initial guess. 
 #' We use the iterated filtering algorithm IF2 of @ionides15, which uses a random walk in parameter space to approach the MLE. 
-#' We set a constant random walk standard deviation for each of the regular parameters and a larger constant for each of the initial value parameters. 
+#' We set a constant random walk standard deviation for each of the regular parameters and a larger constant for each of the initial value parameters.
+#' 
 ## ----local_search--------------------------------------------------------
 stew(file="local_search.rda",{
+  registerDoRNG(318817883)
+  
   w1 <- getDoParWorkers()
+  
   t1 <- system.time({
-    m1 <- foreach(i=1:90,
-                  .packages='pomp',.combine=rbind,
-                  .options.multicore=list(set.seed=TRUE)
+    
+    foreach(
+      i=1:90,
+      .packages='pomp',.combine=rbind
     ) %dopar% {
-      mf <- mif2(polio,
-                 Np=1000,
-                 Nmif=50,
-                 cooling.type="geometric",
-                 cooling.fraction.50=0.5,
-                 transform=TRUE,
-                 rw.sd=rw.sd(
-                   b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
-                   psi=0.02, rho=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
-                   IO_0=ivp(0.2), SO_0=ivp(0.2)
-                 )
-      )
-      ll <- logmeanexp(replicate(10,logLik(pfilter(mf,Np=5000))),se=TRUE)
+      
+      polio %>%
+        mif2(
+          Np=1000,
+          Nmif=50,
+          cooling.type="geometric",
+          cooling.fraction.50=0.5,
+          rw.sd=rw.sd(
+            b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
+            psi=0.02, rho=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
+            IO_0=ivp(0.2), SO_0=ivp(0.2)
+          )
+        ) -> mf
+      
+      replicate(
+        10, 
+        mf %>% pfilter(Np=5000) %>% logLik()
+      ) %>%
+        logmeanexp(se=TRUE) -> ll
+      
       data.frame(as.list(coef(mf)),loglik=ll[1],loglik.se=ll[2])
-    }
-  }
-  )
-},seed=318817883,kind="L'Ecuyer")
+      
+    } -> m1
+    
+  })
+})
 
 #' 
 #' This investigation took `r round(t1["elapsed"]/60,1)` minutes on a machine with `r w1` cores.
 #' The maximum likelihood we obtain is `r with(subset(m1,loglik==max(loglik)),round(loglik,1))`.
 #' These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
+#' 
 ## ----pairs_local,fig.width=6,fig.height=6--------------------------------
 pairs(~loglik+psi+rho+tau+sigma_dem+sigma_env,data=subset(m1,loglik>max(loglik)-20))
 
 #' 
 #' Because it is so useful to build up a view of the geometry of the likelihood surface, we save these likelihood estimates in a file for later use:
+#' 
 ## ----param_file1---------------------------------------------------------
-write.csv(m1,file="polio_params.csv",row.names=FALSE,na="")
+m1 %>% write_csv(path="polio_params.csv")
 
 #' 
 #' We see what look like tradeoffs between $\psi$, $\rho$, and $\sigma_\mathrm{dem}$. 
@@ -465,32 +445,45 @@ polio_box <- rbind(
 #' 
 ## ----global_search-------------------------------------------------------
 stew(file="global_search.rda",{
+  registerDoRNG(290860873)
   w2 <- getDoParWorkers()
   t2 <- system.time({
-    m2 <- foreach(i=1:400,.packages='pomp',.combine=rbind,
-                  .options.multicore=list(set.seed=TRUE)
+    foreach(
+      i=1:400,
+      .packages='pomp',.combine=rbind
     ) %dopar% {
+      
       guess <- apply(polio_box,1,function(x)runif(1,x[1],x[2]))
-      mf <- mif2(polio,
-                 start=c(guess,fixed_params),
-                 Np=2000,
-                 Nmif=300,
-                 cooling.type="geometric",
-                 cooling.fraction.50=0.5,
-                 transform=TRUE,
-                 rw.sd=rw.sd(
-                   b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
-                   psi=0.02, rho=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
-                   IO_0=ivp(0.2), SO_0=ivp(0.2)
-                 ))
-      ll <- logmeanexp(replicate(10,logLik(pfilter(mf,Np=5000))),se=TRUE)
+      
+      polio %>% mif2(
+        params=c(guess,fixed_params),
+        Np=2000,
+        Nmif=300,
+        cooling.type="geometric",
+        cooling.fraction.50=0.5,
+        rw.sd=rw.sd(
+          b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
+          psi=0.02, rho=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
+          IO_0=ivp(0.2), SO_0=ivp(0.2)
+        )
+      ) -> mf
+      
+      replicate(
+        10,
+        mf %>% pfilter(Np=5000) %>% logLik()
+      ) %>%
+        logmeanexp(se=TRUE) -> ll
+      
       data.frame(as.list(coef(mf)),loglik=ll[1],loglik.se=ll[2])
-    }
+    } -> m2
   })
-},seed=290860873,kind="L'Ecuyer")
-library(plyr)
-params <- arrange(rbind(m1,m2[names(m1)]),-loglik)
-write.csv(params,file="polio_params.csv",row.names=FALSE,na="")
+})
+
+m2 %>% bind_rows(m1)  -> params
+
+params %>%
+  arrange(-loglik) %>%
+  write_csv(path="polio_params.csv")
 
 #' 
 #' This search gives a maximized likelihood estimate of `r with(m2,round(max(loglik),1))` with a standard error of `r with(subset(m2,loglik==max(loglik)),round(loglik.se,2))`.
@@ -507,20 +500,17 @@ pairs(~loglik+psi+rho+tau+sigma_dem+sigma_env,data=subset(m2,loglik>max(loglik)-
 #' It is also good practice to look at simulations from the fitted model:
 #' 
 ## ----plot_simulated,echo=F-----------------------------------------------
-library(magrittr)
-library(reshape2)
-library(ggplot2)
 nsim <- 9
 params %>%
   subset(loglik==max(loglik)) %>%
   unlist() -> coef(polio)
 polio %>%
-  simulate(nsim=nsim,as.data.frame=TRUE,include.data=TRUE) %>%
-  ggplot(aes(x=time,y=cases,group=sim,color=(sim=="data")))+
+  simulate(nsim=nsim,format="data.frame",include.data=TRUE) %>%
+  ggplot(aes(x=time,y=cases,group=.id,color=(.id=="data")))+
   geom_line()+
   scale_color_manual(values=c(`TRUE`="blue",`FALSE`="red"))+
   guides(color=FALSE)+
-  facet_wrap(~sim,ncol=2)+
+  facet_wrap(~.id,ncol=2)+
   scale_y_sqrt()+
   theme_bw()+theme(strip.text=element_blank())
 
@@ -535,7 +525,7 @@ polio %>%
 #' Saving the results of previous searches, with likelihoods that have been repeatedly evaluated by particle filters, gives a resource for building up knowledge about the likelihood surface. Above, we have added our new results to the file `polio_params.csv`, which we now investigate.
 #' 
 ## ----param_file,fig.width=6,fig.height=6---------------------------------
-params <- read.csv("polio_params.csv")
+params <- read_csv("polio_params.csv")
 pairs(~loglik+psi+rho+tau+sigma_dem+sigma_env,data=subset(params,loglik>max(loglik)-20))
 
 #' 
@@ -552,48 +542,63 @@ plot(loglik~rho,data=subset(params,loglik>max(loglik)-10),log="x")
 #' ### Profile likelihood
 #' 
 ## ----profile_rho---------------------------------------------------------
-library(plyr)
-library(reshape2)
-library(magrittr)
-
 bake(file="profile_rho.rds",{
+  
   params %>% 
-    subset(loglik>max(loglik)-20,
-           select=-c(loglik,loglik.se,rho)) %>% 
-    melt(id=NULL) %>% 
-    daply(~variable,function(x)range(x$value)) -> box
+    filter(loglik>max(loglik)-20) %>%
+    select(-loglik,-loglik.se,-rho) %>% 
+    gather(variable,value) %>%  
+    group_by(variable) %>%
+    summarize(min=min(value),max=max(value)) %>%
+    ungroup() %>%
+    column_to_rownames(var="variable") %>%
+    t() -> box
   
-  starts <- profileDesign(rho=seq(0.01,0.025,length=30),
-                          lower=box[,1],upper=box[,2],
-                          nprof=10)
+  profileDesign(
+    rho=seq(0.01,0.025,length=30),
+    lower=box["min",],upper=box["max",],
+    nprof=10
+  ) -> starts
   
-  foreach(start=iter(starts,"row"),
-          .combine=rbind,
-          .packages="pomp",
-          .options.multicore=list(set.seed=TRUE),
-          .options.mpi=list(seed=290860873,chunkSize=1)
+  foreach(
+    start=iter(starts,"row"),
+    .combine=rbind,
+    .packages="pomp"
   ) %dopar% {
-    mf <- mif2(polio,
-               start=unlist(start),
-               Np=2000,
-               Nmif=300,
-               cooling.type="geometric",
-               cooling.fraction.50=0.5,
-               transform=TRUE,
-               rw.sd=rw.sd(
-                 b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
-                 psi=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
-                 IO_0=ivp(0.2), SO_0=ivp(0.2)
-               ))
-    mf <- mif2(mf,Np=5000,Nmif=100,cooling.fraction.50=0.1)
-    ll <- logmeanexp(replicate(10,logLik(pfilter(mf,Np=5000))),se=TRUE)
+    polio %>%
+      mif2(
+        params=unlist(start),
+        Np=2000,
+        Nmif=300,
+        cooling.type="geometric",
+        cooling.fraction.50=0.5,
+        rw.sd=rw.sd(
+          b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
+          psi=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
+          IO_0=ivp(0.2), SO_0=ivp(0.2)
+        )
+      ) %>%
+      mif2(
+        Np=5000,
+        Nmif=100,
+        cooling.fraction.50=0.1
+      ) -> mf
+    
+    replicate(
+      10,
+      mf %>% pfilter(Np=5000) %>% logLik()
+    ) %>% 
+      logmeanexp(se=TRUE) -> ll
+    
     data.frame(as.list(coef(mf)),loglik=ll[1],loglik.se=ll[2])
   }
 }) -> m3
 
 ## ----save_profile_rho----------------------------------------------------
-params <- arrange(rbind(params,m3[names(params)]),-loglik)
-write.csv(params,file="polio_params.csv",row.names=FALSE,na="")
+m3 %>%
+  bind_rows(m1,m2) %>%
+  arrange(-loglik) %>%
+  write_csv(path="polio_params.csv")
 
 #' 
 #' Note that $\rho$ is not perturbed in the IF iterations for the purposes of the profile calculation.
@@ -601,8 +606,10 @@ write.csv(params,file="polio_params.csv",row.names=FALSE,na="")
 ## ----profile_rho_plot1,echo=F,fig.width=6,fig.height=6-------------------
 params %>%
   mutate(rho.bin=cut(rho,breaks=seq(0.01,0.025,by=0.0005),include=T)) %>%
-  subset(rho>0.01 & rho<0.025) %>%
-  ddply(~rho.bin,subset,rank(-loglik)<=3) -> pp
+  filter(rho>0.01 & rho<0.025) %>%
+  group_by(rho.bin) %>%
+  filter(rank(-loglik)<=3) %>%
+  ungroup() -> pp
 
 # pp %>%
 #   ggplot(aes(x=rho,y=loglik))+
@@ -622,47 +629,50 @@ pairs(~loglik+psi+rho+tau+sigma_dem+sigma_env,data=subset(pp,loglik>max(loglik)-
 #' For Wisconsin, using our model at the estimated MLE, we compute as follows:
 #' 
 ## ----persistence---------------------------------------------------------
-library(plyr)
-library(magrittr)
-library(ggplot2)
 library(grid)
 
 params %>%
-  subset(loglik==max(loglik)) %>%
+  filter(loglik==max(loglik)) %>%
   unlist() -> mleparams
 
 coef(polio) <- mleparams
 
 bake(file="sims.rds",seed=398906785,
-     simulate(polio,nsim=2000,as.data.frame=TRUE,include.data=TRUE)
+     polio %>%
+       simulate(nsim=2000,format="data.frame",include.data=TRUE)
 ) -> sims
-ddply(sims,~sim,summarize,zeros=sum(cases==0)) -> num_zeros
+
+sims %>%
+  group_by(.id) %>%
+  summarize(zeros=sum(cases==0)) %>%
+  ungroup() -> num_zeros
 
 num_zeros %>%
-  subset(sim != "data") %>%
-  ggplot(mapping=aes(x=zeros))+
+  filter(.id != "data") %>%
+  ggplot(aes(x=zeros))+
   geom_density()+
-  geom_vline(data=subset(num_zeros,sim=="data"),aes(xintercept=zeros))+
+  geom_vline(data=subset(num_zeros,.id=="data"),aes(xintercept=zeros))+
   labs(x="# zero-case months")+
   theme_bw() -> pl1
 
 num_zeros %>%
-  subset(sim=="data") %>%
-  extract2("zeros") -> datz
+  filter(.id=="data") %>%
+  pull(zeros) -> datz
 
 num_zeros %>%
-  ddply(.(data=sim=="data"),summarize,
-        mean=mean(zeros)) -> mean_zeros
+  group_by(data=(.id=="data")) %>%
+  summarize(mean=mean(zeros)) -> mean_zeros
 
 sims %>%
-  subset(sim != "data") %>%
-  ddply(~sim,summarize,
-        fadeout1=sum(IB+IO<0.5),
-        fadeout80=sum(IB+IO<80)
+  filter(.id != "data") %>%
+  group_by(.id) %>%
+  summarize(
+    fadeout1=sum(IB+IO<0.5),
+    fadeout80=sum(IB+IO<80)
   ) -> fadeouts
 
 fadeouts %>%
-  ggplot(mapping=aes(x=fadeout1))+
+  ggplot(aes(x=fadeout1))+
   geom_histogram(binwidth=1,fill=NA,color='black',aes(y=..density..))+
   labs(x="# fadeouts")+
   theme_bw()+theme(legend.position="top") -> pl2
@@ -671,12 +681,12 @@ print(pl1)
 print(pl2,vp=viewport(x=0.8,y=0.75,height=0.4,width=0.2))
 
 sims %>%
-  subset(sim!="data") %>%
+  filter(.id!="data") %>%
   summarize(imports=coef(polio,"psi")*mean(SO+SB1+SB2+SB3+SB4+SB5+SB6)/12
   ) -> imports
 
 #' 
-#' Since only `r with(subset(num_zeros,sim!="data"),round(sum(zeros<datz)/length(zeros)*100,1))`% of the simulations had fewer zero-case months than did the data, the model does predict significantly more fadeouts than are seen in the data.
+#' Since only `r with(subset(num_zeros,.id!="data"),round(sum(zeros<datz)/length(zeros)*100,1))`% of the simulations had fewer zero-case months than did the data, the model does predict significantly more fadeouts than are seen in the data.
 #' Months with no asyptomatic infections for the simulations were rare, on average `r round(mean(fadeouts$fadeout1),1)` months per simulation. 
 #' Months with fewer than 80 infections averaged `r round(mean(fadeouts$fadeout80),1)` per simulation, which in the context of a reporting rate of `r signif(mleparams["rho"],3)` can explain the absences of case reports. 
 #' 
@@ -719,21 +729,21 @@ foreach(i=1:4,
         .packages='pomp',.combine=c,
         .options.multicore=list(set.seed=TRUE)
 ) %dopar% {
-  mif2(polio,
-       start=c(b1=3,b2=0,b3=1.5,b4=6,b5=5,b6=3,
-               psi=0.002,rho=0.01,tau=0.001,
-               sigma_dem=0.04,sigma_env=0.5,
-               SO_0=0.12,IO_0=0.001,fixed_params),
-       Np=1000,
-       Nmif=50,
-       cooling.type="geometric",
-       cooling.fraction.50=0.5,
-       transform=TRUE,
-       rw.sd=rw.sd(
-         b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
-         psi=0.02, rho=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
-         IO_0=ivp(0.2), SO_0=ivp(0.2)
-       )
+  polio %>%
+  mif2(
+    params=c(b1=3,b2=0,b3=1.5,b4=6,b5=5,b6=3,
+             psi=0.002,rho=0.01,tau=0.001,
+             sigma_dem=0.04,sigma_env=0.5,
+             SO_0=0.12,IO_0=0.001,fixed_params),
+    Np=1000,
+    Nmif=50,
+    cooling.type="geometric",
+    cooling.fraction.50=0.5,
+    rw.sd=rw.sd(
+      b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
+      psi=0.02, rho=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
+      IO_0=ivp(0.2), SO_0=ivp(0.2)
+    )
   )
 } -> m4
 
@@ -748,7 +758,10 @@ plot(m4)
 #' So, let's zoom in on the likelihood convergence:
 #' 
 ## ----likelihood_convergence----------------------------------------------
-llconv <- do.call(cbind,conv.rec(m4,"loglik"))
+m4 %>%
+  traces("loglik") %>%
+  bind_cols() -> llconv
+
 matplot(llconv,type="l",lty=1,ylim=max(llconv,na.rm=T)+c(-30,0))
 
 #' 
