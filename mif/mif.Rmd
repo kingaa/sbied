@@ -4,6 +4,11 @@ author: "Edward Ionides and Aaron A. King"
 output:
   html_document:
     toc: yes
+    toc_depth: 3
+    code_folding: show
+    highlight: haddock
+    number_sections: FALSE
+    df_print: kable
 bibliography: ../sbied.bib
 csl: ../ecology.csl
 ---
@@ -472,11 +477,12 @@ registerDoRNG(625904618)
 
 tic <- Sys.time()
 
-foreach(i=1:10,.packages='pomp') %dopar% {
+foreach(i=1:10,.packages='pomp',.combine=c) %dopar% {
   measSIR %>% pfilter(params=params,Np=10000)
 } -> pf
 
-(L_pf <- logmeanexp(sapply(pf,logLik),se=TRUE))
+pf %>% logLik() %>% logmeanexp(se=TRUE) -> L_pf
+L_pf
 
 toc <- Sys.time()
 ```
@@ -609,7 +615,7 @@ Practical parameter estimation involves trying many starting values for the para
 One way to approach this is to choose a large box in parameter space that contains all remotely sensible parameter vectors.
 If an estimation method gives stable conclusions with starting values drawn randomly from this box, this gives some confidence that an adequate global search has been carried out. 
 
-For our flu model, a box containing reasonable parameter values might be
+For our measles model, a box containing reasonable parameter values might be
 $\beta\in (10,80)$, $\gamma\in (0.3,2)$, $\rho\in (0.2,0.9)$, $\eta\in (0,0.2)$.
 
 We are now ready to carry out likelihood maximizations from diverse starting points.
@@ -809,8 +815,8 @@ bake(file="gamma_profile.rds",{
 }) -> results
 ```
 ```{r purl=FALSE,include=FALSE}
-n_eta <- getDoParWorkers()
-t_eta <- attr(results,"system.time")
+n_gamma <- getDoParWorkers()
+t_gamma <- attr(results,"system.time")
 ```
 ```{r}
 results %>%
@@ -820,18 +826,12 @@ results %>%
 pairs(~loglik+Beta+gamma+eta+rho,data=results,pch=16)
 
 results %>%
-  filter(loglik.se<1,loglik>max(loglik)-10) %>%
-  ggplot(aes(x=gamma,y=loglik))+
-  geom_point()
-
-results %>%
   filter(loglik>max(loglik)-10,loglik.se<1) %>%
   group_by(round(gamma,1)) %>%
   filter(rank(-loglik)<3) %>%
   ungroup() %>%
   ggplot(aes(x=gamma,y=loglik))+
-  geom_point()+
-  geom_smooth(method="loess")
+  geom_point()
 ```
 
 
@@ -841,16 +841,198 @@ results %>%
 
 ----
 
+
+#### Fix $\gamma$ and profile over $\beta$
+
+
+```{r beta_profile1}
+registerDoRNG(87757758)
+
+results %>%
+  filter(loglik>max(loglik)-10,loglik.se<2,gamma>1.8,gamma<2.2) %>%
+  sapply(range) -> box
+box
+
+profileDesign(
+  gamma=2,
+  Beta=seq(2,70,length=20),
+  N=38000,
+  lower=box[1,c("eta","rho")],
+  upper=box[2,c("eta","rho")],
+  nprof=15
+) -> guesses
+
+mf1 <- mifs_local[[1]]
+
+bake(file="beta_profile1.rds",{
+  foreach(guess=iter(guesses,"row"), 
+    .packages='pomp', .combine=rbind
+  ) %dopar% {
+    mf1 %>%
+      mif2(
+        params=guess,
+        partrans=parameter_trans(logit=c("eta","rho")),
+        paramnames=c("eta","rho"),
+        rw.sd=rw.sd(eta=0.02,rho=0.02)
+      ) %>%
+      mif2(Nmif=100,cooling.fraction.50=0.3) %>%
+      mif2() -> mf
+    ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
+    ll <- logmeanexp(ll,se=TRUE)
+    mf %>% coef() %>% bind_rows() %>%
+        bind_cols(loglik=ll[1],loglik.se=ll[2])
+  }
+}) -> results
+```
+```{r purl=FALSE,include=FALSE}
+n_beta <- getDoParWorkers()
+t_beta <- attr(results,"system.time")
+```
+```{r}
+results %>%
+  write_csv(path="measles_params.csv",append=TRUE)
+```
+```{r}
+pairs(~loglik+Beta+eta+rho,data=filter(results,loglik>max(loglik)-20),pch=16)
+
+results %>%
+  filter(loglik.se<1,loglik>max(loglik)-10) %>%
+  ggplot(aes(x=Beta,y=loglik))+
+  geom_point()
+
+results %>% filter(loglik==max(loglik)) %>% pull(loglik) -> max.loglik
+cutoff <- max.loglik-0.5*qchisq(p=0.95,df=1)
+
+results %>%
+  filter(loglik>max(loglik)-10,loglik.se<1) %>%
+  group_by(round(Beta,0.01)) %>%
+  filter(rank(-loglik)<3) %>%
+  ungroup() %>%
+  ggplot(aes(x=Beta,y=loglik))+
+  geom_point()+
+  geom_hline(yintercept=cutoff,color="red")
+```
+```{r fig.height=6}
+results %>%
+  filter(loglik>max(loglik)-10,loglik.se<1) %>%
+  group_by(round(Beta,0.01)) %>%
+  filter(rank(-loglik)<3) %>%
+  ungroup() %>%
+  gather(variable,value,eta,rho,loglik) %>%
+  ggplot(aes(x=Beta,y=value))+
+  geom_point()+
+  facet_wrap(~variable,scales="free_y",ncol=1)
+```
+
+
+<br>
+
+----
+
+----
+
+
+
+#### Fix $\rho$ and profile over $\beta$
+
+
+```{r beta_profile2}
+registerDoRNG(50965452)
+
+results %>%
+  filter(loglik>max(loglik)-10,loglik.se<2,rho>0.5,rho<0.7) %>%
+  sapply(range) -> box
+box
+
+profileDesign(
+  rho=0.6,
+  Beta=seq(10,60,length=20),
+  N=38000,
+  lower=box[1,c("eta","gamma")],
+  upper=box[2,c("eta","gamma")],
+  nprof=15
+) -> guesses
+
+mf1 <- mifs_local[[1]]
+
+bake(file="beta_profile2.rds",{
+  foreach(guess=iter(guesses,"row"), 
+    .packages='pomp', .combine=rbind
+  ) %dopar% {
+    mf1 %>%
+      mif2(
+        params=guess,
+        partrans=parameter_trans(log="gamma",logit=c("eta")),
+        paramnames=c("eta","gamma"),
+        rw.sd=rw.sd(eta=0.02,gamma=0.02)
+      ) %>%
+      mif2(Nmif=150,cooling.fraction.50=0.3) %>%
+      mif2() -> mf
+    ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
+    ll <- logmeanexp(ll,se=TRUE)
+    mf %>% coef() %>% bind_rows() %>%
+        bind_cols(loglik=ll[1],loglik.se=ll[2])
+  }
+}) -> results
+```
+```{r purl=FALSE,include=FALSE}
+n_beta <- getDoParWorkers()
+t_beta <- attr(results,"system.time")
+```
+```{r}
+results %>%
+  write_csv(path="measles_params.csv",append=TRUE)
+```
+```{r}
+pairs(~loglik+Beta+gamma+eta,data=filter(results,loglik>max(loglik)-20),pch=16)
+
+results %>%
+  filter(loglik.se<1,loglik>max(loglik)-10) %>%
+  ggplot(aes(x=Beta,y=loglik))+
+  geom_point()
+
+results %>% filter(loglik==max(loglik)) %>% pull(loglik) -> max.loglik
+cutoff <- max.loglik-0.5*qchisq(p=0.95,df=1)
+
+results %>%
+  filter(loglik>max(loglik)-10,loglik.se<1) %>%
+  group_by(round(Beta,0.01)) %>%
+  filter(rank(-loglik)<3) %>%
+  ungroup() %>%
+  ggplot(aes(x=Beta,y=loglik))+
+  geom_point()+
+  geom_hline(yintercept=cutoff,color="red")
+```
+```{r fig.height=6}
+results %>%
+  filter(loglik>max(loglik)-10,loglik.se<1) %>%
+  group_by(round(Beta,0.01)) %>%
+  filter(rank(-loglik)<3) %>%
+  ungroup() %>%
+  gather(variable,value,eta,gamma,loglik) %>%
+  ggplot(aes(x=Beta,y=value))+
+  geom_point()+
+  facet_wrap(~variable,scales="free_y",ncol=1)
+```
+
+
+<br>
+
+----
+
+----
+
+
 ### Exercises
 
 --------------------------
 
-#### Basic Exercise: Fitting the SEIR^3^ model
+#### Basic Exercise: Fitting the SEIR model
 
-Following the template above, estimate the parameters and likelihood of the SEIR^3^ model you implemented in the earlier lessons.
+Following the template above, estimate the parameters and likelihood of the SEIR model you implemented in the earlier lessons.
 Specifically, first conduct a local search and then a global search using the multi-stage, multi-start method displayed above.
 
-How does the maximized likelihood compare with what we obtained for the SIR^3^ model?
+How does the maximized likelihood compare with what we obtained for the SIR model?
 How do the parameter estimates differ?
 
 You will need to tailor the intensity of your search to the computational resources at your disposal.
@@ -861,8 +1043,8 @@ In particular, choose the number of starts, number of particles employed, and th
 
 #### Extra Exercise: Modify the measurement model
 
-The Poisson measurement model used here may not seem easy to interpret.
-Formulate an alternative measurement model and maximize the likelihood to compare the alternative model.
+The binomial measurement model used here assumes that the reporting rate is fixed through time and that all infections are equally likely to be reported.
+Formulate an alternative measurement model and maximize the likelihood to compare it with existing results.
 
 --------------------------
 
@@ -873,13 +1055,13 @@ Use `mif2` to construct a profile likelihood.
 Due to time constraints, you may be able to compute only a preliminary version.
 
 It is also possible to profile over the basic reproduction number, $R_0=\beta /\gamma$.
-Is this more or less well determined that $\beta$ for this model and data?
+Is this more or less well determined than $\beta$ for this model and data?
 
 --------------------------
 
 #### Extra Exercise: Checking the source code
 
-Check the source code for the `flu` pomp object.
+Check the source code for the `measSIR` pomp object.
 Does the code implement the model described?
 
 For various reasons, it can be surprisingly hard to make sure that the written equations and the code are perfectly matched.
