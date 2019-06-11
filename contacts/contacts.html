@@ -133,7 +133,9 @@ $(document).ready(function () {
 <li><a href="#a-model-for-dynamic-variation-in-sexual-contact-rates">A model for dynamic variation in sexual contact rates</a><ul>
 <li><a href="#results-consequences-of-dynamic-behavior-in-a-simple-epidemic-model">Results: Consequences of dynamic behavior in a simple epidemic model</a></li>
 </ul></li>
-<li><a href="#panelpomp-models-as-an-extension-of-pomp-models">PanelPOMP models as an extension of POMP models</a><ul>
+<li><a href="#panelpomp-models-as-an-extension-of-pomp-models">PanelPOMP models as an extension of POMP models</a></li>
+<li><a href="#likelihood-evaluation-for-panelpomps">Likelihood evaluation for panelPomps</a></li>
+<li><a href="#replicated-likelihood-evaluations">Replicated likelihood evaluations</a><ul>
 <li><a href="#likelihood-maximization-using-the-pif-algorithm">Likelihood maximization using the PIF algorithm</a></li>
 </ul></li>
 <li><a href="#back-to-course-homepage"><a href="../index.html">Back to course homepage</a></a></li>
@@ -232,124 +234,161 @@ matplot(t(contact_data[1:15,1:4]),
 <li><p>In general, some parameters may be <strong>unit-specific</strong> (different for each individual) whereas others are <strong>shared</strong> (common to all individuals).</p></li>
 <li><p>Here, we only have shared parameters. The heterogeneities between individuals are modeled as <strong>random effects</strong> with distribution determined by these shared parameters.</p></li>
 <li><p><strong>pomp</strong> methods were extended to PanelPOMP models by <span class="citation">Bretó et al. (2019)</span>.</p></li>
+</ul>
+<pre class="r"><code>library(panelPomp)</code></pre>
+<ul>
+<li><p>This document uses <strong>panelPomp</strong> 0.9.1.3 with <strong>pomp</strong> 2.1.1.0</p></li>
 <li><p>The main task of <strong>panelPomp</strong> beyond <strong>pomp</strong> is to handle the additional book-keeping necessitated by the unit structure.</p></li>
 <li><p>PanelPOMP models also motivate methodological developments to deal with large datasets and the high dimensional parameter vectors that can result from unit-specific parameters.</p></li>
 <li><p>A <code>panelPomp</code> object for the above contact data and model is provided by <code>pancon</code> in <strong>panelPomp</strong>.</p></li>
 </ul>
-<pre class="r"><code>pompExample(pancon)</code></pre>
-<pre><code>## newly created object(s):
-##  pancon</code></pre>
-<pre class="r"><code>slotNames(pancon)</code></pre>
+<pre class="r"><code>contacts &lt;- panelPompExample(pancon)</code></pre>
+<ul>
+<li><p>The implementation of the above model equations in <code>contacts</code> can be found in the <a href="https://github.com/cbreto/panelPomp/blob/master/inst/examples/pancon.R"><code>panelPomp</code> source code on github</a></p></li>
+<li><p>Let’s start by exploring the <code>contacts</code> object</p></li>
+</ul>
+<pre class="r"><code>class(contacts)</code></pre>
+<pre><code>## [1] &quot;panelPomp&quot;
+## attr(,&quot;package&quot;)
+## [1] &quot;panelPomp&quot;</code></pre>
+<pre class="r"><code>slotNames(contacts)</code></pre>
 <pre><code>## [1] &quot;unit.objects&quot; &quot;shared&quot;       &quot;specific&quot;</code></pre>
-<pre class="r"><code>class(unitobjects(pancon)[[1]])</code></pre>
+<pre class="r"><code>class(unitobjects(contacts)[[1]])</code></pre>
 <pre><code>## [1] &quot;pomp&quot;
 ## attr(,&quot;package&quot;)
 ## [1] &quot;pomp&quot;</code></pre>
 <ul>
+<li><p>We see that an object of class <code>panelPomp</code> is a list of <code>pomp</code> objects together with a parameter specification permitting shared and/or unit-specific parameters.</p></li>
 <li><p>The POMP models comprising the PanelPOMP model do not need to have the same observation times for each unit, or to have the same model structure.</p></li>
-<li><p>However, if there are no shared parameters then there is no useful panel structure and the PanelPOMP model is equivalent to a list of POMP models.</p></li>
-<li><p>If we formally write a PanelPOMP as a POMP, we can use methods such as <code>mif2</code> for inference.</p></li>
-<li><p>A naive way to do inference for a PanelPOMP model as a POMP is to let an observation for the POMP be a vector of observations for all units in the PanelPOMP at that time. This gives a high-dimensional observation vector which is numerically intractable via particle filters.</p></li>
-<li><p>Instead, the <code>mif2</code> method for <code>panelPomp</code> objects concatenates the panel members into one long time series.</p></li>
-<li><p><code>pancon</code> contains the MLE for total contacts reported in the top row of table 1 of @romero-severson15:</p></li>
+<li><p>If there are no shared parameters then there is no useful panel structure and the PanelPOMP model is equivalent to a list of POMP models.</p></li>
 </ul>
-<pre class="r"><code>coef(pancon)</code></pre>
+<hr />
+<div id="question.-methods-for-panelpomps." class="section level4">
+<h4>Question. Methods for panelPomps.</h4>
+<ul>
+<li><p>How would you find the <strong>panelPomp</strong> package methods available for working with a <code>panelPomp</code> object?</p></li>
+<li><p><a href="Q-panelPomp-methods.html">Worked solution.</a></p></li>
+</ul>
+<hr />
+<hr />
+</div>
+</div>
+<div id="likelihood-evaluation-for-panelpomps" class="section level2">
+<h2>Likelihood evaluation for panelPomps</h2>
+<ul>
+<li><p>PanelPOMP models are closely related to POMPs, and we will see that particle filter methods remain applicable.</p></li>
+<li><p><code>contacts</code> contains a parameter vector corresponding to the MLE for total contacts reported by @romero-severson15:</p></li>
+</ul>
+<pre class="r"><code>coef(contacts)</code></pre>
 <pre><code>##    mu_X sigma_X    mu_D sigma_D    mu_R sigma_R   alpha 
 ##    1.75    2.67    3.81    4.42    0.04    0.00    0.90</code></pre>
 <ul>
-<li>The implementation of the above model equations in <code>pancon</code> can be found in the <code>panelPomp</code> source code: <a href="https://github.com/cbreto/panelPomp/blob/master/inst/examples/pancon.R" class="uri">https://github.com/cbreto/panelPomp/blob/master/inst/examples/pancon.R</a></li>
+<li><code>pfilter(contacts,Np=1000)</code> carries out a particle filter computation at this parameter vector.</li>
 </ul>
 <hr />
-<div id="question" class="section level4">
-<h4>Question</h4>
+<div id="question.-what-do-you-get-if-you-pfilter-a-panelpomp" class="section level4">
+<h4>Question. What do you get if you <code>pfilter</code> a <code>panelPomp</code>?</h4>
 <ul>
-<li><p>Describe what you think <code>pfilter(pancon,Np=100)</code> should do.</p></li>
-<li><p>What might be the class of the resulting object? What slots might this object possess?</p></li>
+<li><p>Describe what you think <code>pfilter(contacts,Np=1000)</code> should do.</p></li>
+<li><p>Hypothesize what might be the class of the resulting object? What slots might this object possess?</p></li>
+<li><p>Check your hypothesis.</p></li>
+<li><p><a href="Q-pfilter-for-panelPomp.html">Worked solution.</a></p></li>
 </ul>
 <hr />
+<hr />
+</div>
+</div>
+<div id="replicated-likelihood-evaluations" class="section level2">
+<h2>Replicated likelihood evaluations</h2>
+<ul>
+<li><p>With <code>pomp</code>, it is useful to replicate the likelihood evaluations, both to reduce Monte Carlo uncertainty and (perhaps more importantly) to quantify it.</p></li>
+<li><p>The same applies with <code>panelPomp</code></p></li>
+</ul>
 <pre class="r"><code>stew(&quot;pfilter1.rda&quot;,{
-t1 &lt;- system.time(
-pf1 &lt;- foreach(i=1:10,.packages=c('pomp','panelPomp'),.options.multicore=mcopts) %dopar% try(pfilter(pancon,Np=1000))
-)
-},seed=1943810296,kind=&quot;L'Ecuyer&quot;)
-
-(loglik1 &lt;- sapply(pf1,logLik))</code></pre>
-<pre><code>##  [1] -9557.973 -9557.774 -9559.371 -9560.819 -9566.569 -9562.076 -9558.386
-##  [8] -9557.693 -9556.666 -9561.642</code></pre>
+  pf1 &lt;- foreach(i=1:10,
+    .packages=c('pomp','panelPomp'),
+    .options.multicore=mcopts) %dopar% pfilter(
+      contacts,Np= if(DEBUG) 10 else 2000)
+  },seed=19810296,kind=&quot;L'Ecuyer&quot;) </code></pre>
+<ul>
+<li><p>This took 0.8 minutes using 12 cores.</p></li>
+<li><p>Now we have a new consideration not found with <code>pomp</code> models. Each unit has its own log likelihood arising from an independent Monte Carlo computation, unlike the conditional log likelihoods at each time point for a <code>pomp</code>.</p></li>
+<li><p>The basic <code>pomp</code> approach remains valid:</p></li>
+</ul>
+<pre class="r"><code>loglik1 &lt;- sapply(pf1,logLik)
+loglik1</code></pre>
+<pre><code>##  [1] -9558.177 -9560.127 -9558.296 -9558.779 -9559.165 -9558.320 -9560.544
+##  [8] -9557.049 -9552.371 -9557.973</code></pre>
+<pre class="r"><code>logmeanexp(loglik1,se=T)</code></pre>
+<pre><code>##                        se 
+## -9554.648699     3.348773</code></pre>
+<ul>
+<li>Can we do better, using the independence? It turns out we can <span class="citation">(Bretó et al. 2019)</span>.</li>
+</ul>
+<pre class="r"><code>pf1_loglik_matrix &lt;- sapply(pf1,function(pp) sapply(unitobjects(pp),logLik))
+panel_logmeanexp(pf1_loglik_matrix,MARGIN=1,se=T)</code></pre>
+<pre><code>##                          se 
+## -9554.7914513     0.8618086</code></pre>
+<hr />
+<div id="question-the-difference-between-panel_logmeanexp-and-logmeanexp" class="section level4">
+<h4>Question: The difference between <code>panel_logmeanexp</code> and <code>logmeanexp</code></h4>
+<ul>
+<li><p>The basic <code>pomp</code> approach averages the Monte Carlo likelihood estimates after aggregating the likelihood over units.</p></li>
+<li><p>The <code>panel_logmeanexp</code> averages separately for each unit before combining.</p></li>
+<li><p>Why does the latter typically give a higher log likelihood estimate with lower Monte Carlo uncertainty?</p></li>
+<li><p>Either reason at a heuristic level or (optionally) develop a mathematical argument.</p></li>
+<li><p><a href="Q-panel-logmeanexp.html">Worked solution.</a></p></li>
+</ul>
 <hr />
 <hr />
 </div>
 <div id="likelihood-maximization-using-the-pif-algorithm" class="section level3">
 <h3>Likelihood maximization using the PIF algorithm</h3>
 <ul>
+<li><p>If we can formally write a PanelPOMP as a POMP, we can use methods such as <code>mif2</code> for inference.</p></li>
+<li><p>A naive way to do inference for a PanelPOMP model as a POMP is to let an observation for the POMP be a vector of observations for all units in the PanelPOMP at that time. This gives a high-dimensional observation vector which is numerically intractable via particle filters.</p></li>
+<li><p>Instead, the <code>mif2</code> method for <code>panelPomp</code> objects concatenates the panel members into one long time series.</p></li>
 <li><p>The panel iterated filtering (PIF) algorithm of <span class="citation">Bretó et al. (2019)</span> is an extension of the IF2 algorithm of <span class="citation">Ionides et al. (2015)</span>.</p></li>
 <li><p>PIF is implemented in <strong>panelPomp</strong> as the <code>mif2</code> method for class <code>panelPomp</code>.</p></li>
 <li><p>Comparing <code>?panelPomp::mif2</code> with <code>?pomp::mif2</code> reveals that the only difference in the arguments is that the <code>start</code> argument for <code>pomp::mif2</code> becomes <code>shared.start</code> and <code>specific.start</code> for <code>panelPomp::mif2</code>.</p></li>
 <li><p>As an example of an iterated filtering investigation, let’s carry out a local search, starting at the current estimate of the MLE.</p></li>
 </ul>
 <pre class="r"><code>stew(&quot;mif1.rda&quot;,{
-  t2 &lt;- system.time(
-    m2 &lt;- foreach(i=1:10,.packages=c('pomp','panelPomp'),.options.multicore=mcopts) %dopar% try( 
-      mif2(pancon,
-        Nmif=50,
-        Np=1000,
-        cooling.fraction.50=0.1,
-        cooling.type=&quot;geometric&quot;,
-        transform=TRUE,
-        rw.sd=rw.sd(mu_X=0.02, sigma_X=0.02, mu_D = 0.02, sigma_D=0.02,
-                    mu_R=0.02, sigma_R =0.02, alpha=0.02)
+  m2 &lt;- foreach(i=1:10,
+    .packages=c('pomp','panelPomp'),
+    .options.multicore=mcopts) %dopar% mif2(contacts,
+      Nmif = if(DEBUG) 2 else 50,
+      Np = if(DEBUG) 5 else 1000,
+      cooling.fraction.50=0.1,
+      cooling.type=&quot;geometric&quot;,
+      transform=TRUE,
+      rw.sd=rw.sd(mu_X=0.02, sigma_X=0.02, mu_D = 0.02, sigma_D=0.02,
+        mu_R=0.02, sigma_R =0.02, alpha=0.02
       )
     )
-  )
-},seed=354320731,kind=&quot;L'Ecuyer&quot;)</code></pre>
+  },seed=354320731,kind=&quot;L'Ecuyer&quot;) </code></pre>
 <ul>
-<li><p>This is a relatively quick search, taking 20.6 minutes.</p></li>
+<li><p>This is a relatively quick search, taking 20.9 minutes.</p></li>
 <li><p>The preliminary likelihood estimated as a consequence of running <code>mif2</code> and extracted here by <code>sapply(m2,logLik)</code> does not correspond to the actual, fixed parameter, model. It is the sequential Monte Carlo estimate of the likelihood from the last filtering iteration, and therefore will have some perturbation of the parameters. Further, one typically requires fewer particles for each filtering iteration than necessary to obtain a good likelihood estimate—stochastic errors can cancel out through the filtering iterations, rather than within any one iteration.</p></li>
 <li><p>For promising new parameter values, it is desirable to put computational effort into evaluating the likelihood sufficient to make the Monte Carlo error small compared to one log unit.</p></li>
 </ul>
 <pre class="r"><code>stew(&quot;mif1-lik-eval.rda&quot;,{
   params_new &lt;- coef( m2[[which.max( sapply(m2,logLik) )]] )
-  t3 &lt;- system.time( pf3 &lt;- foreach(i=1:10,.packages=c('pomp','panelPomp'),
-                 .options.multicore=mcopts) %dopar% try(
-                   pfilter(pancon,shared=params_new,Np=2000))
-  )
-},seed=35780731,kind=&quot;L'Ecuyer&quot;)
-
-(loglik_new &lt;- logmeanexp(sapply(pf3,logLik),se=TRUE))</code></pre>
+  pf3 &lt;- foreach(i=1:10,
+    .packages=c('pomp','panelPomp'),
+    .options.multicore=mcopts) %dopar% pfilter(contacts,
+      shared=params_new,
+      Np=if(DEBUG) 50 else 2000)
+  },seed=35780731,kind=&quot;L'Ecuyer&quot;)
+pf3_loglik_matrix &lt;- sapply(pf3,function(pp) sapply(unitobjects(pp),logLik))
+panel_logmeanexp(pf3_loglik_matrix,MARGIN=1,se=T)</code></pre>
 <pre><code>##                          se 
-## -9567.2079514     0.7196872</code></pre>
+## -9565.7187699     0.8275629</code></pre>
 <ul>
-<li><p>This took 0.5 minutes</p></li>
-<li><p>This is the direct analog of how we combined Monte Carlo replicated with POMP models.</p></li>
-<li><p>However, here we might be able to take advantage of the panel structure to do better.</p></li>
+<li>This took 1 minutes.</li>
 </ul>
 <hr />
 <hr />
-<div id="exercise-how-to-average-repeated-log-likelihood-estimates-for-a-panelpomp-model" class="section level4">
-<h4>Exercise: How to average repeated log likelihood estimates for a PanelPOMP model</h4>
-<ul>
-<li><p>It turns out that the SMC algorithm implemented by <code>pfilter()</code> gives an unbiased Monte Carlo estimate of the likelihood.</p></li>
-<li><p>For inferential purposes, we usually work with the log likelihood. Due to Jensen’s inequality, SMC has a negative bias as an estimator of the log likelihood, i.e., it systematically underestimates the log likelihood. Usually, the higher the Monte Carlo error on the likelihood, the larger this bias.</p></li>
-<li><p>Let <span class="math inline">\(\hat\lambda_u^{(k)}\)</span> be the <span class="math inline">\(k\)</span>th replication of the Monte Carlo log likelihood evaluation for unit <span class="math inline">\(u\)</span>.</p></li>
-<li><p>Let <span class="math inline">\(\hat L_u^{(k)}=\exp\big\{\hat\lambda_u^{(k)}\big\}\)</span> be the corresponding likelihood.</p></li>
-<li><p>Let <span class="math inline">\(\hat\lambda^{(k)}=\sum_{u=1}^U \lambda_{u}^{(k)}\)</span> and <span class="math inline">\(\hat L^{(k)}=\exp\big\{\hat\lambda^{(k)}\big\}\)</span> be estimates of the (log)likelihood of the entire data.</p></li>
-<li><p>Different possible estimates of the actual log likelihood <span class="math inline">\(\lambda=\sum_{u=1}^U \lambda_u\)</span> are</p></li>
-</ul>
-\begin{eqnarray} \hat\lambda^{[1]} &amp;=&amp; \frac{1}{K}\sum_{k=1}^K \hat\lambda^{(k)} 
-\\
-  \hat\lambda^{[2]} &amp;=&amp; \log \left( \frac{1}{K}\sum_{k=1}^K \hat L^{(k)} \right)  
-\\
- \hat\lambda^{[3]} &amp;=&amp; \sum_{u=1}^U\frac{1}{K}\sum_{k=1}^K \hat\lambda^{(k)}_u  
-\\
-  \hat\lambda^{[4]} &amp;=&amp; \sum_{u=1}^U \log \left( \frac{1}{K}\sum_{k=1}^K \hat L^{(k)}_u \right)  
-\end{eqnarray}
-<ol style="list-style-type: lower-alpha">
-<li><p>Calculate empirically the mean and standard deviation of the log likelihood estimate at the MLE using 100 filter replications each with 1000 particles.</p></li>
-<li><p>Which of <span class="math inline">\(\hat\lambda^{[1]}\)</span>, <span class="math inline">\(\hat\lambda^{[2]}\)</span>, <span class="math inline">\(\hat\lambda^{[3]}\)</span> and <span class="math inline">\(\hat\lambda^{[4]}\)</span> would you use, and why?</p></li>
-</ol>
-<p>Some discussion of different estimators and their means and variance is given in the supplement of <span class="citation">Bretó et al. (2019)</span>.</p>
-<hr />
-</div>
 </div>
 </div>
 <div id="back-to-course-homepage" class="section level2">
@@ -361,7 +400,7 @@ pf1 &lt;- foreach(i=1:10,.packages=c('pomp','panelPomp'),.options.multicore=mcop
 </div>
 <div id="acknowledgments" class="section level2">
 <h2>Acknowledgments</h2>
-<p>This tutorial is prepared for the <a href="https://kingaa.github.io/sbied/">Simulation-based Inference for Epidemiological Dynamics</a> module at 11th Annual Summer Institute in Statistics and Modeling in Infectious Diseases (<a href="https://www.biostat.washington.edu/suminst/sismid">SISMID 2019</a>). Previous versions were presented at SISMID in 2016, 2017, 2018.</p>
+<p>This tutorial is prepared for the <a href="https://kingaa.github.io/sbied/">Simulation-based Inference for Epidemiological Dynamics</a> module at 11th Annual Summer Institute in Statistics and Modeling in Infectious Diseases (<a href="https://www.biostat.washington.edu/suminst/sismid">SISMID 2019</a>). Previous versions were presented at SISMID in 2015, 2016, 2017, 2018.</p>
 <hr />
 </div>
 <div id="references" class="section level2 unnumbered">
