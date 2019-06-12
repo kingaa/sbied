@@ -4,9 +4,16 @@ ifneq ($(INSTALLDIR),)
 	install -m0600 $^ $(INSTALLDIR)
 endif
 
+slides:
+	Rscript --vanilla -e "rmarkdown::render(\"intro.Rmd\",output_format=\"slidy_presentation\")"
+
+html:
+	Rscript --vanilla -e "rmarkdown::render(\"intro.Rmd\",output_format=\"html_document\")"
+
+
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
+	Rscript --vanilla -e "rmarkdown::render(\"$*.Rmd\")"
 
 %.html: %.md
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \

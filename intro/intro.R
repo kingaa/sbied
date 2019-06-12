@@ -1,9 +1,10 @@
 #' ---
 #' title: "Introduction to Simulation-based Inference"
-#' author: "Aaron A. King and Edward L. Ionides"
+#' author: "Aaron A. King and Edward L. Ionides<br><br><br><br><br>
+#' "
 #' output:
-#'   html_document:
-#'     toc: yes
+#'   slidy_presentation:
+#'     toc: true
 #'     toc_depth: 4
 #' bibliography: ../sbied.bib
 #' csl: ../ecology.csl
@@ -20,11 +21,6 @@
 #' \newcommand\lik{\mathcal{L}}
 #' \newcommand\loglik{\ell}
 #' 
-#' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-#' Please share and remix noncommercially, mentioning its origin.  
-#' ![CC-BY_NC](../graphics/cc-by-nc.png)
-#' 
-#' Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 #' 
 
 ## ----opts,include=FALSE,cache=FALSE--------------------------------------
@@ -34,11 +30,8 @@ theme_set(theme_bw())
 set.seed(2028866059L)
 
 #' 
-#' --------
 #' 
-#' --------
-#' 
-#' ## Introduction: ecological and epidemiological dynamics
+#' ## Ecological and epidemiological dynamics
 #' 
 #' - Ecological systems are complex, open, nonlinear, and nonstationary.
 #' - "Laws of Nature" are unavailable except in the most general form.
@@ -52,17 +45,14 @@ set.seed(2028866059L)
 #'     - How to make accurate forecasts?
 #' - Time series are particularly useful sources of data.
 #' 
-#' <br>
 #' 
 #' -----
 #' 
-#' -----
 #' 
 #' ### Noisy clockwork: Time series analysis of population fluctuations in animals
 #' 
-#' ##### Six problems of @Bjornstad2001
 #' 
-#' Obstacles for **ecological** modeling and inference via nonlinear mechanistic models:
+#' Obstacles for **ecological** modeling and inference via nonlinear mechanistic models enumerated by @Bjornstad2001
 #' 
 #' 1. Combining measurement noise and process noise.
 #' 2. Including covariates in mechanistically plausible ways.
@@ -75,13 +65,11 @@ set.seed(2028866059L)
 #' 
 #' The *partially observed Markov process* modeling framework we focus on in this course addresses most of these problems effectively.
 #' 
-#' <br>
 #' 
 #' ------
 #' 
-#' ------
 #' 
-#' ## Objectives
+#' ## Course objectives
 #' 
 #' 1. To show how stochastic dynamical systems models can be used as scientific instruments.
 #' 1. To teach statistically and computationally efficient approaches for performing scientific inference using POMP models.
@@ -90,18 +78,16 @@ set.seed(2028866059L)
 #' 1. To familiarize students with the **pomp** package.
 #' 1. To provide documented examples for adaptation and re-use.
 #' 
-#' <br>
 #' 
 #' -------
 #' 
-#' -------
 #' 
 #' ## Questions and answers
 #' 
 #' 1. [How to explain the resurgence of pertussis in countries with sustained high vaccine coverage?](https://doi.org/10.1126/scitranslmed.aaj1748)
 #' 1. [What roles are played by asymptomatic infection and waning immunity in cholera epidemics?](http://dx.doi.org/10.1038/nature07084)
-#' 1. [How long does pertussis vaccine protection last and how does it fail?](https://doi.org/10.1017/S0031182015000979)
 #' 3. [What explains the seasonality of measles?](http://dx.doi.org/10.1098/rsif.2009.0151)
+#' 1. [Can serotype-specific immunity explain the strain dynamics of human enteroviruses?](http://dx.doi.org/10.1126/science.aat6777)
 #' 7. [Do subclinical infections of pertussis play an important epidemiological role?](http://dx.doi.org/10.1371/journal.pone.0072086)
 #' 2. [What is the contribution to the HIV epidemic of dynamic variation in sexual behavior of an individual over time? How does this compare to the role of heterogeneity between individuals?](http://dx.doi.org/10.1093/aje/kwv044)
 #' 5. [What explains the interannual variability of malaria?](http://dx.doi.org/10.1371/journal.pcbi.1000898)
@@ -109,9 +95,6 @@ set.seed(2028866059L)
 #' 1. [Can hydrology explain the seasonality of cholera?](http://doi.org/10.1016/j.advwatres.2016.11.012)
 #' 1. [What is the contribution of adults to polio transmission?](http://doi.org/10.1073/pnas.1323688111)
 #' 
-#' <br>
-#' 
-#' ------------
 #' 
 #' -----------
 #' 
@@ -131,9 +114,6 @@ set.seed(2028866059L)
 #' 
 #' * POMP models can include all the features desired by @Bjornstad2001.
 #' 
-#' <br>
-#' 
-#' -----------------
 #' 
 #' ------------------------------
 #' 
@@ -148,10 +128,6 @@ set.seed(2028866059L)
 #' - A key perspective to keep in mind is that **the model is to be viewed as the process that generated the data**.
 #' 
 #' 
-#' <br>
-#' 
-#' ---------------------
-#' 
 #' ---------------------
 #' 
 #' #### Notation for partially observed Markov process models
@@ -160,15 +136,12 @@ set.seed(2028866059L)
 #' 
 #' * The one-step transition density, $f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)$, together with the measurement density, $f_{Y_n|X_n}(y_n|x_n;\theta)$ and the initial density, $f_{X_0}(x_0;\theta)$, specify the entire joint density via
 #' 
-#' $$f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta) = f_{X_0}(x_0;\theta)\,\prod_{n=1}^N\!f_{X_n | X_{n-1}}(x_n|x_{n-1};\theta)\,f_{Y_n|X_n}(y_n|x_n;\theta).$$
+#' $$\hspace{-4mm} f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta) = f_{X_0}(x_0;\theta)\,\prod_{n=1}^N\!f_{X_n | X_{n-1}}(x_n|x_{n-1};\theta)\,f_{Y_n|X_n}(y_n|x_n;\theta).$$
 #' 
 #' * The marginal density for sequence of measurements, $Y_{1:N}$, evaluated at the data, $y_{1:N}^*$, is
 #' 
 #' $$ f_{Y_{1:N}}(y^*_{1:N};\theta)=\int f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)\, dx_{0:N}.$$
 #' 
-#' <br>
-#' 
-#' ------------------------------
 #' 
 #' ------------------------------
 #' 
@@ -183,12 +156,9 @@ set.seed(2028866059L)
 #' $$f_{X_n|X_{0:n-1},Y_{1:n-1}}(x_n|x_{0:n-1},y_{1:n-1})=f_{X_n|X_{n-1}}(x_n|x_{n-1}).$$
 #' 
 #' - Moreover, the measurable random variable, $Y_n$, depends only on the state at that time:
-#' $$f_{Y_n|X_{0:N},Y_{1:n-1}}(y_n|x_{0:n},y_{1:n-1})=f_{Y_n|X_{n}}(y_n|x_n),$$
-#' for all $n=1,\dots,N$.
+#' $$f_{Y_n|X_{0:N},Y_{1:n-1}}(y_n|x_{0:n},y_{1:n-1})=f_{Y_n|X_{n}}(y_n|x_n), \,\,\, \mbox{for $n=1,\dots,N$.}$$
 #' 
-#' <br>
-#'  
-#' -----------------
+#' 
 #' 
 #' ----------------
 #' 
@@ -204,11 +174,7 @@ set.seed(2028866059L)
 #' 
 #' * `dmeasure( )`: evaluation of $f_{Y_n|X_n}(y_n| x_n;\theta)$
 #' 
-#' * `initializer( )`: a draw from $f_{X_0}(x_0;\theta)$
-#' 
-#' <br>
-#' 
-#' -------------
+#' * `rinit( )`: a draw from $f_{X_0}(x_0;\theta)$
 #' 
 #' -------------
 #' 
@@ -223,10 +189,6 @@ set.seed(2028866059L)
 #' * __Plug-and-play__, __likelihood-free__ and __equation-free__ are alternative terms for "simulation-based" methods.
 #' 
 #' * Much development of simulation-based statistical methodology has occurred in the past decade.
-#' 
-#' <br>
-#' 
-#' ------------
 #' 
 #' ------------
 #' 
@@ -248,13 +210,9 @@ set.seed(2028866059L)
 #' 	- elementary POMP algorithms
 #' 	- estimation algorithms
 #' 
-#' <br>
-#' 
 #' ---------
 #' 
-#' ---------
-#' 
-#' ### Basic model components and workhorses
+#' ### Basic model components 
 #' 
 #' *Basic model components* are user-specified procedures that perform the elementary computations that specify a POMP model.
 #' There are nine of these:
@@ -270,13 +228,20 @@ set.seed(2028866059L)
 #' The user specifies the procedure (in one of several forms);
 #' the package decides when and where to execute the procedure.
 #' 
+#' ----------
+#' 
+#' ### Workhorses
+#' 
 #' *Workhorses* are **R** functions, built into the package, that cause the basic model component procedures to be executed.
-#' Each workhorse has a name that matches that of the corresponding basic model component.
-#' In addition, there is the `trajectory` workhorse, which iterates or integrates the deterministic skeleton (according to whether it is a map or a vectorfield, respectively) to obtain state trajectories. 
 #' 
-#' <br>
+#' * Each basic model component has a corresponding workhorse.
 #' 
-#' ---------
+#' * For example, the `rprocess()` function uses code specified by the `rprocess` model component, constructed via the `rprocess` argument to `pomp()`.
+#' 
+#' * In addition, there is a `trajectory` workhorse. This iterates or integrates the deterministic skeleton (according to whether the model is defined in discrete or continuous time, respectively) to obtain state trajectories. 
+#' 
+#' 
+#' 
 #' 
 #' ---------
 #' 
@@ -286,13 +251,12 @@ set.seed(2028866059L)
 #' There are currently four of these:
 #' 
 #' - `simulate` performs simulations of the POMP model, i.e., it samples from the joint distribution of latent states and observables.
+#' 
 #' - `pfilter` runs a sequential Monte Carlo (particle filter) algorithm to compute the likelihood and (optionally) estimate the prediction and filtering distributions of the latent state process.
+#' 
 #' - `probe` computes one or more uni- or multi-variate summary statistics on both actual and simulated data.
+#' 
 #' - `spect` estimates the power spectral density functions for the actual and simulated data.
-#' 
-#' <br>
-#' 
-#' ---------
 #' 
 #' ---------
 #' 
@@ -315,16 +279,27 @@ set.seed(2028866059L)
 #' among the estimation algorithms just listed, four are methods that construct stateful objective functions that can be optimized using general-purpose numerical optimization algorithms such as `optim`, `subplex`, or the optimizers in the **nloptr** package.
 #' These have certain new features that will be described below.
 #' 
+#' 
+#' ---------
+#' 
+#' ## Acknowledgments
+#' 
+#' * Versions of this material have been presented at [Summer Institute in Statistics and Modeling in Infectious Diseases (SISMID)](https://www.biostat.washington.edu/suminst/sismid) in 2015-2018.
 #' <br>
 #' 
+#' * Licensed under the [Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+#' Please share and remix noncommercially, mentioning its origin.  
+#' ![CC-BY_NC](../graphics/cc-by-nc.png)
+#' 
+#' <br>
+#' 
+#' * Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion('pomp')`.
+#' 
+#' <br><br>
+#' 
+#' <big><big><b>[Back to course homepage](../index.html)</b></big></big>
+#' 
 #' ---------
-#' 
-#' 
-#' ---------
-#' 
-#' 
-#' ## [Back to course homepage](../index.html)
-#' 
-#' ----------------------
 #' 
 #' ## References
+#' 
