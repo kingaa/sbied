@@ -13,6 +13,7 @@
 #' Please share and remix noncommercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
+
 #' 
 ## ----opts,include=FALSE,cache=FALSE--------------------------------------
 
@@ -140,7 +141,12 @@ matplot(t(contact_data[1:15,1:4]),
 #' 
 #' * Though this model is too simple to draw firm scientific conclusions, it does show the importance of the issue:
 #' 
+#' 
 #' ![fig4](contacts_fig4.jpg)
+#' 
+## ---- out.width="400px"--------------------------------------------------
+knitr::include_graphics("contacts_fig4.jpg")
+
 #' 
 #' Fig 4 of  @romero-severson15. The median of 500 simulations are shown as lines and the $75^{th}$ and $25^{th}$ quantiles are shown as gray envelopes for three parameterizations. 
 #' 
