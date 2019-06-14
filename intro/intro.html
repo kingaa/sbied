@@ -16,7 +16,7 @@
   <p class="author">
 Aaron A. King and Edward L. Ionides<br>
 <div align="center">
-<image src="../logo.jpg" width="200" align="center">
+<image src="../logo.jpg" height="200" align="center">
 </div>
 <h2>
 Objectives
@@ -53,9 +53,8 @@ Introducing the <strong>pomp</strong> R package.
 <li>Time series are particularly useful sources of data.</li>
 </ul>
 </div>
-<div class="slide section level2">
-
-<h3 id="noisy-clockwork-time-series-analysis-of-population-fluctuations-in-animals">Noisy clockwork: Time series analysis of population fluctuations in animals</h3>
+<div id="noisy-clockwork-time-series-analysis-of-population-fluctuations-in-animals" class="slide section level2">
+<h1>Noisy clockwork: Time series analysis of population fluctuations in animals</h1>
 <p>Obstacles for <strong>ecological</strong> modeling and inference via nonlinear mechanistic models enumerated by <span class="citation">Bjørnstad and Grenfell (2001)</span></p>
 <ol style="list-style-type: decimal">
 <li>Combining measurement noise and process noise.</li>
@@ -106,9 +105,8 @@ Introducing the <strong>pomp</strong> R package.
 <li><p>POMP models can include all the features desired by <span class="citation">Bjørnstad and Grenfell (2001)</span>.</p></li>
 </ul>
 </div>
-<div class="slide section level2">
-
-<h3 id="schematic-of-the-structure-of-a-pomp">Schematic of the structure of a POMP</h3>
+<div id="schematic-of-the-structure-of-a-pomp" class="slide section level2">
+<h1>Schematic of the structure of a POMP</h1>
 <ul>
 <li>Arrows in the following diagram show causal relations.</li>
 </ul>
@@ -117,22 +115,17 @@ Introducing the <strong>pomp</strong> R package.
 <li>A key perspective to keep in mind is that <strong>the model is to be viewed as the process that generated the data</strong>.</li>
 </ul>
 </div>
-<div class="slide section level2">
-
-<h4 id="notation-for-partially-observed-markov-process-models">Notation for partially observed Markov process models</h4>
+<div id="notation-for-pomp-models" class="slide section level2">
+<h1>Notation for POMP models</h1>
 <ul>
-<li><p>Write <span class="math inline">\(X_n=X(t_n)\)</span> and <span class="math inline">\(X_{0:N}=(X_0,\dots,X_N)\)</span>. Let <span class="math inline">\(Y_n\)</span> be a random variable modeling the observation at time <span class="math inline">\(t_n\)</span>.</p></li>
-<li><p>The one-step transition density, <span class="math inline">\(f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)\)</span>, together with the measurement density, <span class="math inline">\(f_{Y_n|X_n}(y_n|x_n;\theta)\)</span> and the initial density, <span class="math inline">\(f_{X_0}(x_0;\theta)\)</span>, specify the entire joint density via</p></li>
+<li>Write <span class="math inline">\(X_n=X(t_n)\)</span> and <span class="math inline">\(X_{0:N}=(X_0,\dots,X_N)\)</span>. Let <span class="math inline">\(Y_n\)</span> be a random variable modeling the observation at time <span class="math inline">\(t_n\)</span>.</li>
+<li>The one-step transition density, <span class="math inline">\(f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)\)</span>, together with the measurement density, <span class="math inline">\(f_{Y_n|X_n}(y_n|x_n;\theta)\)</span> and the initial density, <span class="math inline">\(f_{X_0}(x_0;\theta)\)</span>, specify the entire POMP model.</li>
+<li>The joint density <span class="math inline">\(f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta)\)</span> can be written as <span class="math display">\[f_{X_0}(x_0;\theta)\,\prod_{n=1}^N\!f_{X_n | X_{n-1}}(x_n|x_{n-1};\theta)\,f_{Y_n|X_n}(y_n|x_n;\theta).\]</span></li>
+<li>The marginal density for <span class="math inline">\(Y_{1:N}\)</span> evaluated at the data, <span class="math inline">\(y_{1:N}^*\)</span>, is <span class="math display">\[ f_{Y_{1:N}}(y^*_{1:N};\theta)=\int f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)\, dx_{0:N}.\]</span></li>
 </ul>
-<p><span class="math display">\[\hspace{-4mm} f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta) = f_{X_0}(x_0;\theta)\,\prod_{n=1}^N\!f_{X_n | X_{n-1}}(x_n|x_{n-1};\theta)\,f_{Y_n|X_n}(y_n|x_n;\theta).\]</span></p>
-<ul>
-<li>The marginal density for sequence of measurements, <span class="math inline">\(Y_{1:N}\)</span>, evaluated at the data, <span class="math inline">\(y_{1:N}^*\)</span>, is</li>
-</ul>
-<p><span class="math display">\[ f_{Y_{1:N}}(y^*_{1:N};\theta)=\int f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)\, dx_{0:N}.\]</span></p>
 </div>
-<div class="slide section level2">
-
-<h3 id="another-pomp-model-schematic">Another POMP model schematic</h3>
+<div id="another-pomp-model-schematic" class="slide section level2">
+<h1>Another POMP model schematic</h1>
 <ul>
 <li>In the following diagram, arrows show dependence among model variables:</li>
 </ul>
@@ -145,25 +138,24 @@ Introducing the <strong>pomp</strong> R package.
 <li>Moreover, the measurable random variable, <span class="math inline">\(Y_n\)</span>, depends only on the state at that time: <span class="math display">\[f_{Y_n|X_{0:N},Y_{1:n-1}}(y_n|x_{0:n},y_{1:n-1})=f_{Y_n|X_{n}}(y_n|x_n), \,\,\, \mbox{for $n=1,\dots,N$.}\]</span></li>
 </ul>
 </div>
-<div class="slide section level2">
-
-<h3 id="algorithms-for-pomp-models">Algorithms for POMP models</h3>
-<p>To think algorithmically, we define some function calls:</p>
+<div id="moving-from-math-to-algorithms-for-pomp-models" class="slide section level2">
+<h1>Moving from math to algorithms for POMP models</h1>
+<p>We specify some <strong>basic model components</strong> which can be used within algorithms:</p>
 <ul>
-<li><p><code>rprocess( )</code>: a draw from <span class="math inline">\(f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)\)</span></p></li>
-<li><p><code>dprocess( )</code>: evaluation of <span class="math inline">\(f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)\)</span></p></li>
-<li><p><code>rmeasure( )</code>: a draw from <span class="math inline">\(f_{Y_n|X_n}(y_n| x_n;\theta)\)</span></p></li>
-<li><p><code>dmeasure( )</code>: evaluation of <span class="math inline">\(f_{Y_n|X_n}(y_n| x_n;\theta)\)</span></p></li>
-<li><p><code>rinit( )</code>: a draw from <span class="math inline">\(f_{X_0}(x_0;\theta)\)</span></p></li>
+<li><p><code>rprocess</code>: a draw from <span class="math inline">\(f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)\)</span></p></li>
+<li><p><code>dprocess</code>: evaluation of <span class="math inline">\(f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)\)</span></p></li>
+<li><p><code>rmeasure</code>: a draw from <span class="math inline">\(f_{Y_n|X_n}(y_n| x_n;\theta)\)</span></p></li>
+<li><p><code>dmeasure</code>: evaluation of <span class="math inline">\(f_{Y_n|X_n}(y_n| x_n;\theta)\)</span></p></li>
+<li><p><code>rinit</code>: a draw from <span class="math inline">\(f_{X_0}(x_0;\theta)\)</span></p></li>
 </ul>
+<p>These basic model components define the specific POMP model under consideration.</p>
 </div>
-<div class="slide section level2">
-
-<h3 id="what-does-it-mean-for-methodology-to-be-simulation-based">What does it mean for methodology to be <strong>simulation-based</strong>?</h3>
+<div id="what-does-it-mean-for-methodology-to-be-simulation-based" class="slide section level2">
+<h1>What does it mean for methodology to be <strong>simulation-based</strong>?</h1>
 <ul>
 <li><p>Simulating random processes is often much easier than evaluating their transition probabilities.</p></li>
-<li><p>In other words, we may be able to write <code>rprocess()</code> but not <code>dprocess()</code>.</p></li>
-<li><p><strong>Simulation-based</strong> methods require the user to specify <code>rprocess()</code> but not <code>dprocess()</code>.</p></li>
+<li><p>In other words, we may be able to write <code>rprocess</code> but not <code>dprocess</code>.</p></li>
+<li><p><strong>Simulation-based</strong> methods require the user to specify <code>rprocess</code> but not <code>dprocess</code>.</p></li>
 <li><p><strong>Plug-and-play</strong>, <strong>likelihood-free</strong> and <strong>equation-free</strong> are alternative terms for “simulation-based” methods.</p></li>
 <li><p>Much development of simulation-based statistical methodology has occurred in the past decade.</p></li>
 </ul>
@@ -180,20 +172,17 @@ Introducing the <strong>pomp</strong> R package.
 </div>
 <div id="structure-of-the-pomp-package" class="slide section level2">
 <h1>Structure of the <strong>pomp</strong> package</h1>
+<p>It is useful to divide the <strong>pomp</strong> package functionality into different levels:</p>
 <ul>
-<li>It is useful to divide the <strong>pomp</strong> package functionality into different levels:
-<ul>
-<li>basic model components</li>
-<li>workhorses</li>
-<li>elementary POMP algorithms</li>
-<li>inference algorithms</li>
-</ul></li>
+<li><p>Basic model components</p></li>
+<li><p>Workhorses</p></li>
+<li><p>Elementary POMP algorithms</p></li>
+<li><p>Inference algorithms</p></li>
 </ul>
 </div>
-<div class="slide section level2">
-
-<h3 id="basic-model-components">Basic model components</h3>
-<p><em>Basic model components</em> are user-specified procedures that perform the elementary computations that specify a POMP model. There are nine of these:</p>
+<div id="basic-model-components" class="slide section level2">
+<h1>Basic model components</h1>
+<p>Basic model components* are user-specified procedures that perform the elementary computations that specify a POMP model. There are nine of these:</p>
 <ul>
 <li><code>rinit</code>: simulator for the initial-state distribution, i.e., the distribution of the latent state at time <code>t0</code>.</li>
 <li><code>rprocess</code> and <code>dprocess</code>: simulator and density evaluation procedure, respectively, for the process model.</li>
@@ -202,21 +191,20 @@ Introducing the <strong>pomp</strong> R package.
 <li><code>skeleton</code>: evaluation of the deterministic skeleton.</li>
 <li><code>partrans</code>: parameter transformations.</li>
 </ul>
-<p>The term <em>basic model component</em> is meant to refer to the procedure itself, as distinct from the execution of the procedure. The user specifies the procedure (in one of several forms); the package decides when and where to execute the procedure.</p>
+<p>The scientist must specify whichever of these basic model components are required for the algorithms that the scientist uses.</p>
 </div>
-<div class="slide section level2">
-
-<h3 id="workhorses">Workhorses</h3>
-<p><em>Workhorses</em> are <strong>R</strong> functions, built into the package, that cause the basic model component procedures to be executed.</p>
+<div id="workhorses" class="slide section level2">
+<h1>Workhorses</h1>
+<p>Workhorses are <strong>R</strong> functions, built into the package, that cause the basic model component procedures to be executed.</p>
 <ul>
 <li><p>Each basic model component has a corresponding workhorse.</p></li>
+<li><p>Effectively, the workhorse is a vectorized wrapper around the basic model component.</p></li>
 <li><p>For example, the <code>rprocess()</code> function uses code specified by the <code>rprocess</code> model component, constructed via the <code>rprocess</code> argument to <code>pomp()</code>.</p></li>
-<li><p>In addition, there is a <code>trajectory</code> workhorse. This iterates or integrates the deterministic skeleton (according to whether the model is defined in discrete or continuous time, respectively) to obtain state trajectories.</p></li>
+<li><p>The <code>rprocess</code> model component specifies how a single trajectory evolves at a single moment of time. The <code>rprocess()</code> workhorse combines these computations for arbitrary collections of times and arbitrary numbers of replications.</p></li>
 </ul>
 </div>
-<div class="slide section level2">
-
-<h3 id="elementary-pomp-algorithms">Elementary POMP algorithms</h3>
+<div id="elementary-pomp-algorithms" class="slide section level2">
+<h1>Elementary POMP algorithms</h1>
 <p>These are algorithms that interrogate the model or the model/data confrontation without attempting to estimate parameters. There are currently four of these:</p>
 <ul>
 <li><p><code>simulate</code> performs simulations of the POMP model, i.e., it samples from the joint distribution of latent states and observables.</p></li>
@@ -237,9 +225,9 @@ Introducing the <strong>pomp</strong> R package.
 <li><code>traj_objfun</code>: trajectory matching</li>
 <li><code>spect_objfun</code>: power spectrum matching</li>
 <li><code>probe_objfun</code>: probe matching</li>
-<li><p><code>nlf_objfun</code>: nonlinear forecasting</p></li>
-<li><p><em>Objective function methods</em>: among the estimation algorithms just listed, four are methods that construct stateful objective functions that can be optimized using general-purpose numerical optimization algorithms such as <code>optim</code>, <code>subplex</code>, or the optimizers in the <strong>nloptr</strong> package. These have certain new features that will be described below.</p></li>
+<li><code>nlf_objfun</code>: nonlinear forecasting</li>
 </ul>
+<p><em>Objective function methods</em>: among the estimation algorithms just listed, four are methods that construct stateful objective functions that can be optimized using general-purpose numerical optimization algorithms such as <code>optim</code>, <code>subplex</code>, or the optimizers in the <strong>nloptr</strong> package.</p>
 </div>
 <div id="acknowledgments" class="slide section level2">
 <h1>Acknowledgments</h1>
@@ -247,7 +235,7 @@ Introducing the <strong>pomp</strong> R package.
 <li><p>Versions of this material have been presented at <a href="https://www.biostat.washington.edu/suminst/sismid">Summer Institute in Statistics and Modeling in Infectious Diseases (SISMID)</a> in 2015-2018.</p></li>
 <li><p>Licensed under the <a href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial license</a>. Please share and remix noncommercially, mentioning its origin.<br />
 <img src="data:image/png;base64,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" alt="CC-BY_NC" /></p></li>
-<li><p>The eagle and fish, representing biological dynamics, is by <a href="https://www.artisanti.com/hunting-eagle-abstract-metal-sculpture-103641-p.asp">Artisanti</a>.</p></li>
+<li><p>The bumble bee with apple blossom image is by <a href="https://pixabay.com/photos/bumblebee-apple-blossom-flight-bug-1043067/">Celles from Pixabay</a>.</p></li>
 <li><p>Produced in <strong>R</strong> version 3.6.0 using <strong>pomp</strong> version 2.1.1.0.</p></li>
 </ul>
 <p><br><br></p>

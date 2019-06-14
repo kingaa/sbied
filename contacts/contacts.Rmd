@@ -1,9 +1,9 @@
 ---
 title: "Case study: panel data on dynamic variation in sexual contact rates"
-author: "Edward Ionides and Aaron A. King<br>
+author: "Edward L. Ionides and Aaron A. King<br>
 
 <div align=center>
-<image src='../logo.jpg' width='200' align='center'>
+<image src='../logo.jpg' height='200' align='center'>
 </div>
 
 
@@ -12,7 +12,7 @@ author: "Edward Ionides and Aaron A. King<br>
 <div align=left>
 <ul>
 <li> Show how partially observed Markov process (POMP) methods can be used to understand the outcomes of a longitudinal behavioral survey.
-<li>More broadly, discuss the use of POMP methods for panel data analysis (also known as longitudinal data).
+<li>More broadly, discuss the use of POMP methods for panel data, also known as longitudinal data.
 <li>Introduce the R package **panelPomp** that extends **pomp** to panel data.
 </div>
 "
