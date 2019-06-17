@@ -1,6 +1,20 @@
 #' ---
 #' title: "Introduction to Simulation-based Inference"
-#' author: "Aaron A. King and Edward L. Ionides<br><br><br><br><br>
+#' author: "Aaron A. King and Edward L. Ionides<br>
+#' 
+#' <div align=center>
+#' <image src='../logo.jpg' height='200' align='center'>
+#' </div>
+#' 
+#' <h2>Objectives</h2>
+#' 
+#' <div align=left>
+#' <ul>
+#' <li>Motivations from the study of epidemiological and ecological systems. 
+#' <li>Introducing partially observed Markov process (POMP) models.
+#' <li>Introducing the **pomp** R package.
+#' </ul>
+#' </div>
 #' "
 #' output:
 #'   slidy_presentation:
@@ -10,7 +24,7 @@
 #' csl: ../ecology.csl
 #' nocite: |
 #'   @King2008, @Romero-Severson2015, @He2010, 
-#'   @Laneri2010, @King2015
+#'   @Laneri2010, @King2015, @pons-salort18, @Blake2014, @decelles18
 #' ---
 #' 
 #' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
@@ -49,7 +63,7 @@ set.seed(2028866059L)
 #' -----
 #' 
 #' 
-#' ### Noisy clockwork: Time series analysis of population fluctuations in animals
+#' ## Noisy clockwork: Time series analysis of population fluctuations in animals
 #' 
 #' 
 #' Obstacles for **ecological** modeling and inference via nonlinear mechanistic models enumerated by @Bjornstad2001
@@ -117,7 +131,7 @@ set.seed(2028866059L)
 #' 
 #' ------------------------------
 #' 
-#' ### Schematic of the structure of a POMP
+#' ## Schematic of the structure of a POMP
 #' 
 #' - Arrows in the following diagram show causal relations.
 #'    
@@ -130,22 +144,19 @@ set.seed(2028866059L)
 #' 
 #' ---------------------
 #' 
-#' #### Notation for partially observed Markov process models
+#' ## Notation for POMP models
 #' 
-#' * Write $X_n=X(t_n)$ and $X_{0:N}=(X_0,\dots,X_N)$. Let $Y_n$ be a random variable modeling the observation at time $t_n$.
-#' 
-#' * The one-step transition density, $f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)$, together with the measurement density, $f_{Y_n|X_n}(y_n|x_n;\theta)$ and the initial density, $f_{X_0}(x_0;\theta)$, specify the entire joint density via
-#' 
-#' $$\hspace{-4mm} f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta) = f_{X_0}(x_0;\theta)\,\prod_{n=1}^N\!f_{X_n | X_{n-1}}(x_n|x_{n-1};\theta)\,f_{Y_n|X_n}(y_n|x_n;\theta).$$
-#' 
-#' * The marginal density for sequence of measurements, $Y_{1:N}$, evaluated at the data, $y_{1:N}^*$, is
-#' 
+#' - Write $X_n=X(t_n)$ and $X_{0:N}=(X_0,\dots,X_N)$. Let $Y_n$ be a random variable modeling the observation at time $t_n$.
+#' - The one-step transition density, $f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)$, together with the measurement density, $f_{Y_n|X_n}(y_n|x_n;\theta)$ and the initial density, $f_{X_0}(x_0;\theta)$, specify the entire POMP model.
+#' - The joint density $f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta)$ can be written as
+#' $$f_{X_0}(x_0;\theta)\,\prod_{n=1}^N\!f_{X_n | X_{n-1}}(x_n|x_{n-1};\theta)\,f_{Y_n|X_n}(y_n|x_n;\theta).$$
+#' - The marginal density for $Y_{1:N}$ evaluated at the data, $y_{1:N}^*$, is
 #' $$ f_{Y_{1:N}}(y^*_{1:N};\theta)=\int f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)\, dx_{0:N}.$$
 #' 
 #' 
 #' ------------------------------
 #' 
-#' ### Another POMP model schematic
+#' ## Another POMP model schematic
 #' 
 #' - In the following diagram, arrows show dependence among model variables:
 #' 
@@ -162,59 +173,73 @@ set.seed(2028866059L)
 #' 
 #' ----------------
 #' 
-#' ### Algorithms for POMP models
+#' ## Moving from math to algorithms for POMP models
 #' 
-#' To think algorithmically, we define some function calls:
+#' We specify some **basic model components** which can be used within algorithms:
 #' 
-#' * `rprocess( )`: a draw from $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
 #' 
-#' * `dprocess( )`: evaluation of $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
+#' * `rprocess`: a draw from $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
 #' 
-#' * `rmeasure( )`: a draw from $f_{Y_n|X_n}(y_n| x_n;\theta)$
+#' * `dprocess`: evaluation of $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
 #' 
-#' * `dmeasure( )`: evaluation of $f_{Y_n|X_n}(y_n| x_n;\theta)$
+#' * `rmeasure`: a draw from $f_{Y_n|X_n}(y_n| x_n;\theta)$
 #' 
-#' * `rinit( )`: a draw from $f_{X_0}(x_0;\theta)$
+#' * `dmeasure`: evaluation of $f_{Y_n|X_n}(y_n| x_n;\theta)$
+#' 
+#' * `rinit`: a draw from $f_{X_0}(x_0;\theta)$
+#' 
+#' These basic model components define the specific POMP model under consideration.
+#' 
+#' 
 #' 
 #' -------------
 #' 
-#' ### What does it mean for methodology to be __simulation-based__?
+#' ## What does it mean for methodology to be __simulation-based__?
 #' 
-#' * Simulating random processes is often much easier than evaluating their transition probabilities.
+#' - Simulating random processes is often much easier than evaluating their transition probabilities.
 #' 
-#' * In other words, we may be able to write `rprocess()` but not `dprocess()`.
+#' - In other words, we may be able to write `rprocess` but not `dprocess`.
 #' 
-#' *  __Simulation-based__ methods require the user to specify `rprocess()` but not `dprocess()`.
+#' -  __Simulation-based__ methods require the user to specify `rprocess` but not `dprocess`.
 #' 
-#' * __Plug-and-play__, __likelihood-free__ and __equation-free__ are alternative terms for "simulation-based" methods.
+#' - __Plug-and-play__, __likelihood-free__ and __equation-free__ are alternative terms for "simulation-based" methods.
 #' 
-#' * Much development of simulation-based statistical methodology has occurred in the past decade.
+#' - Much development of simulation-based statistical methodology has occurred in the past decade.
 #' 
 #' ------------
 #' 
 #' ## The **pomp** package for POMP models
 #' 
-#' * **pomp** is an  **R**  package for data analysis using partially observed Markov process (POMP) models.
+#' - **pomp** is an  **R**  package for data analysis using partially observed Markov process (POMP) models.
 #' 
-#' * Note the distinction: lower case '**pomp**' is a software package; upper case 'POMP' is a class of models.
+#' - Note the distinction: lower case '**pomp**' is a software package; upper case 'POMP' is a class of models.
 #' 
-#' * **pomp** builds methodology for POMP models in terms of arbitrary user-specified POMP models.
+#' - **pomp** builds methodology for POMP models in terms of arbitrary user-specified POMP models.
 #' 
-#' * **pomp** provides tools, documentation, and examples to help users specify POMP models.
+#' - **pomp** provides tools, documentation, and examples to help users specify POMP models.
 #' 
-#' * **pomp** provides a platform for modification and sharing of models, data-analysis workflows, and methodological development.
+#' - **pomp** provides a platform for modification and sharing of models, data-analysis workflows, and methodological development.
 #' 
-#' * It is useful to divide the **pomp** package functionality into different levels:
-#' 	- basic model components
-#' 	- workhorses
-#' 	- elementary POMP algorithms
-#' 	- estimation algorithms
 #' 
 #' ---------
 #' 
-#' ### Basic model components 
+#' ## Structure of the **pomp** package 
 #' 
-#' *Basic model components* are user-specified procedures that perform the elementary computations that specify a POMP model.
+#' It is useful to divide the **pomp** package functionality into different levels:
+#' 
+#' - Basic model components
+#' 
+#' - Workhorses
+#' 
+#' - Elementary POMP algorithms
+#' 
+#' - Inference algorithms
+#' 
+#' ---------
+#' 
+#' ## Basic model components 
+#' 
+#' Basic model components* are user-specified procedures that perform the elementary computations that specify a POMP model.
 #' There are nine of these:
 #' 
 #' - `rinit`: simulator for the initial-state distribution, i.e., the distribution of the latent state at time `t0`.
@@ -224,28 +249,26 @@ set.seed(2028866059L)
 #' - `skeleton`: evaluation of the deterministic skeleton.
 #' - `partrans`: parameter transformations.
 #' 
-#' The term *basic model component* is meant to refer to the procedure itself, as distinct from the execution of the procedure.
-#' The user specifies the procedure (in one of several forms);
-#' the package decides when and where to execute the procedure.
+#' The scientist must specify whichever of these basic model components are required for the algorithms that the scientist uses.
 #' 
 #' ----------
 #' 
-#' ### Workhorses
+#' ## Workhorses
 #' 
-#' *Workhorses* are **R** functions, built into the package, that cause the basic model component procedures to be executed.
+#' Workhorses are **R** functions, built into the package, that cause the basic model component procedures to be executed.
 #' 
-#' * Each basic model component has a corresponding workhorse.
+#' - Each basic model component has a corresponding workhorse.  
 #' 
-#' * For example, the `rprocess()` function uses code specified by the `rprocess` model component, constructed via the `rprocess` argument to `pomp()`.
+#' - Effectively, the workhorse is a vectorized wrapper around the basic model component.
 #' 
-#' * In addition, there is a `trajectory` workhorse. This iterates or integrates the deterministic skeleton (according to whether the model is defined in discrete or continuous time, respectively) to obtain state trajectories. 
+#' - For example, the `rprocess()` function uses code specified by the `rprocess` model component, constructed via the `rprocess` argument to `pomp()`.
 #' 
-#' 
+#' - The `rprocess` model component specifies how a single trajectory evolves at a single moment of time. The `rprocess()` workhorse combines these computations for arbitrary collections of times and arbitrary numbers of replications.
 #' 
 #' 
 #' ---------
 #' 
-#' ### Elementary POMP algorithms
+#' ## Elementary POMP algorithms
 #' 
 #' These are algorithms that interrogate the model or the model/data confrontation without attempting to estimate parameters.
 #' There are currently four of these:
@@ -260,7 +283,7 @@ set.seed(2028866059L)
 #' 
 #' ---------
 #' 
-#' ## POMP estimation algorithms
+#' ## POMP inference algorithms
 #' 
 #' These are procedures that build on the elementary algorithms and are used for estimation of parameters and other inferential tasks.
 #' There are currently ten of these:
@@ -275,9 +298,8 @@ set.seed(2028866059L)
 #' - `probe_objfun`: probe matching
 #' - `nlf_objfun`: nonlinear forecasting
 #' 
-#' - *Objective function methods*: 
+#' *Objective function methods*: 
 #' among the estimation algorithms just listed, four are methods that construct stateful objective functions that can be optimized using general-purpose numerical optimization algorithms such as `optim`, `subplex`, or the optimizers in the **nloptr** package.
-#' These have certain new features that will be described below.
 #' 
 #' 
 #' ---------
@@ -285,19 +307,21 @@ set.seed(2028866059L)
 #' ## Acknowledgments
 #' 
 #' * Versions of this material have been presented at [Summer Institute in Statistics and Modeling in Infectious Diseases (SISMID)](https://www.biostat.washington.edu/suminst/sismid) in 2015-2018.
-#' <br>
 #' 
 #' * Licensed under the [Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
 #' Please share and remix noncommercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
-#' <br>
+#' * The bumble bee with apple blossom image is by [Celles from Pixabay](https://pixabay.com/photos/bumblebee-apple-blossom-flight-bug-1043067/). 
+#' 
 #' 
 #' * Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion('pomp')`.
 #' 
+#' 
+#' 
 #' <br><br>
 #' 
-#' <big><big><b>[Back to course homepage](../index.html)</b></big></big>
+#' ###[Back to course homepage](../index.html)
 #' 
 #' ---------
 #' 

@@ -1,17 +1,29 @@
 #' ---
 #' title: "Case study: panel data on dynamic variation in sexual contact rates"
-#' author: "Edward Ionides"
+#' author: "Edward L. Ionides and Aaron A. King<br>
+#' 
+#' <div align=center>
+#' <image src='../logo.jpg' height='200' align='center'>
+#' </div>
+#' 
+#' 
+#' <h2>Objectives</h2>
+#' 
+#' <div align=left>
+#' <ul>
+#' <li> Show how partially observed Markov process (POMP) methods can be used to understand the outcomes of a longitudinal behavioral survey.
+#' <li>More broadly, discuss the use of POMP methods for panel data, also known as longitudinal data.
+#' <li>Introduce the R package **panelPomp** that extends **pomp** to panel data.
+#' </div>
+#' "
 #' output:
-#'   html_document:
+#'   slidy_presentation:
 #'     toc: yes
 #'     toc_depth: 3
 #' bibliography: ../sbied.bib
 #' csl: ../ecology.csl
 #' ---
 #' 
-#' Licensed under the Creative Commons attribution-noncommercial license, http://creativecommons.org/licenses/by-nc/3.0/.
-#' Please share and remix noncommercially, mentioning its origin.  
-#' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
 
 #' 
@@ -38,22 +50,9 @@ registerDoParallel(cores)
 mcopts <- list(set.seed=TRUE)
 
 #' 
-#' ----------------------
-#' 
-#' ## Objectives
-#' 
-#' 1. Show how partially observed Markov process (POMP) methods can be used to understand the outcomes of a longitudinal behavioral survey.
-#' 
-#' 2. More broadly, discuss the use of POMP methods for panel data analysis (also known as longitudinal data).
-#' 
-#' 3. Introduce the R package **panelPomp** that extends **pomp** to panel data.
-#' 
-#' -------------
-#' 
-#' ------------
 #' 
 #' 
-#' ## Introduction
+#' ## Heterogeneities in sexual contacts
 #' 
 #' * Basic epidemiological models suppose equal contact rates for all individuals in a population. 
 #' 
@@ -63,6 +62,10 @@ mcopts <- list(set.seed=TRUE)
 #' 
 #' * There have been some indications that rate heterogeneity plays a substantial role in the HIV epidemic. 
 #' 
+#' ----------------
+#' 
+#' ## Data from a prospective study
+#' 
 #' * @romero-severson15 investigated whether dynamic variation in sexual contact rates are a real and measurable phenomenon, by analyzing a large cohort study of HIV-negative gay men in 3 cities [@vittinghoff99]. 
 #' 
 #' * @romero-severson15 found evidence for dynamic variation. In a simple model for HIV, with a fully mixing population of susceptible and infected individuals, this fitted variation can help explain the observed prevalence history in the US despite the low per-contact infectivity of HIV.
@@ -71,12 +74,16 @@ mcopts <- list(set.seed=TRUE)
 #' 
 #' * The data are available in [contacts.csv](contacts.csv). Plotted is a sample of 15 time series in the panel:
 #' 
-## ----data----------------------------------------------------------------
+## ----data, out.width="500px"---------------------------------------------
 contact_data <- read.table(file="contacts.csv",header=TRUE)
 matplot(t(contact_data[1:15,1:4]),
         ylab="total sexual contacts",xlab="6-month intervals", 
         type="l",xaxp=c(1,4,3))
 
+#' 
+#' -------------
+#' 
+#' ## Types of contact rate heterogeneity
 #' 
 #' We want a model that can describe all sources of variability in the data:
 #' 
@@ -89,7 +96,6 @@ matplot(t(contact_data[1:15,1:4]),
 #' 
 #' ---------------
 #' 
-#' ----------------
 #' 
 #' ## A model for dynamic variation in sexual contact rates
 #' 
@@ -129,9 +135,10 @@ matplot(t(contact_data[1:15,1:4]),
 #' 
 #' * Whether the data are sufficient to identify both $R_i$ and $D_i$ is an empirical question.
 #' 
-#' ---------
+#' 
 #' 
 #' --------
+#' 
 #' 
 #' ### Results: Consequences of dynamic behavior in a simple epidemic model
 #' 
@@ -142,9 +149,7 @@ matplot(t(contact_data[1:15,1:4]),
 #' * Though this model is too simple to draw firm scientific conclusions, it does show the importance of the issue:
 #' 
 #' 
-#' ![fig4](contacts_fig4.jpg)
-#' 
-## ---- out.width="400px"--------------------------------------------------
+## ---- out.width="500px",echo=F-------------------------------------------
 knitr::include_graphics("contacts_fig4.jpg")
 
 #' 
@@ -161,7 +166,6 @@ knitr::include_graphics("contacts_fig4.jpg")
 #' 
 #' ---------------
 #' 
-#' ---------------
 #' 
 #' ## PanelPOMP models as an extension of POMP models
 #' 
@@ -177,11 +181,9 @@ knitr::include_graphics("contacts_fig4.jpg")
 #' 
 #' * **pomp** methods were extended to PanelPOMP models by @breto19. 
 #' 
-## ----load-panelPomp,cache=F----------------------------------------------
-library(panelPomp)
-
+#' ----------------
 #' 
-#' * This document uses **panelPomp** `r packageVersion("panelPomp")` with **pomp** `r packageVersion("pomp")`
+#' ## Using the **panelPomp** R package
 #' 
 #' * The main task of **panelPomp** beyond **pomp** is to handle the additional book-keeping necessitated by the unit structure.
 #' 
@@ -189,7 +191,8 @@ library(panelPomp)
 #' 
 #' * A `panelPomp` object for the above contact data and model is provided by `pancon` in **panelPomp**.
 #' 
-## ----load-pancon---------------------------------------------------------
+## ----load-pancon,cache=F-------------------------------------------------
+library(panelPomp)
 contacts <- panelPompExample(pancon)
 
 #' 
@@ -210,16 +213,14 @@ class(unitobjects(contacts)[[1]])
 #' * If there are no shared parameters then there is no useful panel structure and the PanelPOMP model is equivalent to a list of POMP models.
 #' 
 #' 
-#' 
 #' --------------------
 #' 
-#' #### Question. Methods for panelPomps.
+#' ### Question. Methods for panelPomps.
 #' 
 #' * How would you find the **panelPomp** package methods available for working with a `panelPomp` object?  
 #' 
 #' * [Worked solution.](Q-panelPomp-methods.html)
 #' 
-#' --------------------
 #' 
 #' -------------------
 #' 
@@ -236,10 +237,8 @@ coef(contacts)
 #' 
 #' * `pfilter(contacts,Np=1000)` carries out a particle filter computation at this parameter vector.
 #' 
-#' ---------
 #' 
-#' 
-#' #### Question. What do you get if you `pfilter` a `panelPomp`?
+#' ### Question. What do you get if you `pfilter` a `panelPomp`?
 #' 
 #' * Describe what you think `pfilter(contacts,Np=1000)` should do. 
 #' 
@@ -250,13 +249,9 @@ coef(contacts)
 #' * [Worked solution.](Q-pfilter-for-panelPomp.html)
 #' 
 #' 
-#' --------
-#' 
 #' ---------
 #' 
-#' 
 #' ## Replicated likelihood evaluations
-#' 
 #' 
 #' * With `pomp`, it is useful to replicate the likelihood evaluations, both to reduce Monte Carlo uncertainty and (perhaps more importantly) to quantify it. 
 #' 
@@ -270,11 +265,14 @@ tic <- Sys.time()
 #' 
 ## ----pfilter1,cache=F----------------------------------------------------
 stew("pfilter1.rda",{
-  pf1 <- foreach(i=1:10,
+  pf1_results <- foreach(i=1:20,
     .packages=c('pomp','panelPomp'),
-    .options.multicore=mcopts) %dopar% pfilter(
-      contacts,Np= if(DEBUG) 10 else 2000)
-  },seed=19810296,kind="L'Ecuyer") 
+    .options.multicore=mcopts) %dopar% {
+      pf <- pfilter(contacts,Np= if(DEBUG) 10 else 2000)
+      list(logLik=logLik(pf),
+           unitLogLik=sapply(unitobjects(pf),logLik))
+  }
+},seed=860496,kind="L'Ecuyer") 
 
 #' 
 ## ---- echo=F,cache=F-----------------------------------------------------
@@ -285,14 +283,17 @@ if(timing) save(t1,file="pfilter1-timing.rda") else load("pfilter1-timing.rda")
 #' * This took `r round(t1,1)` minutes using `r cores` cores.
 #' 
 #' 
-#' * Now we have a new consideration not found with `pomp` models. 
-#' Each unit has its own log likelihood arising from an independent Monte Carlo computation, unlike the conditional log likelihoods at each time point for a `pomp`.
+#' ---------
 #' 
+#' ## Combining Monte Carlo likelihood evaluation replicates for panelPomps
+#' 
+#' * We have a new consideration not found with `pomp` models. 
+#' Each unit has its own log likelihood arising from an independent Monte Carlo computation, unlike the conditional log likelihoods at each time point for a `pomp`.
 #' 
 #' * The basic `pomp` approach remains valid:
 #' 
 ## ------------------------------------------------------------------------
-loglik1 <- sapply(pf1,logLik)
+loglik1 <- sapply(pf1_results,function(x) x$logLik)
 loglik1
 logmeanexp(loglik1,se=T)
 
@@ -300,14 +301,15 @@ logmeanexp(loglik1,se=T)
 #' * Can we do better, using the independence? It turns out we can [@breto19].
 #' 
 ## ------------------------------------------------------------------------
-pf1_loglik_matrix <- sapply(pf1,function(pp) sapply(unitobjects(pp),logLik))
+pf1_loglik_matrix <- sapply(pf1_results,function(x) x$unitLogLik)
 panel_logmeanexp(pf1_loglik_matrix,MARGIN=1,se=T)
 
 #' 
+#' * The difference is small in this case, since the number of observation times is small. For longer panels, the difference becomes more important.
 #' 
 #' -----------
 #' 
-#' #### Question: The difference between `panel_logmeanexp` and `logmeanexp`
+#' ### Question: The difference between `panel_logmeanexp` and `logmeanexp`
 #' 
 #' * The basic `pomp` approach averages the Monte Carlo likelihood estimates after aggregating the likelihood over units.
 #' 
@@ -319,12 +321,10 @@ panel_logmeanexp(pf1_loglik_matrix,MARGIN=1,se=T)
 #' 
 #' *  [Worked solution.](Q-panel-logmeanexp.html)
 #' 
+#' 
 #' -----------
 #' 
-#' 
-#' ----------
-#' 
-#' ### Likelihood maximization using the PIF algorithm
+#' ## Likelihood maximization using the PIF algorithm
 #' 
 #' * If we can formally write a PanelPOMP as a POMP, we can use methods such as `mif2` for inference.
 #' 
@@ -349,19 +349,22 @@ tic <- Sys.time()
 #' 
 ## ----mif1,cache=F--------------------------------------------------------
 stew("mif1.rda",{
-  m2 <- foreach(i=1:10,
+  mif_results <- foreach(i=1:10,
     .packages=c('pomp','panelPomp'),
-    .options.multicore=mcopts) %dopar% mif2(contacts,
-      Nmif = if(DEBUG) 2 else 50,
-      Np = if(DEBUG) 5 else 1000,
-      cooling.fraction.50=0.1,
-      cooling.type="geometric",
-      transform=TRUE,
-      rw.sd=rw.sd(mu_X=0.02, sigma_X=0.02, mu_D = 0.02, sigma_D=0.02,
-        mu_R=0.02, sigma_R =0.02, alpha=0.02
+    .options.multicore=mcopts) %dopar% {
+      mf <- mif2(contacts,
+        Nmif = if(DEBUG) 2 else 50,
+        Np = if(DEBUG) 5 else 1000,
+        cooling.fraction.50=0.1,
+        cooling.type="geometric",
+        transform=TRUE,
+        rw.sd=rw.sd(mu_X=0.02, sigma_X=0.02, mu_D = 0.02, sigma_D=0.02,
+          mu_R=0.02, sigma_R =0.02, alpha=0.02
+        )
       )
-    )
-  },seed=354320731,kind="L'Ecuyer") 
+      list(logLik=logLik(mf),params=coef(mf))
+    }
+},seed=354320731,kind="L'Ecuyer") 
 
 #' 
 ## ---- echo=F,cache=F-----------------------------------------------------
@@ -382,15 +385,15 @@ tic <- Sys.time()
 #'  
 ## ----mif1-lik-eval,cache=F-----------------------------------------------
 stew("mif1-lik-eval.rda",{
-  params_new <- coef( m2[[which.max( sapply(m2,logLik) )]] )
-  pf3 <- foreach(i=1:10,
-    .packages=c('pomp','panelPomp'),
-    .options.multicore=mcopts) %dopar% pfilter(contacts,
-      shared=params_new,
-      Np=if(DEBUG) 50 else 2000)
-  },seed=35780731,kind="L'Ecuyer")
-pf3_loglik_matrix <- sapply(pf3,function(pp) sapply(unitobjects(pp),logLik))
-panel_logmeanexp(pf3_loglik_matrix,MARGIN=1,se=T)
+  mif_logLik <-  sapply(mif_results,function(x)x$logLik)
+  mif_mle <- mif_results[[which.max(mif_logLik)]]$params
+  pf3_loglik_matrix <- foreach(i=1:10,
+    .packages=c('pomp','panelPomp'),.combine=rbind,
+    .options.multicore=mcopts) %dopar% {
+      unitlogLik(pfilter(contacts,shared=mif_mle,Np=if(DEBUG) 50 else 2000))
+    }  
+},seed=35780731,kind="L'Ecuyer")
+panel_logmeanexp(pf3_loglik_matrix,MARGIN=2,se=T)
 
 #'  
 ## ---- echo=F,cache=F-----------------------------------------------------
@@ -403,18 +406,21 @@ if(timing) save(t3,file="mif1-lik-eval-timing.rda") else load("mif1-lik-eval-tim
 #' 
 #' -----------------------------
 #' 
-#' --------------------------
-#' 
-#' ## [Back to course homepage](../index.html)
-#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/contacts/contacts.R)
-#' 
-#' 
-#' ----------------------
 #' 
 #' ## Acknowledgments
 #' 
-#' This tutorial is prepared for the [Simulation-based Inference for Epidemiological Dynamics](https://kingaa.github.io/sbied/) module at 11th Annual Summer Institute in Statistics and Modeling in Infectious Diseases ([SISMID 2019](https://www.biostat.washington.edu/suminst/sismid)). 
+#' * This tutorial is prepared for the [Simulation-based Inference for Epidemiological Dynamics](https://kingaa.github.io/sbied/) module at 11th Annual Summer Institute in Statistics and Modeling in Infectious Diseases ([SISMID 2019](https://www.biostat.washington.edu/suminst/sismid)). 
 #' Previous versions were presented at SISMID in 2015, 2016, 2017, 2018.
+#' 
+#' * Licensed under the [Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
+#' Please share and remix noncommercially, mentioning its origin.  
+#' ![CC-BY_NC](../graphics/cc-by-nc.png)
+#' 
+#' * This document was run using **panelPomp** `r packageVersion("panelPomp")` with **pomp** `r packageVersion("pomp")`
+#' 
+#' <h2> [Back to course homepage](../index.html) </h2>
+#' 
+#' <h2> [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/contacts/contacts.R)</h2>
 #' 
 #' ----------------------
 #' 
