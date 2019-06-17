@@ -28,6 +28,7 @@ nloptr
 plyr
 RColorBrewer
 reshape2
+scales
 sos
 subplex
 tidyr
@@ -35,6 +36,12 @@ tidyverse
 pomp
 "
 )
+
+## latest 'rngtools' requires version >= 3.6.0
+if (rv < "3.6.0") {
+  pkgurl <- "https://cran.r-project.org/src/contrib/Archive/rngtools/rngtools_1.3.1.tar.gz"
+  install.packages(pkgurl,repos=NULL,type="source")
+}
 
 ## some packages may be already installed
 pkglist <- setdiff(pkglist,rownames(installed.packages()))
