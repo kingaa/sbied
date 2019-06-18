@@ -4,11 +4,6 @@ ifneq ($(INSTALLDIR),)
 	install -m0600 $^ $(INSTALLDIR)
 endif
 
-model.html: model.R
-
-model.R: ebola.Rmd
-	Rscript --vanilla -e "knitr::purl(\"ebola.Rmd\",output=\"model.R\",documentation=1)"
-
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
 	Rscript --vanilla -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
