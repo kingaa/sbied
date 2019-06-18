@@ -6,12 +6,12 @@ output:
     toc: yes
     toc_depth: 4
     toc_float:
-      collapsed: FALSE
+      collapsed: TRUE
       smooth_scroll: TRUE
     code_folding: hide
     highlight: haddock
     number_sections: FALSE
-    df_print: kable
+    df_print: paged
 bibliography: ../sbied.bib
 csl: ../ecology.csl
 ---
@@ -59,7 +59,7 @@ opts_chunk$set(
   dev='png',
   dev.args=list(bg='transparent')
   )
-read_chunk("model.R")
+read_chunk("ebola_model.R")
 ```
 
 ```{r prelims,include=FALSE,cache=FALSE}
@@ -141,10 +141,7 @@ $C_t | H_t$ is negative binomial with $\expect{C_t|H_t} = \rho\,H_t$ and $\var{C
 ```{r measmodel}
 ```
 
-### Parameter transformations
-
-```{r partrans}
-```
+### Pomp construction
 
 The following function constructs a `pomp` object to hold the data for any one of the countries.
 It demonstrates one level of abstraction above the basic `pomp` constructor.
@@ -155,7 +152,7 @@ It demonstrates one level of abstraction above the basic `pomp` constructor.
 --------------------------
 
 ## [Back to Ebola case study](./ebola.html)
-## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/model.R)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola_model.R)
 
 
 ----------------------

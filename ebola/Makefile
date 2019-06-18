@@ -1,4 +1,4 @@
-default: ebola_data.csv ebola.html ebola-profiles.csv ebola.R model.R model.html
+default: ebola_data.csv ebola.html ebola-profiles.csv ebola_model.R model.html
 ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)
