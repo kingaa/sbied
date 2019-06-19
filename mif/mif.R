@@ -32,7 +32,7 @@
 library(tidyverse)
 library(pomp)
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp")>="2.1")
+stopifnot(packageVersion("pomp")>="2.1.2.1")
 theme_set(theme_bw())
 set.seed(557976883)
 
@@ -433,7 +433,7 @@ registerDoRNG(625904618)
 
 tic <- Sys.time()
 
-foreach(i=1:10,.packages='pomp',.combine=c) %dopar% {
+foreach(i=1:10,.packages="pomp",.combine=c) %dopar% {
   measSIR %>% pfilter(params=params,Np=10000)
 } -> pf
 
@@ -462,7 +462,7 @@ toc <- Sys.time()
 ## ----init_csv------------------------------------------------------------
 pf[[1]] %>% coef() %>% bind_rows() %>%
   bind_cols(loglik=L_pf[1],loglik.se=L_pf[2]) %>%
-  write_csv(path="measles_params.csv")
+  write_csv("measles_params.csv")
 
 #' 
 #' <br>
@@ -482,7 +482,9 @@ pf[[1]] %>% coef() %>% bind_rows() %>%
 ## ----local_search--------------------------------------------------------
 registerDoRNG(482947940)
 bake(file="local_search.rds",{
-  foreach(i=1:20,.packages='pomp',.combine=c) %dopar%  
+  foreach(i=1:20,
+          .packages=c("pomp","tidyverse"), 
+          .combine=c) %dopar%  
   {
     measSIR %>%
     mif2(
@@ -503,7 +505,7 @@ bake(file="local_search.rds",{
 #' 
 
 #' 
-#' No filtering failures (`nfail`) are generated after about 15 iterations, which is comforting.
+#' No filtering failures (`nfail`) are generated after about 10 iterations, which is comforting.
 #' In general, we expect to see filtering failures whenever our initial guess (`start`) is incompatible with one or more of the observations.
 #' Filtering failures at the MLE are an indication that the model, at its best, is incompatible with one or more of the data.
 #' 
@@ -518,7 +520,9 @@ bake(file="local_search.rds",{
 ## ----lik_local-----------------------------------------------------------
 registerDoRNG(900242057)
 bake(file="lik_local.rds",{
-  foreach(mf=mifs_local,.packages='pomp',.combine=rbind) %dopar% 
+  foreach(mf=mifs_local,
+          .packages=c("pomp","tidyverse"), 
+          .combine=rbind) %dopar% 
   {
     evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
     ll <- logmeanexp(evals,se=TRUE)
@@ -539,8 +543,10 @@ bake(file="lik_local.rds",{
 #' 
 #' We add these newly explored points to our database:
 ## ----local_database------------------------------------------------------
-results %>%
-  write_csv(path="measles_params.csv",append=TRUE)
+read_csv("measles_params.csv") %>%
+  bind_rows(results) %>%
+  arrange(-loglik) %>%
+  write_csv("measles_params.csv")
 
 #' 
 #' <br>
@@ -563,6 +569,15 @@ results %>%
 #' 
 #' We are now ready to carry out likelihood maximizations from diverse starting points.
 #' 
+## ----mpi,include=FALSE,purl=TRUE-----------------------------------------
+if (file.exists("CLUSTER")) {
+  scan("CLUSTER",what=integer(0)) -> ncpu
+  library(doMPI)
+  cl <- startMPIcluster(ncpu,verbose=TRUE,logdir="/tmp")
+  registerDoMPI(cl)
+}
+
+#' 
 ## ----global_search-------------------------------------------------------
 registerDoRNG(1270401374)
 guesses <- runifDesign(
@@ -575,7 +590,7 @@ mf1 <- mifs_local[[1]]
 
 bake(file="global_search.rds",{
   foreach(guess=iter(guesses,"row"), 
-    .packages='pomp', 
+    .packages=c("pomp","tidyverse"), 
     .combine=rbind,
     .export=c("mf1","fixed_params")
   ) %dopar% 
@@ -592,8 +607,10 @@ bake(file="global_search.rds",{
 
 
 ## ------------------------------------------------------------------------
-results %>%
-  write_csv(path="measles_params.csv",append=TRUE)
+read_csv("measles_params.csv") %>%
+  bind_rows(results) %>%
+  arrange(-loglik) %>%
+  write_csv("measles_params.csv")
 
 #' 
 #' The above codes run one search from each of `r nrow(guesses)` starting values.
@@ -607,7 +624,7 @@ results %>%
 #' Following the `mif2` computations, the particle filter is used to evaluate the likelihood, as before.
 #' In contract to the local-search codes above, here we return only the endpoint of the search, together with the likelihood estimate and its standard error in a named vector.
 #' The best result of this search had a likelihood of `r round(max(results$loglik),1)` with a standard error of `r round(results$loglik.se[which.max(results$loglik)],2)`.
-#' This took `r round(t_global["elapsed"]/60,1)` minutes altogether using `r n_global` processors.
+#' This took `r round(t_global["elapsed"]/60,1)` minutes altogether using 150 processors.
 #' 
 #' Again, we attempt to visualize the global geometry of the likelihood surface using a scatterplot matrix.
 #' In particular, here we plot both the starting values (grey) and the IF2 estimates (red).
@@ -634,14 +651,14 @@ guesses <- profileDesign(
   eta=seq(0.01,0.85,length=20),
   lower=box[1,c("Beta","gamma","rho")],
   upper=box[2,c("Beta","gamma","rho")],
-  nprof=15
+  nprof=15, type="runif"
 )
 
 mf1 <- mifs_local[[1]]
 
 bake(file="eta_profile.rds",{
   foreach(guess=iter(guesses,"row"), 
-    .packages='pomp', 
+    .packages=c("pomp","tidyverse"),
     .combine=rbind,
     .export=c("mf1","fixed_params")
   ) %dopar% 
@@ -659,8 +676,10 @@ bake(file="eta_profile.rds",{
 
 
 ## ------------------------------------------------------------------------
-results %>%
-  write_csv(path="measles_params.csv",append=TRUE)
+read_csv("measles_params.csv") %>%
+  bind_rows(results) %>%
+  arrange(-loglik) %>%
+  write_csv("measles_params.csv")
 
 ## ------------------------------------------------------------------------
 read_csv("measles_params.csv") %>%
@@ -687,7 +706,6 @@ results %>%
   ggplot(aes(x=eta,y=gamma))+
   geom_point()
 
-
 #' 
 #' 
 #' #### Profile over $\gamma$
@@ -708,7 +726,7 @@ results %>%
       gamma=seq(0.7,7,length=20),
       lower=box[1,c("Beta","eta","rho")],
       upper=box[2,c("Beta","eta","rho")],
-      nprof=15
+      nprof=15, type="runif"
     )
 ) -> guesses
 
@@ -716,7 +734,7 @@ mf1 <- mifs_local[[1]]
 
 bake(file="gamma_profile.rds",{
   foreach(guess=iter(guesses,"row"), 
-    .packages='pomp', 
+    .packages=c("pomp","tidyverse"),
     .combine=rbind,
     .export=c("mf1","fixed_params")
   ) %dopar% 
@@ -739,8 +757,10 @@ bake(file="gamma_profile.rds",{
 
 
 ## ------------------------------------------------------------------------
-results %>%
-  write_csv(path="measles_params.csv",append=TRUE)
+read_csv("measles_params.csv") %>%
+  bind_rows(results) %>%
+  arrange(-loglik) %>%
+  write_csv("measles_params.csv")
 
 ## ------------------------------------------------------------------------
 pairs(~loglik+Beta+gamma+eta+rho,data=results,pch=16)
@@ -768,7 +788,7 @@ results %>%
 ## ----beta_profile1-------------------------------------------------------
 registerDoRNG(87757758)
 
-results %>%
+read_csv("measles_params.csv") %>%
   filter(loglik>max(loglik)-10,loglik.se<2,gamma>1.8,gamma<2.2) %>%
   sapply(range) -> box
 box
@@ -779,14 +799,15 @@ profileDesign(
   N=38000,
   lower=box[1,c("eta","rho")],
   upper=box[2,c("eta","rho")],
-  nprof=15
+  nprof=15, type="runif"
 ) -> guesses
 
 mf1 <- mifs_local[[1]]
 
 bake(file="beta_profile1.rds",{
   foreach(guess=iter(guesses,"row"), 
-    .packages='pomp', .combine=rbind
+    .packages=c("pomp","tidyverse"),
+    .combine=rbind
   ) %dopar% {
     mf1 %>%
       mif2(
@@ -806,8 +827,10 @@ bake(file="beta_profile1.rds",{
 
 
 ## ------------------------------------------------------------------------
-results %>%
-  write_csv(path="measles_params.csv",append=TRUE)
+read_csv("measles_params.csv") %>%
+  bind_rows(results) %>%
+  arrange(-loglik) %>%
+  write_csv("measles_params.csv")
 
 ## ------------------------------------------------------------------------
 pairs(~loglik+Beta+eta+rho,data=filter(results,loglik>max(loglik)-20),pch=16)
@@ -856,7 +879,7 @@ results %>%
 ## ----beta_profile2-------------------------------------------------------
 registerDoRNG(50965452)
 
-results %>%
+read_csv("measles_params.csv") %>%
   filter(loglik>max(loglik)-10,loglik.se<2,rho>0.5,rho<0.7) %>%
   sapply(range) -> box
 box
@@ -867,14 +890,15 @@ profileDesign(
   N=38000,
   lower=box[1,c("eta","gamma")],
   upper=box[2,c("eta","gamma")],
-  nprof=15
+  nprof=15, type="sobol"
 ) -> guesses
 
 mf1 <- mifs_local[[1]]
 
 bake(file="beta_profile2.rds",{
   foreach(guess=iter(guesses,"row"), 
-    .packages='pomp', .combine=rbind
+    .packages=c("pomp","tidyverse"),
+    .combine=rbind
   ) %dopar% {
     mf1 %>%
       mif2(
@@ -894,8 +918,10 @@ bake(file="beta_profile2.rds",{
 
 
 ## ------------------------------------------------------------------------
-results %>%
-  write_csv(path="measles_params.csv",append=TRUE)
+read_csv("measles_params.csv") %>%
+  bind_rows(results) %>%
+  arrange(-loglik) %>%
+  write_csv("measles_params.csv")
 
 ## ------------------------------------------------------------------------
 pairs(~loglik+Beta+gamma+eta,data=filter(results,loglik>max(loglik)-20),pch=16)
