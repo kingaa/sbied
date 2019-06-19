@@ -96,7 +96,7 @@ This is gratis and can be installed via the App Store or downloaded from [develo
 
 Open a session in **RStudio** and run the following:
 ```
-> source("https://kingaa.github.io/sbied/prep/pompTest.R")
+> source("https://kingaa.github.io/scripts/pompTest.R")
 ```
 This will check whether you can work with **pomp**.
 
