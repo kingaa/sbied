@@ -37,28 +37,35 @@ pomp
 "
 )
 
+lib <- Sys.getenv("R_LIBS_USER")
+
+inst_pkg <- function (pkglist, lib = Sys.getenv("R_LIBS_USER")) {
+  op <- options(warn=2)
+
+  pkglist <- setdiff(pkglist,rownames(installed.packages()))
+  
+  if (length(pkglist)>0) {
+    cat("trying to install packages in user directory...\n")
+    dir.create(lib,recursive=TRUE,showWarnings=FALSE)
+    res <- try(install.packages(pkglist,lib=lib))
+    if (inherits(res,"try-error")) {
+      stop("cannot install to ",lib,call.=FALSE)
+    }
+  }
+
+  options(op)
+  invisible(NULL)
+}
+
 ## latest 'rngtools' requires version >= 3.6.0
 if (rv < "3.6.0") {
+  
+  inst_pkg(c("pkgmaker","stringr","digest"),lib=lib)
+  
   pkgurl <- "https://cran.r-project.org/src/contrib/Archive/rngtools/rngtools_1.3.1.tar.gz"
-  install.packages(pkgurl,repos=NULL,type="source")
+  install.packages(pkgurl,repos=NULL,type="source",lib=lib)
+  
 }
 
-## some packages may be already installed
-pkglist <- setdiff(pkglist,rownames(installed.packages()))
-
-## do installation
-op <- options(warn=2)
-if (length(pkglist)>0) {
-  cat("trying to install packages in user directory...\n")
-  lib <- Sys.getenv("R_LIBS_USER")
-  dir.create(lib,recursive=TRUE,showWarnings=FALSE)
-  res <- try(install.packages(pkglist,lib=lib))
-  if (inherits(res,"try-error")) {
-    stop("cannot install to ",lib,call.=FALSE)
-  } else {
-    cat("first set of packages installed successfully to user directory\n\t(",lib,")!\n")
-  }
-} else {
-  cat("first set of packages already installed.\n")
-}
-options(op)
+inst_pkg(pkglist,lib=lib)
+cat("first set of packages installed successfully to user directory\n\t(",lib,")!\n")
