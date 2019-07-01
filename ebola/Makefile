@@ -1,13 +1,8 @@
-default: ebola_data.csv ebola.html ebola-profiles.csv ebola.R model.R model.html
+default: ebola_data.csv ebola.html ebola-profiles.csv ebola_model.R model.html
 ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)
 endif
-
-model.html: model.R
-
-model.R: ebola.Rmd
-	Rscript --vanilla -e "knitr::purl(\"ebola.Rmd\",output=\"model.R\",documentation=1)"
 
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \

@@ -3,7 +3,7 @@
 #' author: "Edward L. Ionides and Aaron A. King<br>
 #' 
 #' <div align=center>
-#' <image src='../logo.jpg' height='200' align='center'>
+#' <image src='../logo.jpg' height='250' align='center'>
 #' </div>
 #' 
 #' 

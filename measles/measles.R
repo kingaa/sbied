@@ -517,14 +517,14 @@ m1 %>%
 
 
 #' 
-#' #### Imported infections
+#' ### Imported infections
 #' 
 #' $$\text{force of infection} = \mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
 #' 
 
 #' 
 #' 
-#' #### Seasonality
+#' ### Seasonality
 #' 
 
 #' 

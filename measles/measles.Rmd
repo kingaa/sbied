@@ -578,7 +578,7 @@ m1 %>%
 ```{r mles,include=FALSE,purl=FALSE}
 ```
 
-#### Imported infections
+### Imported infections
 
 $$\text{force of infection} = \mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
 
@@ -650,7 +650,7 @@ par(op)
 ```
 
 
-#### Seasonality
+### Seasonality
 
 ```{r amplitude,echo=FALSE,results="hide",purl=FALSE}   
 
