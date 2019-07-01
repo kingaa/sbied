@@ -3,7 +3,7 @@ title: "Introduction to Simulation-based Inference"
 author: "Aaron A. King and Edward L. Ionides<br>
 
 <div align=center>
-<image src='../logo.jpg' height='200' align='center'>
+<image src='../logo.jpg' height='250' align='center'>
 </div>
 
 <h2>Objectives</h2>

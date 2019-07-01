@@ -1,0 +1,86 @@
+---
+title: "Demography and discrete time: modeling decisions for the polio case study"
+author: "Edward L. Ionides and Aaron A. King"
+output:
+  html_document:
+    toc: no
+bibliography: ../sbied.bib
+csl: ../ecology.csl
+---
+
+
+-----------------------------------
+
+```{r knitr-opts,include=FALSE,purl=FALSE}
+library(knitr)
+prefix <- "nelder"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.lp="fig:",
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=3,fig.width=4.85,
+  dpi=100,
+  dev='png',
+  dev.args=list(bg='transparent')
+  )
+```
+```{r prelims,include=FALSE,cache=FALSE}
+options(
+  keep.source=TRUE,
+  stringsAsFactors=FALSE,
+  encoding="UTF-8"
+  )
+
+```
+
+
+### Exercise
+
+It can be surprisingly hard to include birth, death, immigration, emigration and aging into a disease model in satisfactory ways. Also, one must make a decision on modeling in continuous versus discrete time. Consider the strengths and weaknesses of the analysis presented, and list changes to the model that might be improvements. 
+
+In an imperfect world, it is nice to check the extent to which the conclusions are insensitive to alternative modeling decisions. These are testable hypotheses, which can be addressed within a plug-and-play inference framework. Identify what would have to be done to investigate the changes you have proposed. Optionally, you could have a go at coding something up to see if it makes a difference.
+
+<br>
+
+--------
+
+---------
+
+### Solution
+
+* **Immigration**. the model ignores immigration of susceptibles. implicitly, it is assumed that all immigrants (who play a role in P and therefore in the force of infection) are non-susceptible. One could change the model so that non-infant immigrants/emigrants, defined to be the change in population size after accounting for modeled birth and death, have the same susceptible fraction as the rest of the population.
+
+* **Ageing**. having relatively small discrete-time (1 month) age categories for babies, and no age categories for older people, avoids some of the issues involved in modeling age. The model of constant mortality rate may be somewhat unrealistic, but adult mortality does not play a large role for pre-vaccine polio when it was primarily a childhood disease.
+
+* **Hetreogeneities**. among many simplifications, age-dependent contact rates may rank among the important omissions. We know there is substantial age-related contact structure. Adding a detailed representation of age structure can considerably increase the dimension of the latent variable space, and potentially the number of unknown parameters. It is interesting to think about what you learn by fitting and studying a model that ignores age structure. What might be the consequences of this model misspecification? 
+
+* **Continuous time**. Polio infections do not last exactly one month, and moving to a continuous-time model is the natural way to accommodate this. Since duration of infection is also not exponentially distributed, one may need a more flexible family such as a gamma distribution made up of a continuous time Markov chain with multiple exponentially distributed transitions.
+
+Re-running the code after revising the model would tell us whether a modified model was a substantial improvement, measured by maximized log likelihood. Also, we would find whether the conclusions about local persistence are robust to the change.
+
+--------------------------
+
+-----------------------------------
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+This version produced in R `r getRversion()` on `r format(Sys.Date(), "%B %d, %Y")`.
+
+
+
+

@@ -18,12 +18,6 @@ csl: ../ecology.csl
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\ell}
 
-Licensed under the [Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
-
-Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
-
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 library(knitr)
@@ -767,7 +761,7 @@ sims %>%
   ) -> imports
 ```
 
-Since only `r with(subset(num_zeros,.id!="data"),round(sum(zeros<datz)/length(zeros)*100,1))`% of the simulations had fewer zero-case months than did the data, the model does predict significantly more fadeouts than are seen in the data.
+Since only `r with(subset(num_zeros,.id!="data"),round(sum(zeros<datz)/length(zeros)*100,1))`% of the simulations had fewer zero-case months than did the data, the model at the MLE does predict significantly more fadeouts than are seen in the data.
 Months with no asyptomatic infections for the simulations were rare, on average `r round(mean(fadeouts$fadeout1),1)` months per simulation. 
 Months with fewer than 80 infections averaged `r round(mean(fadeouts$fadeout80),1)` per simulation, which in the context of a reporting rate of `r signif(mleparams["rho"],3)` can explain the absences of case reports. 
 
@@ -785,21 +779,31 @@ Discuss issues in specifying and inferring initial conditions, with particular r
 
 Suggest a possible improvement in the treatment of initial conditions here, code it up and make some preliminary assessment of its effectiveness. How will you decide if it is a substantial improvement? 
 
+[Worked solution to the Exercise](./initial-values-exercise.html) 
+
 #### Exercise: Parameter estimation using randomized starting values.
 
-Comment on the computations above, for parameter estimation using randomized starting values. Propose and try out at least one modification of the procedure. How could one make a formal statement quantifying the error of the optimization procedure?
+Think about possible improvements on the assignment of randomized starting values for the parameter estimation searches. Propose and try out a modification of the procedure. Does it make a difference?
+
+[Worked solution to the Exercise](./starting-values-exercise.html) 
 
 #### Exercise: Demography and discrete time
 
-It can be surprisingly hard to include birth, death, immigration, emmigration and aging into a disease model in satisfactory ways. Consider the strengths and weaknesses of the analysis presented. For example, how does it compare to a continuous-time model? In an imperfect world, it is nice to check the extent to which the conclusions are insensitive to alternative modeling decisions. If you have some ideas to change the treatmentof demography (or an other aspect of the model) you could have a go at coding it up to see if it makes a difference.
+It can be surprisingly hard to include birth, death, immigration, emigration and aging into a disease model in satisfactory ways. Also, one must make a decision on modeling in continuous versus discrete time. Consider the strengths and weaknesses of the analysis presented, and list changes to the model that might be improvements. 
+
+In an imperfect world, it is nice to check the extent to which the conclusions are insensitive to alternative modeling decisions. These are testable hypotheses, which can be addressed within a plug-and-play inference framework. Identify what would have to be done to investigate the changes you have proposed. Optionally, you could have a go at coding something up to see if it makes a difference.
+
+[Worked solution to the Exercise](./demography-exercise.html) 
 
 #### Exercise: Diagnosing filtering and maximization convergence
 
 Are there outliers in the data (i.e., observations that do not fit well with our model)? Are we using unnecessarily large amounts of computer time to get our results? Are there indications that we would should run our computations for longer? Or maybe with different choices of algorithmic settings?
+Interpret the diagnostic plots below, and suggest things to try that might lead to a more effective search.
 
-In particular, `cooling.fraction.50` gives the fraction by which the random walk standard deviation is decreased ("cooled") in 50 iterations. If `cooling.fraction.50` is too small, the search will "freeze" too soon, evidenced by flat parallel lines in the convergence diagnostics. If `cooling.fraction.50` is too large, the researcher may run of of time, patience or computing budget (or all three) before the parameter trajectories approach an MLE.
+[Worked solution to the Exercise](./convergence-exercise.html) 
 
-Interpret the diagnostic plots below. Carry out some numerical experiments to test your interpretations. 
+Note that `cooling.fraction.50` gives the fraction by which the random walk standard deviation is decreased ("cooled") in 50 iterations. If `cooling.fraction.50` is too small, the search will "freeze" too soon, evidenced by flat parallel lines in the convergence diagnostics. If `cooling.fraction.50` is too large, the researcher may run of of time, patience or computing budget (or all three) before the parameter trajectories approach an MLE.
+
 One could look at filtering diagnostics at the MLE, for example, `plot(pf1[[1]])` but the diagnostic plots for iterated filtering include filtering diagnostics for the last iteration anyhow, so let's just consider the `mif` diagnostic plot. 
 Looking at several simultaneously permits assessment of Monte Carlo variability. 
 In the following, `m4` is constructed by concatenating the results of several `mif2` computations using `c()`.
@@ -848,8 +852,22 @@ matplot(llconv,type="l",lty=1,ylim=max(llconv,na.rm=T)+c(-30,0))
 
 --------------------------
 
-## [Back to course homepage](../index.html)
-## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/polio/polio.R)
+## Acknowledgments
+
+* This tutorial is prepared for the [Simulation-based Inference for Epidemiological Dynamics](https://kingaa.github.io/sbied/) module at 11th Annual Summer Institute in Statistics and Modeling in Infectious Diseases ([SISMID 2019](https://www.biostat.washington.edu/suminst/sismid)). 
+Previous versions were presented at SISMID by ELI and AAK in 2015, 2016, 2017, 2018.
+Carles Breto assisted in 2018.
+
+* Licensed under the [Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+* This document was produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
+
+<h2> [Back to course homepage](../index.html) </h2>
+
+<h2> [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/polio/polio.R)
+
 
 --------------------------
 

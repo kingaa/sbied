@@ -3,7 +3,7 @@ title: "Case study: panel data on dynamic variation in sexual contact rates"
 author: "Edward L. Ionides and Aaron A. King<br>
 
 <div align=center>
-<image src='../logo.jpg' height='200' align='center'>
+<image src='../logo.jpg' height='250' align='center'>
 </div>
 
 
@@ -438,13 +438,14 @@ if(timing) save(t3,file="mif1-lik-eval-timing.rda") else load("mif1-lik-eval-tim
 ## Acknowledgments
 
 * This tutorial is prepared for the [Simulation-based Inference for Epidemiological Dynamics](https://kingaa.github.io/sbied/) module at 11th Annual Summer Institute in Statistics and Modeling in Infectious Diseases ([SISMID 2019](https://www.biostat.washington.edu/suminst/sismid)). 
-Previous versions were presented at SISMID in 2015, 2016, 2017, 2018.
+Previous versions were presented at SISMID by ELI and AAK in 2015, 2016, 2017, 2018.
+Carles Breto assisted in 2018.
 
 * Licensed under the [Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
-* This document was run using **panelPomp** `r packageVersion("panelPomp")` with **pomp** `r packageVersion("pomp")`
+* This document was produced using **R** version `r getRversion()`, **panelPomp** `r packageVersion("panelPomp")` and **pomp** `r packageVersion("pomp")`
 
 <h2> [Back to course homepage](../index.html) </h2>
 

@@ -1,0 +1,857 @@
+---
+title: "Modification to test alternative initial conditions. Case study: polio in Wisconsin"
+author: "Edward Ionides and Aaron A. King"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+    df_print: paged
+bibliography: ../sbied.bib
+csl: ../ecology.csl
+---
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dlta[1]{{\Delta}{#1}}
+\newcommand\lik{\mathcal{L}}
+\newcommand\loglik{\ell}
+
+Licensed under the [Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
+
+
+```{r knitr-opts,include=FALSE,purl=FALSE}
+library(knitr)
+prefix <- "polio"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,tidy=FALSE,highlight=TRUE,
+  strip.white=TRUE,
+  warning=TRUE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  cache.extra=rand_seed,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  dpi=100,
+  dev='png',
+  dev.args=list(bg='transparent')
+)
+options(
+  keep.source=TRUE,
+  encoding="UTF-8"
+)
+```
+
+```{r prelims,include=FALSE}
+library(pomp)
+stopifnot(packageVersion("pomp")>="2.1")
+set.seed(5996485L)
+```
+
+## Objectives
+
+In this lesson, we aim to 
+
+1. show how partially observed Markov process (POMP) methods can be used to understand transmission dynamics of polio.
+2. discuss the use of POMP methods for compartmental models for biological systems having age structure, seasonality and other covariates.
+3. get some practice maximizing the likelihood for such models. How does one set up a *global* search for a maximum likelihood estimate? 
+4. see how to test whether such a search has been successful.
+
+## Introduction
+
+The massive global polio eradication initiative (GPEI) has brought polio from a major global disease to the brink of extinction. 
+Finishing this task is proving hard, and an improved understanding of polio ecology might assist.
+A recent paper investigated this using extensive state level pre-vaccination era data from the USA [[@Martinez-Bakker2015]](http://dx.doi.org/10.1371/journal.pbio.1002172). 
+We will follow the approach of @Martinez-Bakker2015 for one state (Wisconsin). 
+In the context of the @Martinez-Bakker2015 model, we can quantify seasonality of transmission, the role of the birth rate in explaining the transmission dynamics, and the persistence mechanism of polio. 
+@Martinez-Bakker2015 carrried out this analysis for all 48 contigous states and District of Columbia, and their data and code are all publicly available. 
+The data we study, in consist of `cases`, the monthly reported polio cases; `births`, the  monthly recorded births; `pop`, the annual census; `time`, date in years.
+
+```{r data}
+library(tidyverse)
+
+read_csv("https://kingaa.github.io/sbied/polio/polio_wisconsin.csv",comment="#")  -> polio_data
+```
+```{r data-show,purl=F}
+polio_data %>% as.data.frame()
+```
+```{r dataplot,echo=F,purl=F}
+polio_data %>%
+  gather(variable,value,-time) %>%
+  ggplot(aes(x=time,y=value))+
+  geom_line()+
+  facet_wrap(~variable,ncol=1,scales='free_y',strip.position = "left")+
+  theme_bw()+
+  theme(
+    strip.background=element_rect(fill=NA,color=NA),
+    strip.placement="outside"
+  )+
+  labs(x="",y="")
+```
+
+## A polio transmission model
+
+### Model formulation
+
+We implement the discrete-time compartmental model of @Martinez-Bakker2015.
+It has compartments representing susceptible babies in each of six one-month birth cohorts ($S^B_1$,...,$S^B_6$), susceptible older individuals ($S^O$), infected babies ($I^B$), infected older individuals ($I^O$), and individuals who have recovered with lifelong immunity ($R$). 
+The state vector of the disease transmission model consists of numbers of individuals in each compartment at each time, 
+$$X(t)=\big(S^B_1(t),...,S^B_6(t), I^B(t),I^O(t),R(t) \big).$$
+Babies under six months are modeled as fully protected from symptomatic poliomyelitis; 
+older infections lead to reported cases (usually paralysis) at a rate $\rho$. 
+
+The flows through the compartments are graphically represented as follows (Figure 1A of @Martinez-Bakker2015):
+
+![Polio model diagram](./polio_fig1A.png)
+
+Since duration of infection is comparable to the one-month reporting aggregation, a discrete time model may be appropriate. 
+@Martinez-Bakker2015 fitted monthly observations from May 1932 through January 1953, so we define $t_n=1932+ (4+n)/12$ for $n=0,\dots,N$, and we write $$X_n=X(t_n)=\big(S^B_{1,n},...,S^B_{6,n}, I^B_n,I^O_n,R_n \big).$$
+The mean force of infection, in units of $\mathrm{yr}^{-1}$, is modeled as
+$$\bar\lambda_n=\left( \beta_n \frac{I^O_n+I^B_n}{P_n} + \psi \right)$$
+where $P_n$ is census population interpolated to time $t_n$ and seasonality of transmission is modeled as
+$$\beta_n=\exp\left\{ \sum_{k=1}^K b_k\xi_k(t_n) \right\},$$
+with $\{\xi_k(t),k=1,\dots,K\}$ being a periodic B-spline basis.
+We set $K=6$. The force of infection has a stochastic perturbation,
+$$\lambda_n = \bar\lambda_n \epsilon_n,$$
+where $\epsilon_n$ is a Gamma random variable with mean 1 and variance $\sigma^2_{\mathrm{env}} + \sigma^2_{\mathrm{dem}}\big/\bar\lambda_n$.
+These two terms capture variation on the environmental and demographic scales, respectively.
+All compartments suffer a mortality rate, set at $\delta=1/60\mathrm{yr}^{-1}$. 
+Within each month, all susceptible individuals are modeled as having exposure to constant competing hazards of mortality and polio infection.
+The chance of remaining in the susceptible population when exposed to these hazards for one month is therefore
+$$p_n = \exp\left\{-\frac{\delta+\lambda_n}{12}\right\},$$
+with the chance of polio infection being 
+$$q_n = (1-p_n)\,\frac{\lambda_n}{\lambda_n+\delta}.$$
+We employ a continuous population model, with no demographic stochasticity (in some sense, the demographic-scale stochasticity in $\lambda_n$ is in fact environmental stochasticity since it modifies a rate that affects all compartments equally).
+Writing $B_n$ for births in month $n$, the full set of model equations is:
+$$\begin{aligned}
+S^B_{1,n+1} &= B_{n+1}\\
+S^B_{k,n+1} &= p_nS^B_{k-1,n} \quad\mbox{for $k=2,\dots,6$}\\
+S^O_{n+1} &= p_n(S^O_n+S^B_{6,n})\\
+I^B_{n+1} &= q_n \sum_{k=1}^6 S^B_{k,n}\\
+I^O_{n+1} &= q_n S^O_n
+\end{aligned}$$
+The model for the reported observations, conditional on the state, is a discretized normal distribution truncated at zero, with both environmental and Poisson-scale contributions to the variance:
+$$Y_n= \max\{\mathrm{round}(Z_n),0\}, \quad Z_n\sim\dist{Normal}{\rho I^O_n, \rho I^O_n+\left(\tau I^O_n\right)^2}.$$
+Additional parameters are used to specify initial state values at time $t_0=1932+ 4/12$. 
+We will suppose there are parameters $\big(\tilde S^B_{1,0},...,\tilde S^B_{6,0}, \tilde I^B_0,\tilde I^O_0,\tilde S^O_0\big)$ that specify the population in each compartment at time $t_0$ via
+$$ S^B_{1,0}= {\tilde S}^B_{1,0} ,...,S^B_{6,0}= \tilde S^B_{6,0}, \quad I^B_{0}= P_0 \tilde I^B_{0},\quad S^O_{0}= P_0 \tilde S^O_{0}, \quad I^O_{0}= P_0 \tilde I^O_{0}.$$
+Following @Martinez-Bakker2015, we make an approximation for the initial conditions of ignoring infant infections at time $t_0$. 
+Thus, we set $\tilde I^B_{0}=0$ and use monthly births in the preceding months (ignoring infant mortality) to fix $\tilde S^B_{k,0}=B_{1-k}$ for $k=1,\dots,6$.
+The estimated initial conditions are then defined by the two parameters $\tilde I^O_{0}$ and $\tilde S^O_{0}$, since the initial recovered population, $R_0$, is specified by subtraction of all the other compartments from the total initial population, $P_0$. 
+Note that it is convenient to parameterize the estimated initial states as fractions of the population, whereas the initial states fixed at births are parameterized directly as a count.
+
+
+### Model implementation
+
+**pomp** is an **R** package for time series data analysis, focusing on the use of POMP models [@King2016].
+pomp is available from [CRAN](https://cran.r-project.org/package=pomp), with development versions available from [github](https://kingaa.github.io/pomp/). 
+Here, we use pomp version `r packageVersion("pomp")`.
+
+```{r load-package}
+library(pomp)
+packageVersion("pomp")
+```
+
+Observations are monthly case reports, $y^*_{1:N}$, occurring at times $t_{1:N}$.
+Since our model is in discrete time, we only really need to consider the discrete time state process,. 
+However, the model and POMP methods extend naturally to the possibility of a continuous-time model specification. 
+We code the list of state variables, and the choice of $t_0$, as
+
+```{r statenames} 
+statenames <- c("SB1","SB2","SB3","SB4","SB5","SB6","IB","SO","IO")
+t0 <- polio_data$time[16]
+t0
+```
+
+We do not explictly code $R$, since it is defined implicitly as the total population minus the sum of the other compartments. 
+Due to lifelong immunity, individuals in $R$ play no role in the dynamics. 
+Even occasional negative values of $R$ (due to a discrepancy between the census and the mortality model) would not be a fatal flaw.
+
+Now, let's define the covariates. `time` gives the time at which the covariates are defined. 
+`P` is a smoothed interpolation of the annual census. 
+`B` is monthly births. 
+The B-spline basis is coded as `xi1,...,xi6`.
+
+```{r covariates}
+covariate_table(
+  t=polio_data$time,
+  B=polio_data$births,
+  P=predict(smooth.spline(x=1931:1954,y=polio_data$pop[seq(12,24*12,by=12)]))$y,
+  periodic.bspline.basis(t,nbasis=6,degree=3,period=1,names="xi%d"),
+  times="t"
+) -> covartab
+```
+
+The parameters $b_1,\dots,b_6,\psi,\rho,\tau,\sigma_\mathrm{dem}, \sigma_\mathrm{env}$  in the model above are _regular parameters_ (RPs), meaning that they are real-valued parameters that affect the dynamics and/or the measurement of the process.
+
+```{r rp_names} 
+rp_names <- c("b1","b2","b3","b4","b5","b6","psi","rho","tau","sigma_dem","sigma_env")
+```
+
+The _initial value parameters_ (IVPs), $\tilde I^O_{0}$ and  $\tilde S^O_{0}$, are coded for each state named by adding `_0` to the state name:
+
+```{r ivp_names} 
+ivp_names <- c("SO_0","IO_0")
+```
+
+Finally, there are two quantities in the dynamic model specification, $\delta=1/60 \mathrm{yr}^{-1}$ and $K=6$, that we are not estimating. 
+In addition, there are six other initial-value quantities, $\{\tilde S^B_{1,0},\dots,\tilde S^B_{6,0}\}$, which we are treating as _fixed parameters_ (FPs). 
+These represent the initial numbers in the 6 one-month infant age classes.
+We initialize these using the first 6 months of data:
+
+```{r fixed_params} 
+covartab %>%
+  lookup(polio_data$time[11:16]) %>%
+  pull(B) %>%
+  set_names(c("SB1_0","SB2_0","SB3_0","SB4_0","SB5_0","SB6_0")) -> initial_births
+
+fixed_params <- c(delta=1/60,initial_births)
+fp_names <- names(fixed_params)
+```
+
+To begin with, we'll use a crude estimate of the parameters, based on earlier work.
+
+```{r param_guess}
+params <- c(b1=3,b2=0,b3=1.5,b4=6,b5=5,b6=3,psi=0.002,rho=0.01,tau=0.001,
+            sigma_dem=0.04,sigma_env=0.5,SO_0=0.12,IO_0=0.001,fixed_params)
+```
+
+The process model is implemented by a C snippet that simulates a single step from time `t` to time `t+dt`:
+
+```{r rprocess}
+rproc <- Csnippet("
+  double beta = exp(dot_product(K, &xi1, &b1));
+  double lambda = (beta * (IO+IB) / P + psi);
+  double var_epsilon = pow(sigma_dem,2)/lambda +  sigma_env*sigma_env;
+  lambda *= (var_epsilon < 1.0e-6) ? 1 : rgamma(1/var_epsilon,var_epsilon);
+  double p = exp(-(delta+lambda)/12);
+  double q = (1-p)*lambda/(delta+lambda);
+  SB1 = B;
+  SB2 = SB1*p;
+  SB3 = SB2*p;
+  SB4 = SB3*p;
+  SB5 = SB4*p;
+  SB6 = SB5*p;
+  SO = (SB6+SO)*p;
+  IB = (SB1+SB2+SB3+SB4+SB5+SB6)*q;
+  IO = SO*q;
+")
+```
+
+The measurement model is
+```{r measure}
+dmeas <- Csnippet("
+  double tol = 1.0e-25;
+  double mean_cases = rho*IO;
+  double sd_cases = sqrt(pow(tau*IO,2) + mean_cases);
+  if (cases > 0.0) {
+    lik = pnorm(cases+0.5,mean_cases,sd_cases,1,0) - pnorm(cases-0.5,mean_cases,sd_cases,1,0) + tol; 
+  } else{
+    lik = pnorm(cases+0.5,mean_cases,sd_cases,1,0) + tol;
+  }
+  if (give_log) lik = log(lik);
+")
+
+rmeas <- Csnippet("
+  cases = rnorm(rho*IO, sqrt( pow(tau*IO,2) + rho*IO ) );
+  if (cases > 0.0) {
+    cases = nearbyint(cases);
+  } else {
+    cases = 0.0;
+  }
+")
+```
+
+The map from the initial value parameters to the initial value of the states at time $t_0$ is coded by the rinit snippet:
+
+```{r initializer}
+init <- Csnippet("
+  double p=IO_0/(IO_0+SO_0);
+  SB1 = SB1_0 * pow(1-p,1);
+  SB2 = SB2_0 * pow(1-p,2);
+  SB3 = SB3_0 * pow(1-p,3);
+  SB4 = SB4_0 * pow(1-p,4);
+  SB5 = SB5_0 * pow(1-p,5);
+  SB6 = SB6_0 * pow(1-p,6);
+  IB = (SB1+SB2+SB3+SB4+SB5+SB6) * p/(1-p);
+  IO = IO_0 * P;
+  SO = SO_0 * P;
+")
+```
+
+To carry out parameter estimation, it is also helpful to have transformations that map each parameter into the whole real line:
+
+```{r trans}
+partransform <- parameter_trans(
+  log=c("psi","rho","tau","sigma_dem","sigma_env"),
+  logit=c("SO_0","IO_0")
+)
+```
+
+We can now put these pieces together into a pomp object. 
+
+
+```{r pomp}
+polio_data %>%
+  filter(time>t0,time<1953+2/12) %>%
+  select(cases,time) %>%
+  pomp(
+    times="time",
+    t0=t0,
+    params=params,
+    rinit=init,
+    rprocess = euler(step.fun = rproc, delta.t=1/12),
+    rmeasure = rmeas,
+    dmeasure = dmeas,
+    partrans=partransform,
+    covar=covartab,
+    statenames = statenames,
+    paramnames = c(rp_names,ivp_names,fp_names),
+    globals="int K = 6;"
+  ) -> polio
+```
+
+```{r mle,include=FALSE,purl=FALSE}
+mle <- read.csv(text="
+loglik,loglik_se,b1,b2,b3,b4,b5,b6,psi,rho,tau,sigma_dem,sigma_env,SO_0,IO_0,delta,SB1_0,SB2_0,SB3_0,SB4_0,SB5_0,SB6_0
+-794.377786862259,0.244539751426502,3.23885847027411,0.0161293200061053,1.60165136825701,6.30177628325257,5.01616167760398,2.66224649294269,0.00250485992701175,0.0124384771645492,0.0010553681003828,0.0442548025265034,0.461687742270177,0.128260976597098,0.000986754323053226,0.0166666666666667,4069,4565,4410,4616,4305,4032
+")
+```
+
+```{r first_sim,include=FALSE,purl=FALSE}
+nsim <- 9
+polio %>%
+  simulate(nsim=nsim,format="data.frame",include.data=TRUE) %>%
+  ggplot(aes(x=time,y=cases,group=.id,color=(.id=="data")))+
+  geom_line()+
+  scale_color_manual(values=c(`TRUE`="blue",`FALSE`="red"))+
+  guides(color=FALSE)+
+  facet_wrap(~.id,ncol=2)+
+  scale_y_sqrt()+
+  theme_bw()+
+  theme(strip.text=element_blank()) -> pl
+```
+
+To test the codes, let's run some simulations.
+In the following, we plot the data (in blue) and `r nsim` simulations.
+
+```{r first_sim-show,echo=F,purl=F}
+print(pl)
+```
+
+To test the `dmeasure` portion of the likelihood, we'll run a particle filter.
+This will compute the likelihood at our parameter guess.
+
+```{r first_pf,purl=FALSE}
+polio %>% pfilter(Np=1000) -> pf
+logLik(pf)
+```
+
+To get an idea of the Monte Carlo error in this estimate, we can run several realization of the particle filter.
+Since most modern machines have multiple cores, it is easy to do this in parallel.
+We accomplish this via the **doParallel** and **foreach** packages.
+
+```{r parallel-setup,cache=FALSE}
+library(foreach)
+library(doParallel)
+library(doRNG)
+registerDoParallel()
+registerDoRNG(493536993)
+```
+
+```{r pf1,purl=FALSE}
+t1 <- system.time(
+  pf1 <- foreach(i=1:10,.combine=c) %dopar% {
+    pfilter(polio,Np=5000)
+  }
+)
+(L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE))
+```
+
+Notice that we set up a parallel random number generator (RNG).
+In particular, we use the L'Ecuyer RNG, which is recommended for use with **doParallel**.
+Note, too, that the replications are averaged using the `logmeanexp` function, which counteracts Jensen's inequality.
+It is helpful to plot the *effective sample size* and conditional log likelihoods:
+```{r pf1-plot,echo=FALSE,purl=FALSE}
+pf1 %>% 
+  as.data.frame() %>%
+  select(time,rep=.id,ess,cond.loglik,cases) %>%
+  gather(variable,value,-time,-rep) %>%
+  ggplot(aes(x=time,y=value,group=variable))+
+  geom_line()+
+  facet_wrap(~variable,ncol=1,scales='free_y')+
+  guides(color=FALSE)+
+  theme_bw()
+```
+
+These calculations took only `r round(t1[3],0)` sec and produced a log likelihood estimate with a standard error of `r round(L1[2],2)`.
+
+## Parameter estimation
+
+### Likelihood maximization: A local approach
+
+Now, let us see if we can improve on our initial guess. 
+We use the iterated filtering algorithm IF2 of @ionides15, which uses a random walk in parameter space to approach the MLE. 
+We set a constant random walk standard deviation for each of the regular parameters and a larger constant for each of the initial value parameters.
+
+```{r local_search}
+stew(file="local_search.rda",{
+  registerDoRNG(318817883)
+  
+  w1 <- getDoParWorkers()
+  
+  t1 <- system.time({
+    
+    foreach(
+      i=1:90,
+      .packages='pomp',.combine=rbind
+    ) %dopar% {
+      
+      polio %>%
+        mif2(
+          Np=1000,
+          Nmif=50,
+          cooling.type="geometric",
+          cooling.fraction.50=0.5,
+          rw.sd=rw.sd(
+            b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
+            psi=0.02, rho=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
+            IO_0=ivp(0.2), SO_0=ivp(0.2)
+          )
+        ) -> mf
+      
+      replicate(
+        10, 
+        mf %>% pfilter(Np=5000) %>% logLik()
+      ) %>%
+        logmeanexp(se=TRUE) -> ll
+      
+      data.frame(as.list(coef(mf)),loglik=ll[1],loglik.se=ll[2])
+      
+    } -> m1
+    
+  })
+})
+```
+
+This investigation took `r round(t1["elapsed"]/60,1)` minutes on a machine with `r w1` cores.
+The maximum likelihood we obtain is `r with(subset(m1,loglik==max(loglik)),round(loglik,1))`.
+These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
+
+```{r pairs_local,fig.width=6,fig.height=6}
+pairs(~loglik+psi+rho+tau+sigma_dem+sigma_env,data=subset(m1,loglik>max(loglik)-20))
+```
+
+Because it is so useful to build up a view of the geometry of the likelihood surface, we save these likelihood estimates in a file for later use:
+
+```{r param_file1}
+m1 %>% write_csv(path="polio_params.csv")
+```
+
+We see what look like tradeoffs between $\psi$, $\rho$, and $\sigma_\mathrm{dem}$. 
+By itself, in the absence of other assumptions, the pathogen immigration rate $\psi$ is fairly weakly identified. 
+However, the reporting rate $\rho$ is essentially the fraction of poliovirus infections leading to acute flaccid paralysis, which is known to be around 1%. 
+This plot suggests that fixing an assumed value of $\rho$ might lead to much more precise inference on $\psi$; 
+the rate of pathogen immigration presumably being important for understanding disease persistence. 
+These hypotheses could be investigated more formally by construction of profile likelihood plots and likelihood ratio tests.
+
+### Benchmark likelihoods for non-mechanistic models
+
+The most basic statistical model for data is independent, identically distributed (IID). 
+Picking a negative binomial model, 
+
+```{r nbinom}
+nb_lik <- function(theta) {
+  -sum(dnbinom(as.vector(obs(polio)),size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))
+} 
+nb_mle <- optim(c(0,-5),nb_lik)
+-nb_mle$value
+```
+
+This shows us that a model with likelihood below `r round(-nb_mle$value,1)` is objectively worse than this simple IID model, and therefore scientifically unreasonable.
+This explains a cutoff around this value in the global searches:
+in these cases, the model is finding essentially IID explanations for the data.
+
+Linear, Gaussian auto-regressive moving-average (ARMA) models provide non-mechanistic fits to the data including flexible dependence relationships. 
+We fit to $\log(y_n^*+1)$ and correct the likelihood back to the scale appropriate for the untransformed data:
+
+```{r arma}
+log_y <- log(as.vector(obs(polio))+1)
+arma_fit <- arima(log_y,order=c(2,0,2),seasonal=list(order=c(1,0,1),period=12))
+arma_fit$loglik-sum(log_y)
+```
+
+This 7-parameter model, which knows nothing of susceptible depletion, attains a likelihood of `r round( arma_fit$loglik-sum(log_y),1)`. 
+Although our goal is not to beat non-mechanstic models, it is comforting that we're competitive against them.
+
+### Global likelihood maximization: parameter estimation using randomized starting values.
+
+When carrying out parameter estimation for dynamic systems, we need to specify beginning values for both the dynamic system (in the state space) and the parameters (in the parameter space). By convention, we use  *initial values* for the initialization of the dynamic system and *starting values* for initialization of the parameter search.
+
+Practical parameter estimation involves trying many starting values for the parameters. One can specify a large box in parameter space that contains all parameter vectors which seem remotely sensible. If an estimation method gives stable conclusions with starting values drawn randomly from this box, this gives some confidence that an adequate global search has been carried out. 
+
+For our polio model, a box containing reasonable parameter values might be
+
+```{r box}
+polio_box <- rbind(
+  b1=c(-2,8),
+  b2=c(-2,8),
+  b3=c(-2,8),
+  b4=c(-2,8),
+  b5=c(-2,8),
+  b6=c(-2,8),
+  psi=c(0,0.1),
+  rho=c(0,0.1),
+  tau=c(0,0.1),
+  sigma_dem=c(0,0.5),
+  sigma_env=c(0,1),
+  SO_0=c(0,1),
+  IO_0=c(0,0.01)
+)
+```
+
+We then carry out a search identical to the local one except for the starting parameter values.
+
+```{r global_search}
+stew(file="global_search.rda",{
+  registerDoRNG(290860873)
+  w2 <- getDoParWorkers()
+  t2 <- system.time({
+    foreach(
+      i=1:400,
+      .packages='pomp',.combine=rbind
+    ) %dopar% {
+      
+      guess <- apply(polio_box,1,function(x)runif(1,x[1],x[2]))
+      
+      polio %>% mif2(
+        params=c(guess,fixed_params),
+        Np=2000,
+        Nmif=300,
+        cooling.type="geometric",
+        cooling.fraction.50=0.5,
+        rw.sd=rw.sd(
+          b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
+          psi=0.02, rho=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
+          IO_0=ivp(0.2), SO_0=ivp(0.2)
+        )
+      ) -> mf
+      
+      replicate(
+        10,
+        mf %>% pfilter(Np=5000) %>% logLik()
+      ) %>%
+        logmeanexp(se=TRUE) -> ll
+      
+      data.frame(as.list(coef(mf)),loglik=ll[1],loglik.se=ll[2])
+    } -> m2
+  })
+})
+
+m2 %>% bind_rows(m1)  -> params
+
+params %>%
+  arrange(-loglik) %>%
+  write_csv(path="polio_params.csv")
+```
+
+This search gives a maximized likelihood estimate of `r with(m2,round(max(loglik),1))` with a standard error of `r with(subset(m2,loglik==max(loglik)),round(loglik.se,2))`.
+It took about `r round(t2[3]/60)` mins on a `r w2`-core machine.
+This compares with the results of @Martinez-Bakker2015, who report a maximized likelihood of -794.3 with a standard error of 0.11.
+
+Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface.
+```{r pairs_global,fig.width=6,fig.height=6}
+pairs(~loglik+psi+rho+tau+sigma_dem+sigma_env,data=subset(m2,loglik>max(loglik)-20))
+```
+
+To understand these global searches, many of which may correspond to parameter values having no meaningful scientific interpretation, it is helpful to put the log likelihoods in the context of some non-mechanistic benchmarks.
+
+It is also good practice to look at simulations from the fitted model:
+
+```{r plot_simulated,echo=F}
+nsim <- 9
+params %>%
+  subset(loglik==max(loglik)) %>%
+  unlist() -> coef(polio)
+polio %>%
+  simulate(nsim=nsim,format="data.frame",include.data=TRUE) %>%
+  ggplot(aes(x=time,y=cases,group=.id,color=(.id=="data")))+
+  geom_line()+
+  scale_color_manual(values=c(`TRUE`="blue",`FALSE`="red"))+
+  guides(color=FALSE)+
+  facet_wrap(~.id,ncol=2)+
+  scale_y_sqrt()+
+  theme_bw()+theme(strip.text=element_blank())
+```
+
+We see from this simulation that the fitted model can generate report histories that look qualitatively similar to the data. 
+However, there are oddities in the latent states. Specifically, the pool of older susceptibles, $S^O(t)$, is mostly increasing. 
+The reduced case burden in the data in the time interval 1932--1945 is explained by a large initial recovered ($R$) population, which implies much higher levels of polio before 1932. 
+A likelihood profile over the parameter $\tilde S^O_0$ could help to clarify to what extent this is a critical feature of how the model explains the data.
+
+### Mining previous investigations of the likelihood
+
+Saving the results of previous searches, with likelihoods that have been repeatedly evaluated by particle filters, gives a resource for building up knowledge about the likelihood surface. Above, we have added our new results to the file `polio_params.csv`, which we now investigate.
+
+```{r param_file,fig.width=6,fig.height=6}
+params <- read_csv("polio_params.csv")
+pairs(~loglik+psi+rho+tau+sigma_dem+sigma_env,data=subset(params,loglik>max(loglik)-20))
+```
+
+Here, we see that the most successful searches have always led to models low reporting rate. 
+Looking more closely:
+
+```{r global_rho,echo=F}
+plot(loglik~rho,data=subset(params,loglik>max(loglik)-10),log="x")
+```
+
+We see that reporting rates of 1--2% seem to provide a small but clear (several units of log likelihood) advantage in explaining the data.
+These are the reporting rates for which depletion of susceptibles can help to explain the dynamics.
+
+### Profile likelihood
+
+```{r profile_rho}
+bake(file="profile_rho.rds",{
+  
+  params %>% 
+    filter(loglik>max(loglik)-20) %>%
+    select(-loglik,-loglik.se,-rho) %>% 
+    gather(variable,value) %>%  
+    group_by(variable) %>%
+    summarize(min=min(value),max=max(value)) %>%
+    ungroup() %>%
+    column_to_rownames(var="variable") %>%
+    t() -> box
+  
+  profileDesign(
+    rho=seq(0.01,0.025,length=30),
+    lower=box["min",],upper=box["max",],
+    nprof=10
+  ) -> starts
+  
+  foreach(
+    start=iter(starts,"row"),
+    .combine=rbind,
+    .packages="pomp"
+  ) %dopar% {
+    polio %>%
+      mif2(
+        params=unlist(start),
+        Np=2000,
+        Nmif=300,
+        cooling.type="geometric",
+        cooling.fraction.50=0.5,
+        rw.sd=rw.sd(
+          b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
+          psi=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
+          IO_0=ivp(0.2), SO_0=ivp(0.2)
+        )
+      ) %>%
+      mif2(
+        Np=5000,
+        Nmif=100,
+        cooling.fraction.50=0.1
+      ) -> mf
+    
+    replicate(
+      10,
+      mf %>% pfilter(Np=5000) %>% logLik()
+    ) %>% 
+      logmeanexp(se=TRUE) -> ll
+    
+    data.frame(as.list(coef(mf)),loglik=ll[1],loglik.se=ll[2])
+  }
+}) -> m3
+```
+```{r save_profile_rho}
+m3 %>%
+  bind_rows(m1,m2) %>%
+  arrange(-loglik) %>%
+  write_csv(path="polio_params.csv")
+```
+
+Note that $\rho$ is not perturbed in the IF iterations for the purposes of the profile calculation.
+
+```{r profile_rho_plot1,echo=F,fig.width=6,fig.height=6}
+params %>%
+  mutate(rho.bin=cut(rho,breaks=seq(0.01,0.025,by=0.0005),include=T)) %>%
+  filter(rho>0.01 & rho<0.025) %>%
+  group_by(rho.bin) %>%
+  filter(rank(-loglik)<=3) %>%
+  ungroup() -> pp
+
+# pp %>%
+#   ggplot(aes(x=rho,y=loglik))+
+#   geom_point()+
+#   # geom_smooth(method="loess")+
+#   # lims(y=max(m3$loglik)+c(-10,2))+
+#   labs(x=expression(rho))+
+#   theme_bw()
+
+pairs(~loglik+psi+rho+tau+sigma_dem+sigma_env,data=subset(pp,loglik>max(loglik)-20))
+```
+
+### Simulation to investigate the fitted model: Local persistence
+
+The scientific purpose of fitting a model typically involves analyzing properties of the fitted model, often investigated using simulation.
+Following @Martinez-Bakker2015, we are interested in how often months with no reported cases ($Y_n=0$) correspond to months without any local asymptomatic cases, defined for our continuous state model as $I^B_n+I^O_n<\tfrac{1}{2}$.
+For Wisconsin, using our model at the estimated MLE, we compute as follows:
+
+```{r persistence}
+library(grid)
+
+params %>%
+  filter(loglik==max(loglik)) %>%
+  unlist() -> mleparams
+
+coef(polio) <- mleparams
+
+bake(file="sims.rds",seed=398906785,
+     polio %>%
+       simulate(nsim=2000,format="data.frame",include.data=TRUE)
+) -> sims
+
+sims %>%
+  group_by(.id) %>%
+  summarize(zeros=sum(cases==0)) %>%
+  ungroup() -> num_zeros
+
+num_zeros %>%
+  filter(.id != "data") %>%
+  ggplot(aes(x=zeros))+
+  geom_density()+
+  geom_vline(data=subset(num_zeros,.id=="data"),aes(xintercept=zeros))+
+  labs(x="# zero-case months")+
+  theme_bw() -> pl1
+
+num_zeros %>%
+  filter(.id=="data") %>%
+  pull(zeros) -> datz
+
+num_zeros %>%
+  group_by(data=(.id=="data")) %>%
+  summarize(mean=mean(zeros)) -> mean_zeros
+
+sims %>%
+  filter(.id != "data") %>%
+  group_by(.id) %>%
+  summarize(
+    fadeout1=sum(IB+IO<0.5),
+    fadeout80=sum(IB+IO<80)
+  ) -> fadeouts
+
+fadeouts %>%
+  ggplot(aes(x=fadeout1))+
+  geom_histogram(binwidth=1,fill=NA,color='black',aes(y=..density..))+
+  labs(x="# fadeouts")+
+  theme_bw()+theme(legend.position="top") -> pl2
+
+print(pl1)
+print(pl2,vp=viewport(x=0.8,y=0.75,height=0.4,width=0.2))
+
+sims %>%
+  filter(.id!="data") %>%
+  summarize(imports=coef(polio,"psi")*mean(SO+SB1+SB2+SB3+SB4+SB5+SB6)/12
+  ) -> imports
+```
+
+Since only `r with(subset(num_zeros,.id!="data"),round(sum(zeros<datz)/length(zeros)*100,1))`% of the simulations had fewer zero-case months than did the data, the model does predict significantly more fadeouts than are seen in the data.
+Months with no asyptomatic infections for the simulations were rare, on average `r round(mean(fadeouts$fadeout1),1)` months per simulation. 
+Months with fewer than 80 infections averaged `r round(mean(fadeouts$fadeout80),1)` per simulation, which in the context of a reporting rate of `r signif(mleparams["rho"],3)` can explain the absences of case reports. 
+
+For this model, the mean monthly infections due to importations (i.e., due to the term $\psi$) is `r round(imports,1)`. 
+This does not give much opportunity for local elimination of poliovirus. 
+One could profile over $\psi$ to investigate how sensitive this conclusion is to values of $\psi$ consistent with the data.
+
+## Exercises
+
+#### Exercise: Initial values
+
+When carrying out parameter estimation for dynamic systems, we need to specify beginning values for both the dynamic system (in the state space) and the parameters (in the parameter space). By convention, we use  *initial values* for the initialization of the dynamic system and *starting values* for initialization of the parameter search.
+
+Discuss issues in specifying and inferring initial conditions, with particular reference to this polio example. 
+
+Suggest a possible improvement in the treatment of initial conditions here, code it up and make some preliminary assessment of its effectiveness. How will you decide if it is a substantial improvement? 
+
+#### Exercise: Parameter estimation using randomized starting values.
+
+Comment on the computations above, for parameter estimation using randomized starting values. Propose and try out at least one modification of the procedure. How could one make a formal statement quantifying the error of the optimization procedure?
+
+#### Exercise: Demography and discrete time
+
+It can be surprisingly hard to include birth, death, immigration, emmigration and aging into a disease model in satisfactory ways. Consider the strengths and weaknesses of the analysis presented. For example, how does it compare to a continuous-time model? In an imperfect world, it is nice to check the extent to which the conclusions are insensitive to alternative modeling decisions. If you have some ideas to change the treatmentof demography (or an other aspect of the model) you could have a go at coding it up to see if it makes a difference.
+
+#### Exercise: Diagnosing filtering and maximization convergence
+
+Are there outliers in the data (i.e., observations that do not fit well with our model)? Are we using unnecessarily large amounts of computer time to get our results? Are there indications that we would should run our computations for longer? Or maybe with different choices of algorithmic settings?
+
+In particular, `cooling.fraction.50` gives the fraction by which the random walk standard deviation is decreased ("cooled") in 50 iterations. If `cooling.fraction.50` is too small, the search will "freeze" too soon, evidenced by flat parallel lines in the convergence diagnostics. If `cooling.fraction.50` is too large, the researcher may run of of time, patience or computing budget (or all three) before the parameter trajectories approach an MLE.
+
+Interpret the diagnostic plots below. Carry out some numerical experiments to test your interpretations. 
+One could look at filtering diagnostics at the MLE, for example, `plot(pf1[[1]])` but the diagnostic plots for iterated filtering include filtering diagnostics for the last iteration anyhow, so let's just consider the `mif` diagnostic plot. 
+Looking at several simultaneously permits assessment of Monte Carlo variability. 
+In the following, `m4` is constructed by concatenating the results of several `mif2` computations using `c()`.
+When we call `plot` on such an object, we obtain useful diagnostics.
+
+```{r mif_diagnostics,fig.height=6,fig.width=6}
+foreach(i=1:4,
+        .packages='pomp',.combine=c,
+        .options.multicore=list(set.seed=TRUE)
+) %dopar% {
+  polio %>%
+  mif2(
+    params=c(b1=3,b2=0,b3=1.5,b4=6,b5=5,b6=3,
+             psi=0.002,rho=0.01,tau=0.001,
+             sigma_dem=0.04,sigma_env=0.5,
+             SO_0=0.12,IO_0=0.001,fixed_params),
+    Np=1000,
+    Nmif=50,
+    cooling.type="geometric",
+    cooling.fraction.50=0.5,
+    rw.sd=rw.sd(
+      b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
+      psi=0.02, rho=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
+      IO_0=ivp(0.2), SO_0=ivp(0.2)
+    )
+  )
+} -> m4
+
+plot(m4)
+```
+
+The likelihood is particularly important to keep in mind. 
+If parameter estimates are numerically unstable, that could be a consequence of a weakly identified parameter subspace. 
+The presence of some weakly identified combinations of parameters is not fundamentally a scientific flaw; 
+rather, our scientific inquiry looks to investigate which questions can and cannot be answered in the context of a set of data and modeling assumptions. 
+Thus, as long as the search is demonstrably approaching the maximum likelihood region we should not necessarily be worried about the stability of parameter values (at least, from the point of view of diagnosing successful maximization). 
+So, let's zoom in on the likelihood convergence:
+
+```{r likelihood_convergence}
+m4 %>%
+  traces("loglik") %>%
+  bind_cols() -> llconv
+
+matplot(llconv,type="l",lty=1,ylim=max(llconv,na.rm=T)+c(-30,0))
+```
+
+--------------------------
+
+## [Back to course homepage](../index.html)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/polio/polio.R)
+
+--------------------------
+
+## References
