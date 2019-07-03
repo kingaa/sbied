@@ -130,7 +130,8 @@ init <- Csnippet("
 ")
 ```
  
-Here, there are no new parameters. We can just put the new `rinit` into the Rmarkdown document and re-run it. This is shown at [initial-values-exercise/polio.html](initial-values-exercise/polio.html).
+Here, there are no new parameters. We can just put the new `rinit` into the Rmarkdown document and re-run it. The results are shown at [initial-values-exercise/polio.html](initial-values-exercise/polio.html).
+The key outcome is the maximized log likelihood. The search found a maximum of -794.7 for the modified model, whereas an identical search found -794.5 for the original model. The modification is certainly not a substantial improvement, and even has a small cost measured by Monte Carlo estimated likelihood of the data.
 
 
 -----------------------------------

@@ -1,13 +1,13 @@
 ---
-title: "Case study: polio in Wisconsin"
+title: "Modification to test alternative starting value specification. Case study: polio in Wisconsin"
 author: "Edward Ionides and Aaron A. King"
 output:
   html_document:
     toc: yes
     toc_depth: 4
     df_print: paged
-bibliography: ../sbied.bib
-csl: ../ecology.csl
+bibliography: ../../sbied.bib
+csl: ../../ecology.csl
 ---
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
@@ -18,8 +18,16 @@ csl: ../ecology.csl
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\ell}
 
+Licensed under the [Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../../graphics/cc-by-nc.png)
+
+Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
+
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
+#DEBUG <- TRUE
+DEBUG <- FALSE
 library(knitr)
 prefix <- "polio"
 opts_chunk$set(
@@ -273,13 +281,14 @@ The map from the initial value parameters to the initial value of the states at 
 
 ```{r initializer}
 init <- Csnippet("
-  SB1 = SB1_0;
-  SB2 = SB2_0;
-  SB3 = SB3_0;
-  SB4 = SB4_0;
-  SB5 = SB5_0;
-  SB6 = SB6_0;
-  IB = 0;
+  double p=IO_0/(IO_0+SO_0);
+  SB1 = SB1_0 * pow(1-p,1);
+  SB2 = SB2_0 * pow(1-p,2);
+  SB3 = SB3_0 * pow(1-p,3);
+  SB4 = SB4_0 * pow(1-p,4);
+  SB5 = SB5_0 * pow(1-p,5);
+  SB6 = SB6_0 * pow(1-p,6);
+  IB = (SB1+SB2+SB3+SB4+SB5+SB6) * p/(1-p);
   IO = IO_0 * P;
   SO = SO_0 * P;
 ")
@@ -415,8 +424,8 @@ stew(file="local_search.rda",{
       
       polio %>%
         mif2(
-          Np=1000,
-          Nmif=50,
+          Np=if(DEBUG) 50 else 1000,
+          Nmif=if(DEBUG) 5 else 50,
           cooling.type="geometric",
           cooling.fraction.50=0.5,
           rw.sd=rw.sd(
@@ -428,7 +437,7 @@ stew(file="local_search.rda",{
       
       replicate(
         10, 
-        mf %>% pfilter(Np=5000) %>% logLik()
+        mf %>% pfilter(Np=if(DEBUG) 50 else 5000) %>% logLik()
       ) %>%
         logmeanexp(se=TRUE) -> ll
       
@@ -506,14 +515,16 @@ polio_box <- rbind(
   b4=c(-2,8),
   b5=c(-2,8),
   b6=c(-2,8),
-  psi=c(0,0.1),
-  rho=c(0,0.1),
-  tau=c(0,0.1),
-  sigma_dem=c(0,0.5),
-  sigma_env=c(0,1),
-  SO_0=c(0,1),
-  IO_0=c(0,0.01)
+  psi=c(0.001,0.1),
+  rho=c(0.001,0.1),
+  tau=c(0.001,0.1),
+  sigma_dem=c(0.005,0.5),
+  sigma_env=c(0.01,1),
+  SO_0=c(0.01,0.99),
+  IO_0=c(0.0001,0.01),
+  cbind(fixed_params,fixed_params)
 )
+trans_box <- partrans(polio,polio_box,dir="toEst")
 ```
 
 We then carry out a search identical to the local one except for the starting parameter values.
@@ -524,16 +535,16 @@ stew(file="global_search.rda",{
   w2 <- getDoParWorkers()
   t2 <- system.time({
     foreach(
-      i=1:400,
+      i=1:ifelse(DEBUG,20,400),
       .packages='pomp',.combine=rbind
-    ) %dopar% {
-      
-      guess <- apply(polio_box,1,function(x)runif(1,x[1],x[2]))
-      
+    ) %dopar% {      
+      trans_guess <- runif(nrow(trans_box),trans_box[,1],trans_box[,2])
+      names(trans_guess) <- rownames(trans_box)
+      guess <- partrans(polio,trans_guess,dir="fromEst")
       polio %>% mif2(
-        params=c(guess,fixed_params),
-        Np=2000,
-        Nmif=300,
+        params=guess,
+        Np=if(DEBUG) 200 else 2000,
+        Nmif=if(DEBUG) 5 else 300,
         cooling.type="geometric",
         cooling.fraction.50=0.5,
         rw.sd=rw.sd(
@@ -545,7 +556,7 @@ stew(file="global_search.rda",{
       
       replicate(
         10,
-        mf %>% pfilter(Np=5000) %>% logLik()
+        mf %>% pfilter(Np=if(DEBUG) 50 else 5000) %>% logLik()
       ) %>%
         logmeanexp(se=TRUE) -> ll
       
@@ -621,7 +632,7 @@ bake(file="profile_rho.rds",{
   
   params %>% 
     filter(loglik>max(loglik)-20) %>%
-    select(-loglik,-loglik.se,-rho) %>% 
+    select(-loglik,-loglik.se) %>% 
     gather(variable,value) %>%  
     group_by(variable) %>%
     summarize(min=min(value),max=max(value)) %>%
@@ -629,14 +640,22 @@ bake(file="profile_rho.rds",{
     column_to_rownames(var="variable") %>%
     t() -> box
   
+  #### Replaced code
+  profileDesign(
+    rho=seq(0.01,0.025,length=30),
+    lower=box["min",],upper=box["max",],
+    nprof=10
+  ) -> starts
+  ####
+ 
   profileDesign(
     rho=seq(log(0.01),log(0.025),length=30),     
-    lower=partrans(polio,box["min",],dir="toEst"),     
-    upper=partrans(polio,box["max",],dir="toEst"),
+    lower=partrans(polio,box["min",],dir="toEst")[colnames(box)!="rho"],     
+    upper=partrans(polio,box["max",],dir="toEst")[colnames(box)!="rho"],
     nprof=10
-  )-> trans_starts
+  ) -> trans_starts
   starts <- data.frame(t(partrans(polio,t(trans_starts),dir="fromEst")))
-  
+ 
   foreach(
     start=iter(starts,"row"),
     .combine=rbind,
@@ -645,8 +664,8 @@ bake(file="profile_rho.rds",{
     polio %>%
       mif2(
         params=unlist(start),
-        Np=200,
-        Nmif=30,
+        Np=if(DEBUG) 20 else 2000,
+        Nmif=if(DEBUG) 3 else 300,
         cooling.type="geometric",
         cooling.fraction.50=0.5,
         rw.sd=rw.sd(
@@ -656,14 +675,14 @@ bake(file="profile_rho.rds",{
         )
       ) %>%
       mif2(
-        Np=5000,
-        Nmif=100,
+        Np=if(DEBUG) 50 else 5000,
+        Nmif=if(DEBUG) 5 else 100,
         cooling.fraction.50=0.1
       ) -> mf
     
     replicate(
       10,
-      mf %>% pfilter(Np=5000) %>% logLik()
+      mf %>% pfilter(Np=if(DEBUG) 50 else 5000) %>% logLik()
     ) %>% 
       logmeanexp(se=TRUE) -> ll
     
@@ -763,7 +782,7 @@ sims %>%
   ) -> imports
 ```
 
-Since only `r with(subset(num_zeros,.id!="data"),round(sum(zeros<datz)/length(zeros)*100,1))`% of the simulations had fewer zero-case months than did the data, the model at the MLE does predict significantly more fadeouts than are seen in the data.
+Since only `r with(subset(num_zeros,.id!="data"),round(sum(zeros<datz)/length(zeros)*100,1))`% of the simulations had fewer zero-case months than did the data, the model does predict significantly more fadeouts than are seen in the data.
 Months with no asyptomatic infections for the simulations were rare, on average `r round(mean(fadeouts$fadeout1),1)` months per simulation. 
 Months with fewer than 80 infections averaged `r round(mean(fadeouts$fadeout80),1)` per simulation, which in the context of a reporting rate of `r signif(mleparams["rho"],3)` can explain the absences of case reports. 
 
@@ -781,31 +800,21 @@ Discuss issues in specifying and inferring initial conditions, with particular r
 
 Suggest a possible improvement in the treatment of initial conditions here, code it up and make some preliminary assessment of its effectiveness. How will you decide if it is a substantial improvement? 
 
-[Worked solution to the Exercise](./initial-values-exercise.html) 
-
 #### Exercise: Parameter estimation using randomized starting values.
 
-Think about possible improvements on the assignment of randomized starting values for the parameter estimation searches. Propose and try out a modification of the procedure. Does it make a difference?
-
-[Worked solution to the Exercise](./starting-values-exercise.html) 
+Comment on the computations above, for parameter estimation using randomized starting values. Propose and try out at least one modification of the procedure. How could one make a formal statement quantifying the error of the optimization procedure?
 
 #### Exercise: Demography and discrete time
 
-It can be surprisingly hard to include birth, death, immigration, emigration and aging into a disease model in satisfactory ways. Also, one must make a decision on modeling in continuous versus discrete time. Consider the strengths and weaknesses of the analysis presented, and list changes to the model that might be improvements. 
-
-In an imperfect world, it is nice to check the extent to which the conclusions are insensitive to alternative modeling decisions. These are testable hypotheses, which can be addressed within a plug-and-play inference framework. Identify what would have to be done to investigate the changes you have proposed. Optionally, you could have a go at coding something up to see if it makes a difference.
-
-[Worked solution to the Exercise](./demography-exercise.html) 
+It can be surprisingly hard to include birth, death, immigration, emmigration and aging into a disease model in satisfactory ways. Consider the strengths and weaknesses of the analysis presented. For example, how does it compare to a continuous-time model? In an imperfect world, it is nice to check the extent to which the conclusions are insensitive to alternative modeling decisions. If you have some ideas to change the treatmentof demography (or an other aspect of the model) you could have a go at coding it up to see if it makes a difference.
 
 #### Exercise: Diagnosing filtering and maximization convergence
 
 Are there outliers in the data (i.e., observations that do not fit well with our model)? Are we using unnecessarily large amounts of computer time to get our results? Are there indications that we would should run our computations for longer? Or maybe with different choices of algorithmic settings?
-Interpret the diagnostic plots below, and suggest things to try that might lead to a more effective search.
 
-[Worked solution to the Exercise](./convergence-exercise.html) 
+In particular, `cooling.fraction.50` gives the fraction by which the random walk standard deviation is decreased ("cooled") in 50 iterations. If `cooling.fraction.50` is too small, the search will "freeze" too soon, evidenced by flat parallel lines in the convergence diagnostics. If `cooling.fraction.50` is too large, the researcher may run of of time, patience or computing budget (or all three) before the parameter trajectories approach an MLE.
 
-Note that `cooling.fraction.50` gives the fraction by which the random walk standard deviation is decreased ("cooled") in 50 iterations. If `cooling.fraction.50` is too small, the search will "freeze" too soon, evidenced by flat parallel lines in the convergence diagnostics. If `cooling.fraction.50` is too large, the researcher may run of of time, patience or computing budget (or all three) before the parameter trajectories approach an MLE.
-
+Interpret the diagnostic plots below. Carry out some numerical experiments to test your interpretations. 
 One could look at filtering diagnostics at the MLE, for example, `plot(pf1[[1]])` but the diagnostic plots for iterated filtering include filtering diagnostics for the last iteration anyhow, so let's just consider the `mif` diagnostic plot. 
 Looking at several simultaneously permits assessment of Monte Carlo variability. 
 In the following, `m4` is constructed by concatenating the results of several `mif2` computations using `c()`.
@@ -854,23 +863,10 @@ matplot(llconv,type="l",lty=1,ylim=max(llconv,na.rm=T)+c(-30,0))
 
 --------------------------
 
-## Acknowledgments
-
-* This tutorial is prepared for the [Simulation-based Inference for Epidemiological Dynamics](https://kingaa.github.io/sbied/) module at 11th Annual Summer Institute in Statistics and Modeling in Infectious Diseases ([SISMID 2019](https://www.biostat.washington.edu/suminst/sismid)). 
-Previous versions were presented at SISMID by ELI and AAK in 2015, 2016, 2017, 2018.
-Carles Breto assisted in 2018.
-
-* Licensed under the [Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
-
-* This document was produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
-
-<h2> [Back to course homepage](../index.html) </h2>
-
-<h2> [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/polio/polio.R)
-
+## [Back to course homepage](../index.html)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/polio/polio.R)
 
 --------------------------
 
 ## References
+

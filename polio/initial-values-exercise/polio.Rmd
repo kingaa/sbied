@@ -6,8 +6,8 @@ output:
     toc: yes
     toc_depth: 4
     df_print: paged
-bibliography: ../sbied.bib
-csl: ../ecology.csl
+bibliography: ../../sbied.bib
+csl: ../../ecology.csl
 ---
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
@@ -20,12 +20,14 @@ csl: ../ecology.csl
 
 Licensed under the [Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
 Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
+![CC-BY_NC](../../graphics/cc-by-nc.png)
 
 Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
+#DEBUG <- TRUE
+DEBUG <- FALSE
 library(knitr)
 prefix <- "polio"
 opts_chunk$set(
@@ -422,8 +424,8 @@ stew(file="local_search.rda",{
       
       polio %>%
         mif2(
-          Np=1000,
-          Nmif=50,
+          Np=if(DEBUG) 50 else 1000,
+          Nmif=if(DEBUG) 5 else 50,
           cooling.type="geometric",
           cooling.fraction.50=0.5,
           rw.sd=rw.sd(
@@ -435,7 +437,7 @@ stew(file="local_search.rda",{
       
       replicate(
         10, 
-        mf %>% pfilter(Np=5000) %>% logLik()
+        mf %>% pfilter(Np=if(DEBUG) 50 else 5000) %>% logLik()
       ) %>%
         logmeanexp(se=TRUE) -> ll
       
@@ -539,8 +541,8 @@ stew(file="global_search.rda",{
       
       polio %>% mif2(
         params=c(guess,fixed_params),
-        Np=2000,
-        Nmif=300,
+        Np=if(DEBUG) 200 else 2000,
+        Nmif=if(DEBUG) 5 else 300,
         cooling.type="geometric",
         cooling.fraction.50=0.5,
         rw.sd=rw.sd(
@@ -552,7 +554,7 @@ stew(file="global_search.rda",{
       
       replicate(
         10,
-        mf %>% pfilter(Np=5000) %>% logLik()
+        mf %>% pfilter(Np=if(DEBUG) 50 else 5000) %>% logLik()
       ) %>%
         logmeanexp(se=TRUE) -> ll
       
@@ -650,8 +652,8 @@ bake(file="profile_rho.rds",{
     polio %>%
       mif2(
         params=unlist(start),
-        Np=2000,
-        Nmif=300,
+        Np=if(DEBUG) 20 else 2000,
+        Nmif=if(DEBUG) 3 else 300,
         cooling.type="geometric",
         cooling.fraction.50=0.5,
         rw.sd=rw.sd(
@@ -661,14 +663,14 @@ bake(file="profile_rho.rds",{
         )
       ) %>%
       mif2(
-        Np=5000,
-        Nmif=100,
+        Np=if(DEBUG) 50 else 5000,
+        Nmif=if(DEBUG) 5 else 100,
         cooling.fraction.50=0.1
       ) -> mf
     
     replicate(
       10,
-      mf %>% pfilter(Np=5000) %>% logLik()
+      mf %>% pfilter(Np=if(DEBUG) 50 else 5000) %>% logLik()
     ) %>% 
       logmeanexp(se=TRUE) -> ll
     
@@ -855,3 +857,4 @@ matplot(llconv,type="l",lty=1,ylim=max(llconv,na.rm=T)+c(-30,0))
 --------------------------
 
 ## References
+
