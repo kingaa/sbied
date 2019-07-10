@@ -1,21 +1,6 @@
 #' ---
 #' title: "Introduction to Simulation-based Inference"
-#' author: "Aaron A. King and Edward L. Ionides<br>
-#' 
-#' <div align=center>
-#' <image src='../logo.jpg' height='250' align='center'>
-#' </div>
-#' 
-#' <h2>Objectives</h2>
-#' 
-#' <div align=left>
-#' <ul>
-#' <li>Motivations from the study of epidemiological and ecological systems. 
-#' <li>Introducing partially observed Markov process (POMP) models.
-#' <li>Introducing the **pomp** R package.
-#' </ul>
-#' </div>
-#' "
+#' author: "Aaron A. King and Edward L. Ionides"
 #' output:
 #'   slidy_presentation:
 #'     toc: true
@@ -26,6 +11,8 @@
 #'   @King2008, @Romero-Severson2015, @He2010, 
 #'   @Laneri2010, @King2015, @pons-salort18, @Blake2014, @decelles18
 #' ---
+#' 
+#' ## Objectives
 #' 
 #' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
 #' \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
@@ -44,6 +31,13 @@ theme_set(theme_bw())
 set.seed(2028866059L)
 
 #' 
+#' <div align="center">
+#' <img src="../logo.jpg" height="250">
+#' </div>
+#' 
+#' - Motivations from the study of epidemiological and ecological systems. 
+#' - Introducing partially observed Markov process (POMP) models.
+#' - Introducing the **pomp** R package.
 #' 
 #' ## Ecological and epidemiological dynamics
 #' 
@@ -135,11 +129,12 @@ set.seed(2028866059L)
 #' 
 #' - Arrows in the following diagram show causal relations.
 #'    
-#' <img src="pomp_schematic1.png" width="400" />
+#' <img src="pomp_schematic1.png" width="500" />
 #' 
 
 #' 
 #' - A key perspective to keep in mind is that **the model is to be viewed as the process that generated the data**.
+#' - That is: the data are viewed as one realization of the model's stochastic process.
 #' 
 #' 
 #' ---------------------

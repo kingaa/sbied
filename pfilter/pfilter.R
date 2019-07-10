@@ -175,30 +175,18 @@ set.seed(1221234211)
 #' * Usually, this means obtaining a confidence interval, or in practice an interval close to a true confidence interval which should formally be called an approximate confidence interval. In practice, the word "approximate" is often dropped!
 #' 
 #' * There are three main approaches to estimating the statistical uncertainty in an MLE.
-#' 
-#' 1. The Fisher information. 
-#' 
-#' + A computationally quick approach when one has access to satisfactory numerical second derivatives of the log likelihood. 
-#' 
-#' + The approximation is satisfactory only when $\hat\theta$ is well approximated by a normal distribution. 
-#' 
-#' + Neither of the two requirements above are typically met for POMP models. 
-#' 
-#' + A review of standard errors via Fisher information is provided as a [supplement](fisherSE.html).
-#' 
-#' 2. Profile likelihood estimation. This approach is generally preferable to the Fisher information for POMP models.
-#' 
-#' 3. A simulation study, also known as a bootstrap. 
-#' 
-#' + If done carefully and well, this can be the best approach.
-#' 
-#' + A confidence interval is a claim about reproducibility. You claim, so far as your model is correct, that on 95% of realizations from the model, a 95% confidence interval you have constructed will cover the true value of the parameter.
-#' 
-#' + A simulation study can check this claim fairly directly, but requires the most effort. 
-#' 
-#' + The simulation study takes time for you to develop and debug, time for you to explain, and time for the reader to understand and check what you have done. We usually carry out simulation studies to check our main conclusions only.
-#' 
-#' + Further discussion of bootstrap methods for POMP models is provided as a [supplement](bootstrap.html).
+#' 	1. The Fisher information. 
+#' 	    + A computationally quick approach when one has access to satisfactory numerical second derivatives of the log likelihood. 
+#'         + The approximation is satisfactory only when $\hat\theta$ is well approximated by a normal distribution. 
+#' 		+ Neither of the two requirements above are typically met for POMP models. 
+#' 		+ A review of standard errors via Fisher information is provided as a [supplement](fisherSE.html).
+#' 	2. Profile likelihood estimation. This approach is generally preferable to the Fisher information for POMP models.
+#' 	3. A simulation study, also known as a bootstrap. 
+#' 		+ If done carefully and well, this can be the best approach.
+#' 		+ A confidence interval is a claim about reproducibility. You claim, so far as your model is correct, that on 95% of realizations from the model, a 95% confidence interval you have constructed will cover the true value of the parameter.
+#' 		+ A simulation study can check this claim fairly directly, but requires the most effort. 
+#' 		+ The simulation study takes time for you to develop and debug, time for you to explain, and time for the reader to understand and check what you have done. We usually carry out simulation studies to check our main conclusions only.
+#' 		+ Further discussion of bootstrap methods for POMP models is provided as a [supplement](bootstrap.html).
 #' 
 #' <br>
 #' 
@@ -523,46 +511,33 @@ set.seed(1221234211)
 #' * The prediction and filtering formulas give us a recursion:
 #' 
 #' + The prediction formula gives the prediction distribution at time $t_n$ using the filtering distribution at time $t_{n-1}$. 
-#' 
 #' + The filtering formula gives the filtering distribution at time $t_n$ using the prediction distribution at time $t_n$.
 #' 
 #' * The **particle filter** use Monte Carlo techniques to sequentially estimate the integrals in the prediction and filtering recursions. Hence, the alternative name of **sequential Monte Carlo (SMC)**.
 #' 
 #' * A basic particle filter is described as follows:
 #' 
-#' 1. Suppose $X_{n-1,j}^{F}$, $j=1,\dots,J$ is a set of $J$ points drawn from the filtering distribution at time $t_{n-1}$.
-#' 
-#' 2. We obtain a sample $X_{n,j}^{P}$ of points drawn from the prediction distribution at time $t_n$ by simply simulating the process model:
+#' 	1. Suppose $X_{n-1,j}^{F}$, $j=1,\dots,J$ is a set of $J$ points drawn from the filtering distribution at time $t_{n-1}$.
+#' 	2. We obtain a sample $X_{n,j}^{P}$ of points drawn from the prediction distribution at time $t_n$ by simply simulating the process model:
 #' $$X_{n,j}^{P} \sim \mathrm{process}(X_{n-1,j}^{F},\theta), \qquad j=1,\dots,J.$$
-#' 
-#' 3. Having obtained $x_{n,j}^{P}$, we obtain a sample of points from the filtering distribution at time $t_n$ by *resampling* from $\big\{X_{n,j}^{P},j\in 1:J\big\}$ with weights 
+#' 	3. Having obtained $x_{n,j}^{P}$, we obtain a sample of points from the filtering distribution at time $t_n$ by *resampling* from $\big\{X_{n,j}^{P},j\in 1:J\big\}$ with weights 
 #' $$w_{n,j}=f_{Y_n|X_n}(y^*_{n}|X^P_{n,j};\theta).$$
-#' 
-#' 4. The Monte Carlo principle tells us that the conditional likelihood
+#' 	4. The Monte Carlo principle tells us that the conditional likelihood
 #' $$\begin{eqnarray}
-#' \lik_n(\theta) &=& f_{Y_n|Y_{1:n-1}}(y^*_n|y^*_{1:n-1};\theta)
-#' \\
-#' &=& 
-#' \int
-#' f_{Y_n|X_n}(y^*_{n}|x_{n};\theta)\,f_{X_n|Y_{1:n-1}}(x_{n}|y^*_{1:n-1};\theta)\, dx_n
-#' \end{eqnarray}
-#' $$
+#' \lik_n(\theta) &=& f_{Y_n|Y_{1:n-1}}(y^*_n|y^*_{1:n-1};\theta)\\
+#' &=& \int f_{Y_n|X_n}(y^*_{n}|x_{n};\theta)\,f_{X_n|Y_{1:n-1}}(x_{n}|y^*_{1:n-1};\theta)\, dx_n
+#' \end{eqnarray}$$
 #' is approximated by
-#' $$\hat\lik_n(\theta)  \approx \frac{1}{J}\,\sum_j\, f_{Y_n|X_n}(y^*_{n}|X_{n,j}^{P};\theta),$$
+#' $$\hat{\lik}_n(\theta)\approx\frac{1}{J}\,\sum_j\,f_{Y_n|X_n}(y^*_{n}|X_{n,j}^{P};\theta)$$
 #' since $X_{n,j}^{P}$ is approximately a draw from $f_{X_n|Y_{1:n-1}}(x_{n}|y^*_{1:n-1};\theta)$.
+#' 	5. We can iterate this procedure through the data, one step at a time, alternately simulating and resampling, until we reach $n=N$.
+#' 	6. The full log likelihood then has approximation
 #' 
-#' 5. We can iterate this procedure through the data, one step at a time, alternately simulating and resampling, until we reach $n=N$.
-#' 
-#' 6. The full log likelihood then has approximation
-#' $$\begin{eqnarray}\loglik(\theta) 
-#' &=& \log{\lik(\theta)} 
-#' \\
-#' &=& \sum_n \log{\lik_n(\theta)}
-#' \\
-#' &\approx& \sum_n\log\hat\lik_n(\theta).
-#' \end{eqnarray}
-#' $$
-#' 
+#' $$\begin{aligned}
+#' \loglik(\theta)&=\log{{\lik}(\theta)}\\
+#' &=\sum_n \log{{\lik}_n(\theta)}\\
+#' &\approx \sum_n\log\hat{\lik}_n(\theta).
+#' \end{aligned}$$
 #' 
 #' * Key references on the particle filter include @Kitagawa1987, @Arulampalam2002, and the book by @Doucet2001.
 #' Pseudocode for the above is provided by @King2016.

@@ -246,9 +246,9 @@ Take the limit as $\delta\to 0$ and show that this gives the ODE model.
 - Euler's method is not the only numerical scheme to solve ODEs. More advanced schemes have better convergence properties, meaning that the numerical approximation is closer to $x(t)$.
 
 - There are 3 reasons we choose to lean heavily on Euler's method:
-1. Euler's method is the simplest (the KISS principle).
-2. Euler's method extends naturally to stochastic models, both continuous-time Markov chains models and stochastic differential equation (SDE) models.
-3. In the context of data analysis, close approximation of the numerical solutions to a continuous-time model is less important than may be supposed, a topic discussed later.
+  1. Euler's method is the simplest (the KISS principle).
+  2. Euler's method extends naturally to stochastic models, both continuous-time Markov chains models and stochastic differential equation (SDE) models.
+  3. In the context of data analysis, close approximation of the numerical solutions to a continuous-time model is less important than may be supposed, a topic discussed later.
 
 --------------------------
 
@@ -332,7 +332,7 @@ the numerical solution should be a sensible model in its own right.
 
 -----
 
-### Euler's method for a discrete SIR model
+### Euler's method for a discrete-valued SIR model
 
 - Recall the simple continuous-time Markov chain interpretation of the SIR model without demography:
 $$\begin{aligned}
@@ -353,11 +353,11 @@ $$\begin{aligned}
 the same methods can also be applied to $N_{IR}(t)$.
 
 - Here are three stochastic Euler schemes for $N_{SI}$:
-1. Poisson increments:
-$$\dlta{\tilde N}_{SI}\;\sim\;\dist{Poisson}{\tilde \mu_{SI}(t)\,\tilde S(t)\,\delta},$$ where $\dist{Poisson}{\mu}$ is the Poisson distribution with mean $\mu$ and $$\tilde\mu_{SI}(t)=\beta\,\frac{\tilde I(t)}{N}.$$
-1. Binomial increments with linear probability:
-$$\dlta{\tilde N}_{SI}\;\sim\;\dist{Binomial}{\tilde{S}(t),\tilde\mu_{SI}(t)\,\delta},$$ where $\dist{Binomial}{n,p}$ is the binomial distribution with mean $n\,p$ and variance $n\,p\,(1-p)$.
-1. Binomial increments with exponential decaying probability:
+  1. Poisson increments:
+  $$\dlta{\tilde N}_{SI}\;\sim\;\dist{Poisson}{\tilde \mu_{SI}(t)\,\tilde S(t)\,\delta},$$ where $\dist{Poisson}{\mu}$ is the Poisson distribution with mean $\mu$ and $$\tilde\mu_{SI}(t)=\beta\,\frac{\tilde I(t)}{N}.$$
+  1. Binomial increments with linear probability:
+  $$\dlta{\tilde N}_{SI}\;\sim\;\dist{Binomial}{\tilde{S}(t),\tilde\mu_{SI}(t)\,\delta},$$ where $\dist{Binomial}{n,p}$ is the binomial distribution with mean $n\,p$ and variance $n\,p\,(1-p)$.
+  1. Binomial increments with exponential decaying probability:
 $$\dlta{\tilde{N}}_{SI}\;\sim\;\dist{Binomial}{\tilde{S}(t),1-e^{-\tilde{\mu}_{SI}(t)\,\delta}}.$$
 
 - Note that these schemes all become equivalent as $\delta\to 0$.
