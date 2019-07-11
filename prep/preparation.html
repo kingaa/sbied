@@ -457,6 +457,11 @@ install_github(&quot;kingaa/pomp&quot;)</code></pre>
 <p>If, while trying to install from source, you receive the error,</p>
 <pre><code>make: gfortran-4.8: No such file or directory</code></pre>
 <p>or one that otherwise refers to <code>gfortran</code>, then it is likely that you do not have the necessary version of <strong>gfortran</strong> installed. Have a look at <a href="https://kingaa.github.io/mac-fortran.html">these instructions</a> and contact me at the address above if these don’t work for you.</p>
+<p>Some users have reported receiving an error complaining that</p>
+<pre><code>'stdlib.h' file not found</code></pre>
+<p>This indicates that the command-line tools from <strong>Xcode</strong> have not been properly installed. In a unix terminal, run</p>
+<pre><code>xcode-select --install</code></pre>
+<p>to correct this problem.</p>
 </div>
 <div id="windows" class="section level3">
 <h3>Windows</h3>

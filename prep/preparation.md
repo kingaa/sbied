@@ -128,6 +128,17 @@ make: gfortran-4.8: No such file or directory
 or one that otherwise refers to `gfortran`, then it is likely that you do not have the necessary version of **gfortran** installed.
 Have a look at [these instructions](https://kingaa.github.io/mac-fortran.html) and contact me at the address above if these don’t work for you.
 
+Some users have reported receiving an error complaining that 
+```
+'stdlib.h' file not found
+```
+This indicates that the command-line tools from **Xcode** have not been properly installed.
+In a unix terminal, run 
+```
+xcode-select --install
+```
+to correct this problem.
+
 ### Windows
 
 You have probably failed to install the **Rtools** correctly.
