@@ -10,9 +10,15 @@
 #' nocite: |
 #'   @King2008, @Romero-Severson2015, @He2010, 
 #'   @Laneri2010, @King2015, @pons-salort18, @Blake2014, @decelles18
+#' date: |
+#'   <img src="../logo.jpg" align="center" height=400>
 #' ---
 #' 
 #' ## Objectives
+#' 
+#' - Motivations from the study of epidemiological and ecological systems. 
+#' - Introducing partially observed Markov process (POMP) models.
+#' - Introducing the **pomp** R package.
 #' 
 #' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
 #' \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
@@ -22,7 +28,6 @@
 #' \newcommand\lik{\mathcal{L}}
 #' \newcommand\loglik{\ell}
 #' 
-#' 
 
 ## ----opts,include=FALSE,cache=FALSE--------------------------------------
 options(stringsAsFactors=FALSE)
@@ -30,14 +35,6 @@ library(ggplot2)
 theme_set(theme_bw())
 set.seed(2028866059L)
 
-#' 
-#' <div align="center">
-#' <img src="../logo.jpg" height="250">
-#' </div>
-#' 
-#' - Motivations from the study of epidemiological and ecological systems. 
-#' - Introducing partially observed Markov process (POMP) models.
-#' - Introducing the **pomp** R package.
 #' 
 #' ## Ecological and epidemiological dynamics
 #' 
