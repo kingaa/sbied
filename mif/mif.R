@@ -639,7 +639,14 @@ read_csv("measles_params.csv") %>%
 #' 
 #' #### Profile over $\eta$
 #' 
-## ----eta_profile---------------------------------------------------------
+#' It appears that the likelihood surface may be quite flat with respect to $\eta$.
+#' To check this, let's compute profile likelihood.
+#' Recall that this allows us to determine, for each value of $\eta$, the best likelihood that the model can achieve.
+#' 
+#' To do this, we'll first bound the uncertainty by putting a box around the highest-likelihood estimates we've found so far.
+#' Within this box, we'll choose some random starting points, for each of several values of $\eta$.
+#' 
+## ----eta_profile1--------------------------------------------------------
 registerDoRNG(830007657)
 
 read_csv("measles_params.csv") %>%
@@ -654,6 +661,11 @@ guesses <- profileDesign(
   nprof=15, type="runif"
 )
 
+#' 
+#' Now, we'll start one independent sequence of iterated filtering operations from each of these points.
+#' We'll be careful to keep $\eta$ fixed.
+#' 
+## ----eta_profile2--------------------------------------------------------
 mf1 <- mifs_local[[1]]
 
 bake(file="eta_profile.rds",{
@@ -675,18 +687,24 @@ bake(file="eta_profile.rds",{
 }) -> results
 
 
-## ------------------------------------------------------------------------
+#' 
+#' As before, we save the results in our global database and plot the results.
+#' 
+## ----eta_profile_database------------------------------------------------
 read_csv("measles_params.csv") %>%
   bind_rows(results) %>%
   arrange(-loglik) %>%
   write_csv("measles_params.csv")
 
-## ------------------------------------------------------------------------
+#' 
+## ----eta_profile_pairs---------------------------------------------------
 read_csv("measles_params.csv") %>%
   filter(loglik>max(loglik)-10) -> all
 
 pairs(~loglik+Beta+gamma+eta+rho, data=all,pch=16)
 
+#' 
+## ----eta_profile_plot----------------------------------------------------
 results %>%
   ggplot(aes(x=eta,y=loglik))+
   geom_point()
@@ -699,6 +717,16 @@ results %>%
   geom_point()+
   geom_smooth(method="loess",span=0.25)
 
+#' 
+#' As we suspected, the profile over $\eta$ is indeed flat.
+#' In other words, we can choose any one of the values of $\eta$ within a range and find values of the other parameters that give an equally good explanation of the data.
+#' How does the model do this?
+#' How does it change the other parameters?
+#' For example, how does it change the infectious period?
+#' We can plot $\gamma$ vs $\eta$ across the profile.
+#' This is called a *profile trace*.
+#' 
+## ----eta_profile_eta_by_gamma--------------------------------------------
 results %>%
   group_by(round(eta,5)) %>%
   filter(rank(-loglik)<3) %>%
@@ -708,7 +736,12 @@ results %>%
 
 #' 
 #' 
+#' 
+#' 
 #' #### Profile over $\gamma$
+#' 
+#' Do the data have an opinion about $\gamma$?
+#' Let's construct a profile to see.
 #' 
 ## ----gamma_profile-------------------------------------------------------
 registerDoRNG(2105684752)
@@ -774,6 +807,8 @@ results %>%
   geom_point()
 
 #' 
+#' The data appear to be consistent with values of $\gamma$ within a certain range.
+#' In other words, these data cannot tell us more precisely about the value of $\gamma$.
 #' 
 #' <br>
 #' 
@@ -784,6 +819,11 @@ results %>%
 #' 
 #' #### Fix $\gamma$ and profile over $\beta$
 #' 
+#' 
+#' Suppose we had data about $\gamma$ from another source.
+#' Perhaps household studies lead us to believe that the infectious period is really about 1/2 week.
+#' Let's assume, correspondingly, that $\gamma=2$ and estimate the parameters of the restricted model.
+#' In particular, let's compute a profile over $\beta$.
 #' 
 ## ----beta_profile1-------------------------------------------------------
 registerDoRNG(87757758)
@@ -875,6 +915,14 @@ results %>%
 #' 
 #' #### Fix $\rho$ and profile over $\beta$
 #' 
+#' 
+#' Just above, we used data from household studies on the duration of the infectious period to constrain our $\gamma$ parameter.
+#' What problems might be associated with taking these studies at face value?
+#' 
+#' Perhaps we should check to see what happens when we constrain a different parameter.
+#' We can obtain an estimate of the reporting efficiency, $\rho$, in the case of a highly contagious, immunizing childhood infection such as measles, by simply regressing cumulative cases on cumulative births [@Anderson1991].
+#' When we do this for Consett, over a much longer period, we see that the reporting efficiency is roughly 60%.
+#' Let's construct a profile over $\beta$ with $\rho$ constrained to this value.
 #' 
 ## ----beta_profile2-------------------------------------------------------
 registerDoRNG(50965452)
