@@ -585,7 +585,7 @@ Note that it may be necessary to add `cdir=".", cfile="tmp1"` in the call to `po
 We obtain some diagnostic plots with the `plot` command applied to `mifs_local`.
 Here is a way to get a prettier version:
 
-```{r local_search_plot,purl=FALSE}
+```{r local_search_plot}
 mifs_local %>%
   traces() %>%
   melt() %>%
@@ -622,14 +622,14 @@ bake(file="lik_local.rds",{
   }
 }) -> results
 ```
-```{r include=FALSE,purl=FALSE}
+```{r include=FALSE}
 t_local <- attr(results,"system.time")
 ```
 
 This investigation took `r round(attr(mifs_local,"system.time")["elapsed"],0)` sec for the maximization and `r round(t_local["elapsed"],0)` sec for the likelihood evaluation.
 These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 
-```{r pairs_local,purl=FALSE}
+```{r pairs_local}
 pairs(~loglik+Beta+gamma+eta+rho,data=results,pch=16)
 ```
 
@@ -726,7 +726,7 @@ This took `r round(t_global["elapsed"]/60,1)` minutes altogether using 150 proce
 Again, we attempt to visualize the global geometry of the likelihood surface using a scatterplot matrix.
 In particular, here we plot both the starting values (grey) and the IF2 estimates (red).
 
-```{r pairs_global,purl=FALSE}
+```{r pairs_global}
 read_csv("measles_params.csv") %>%
   filter(loglik>max(loglik)-50) %>%
   bind_rows(guesses) %>%

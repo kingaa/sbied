@@ -517,6 +517,15 @@ bake(file="local_search.rds",{
 #' We obtain some diagnostic plots with the `plot` command applied to `mifs_local`.
 #' Here is a way to get a prettier version:
 #' 
+## ----local_search_plot---------------------------------------------------
+mifs_local %>%
+  traces() %>%
+  melt() %>%
+  ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
+  geom_line()+
+  guides(color=FALSE)+
+  facet_wrap(~variable,scales="free_y")+
+  theme_bw()
 
 #' 
 #' No filtering failures (`nfail`) are generated after about 10 iterations, which is comforting.
@@ -545,11 +554,15 @@ bake(file="lik_local.rds",{
   }
 }) -> results
 
+## ----include=FALSE-------------------------------------------------------
+t_local <- attr(results,"system.time")
 
 #' 
 #' This investigation took `r round(attr(mifs_local,"system.time")["elapsed"],0)` sec for the maximization and `r round(t_local["elapsed"],0)` sec for the likelihood evaluation.
 #' These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 #' 
+## ----pairs_local---------------------------------------------------------
+pairs(~loglik+Beta+gamma+eta+rho,data=results,pch=16)
 
 #' 
 #' This plot shows hints of ridges in the likelihood surface (cf. the $\beta$-$\eta$, $\beta$-$\rho$, and $\eta$-$\rho$ panels).
@@ -643,6 +656,21 @@ read_csv("measles_params.csv") %>%
 #' Again, we attempt to visualize the global geometry of the likelihood surface using a scatterplot matrix.
 #' In particular, here we plot both the starting values (grey) and the IF2 estimates (red).
 #' 
+## ----pairs_global--------------------------------------------------------
+read_csv("measles_params.csv") %>%
+  filter(loglik>max(loglik)-50) %>%
+  bind_rows(guesses) %>%
+  mutate(type=if_else(is.na(loglik),"guess","result")) %>%
+  arrange(type) -> all
+
+pairs(~loglik+Beta+gamma+eta+rho, data=all,
+      col=ifelse(all$type=="guess",grey(0.5),"red"),pch=16)
+
+all %>%
+  filter(type=="result") %>%
+  filter(loglik>max(loglik)-10) %>%
+  ggplot(aes(x=eta,y=loglik))+
+  geom_point()
 
 #' 
 #' We see that optimization attempts from diverse remote starting points converge on a particular region in parameter space.
