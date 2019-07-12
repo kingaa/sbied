@@ -326,7 +326,7 @@ In general, the profile likelihood of one parameter is constructed by maximizing
 * Note that, $\max_{\phi}\profileloglik(\phi) = \max_{\theta}\loglik(\theta)$ and that maximizing the profile likelihood $\profileloglik(\phi)$ gives the MLE, $\hat{\theta}$. Why?
 
 * An approximate 95% confidence interval for $\phi$ is given by
-$$ \big\{\phi : \loglik(\hat\theta) - \profileloglik(\phi)\big\} < 1.92.$$
+$$ \big\{\phi : \loglik(\hat\theta) - \profileloglik(\phi) < 1.92\big\}.$$
 
 * This is known as a profile likelihood confidence interval. The cutoff $1.92$ is derived using [Wilks's theorem](https://en.wikipedia.org/wiki/Likelihood-ratio_test#Distribution:_Wilks.27s_theorem), which we will discuss in more detail when we develop likelihood ratio tests.
 
