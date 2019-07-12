@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Edward Ionides and Aaron A. King" />
@@ -333,7 +334,7 @@ code span.wa { color: #008000; font-weight: bold; } /* Warning */
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -464,27 +465,10 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 <style type="text/css">
 .code-folding-btn { margin-bottom: 4px; }
 </style>
-<script>
-$(document).ready(function () {
-  window.initializeCodeFolding("show" === "show");
-});
-</script>
 
 
 
@@ -988,7 +972,7 @@ What complications does it introduce in the interpretation of results?
 <pre><code>##                      se 
 ## -236.437663    7.545692</code></pre>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">toc &lt;-<span class="st"> </span><span class="kw">Sys.time</span>()</a></code></pre></div>
-<p>In 2.62 seconds, using 4 cores, we obtain an unbiased likelihood estimate of -236.4 with a Monte Carlo standard error of 7.5.</p>
+<p>In 2.53 seconds, using 4 cores, we obtain an unbiased likelihood estimate of -236.4 with a Monte Carlo standard error of 7.5.</p>
 <p><br></p>
 <hr />
 <hr />
@@ -1025,10 +1009,10 @@ What complications does it introduce in the interpretation of results?
 <a class="sourceLine" id="cb15-17" data-line-number="17">  }</a>
 <a class="sourceLine" id="cb15-18" data-line-number="18">}) -&gt;<span class="st"> </span>mifs_local</a></code></pre></div>
 <div class="nb">
-<p>Some Windows users have had trouble with the above code. This appears to be due to certain Windows security features. It has been possible to circumvent this problem by adding <code>cdir=&quot;.&quot;</code> as an argument in the above call to <code>mif2</code>. That is:</p>
+<p>Some Windows users have had trouble with the above code. This appears to be due to certain Windows security features. It has been possible to circumvent this problem by adding <code>cdir=&quot;.&quot;</code> and <code>cfile=&lt;filename&gt;</code> as arguments in the above call to <code>mif2</code>. For example,</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">measSIR <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb16-2" data-line-number="2"><span class="st">  </span><span class="kw">mif2</span>(</a>
-<a class="sourceLine" id="cb16-3" data-line-number="3">    <span class="dt">cdir=</span><span class="st">&quot;.&quot;</span>,</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">    <span class="dt">cdir=</span><span class="st">&quot;.&quot;</span>,<span class="dt">cfile=</span><span class="st">&quot;tmp2&quot;</span>,</a>
 <a class="sourceLine" id="cb16-4" data-line-number="4">    <span class="dt">params=</span>params,</a>
 <a class="sourceLine" id="cb16-5" data-line-number="5">    <span class="dt">partrans=</span><span class="kw">parameter_trans</span>(<span class="dt">log=</span><span class="kw">c</span>(<span class="st">&quot;Beta&quot;</span>,<span class="st">&quot;gamma&quot;</span>),<span class="dt">logit=</span><span class="kw">c</span>(<span class="st">&quot;rho&quot;</span>,<span class="st">&quot;eta&quot;</span>)),</a>
 <a class="sourceLine" id="cb16-6" data-line-number="6">    <span class="dt">paramnames=</span><span class="kw">c</span>(<span class="st">&quot;Beta&quot;</span>,<span class="st">&quot;gamma&quot;</span>,<span class="st">&quot;rho&quot;</span>,<span class="st">&quot;eta&quot;</span>),</a>
@@ -1037,7 +1021,7 @@ What complications does it introduce in the interpretation of results?
 <a class="sourceLine" id="cb16-9" data-line-number="9">    <span class="dt">cooling.fraction.50=</span><span class="fl">0.5</span>,</a>
 <a class="sourceLine" id="cb16-10" data-line-number="10">    <span class="dt">rw.sd=</span><span class="kw">rw.sd</span>(<span class="dt">Beta=</span><span class="fl">0.02</span>,<span class="dt">gamma=</span><span class="fl">0.02</span>,<span class="dt">rho=</span><span class="fl">0.02</span>,<span class="dt">eta=</span><span class="fl">0.02</span>)</a>
 <a class="sourceLine" id="cb16-11" data-line-number="11">  )</a></code></pre></div>
-<p>Note that it may be necessary to add <code>cdir=&quot;.&quot;</code> in the call to <code>pomp</code> that constructed <code>measSIR</code> in the first place.</p>
+<p>Note that it may be necessary to add <code>cdir=&quot;.&quot;, cfile=&quot;tmp1&quot;</code> in the call to <code>pomp</code> that constructed <code>measSIR</code> in the first place.</p>
 </div>
 <p>We obtain some diagnostic plots with the <code>plot</code> command applied to <code>mifs_local</code>. Here is a way to get a prettier version:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">mifs_local <span class="op">%&gt;%</span></a>
@@ -1567,6 +1551,28 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

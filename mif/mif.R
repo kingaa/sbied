@@ -506,10 +506,11 @@ bake(file="local_search.rds",{
 #' 
 #' Some Windows users have had trouble with the above code.
 #' This appears to be due to certain Windows security features.
-#' It has been possible to circumvent this problem by adding `cdir="."` as an argument in the above call to `mif2`.
-#' That is:
+#' It has been possible to circumvent this problem by adding `cdir="."` and `cfile=<filename>` as arguments in the above call to `mif2`.
+#' For example,
 
-#' Note that it may be necessary to add `cdir="."` in the call to `pomp` that constructed `measSIR` in the first place.
+#' Note that it may be necessary to add `cdir=".", cfile="tmp1"` in the call to `pomp` that constructed `measSIR` in the first place.
+#' 
 #' 
 #' </div>
 #' 
