@@ -13,6 +13,20 @@ bibliography: ../sbied.bib
 csl: ../ecology.csl
 ---
 
+```{css styles,echo=FALSE,purl=FALSE}
+div .nb {
+	background-color: #ffeca3;
+	border-style: solid;
+	border-width: 2;
+	border-color: #00274c;
+	padding: 1em;
+}
+hr {
+	border-width: 3;
+	border-color: #00274c;
+}
+```
+
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
 \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
 \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
@@ -543,6 +557,29 @@ bake(file="local_search.rds",{
   }
 }) -> mifs_local
 ```
+
+<div class="nb">
+
+Some Windows users have had trouble with the above code.
+This appears to be due to certain Windows security features.
+It has been possible to circumvent this problem by adding `cdir="."` as an argument in the above call to `mif2`.
+That is:
+```{r eval=FALSE,purl=FALSE}
+measSIR %>%
+  mif2(
+    cdir=".",
+    params=params,
+    partrans=parameter_trans(log=c("Beta","gamma"),logit=c("rho","eta")),
+    paramnames=c("Beta","gamma","rho","eta"),
+    Np=2000,
+    Nmif=50,
+    cooling.fraction.50=0.5,
+    rw.sd=rw.sd(Beta=0.02,gamma=0.02,rho=0.02,eta=0.02)
+  )
+```
+Note that it may be necessary to add `cdir="."` in the call to `pomp` that constructed `measSIR` in the first place.
+
+</div>
 
 We obtain some diagnostic plots with the `plot` command applied to `mifs_local`.
 Here is a way to get a prettier version:
@@ -1226,6 +1263,7 @@ Propose and test a more favorable way to draw starting parameters for the global
 
 ## [Back to course homepage](../index.html)
 ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R)
+## [Files for this lesson on github](https://github.com/kingaa/sbied/tree/master/mif/)
 
 ----------------------
 

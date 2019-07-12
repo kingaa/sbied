@@ -13,6 +13,8 @@
 #' csl: ../ecology.csl
 #' ---
 #' 
+
+#' 
 #' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
 #' \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
 #' \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
@@ -499,6 +501,17 @@ bake(file="local_search.rds",{
   }
 }) -> mifs_local
 
+#' 
+#' <div class="nb">
+#' 
+#' Some Windows users have had trouble with the above code.
+#' This appears to be due to certain Windows security features.
+#' It has been possible to circumvent this problem by adding `cdir="."` as an argument in the above call to `mif2`.
+#' That is:
+
+#' Note that it may be necessary to add `cdir="."` in the call to `pomp` that constructed `measSIR` in the first place.
+#' 
+#' </div>
 #' 
 #' We obtain some diagnostic plots with the `plot` command applied to `mifs_local`.
 #' Here is a way to get a prettier version:
@@ -1144,6 +1157,7 @@ results %>%
 #' 
 #' ## [Back to course homepage](../index.html)
 #' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R)
+#' ## [Files for this lesson on github](https://github.com/kingaa/sbied/tree/master/mif/)
 #' 
 #' ----------------------
 #' 
