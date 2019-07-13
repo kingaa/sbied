@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -342,18 +343,6 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
@@ -431,6 +420,9 @@ hr {
 <div id="macosx-users" class="section level2">
 <h2>MacOSX users</h2>
 <p>So that you can compile C code and dynamically link it into an <strong>R</strong> session, you will need to have the <strong>Xcode</strong> app installed. This is gratis and can be installed via the App Store or downloaded from <a href="https://developer.apple.com/download/">developer.apple.com</a>.</p>
+<p>Note that you must go beyond merely installing the <strong>Xcode</strong> app. After you’ve installed the app, open a unix terminal (listed as the <strong>Terminal</strong> app under “Utilities” in the Finder) and run the following line</p>
+<pre><code>xcode-select --install</code></pre>
+<p>This will install the “Command Line Tools” that are needed to compile native C codes.</p>
 <hr />
 </div>
 <div id="all-users-1" class="section level2">
@@ -496,6 +488,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
