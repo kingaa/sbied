@@ -830,6 +830,15 @@ results %>%
   ggplot(aes(x=eta,y=loglik))+
   geom_point()+
   geom_smooth(method="loess",span=0.25)
+
+results %>%
+  group_by(round(eta,5)) %>%
+  filter(rank(-loglik)<3) %>%
+  ungroup() %>%
+  ggplot(aes(x=eta,y=loglik))+
+  geom_point()+
+  geom_smooth(method="loess",span=0.25)+
+  lims(y=max(results$loglik)-c(4,0))
 ```
 
 As we suspected, the profile over $\eta$ is indeed flat.

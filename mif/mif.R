@@ -759,6 +759,15 @@ results %>%
   geom_point()+
   geom_smooth(method="loess",span=0.25)
 
+results %>%
+  group_by(round(eta,5)) %>%
+  filter(rank(-loglik)<3) %>%
+  ungroup() %>%
+  ggplot(aes(x=eta,y=loglik))+
+  geom_point()+
+  geom_smooth(method="loess",span=0.25)+
+  lims(y=max(results$loglik)-c(4,0))
+
 #' 
 #' As we suspected, the profile over $\eta$ is indeed flat.
 #' In other words, we can choose any one of the values of $\eta$ within a range and find values of the other parameters that give an equally good explanation of the data.
