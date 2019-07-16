@@ -109,7 +109,7 @@ This will check whether you can work with **pomp**.
 
 If it fails, try the following:
 ```
-> source("https://kingaa.github.io/scripts/helloC.R",echo=TRUE)
+> source("https://kingaa.github.io/scripts/hello.R",echo=TRUE)
 ```
 If this fails to give the "Hello!" message, you will need to follow the instructions below that correspond to your OS before re-trying the `pompTest.R` script.
 
