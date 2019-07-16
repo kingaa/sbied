@@ -304,9 +304,6 @@ set.seed(2028866059L)
 #' Please share and remix noncommercially, mentioning its origin.  
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
-#' * The bumble bee with apple blossom image is by [Celles from Pixabay](https://pixabay.com/photos/bumblebee-apple-blossom-flight-bug-1043067/). 
-#' 
-#' 
 #' * Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion('pomp')`.
 #' 
 #' 
