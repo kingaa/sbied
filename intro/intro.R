@@ -11,7 +11,7 @@
 #'   @King2008, @Romero-Severson2015, @He2010, 
 #'   @Laneri2010, @King2015, @pons-salort18, @Blake2014, @decelles18
 #' date: |
-#'   <img src="../logo.jpg" align="center" height=400>
+#'   <img src="../logo.jpg" align="center" height=350>
 #' ---
 #' 
 #' ## Objectives
@@ -115,7 +115,7 @@ set.seed(2028866059L)
 #' 
 #' * Systems with delays can usually be rewritten as Markovian systems, at least approximately.
 #' 
-#' * An important special case: any system of differential equations is Markovian.
+#' * An important special case: any system of differential equations $dx/dt=f(x)$ is Markovian.
 #' 
 #' * POMP models can include all the features desired by @Bjornstad2001.
 #' 
@@ -231,14 +231,14 @@ set.seed(2028866059L)
 #' 
 #' ## Basic model components 
 #' 
-#' Basic model components* are user-specified procedures that perform the elementary computations that specify a POMP model.
+#' Basic model components are user-specified procedures that perform the elementary computations that specify a POMP model.
 #' There are nine of these:
 #' 
 #' - `rinit`: simulator for the initial-state distribution, i.e., the distribution of the latent state at time `t0`.
 #' - `rprocess` and `dprocess`: simulator and density evaluation procedure, respectively, for the process model.
 #' - `rmeasure` and `dmeasure`: simulator and density evaluation procedure, respectively, for the measurement model.
 #' - `rprior` and `dprior`: simulator and density evaluation procedure, respectively, for the prior distribution.
-#' - `skeleton`: evaluation of the deterministic skeleton.
+#' - `skeleton`: evaluation of a deterministic skeleton.
 #' - `partrans`: parameter transformations.
 #' 
 #' The scientist must specify whichever of these basic model components are required for the algorithms that the scientist uses.
@@ -306,11 +306,9 @@ set.seed(2028866059L)
 #' 
 #' * Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion('pomp')`.
 #' 
-#' 
-#' 
 #' <br><br>
 #' 
-#' ###[Back to course homepage](../index.html)
+#' ### [Back to course homepage](../index.html)
 #' 
 #' ---------
 #' 
