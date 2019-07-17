@@ -867,7 +867,7 @@ Final parameter swarm, <span class="math inline">\(\{\Theta^M_j, j=1,\dots,J\}\)
 Diagram of the SIR compartmental model.
 </p>
 </div>
-<p>We’ll assume that there was a single infection in week 0, i.e., that <span class="math inline">\(I(0)=1\)</span>. Our Markov transmission model is that each individual in <span class="math inline">\(S\)</span> transitions to <span class="math inline">\(I\)</span> at rate <span class="math inline">\(\mu_{SI}=\lambda=\beta\,I(t)/N\)</span>; and each individual in <span class="math inline">\(I\)</span> transitions at rate <span class="math inline">\(\mu_{IR}\)</span> to <span class="math inline">\(R\)</span>. Therefore, <span class="math inline">\(1/\mu_{IR}\)</span> is the mean infectious period. All rates will have units wk<sup>-1</sup>.</p>
+<p>We’ll assume that there was a single infection in week 0, i.e., that <span class="math inline">\(I(0)=1\)</span>. Our Markov transmission model is that each individual in <span class="math inline">\(S\)</span> transitions to <span class="math inline">\(I\)</span> at rate <span class="math inline">\(\mu_{SI}=\beta\,I(t)/N\)</span>; and each individual in <span class="math inline">\(I\)</span> transitions at rate <span class="math inline">\(\mu_{IR}\)</span> to <span class="math inline">\(R\)</span>. Therefore, <span class="math inline">\(1/\mu_{IR}\)</span> is the mean infectious period. All rates will have units wk<sup>-1</sup>.</p>
 <p>This model has limitations and weaknesses, but writing down and fitting a model is a starting point for data analysis, not an end point. In particular, having fit one model, one should certainly examine alternative models. For example, one could include a latency period for infections, or one could modify the model to give a better description of the diagnosis, bed-confinement, and convalescence processes.</p>
 <p>Notice that we do not need to track <span class="math inline">\(R\)</span> since this variable has consequences neither for the dynamics of the state process nor for the data.</p>
 <p>Now, as before, we code the model using C snippets:</p>
@@ -972,7 +972,7 @@ What complications does it introduce in the interpretation of results?
 <pre><code>##                      se 
 ## -236.437663    7.545692</code></pre>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">toc &lt;-<span class="st"> </span><span class="kw">Sys.time</span>()</a></code></pre></div>
-<p>In 2.51 seconds, using 4 cores, we obtain an unbiased likelihood estimate of -236.4 with a Monte Carlo standard error of 7.5.</p>
+<p>In 2.66 seconds, using 4 cores, we obtain an unbiased likelihood estimate of -236.4 with a Monte Carlo standard error of 7.5.</p>
 <p><br></p>
 <hr />
 <hr />

@@ -68,7 +68,7 @@ set.seed(594709947L)
 #' The price would be a $n$-fold increase in cpu time, where $n$ is the dimension of the parameter space.
 #' Also, since the likelihood is noisily estimated, we would expect the derivative estimates to be even noisier.
 #' 1. Finally, the parameters set we must optimize over is not unbounded.
-#' In particular, we must have $\beta,\gamma>0$ and $0<\rho,\eta<1$.
+#' In particular, we must have $\beta,\mu_{IR}>0$ and $0<\rho,\eta<1$.
 #' We must therefore select an optimizer that can solve this *constrained maximization problem*, or find some of way of turning it into an unconstrained maximization problem.
 #' For example, we can transform the parameters onto a scale on which there are no constraints.
 #' 
@@ -80,7 +80,7 @@ library(pomp)
 
 sir_step <- Csnippet("
   double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
-  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
   S -= dN_SI;
   I += dN_SI - dN_IR;
   R += dN_IR;
@@ -112,8 +112,8 @@ read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
     dmeasure=dmeas,
     accumvars="H",
     statenames=c("S","I","R","H"),
-    paramnames=c("Beta","gamma","eta","rho","N"),
-    params=c(Beta=15,gamma=0.5,rho=0.5,eta=0.06,N=38000)
+    paramnames=c("Beta","mu_IR","eta","rho","N"),
+    params=c(Beta=15,mu_IR=0.5,rho=0.5,eta=0.06,N=38000)
   ) -> measSIR
 
 #' 
@@ -123,8 +123,8 @@ read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
 #' The following introduces such a transformation into the `pomp` object.
 ## ----partrans------------------------------------------------------------
 measSIR %>%
-  pomp(partrans=parameter_trans(log=c("Beta","gamma"),logit=c("rho","eta")),
-    paramnames=c("Beta","gamma","eta","rho")) -> measSIR
+  pomp(partrans=parameter_trans(log=c("Beta","mu_IR"),logit=c("rho","eta")),
+    paramnames=c("Beta","mu_IR","eta","rho")) -> measSIR
 
 #' 
 #' We can think of the parameters that we furnished when creating `measSIR` as a kind of reference point in parameter space.
@@ -158,7 +158,7 @@ neg.ll <- function (par, est) {
 #' Now we call `optim` to minimize this function:
 ## ----like-optim-2--------------------------------------------------------
 ## use Nelder-Mead with fixed RNG seed
-estpars <- c("Beta","gamma","eta")
+estpars <- c("Beta","mu_IR","eta")
 optim(
   par=coef(measSIR,estpars,transform=TRUE),
   est=estpars,
@@ -207,7 +207,7 @@ sims %>%
 #' 
 #' #### Exercise: Fit more parameters.
 #' 
-#' Try to estimate $\beta$, $\gamma$, $\rho$, and $\eta$ simultaneously.
+#' Try to estimate $\beta$, $\mu_{IR}$, $\rho$, and $\eta$ simultaneously.
 #' Does your estimate of $\Rzero$ differ from the value we computed from the raw data?
 #' How do you interpret the agreement or lack thereof?
 #' 

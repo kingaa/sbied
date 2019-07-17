@@ -347,7 +347,7 @@ popViewport()
 ```
 
 We'll assume that there was a single infection in week 0, i.e., that $I(0)=1$.
-Our Markov transmission model is that each individual in $S$ transitions to $I$ at rate $\mu_{SI}=\lambda=\beta\,I(t)/N$;
+Our Markov transmission model is that each individual in $S$ transitions to $I$ at rate $\mu_{SI}=\beta\,I(t)/N$;
 and each individual in $I$ transitions at rate $\mu_{IR}$ to $R$.
 Therefore, $1/\mu_{IR}$ is the mean infectious period.
 All rates will have units wk^-1^. 

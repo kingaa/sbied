@@ -556,13 +556,13 @@ set.seed(1221234211)
 #' Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our measles-outbreak case study.
 #' Here, we simply repeat the construction of the SIR model we looked at earlier.
 #' 
-## ----model-construct, echo=FALSE-----------------------------------------
+## ----model-construct,echo=FALSE,purl=TRUE--------------------------------
 library(tidyverse)
 library(pomp)
 
 sir_step <- Csnippet("
   double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
-  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
   S -= dN_SI;
   I += dN_SI - dN_IR;
   R += dN_IR;
@@ -595,8 +595,8 @@ read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
     dmeasure=dmeas,
     accumvars="H",
     statenames=c("S","I","R","H"),
-    paramnames=c("Beta","gamma","eta","rho","N"),
-    params=c(Beta=15,gamma=0.5,rho=0.5,eta=0.06,N=38000)
+    paramnames=c("Beta","mu_IR","eta","rho","N"),
+    params=c(Beta=15,mu_IR=0.5,rho=0.5,eta=0.06,N=38000)
   ) -> measSIR
 
 #' 
@@ -645,7 +645,7 @@ logmeanexp(ll,se=TRUE)
 sliceDesign(
   center=coef(measSIR),
   Beta=rep(seq(from=5,to=20,length=40),each=3),
-  gamma=rep(seq(from=0.2,to=2,length=40),each=3)
+  mu_IR=rep(seq(from=0.2,to=2,length=40),each=3)
 ) -> p
 
 library(foreach)
@@ -674,7 +674,7 @@ foreach (theta=iter(p,"row"),
 library(tidyverse)
 
 p %>% 
-  gather(variable,value,Beta,gamma) %>%
+  gather(variable,value,Beta,mu_IR) %>%
   filter(variable==slice) %>%
   ggplot(aes(x=value,y=loglik,color=variable))+
   geom_point()+
@@ -689,7 +689,7 @@ p %>%
 ## ----pfilter-grid1,eval=FALSE--------------------------------------------
 ## expand.grid(
 ##   Beta=rep(seq(from=10,to=30,length=40),each=3),
-##   gamma=rep(seq(from=0.4,to=1.5,length=40),each=3),
+##   mu_IR=rep(seq(from=0.4,to=1.5,length=40),each=3),
 ##   rho=0.5,eta=0.06,N=38000
 ## ) -> p
 ## 
@@ -715,7 +715,7 @@ p %>%
 bake(file="pfilter-grid1.rds",{
   expand.grid(
     Beta=rep(seq(from=10,to=30,length=40),each=3),
-    gamma=rep(seq(from=0.4,to=1.5,length=40),each=3),
+    mu_IR=rep(seq(from=0.4,to=1.5,length=40),each=3),
     rho=0.5,eta=0.06,N=38000
   ) -> p
   
@@ -736,16 +736,16 @@ bake(file="pfilter-grid1.rds",{
       theta$loglik <- logLik(pf)
       theta
     } -> p
-  p %>% arrange(Beta,gamma)
+  p %>% arrange(Beta,mu_IR)
 })-> p
 
 ## ----pfilter-grid1-plot,echo=F,purl=T------------------------------------
 p %>% 
   mutate(loglik=ifelse(loglik>max(loglik)-50,loglik,NA)) %>%
-  ggplot(aes(x=Beta,y=gamma,z=loglik,fill=loglik))+
+  ggplot(aes(x=Beta,y=mu_IR,z=loglik,fill=loglik))+
   geom_tile(color=NA)+
   scale_fill_gradient()+
-  labs(x=expression(beta),y=expression(gamma))
+  labs(x=expression(beta),y=expression(mu[IR]))
 
 #' 
 #' In the above, all points with log likelihoods less than 50 units below the maximum are shown in grey.
