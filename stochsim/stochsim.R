@@ -55,7 +55,8 @@ set.seed(594709947L)
 #' 1. Dynamic systems can often be represented in terms of _flows_ between _compartments_.
 #' We will develop the concept of a _compartmental model_ for which we specify _rates_ for the flows between compartments.
 #' 1. We show how deterministic and stochastic versions of a compartmental model are derived and related.
-#' 1. We introduce Euler's method to simulate from dynamic models, and we apply it to both deterministic and stochastic compartmental models.
+#' 1. We introduce Euler's method to simulate from dynamic models.
+#' 1. We specify deterministic and stochastic compartmental models in **pomp** using Euler method simulation.
 #' 
 #' <br>
 #' 

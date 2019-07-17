@@ -83,7 +83,8 @@ We have the following goals:
 1. Dynamic systems can often be represented in terms of _flows_ between _compartments_.
 We will develop the concept of a _compartmental model_ for which we specify _rates_ for the flows between compartments.
 1. We show how deterministic and stochastic versions of a compartmental model are derived and related.
-1. We introduce Euler's method to simulate from dynamic models, and we apply it to both deterministic and stochastic compartmental models.
+1. We introduce Euler's method to simulate from dynamic models.
+1. We specify deterministic and stochastic compartmental models in **pomp** using Euler method simulation.
 
 <br>
 
@@ -106,7 +107,9 @@ pushViewport(vp)
 grid.rect(x=c(1/4,2/4,3/4),y=1/2,width=1/8,height=1,just=c(0.5,0.5),gp=gpar(fill="white",lwd=2))
 grid.text(x=c(1/4,2/4,3/4),y=1/2,label=c(expression(S),expression(I),expression(R)),gp=gpar(fontsize=24))
 grid.text(x=unit(c(6/16,10/16),"npc"),y=unit(1/2,"npc")+unit(c(12,-12),"point"),
-  label=c(expression(lambda),expression(gamma)),gp=gpar(fontsize=18))
+#  label=c(expression(lambda),expression(gamma)),gp=gpar(fontsize=18))
+#label=c(expression(mu_[SI]),expression(mu_[IR])),gp=gpar(fontsize=18))
+    label=c(expression(mu[SI]),expression(mu[IR])),gp=gpar(fontsize=18))
 grid.lines(x=c(5/16,7/16),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
 grid.lines(x=c(9/16,11/16),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
 popViewport()
