@@ -707,7 +707,7 @@ Narrow ridges can be easy to fall off, and hard to get back on to.
 However, as the dimension increases it quickly becomes hard to imagine the surface.
 
 * To get an idea of what the likelihood surface looks like in the neighborhood of a point in parameter space, we can construct some likelihood *slices*.
-We'll make slices in the $\beta$ and $\mu_I$ directions.
+We'll make slices in the $\beta$ and $\mu_{IR}$ directions.
 Both slices will pass through the central point.
 
 * What is the difference between a likelihood slice and a profile? What is the consequence of this difference for the statistical interpretation of these plots? How should you decide whether to compute a profile or a slice?

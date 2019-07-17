@@ -740,7 +740,7 @@ ll &lt;- sapply(pf,logLik); ll</code></pre>
 <li><p>Local minima are valleys.</p></li>
 <li><p>Peaks may be separated by a valley or may be joined by a ridge. If you go along the ridge, you may be able to go from one peak to the other without losing much elevation. Narrow ridges can be easy to fall off, and hard to get back on to.</p></li>
 <li><p>In higher dimensions, one can still think of peaks and valleys and ridges. However, as the dimension increases it quickly becomes hard to imagine the surface.</p></li>
-<li><p>To get an idea of what the likelihood surface looks like in the neighborhood of a point in parameter space, we can construct some likelihood <em>slices</em>. We’ll make slices in the <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\mu_I\)</span> directions. Both slices will pass through the central point.</p></li>
+<li><p>To get an idea of what the likelihood surface looks like in the neighborhood of a point in parameter space, we can construct some likelihood <em>slices</em>. We’ll make slices in the <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\mu_{IR}\)</span> directions. Both slices will pass through the central point.</p></li>
 <li><p>What is the difference between a likelihood slice and a profile? What is the consequence of this difference for the statistical interpretation of these plots? How should you decide whether to compute a profile or a slice?</p></li>
 </ul>
 <pre class="r"><code>sliceDesign(
