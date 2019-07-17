@@ -376,16 +376,6 @@ summary {
 <li><a href="#definition-of-the-likelihood-function">Definition of the likelihood function</a></li>
 <li><a href="#modeling-using-discrete-and-continuous-distributions">Modeling using discrete and continuous distributions</a></li>
 </ul></li>
-<li><a href="#review-of-likelihood-based-inference">Review of likelihood-based inference</a><ul>
-<li><a href="#the-maximum-likelihood-estimate-mle">The maximum likelihood estimate (MLE)</a></li>
-<li><a href="#standard-errors-for-the-mle">Standard errors for the MLE</a></li>
-<li><a href="#confidence-intervals-via-the-profile-likelihood">Confidence intervals via the profile likelihood</a></li>
-<li><a href="#likelihood-based-model-selection-and-model-diagnostics">Likelihood-based model selection and model diagnostics</a><ul>
-<li><a href="#likelihood-ratio-tests-for-nested-hypotheses">Likelihood ratio tests for nested hypotheses</a></li>
-<li><a href="#the-connection-between-wilkss-theorem-and-profile-likelihood">The connection between Wilks’s theorem and profile likelihood</a></li>
-<li><a href="#akaikes-information-criterion-aic">Akaike’s information criterion (AIC)</a></li>
-</ul></li>
-</ul></li>
 <li><a href="#indirect-specification-of-a-statistical-model-via-a-simulation-procedure">Indirect specification of a statistical model via a simulation procedure</a></li>
 <li><a href="#the-likelihood-for-a-pomp-model">The likelihood for a POMP model</a><ul>
 <li><a href="#special-case-deterministic-latent-process">Special case: deterministic latent process</a></li>
@@ -394,6 +384,11 @@ summary {
 <li><a href="#monte-carlo-likelihood-by-direct-simulation">Monte Carlo likelihood by direct simulation</a></li>
 <li><a href="#sequential-monte-carlo-the-particle-filter">Sequential Monte Carlo: The particle filter</a></li>
 <li><a href="#particle-filtering-in-pomp">Particle filtering in <strong>pomp</strong></a></li>
+<li><a href="#review-of-likelihood-based-inference">Review of likelihood-based inference</a><ul>
+<li><a href="#the-maximum-likelihood-estimate-mle">The maximum likelihood estimate (MLE)</a></li>
+<li><a href="#standard-errors-for-the-mle">Standard errors for the MLE</a></li>
+<li><a href="#confidence-intervals-via-the-profile-likelihood">Confidence intervals via the profile likelihood</a></li>
+</ul></li>
 <li><a href="#the-graph-of-the-likelihood-function-the-likelihood-surface">The graph of the likelihood function: The likelihood surface</a></li>
 <li><a href="#exercises">Exercises</a><ul>
 <li><a href="#basic-exercise-estimating-the-expense-of-a-particle-filter-calculation">Basic Exercise: estimating the expense of a particle-filter calculation</a></li>
@@ -402,6 +397,13 @@ summary {
 <li><a href="#optional-exercise-two-dimensional-likelihood-slice">Optional Exercise: two-dimensional likelihood slice</a></li>
 </ul></li>
 <li><a href="#maximizing-the-particle-filter-likelihood">Maximizing the particle filter likelihood</a></li>
+<li><a href="#more-review-of-likelihood-based-inference">More review of likelihood-based inference</a><ul>
+<li><a href="#likelihood-based-model-selection-and-model-diagnostics">Likelihood-based model selection and model diagnostics</a><ul>
+<li><a href="#likelihood-ratio-tests-for-nested-hypotheses">Likelihood ratio tests for nested hypotheses</a></li>
+<li><a href="#the-connection-between-wilkss-theorem-and-profile-likelihood">The connection between Wilks’s theorem and profile likelihood</a></li>
+<li><a href="#akaikes-information-criterion-aic">Akaike’s information criterion (AIC)</a></li>
+</ul></li>
+</ul></li>
 <li><a href="#back-to-course-homepage"><span>Back to course homepage</span></a></li>
 <li><a href="#r-codes-for-this-document"><span><strong>R</strong> codes for this document</span></a></li>
 <li><a href="#references">References</a></li>
@@ -478,146 +480,6 @@ summary {
 <p><br></p>
 <hr />
 <hr />
-</div>
-</div>
-<div id="review-of-likelihood-based-inference" class="section level2">
-<h2>Review of likelihood-based inference</h2>
-<p>For now, suppose that software exists to evaluate and maximize the likelihood function, up to a tolerable numerical error, for the dynamic models of interest. Our immediate task is to think about how to use that capability.</p>
-<ul>
-<li><p>Likelihood-based inference (meaning statistical tools based on the likelihood function) provides tools for parameter estimation, standard errors, hypothesis tests and diagnosing model misspecification.</p></li>
-<li><p>Likelihood-based inference often (but not always) has favorable theoretical properties. Here, we are not especially concerned with the underlying theory of likelihood-based inference. On any practical problem, we can check the properties of a statistical procedure by simulation experiments.</p></li>
-</ul>
-<p><br></p>
-<hr />
-<hr />
-<div id="the-maximum-likelihood-estimate-mle" class="section level3">
-<h3>The maximum likelihood estimate (MLE)</h3>
-<ul>
-<li><p>A maximum likelihood estimate (MLE) is <span class="math display">\[ \hat\theta = \underset{\theta}{\arg\max} \ell(\theta),\]</span> where <span class="math inline">\(\underset{\theta}{\arg\max} g(\theta)\)</span> means a value of argument <span class="math inline">\(\theta\)</span> at which the maximum of the function <span class="math inline">\(g\)</span> is attained, so <span class="math inline">\(g\big(\underset{\theta}{\arg\max} g(\theta)\big) = \max_\theta g(\theta)\)</span>.</p></li>
-<li><p>If there are many values of <span class="math inline">\(\theta\)</span> giving the same maximum value of the likelihood, then an MLE still exists but is not unique.</p></li>
-<li><p>Note that <span class="math inline">\(\underset{\theta}{\arg\max} \mathcal{L}(\theta)\)</span> and <span class="math inline">\(\underset{\theta}{\arg\max} \ell(\theta)\)</span> are the same. Why?</p></li>
-</ul>
-<p><br></p>
-<hr />
-<hr />
-</div>
-<div id="standard-errors-for-the-mle" class="section level3">
-<h3>Standard errors for the MLE</h3>
-<ul>
-<li><p>Of course, we have a responsibility to attach a measure of uncertainty to our parameter estimates!</p></li>
-<li><p>Usually, this means obtaining a confidence interval, or in practice an interval close to a true confidence interval which should formally be called an approximate confidence interval. In practice, the word “approximate” is often dropped!</p></li>
-<li>There are three main approaches to estimating the statistical uncertainty in an MLE.
-<ol style="list-style-type: decimal">
-<li>The Fisher information.
-<ul>
-<li>A computationally quick approach when one has access to satisfactory numerical second derivatives of the log likelihood.</li>
-<li>The approximation is satisfactory only when <span class="math inline">\(\hat\theta\)</span> is well approximated by a normal distribution.</li>
-<li>Neither of the two requirements above are typically met for POMP models.</li>
-<li>A review of standard errors via Fisher information is provided as a <a href="fisherSE.html">supplement</a>.</li>
-</ul></li>
-<li>Profile likelihood estimation. This approach is generally preferable to the Fisher information for POMP models.</li>
-<li>A simulation study, also known as a bootstrap.
-<ul>
-<li>If done carefully and well, this can be the best approach.</li>
-<li>A confidence interval is a claim about reproducibility. You claim, so far as your model is correct, that on 95% of realizations from the model, a 95% confidence interval you have constructed will cover the true value of the parameter.</li>
-<li>A simulation study can check this claim fairly directly, but requires the most effort.</li>
-<li>The simulation study takes time for you to develop and debug, time for you to explain, and time for the reader to understand and check what you have done. We usually carry out simulation studies to check our main conclusions only.</li>
-<li>Further discussion of bootstrap methods for POMP models is provided as a <a href="bootstrap.html">supplement</a>.</li>
-</ul></li>
-</ol></li>
-</ul>
-<p><br></p>
-<hr />
-<hr />
-</div>
-<div id="confidence-intervals-via-the-profile-likelihood" class="section level3">
-<h3>Confidence intervals via the profile likelihood</h3>
-<ul>
-<li><p>Let’s consider the problem of obtaining a confidence interval for the first component of <span class="math inline">\(\theta\)</span>. We’ll write <span class="math display">\[\theta=(\phi,\psi).\]</span></p></li>
-<li><p>The <strong>profile log likelihood function</strong> of <span class="math inline">\(\phi\)</span> is defined to be <span class="math display">\[ \ell_\mathrm{profile}(\phi) = \max_{\psi}\ell(\phi,\psi).\]</span> In general, the profile likelihood of one parameter is constructed by maximizing the likelihood function over all other parameters.</p></li>
-<li><p>Note that, <span class="math inline">\(\max_{\phi}\ell_\mathrm{profile}(\phi) = \max_{\theta}\ell(\theta)\)</span> and that maximizing the profile likelihood <span class="math inline">\(\ell_\mathrm{profile}(\phi)\)</span> gives the MLE, <span class="math inline">\(\hat{\theta}\)</span>. Why?</p></li>
-<li><p>An approximate 95% confidence interval for <span class="math inline">\(\phi\)</span> is given by <span class="math display">\[ \big\{\phi : \ell(\hat\theta) - \ell_\mathrm{profile}(\phi) &lt; 1.92\big\}.\]</span></p></li>
-<li><p>This is known as a profile likelihood confidence interval. The cutoff <span class="math inline">\(1.92\)</span> is derived using <a href="https://en.wikipedia.org/wiki/Likelihood-ratio_test#Distribution:_Wilks.27s_theorem">Wilks’s theorem</a>, which we will discuss in more detail when we develop likelihood ratio tests.</p></li>
-<li><p>Although the asymptotic justification of Wilks’s theorem is the same limit that justifies the Fisher information standard errors, profile likelihood confidence intervals tend to work better than Fisher information confidence intervals when <span class="math inline">\(N\)</span> is not so large—particularly when the log likelihood function is not close to quadratic near its maximum.</p></li>
-</ul>
-<p><br></p>
-<hr />
-<hr />
-</div>
-<div id="likelihood-based-model-selection-and-model-diagnostics" class="section level3">
-<h3>Likelihood-based model selection and model diagnostics</h3>
-<ul>
-<li><p>For nested hypotheses, we can carry out model selection by likelihood ratio tests.</p></li>
-<li><p>For non-nested hypotheses, likelihoods can be compared using Akaike’s information criterion (AIC) or related methods.</p></li>
-</ul>
-<p><br></p>
-<hr />
-<hr />
-<div id="likelihood-ratio-tests-for-nested-hypotheses" class="section level4">
-<h4>Likelihood ratio tests for nested hypotheses</h4>
-<ul>
-<li><p>The whole parameter space on which the model is defined is <span class="math inline">\(\Theta\subset\mathbb{R}^D\)</span>.</p></li>
-<li><p>Suppose we have two <strong>nested</strong> hypotheses <span class="math display">\[\begin{eqnarray}
-H^{\langle 0\rangle} &amp;:&amp; \theta\in \Theta^{\langle 0\rangle},
-\\
-H^{\langle 1\rangle} &amp;=&amp; \theta\in \Theta^{\langle 1\rangle},
-\end{eqnarray}\]</span> defined via two nested parameter subspaces, <span class="math inline">\(\Theta^{\langle 0\rangle}\subset \Theta^{\langle 1\rangle}\)</span>, with respective dimensions <span class="math inline">\(D^{\langle 0\rangle}&lt; D^{\langle 1\rangle}\le D\)</span>.</p></li>
-<li><p>We consider the log likelihood maximized over each of the hypotheses, <span class="math display">\[\begin{eqnarray}
-\ell^{\langle 0\rangle} &amp;=&amp; \sup_{\theta\in \Theta^{\langle 0\rangle}} \ell(\theta),
-\\
-\ell^{\langle 1\rangle} &amp;=&amp; \sup_{\theta\in \Theta^{\langle 1\rangle}} \ell(\theta).
-\end{eqnarray}\]</span> <br></p></li>
-<li><p>A useful approximation asserts that, under the hypothesis <span class="math inline">\(H^{\langle 0\rangle}\)</span>, <span class="math display">\[ 
-\ell^{\langle 1\rangle} - \ell^{\langle 0\rangle} \approx (1/2) \chi^2_{D^{\langle 1\rangle}- D^{\langle 0\rangle}},
-\]</span> where <span class="math inline">\(\chi^2_d\)</span> is a chi-squared random variable on <span class="math inline">\(d\)</span> degrees of freedom and <span class="math inline">\(\approx\)</span> means “is approximately distributed as.”</p></li>
-<li><p>We will call this the <strong>Wilks approximation</strong>.</p></li>
-<li><p>The Wilks approximation can be used to construct a hypothesis test of the null hypothesis <span class="math inline">\(H^{\langle 0\rangle}\)</span> against the alternative <span class="math inline">\(H^{\langle 1\rangle}\)</span>.</p></li>
-<li><p>This is called a <strong>likelihood ratio test</strong> since a difference of log likelihoods corresponds to a ratio of likelihoods.</p></li>
-<li><p>When the data are IID, <span class="math inline">\(N\to\infty\)</span>, and the hypotheses satisfy suitable regularity conditions, this approximation can be derived mathematically and is known as <strong>Wilks’s theorem</strong>.</p></li>
-<li><p>The chi-squared approximation to the likelihood ratio statistic may be useful, and can be assessed empirically by a simulation study, even in situations that do not formally satisfy any known theorem.</p></li>
-</ul>
-<p><br></p>
-<hr />
-<hr />
-</div>
-<div id="the-connection-between-wilkss-theorem-and-profile-likelihood" class="section level4">
-<h4>The connection between Wilks’s theorem and profile likelihood</h4>
-<ul>
-<li><p>Suppose we have an MLE, written <span class="math inline">\(\hat\theta=(\hat\phi,\hat\psi)\)</span>, and a profile log likelihood for <span class="math inline">\(\phi\)</span>, given by <span class="math inline">\(\ell_\mathrm{profile}(\phi)\)</span>.</p></li>
-<li><p>Consider the likelihood ratio test for the nested hypotheses <span class="math display">\[\begin{eqnarray}
-H^{\langle 0\rangle} &amp;:&amp; \phi = \phi_0,
-\\
-H^{\langle 1\rangle} &amp;:&amp; \mbox{$\phi$ unconstrained}.
-\end{eqnarray}\]</span></p></li>
-<li><p>We can check what the 95% cutoff is for a chi-squared distribution with one degree of freedom,</p></li>
-</ul>
-<pre class="r"><code>qchisq(0.95,df=1)</code></pre>
-<pre><code>## [1] 3.841459</code></pre>
-<ul>
-<li><p>Wilks’s theorem then gives us a hypothesis test with approximate size <span class="math inline">\(5\%\)</span> that rejects <span class="math inline">\(H^{\langle 0\rangle}\)</span> if <span class="math inline">\(\ell_\mathrm{profile}(\hat\phi)-\ell_\mathrm{profile}(\phi_0)&lt;3.84/2\)</span>.</p></li>
-<li><p>It follows that, with probability <span class="math inline">\(95\%\)</span>, the true value of <span class="math inline">\(\phi\)</span> falls in the set <span class="math display">\[\big\{\phi: \ell_\mathrm{profile}(\hat\phi)-\ell_\mathrm{profile}(\phi)&lt;1.92\big\}.\]</span> So, we have constructed a profile likelihood confidence interval, consisting of the set of points on the profile likelihood within 1.92 log units of the maximum.</p></li>
-<li><p>This is an example of <a href="http://www.stat.nus.edu.sg/~wloh/lecture17.pdf">a general duality between confidence intervals and hypothesis tests</a>.</p></li>
-</ul>
-<p><br></p>
-<hr />
-<hr />
-</div>
-<div id="akaikes-information-criterion-aic" class="section level4">
-<h4>Akaike’s information criterion (AIC)</h4>
-<ul>
-<li><p>Likelihood ratio tests provide an approach to model selection for nested hypotheses, but what do we do when models are not nested?</p></li>
-<li><p>A more general approach is to compare likelihoods of different models by penalizing the likelihood of each model by a measure of its complexity.</p></li>
-<li><p>Akaike’s information criterion <strong>AIC</strong> is given by <span class="math display">\[ \textrm{AIC} = -2\,\ell(\hat{\theta}) + 2\,D\]</span> “Minus twice the maximized log likelihood plus twice the number of parameters.”</p></li>
-<li><p>We are invited to select the model with the lowest AIC score.</p></li>
-<li><p>AIC was derived as an approach to minimizing prediction error. Increasing the number of parameters leads to additional <strong>overfitting</strong> which can decrease predictive skill of the fitted model.</p></li>
-<li><p>Viewed as a hypothesis test, AIC may have weak statistical properties. It can be a mistake to interpret AIC by making a claim that the favored model has been shown to provides a superior explanation of the data. However, viewed as a way to select a model with reasonable predictive skill from a range of possibilities, it is often useful.</p></li>
-<li><p>AIC does not penalize model complexity beyond the consequence of reduced predictive skill due to overfitting. One can penalize complexity by incorporating a more severe penalty that the <span class="math inline">\(2D\)</span> term above, such as via <a href="https://en.wikipedia.org/wiki/Bayesian_information_criterion">BIC</a>.</p></li>
-<li><p>A practical approach is to use AIC, while taking care to view it as a procedure to select a reasonable predictive model and not as a formal hypothesis test.</p></li>
-</ul>
-<p><br></p>
-<hr />
-<hr />
-</div>
 </div>
 </div>
 <div id="indirect-specification-of-a-statistical-model-via-a-simulation-procedure" class="section level2">
@@ -800,6 +662,74 @@ ll &lt;- sapply(pf,logLik); ll</code></pre>
 <pre class="r"><code>logmeanexp(ll,se=TRUE)</code></pre>
 <pre><code>##                    se 
 ## -240.83742   28.47015</code></pre>
+<p><br></p>
+<hr />
+<hr />
+</div>
+<div id="review-of-likelihood-based-inference" class="section level2">
+<h2>Review of likelihood-based inference</h2>
+<p>For now, suppose that software exists to evaluate and maximize the likelihood function, up to a tolerable numerical error, for the dynamic models of interest. Our immediate task is to think about how to use that capability.</p>
+<ul>
+<li><p>Likelihood-based inference (meaning statistical tools based on the likelihood function) provides tools for parameter estimation, standard errors, hypothesis tests and diagnosing model misspecification.</p></li>
+<li><p>Likelihood-based inference often (but not always) has favorable theoretical properties. Here, we are not especially concerned with the underlying theory of likelihood-based inference. On any practical problem, we can check the properties of a statistical procedure by simulation experiments.</p></li>
+</ul>
+<p><br></p>
+<hr />
+<hr />
+<div id="the-maximum-likelihood-estimate-mle" class="section level3">
+<h3>The maximum likelihood estimate (MLE)</h3>
+<ul>
+<li><p>A maximum likelihood estimate (MLE) is <span class="math display">\[ \hat\theta = \underset{\theta}{\arg\max} \ell(\theta),\]</span> where <span class="math inline">\(\underset{\theta}{\arg\max} g(\theta)\)</span> means a value of argument <span class="math inline">\(\theta\)</span> at which the maximum of the function <span class="math inline">\(g\)</span> is attained, so <span class="math inline">\(g\big(\underset{\theta}{\arg\max} g(\theta)\big) = \max_\theta g(\theta)\)</span>.</p></li>
+<li><p>If there are many values of <span class="math inline">\(\theta\)</span> giving the same maximum value of the likelihood, then an MLE still exists but is not unique.</p></li>
+<li><p>Note that <span class="math inline">\(\underset{\theta}{\arg\max} \mathcal{L}(\theta)\)</span> and <span class="math inline">\(\underset{\theta}{\arg\max} \ell(\theta)\)</span> are the same. Why?</p></li>
+</ul>
+<p><br></p>
+<hr />
+<hr />
+</div>
+<div id="standard-errors-for-the-mle" class="section level3">
+<h3>Standard errors for the MLE</h3>
+<ul>
+<li><p>Of course, we have a responsibility to attach a measure of uncertainty to our parameter estimates!</p></li>
+<li><p>Usually, this means obtaining a confidence interval, or in practice an interval close to a true confidence interval which should formally be called an approximate confidence interval. In practice, the word “approximate” is often dropped!</p></li>
+<li>There are three main approaches to estimating the statistical uncertainty in an MLE.
+<ol style="list-style-type: decimal">
+<li>The Fisher information.
+<ul>
+<li>A computationally quick approach when one has access to satisfactory numerical second derivatives of the log likelihood.</li>
+<li>The approximation is satisfactory only when <span class="math inline">\(\hat\theta\)</span> is well approximated by a normal distribution.</li>
+<li>Neither of the two requirements above are typically met for POMP models.</li>
+<li>A review of standard errors via Fisher information is provided as a <a href="fisherSE.html">supplement</a>.</li>
+</ul></li>
+<li>Profile likelihood estimation. This approach is generally preferable to the Fisher information for POMP models.</li>
+<li>A simulation study, also known as a bootstrap.
+<ul>
+<li>If done carefully and well, this can be the best approach.</li>
+<li>A confidence interval is a claim about reproducibility. You claim, so far as your model is correct, that on 95% of realizations from the model, a 95% confidence interval you have constructed will cover the true value of the parameter.</li>
+<li>A simulation study can check this claim fairly directly, but requires the most effort.</li>
+<li>The simulation study takes time for you to develop and debug, time for you to explain, and time for the reader to understand and check what you have done. We usually carry out simulation studies to check our main conclusions only.</li>
+<li>Further discussion of bootstrap methods for POMP models is provided as a <a href="bootstrap.html">supplement</a>.</li>
+</ul></li>
+</ol></li>
+</ul>
+<p><br></p>
+<hr />
+<hr />
+</div>
+<div id="confidence-intervals-via-the-profile-likelihood" class="section level3">
+<h3>Confidence intervals via the profile likelihood</h3>
+<ul>
+<li><p>Let’s consider the problem of obtaining a confidence interval for the first component of <span class="math inline">\(\theta\)</span>. We’ll write <span class="math display">\[\theta=(\phi,\psi).\]</span></p></li>
+<li><p>The <strong>profile log likelihood function</strong> of <span class="math inline">\(\phi\)</span> is defined to be <span class="math display">\[ \ell_\mathrm{profile}(\phi) = \max_{\psi}\ell(\phi,\psi).\]</span> In general, the profile likelihood of one parameter is constructed by maximizing the likelihood function over all other parameters.</p></li>
+<li><p>Note that, <span class="math inline">\(\max_{\phi}\ell_\mathrm{profile}(\phi) = \max_{\theta}\ell(\theta)\)</span> and that maximizing the profile likelihood <span class="math inline">\(\ell_\mathrm{profile}(\phi)\)</span> gives the MLE, <span class="math inline">\(\hat{\theta}\)</span>. Why?</p></li>
+<li><p>An approximate 95% confidence interval for <span class="math inline">\(\phi\)</span> is given by <span class="math display">\[ \big\{\phi : \ell(\hat\theta) - \ell_\mathrm{profile}(\phi) &lt; 1.92\big\}.\]</span></p></li>
+<li><p>This is known as a profile likelihood confidence interval. The cutoff <span class="math inline">\(1.92\)</span> is derived using <a href="https://en.wikipedia.org/wiki/Likelihood-ratio_test#Distribution:_Wilks.27s_theorem">Wilks’s theorem</a>, which we will discuss in more detail when we develop likelihood ratio tests.</p></li>
+<li><p>Although the asymptotic justification of Wilks’s theorem is the same limit that justifies the Fisher information standard errors, profile likelihood confidence intervals tend to work better than Fisher information confidence intervals when <span class="math inline">\(N\)</span> is not so large—particularly when the log likelihood function is not close to quadratic near its maximum.</p></li>
+</ul>
+<p><br></p>
+<hr />
+<hr />
+</div>
 </div>
 <div id="the-graph-of-the-likelihood-function-the-likelihood-surface" class="section level2">
 <h2>The graph of the likelihood function: The likelihood surface</h2>
@@ -930,11 +860,85 @@ foreach (theta=iter(p,&quot;row&quot;),
 <li><p>First, let’s think a bit about some practical considerations in interpreting the MLE for a POMP.</p></li>
 </ul>
 <p><br></p>
+<hr />
+<hr />
+</div>
+<div id="more-review-of-likelihood-based-inference" class="section level2">
+<h2>More review of likelihood-based inference</h2>
+<div id="likelihood-based-model-selection-and-model-diagnostics" class="section level3">
+<h3>Likelihood-based model selection and model diagnostics</h3>
+<ul>
+<li><p>For nested hypotheses, we can carry out model selection by likelihood ratio tests.</p></li>
+<li><p>For non-nested hypotheses, likelihoods can be compared using Akaike’s information criterion (AIC) or related methods.</p></li>
+</ul>
+<p><br></p>
+<hr />
+<hr />
+<div id="likelihood-ratio-tests-for-nested-hypotheses" class="section level4">
+<h4>Likelihood ratio tests for nested hypotheses</h4>
+<ul>
+<li><p>The whole parameter space on which the model is defined is <span class="math inline">\(\Theta\subset\mathbb{R}^D\)</span>.</p></li>
+<li><p>Suppose we have two <strong>nested</strong> hypotheses <span class="math display">\[\begin{eqnarray}
+H^{\langle 0\rangle} &amp;:&amp; \theta\in \Theta^{\langle 0\rangle},
+\\
+H^{\langle 1\rangle} &amp;=&amp; \theta\in \Theta^{\langle 1\rangle},
+\end{eqnarray}\]</span> defined via two nested parameter subspaces, <span class="math inline">\(\Theta^{\langle 0\rangle}\subset \Theta^{\langle 1\rangle}\)</span>, with respective dimensions <span class="math inline">\(D^{\langle 0\rangle}&lt; D^{\langle 1\rangle}\le D\)</span>.</p></li>
+<li><p>We consider the log likelihood maximized over each of the hypotheses, <span class="math display">\[\begin{eqnarray}
+\ell^{\langle 0\rangle} &amp;=&amp; \sup_{\theta\in \Theta^{\langle 0\rangle}} \ell(\theta),
+\\
+\ell^{\langle 1\rangle} &amp;=&amp; \sup_{\theta\in \Theta^{\langle 1\rangle}} \ell(\theta).
+\end{eqnarray}\]</span> <br></p></li>
+<li><p>A useful approximation asserts that, under the hypothesis <span class="math inline">\(H^{\langle 0\rangle}\)</span>, <span class="math display">\[ 
+\ell^{\langle 1\rangle} - \ell^{\langle 0\rangle} \approx (1/2) \chi^2_{D^{\langle 1\rangle}- D^{\langle 0\rangle}},
+\]</span> where <span class="math inline">\(\chi^2_d\)</span> is a chi-squared random variable on <span class="math inline">\(d\)</span> degrees of freedom and <span class="math inline">\(\approx\)</span> means “is approximately distributed as.”</p></li>
+<li><p>We will call this the <strong>Wilks approximation</strong>.</p></li>
+<li><p>The Wilks approximation can be used to construct a hypothesis test of the null hypothesis <span class="math inline">\(H^{\langle 0\rangle}\)</span> against the alternative <span class="math inline">\(H^{\langle 1\rangle}\)</span>.</p></li>
+<li><p>This is called a <strong>likelihood ratio test</strong> since a difference of log likelihoods corresponds to a ratio of likelihoods.</p></li>
+<li><p>When the data are IID, <span class="math inline">\(N\to\infty\)</span>, and the hypotheses satisfy suitable regularity conditions, this approximation can be derived mathematically and is known as <strong>Wilks’s theorem</strong>.</p></li>
+<li><p>The chi-squared approximation to the likelihood ratio statistic may be useful, and can be assessed empirically by a simulation study, even in situations that do not formally satisfy any known theorem.</p></li>
+</ul>
+<p><br></p>
+<hr />
+<hr />
+</div>
+<div id="the-connection-between-wilkss-theorem-and-profile-likelihood" class="section level4">
+<h4>The connection between Wilks’s theorem and profile likelihood</h4>
+<ul>
+<li><p>Suppose we have an MLE, written <span class="math inline">\(\hat\theta=(\hat\phi,\hat\psi)\)</span>, and a profile log likelihood for <span class="math inline">\(\phi\)</span>, given by <span class="math inline">\(\ell_\mathrm{profile}(\phi)\)</span>.</p></li>
+<li><p>Consider the likelihood ratio test for the nested hypotheses <span class="math display">\[\begin{eqnarray}
+H^{\langle 0\rangle} &amp;:&amp; \phi = \phi_0,
+\\
+H^{\langle 1\rangle} &amp;:&amp; \mbox{$\phi$ unconstrained}.
+\end{eqnarray}\]</span></p></li>
+<li><p>We can check what the 95% cutoff is for a chi-squared distribution with one degree of freedom,</p></li>
+</ul>
+<pre class="r"><code>qchisq(0.95,df=1)</code></pre>
+<pre><code>## [1] 3.841459</code></pre>
+<ul>
+<li><p>Wilks’s theorem then gives us a hypothesis test with approximate size <span class="math inline">\(5\%\)</span> that rejects <span class="math inline">\(H^{\langle 0\rangle}\)</span> if <span class="math inline">\(\ell_\mathrm{profile}(\hat\phi)-\ell_\mathrm{profile}(\phi_0)&lt;3.84/2\)</span>.</p></li>
+<li><p>It follows that, with probability <span class="math inline">\(95\%\)</span>, the true value of <span class="math inline">\(\phi\)</span> falls in the set <span class="math display">\[\big\{\phi: \ell_\mathrm{profile}(\hat\phi)-\ell_\mathrm{profile}(\phi)&lt;1.92\big\}.\]</span> So, we have constructed a profile likelihood confidence interval, consisting of the set of points on the profile likelihood within 1.92 log units of the maximum.</p></li>
+<li><p>This is an example of <a href="http://www.stat.nus.edu.sg/~wloh/lecture17.pdf">a general duality between confidence intervals and hypothesis tests</a>.</p></li>
+</ul>
+<p><br></p>
+<hr />
+<hr />
+</div>
+<div id="akaikes-information-criterion-aic" class="section level4">
+<h4>Akaike’s information criterion (AIC)</h4>
+<ul>
+<li><p>Likelihood ratio tests provide an approach to model selection for nested hypotheses, but what do we do when models are not nested?</p></li>
+<li><p>A more general approach is to compare likelihoods of different models by penalizing the likelihood of each model by a measure of its complexity.</p></li>
+<li><p>Akaike’s information criterion <strong>AIC</strong> is given by <span class="math display">\[ \textrm{AIC} = -2\,\ell(\hat{\theta}) + 2\,D\]</span> “Minus twice the maximized log likelihood plus twice the number of parameters.”</p></li>
+<li><p>We are invited to select the model with the lowest AIC score.</p></li>
+<li><p>AIC was derived as an approach to minimizing prediction error. Increasing the number of parameters leads to additional <strong>overfitting</strong> which can decrease predictive skill of the fitted model.</p></li>
+<li><p>Viewed as a hypothesis test, AIC may have weak statistical properties. It can be a mistake to interpret AIC by making a claim that the favored model has been shown to provides a superior explanation of the data. However, viewed as a way to select a model with reasonable predictive skill from a range of possibilities, it is often useful.</p></li>
+<li><p>AIC does not penalize model complexity beyond the consequence of reduced predictive skill due to overfitting. One can penalize complexity by incorporating a more severe penalty that the <span class="math inline">\(2D\)</span> term above, such as via <a href="https://en.wikipedia.org/wiki/Bayesian_information_criterion">BIC</a>.</p></li>
+<li><p>A practical approach is to use AIC, while taking care to view it as a procedure to select a reasonable predictive model and not as a formal hypothesis test.</p></li>
+</ul>
+<p><br></p>
+<hr />
+<hr />
 <!---
-
-------
-
-------
 
 ## Biological interpretation of parameter estimates
 
@@ -953,6 +957,8 @@ However, this risks suppressing the warning that the data were trying to give ab
 
 --->
 <hr />
+</div>
+</div>
 </div>
 <div id="back-to-course-homepage" class="section level2">
 <h2><a href="../index.html">Back to course homepage</a></h2>
