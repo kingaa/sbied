@@ -1654,43 +1654,37 @@ $(document).ready(function () {
 <ul>
 <li><a href="#objectives">Objectives</a></li>
 <li><a href="#introduction">Introduction</a></li>
-<li><a href="#compartmental-models-in-theory">Compartmental models in theory</a><ul>
+<li><a href="#compartmental-models-as-deterministic-or-stochastic-markov-models.">Compartmental models as deterministic or stochastic Markov models.</a><ul>
 <li><a href="#the-deterministic-version-of-the-sir-model">The deterministic version of the SIR model</a></li>
 <li><a href="#the-simple-continuous-time-markov-chain-version-of-the-sir-model">The simple continuous-time Markov chain version of the SIR model</a><ul>
 <li><a href="#optional-exercise-from-markov-chain-to-ode">Optional Exercise: From Markov chain to ODE</a></li>
 </ul></li>
-<li><a href="#eulers-method-for-an-ode">Euler’s method for an ODE</a></li>
-<li><a href="#some-comments-on-using-continuous-time-models-and-discretized-approximations">Some comments on using continuous-time models and discretized approximations</a></li>
+</ul></li>
+<li><a href="#eulers-method-for-numerical-solution-of-dynamic-models">Euler’s method for numerical solution of dynamic models</a><ul>
 <li><a href="#eulers-method-for-a-discrete-valued-sir-model">Euler’s method for a discrete-valued SIR model</a></li>
-<li><a href="#compartmental-models-via-stochastic-differential-equations-sde">Compartmental models via stochastic differential equations (SDE)</a><ul>
+<li><a href="#euler-methods-for-stochastic-differential-equations-sde-models">Euler methods for stochastic differential equations (SDE) models</a><ul>
 <li><a href="#optional-exercise-sde-version-of-the-sir-model">Optional Exercise: SDE version of the SIR model</a></li>
 </ul></li>
 <li><a href="#eulers-method-vs.gillespies-algorithm">Euler’s method vs. Gillespie’s algorithm</a></li>
+<li><a href="#some-comments-on-discrete-time-numerical-solutions-to-dynamic-systems">Some comments on discrete-time numerical solutions to dynamic systems</a></li>
 </ul></li>
 <li><a href="#compartmental-models-in-pomp.">Compartmental models in <strong>pomp</strong>.</a><ul>
 <li><a href="#the-consett-measles-outbreak">The Consett measles outbreak</a></li>
-<li><a href="#a-first-pomp-model">A first POMP model</a></li>
-<li><a href="#implementing-the-model">Implementing the model</a><ul>
-<li><a href="#using-c-snippets">Using C snippets</a></li>
-</ul></li>
+<li><a href="#a-simple-pomp-model-for-measles">A simple POMP model for measles</a></li>
+<li><a href="#implementing-the-model">Implementing the model</a></li>
+<li><a href="#specifying-model-components-using-c-snippets">Specifying model components using C snippets</a></li>
 <li><a href="#testing-the-model-simulations">Testing the model: simulations</a></li>
 <li><a href="#exercises">Exercises</a><ul>
 <li><a href="#basic-exercise-explore-the-sir-model">Basic Exercise: Explore the SIR model</a></li>
 <li><a href="#basic-exercise-the-seir-model">Basic Exercise: The SEIR model</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#back-to-course-homepage"><span>Back to course homepage</span></a></li>
-<li><a href="#r-codes-for-this-document"><span><strong>R</strong> codes for this document</span></a></li>
+<li><a href="#acknowledgments">Acknowledgments</a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
 
 
-<hr />
-<p><a href="http://creativecommons.org/licenses/by-nc/4.0/">Licensed under the Creative Commons Attribution-NonCommercial license</a>. Please share and remix noncommercially, mentioning its origin.<br />
-<img src="data:image/png;base64,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" alt="CC-BY_NC" /></p>
-<p>Produced with <strong>R</strong> version 3.6.0 and <strong>pomp</strong> version 2.2.0.0.</p>
-<hr />
 <hr />
 <div id="objectives" class="section level2">
 <h2>Objectives</h2>
@@ -1710,7 +1704,7 @@ $(document).ready(function () {
 <ul>
 <li><p>Compartmental models are of great utility in many disciplines and very much so in epidemiology.</p></li>
 <li><p>We start by deriving deterministic and stochastic versions of the susceptible-infected-recovered (SIR) model of disease transmission dynamics in a closed population.</p></li>
-<li><p>In so doing, we will use notation that generalizes to more complex systems <a href="http://dx.doi.org/10.1214/08-AOAS201"><span class="citation">(Bretó et al. 2009)</span></a>.</p></li>
+<li><p>In so doing, we develop notation that generalizes to systems of greater complexity <a href="http://dx.doi.org/10.1214/08-AOAS201"><span class="citation">(Bretó et al. 2009)</span></a>.</p></li>
 </ul>
 <div class="figure" style="text-align: center">
 <img src="data:image/png;base64,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" alt="Diagram of the SIR compartmental model." width="600" />
@@ -1721,25 +1715,22 @@ Diagram of the SIR compartmental model.
 <ul>
 <li><p>Let <span class="math inline">\(S(t)\)</span>, <span class="math inline">\(I(t)\)</span>, and <span class="math inline">\(R(t)\)</span> represent, respectively, the number of susceptible hosts, the number of infected (and, by assumption, infectious) hosts, and the number of recovered or removed hosts. This corresponds to placing individuals into one of the compartments S, I and R in the diagram.</p></li>
 <li><p>We suppose that each arrow has an associated <em>per capita</em> rate, so here there is a rate <span class="math inline">\(\mu_{SI}\)</span> at which each individual in S transitions to I, and <span class="math inline">\(\mu_{IR}\)</span> at which each individual in I transitions to R.</p></li>
-<li>To account for demography (birth/death/migration) we allow the possibility of a source and sink compartment, which is not represented on the flow diagram above.</li>
-<li>We write <span class="math inline">\(\mu_{{\small\bullet} S}\)</span> for a rate of births into S.</li>
+<li><p>To account for demography (birth/death/migration) we allow the possibility of a source and sink compartment, which is not represented on the flow diagram above.</p></li>
+<li><p>We write <span class="math inline">\(\mu_{{\small\bullet} S}\)</span> for a rate of births into S.</p></li>
 <li><p>Mortality rates are denoted by <span class="math inline">\(\mu_{S{\small\bullet}}\)</span>, <span class="math inline">\(\mu_{I{\small\bullet}}\)</span>, <span class="math inline">\(\mu_{R{\small\bullet}}\)</span>.</p></li>
 <li><p>The rates may be either constant or varying. In particular, for a simple SIR model, the recovery rate <span class="math inline">\(\mu_{IR}\)</span> is a constant but the infection rate has the time-varying form <span class="math display">\[\mu_{SI}(t)=\beta\,\frac{I(t)}{N(t)},\]</span> with <span class="math inline">\(\beta\)</span> being the <em>contact rate</em> and <span class="math inline">\(N\)</span> the total size of the host population. In the present case, since the population is closed, we set <span class="math display">\[\mu_{{\small\bullet} S}=\mu_{S{\small\bullet}}=\mu_{I{\small\bullet}}=\mu_{R{\small\bullet}}=0.\]</span></p></li>
 <li><p>In general, it turns out to be convenient to keep track of the flows between compartments as well as the number of individuals in each compartment.</p></li>
 <li><p>Let <span class="math inline">\(N_{SI}(t)\)</span> count the number of individuals who have transitioned from <span class="math inline">\(S\)</span> to <span class="math inline">\(I\)</span> by time <span class="math inline">\(t\)</span>.</p></li>
 <li><p>We say that <span class="math inline">\(N_{SI}(t)\)</span> is a <em>counting process</em>.</p></li>
 <li><p>A similarly constructed process <span class="math inline">\(N_{IR}(t)\)</span> counts individuals transitioning from I to R.</p></li>
-<li>To include demography, we could keep track of birth and death events by the counting processes <span class="math inline">\(N_{{\small\bullet} S}(t)\)</span>, <span class="math inline">\(N_{S{\small\bullet}}(t)\)</span>, <span class="math inline">\(N_{I{\small\bullet}}(t)\)</span>, <span class="math inline">\(N_{R{\small\bullet}}(t)\)</span>.</li>
-<li>For discrete population compartment models, the flow counting processes are non-decreasing and integer valued.</li>
+<li><p>To include demography, we could keep track of birth and death events by the counting processes <span class="math inline">\(N_{{\small\bullet} S}(t)\)</span>, <span class="math inline">\(N_{S{\small\bullet}}(t)\)</span>, <span class="math inline">\(N_{I{\small\bullet}}(t)\)</span>, <span class="math inline">\(N_{R{\small\bullet}}(t)\)</span>.</p></li>
+<li><p>For discrete population compartment models, the flow counting processes are non-decreasing and integer valued.</p></li>
 <li><p>For continuous population compartment models, the flow counting processes are non-decreasing and real valued.</p></li>
-<li><p>The number of hosts in each compartment can be computed via these counting processes.</p></li>
-</ul>
-<p>Ignoring demography, we have: <span class="math display">\[\begin{aligned} 
+<li><p>The number of hosts in each compartment can be computed via these counting processes. Ignoring demography, we have: <span class="math display">\[\begin{aligned} 
 S(t) &amp;= S(0) - N_{SI}(t)\\
 I(t) &amp;= I(0) + N_{SI}(t) - N_{IR}(t)\\
 R(t) &amp;= R(0) + N_{IR}(t)\\
-\end{aligned}\]</span></p>
-<ul>
+\end{aligned}\]</span></p></li>
 <li><p>These equations represent a kind of conservation law. Over any finite time interval <span class="math inline">\([t,t+\delta)\)</span>, we have <span class="math display">\[\begin{aligned} 
 {\Delta}{S} &amp;= -{\Delta}{N}_{SI}\\
 {\Delta}{I} &amp;= \phantom{-}{\Delta}{N}_{SI}-{\Delta}{N}_{IR}\\
@@ -1751,14 +1742,26 @@ R(t) &amp;= R(0) + N_{IR}(t)\\
 <hr />
 <hr />
 </div>
-<div id="compartmental-models-in-theory" class="section level2">
-<h2>Compartmental models in theory</h2>
+<div id="compartmental-models-as-deterministic-or-stochastic-markov-models." class="section level2">
+<h2>Compartmental models as deterministic or stochastic Markov models.</h2>
+<ul>
+<li><p>We suppose that flow rates between compartments depend only on the current state of the system. In this case, a compartmental model is Markovian.</p></li>
+<li><p>The deterministic, continuous time, continuous population version of a compartmental model is given by the solution to a system of coupled ordinary differential equation (ODEs).</p></li>
+<li><p>We will see various ways to include stochasticity (i.e., noise) in a compartmental model.</p></li>
+<li><p>Removing noise from a stochastic model to obtain an ODE model gives a <em>deterministic skeleton</em> of the stochastic model.</p></li>
+</ul>
+<p><br></p>
+<hr />
+<hr />
 <div id="the-deterministic-version-of-the-sir-model" class="section level3">
 <h3>The deterministic version of the SIR model</h3>
-<p>Together with initial conditions specifying <span class="math inline">\(S(0)\)</span>, <span class="math inline">\(I(0)\)</span> and <span class="math inline">\(R(0)\)</span>, we just need to write down ordinary differential equations (ODE) for the flow counting processes. These are, <span class="math display">\[\begin{gathered}
+<ul>
+<li><p>Together with initial conditions specifying <span class="math inline">\(S(0)\)</span>, <span class="math inline">\(I(0)\)</span> and <span class="math inline">\(R(0)\)</span>, we just need to write down ordinary differential equations (ODE) for the flow counting processes. These are, <span class="math display">\[\begin{gathered}
 \frac{dN_{SI}}{dt} = \mu_{SI}(t)\,S(t), \qquad
 \frac{dN_{IR}}{dt} = \mu_{IR}\,I(t).
-\end{gathered}\]</span></p>
+\end{gathered}\]</span></p></li>
+<li><p>Given initial values, all the future states in the model are exactly specified. This is suitable for highly predictable systems.</p></li>
+</ul>
 <p><br></p>
 <hr />
 <hr />
@@ -1786,11 +1789,14 @@ R(t) &amp;= R(0) + N_{IR}(t)\\
 <h4>Optional Exercise: From Markov chain to ODE</h4>
 <p>Find the expected value of <span class="math inline">\(N_{SI}(t+\delta)-N_{SI}(t)\)</span> and <span class="math inline">\(N_{IR}(t+\delta)-N_{IR}(t)\)</span> given the current state, <span class="math inline">\(S(t)\)</span>, <span class="math inline">\(I(t)\)</span> and <span class="math inline">\(R(t)\)</span>. Take the limit as <span class="math inline">\(\delta\to 0\)</span> and show that this gives the ODE model.</p>
 <p><a href="./exer_ctmc_ode.html#optional-exercise-from-markov-chain-to-ode">Worked solution to the Optional Exercise</a></p>
+<p><br></p>
+<hr />
 <hr />
 </div>
 </div>
-<div id="eulers-method-for-an-ode" class="section level3">
-<h3>Euler’s method for an ODE</h3>
+</div>
+<div id="eulers-method-for-numerical-solution-of-dynamic-models" class="section level2">
+<h2>Euler’s method for numerical solution of dynamic models</h2>
 <p><a href="https://en.wikipedia.org/wiki/Leonhard_Euler">Euler</a> took the following approach to numeric solution of an ODE:</p>
 <ul>
 <li><p>He wanted to investigate an ODE <span class="math inline">\(\frac{dx}{dt}=h(x,t)\)</span> with an initial condition <span class="math inline">\(x(t_0)=x_0\)</span>.</p></li>
@@ -1803,11 +1809,11 @@ R(t) &amp;= R(0) + N_{IR}(t)\\
 <li><p>We now have a numerical scheme stepping forward in time increments of size <span class="math inline">\(\delta\)</span> which can be readily evaluated by computer.</p></li>
 <li><p><a href="https://en.wikipedia.org/wiki/Euler_method">Mathematical analysis of Euler’s method</a> says that, as long as the function <span class="math inline">\(h(x)\)</span> is not too exotic, then <span class="math inline">\(x(t)\)</span> is well approximated by <span class="math inline">\(\tilde x(t)\)</span> when the discretization time-step, <span class="math inline">\(\delta\)</span>, is sufficiently small.</p></li>
 <li><p>Euler’s method is not the only numerical scheme to solve ODEs. More advanced schemes have better convergence properties, meaning that the numerical approximation is closer to <span class="math inline">\(x(t)\)</span>.</p></li>
-<li>There are 3 reasons we choose to lean heavily on Euler’s method:
+<li><p>There are 3 reasons we choose to lean heavily on Euler’s method:</p>
 <ol style="list-style-type: decimal">
-<li>Euler’s method is the simplest (the KISS principle).</li>
-<li>Euler’s method extends naturally to stochastic models, both continuous-time Markov chains models and stochastic differential equation (SDE) models.</li>
-<li>In the context of data analysis, close approximation of the numerical solutions to a continuous-time model is less important than may be supposed, a topic discussed later.</li>
+<li><p>Euler’s method is the simplest (the KISS principle).</p></li>
+<li><p>Euler’s method extends naturally to stochastic models, both continuous-time Markov chains models and stochastic differential equation (SDE) models.</p></li>
+<li><p>In the context of data analysis, close approximation of the numerical solutions to a continuous-time model is less important than may be supposed, a topic discussed later.</p></li>
 </ol></li>
 </ul>
 <hr />
@@ -1820,26 +1826,6 @@ Euler approximations <span class="math inline">\(x=\tilde x(t)\)</span> with ste
 <p><br></p>
 <hr />
 <hr />
-</div>
-<div id="some-comments-on-using-continuous-time-models-and-discretized-approximations" class="section level3">
-<h3>Some comments on using continuous-time models and discretized approximations</h3>
-<ul>
-<li><p>In some physical situations, a system follows an ODE model closely. For example, Newton’s laws provide a very good approximation to the motions of celestial bodies.</p></li>
-<li><p>In many biological situations, ODE models become good approximations to reality only at relatively large scales. On small temporal scales, models cannot usually capture the full scope of biological variation and biological complexity.</p></li>
-<li><p>If we are going to expect substantial error in using <span class="math inline">\(x(t)\)</span> to model a biological system, maybe the numerical solution <span class="math inline">\(\tilde x(t)\)</span> represents the system being modeled as well as <span class="math inline">\(x(t)\)</span> does.</p></li>
-<li><p>If our model fitting, model investigation, and final conclusions are all based on our numerical solution <span class="math inline">\(\tilde x(t)\)</span> (e.g., we are sticking entirely to simulation-based methods) then we are most immediately concerned with how well <span class="math inline">\(\tilde x(t)\)</span> describes the system of interest.<br />
-<span class="math inline">\(\tilde x(t)\)</span> becomes more important than the original model, <span class="math inline">\(x(t)\)</span>.</p></li>
-<li><p>When following this perspective, it is important that one fully describe the numerical model <span class="math inline">\(\tilde x(t)\)</span>.</p></li>
-<li><p>From this point of view, then, the main advantage of the continuous-time model <span class="math inline">\(x(t)\)</span> is then that it gives a succinct way to describe how <span class="math inline">\(\tilde x(t)\)</span> was constructed.</p></li>
-<li>All numerical methods are, ultimately, discretizations.</li>
-<li>For continuous-time modeling, we usually aim to set <span class="math inline">\(\delta\)</span> small compared to the timescale of the process being modeled, so that the choice of <span class="math inline">\(\delta\)</span> does not play an explicit role in the interpretation of the model.</li>
-<li>Epidemiologically, setting <span class="math inline">\(\delta\)</span> to be a day, or an hour, can be quite different from setting <span class="math inline">\(\delta\)</span> to be two weeks or a month.</li>
-<li><p>Putting more emphasis on the scientific role of the numerical solution itself reminds you that the numerical solution has to do more than approximate a target model in some asymptotic sense: the numerical solution should be a sensible model in its own right.</p></li>
-</ul>
-<p><br></p>
-<hr />
-<hr />
-</div>
 <div id="eulers-method-for-a-discrete-valued-sir-model" class="section level3">
 <h3>Euler’s method for a discrete-valued SIR model</h3>
 <ul>
@@ -1854,22 +1840,30 @@ Euler approximations <span class="math inline">\(x=\tilde x(t)\)</span> with ste
 {\Delta}{\tilde R} &amp;= {\Delta}{\tilde N}_{IR},
 \end{aligned}\]</span></p></li>
 <li><p>Let’s focus <span class="math inline">\(N_{SI}(t)\)</span>; the same methods can also be applied to <span class="math inline">\(N_{IR}(t)\)</span>.</p></li>
-<li>Here are three stochastic Euler schemes for <span class="math inline">\(N_{SI}\)</span>:
+<li><p>Three stochastic Euler schemes for <span class="math inline">\(N_{SI}\)</span> are enumerated below. Conceptually, it is simplest to think of schemes (1) and (2). Numerically, we prefer to use (3).</p></li>
+</ul>
 <ol style="list-style-type: decimal">
-<li>Poisson increments: <span class="math display">\[{\Delta}{\tilde N}_{SI}\;\sim\;\mathrm{Poisson}\left(\tilde \mu_{SI}(t)\,\tilde S(t)\,\delta\right),\]</span> where <span class="math inline">\(\mathrm{Poisson}\left(\mu\right)\)</span> is the Poisson distribution with mean <span class="math inline">\(\mu\)</span> and <span class="math display">\[\tilde\mu_{SI}(t)=\beta\,\frac{\tilde I(t)}{N}.\]</span></li>
-<li>Binomial increments with linear probability: <span class="math display">\[{\Delta}{\tilde N}_{SI}\;\sim\;\mathrm{Binomial}\left(\tilde{S}(t),\tilde\mu_{SI}(t)\,\delta\right),\]</span> where <span class="math inline">\(\mathrm{Binomial}\left(n,p\right)\)</span> is the binomial distribution with mean <span class="math inline">\(n\,p\)</span> and variance <span class="math inline">\(n\,p\,(1-p)\)</span>.</li>
-<li>Binomial increments with exponential decaying probability: <span class="math display">\[{\Delta}{\tilde{N}}_{SI}\;\sim\;\mathrm{Binomial}\left(\tilde{S}(t),1-e^{-\tilde{\mu}_{SI}(t)\,\delta}\right).\]</span></li>
-</ol></li>
-<li><p>Note that these schemes all become equivalent as <span class="math inline">\(\delta\to 0\)</span>.</p></li>
-<li><p>What are the advantages and disadvantages of these different schemes? Conceptually, it is simplest to think of (1) or (2). Numerically, it is usually preferable to implement (3).</p></li>
+<li><p>Poisson increments: <span class="math display">\[{\Delta}{\tilde N}_{SI}\;\sim\;\mathrm{Poisson}\left(\tilde \mu_{SI}(t)\,\tilde S(t)\,\delta\right),\]</span> where <span class="math inline">\(\mathrm{Poisson}\left(\mu\right)\)</span> is the Poisson distribution with mean <span class="math inline">\(\mu\)</span> and <span class="math display">\[\tilde\mu_{SI}(t)=\beta\,\frac{\tilde I(t)}{N}.\]</span></p></li>
+<li><p>Binomial increments with linear probability: <span class="math display">\[{\Delta}{\tilde N}_{SI}\;\sim\;\mathrm{Binomial}\left(\tilde{S}(t),\tilde\mu_{SI}(t)\,\delta\right),\]</span> where <span class="math inline">\(\mathrm{Binomial}\left(n,p\right)\)</span> is the binomial distribution with mean <span class="math inline">\(n\,p\)</span> and variance <span class="math inline">\(n\,p\,(1-p)\)</span>.</p></li>
+<li><p>Binomial increments with exponential decaying probability: <span class="math display">\[{\Delta}{\tilde{N}}_{SI}\;\sim\;\mathrm{Binomial}\left(\tilde{S}(t),1-e^{-\tilde{\mu}_{SI}(t)\,\delta}\right).\]</span></p></li>
+</ol>
+<ul>
+<li><p>These schemes all become equivalent as <span class="math inline">\(\delta\to 0\)</span>.</p></li>
+<li><p>Why is (3) usually advantageous in practice?</p></li>
 </ul>
 <p><br></p>
 <hr />
 <hr />
 </div>
-<div id="compartmental-models-via-stochastic-differential-equations-sde" class="section level3">
-<h3>Compartmental models via stochastic differential equations (SDE)</h3>
-<p>The Euler method extends naturally to stochastic differential equations. A natural way to add stochastic variation to an ODE <span class="math inline">\(dx/dt=h(x)\)</span> is <span class="math display">\[\frac{dX}{dt}=h(X)+\sigma\,\frac{dB}{dt}\]</span> where <span class="math inline">\(B(t)\)</span> is Brownian motion and so <span class="math inline">\(dB/dt\)</span> is Gaussian white noise. The so-called Euler-Maruyama approximation <span class="math inline">\(\tilde X\)</span> is generated by <span class="math display">\[\tilde X(\tilde t_{k+1}) = \tilde X(\tilde t_k) + \delta\,h\big(\tilde X(\tilde t_k)\big) + \sigma \sqrt{\delta} \, Z_k\]</span> where <span class="math inline">\(Z_1,Z_2,\dots\)</span> is a sequence of independent standard normal random variables, i.e., <span class="math inline">\(Z_k\sim\mathrm{Normal}\left(0,1\right)\)</span>. Although SDEs are often considered an advanced topic in probability, the Euler approximation doesn’t demand much more than familiarity with the normal distribution.</p>
+<div id="euler-methods-for-stochastic-differential-equations-sde-models" class="section level3">
+<h3>Euler methods for stochastic differential equations (SDE) models</h3>
+<ul>
+<li><p>A natural way to add stochastic variation to an ODE <span class="math inline">\(dx/dt=h(x)\)</span> is <span class="math display">\[\frac{dX}{dt}=h(X)+\sigma\,\frac{dB}{dt}\]</span> where <span class="math inline">\(B(t)\)</span> is Brownian motion and so <span class="math inline">\(dB/dt\)</span> is Gaussian white noise.</p></li>
+<li><p>This is called a stochastic differential equation (SDE).</p></li>
+<li><p>The Euler method extends naturally to SDE models.</p></li>
+<li><p>The approximation <span class="math inline">\(\tilde X\)</span> is generated by <span class="math display">\[\tilde X(\tilde t_{k+1}) = \tilde X(\tilde t_k) + \delta\,h\big(\tilde X(\tilde t_k)\big) + \sigma \sqrt{\delta} \, Z_k\]</span> where <span class="math inline">\(Z_1,Z_2,\dots\)</span> is a sequence of independent standard normal random variables, i.e., <span class="math inline">\(Z_k\sim\mathrm{Normal}\left(0,1\right)\)</span>.</p></li>
+<li><p>SDEs are often considered an advanced topic in probability. However, working with SDE models specified by Euler solutions does not require advanced probability techniques. We only need familiarity with the normal distribution.</p></li>
+</ul>
 <p><br></p>
 <hr />
 <hr />
@@ -1891,6 +1885,25 @@ Euler approximations <span class="math inline">\(x=\tilde x(t)\)</span> with ste
 <li><p>When would you prefer an implementation of Gillespie’s algorithm to an Euler solution?</p></li>
 <li><p>Numerically, Gillespie’s algorithm is often approximated using so-called <a href="https://en.wikipedia.org/wiki/Tau-leaping"><span class="math inline">\(\tau\)</span>-leaping</a> methods <span class="citation">(Gillespie 2001)</span>, which are closely related to Euler’s approach with <span class="math inline">\(\delta\)</span> being <span class="math inline">\(\tau\)</span>.</p></li>
 <li><p>Indeed, an Euler solution for a continuous time Markov chain is sometimes called a Gillespie tau-leaping method.</p></li>
+</ul>
+<p><br></p>
+<hr />
+<hr />
+</div>
+<div id="some-comments-on-discrete-time-numerical-solutions-to-dynamic-systems" class="section level3">
+<h3>Some comments on discrete-time numerical solutions to dynamic systems</h3>
+<ul>
+<li><p>In some physical situations, a system follows an ODE model closely. For example, Newton’s laws provide a very good approximation to the motions of celestial bodies.</p></li>
+<li><p>In many biological situations, ODE models become good approximations to reality only at relatively large scales. On small temporal scales, models cannot usually capture the full scope of biological variation and biological complexity.</p></li>
+<li><p>If we expect substantial error in using <span class="math inline">\(x(t)\)</span> to model a biological system, maybe the numerical solution <span class="math inline">\(\tilde x(t)\)</span> represents the biological system as well as <span class="math inline">\(x(t)\)</span> does.</p></li>
+<li><p>If our model fitting, model investigation, and final conclusions are all based on our numerical solution <span class="math inline">\(\tilde x(t)\)</span> (e.g., we are sticking entirely to simulation-based methods) then we are most immediately concerned with how well <span class="math inline">\(\tilde x(t)\)</span> describes the system of interest.</p></li>
+<li><p><span class="math inline">\(\tilde x(t)\)</span> may be more important than the original model, <span class="math inline">\(x(t)\)</span>.</p></li>
+<li><p>When following this perspective, it is important that one fully describe the numerical model <span class="math inline">\(\tilde x(t)\)</span>.</p></li>
+<li><p>From this point of view, the role of the continuous-time model <span class="math inline">\(x(t)\)</span> is to provide a succinct way to describe how <span class="math inline">\(\tilde x(t)\)</span> was constructed.</p></li>
+<li><p>All numerical methods are, ultimately, discretizations.</p></li>
+<li><p>For continuous-time modeling, we usually aim to set <span class="math inline">\(\delta\)</span> small compared to the timescale of the process being modeled, so that the choice of <span class="math inline">\(\delta\)</span> does not play an explicit role in the interpretation of the model.</p></li>
+<li><p>Epidemiologically, setting <span class="math inline">\(\delta\)</span> to be a day, or an hour, can be quite different from setting <span class="math inline">\(\delta\)</span> to be two weeks or a month.</p></li>
+<li><p>Putting emphasis on the scientific role of the numerical solution is a reminder that the numerical solution has to do more than approximate a target model in a limit as <span class="math inline">\(\delta\to 0\)</span>. The numerical solution should be a sensible model in its own right for the value of <span class="math inline">\(\delta\)</span> being used.</p></li>
 </ul>
 <p><br></p>
 <hr />
@@ -1921,8 +1934,8 @@ as.data.frame(meas)</code></pre>
 <hr />
 <hr />
 </div>
-<div id="a-first-pomp-model" class="section level3">
-<h3>A first POMP model</h3>
+<div id="a-simple-pomp-model-for-measles" class="section level3">
+<h3>A simple POMP model for measles</h3>
 <ul>
 <li><p>These are incidence data: The <code>reports</code> variable counts the number of reports of new measles cases each week.</p></li>
 <li><p>Let us model the outbreak using the simple SIR model.</p></li>
@@ -2014,8 +2027,12 @@ rmeas &lt;- function (H, rho, ...) {
 <li>We then put these into our <code>pomp</code> object:</li>
 </ul>
 <pre class="r"><code>measSIR %&gt;% pomp(rmeasure=rmeas,dmeasure=dmeas) -&gt; measSIR</code></pre>
-<div id="using-c-snippets" class="section level4">
-<h4>Using C snippets</h4>
+<p><br></p>
+<hr />
+<hr />
+</div>
+<div id="specifying-model-components-using-c-snippets" class="section level3">
+<h3>Specifying model components using C snippets</h3>
 <ul>
 <li><p>Although we can always specify basic model components using <strong>R</strong> functions, as above, we’ll typically want the computational speed up that we can obtain only by using compiled native code.</p></li>
 <li><p><strong>pomp</strong> provides a facility for doing so with ease, using <em>C snippets</em>.</p></li>
@@ -2064,7 +2081,6 @@ rmeas &lt;- Csnippet(&quot;
 <hr />
 <hr />
 </div>
-</div>
 <div id="testing-the-model-simulations" class="section level3">
 <h3>Testing the model: simulations</h3>
 <ul>
@@ -2112,11 +2128,20 @@ sims %&gt;%
 </div>
 </div>
 </div>
-<div id="back-to-course-homepage" class="section level2">
-<h2><a href="../index.html">Back to course homepage</a></h2>
-</div>
-<div id="r-codes-for-this-document" class="section level2">
-<h2><a href="http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/stochsim.R"><strong>R</strong> codes for this document</a></h2>
+<div id="acknowledgments" class="section level2">
+<h2>Acknowledgments</h2>
+<ul>
+<li><p>This tutorial is prepared for the <a href="https://kingaa.github.io/sbied/">Simulation-based Inference for Epidemiological Dynamics</a> module at 11th Annual Summer Institute in Statistics and Modeling in Infectious Diseases (<a href="https://www.biostat.washington.edu/suminst/sismid">SISMID 2019</a>). Previous versions were presented at SISMID by ELI and AAK in 2015, 2016, 2017, 2018. Carles Breto assisted in 2018.</p></li>
+<li><p>Licensed under the <a href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons attribution-noncommercial license</a>. Please share and remix noncommercially, mentioning its origin.<br />
+<img src="data:image/png;base64,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" alt="CC-BY_NC" /></p></li>
+<li><p>This document was produced using <strong>R</strong> version 3.6.0, <strong>panelPomp</strong> 0.9.1.4 and <strong>pomp</strong> 2.2.0.0</p></li>
+</ul>
+<h2>
+<a href="../index.html">Back to course homepage</a>
+</h2>
+<h2>
+<a href="http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/stochsim.R"><strong>R</strong> codes for this document</a>
+</h2>
 <hr />
 </div>
 <div id="references" class="section level2 unnumbered">

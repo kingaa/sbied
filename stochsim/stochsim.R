@@ -24,17 +24,6 @@
 #' 
 #' --------------
 #' 
-#' 
-#' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-#' Please share and remix noncommercially, mentioning its origin.  
-#' ![CC-BY_NC](../graphics/cc-by-nc.png)
-#' 
-#' Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
-#' 
-#' -------------
-#' 
-#' --------------
-#' 
 
 #' 
 ## ----prelims,echo=F,cache=F----------------------------------------------
@@ -70,7 +59,7 @@ set.seed(594709947L)
 #' 
 #' - We start by deriving deterministic and stochastic versions of the susceptible-infected-recovered (SIR) model of disease transmission dynamics in a closed population.
 #' 
-#' - In so doing, we will use notation that generalizes to more complex systems [[@breto09]](http://dx.doi.org/10.1214/08-AOAS201).
+#' - In so doing, we develop notation that generalizes to systems of greater complexity [[@breto09]](http://dx.doi.org/10.1214/08-AOAS201).
 #' 
 
 #' 
@@ -80,7 +69,9 @@ set.seed(594709947L)
 #' - We suppose that each arrow has an associated *per capita* rate, so here there is a rate $\mu_{SI}$ at which each individual in S transitions to I, and $\mu_{IR}$ at which each individual in I transitions to R. 
 #' 
 #' - To account for demography (birth/death/migration) we allow the possibility of a source and sink compartment, which is not represented on the flow diagram above.
+#' 
 #' - We write $\mu_{{\small\bullet} S}$ for a rate of births into S.
+#' 
 #' - Mortality rates are denoted by $\mu_{S{\small\bullet}}$, $\mu_{I{\small\bullet}}$, $\mu_{R{\small\bullet}}$.
 #' 
 #' - The rates may be either constant or varying. In particular, for a simple SIR model, the recovery rate $\mu_{IR}$ is a constant but the infection rate has the time-varying form $$\mu_{SI}(t)=\beta\,\frac{I(t)}{N(t)},$$ with $\beta$ being the _contact rate_ and $N$ the total size of the host population.
@@ -96,12 +87,12 @@ set.seed(594709947L)
 #' - A similarly constructed process $N_{IR}(t)$ counts individuals transitioning from I to R.
 #' 
 #' - To include demography, we could keep track of birth and death events by the counting processes $N_{{\small\bullet} S}(t)$, $N_{S{\small\bullet}}(t)$, $N_{I{\small\bullet}}(t)$, $N_{R{\small\bullet}}(t)$.
+#' 
 #' - For discrete population compartment models, the flow counting processes are non-decreasing and integer valued.
+#' 
 #' - For continuous population compartment models, the flow counting processes are non-decreasing and real valued.
 #' 
-#' - The number of hosts in each compartment can be computed via these counting processes.
-#' 
-#' Ignoring demography, we have: 
+#' - The number of hosts in each compartment can be computed via these counting processes. Ignoring demography, we have: 
 #' $$\begin{aligned} 
 #' S(t) &= S(0) - N_{SI}(t)\\
 #' I(t) &= I(0) + N_{SI}(t) - N_{IR}(t)\\
@@ -124,16 +115,32 @@ set.seed(594709947L)
 #' 
 #' ------
 #' 
-#' ## Compartmental models in theory
+#' ## Compartmental models as deterministic or stochastic Markov models.
+#' 
+#' * We suppose that flow rates between compartments depend only on the current state of the system. In this case,  a compartmental model is Markovian.
+#' 
+#' * The deterministic, continuous time, continuous population version of a compartmental model is given by the solution to a system of coupled ordinary differential equation (ODEs).
+#' 
+#' * We will see various ways to include stochasticity (i.e., noise) in a compartmental model.
+#' 
+#' * Removing noise from a stochastic model to obtain an ODE model gives a _deterministic skeleton_ of the stochastic model.
+#' 
+#' <br>
+#' 
+#' ------
+#' 
+#' ------
 #' 
 #' ### The deterministic version of the SIR model
 #' 
-#' Together with initial conditions specifying $S(0)$, $I(0)$ and $R(0)$, we just need to write down ordinary differential equations (ODE) for the flow counting processes.
+#' * Together with initial conditions specifying $S(0)$, $I(0)$ and $R(0)$, we just need to write down ordinary differential equations (ODE) for the flow counting processes.
 #' These are,
 #' $$\begin{gathered}
 #' \frac{dN_{SI}}{dt} = \mu_{SI}(t)\,S(t), \qquad
 #' \frac{dN_{IR}}{dt} = \mu_{IR}\,I(t).
 #' \end{gathered}$$
+#' 
+#' * Given initial values, all the future states in the model are exactly specified. This is suitable for highly predictable systems. 
 #' 
 #' <br>
 #' 
@@ -181,9 +188,13 @@ set.seed(594709947L)
 #' 
 #' [Worked solution to the Optional Exercise](./exer_ctmc_ode.html#optional-exercise-from-markov-chain-to-ode)
 #' 
+#' <br>
+#' 
 #' --------------------------
 #' 
-#' ### Euler's method for an ODE
+#' -------------------------
+#' 
+#' ## Euler's method for numerical solution of dynamic models
 #' 
 #' [Euler](https://en.wikipedia.org/wiki/Leonhard_Euler) took the following approach to numeric solution of an ODE:
 #' 
@@ -208,8 +219,11 @@ set.seed(594709947L)
 #' - Euler's method is not the only numerical scheme to solve ODEs. More advanced schemes have better convergence properties, meaning that the numerical approximation is closer to $x(t)$.
 #' 
 #' - There are 3 reasons we choose to lean heavily on Euler's method:
+#' 
 #'   1. Euler's method is the simplest (the KISS principle).
+#'   
 #'   2. Euler's method extends naturally to stochastic models, both continuous-time Markov chains models and stochastic differential equation (SDE) models.
+#'   
 #'   3. In the context of data analysis, close approximation of the numerical solutions to a continuous-time model is less important than may be supposed, a topic discussed later.
 #' 
 #' --------------------------
@@ -223,34 +237,6 @@ set.seed(594709947L)
 #' --------
 #' 
 #' 
-#' ### Some comments on using continuous-time models and discretized approximations
-#' 
-#' - In some physical situations, a system follows an ODE model closely. 
-#' For example, Newton's laws provide a very good approximation to the motions of celestial bodies.
-#' 
-#' - In many biological situations, ODE models become good approximations to reality only at relatively large scales. 
-#' On small temporal scales, models cannot usually capture the full scope of biological variation and biological complexity.
-#' 
-#' - If we are going to expect substantial error in using $x(t)$ to model a biological system, maybe the numerical solution $\tilde x(t)$ represents the system being modeled as well as $x(t)$  does.
-#' 
-#' - If our model fitting, model investigation, and final conclusions are all based on our numerical solution  $\tilde x(t)$ (e.g., we are sticking entirely to simulation-based methods) then we are most immediately concerned with how well $\tilde x(t)$ describes the system of interest.  
-#' $\tilde x(t)$ becomes more important than the original model, $x(t)$.
-#' 
-#' - When following this perspective, it is important that one fully describe the numerical model $\tilde x(t)$.
-#' 
-#' -  From this point of view, then, the main advantage of the continuous-time model $x(t)$ is then that it gives a succinct way to describe how $\tilde x(t)$ was constructed.
-#' 
-#' - All numerical methods are, ultimately, discretizations.
-#' + For continuous-time modeling, we usually aim to set $\delta$ small compared to the timescale of the process being modeled, so that the choice of $\delta$ does not play an explicit role in the interpretation of the model.
-#' + Epidemiologically, setting $\delta$ to be a day, or an hour, can be quite different from setting $\delta$ to be two weeks or a month. 
-#' + Putting more emphasis on the scientific role of the numerical solution itself reminds you that the numerical solution has to do more than approximate a target model in some asymptotic sense: 
-#' the numerical solution should be a sensible model in its own right. 
-#' 
-#' <br>
-#' 
-#' -----
-#' 
-#' -----
 #' 
 #' ### Euler's method for a discrete-valued SIR model
 #' 
@@ -272,19 +258,23 @@ set.seed(594709947L)
 #' - Let's focus $N_{SI}(t)$;
 #' the same methods can also be applied to $N_{IR}(t)$.
 #' 
-#' - Here are three stochastic Euler schemes for $N_{SI}$:
-#'   1. Poisson increments:
+#' - Three stochastic Euler schemes for $N_{SI}$ are enumerated below.
+#' Conceptually, it is simplest to think of schemes (1) and (2). 
+#' Numerically, we prefer to use (3). 
+#' 
+#' 
+#' 1. Poisson increments:
 #'   $$\dlta{\tilde N}_{SI}\;\sim\;\dist{Poisson}{\tilde \mu_{SI}(t)\,\tilde S(t)\,\delta},$$ where $\dist{Poisson}{\mu}$ is the Poisson distribution with mean $\mu$ and $$\tilde\mu_{SI}(t)=\beta\,\frac{\tilde I(t)}{N}.$$
-#'   1. Binomial increments with linear probability:
+#'   
+#' 1. Binomial increments with linear probability:
 #'   $$\dlta{\tilde N}_{SI}\;\sim\;\dist{Binomial}{\tilde{S}(t),\tilde\mu_{SI}(t)\,\delta},$$ where $\dist{Binomial}{n,p}$ is the binomial distribution with mean $n\,p$ and variance $n\,p\,(1-p)$.
-#'   1. Binomial increments with exponential decaying probability:
+#'   
+#' 1. Binomial increments with exponential decaying probability:
 #' $$\dlta{\tilde{N}}_{SI}\;\sim\;\dist{Binomial}{\tilde{S}(t),1-e^{-\tilde{\mu}_{SI}(t)\,\delta}}.$$
 #' 
-#' - Note that these schemes all become equivalent as $\delta\to 0$.
+#' - These schemes all become equivalent as $\delta\to 0$.
 #' 
-#' - What are the advantages and disadvantages of these different schemes?
-#' Conceptually, it is simplest to think of (1) or (2). 
-#' Numerically, it is usually preferable to implement (3). 
+#' - Why is (3) usually advantageous in practice?
 #' 
 #' <br>
 #' 
@@ -292,15 +282,21 @@ set.seed(594709947L)
 #' 
 #' ------
 #' 
-#' ### Compartmental models via stochastic differential equations (SDE)
+#' ### Euler methods for stochastic differential equations (SDE) models
 #' 
-#' The Euler method extends naturally to stochastic differential equations. A natural way to add stochastic variation to an ODE $dx/dt=h(x)$ is
+#' * A natural way to add stochastic variation to an ODE $dx/dt=h(x)$ is
 #' $$\frac{dX}{dt}=h(X)+\sigma\,\frac{dB}{dt}$$
 #' where $B(t)$ is Brownian motion and so $dB/dt$ is Gaussian white noise.
-#' The so-called Euler-Maruyama approximation $\tilde X$ is generated by 
+#' 
+#' * This is called a stochastic differential equation (SDE).
+#' 
+#' * The Euler method extends naturally to SDE models.  
+#' 
+#' * The approximation $\tilde X$ is generated by 
 #' $$\tilde X(\tilde t_{k+1}) = \tilde X(\tilde t_k) + \delta\,h\big(\tilde X(\tilde t_k)\big) + \sigma \sqrt{\delta} \, Z_k$$
-#' where $Z_1,Z_2,\dots$ is a sequence of independent standard normal random variables, i.e., $Z_k\sim\dist{Normal}{0,1}$. 
-#' Although SDEs are often considered an advanced topic in probability, the Euler approximation doesn't demand much more than familiarity with the normal distribution.
+#' where $Z_1,Z_2,\dots$ is a sequence of independent standard normal random variables, i.e., $Z_k\sim\dist{Normal}{0,1}$.
+#' 
+#' * SDEs are often considered an advanced topic in probability. However, working with SDE models specified by Euler solutions does not require advanced probability techniques. We only need familiarity with the normal distribution.
 #' 
 #' <br>
 #' 
@@ -343,6 +339,38 @@ set.seed(594709947L)
 #' 
 #' -------
 #' 
+#' ### Some comments on discrete-time numerical solutions to dynamic systems
+#' 
+#' - In some physical situations, a system follows an ODE model closely. 
+#' For example, Newton's laws provide a very good approximation to the motions of celestial bodies.
+#' 
+#' - In many biological situations, ODE models become good approximations to reality only at relatively large scales. 
+#' On small temporal scales, models cannot usually capture the full scope of biological variation and biological complexity.
+#' 
+#' - If we expect substantial error in using $x(t)$ to model a biological system, maybe the numerical solution $\tilde x(t)$ represents the biological system as well as $x(t)$  does.
+#' 
+#' - If our model fitting, model investigation, and final conclusions are all based on our numerical solution  $\tilde x(t)$ (e.g., we are sticking entirely to simulation-based methods) then we are most immediately concerned with how well $\tilde x(t)$ describes the system of interest.
+#' 
+#' - $\tilde x(t)$ may be more important than the original model, $x(t)$.
+#' 
+#' - When following this perspective, it is important that one fully describe the numerical model $\tilde x(t)$.
+#' 
+#' -  From this point of view, the role of the continuous-time model $x(t)$ is to provide a succinct way to describe how $\tilde x(t)$ was constructed.
+#' 
+#' - All numerical methods are, ultimately, discretizations.
+#' 
+#' + For continuous-time modeling, we usually aim to set $\delta$ small compared to the timescale of the process being modeled, so that the choice of $\delta$ does not play an explicit role in the interpretation of the model.
+#' 
+#' + Epidemiologically, setting $\delta$ to be a day, or an hour, can be quite different from setting $\delta$ to be two weeks or a month. 
+#' 
+#' + Putting emphasis on the scientific role of the numerical solution is a reminder that the numerical solution has to do more than approximate a target model in a limit as $\delta\to 0$.  The numerical solution should be a sensible model in its own right for the value of $\delta$ being used.
+#' 
+#' <br>
+#' 
+#' -----
+#' 
+#' -----
+#' 
 #' ## Compartmental models in **pomp**.
 #' 
 #' ### The Consett measles outbreak
@@ -375,7 +403,7 @@ meas %>%
 #' 
 #' ------
 #' 
-#' ### A first POMP model
+#' ### A simple POMP model for measles
 #' 
 #' - These are incidence data: The `reports` variable counts the number of reports of new measles cases each week.
 #' 
@@ -509,7 +537,13 @@ measSIR %>% pomp(rmeasure=rmeas,dmeasure=dmeas) -> measSIR
 #' 
 
 #' 
-#' #### Using C snippets
+#' <br>
+#' 
+#' --------
+#' 
+#' -------
+#' 
+#' ### Specifying model components using C snippets
 #' 
 #' - Although we can always specify basic model components using **R** functions, as above, we'll typically want the computational speed up that we can obtain only by using compiled native code.
 #' 
@@ -646,10 +680,23 @@ sims %>%
 #' ------------
 #' 
 #' 
-#' ## [Back to course homepage](../index.html)
-#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/stochsim.R)
+#' ## Acknowledgments
 #' 
-#' --------------------------
+#' * This tutorial is prepared for the [Simulation-based Inference for Epidemiological Dynamics](https://kingaa.github.io/sbied/) module at 11th Annual Summer Institute in Statistics and Modeling in Infectious Diseases ([SISMID 2019](https://www.biostat.washington.edu/suminst/sismid)). 
+#' Previous versions were presented at SISMID by ELI and AAK in 2015, 2016, 2017, 2018.
+#' Carles Breto assisted in 2018.
+#' 
+#' * Licensed under the [Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
+#' Please share and remix noncommercially, mentioning its origin.  
+#' ![CC-BY_NC](../graphics/cc-by-nc.png)
+#' 
+#' * This document was produced using **R** version `r getRversion()`, **panelPomp** `r packageVersion("panelPomp")` and **pomp** `r packageVersion("pomp")`
+#' 
+#' <h2> [Back to course homepage](../index.html) </h2>
+#' 
+#' <h2> [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/stochsim.R)</h2>
+#' 
+#' ----------------------
 #' 
 #' ## References
 #' 
