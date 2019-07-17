@@ -79,7 +79,7 @@ library(pomp)
 
 sir_step <- Csnippet("
   double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
-  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
   S -= dN_SI;
   I += dN_SI - dN_IR;
   R += dN_IR;
@@ -112,8 +112,8 @@ read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
     dmeasure=dmeas,
     accumvars="H",
     statenames=c("S","I","R","H"),
-    paramnames=c("Beta","gamma","eta","rho","N"),
-    params=c(Beta=15,gamma=0.5,rho=0.5,eta=0.06,N=38000)
+    paramnames=c("Beta","mu_IR","eta","rho","N"),
+    params=c(Beta=15,mu_IR=0.5,rho=0.5,eta=0.06,N=38000)
   ) -> measSIR
 ```
 
