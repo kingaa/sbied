@@ -417,7 +417,7 @@ meas %>%
 #'   I, infected (and infectious) hosts; 
 #'   R, recovered and immune hosts. 
 #' 
-#' - The rate at which individuals move from S to I is the __force of infection__, $\lambda=\mu_{SI}=\beta\,I/N$, while that at which individuals move into the R class is $\mu_{IR}=\gamma$.
+#' - The rate at which individuals move from S to I is the __force of infection__, $\mu_{SI}=\beta\,I/N$, while that at which individuals move into the R class is $\mu_{IR}$.
 #' 
 
 #' 
@@ -447,12 +447,12 @@ meas %>%
 #' 
 #' - An attractive option here is to model the number moving from one compartment to the next over a very short time interval as a binomial random variable.
 #' 
-#' - In particular, we model the number, $\dlta{N_{SI}}$, moving from S to I over interval $\dlta{t}$ as $$\dlta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\beta\,I/N\dlta{t}}},$$ and the number moving from I to R as $$\dlta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\gamma\dlta{t}}}.$$
+#' - In particular, we model the number, $\dlta{N_{SI}}$, moving from S to I over interval $\dlta{t}$ as $$\dlta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\beta\,I/N\dlta{t}}},$$ and the number moving from I to R as $$\dlta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\mu_{IR}\dlta{t}}}.$$
 #' 
 ## ----rproc1R-------------------------------------------------------------
-sir_step <- function (S, I, R, N, Beta, gamma, delta.t, ...) {
+sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t, ...) {
   dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
-  dN_IR <- rbinom(n=1,size=I,prob=1-exp(-gamma*delta.t))
+  dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
   S <- S - dN_SI
   I <- I + dN_SI - dN_IR
   R <- R + dN_IR
@@ -487,9 +487,9 @@ meas %>%
 #'   Let's modify our rprocess function above, adding a variable $H$ to tally the true incidence.
 #' 
 ## ----rproc2R-------------------------------------------------------------
-sir_step <- function (S, I, R, H, N, Beta, gamma, delta.t, ...) {
+sir_step <- function (S, I, R, H, N, Beta, mu_IR, delta.t, ...) {
   dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
-  dN_IR <- rbinom(n=1,size=I,prob=1-exp(-gamma*delta.t))
+  dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
   S <- S - dN_SI
   I <- I + dN_SI - dN_IR
   R <- R + dN_IR
@@ -556,7 +556,7 @@ measSIR %>% pomp(rmeasure=rmeas,dmeasure=dmeas) -> measSIR
 ## ----csnips--------------------------------------------------------------
 sir_step <- Csnippet("
   double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
-  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
   S -= dN_SI;
   I += dN_SI - dN_IR;
   R += dN_IR;
@@ -589,7 +589,7 @@ measSIR %>%
     dmeasure=dmeas,
     accumvars="H",
     statenames=c("S","I","R","H"),
-    paramnames=c("Beta","gamma","N","eta","rho")
+    paramnames=c("Beta","mu_IR","N","eta","rho")
   ) -> measSIR
 
 #' 
@@ -623,13 +623,13 @@ measSIR %>%
 #'   Assuming 50% reporting, we have that $S_0\approx`r sum(meas$reports)/0.5`$, so that
 #'   $\eta=\frac{S_0}{N}\approx`r signif(2*sum(meas$reports)/38000,2)`$.
 #' 
-#' - If the infectious period is roughly 2&nbsp;wk, then $1/\gamma \approx 2~\text{wk}$ and $\beta = \gamma\,\Rzero \approx 7.5~\text{wk}^{-1}$.
+#' - If the infectious period is roughly 2&nbsp;wk, then $1/\mu_{IR} \approx 2~\text{wk}$ and $\beta = \mu_{IR}\,\Rzero \approx 7.5~\text{wk}^{-1}$.
 #' 
 #' - Let's simulate the model at these parameters.
 #' 
 ## ----sir_sim1------------------------------------------------------------
 measSIR %>%
-  simulate(params=c(Beta=7.5,gamma=0.5,rho=0.5,eta=0.03,N=38000),
+  simulate(params=c(Beta=7.5,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) -> sims
 
 sims %>%
