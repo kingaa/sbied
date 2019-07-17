@@ -297,9 +297,9 @@ dat %>%
 
 #' 
 #' We'll assume that there was a single infection in week 0, i.e., that $I(0)=1$.
-#' Our Markov transmission model is that each individual in $S$ transitions to $I$ at rate $\lambda=\beta\,I(t)/N$;
-#' and each individual in $I$ transitions at rate $\gamma$ to $R$.
-#' Therefore, $1/\gamma$ is the mean infectious period.
+#' Our Markov transmission model is that each individual in $S$ transitions to $I$ at rate $\mu_{SI}=\lambda=\beta\,I(t)/N$;
+#' and each individual in $I$ transitions at rate $\mu_{IR}$ to $R$.
+#' Therefore, $1/\mu_{IR}$ is the mean infectious period.
 #' All rates will have units wk^-1^. 
 #' 
 #' This model has limitations and weaknesses, but writing down and fitting a model is a starting point for data analysis, not an end point.
@@ -316,7 +316,7 @@ library(pomp)
 
 sir_step <- Csnippet("
   double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
-  double dN_IR = rbinom(I,1-exp(-gamma*dt));
+  double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
   S -= dN_SI;
   I += dN_SI - dN_IR;
   H += dN_IR;
@@ -345,7 +345,7 @@ dat %>%
     dmeasure=dmeas,
     accumvars="H",
     statenames=c("S","I","H"),
-    paramnames=c("Beta","gamma","eta","rho","N")
+    paramnames=c("Beta","mu_IR","eta","rho","N")
   ) -> measSIR
 
 #' 
@@ -367,7 +367,7 @@ dat %>%
 #' As such a test, here we run some simulations and a particle filter.
 #' We'll use the following parameters, derived from our earlier explorations:
 ## ----start_params--------------------------------------------------------
-params <- c(Beta=15,gamma=0.5,rho=0.5,eta=0.06,N=38000)
+params <- c(Beta=15,mu_IR=0.5,rho=0.5,eta=0.06,N=38000)
 
 #' 
 #' Now to run and plot some simulations:
@@ -404,7 +404,7 @@ measSIR %>%
 fixed_params <- params[c("N")]; fixed_params
 
 #' 
-#' We will estimate $\beta$, $\gamma$, $\eta$, and $\rho$.
+#' We will estimate $\beta$, $\mu_{IR}$, $\eta$, and $\rho$.
 #' 
 #' It will be helpful to parallelize most of the computations.
 #' Most machines nowadays have multiple cores and using this computational capacity is as simple as:
@@ -427,7 +427,7 @@ registerDoParallel()
 #' 
 #' ### Running a particle filter.
 #' 
-#' We proceed to carry out replicated particle filters at an initial guess of $\beta=`r params["Beta"]`$, $\gamma=`r params["gamma"]`$, $\eta=`r params["eta"]`$, and $\rho=`r params["rho"]`$.
+#' We proceed to carry out replicated particle filters at an initial guess of $\beta=`r params["Beta"]`$, $\mu_{IR}=`r params["mu_{IR}"]`$, $\eta=`r params["eta"]`$, and $\rho=`r params["rho"]`$.
 #' 
 ## ----pf------------------------------------------------------------------
 library(doRNG)
@@ -477,7 +477,7 @@ pf[[1]] %>% coef() %>% bind_rows() %>%
 #' 
 #' Let's carry out a local search using `mif2` around this point in parameter space. 
 #' To do so, we need to choose the `rw.sd` and `cooling.fraction.50` algorithmic parameters.
-#' Since $\beta$ and $\gamma$ will be estimated on the log scale, and we expect that multiplicative perturbations of these parameters will have roughly similar effects on the likelihood, we'll use a perturbation size of $0.02$, which we imagine will have a small but non-negligible effect.
+#' Since $\beta$ and $\mu_{IR}$ will be estimated on the log scale, and we expect that multiplicative perturbations of these parameters will have roughly similar effects on the likelihood, we'll use a perturbation size of $0.02$, which we imagine will have a small but non-negligible effect.
 #' For simplicity, we'll use the same perturbation size on $\rho$.
 #' We fix `cooling.fraction.50=0.5`, so that after 50 `mif2` iterations, the perturbations are reduced to half their original magnitudes.
 #' 
@@ -491,12 +491,12 @@ bake(file="local_search.rds",{
     measSIR %>%
     mif2(
       params=params,
-      partrans=parameter_trans(log=c("Beta","gamma"),logit=c("rho","eta")),
-      paramnames=c("Beta","gamma","rho","eta"),
+      partrans=parameter_trans(log=c("Beta","mu_IR"),logit=c("rho","eta")),
+      paramnames=c("Beta","mu_IR","rho","eta"),
       Np=2000,
       Nmif=50,
       cooling.fraction.50=0.5,
-      rw.sd=rw.sd(Beta=0.02,gamma=0.02,rho=0.02,eta=0.02)
+      rw.sd=rw.sd(Beta=0.02,mu_IR=0.02,rho=0.02,eta=0.02)
     )
   }
 }) -> mifs_local
@@ -562,7 +562,7 @@ t_local <- attr(results,"system.time")
 #' These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 #' 
 ## ----pairs_local---------------------------------------------------------
-pairs(~loglik+Beta+gamma+eta+rho,data=results,pch=16)
+pairs(~loglik+Beta+mu_IR+eta+rho,data=results,pch=16)
 
 #' 
 #' This plot shows hints of ridges in the likelihood surface (cf. the $\beta$-$\eta$, $\beta$-$\rho$, and $\eta$-$\rho$ panels).
@@ -592,7 +592,7 @@ read_csv("measles_params.csv") %>%
 #' If an estimation method gives stable conclusions with starting values drawn randomly from this box, this gives some confidence that an adequate global search has been carried out. 
 #' 
 #' For our measles model, a box containing reasonable parameter values might be
-#' $\beta\in (10,80)$, $\gamma\in (0.3,2)$, $\rho\in (0.2,0.9)$, $\eta\in (0,0.2)$.
+#' $\beta\in (10,80)$, $\mu_{IR}\in (0.3,2)$, $\rho\in (0.2,0.9)$, $\eta\in (0,0.2)$.
 #' 
 #' We are now ready to carry out likelihood maximizations from diverse starting points.
 #' 
@@ -608,8 +608,8 @@ if (file.exists("CLUSTER")) {
 ## ----global_search-------------------------------------------------------
 registerDoRNG(1270401374)
 guesses <- runifDesign(
-  lower=c(Beta=10,gamma=0.3,rho=0.2,eta=0),
-  upper=c(Beta=80,gamma=2,rho=0.9,eta=0.2),
+  lower=c(Beta=10,mu_IR=0.3,rho=0.2,eta=0),
+  upper=c(Beta=80,mu_IR=2,rho=0.9,eta=0.2),
   nseq=300
 )
 
@@ -663,7 +663,7 @@ read_csv("measles_params.csv") %>%
   mutate(type=if_else(is.na(loglik),"guess","result")) %>%
   arrange(type) -> all
 
-pairs(~loglik+Beta+gamma+eta+rho, data=all,
+pairs(~loglik+Beta+mu_IR+eta+rho, data=all,
       col=ifelse(all$type=="guess",grey(0.5),"red"),pch=16)
 
 all %>%
@@ -698,8 +698,8 @@ box
 
 guesses <- profileDesign(
   eta=seq(0.01,0.85,length=20),
-  lower=box[1,c("Beta","gamma","rho")],
-  upper=box[2,c("Beta","gamma","rho")],
+  lower=box[1,c("Beta","mu_IR","rho")],
+  upper=box[2,c("Beta","mu_IR","rho")],
   nprof=15, type="runif"
 )
 
@@ -719,7 +719,7 @@ bake(file="eta_profile.rds",{
   {
     mf1 %>%
       mif2(params=c(unlist(guess),fixed_params),
-           rw.sd=rw.sd(Beta=0.02,gamma=0.02,rho=0.02)) %>%
+           rw.sd=rw.sd(Beta=0.02,mu_IR=0.02,rho=0.02)) %>%
       mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
     ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
     ll <- logmeanexp(ll,se=TRUE)
@@ -743,7 +743,7 @@ read_csv("measles_params.csv") %>%
 read_csv("measles_params.csv") %>%
   filter(loglik>max(loglik)-10) -> all
 
-pairs(~loglik+Beta+gamma+eta+rho, data=all,pch=16)
+pairs(~loglik+Beta+mu_IR+eta+rho, data=all,pch=16)
 
 #' 
 ## ----eta_profile_plot----------------------------------------------------
@@ -774,40 +774,40 @@ results %>%
 #' How does the model do this?
 #' How does it change the other parameters?
 #' For example, how does it change the infectious period?
-#' We can plot $\gamma$ vs $\eta$ across the profile.
+#' We can plot $\mu_{IR}$ vs $\eta$ across the profile.
 #' This is called a *profile trace*.
 #' 
-## ----eta_profile_eta_by_gamma--------------------------------------------
+## ----eta_profile_eta_by_mu_IR--------------------------------------------
 results %>%
   group_by(round(eta,5)) %>%
   filter(rank(-loglik)<3) %>%
   ungroup() %>%
-  ggplot(aes(x=eta,y=gamma))+
+  ggplot(aes(x=eta,y=mu_IR))+
   geom_point()
 
 #' 
 #' 
 #' 
 #' 
-#' #### Profile over $\gamma$
+#' #### Profile over $\mu_{IR}$
 #' 
-#' Do the data have an opinion about $\gamma$?
+#' Do the data have an opinion about $\mu_{IR}$?
 #' Let's construct a profile to see.
 #' 
-## ----gamma_profile-------------------------------------------------------
+## ----mu_IR_profile-------------------------------------------------------
 registerDoRNG(2105684752)
 
 results %>%
-  filter(loglik>max(loglik)-20,loglik.se<2,gamma<10) %>%
+  filter(loglik>max(loglik)-20,loglik.se<2,mu_IR<10) %>%
   sapply(range) -> box
 box
 
 results %>% 
   filter(loglik>max(loglik)-10) %>%
-  select(Beta,eta,rho,gamma) %>%
+  select(Beta,eta,rho,mu_IR) %>%
   bind_rows(
     profileDesign(
-      gamma=seq(0.7,7,length=20),
+      mu_IR=seq(0.7,7,length=20),
       lower=box[1,c("Beta","eta","rho")],
       upper=box[2,c("Beta","eta","rho")],
       nprof=15, type="runif"
@@ -816,7 +816,7 @@ results %>%
 
 mf1 <- mifs_local[[1]]
 
-bake(file="gamma_profile.rds",{
+bake(file="mu_IR_profile.rds",{
   foreach(guess=iter(guesses,"row"), 
     .packages=c("pomp","tidyverse"),
     .combine=rbind,
@@ -847,19 +847,19 @@ read_csv("measles_params.csv") %>%
   write_csv("measles_params.csv")
 
 ## ------------------------------------------------------------------------
-pairs(~loglik+Beta+gamma+eta+rho,data=results,pch=16)
+pairs(~loglik+Beta+mu_IR+eta+rho,data=results,pch=16)
 
 results %>%
   filter(loglik>max(loglik)-10,loglik.se<1) %>%
-  group_by(round(gamma,1)) %>%
+  group_by(round(mu_IR,1)) %>%
   filter(rank(-loglik)<3) %>%
   ungroup() %>%
-  ggplot(aes(x=gamma,y=loglik))+
+  ggplot(aes(x=mu_IR,y=loglik))+
   geom_point()
 
 #' 
-#' The data appear to be consistent with values of $\gamma$ within a certain range.
-#' In other words, these data cannot tell us more precisely about the value of $\gamma$.
+#' The data appear to be consistent with values of $\mu_{IR}$ within a certain range.
+#' In other words, these data cannot tell us more precisely about the value of $\mu_{IR}$.
 #' 
 #' <br>
 #' 
@@ -868,24 +868,24 @@ results %>%
 #' ----
 #' 
 #' 
-#' #### Fix $\gamma$ and profile over $\beta$
+#' #### Fix $\mu_{IR}$ and profile over $\beta$
 #' 
 #' 
-#' Suppose we had data about $\gamma$ from another source.
+#' Suppose we had data about $\mu_{IR}$ from another source.
 #' Perhaps household studies lead us to believe that the infectious period is really about 1/2 week.
-#' Let's assume, correspondingly, that $\gamma=2$ and estimate the parameters of the restricted model.
+#' Let's assume, correspondingly, that $\mu_{IR}=2$ and estimate the parameters of the restricted model.
 #' In particular, let's compute a profile over $\beta$.
 #' 
 ## ----beta_profile1-------------------------------------------------------
 registerDoRNG(87757758)
 
 read_csv("measles_params.csv") %>%
-  filter(loglik>max(loglik)-10,loglik.se<2,gamma>1.8,gamma<2.2) %>%
+  filter(loglik>max(loglik)-10,loglik.se<2,mu_IR>1.8,mu_IR<2.2) %>%
   sapply(range) -> box
 box
 
 profileDesign(
-  gamma=2,
+  mu_IR=2,
   Beta=seq(2,70,length=20),
   N=38000,
   lower=box[1,c("eta","rho")],
@@ -967,7 +967,7 @@ results %>%
 #' #### Fix $\rho$ and profile over $\beta$
 #' 
 #' 
-#' Just above, we used data from household studies on the duration of the infectious period to constrain our $\gamma$ parameter.
+#' Just above, we used data from household studies on the duration of the infectious period to constrain our $\mu_{IR}$ parameter.
 #' What problems might be associated with taking these studies at face value?
 #' 
 #' Perhaps we should check to see what happens when we constrain a different parameter.
@@ -987,8 +987,8 @@ profileDesign(
   rho=0.6,
   Beta=seq(10,60,length=20),
   N=38000,
-  lower=box[1,c("eta","gamma")],
-  upper=box[2,c("eta","gamma")],
+  lower=box[1,c("eta","mu_IR")],
+  upper=box[2,c("eta","mu_IR")],
   nprof=15, type="sobol"
 ) -> guesses
 
@@ -1002,9 +1002,9 @@ bake(file="beta_profile2.rds",{
     mf1 %>%
       mif2(
         params=guess,
-        partrans=parameter_trans(log="gamma",logit=c("eta")),
-        paramnames=c("eta","gamma"),
-        rw.sd=rw.sd(eta=0.02,gamma=0.02)
+        partrans=parameter_trans(log="mu_IR",logit=c("eta")),
+        paramnames=c("eta","mu_IR"),
+        rw.sd=rw.sd(eta=0.02,mu_IR=0.02)
       ) %>%
       mif2(Nmif=150,cooling.fraction.50=0.3) %>%
       mif2() -> mf
@@ -1023,7 +1023,7 @@ read_csv("measles_params.csv") %>%
   write_csv("measles_params.csv")
 
 ## ------------------------------------------------------------------------
-pairs(~loglik+Beta+gamma+eta,data=filter(results,loglik>max(loglik)-20),pch=16)
+pairs(~loglik+Beta+mu_IR+eta,data=filter(results,loglik>max(loglik)-20),pch=16)
 
 results %>%
   filter(loglik.se<1,loglik>max(loglik)-10) %>%
@@ -1048,7 +1048,7 @@ results %>%
   group_by(round(Beta,0.01)) %>%
   filter(rank(-loglik)<3) %>%
   ungroup() %>%
-  gather(variable,value,eta,gamma,loglik) %>%
+  gather(variable,value,eta,mu_IR,loglik) %>%
   ggplot(aes(x=Beta,y=value))+
   geom_point()+
   facet_wrap(~variable,scales="free_y",ncol=1)
@@ -1093,7 +1093,7 @@ results %>%
 #' Use `mif2` to construct a profile likelihood.
 #' Due to time constraints, you may be able to compute only a preliminary version.
 #' 
-#' It is also possible to profile over the basic reproduction number, $R_0=\beta /\gamma$.
+#' It is also possible to profile over the basic reproduction number, $R_0=\beta /\mu_{IR}$.
 #' Is this more or less well determined than $\beta$ for this model and data?
 #' 
 #' --------------------------
