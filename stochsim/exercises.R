@@ -76,7 +76,7 @@ measSIR %>%
 ## ------------------------------------------------------------------------
 seir_step <- Csnippet("
   double dN_SE = rbinom(S,1-exp(-Beta*I/N*dt));
-  double dN_EI = rbinom(E,1-exp(-sigma*dt));
+  double dN_EI = rbinom(E,1-exp(-mu_EI*dt));
   double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
   S -= dN_SE;
   E += dN_SE - dN_EI;
@@ -98,16 +98,16 @@ measSIR %>%
   pomp(
     rprocess=euler(seir_step,delta.t=1/7),
     rinit=seir_init,
-    paramnames=c("N","Beta","sigma","mu_IR","rho","eta"),
+    paramnames=c("N","Beta","mu_EI","mu_IR","rho","eta"),
     statenames=c("S","E","I","R","H")
   ) -> measSEIR
 
 #' 
-#' Using the rough estimate that the latent period in measles is 8--10da, we take $\sigma\sim 0.8$wk^-1^ and $\mu_{IR}\sim 1.3$wk^-1^ (so as to have roughly the same generation time as before).
+#' Using the rough estimate that the latent period in measles is 8--10da, we take $\mu_{EI}\sim 0.8$wk^-1^ and $\mu_{IR}\sim 1.3$wk^-1^ (so as to have roughly the same generation time as before).
 #' 
 ## ------------------------------------------------------------------------
 measSEIR %>%
-  simulate(params=c(Beta=15,sigma=0.8,mu_IR=1.3,rho=0.5,eta=0.06,N=38000),
+  simulate(params=c(Beta=15,mu_EI=0.8,mu_IR=1.3,rho=0.5,eta=0.06,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
@@ -118,7 +118,7 @@ measSEIR %>%
 #' 
 ## ------------------------------------------------------------------------
 measSEIR %>% 
-  simulate(params=c(Beta=40,sigma=0.8,mu_IR=1.3,rho=0.5,eta=0.06,N=38000),
+  simulate(params=c(Beta=40,mu_EI=0.8,mu_IR=1.3,rho=0.5,eta=0.06,N=38000),
   nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
