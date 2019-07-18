@@ -614,9 +614,11 @@ f_{Y_n|X_n}(y^*_{n}|u_{n};\theta)\,f_{X_n|Y_{1:n-1}}(u_{n}|y^*_{1:n-1};\theta)\,
 <li><p>This suggests that we keep track of two key distributions at each time <span class="math inline">\(t_n\)</span>,</p></li>
 <li><p>The <strong>prediction distribution</strong> is <span class="math inline">\(f_{X_n | Y_{1:n-1}}(x_n| y^*_{1:n-1})\)</span>.</p></li>
 <li><p>The <strong>filtering distribution</strong> is <span class="math inline">\(f_{X_{n} | Y_{1:n}}(x_n| y^*_{1:n})\)</span>.</p></li>
-<li><p>The prediction and filtering formulas give us a recursion:</p></li>
+<li><p>The prediction and filtering formulas give us a recursion:</p>
+<ul>
 <li>The prediction formula gives the prediction distribution at time <span class="math inline">\(t_n\)</span> using the filtering distribution at time <span class="math inline">\(t_{n-1}\)</span>.</li>
-<li><p>The filtering formula gives the filtering distribution at time <span class="math inline">\(t_n\)</span> using the prediction distribution at time <span class="math inline">\(t_n\)</span>.</p></li>
+<li>The filtering formula gives the filtering distribution at time <span class="math inline">\(t_n\)</span> using the prediction distribution at time <span class="math inline">\(t_n\)</span>.</li>
+</ul></li>
 <li><p>The <strong>particle filter</strong> use Monte Carlo techniques to sequentially estimate the integrals in the prediction and filtering recursions. Hence, the alternative name of <strong>sequential Monte Carlo (SMC)</strong>.</p></li>
 <li><p>A basic particle filter is described as follows:</p>
 <ol style="list-style-type: decimal">

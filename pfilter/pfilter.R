@@ -317,8 +317,8 @@ set.seed(1221234211)
 #' 
 #' * The prediction and filtering formulas give us a recursion:
 #' 
-#' + The prediction formula gives the prediction distribution at time $t_n$ using the filtering distribution at time $t_{n-1}$. 
-#' + The filtering formula gives the filtering distribution at time $t_n$ using the prediction distribution at time $t_n$.
+#' 	+ The prediction formula gives the prediction distribution at time $t_n$ using the filtering distribution at time $t_{n-1}$. 
+#' 	+ The filtering formula gives the filtering distribution at time $t_n$ using the prediction distribution at time $t_n$.
 #' 
 #' * The **particle filter** use Monte Carlo techniques to sequentially estimate the integrals in the prediction and filtering recursions. Hence, the alternative name of **sequential Monte Carlo (SMC)**.
 #' 
