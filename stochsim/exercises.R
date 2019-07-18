@@ -96,7 +96,7 @@ seir_init <- Csnippet("
 
 measSIR %>%
   pomp(
-    rprocess=euler(seir_step,delta.t=1/6),
+    rprocess=euler(seir_step,delta.t=1/7),
     rinit=seir_init,
     paramnames=c("N","Beta","sigma","mu_IR","rho","eta"),
     statenames=c("S","E","I","R","H")

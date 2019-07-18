@@ -473,7 +473,7 @@ sir_init <- function(N, eta, ...) {
 ## ----pomp1R--------------------------------------------------------------
 meas %>%
   pomp(times="week",t0=0,
-    rprocess=euler(sir_step,delta.t=1/6),
+    rprocess=euler(sir_step,delta.t=1/7),
     rinit=sir_init
   ) -> measSIR
 
@@ -509,7 +509,7 @@ sir_init <- function (N, eta, ...) {
 ## ----zero1R--------------------------------------------------------------
 measSIR %>% 
   pomp(
-    rprocess=euler(sir_step,delta.t=1/6),
+    rprocess=euler(sir_step,delta.t=1/7),
     rinit=sir_init,accumvars="H"
   ) -> measSIR
 
@@ -583,7 +583,7 @@ rmeas <- Csnippet("
 #' 
 ## ----sir_pomp------------------------------------------------------------
 measSIR %>%
-  pomp(rprocess=euler(sir_step,delta.t=1/6),
+  pomp(rprocess=euler(sir_step,delta.t=1/7),
     rinit=sir_init,
     rmeasure=rmeas,
     dmeasure=dmeas,
