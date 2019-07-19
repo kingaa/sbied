@@ -266,7 +266,7 @@ The simulations also appear to be more highly variable around the trend than do 
 ```{r diagnostics-growth-rate-and-sd}
 ```
 
-Let's also look more carefully at the distribution of values about the trend using the 1st and 3rd quantiles.
+Let's also look more carefully at the distribution of values about the trend using the 1st and 3rd quartiles.
 Also, it looks like the data are less jagged than the simulations.
 We can quantify this using the autocorrelation function (ACF).
 

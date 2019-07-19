@@ -148,7 +148,7 @@ set.seed(1109529108L)
 #'     - school-term transmission:
 #' $$\beta(t) = \begin{cases}\beta_0\,(1+a) &\text{during term}\\\beta_0\,(1-a) &\text{during vacation}\end{cases}$$  
 #'     - $\iota = \text{imported infections}$
-#'     - $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ [@He2010,@bhadra11]
+#'     - $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ [@He2010;@bhadra11]
 #' 
 #' - Overdispersed binomial measurement model: $\mathrm{cases}_t\,\vert\,\dlta{N}_{IR}=z_t \sim \dist{Normal}{\rho\,z_t,\rho\,(1-\rho)\,z_t+(\psi\,\rho\,z_t)^2}$
 #' 
