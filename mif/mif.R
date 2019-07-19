@@ -39,6 +39,14 @@ theme_set(theme_bw())
 set.seed(557976883)
 
 #' 
+#' <!---
+#' 
+#' Begin estimation by fixing rho according to long-term estimates, or by fixing mu_IR according to "household studies".
+#' Then relax this assumption, showing non-identifiability.
+#' 
+#' --->
+#' 
+#' 
 #' -----------
 #' 
 #' ----------
@@ -344,6 +352,7 @@ dat %>%
     rmeasure=rmeas,
     dmeasure=dmeas,
     accumvars="H",
+    partrans=parameter_trans(log=c("Beta","mu_IR"),logit=c("rho","eta")),
     statenames=c("S","I","H"),
     paramnames=c("Beta","mu_IR","eta","rho","N")
   ) -> measSIR
@@ -354,6 +363,9 @@ dat %>%
 #' Why is this useful?
 #' What complications does it introduce in the interpretation of results?
 #' --->
+#' 
+#' Note that we've included parameter transformations (`partrans`) in `measSIR`.
+#' The reason for this will become clear soon.
 #' 
 #' <br>
 #' 
@@ -435,7 +447,8 @@ registerDoRNG(625904618)
 
 tic <- Sys.time()
 
-foreach(i=1:10,.packages="pomp",.combine=c) %dopar% {
+foreach(i=1:10,.combine=c) %dopar% {
+  library(pomp)
   measSIR %>% pfilter(params=params,Np=10000)
 } -> pf
 
@@ -484,21 +497,21 @@ pf[[1]] %>% coef() %>% bind_rows() %>%
 ## ----local_search--------------------------------------------------------
 registerDoRNG(482947940)
 bake(file="local_search.rds",{
-  foreach(i=1:20,
-          .packages=c("pomp","tidyverse"), 
-          .combine=c) %dopar%  
-  {
-    measSIR %>%
-    mif2(
-      params=params,
-      partrans=parameter_trans(log=c("Beta","mu_IR"),logit=c("rho","eta")),
-      paramnames=c("Beta","mu_IR","rho","eta"),
-      Np=2000,
-      Nmif=50,
-      cooling.fraction.50=0.5,
-      rw.sd=rw.sd(Beta=0.02,mu_IR=0.02,rho=0.02,eta=0.02)
-    )
-  }
+  foreach(i=1:20,.combine=c) %dopar%  
+    {
+      library(pomp)
+      library(tidyverse)
+      
+      measSIR %>%
+        mif2(
+          params=params,
+          Np=2000,
+          Nmif=50,
+          cooling.fraction.50=0.5,
+          rw.sd=rw.sd(Beta=0.02,mu_IR=0.02,rho=0.02,eta=ivp(0.02))
+        )
+
+    }
 }) -> mifs_local
 
 #' 
@@ -506,10 +519,9 @@ bake(file="local_search.rds",{
 #' 
 #' Some Windows users have had trouble with the above code.
 #' This appears to be due to certain Windows security features.
-#' It has been possible to circumvent this problem by adding `cdir="."` and `cfile=<filename>` as arguments in the above call to `mif2`.
-#' For example,
+#' It has been possible to circumvent this problem by adding `cdir="."` and `cfile=<filename>` as arguments in the call that created `measSIR`.
+#' Thus, for example,
 
-#' Note that it may be necessary to add `cdir=".", cfile="tmp1"` in the call to `pomp` that constructed `measSIR` in the first place.
 #' 
 #' 
 #' </div>
@@ -543,15 +555,17 @@ mifs_local %>%
 ## ----lik_local-----------------------------------------------------------
 registerDoRNG(900242057)
 bake(file="lik_local.rds",{
-  foreach(mf=mifs_local,
-          .packages=c("pomp","tidyverse"), 
-          .combine=rbind) %dopar% 
-  {
-    evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
-    ll <- logmeanexp(evals,se=TRUE)
-    mf %>% coef() %>% bind_rows() %>%
+
+  foreach(mf=mifs_local,.combine=rbind) %dopar% 
+    {
+      library(pomp)
+      library(tidyverse)
+      evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
+      ll <- logmeanexp(evals,se=TRUE)
+      mf %>% coef() %>% bind_rows() %>%
         bind_cols(loglik=ll[1],loglik.se=ll[2])
-  }
+    }
+  
 }) -> results
 
 ## ----include=FALSE-------------------------------------------------------
@@ -617,19 +631,20 @@ mf1 <- mifs_local[[1]]
 
 bake(file="global_search.rds",{
   foreach(guess=iter(guesses,"row"), 
-    .packages=c("pomp","tidyverse"), 
-    .combine=rbind,
-    .export=c("mf1","fixed_params")
-  ) %dopar% 
-  {
-    mf1 %>%
-      mif2(params=c(unlist(guess),fixed_params)) %>%
-      mif2(Nmif=100) -> mf
-    ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
-    ll <- logmeanexp(ll,se=TRUE)
-    mf %>% coef() %>% bind_rows() %>%
+          .combine=rbind,
+          .export=c("mf1","fixed_params")
+          ) %dopar% 
+    {
+      library(pomp)
+      library(tidyverse)
+      mf1 %>%
+        mif2(params=c(unlist(guess),fixed_params)) %>%
+        mif2(Nmif=100) -> mf
+      ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
+      ll <- logmeanexp(ll,se=TRUE)
+      mf %>% coef() %>% bind_rows() %>%
         bind_cols(loglik=ll[1],loglik.se=ll[2])
-  }
+    }
 }) -> results
 
 
@@ -712,20 +727,22 @@ mf1 <- mifs_local[[1]]
 
 bake(file="eta_profile.rds",{
   foreach(guess=iter(guesses,"row"), 
-    .packages=c("pomp","tidyverse"),
-    .combine=rbind,
-    .export=c("mf1","fixed_params")
-  ) %dopar% 
-  {
-    mf1 %>%
-      mif2(params=c(unlist(guess),fixed_params),
-           rw.sd=rw.sd(Beta=0.02,mu_IR=0.02,rho=0.02)) %>%
-      mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
-    ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
-    ll <- logmeanexp(ll,se=TRUE)
-    mf %>% coef() %>% bind_rows() %>%
+          .combine=rbind,
+          .export=c("mf1","fixed_params")
+          ) %dopar% 
+    {
+      library(pomp)
+      library(tidyverse)
+      mf1 %>%
+        mif2(params=c(unlist(guess),fixed_params),
+             rw.sd=rw.sd(Beta=0.02,mu_IR=0.02,rho=0.02)) %>%
+        mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
+      ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
+      ll <- logmeanexp(ll,se=TRUE)
+      mf %>% coef() %>% bind_rows() %>%
         bind_cols(loglik=ll[1],loglik.se=ll[2])
-  }
+    }
+
 }) -> results
 
 
@@ -818,25 +835,25 @@ mf1 <- mifs_local[[1]]
 
 bake(file="mu_IR_profile.rds",{
   foreach(guess=iter(guesses,"row"), 
-    .packages=c("pomp","tidyverse"),
-    .combine=rbind,
-    .export=c("mf1","fixed_params")
-  ) %dopar% 
-  {
-    mf1 %>%
-      mif2(
-        params=c(unlist(guess),fixed_params),
-        partrans=parameter_trans(log="Beta",logit=c("eta","rho")),
-        paramnames=c("Beta","eta","rho"),
-        rw.sd=rw.sd(Beta=0.02,eta=0.02,rho=0.02)
-      ) %>%
-      mif2(Nmif=100,cooling.fraction.50=0.3) %>%
-      mif2() -> mf
-    ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
-    ll <- logmeanexp(ll,se=TRUE)
-    mf %>% coef() %>% bind_rows() %>%
+          .combine=rbind,
+          .export=c("mf1","fixed_params")
+          ) %dopar% 
+    {
+      library(pomp)
+      library(tidyverse)
+      mf1 %>%
+        mif2(
+          params=c(unlist(guess),fixed_params),
+          rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02),rho=0.02)
+        ) %>%
+        mif2(Nmif=100,cooling.fraction.50=0.3) %>%
+        mif2() -> mf
+      ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
+      ll <- logmeanexp(ll,se=TRUE)
+      mf %>% coef() %>% bind_rows() %>%
         bind_cols(loglik=ll[1],loglik.se=ll[2])
-  }
+    }
+
 }) -> results
 
 
@@ -896,24 +913,25 @@ profileDesign(
 mf1 <- mifs_local[[1]]
 
 bake(file="beta_profile1.rds",{
+
   foreach(guess=iter(guesses,"row"), 
-    .packages=c("pomp","tidyverse"),
-    .combine=rbind
-  ) %dopar% {
-    mf1 %>%
-      mif2(
-        params=guess,
-        partrans=parameter_trans(logit=c("eta","rho")),
-        paramnames=c("eta","rho"),
-        rw.sd=rw.sd(eta=0.02,rho=0.02)
-      ) %>%
-      mif2(Nmif=100,cooling.fraction.50=0.3) %>%
-      mif2() -> mf
-    ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
-    ll <- logmeanexp(ll,se=TRUE)
-    mf %>% coef() %>% bind_rows() %>%
-        bind_cols(loglik=ll[1],loglik.se=ll[2])
-  }
+          .combine=rbind
+          ) %dopar% {
+            library(pomp)
+            library(tidyverse)
+            mf1 %>%
+              mif2(
+                params=guess,
+                rw.sd=rw.sd(eta=ivp(0.02),rho=0.02)
+              ) %>%
+              mif2(Nmif=100,cooling.fraction.50=0.3) %>%
+              mif2() -> mf
+            ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
+            ll <- logmeanexp(ll,se=TRUE)
+            mf %>% coef() %>% bind_rows() %>%
+              bind_cols(loglik=ll[1],loglik.se=ll[2])
+          }
+
 }) -> results
 
 
@@ -995,24 +1013,25 @@ profileDesign(
 mf1 <- mifs_local[[1]]
 
 bake(file="beta_profile2.rds",{
+
   foreach(guess=iter(guesses,"row"), 
-    .packages=c("pomp","tidyverse"),
-    .combine=rbind
-  ) %dopar% {
-    mf1 %>%
-      mif2(
-        params=guess,
-        partrans=parameter_trans(log="mu_IR",logit=c("eta")),
-        paramnames=c("eta","mu_IR"),
-        rw.sd=rw.sd(eta=0.02,mu_IR=0.02)
-      ) %>%
-      mif2(Nmif=150,cooling.fraction.50=0.3) %>%
-      mif2() -> mf
-    ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
-    ll <- logmeanexp(ll,se=TRUE)
-    mf %>% coef() %>% bind_rows() %>%
-        bind_cols(loglik=ll[1],loglik.se=ll[2])
-  }
+          .combine=rbind
+          ) %dopar% {
+            library(pomp)
+            library(tidyverse)
+            mf1 %>%
+              mif2(
+                params=guess,
+                rw.sd=rw.sd(eta=ivp(0.02),mu_IR=0.02)
+              ) %>%
+              mif2(Nmif=150,cooling.fraction.50=0.3) %>%
+              mif2() -> mf
+            ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
+            ll <- logmeanexp(ll,se=TRUE)
+            mf %>% coef() %>% bind_rows() %>%
+              bind_cols(loglik=ll[1],loglik.se=ll[2])
+          }
+
 }) -> results
 
 
@@ -1182,14 +1201,6 @@ results %>%
 #' Discuss the strengths and weaknesses of this quantification of optimization success.
 #' See if you can choose $J$ and $M$ subject to this constraint, together with choices of `rw.sd` and the cooling rate, `cooling.fraction.50`, to arrive at a quantifiably better procedure.
 #' Computationally, you may not be readily able to run your full procedure, but you could run a quicker version of it.
-#' 
-#' --------------------------
-#' 
-#' #### Optional Exercise: Finding sharp peaks in the likelihood surface
-#' 
-#' Even in this small, 3 parameter example, it takes a considerable amount of computation to find the global maximum (with values of $\beta$ around 0.004) starting from uniform draws in the specified box.
-#' The problem is that, on the scale on which "uniform" is defined, the peak around $\beta\approx 0.004$ is very narrow.
-#' Propose and test a more favorable way to draw starting parameters for the global search, with better scale invariance properties.
 #' 
 #' --------------------------
 #' 

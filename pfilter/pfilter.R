@@ -9,6 +9,11 @@
 #' csl: ../ecology.csl
 #' ---
 #' 
+#' <!---
+#' NOTES:
+#' - put in plot of pf object and discuss ESS and conditional log likelihood
+#' --->
+#' 
 #' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
 #' \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
 #' \newcommand\E[1]{\expect{#1}}
