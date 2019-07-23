@@ -379,7 +379,7 @@ dat %>%
 #' As such a test, here we run some simulations and a particle filter.
 #' We'll use the following parameters, derived from our earlier explorations:
 ## ----start_params--------------------------------------------------------
-params <- c(Beta=15,mu_IR=0.5,rho=0.5,eta=0.06,N=38000)
+params <- c(Beta=20,mu_IR=2,rho=0.5,eta=0.1,N=38000)
 
 #' 
 #' Now to run and plot some simulations:
@@ -412,11 +412,15 @@ measSIR %>%
 #' Let's assume that the population size, $N$, is known accurately.
 #' We'll fix that parameter.
 #' 
+#' Let's also imagine that we have access to the results of household and clinical studies that have concluded that infected patients shed the virus for 3--4 days.
+#' We'll use these results to constrain the infectious period in our model to 3.5da, i.e., $\mu_{IR}=2\mathrm{wk}^{-1}$.
+#' Later, we'll relax this assumption.
+#' 
 ## ----fixed_params--------------------------------------------------------
-fixed_params <- params[c("N")]; fixed_params
+fixed_params <- c(N=38000, mu_IR=2)
 
 #' 
-#' We will estimate $\beta$, $\mu_{IR}$, $\eta$, and $\rho$.
+#' We proceed to estimate $\beta$, $\eta$, and $\rho$.
 #' 
 #' It will be helpful to parallelize most of the computations.
 #' Most machines nowadays have multiple cores and using this computational capacity is as simple as:
@@ -439,7 +443,7 @@ registerDoParallel()
 #' 
 #' ### Running a particle filter.
 #' 
-#' We proceed to carry out replicated particle filters at an initial guess of $\beta=`r params["Beta"]`$, $\mu_{IR}=`r params["mu_{IR}"]`$, $\eta=`r params["eta"]`$, and $\rho=`r params["rho"]`$.
+#' We proceed to carry out replicated particle filters at an initial guess of $\beta=`r params["Beta"]`$, $\eta=`r params["eta"]`$, and $\rho=`r params["rho"]`$.
 #' 
 ## ----pf------------------------------------------------------------------
 library(doRNG)
@@ -508,7 +512,7 @@ bake(file="local_search.rds",{
           Np=2000,
           Nmif=50,
           cooling.fraction.50=0.5,
-          rw.sd=rw.sd(Beta=0.02,mu_IR=0.02,rho=0.02,eta=ivp(0.02))
+          rw.sd=rw.sd(Beta=0.02,rho=0.02,eta=ivp(0.02))
         )
 
     }
@@ -576,11 +580,11 @@ t_local <- attr(results,"system.time")
 #' These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 #' 
 ## ----pairs_local---------------------------------------------------------
-pairs(~loglik+Beta+mu_IR+eta+rho,data=results,pch=16)
+pairs(~loglik+Beta+eta+rho,data=results,pch=16)
 
 #' 
-#' This plot shows hints of ridges in the likelihood surface (cf. the $\beta$-$\eta$, $\beta$-$\rho$, and $\eta$-$\rho$ panels).
-#' However, the sampling is still too sparse to give a clear picture.
+#' This plot shows a hint of a ridge in the likelihood surface (cf. the $\beta$-$\eta$ panel).
+#' However, the sampling is as yet too sparse to give a clear picture.
 #' 
 #' We add these newly explored points to our database:
 ## ----local_database------------------------------------------------------
@@ -606,7 +610,7 @@ read_csv("measles_params.csv") %>%
 #' If an estimation method gives stable conclusions with starting values drawn randomly from this box, this gives some confidence that an adequate global search has been carried out. 
 #' 
 #' For our measles model, a box containing reasonable parameter values might be
-#' $\beta\in (10,80)$, $\mu_{IR}\in (0.3,2)$, $\rho\in (0.2,0.9)$, $\eta\in (0,0.2)$.
+#' $\beta\in (10,80)$, $\rho\in (0.2,0.9)$, $\eta\in (0,0.2)$.
 #' 
 #' We are now ready to carry out likelihood maximizations from diverse starting points.
 #' 
@@ -621,11 +625,12 @@ if (file.exists("CLUSTER")) {
 #' 
 ## ----global_search-------------------------------------------------------
 registerDoRNG(1270401374)
-guesses <- runifDesign(
-  lower=c(Beta=10,mu_IR=0.3,rho=0.2,eta=0),
-  upper=c(Beta=80,mu_IR=2,rho=0.9,eta=0.2),
+
+runifDesign(
+  lower=c(Beta=5,rho=0.2,eta=0),
+  upper=c(Beta=80,rho=0.9,eta=0.4),
   nseq=300
-)
+) -> guesses
 
 mf1 <- mifs_local[[1]]
 
@@ -666,7 +671,7 @@ read_csv("measles_params.csv") %>%
 #' Following the `mif2` computations, the particle filter is used to evaluate the likelihood, as before.
 #' In contract to the local-search codes above, here we return only the endpoint of the search, together with the likelihood estimate and its standard error in a named vector.
 #' The best result of this search had a likelihood of `r round(max(results$loglik),1)` with a standard error of `r round(results$loglik.se[which.max(results$loglik)],2)`.
-#' This took `r round(t_global["elapsed"]/60,1)` minutes altogether using 150 processors.
+#' This took `r round(t_global["elapsed"]/60,1)` minutes altogether using 250 processors.
 #' 
 #' Again, we attempt to visualize the global geometry of the likelihood surface using a scatterplot matrix.
 #' In particular, here we plot both the starting values (grey) and the IF2 estimates (red).
@@ -678,7 +683,7 @@ read_csv("measles_params.csv") %>%
   mutate(type=if_else(is.na(loglik),"guess","result")) %>%
   arrange(type) -> all
 
-pairs(~loglik+Beta+mu_IR+eta+rho, data=all,
+pairs(~loglik+Beta+eta+rho, data=all,
       col=ifelse(all$type=="guess",grey(0.5),"red"),pch=16)
 
 all %>%
@@ -696,9 +701,9 @@ all %>%
 #' 
 #' #### Profile over $\eta$
 #' 
-#' It appears that the likelihood surface may be quite flat with respect to $\eta$.
-#' To check this, let's compute profile likelihood.
-#' Recall that this allows us to determine, for each value of $\eta$, the best likelihood that the model can achieve.
+#' The curvature displayed in the upper envelope of the above plot suggests that there is indeed information in the data with respect to the susceptible fraction, $\eta$.
+#' To solidify this evidence, let's compute a profile likelihood over this parameter.
+#' Recall that this means determining, for each value of $\eta$, the best likelihood that the model can achieve.
 #' 
 #' To do this, we'll first bound the uncertainty by putting a box around the highest-likelihood estimates we've found so far.
 #' Within this box, we'll choose some random starting points, for each of several values of $\eta$.
@@ -711,21 +716,23 @@ read_csv("measles_params.csv") %>%
   sapply(range) -> box
 box
 
-guesses <- profileDesign(
-  eta=seq(0.01,0.85,length=20),
-  lower=box[1,c("Beta","mu_IR","rho")],
-  upper=box[2,c("Beta","mu_IR","rho")],
+profileDesign(
+  eta=seq(0.01,0.85,length=40),
+  lower=box[1,c("Beta","rho")],
+  upper=box[2,c("Beta","rho")],
   nprof=15, type="runif"
-)
+) -> guesses
 
 #' 
 #' Now, we'll start one independent sequence of iterated filtering operations from each of these points.
 #' We'll be careful to keep $\eta$ fixed.
+#' This is accomplished by not giving this parameter a random perturbation in the `mif2` call.
 #' 
 ## ----eta_profile2--------------------------------------------------------
 mf1 <- mifs_local[[1]]
 
 bake(file="eta_profile.rds",{
+
   foreach(guess=iter(guesses,"row"), 
           .combine=rbind,
           .export=c("mf1","fixed_params")
@@ -735,7 +742,7 @@ bake(file="eta_profile.rds",{
       library(tidyverse)
       mf1 %>%
         mif2(params=c(unlist(guess),fixed_params),
-             rw.sd=rw.sd(Beta=0.02,mu_IR=0.02,rho=0.02)) %>%
+             rw.sd=rw.sd(Beta=0.02,rho=0.02)) %>%
         mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
       ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
       ll <- logmeanexp(ll,se=TRUE)
@@ -760,22 +767,33 @@ read_csv("measles_params.csv") %>%
 read_csv("measles_params.csv") %>%
   filter(loglik>max(loglik)-10) -> all
 
-pairs(~loglik+Beta+mu_IR+eta+rho, data=all,pch=16)
+pairs(~loglik+Beta+eta+rho, data=all,pch=16)
 
 #' 
-## ----eta_profile_plot----------------------------------------------------
+#' Plotting just the results of the profile calculation reveals that, while some of the IF2 runs either become "stuck" on local minima or run out of opportunity to reach the heights of the likelihood surface, many of the runs converge on high likelihoods.
+#' 
+## ----eta_profile_plot1---------------------------------------------------
 results %>%
   ggplot(aes(x=eta,y=loglik))+
   geom_point()
 
+#' 
+#' A closer look shows what at first appears to be quite a flat surface over much of the explored range of $\eta$.
+#' Note that this appearance is due to the vertical scale, which is driven by the very low likelihoods associated with the smallest values of $\eta$.
+#' 
+## ----eta_profile_plot2---------------------------------------------------
 results %>%
   group_by(round(eta,5)) %>%
   filter(rank(-loglik)<3) %>%
   ungroup() %>%
   ggplot(aes(x=eta,y=loglik))+
-  geom_point()+
-  geom_smooth(method="loess",span=0.25)
+  geom_point()
 
+#' 
+#' Focusing on just the top of the surface shows that, in fact, one is able to estimate $\eta$ using these data.
+#' In the following plot, the cutoff for the 95% confidence interval (CI) is shown.
+#' 
+## ----eta_profile_plot3---------------------------------------------------
 results %>%
   group_by(round(eta,5)) %>%
   filter(rank(-loglik)<3) %>%
@@ -783,57 +801,52 @@ results %>%
   ggplot(aes(x=eta,y=loglik))+
   geom_point()+
   geom_smooth(method="loess",span=0.25)+
-  lims(y=max(results$loglik)-c(4,0))
+  geom_hline(color="red",yintercept=max(results$loglik)-0.5*qchisq(df=1,p=0.95))+
+  lims(y=max(results$loglik)-c(5,0))
 
 #' 
-#' As we suspected, the profile over $\eta$ is indeed flat.
-#' In other words, we can choose any one of the values of $\eta$ within a range and find values of the other parameters that give an equally good explanation of the data.
-#' How does the model do this?
-#' How does it change the other parameters?
-#' For example, how does it change the infectious period?
-#' We can plot $\mu_{IR}$ vs $\eta$ across the profile.
+#' As one varies $\eta$ across the profile, the model compensates by adjusting the other parameters.
+#' It can be very instructive to understand how the model does this.
+#' For example, how does the reporting efficiency, $\rho$, change as $\eta$ is varied?
+#' We can plot $\rho$ vs $\eta$ across the profile.
 #' This is called a *profile trace*.
 #' 
-## ----eta_profile_eta_by_mu_IR--------------------------------------------
+## ----eta_profile_eta_by_rho----------------------------------------------
 results %>%
+  mutate(in_ci=loglik>max(loglik)-1.92) %>%
   group_by(round(eta,5)) %>%
   filter(rank(-loglik)<3) %>%
   ungroup() %>%
-  ggplot(aes(x=eta,y=mu_IR))+
-  geom_point()
+  ggplot(aes(x=eta,y=rho,color=in_ci))+
+  geom_point()+
+  labs(color="inside 95% CI?")
 
 #' 
 #' 
+#' #### Profile over $\rho$
 #' 
+## ----include=FALSE-------------------------------------------------------
+results %>%
+  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.95)) %>%
+  summarize(min=min(rho),max=max(rho)) -> rho_ci
+
 #' 
-#' #### Profile over $\mu_{IR}$
+#' While the above profile trace is suggestive that the 95% CI for $\eta$ must be between roughly `r signif(100*rho_ci$min,1)`% and `r signif(100*rho_ci$max,1)`%, to confirm this, we should construct a proper profile likelihood over $\rho$.
+#' We do so now.
 #' 
-#' Do the data have an opinion about $\mu_{IR}$?
-#' Let's construct a profile to see.
-#' 
-## ----mu_IR_profile-------------------------------------------------------
+## ----rho_profile---------------------------------------------------------
 registerDoRNG(2105684752)
 
-results %>%
-  filter(loglik>max(loglik)-20,loglik.se<2,mu_IR<10) %>%
-  sapply(range) -> box
-box
-
-results %>% 
-  filter(loglik>max(loglik)-10) %>%
-  select(Beta,eta,rho,mu_IR) %>%
-  bind_rows(
-    profileDesign(
-      mu_IR=seq(0.7,7,length=20),
-      lower=box[1,c("Beta","eta","rho")],
-      upper=box[2,c("Beta","eta","rho")],
-      nprof=15, type="runif"
-    )
-) -> guesses
+read_csv("measles_params.csv") %>%
+  group_by(cut=round(rho,2)) %>%
+  filter(rank(-loglik)<=10) %>%
+  ungroup() %>%
+  select(-cut) -> guesses
 
 mf1 <- mifs_local[[1]]
 
-bake(file="mu_IR_profile.rds",{
+bake(file="rho_profile.rds",{
+
   foreach(guess=iter(guesses,"row"), 
           .combine=rbind,
           .export=c("mf1","fixed_params")
@@ -844,7 +857,7 @@ bake(file="mu_IR_profile.rds",{
       mf1 %>%
         mif2(
           params=c(unlist(guess),fixed_params),
-          rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02),rho=0.02)
+          rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02))
         ) %>%
         mif2(Nmif=100,cooling.fraction.50=0.3) %>%
         mif2() -> mf
@@ -864,222 +877,198 @@ read_csv("measles_params.csv") %>%
   write_csv("measles_params.csv")
 
 ## ------------------------------------------------------------------------
-pairs(~loglik+Beta+mu_IR+eta+rho,data=results,pch=16)
+pairs(~loglik+Beta+eta+rho,data=results,pch=16)
 
 results %>%
   filter(loglik>max(loglik)-10,loglik.se<1) %>%
-  group_by(round(mu_IR,1)) %>%
+  group_by(round(rho,2)) %>%
+  filter(rank(-loglik)<3) %>%
+  ungroup() %>%
+  ggplot(aes(x=rho,y=loglik))+
+  geom_point()+
+  geom_hline(color="red",yintercept=max(results$loglik)-0.5*qchisq(df=1,p=0.95))
+
+#' 
+## ----include=FALSE-------------------------------------------------------
+results %>%
+  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.95)) %>%
+  summarize(min=min(rho),max=max(rho)) -> rho_ci
+
+#' 
+#' The data appear to be consistent with reporting efficiencies in the `r signif(100*rho_ci$min,2)`--`r signif(100*rho_ci$max,2)`% range.
+#' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
+#' 
+#' ### Parameter estimates as model predictions
+#' 
+#' The estimated parameters are one kind of model prediction.
+#' When we can estimate parameters using other data, we can test these predictions.
+#' In the case of a highly contagious, immunizing childhood infection such as measles, we can obtain an estimate of the reporting efficiency, $\rho$, in the case of a higby simply regressing cumulative cases on cumulative births [@Anderson1991] over many years.
+#' When we do this for Consett, we see that the reporting efficiency is roughly 60%.
+#' Since such a value makes the outbreak data quite unlikely, the prediction does not appear to be borne out.
+#' We can conclude that one or more of our model assumptions is inconsistent with the data.
+#' 
+#' Let's revisit our assumption that the infectious period is known to be 0.5wk.
+#' Indeed, it would not be surprising were we to find that the *effective* infectious period, at the population scale, were somewhat shorter than the *clinical* infectious period.
+#' For example, confinement of patients should reduce contact rates, and might therefore curtail the effective infectious period.
+#' 
+#' To investigate this, we'll construct another profile likelihood over $\rho$, estimating $\mu_{IR}$ in the process.
+#' 
+#' 
+#' <br>
+#' 
+#' ----
+#' 
+#' ----
+#' 
+## ----global_search2------------------------------------------------------
+registerDoRNG(610408798)
+
+fixed_params <- c(N=38000,rho=0.6)
+
+runifDesign(
+  lower=c(Beta=5,mu_IR=0.2,eta=0),
+  upper=c(Beta=80,mu_IR=5,eta=0.4),
+  nseq=1000
+) -> guesses
+
+bake(file="global_search2.rds",{
+
+  foreach(guess=iter(guesses,"row"), 
+          .combine=rbind,
+          .export=c("measSIR","fixed_params")
+          ) %dopar% 
+    {
+      library(pomp)
+      library(tidyverse)
+      measSIR %>%
+        mif2(
+          params=c(unlist(guess),fixed_params),
+          Np=2000,
+          Nmif=100,
+          cooling.fraction.50=0.5,
+          rw.sd=rw.sd(Beta=0.02,mu_IR=0.02,eta=ivp(0.02))
+        ) %>%
+        mif2(Nmif=100) %>%
+        mif2(Nmif=100) %>%
+        mif2(Nmif=100) %>%
+        mif2(Nmif=100,cooling.fraction.50=0.3) %>%
+        mif2(Nmif=100,cooling.fraction.50=0.3) %>%
+        mif2(Nmif=100,cooling.fraction.50=0.3) %>%
+        mif2(Nmif=100,cooling.fraction.50=0.1) %>%
+        mif2(Nmif=100,cooling.fraction.50=0.1) %>%
+        mif2(Nmif=100,cooling.fraction.50=0.1) -> mf
+      ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
+      ll <- logmeanexp(ll,se=TRUE)
+      mf %>% coef() %>% bind_rows() %>%
+        bind_cols(loglik=ll[1],loglik.se=ll[2])
+    }
+
+}) -> results
+
+
+## ------------------------------------------------------------------------
+read_csv("measles_params.csv") %>%
+  bind_rows(results) %>%
+  arrange(-loglik) %>%
+  write_csv("measles_params.csv")
+
+#' 
+#' 
+## ------------------------------------------------------------------------
+read_csv("measles_params.csv") %>%
+  filter(loglik>max(loglik)-20) -> all
+
+pairs(~loglik+rho+mu_IR+Beta+eta,data=all,pch=16)
+pairs(~loglik+rho+mu_IR+Beta+eta,data=results,pch=16)
+
+#' 
+## ------------------------------------------------------------------------
+results %>%
+  filter(loglik>max(loglik)-20,loglik.se<1) %>%
+  ggplot(aes(x=mu_IR,y=loglik))+
+  geom_point()+
+  geom_hline(color="red",yintercept=max(results$loglik)-0.5*qchisq(df=1,p=0.95))
+
+#' 
+## ----mu_IR_profile1------------------------------------------------------
+registerDoRNG(610408798)
+
+fixed_params <- c(N=38000,rho=0.6)
+
+read_csv("measles_params.csv") %>%
+  filter(loglik>max(loglik)-20,loglik.se<2,abs(rho-0.6)<0.01) %>%
+  sapply(range) -> box
+
+profileDesign(
+  mu_IR=seq(0.5,2,by=0.1),
+  lower=box[1,c("Beta","eta")],
+  upper=box[2,c("Beta","eta")],
+  nprof=100, type="runif"
+) -> guesses
+
+bake(file="mu_IR_profile1.rds",{
+
+  foreach(guess=iter(guesses,"row"), 
+          .combine=rbind,
+          .export=c("measSIR","fixed_params")
+          ) %dopar% 
+    {
+      library(pomp)
+      library(tidyverse)
+      measSIR %>%
+        mif2(
+          params=c(unlist(guess),fixed_params),
+          Np=2000,
+          Nmif=100,
+          cooling.fraction.50=0.5,
+          rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02))
+        ) %>%
+        mif2(Nmif=100) %>%
+        mif2(Nmif=100,cooling.fraction.50=0.3) %>%
+        mif2(Nmif=100,cooling.fraction.50=0.1) -> mf
+      ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
+      ll <- logmeanexp(ll,se=TRUE)
+      mf %>% coef() %>% bind_rows() %>%
+        bind_cols(loglik=ll[1],loglik.se=ll[2])
+    }
+
+}) -> results
+
+
+## ------------------------------------------------------------------------
+read_csv("measles_params.csv") %>%
+  bind_rows(results) %>%
+  arrange(-loglik) %>%
+  write_csv("measles_params.csv")
+
+#' 
+## ------------------------------------------------------------------------
+results %>%
+  group_by(round(mu_IR,2)) %>%
   filter(rank(-loglik)<3) %>%
   ungroup() %>%
   ggplot(aes(x=mu_IR,y=loglik))+
-  geom_point()
-
-#' 
-#' The data appear to be consistent with values of $\mu_{IR}$ within a certain range.
-#' In other words, these data cannot tell us more precisely about the value of $\mu_{IR}$.
-#' 
-#' <br>
-#' 
-#' ----
-#' 
-#' ----
-#' 
-#' 
-#' #### Fix $\mu_{IR}$ and profile over $\beta$
-#' 
-#' 
-#' Suppose we had data about $\mu_{IR}$ from another source.
-#' Perhaps household studies lead us to believe that the infectious period is really about 1/2 week.
-#' Let's assume, correspondingly, that $\mu_{IR}=2$ and estimate the parameters of the restricted model.
-#' In particular, let's compute a profile over $\beta$.
-#' 
-## ----beta_profile1-------------------------------------------------------
-registerDoRNG(87757758)
-
-read_csv("measles_params.csv") %>%
-  filter(loglik>max(loglik)-10,loglik.se<2,mu_IR>1.8,mu_IR<2.2) %>%
-  sapply(range) -> box
-box
-
-profileDesign(
-  mu_IR=2,
-  Beta=seq(2,70,length=20),
-  N=38000,
-  lower=box[1,c("eta","rho")],
-  upper=box[2,c("eta","rho")],
-  nprof=15, type="runif"
-) -> guesses
-
-mf1 <- mifs_local[[1]]
-
-bake(file="beta_profile1.rds",{
-
-  foreach(guess=iter(guesses,"row"), 
-          .combine=rbind
-          ) %dopar% {
-            library(pomp)
-            library(tidyverse)
-            mf1 %>%
-              mif2(
-                params=guess,
-                rw.sd=rw.sd(eta=ivp(0.02),rho=0.02)
-              ) %>%
-              mif2(Nmif=100,cooling.fraction.50=0.3) %>%
-              mif2() -> mf
-            ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
-            ll <- logmeanexp(ll,se=TRUE)
-            mf %>% coef() %>% bind_rows() %>%
-              bind_cols(loglik=ll[1],loglik.se=ll[2])
-          }
-
-}) -> results
-
-
-## ------------------------------------------------------------------------
-read_csv("measles_params.csv") %>%
-  bind_rows(results) %>%
-  arrange(-loglik) %>%
-  write_csv("measles_params.csv")
-
-## ------------------------------------------------------------------------
-pairs(~loglik+Beta+eta+rho,data=filter(results,loglik>max(loglik)-20),pch=16)
-
-results %>%
-  filter(loglik.se<1,loglik>max(loglik)-10) %>%
-  ggplot(aes(x=Beta,y=loglik))+
-  geom_point()
-
-results %>% filter(loglik==max(loglik)) %>% pull(loglik) -> max.loglik
-cutoff <- max.loglik-0.5*qchisq(p=0.95,df=1)
-
-results %>%
-  filter(loglik>max(loglik)-10,loglik.se<1) %>%
-  group_by(round(Beta,0.01)) %>%
-  filter(rank(-loglik)<3) %>%
-  ungroup() %>%
-  ggplot(aes(x=Beta,y=loglik))+
   geom_point()+
-  geom_hline(yintercept=cutoff,color="red")
+  geom_hline(color="red",yintercept=max(results$loglik)-0.5*qchisq(df=1,p=0.95))
 
-## ----fig.height=6--------------------------------------------------------
-results %>%
-  filter(loglik>max(loglik)-10,loglik.se<1) %>%
-  group_by(round(Beta,0.01)) %>%
-  filter(rank(-loglik)<3) %>%
-  ungroup() %>%
-  gather(variable,value,eta,rho,loglik) %>%
-  ggplot(aes(x=Beta,y=value))+
-  geom_point()+
-  facet_wrap(~variable,scales="free_y",ncol=1)
-
+#' 
+#' This suggests that $\rho=0.6$ is consistent only with smaller values of $\mu_{IR}$, and hence *longer* infectious periods than are possible if the duration of shedding is actually less than one week.
+#' 
+#' Thus the model is incapable of reconciling both an infectious period of less than one week and a reporting rate of 60%.
+#' *What structural changes to the model might we make to improve its ability to explain the data?*
+#' 
 #' 
 #' 
 #' <br>
 #' 
-#' ----
+#' ------
 #' 
-#' ----
-#' 
-#' 
-#' 
-#' #### Fix $\rho$ and profile over $\beta$
-#' 
-#' 
-#' Just above, we used data from household studies on the duration of the infectious period to constrain our $\mu_{IR}$ parameter.
-#' What problems might be associated with taking these studies at face value?
-#' 
-#' Perhaps we should check to see what happens when we constrain a different parameter.
-#' We can obtain an estimate of the reporting efficiency, $\rho$, in the case of a highly contagious, immunizing childhood infection such as measles, by simply regressing cumulative cases on cumulative births [@Anderson1991].
-#' When we do this for Consett, over a much longer period, we see that the reporting efficiency is roughly 60%.
-#' Let's construct a profile over $\beta$ with $\rho$ constrained to this value.
-#' 
-## ----beta_profile2-------------------------------------------------------
-registerDoRNG(50965452)
-
-read_csv("measles_params.csv") %>%
-  filter(loglik>max(loglik)-10,loglik.se<2,rho>0.5,rho<0.7) %>%
-  sapply(range) -> box
-box
-
-profileDesign(
-  rho=0.6,
-  Beta=seq(10,60,length=20),
-  N=38000,
-  lower=box[1,c("eta","mu_IR")],
-  upper=box[2,c("eta","mu_IR")],
-  nprof=15, type="sobol"
-) -> guesses
-
-mf1 <- mifs_local[[1]]
-
-bake(file="beta_profile2.rds",{
-
-  foreach(guess=iter(guesses,"row"), 
-          .combine=rbind
-          ) %dopar% {
-            library(pomp)
-            library(tidyverse)
-            mf1 %>%
-              mif2(
-                params=guess,
-                rw.sd=rw.sd(eta=ivp(0.02),mu_IR=0.02)
-              ) %>%
-              mif2(Nmif=150,cooling.fraction.50=0.3) %>%
-              mif2() -> mf
-            ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
-            ll <- logmeanexp(ll,se=TRUE)
-            mf %>% coef() %>% bind_rows() %>%
-              bind_cols(loglik=ll[1],loglik.se=ll[2])
-          }
-
-}) -> results
-
-
-## ------------------------------------------------------------------------
-read_csv("measles_params.csv") %>%
-  bind_rows(results) %>%
-  arrange(-loglik) %>%
-  write_csv("measles_params.csv")
-
-## ------------------------------------------------------------------------
-pairs(~loglik+Beta+mu_IR+eta,data=filter(results,loglik>max(loglik)-20),pch=16)
-
-results %>%
-  filter(loglik.se<1,loglik>max(loglik)-10) %>%
-  ggplot(aes(x=Beta,y=loglik))+
-  geom_point()
-
-results %>% filter(loglik==max(loglik)) %>% pull(loglik) -> max.loglik
-cutoff <- max.loglik-0.5*qchisq(p=0.95,df=1)
-
-results %>%
-  filter(loglik>max(loglik)-10,loglik.se<1) %>%
-  group_by(round(Beta,0.01)) %>%
-  filter(rank(-loglik)<3) %>%
-  ungroup() %>%
-  ggplot(aes(x=Beta,y=loglik))+
-  geom_point()+
-  geom_hline(yintercept=cutoff,color="red")
-
-## ----fig.height=6--------------------------------------------------------
-results %>%
-  filter(loglik>max(loglik)-10,loglik.se<1) %>%
-  group_by(round(Beta,0.01)) %>%
-  filter(rank(-loglik)<3) %>%
-  ungroup() %>%
-  gather(variable,value,eta,mu_IR,loglik) %>%
-  ggplot(aes(x=Beta,y=value))+
-  geom_point()+
-  facet_wrap(~variable,scales="free_y",ncol=1)
-
-#' 
-#' 
-#' <br>
-#' 
-#' ----
-#' 
-#' ----
-#' 
+#' ------
 #' 
 #' ### Exercises
 #' 

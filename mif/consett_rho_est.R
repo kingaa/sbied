@@ -1,7 +1,7 @@
 library(tidyverse)
 library(lubridate)
 
-load("~/projects/Rpkg/pomp/www/vignettes/twentycities.rda")
+load("/userdata/kingaa/projects/Rpkg/pomp/www/vignettes/twentycities.rda")
 
 measles %>%
   filter(town=="Consett") -> x
@@ -18,7 +18,13 @@ x %>%
     cumbirth=cumsum(births)
   ) -> z
 
-plot(cumcase~cumbirth,data=z)
+z %>%
+  ggplot(aes(x=cumbirth,y=cumcase))+
+  geom_point()+
+  expand_limits(x=0,y=0)+
+  geom_smooth(method="lm",formula=y~x,color="blue")+
+  geom_smooth(method="lm",formula=y~x-1,color="green")
+
 fit <- lm(cumcase~cumbirth,data=z)
 summary(fit)
 coef(fit)
