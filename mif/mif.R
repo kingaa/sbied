@@ -39,14 +39,6 @@ theme_set(theme_bw())
 set.seed(557976883)
 
 #' 
-#' <!---
-#' 
-#' Begin estimation by fixing rho according to long-term estimates, or by fixing mu_IR according to "household studies".
-#' Then relax this assumption, showing non-identifiability.
-#' 
-#' --->
-#' 
-#' 
 #' -----------
 #' 
 #' ----------
