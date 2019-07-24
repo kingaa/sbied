@@ -509,7 +509,7 @@ m1 %>%
 #' 
 #' ### Fitting procedures
 #' 
-#' - A large Latin-hypercube design was used to initiate searches.
+#' - A large number of searches were started at points across the parameter space.
 #' - Iterated filtering was used to maximize the likelihood.
 #' - We obtained point estimates of all parameters for 20 cities.
 #' - We constructed profile likelihoods to quantify uncertainty in London and Hastings.
