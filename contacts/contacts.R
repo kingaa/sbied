@@ -17,6 +17,10 @@
 #' </div>
 #' "
 #' output:
+#'   html_document:
+#'     toc: true
+#'     toc_depth: 4
+#'     df_print: paged
 #'   slidy_presentation:
 #'     toc: yes
 #'     toc_depth: 3
