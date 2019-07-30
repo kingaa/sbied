@@ -218,9 +218,10 @@ DiagrammeR("digraph SEIR {
     - $N(t) = \text{population size, from data}$
 
 - Entry into susceptible class:
-$$\mu_{BS}(t) = (1-c)\,B(t-\tau)+c\,\delta(t-t_0)\,\int_{t-1}^{t}\,B(t-\tau-s)\,ds$$
-    - $c = \text{cohort effect}$  
+$$\mu_{BS}(t) = (1-c)\,B(t-\tau)+c\,\delta(t-\lfloor t\rfloor)\,\int_{t-1}^{t}\,B(t-\tau-s)\,ds$$
+	- $c = \text{cohort effect}$  
     - $\tau = \text{school-entry delay}$  
+    - $\lfloor t \rfloor = \text{most recent 1 September before}\ t$  
 
 - Force of infection:
 $$\mu_{SE}(t) = \tfrac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
@@ -521,7 +522,8 @@ library(doRNG)
 registerDoParallel()
 registerDoRNG(998468235L)
 
-foreach(i=1:4,.packages="pomp") %dopar% {
+foreach(i=1:4) %dopar% {
+  library(pomp)
   pfilter(m1,Np=10000,params=theta)
 } -> pfs
 logmeanexp(sapply(pfs,logLik),se=TRUE)

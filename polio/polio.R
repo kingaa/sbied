@@ -329,8 +329,10 @@ stew(file="local_search.rda",{
     
     foreach(
       i=1:90,
-      .packages='pomp',.combine=rbind
+      .combine=rbind
     ) %dopar% {
+
+      library(pomp)
       
       polio %>%
         mif2(
@@ -444,8 +446,10 @@ stew(file="global_search.rda",{
   t2 <- system.time({
     foreach(
       i=1:400,
-      .packages='pomp',.combine=rbind
+      .combine=rbind
     ) %dopar% {
+      
+      library(pomp)
       
       guess <- apply(polio_box,1,function(x)runif(1,x[1],x[2]))
       
@@ -469,6 +473,7 @@ stew(file="global_search.rda",{
         logmeanexp(se=TRUE) -> ll
       
       data.frame(as.list(coef(mf)),loglik=ll[1],loglik.se=ll[2])
+
     } -> m2
   })
 })
@@ -556,9 +561,11 @@ bake(file="profile_rho.rds",{
   
   foreach(
     start=iter(starts,"row"),
-    .combine=rbind,
-    .packages="pomp"
+    .combine=rbind
   ) %dopar% {
+
+    library(pomp)
+    
     polio %>%
       mif2(
         params=unlist(start),
@@ -585,6 +592,7 @@ bake(file="profile_rho.rds",{
       logmeanexp(se=TRUE) -> ll
     
     data.frame(as.list(coef(mf)),loglik=ll[1],loglik.se=ll[2])
+
   }
 }) -> m3
 
@@ -730,25 +738,29 @@ sims %>%
 #' 
 ## ----mif_diagnostics,fig.height=6,fig.width=6----------------------------
 foreach(i=1:4,
-        .packages='pomp',.combine=c,
+        .combine=c,
         .options.multicore=list(set.seed=TRUE)
 ) %dopar% {
+
+  library(pomp)
+  
   polio %>%
-  mif2(
-    params=c(b1=3,b2=0,b3=1.5,b4=6,b5=5,b6=3,
-             psi=0.002,rho=0.01,tau=0.001,
-             sigma_dem=0.04,sigma_env=0.5,
-             SO_0=0.12,IO_0=0.001,fixed_params),
-    Np=1000,
-    Nmif=50,
-    cooling.type="geometric",
-    cooling.fraction.50=0.5,
-    rw.sd=rw.sd(
-      b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
-      psi=0.02, rho=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
-      IO_0=ivp(0.2), SO_0=ivp(0.2)
+    mif2(
+      params=c(b1=3,b2=0,b3=1.5,b4=6,b5=5,b6=3,
+               psi=0.002,rho=0.01,tau=0.001,
+               sigma_dem=0.04,sigma_env=0.5,
+               SO_0=0.12,IO_0=0.001,fixed_params),
+      Np=1000,
+      Nmif=50,
+      cooling.type="geometric",
+      cooling.fraction.50=0.5,
+      rw.sd=rw.sd(
+        b1=0.02, b2=0.02, b3=0.02, b4=0.02, b5=0.02, b6=0.02,
+        psi=0.02, rho=0.02, tau=0.02, sigma_dem=0.02, sigma_env=0.02,
+        IO_0=ivp(0.2), SO_0=ivp(0.2)
+      )
     )
-  )
+  
 } -> m4
 
 plot(m4)

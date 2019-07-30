@@ -1,21 +1,6 @@
 ---
 title: "Case study: panel data on dynamic variation in sexual contact rates"
-author: "Edward L. Ionides and Aaron A. King<br>
-
-<div align=center>
-<image src='../logo.jpg' height='250' align='center'>
-</div>
-
-
-<h2>Objectives</h2>
-
-<div align=left>
-<ul>
-<li> Show how partially observed Markov process (POMP) methods can be used to understand the outcomes of a longitudinal behavioral survey.
-<li>More broadly, discuss the use of POMP methods for panel data, also known as longitudinal data.
-<li>Introduce the R package **panelPomp** that extends **pomp** to panel data.
-</div>
-"
+author: "Edward L. Ionides and Aaron A. King"
 output:
   html_document:
     toc: true
@@ -26,6 +11,8 @@ output:
     toc_depth: 3
 bibliography: ../sbied.bib
 csl: ../ecology.csl
+date: |
+  <img src="../logo.jpg" align="center" height=350>
 ---
 
 
@@ -83,6 +70,11 @@ mcopts <- list(set.seed=TRUE)
 ```
 
 
+## Objectives
+
+- Show how partially observed Markov process (POMP) methods can be used to understand the outcomes of a longitudinal behavioral survey.
+- More broadly, discuss the use of POMP methods for panel data, also known as longitudinal data.
+- Introduce the R package **panelPomp** that extends **pomp** to panel data.
 
 ## Heterogeneities in sexual contacts
 
@@ -133,7 +125,7 @@ We want a model that can describe all sources of variability in the data:
 
 * We use the model of @romero-severson15, with each individual having a latent rate $X_i(t)$ of making contacts of a specific type.
 
-* Each data point, $y_{ij}$, is the number of reported contacts for individual $i$ between time $t_{j-1}$ and $t_j$, where $i=1,\dots,882$ and $j=1,\dots,4$.
+* Each data point, $y^*_{ij}$, is the number of reported contacts for individual $i$ between time $t_{j-1}$ and $t_j$, where $i=1,\dots,882$ and $j=1,\dots,4$.
 
 * The unobserved process $\{X_i(t)\}$ is connected to the data through the expected number of contacts for individual $i$ in reporting interval $j$, which we write as
 $$C_{ij}= \alpha^{j-1}\int_{t_{j-1}}^{t_j} X_i(t)\, dt,$$
@@ -298,12 +290,17 @@ tic <- Sys.time()
 ```{r pfilter1,cache=F}
 stew("pfilter1.rda",{
   pf1_results <- foreach(i=1:20,
-    .packages=c('pomp','panelPomp'),
-    .options.multicore=mcopts) %dopar% {
+    .options.multicore=mcopts) %dopar%
+    {
+      library(pomp)
+      library(panelPomp)
+
       pf <- pfilter(contacts,Np= if(DEBUG) 10 else 2000)
+
       list(logLik=logLik(pf),
            unitLogLik=sapply(unitobjects(pf),logLik))
-  }
+      
+    }
 },seed=860496,kind="L'Ecuyer") 
 ```
 
@@ -382,8 +379,11 @@ tic <- Sys.time()
 ```{r mif1,cache=F}
 stew("mif1.rda",{
   mif_results <- foreach(i=1:10,
-    .packages=c('pomp','panelPomp'),
     .options.multicore=mcopts) %dopar% {
+
+      library(pomp)
+      library(panelPomp)
+      
       mf <- mif2(contacts,
         Nmif = if(DEBUG) 2 else 50,
         Np = if(DEBUG) 5 else 1000,
@@ -394,6 +394,7 @@ stew("mif1.rda",{
           mu_R=0.02, sigma_R =0.02, alpha=0.02
         )
       )
+
       list(logLik=logLik(mf),params=coef(mf))
     }
 },seed=354320731,kind="L'Ecuyer") 
@@ -420,9 +421,14 @@ stew("mif1-lik-eval.rda",{
   mif_logLik <-  sapply(mif_results,function(x)x$logLik)
   mif_mle <- mif_results[[which.max(mif_logLik)]]$params
   pf3_loglik_matrix <- foreach(i=1:10,
-    .packages=c('pomp','panelPomp'),.combine=rbind,
-    .options.multicore=mcopts) %dopar% {
+     .combine=rbind,
+     .options.multicore=mcopts) %dopar% {
+
+      library(pomp)
+      library(panelPomp)
+
       unitlogLik(pfilter(contacts,shared=mif_mle,Np=if(DEBUG) 50 else 2000))
+      
     }  
 },seed=35780731,kind="L'Ecuyer")
 panel_logmeanexp(pf3_loglik_matrix,MARGIN=2,se=T)
