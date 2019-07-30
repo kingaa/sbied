@@ -2,6 +2,10 @@
 #' title: "Introduction to Simulation-based Inference"
 #' author: "Aaron A. King and Edward L. Ionides"
 #' output:
+#'   html_document:
+#'     toc: true
+#'     toc_depth: 4
+#'     df_print: paged
 #'   slidy_presentation:
 #'     toc: true
 #'     toc_depth: 4
