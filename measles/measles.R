@@ -147,10 +147,11 @@ set.seed(1109529108L)
 #' - Force of infection:
 #' $$\mu_{SE}(t) = \tfrac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
 #'     - school-term transmission:
-#' $$\beta(t) = \begin{cases}\beta_0\,(1+a) &\text{during term}\\\beta_0\,(1-a) &\text{during vacation}\end{cases}$$  
+#' $$\beta(t) = \begin{cases}\beta_0\,\big(1+a(1-p)/p\big) &\text{during term}\\\beta_0\,(1-a) &\text{during vacation}\end{cases}$$  
 #'     - $\iota = \text{imported infections}$
 #'     - $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ [@He2010;@bhadra11]
-#' 
+#'     - $p=0.7589$ is the fraction of the year children are in school. The factor $(1-p)/p$ ensures that the average transmission rate is $\beta_0$.
+#'     
 #' - Overdispersed binomial measurement model: $\mathrm{cases}_t\,\vert\,\dlta{N}_{IR}=z_t \sim \dist{Normal}{\rho\,z_t,\rho\,(1-\rho)\,z_t+(\psi\,\rho\,z_t)^2}$
 #' 
 #' ### Implementation in **pomp**
