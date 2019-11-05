@@ -259,11 +259,11 @@ Take the limit as $\delta\to 0$ and show that this gives the ODE model.
 
 - There are 3 reasons we choose to lean heavily on Euler's method:
 
-  1. Euler's method is the simplest (the KISS principle).
+	 1. Euler's method is the simplest (the KISS principle).
   
-  2. Euler's method extends naturally to stochastic models, both continuous-time Markov chains models and stochastic differential equation (SDE) models.
+	 2. Euler's method extends naturally to stochastic models, both continuous-time Markov chains models and stochastic differential equation (SDE) models.
   
-  3. In the context of data analysis, close approximation of the numerical solutions to a continuous-time model is less important than may be supposed, a topic discussed later.
+	 3. In the context of data analysis, close approximation of the numerical solutions to a continuous-time model is less important than may be supposed, a topic discussed later.
 
 --------------------------
 
@@ -343,14 +343,13 @@ the same methods can also be applied to $N_{IR}(t)$.
 Conceptually, it is simplest to think of schemes (1) and (2). 
 Numerically, we prefer to use (3). 
 
-
-1. Poisson increments:
+	 1. Poisson increments:
   $$\dlta{\tilde N}_{SI}\;\sim\;\dist{Poisson}{\tilde \mu_{SI}(t)\,\tilde S(t)\,\delta},$$ where $\dist{Poisson}{\mu}$ is the Poisson distribution with mean $\mu$ and $$\tilde\mu_{SI}(t)=\beta\,\frac{\tilde I(t)}{N}.$$
   
-1. Binomial increments with linear probability:
+	 1. Binomial increments with linear probability:
   $$\dlta{\tilde N}_{SI}\;\sim\;\dist{Binomial}{\tilde{S}(t),\tilde\mu_{SI}(t)\,\delta},$$ where $\dist{Binomial}{n,p}$ is the binomial distribution with mean $n\,p$ and variance $n\,p\,(1-p)$.
   
-1. Binomial increments with exponential decaying probability:
+	 1. Binomial increments with exponential decaying probability:
 $$\dlta{\tilde{N}}_{SI}\;\sim\;\dist{Binomial}{\tilde{S}(t),1-e^{-\tilde{\mu}_{SI}(t)\,\delta}}.$$
 
 - These schemes all become equivalent as $\delta\to 0$.
