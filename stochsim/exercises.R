@@ -14,7 +14,7 @@
 #' ![CC-BY_NC](../graphics/cc-by-nc.png)
 #' 
 #' 
-## ----include=FALSE-------------------------------------------------------
+## ----include=FALSE------------------------------------------------------------
 source("stochsim.R")
 
 #' 
@@ -23,7 +23,7 @@ source("stochsim.R")
 #' In the simulated outbreaks, the overall incidence is much too low, and the outbreak dies out after only a few weeks. 
 #' To attempt to simulate data for which the observed data is a more plausible realization, we might try increasing the force of infection.
 #' 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 measSIR %>%
   simulate(params=c(Beta=20,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
@@ -34,7 +34,7 @@ measSIR %>%
 #' 
 #' Taking it farther....
 #' 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 measSIR %>%
   simulate(params=c(Beta=40,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
@@ -46,7 +46,7 @@ measSIR %>%
 #' While this increases the overall incidence, the epidemic is now peaking too quickly.
 #' To counteract this, we might try reducing the recovery rate.
 #' 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 measSIR %>%
   simulate(params=c(Beta=40,mu_IR=0.2,rho=0.5,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
@@ -58,7 +58,7 @@ measSIR %>%
 #' Additionally, we might have a look at the effects of changing the initial susceptible fraction, $\eta$.
 #' It's possible to get something not too awful to contemplate by just manipulating $\eta$, in fact:
 #' 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 measSIR %>%
   simulate(params=c(Beta=15,mu_IR=0.5,rho=0.5,eta=0.06,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
@@ -73,7 +73,7 @@ measSIR %>%
 #' 
 #' The existing code may be modified as follows:
 #' 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 seir_step <- Csnippet("
   double dN_SE = rbinom(S,1-exp(-Beta*I/N*dt));
   double dN_EI = rbinom(E,1-exp(-mu_EI*dt));
@@ -105,7 +105,7 @@ measSIR %>%
 #' 
 #' Using the rough estimate that the latent period in measles is 8--10da, we take $\mu_{EI}\sim 0.8$wk^-1^ and $\mu_{IR}\sim 1.3$wk^-1^ (so as to have roughly the same generation time as before).
 #' 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 measSEIR %>%
   simulate(params=c(Beta=15,mu_EI=0.8,mu_IR=1.3,rho=0.5,eta=0.06,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
@@ -116,7 +116,7 @@ measSEIR %>%
 #' 
 #' Again one can increase the force of infection: 
 #' 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 measSEIR %>% 
   simulate(params=c(Beta=40,mu_EI=0.8,mu_IR=1.3,rho=0.5,eta=0.06,N=38000),
   nsim=20,format="data.frame",include.data=TRUE) %>%

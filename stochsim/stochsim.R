@@ -26,7 +26,7 @@
 #' 
 
 #' 
-## ----prelims,echo=F,cache=F----------------------------------------------
+## ----prelims,echo=F,cache=F---------------------------------------------------
 library(plyr)
 library(tidyverse)
 library(pomp)
@@ -380,14 +380,14 @@ set.seed(594709947L)
 #' 
 #' - We download the data.
 #' Examine them:
-## ----meas-data1----------------------------------------------------------
+## ----meas-data1---------------------------------------------------------------
 read_csv("https://kingaa.github.io/sbied/stochsim/Measles_Consett_1948.csv") %>%
   select(week,reports=cases) -> meas
 as.data.frame(meas)
 
 #' 
 #' 
-## ----meas-data2,echo=FALSE-----------------------------------------------
+## ----meas-data2,echo=FALSE----------------------------------------------------
 library(tidyverse)
 
 meas %>%
@@ -448,7 +448,7 @@ meas %>%
 #' 
 #' - In particular, we model the number, $\dlta{N_{SI}}$, moving from S to I over interval $\dlta{t}$ as $$\dlta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\beta\,I/N\dlta{t}}},$$ and the number moving from I to R as $$\dlta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\mu_{IR}\dlta{t}}}.$$
 #' 
-## ----rproc1R-------------------------------------------------------------
+## ----rproc1R------------------------------------------------------------------
 sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t, ...) {
   dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
   dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
@@ -461,7 +461,7 @@ sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t, ...) {
 #' 
 #' - At day zero, we'll assume that $I=1$ but we don't know how many people are susceptible, so we'll treat this fraction, $\eta$, as a parameter to be estimated.
 #' 
-## ----init1R--------------------------------------------------------------
+## ----init1R-------------------------------------------------------------------
 sir_init <- function(N, eta, ...) {
   c(S = round(N*eta), I = 1, R = round(N*(1-eta)))
 }
@@ -469,7 +469,7 @@ sir_init <- function(N, eta, ...) {
 #' 
 #' - We fold these basic model components, with the data, into a `pomp` object thus:
 #' 
-## ----pomp1R--------------------------------------------------------------
+## ----pomp1R-------------------------------------------------------------------
 meas %>%
   pomp(times="week",t0=0,
     rprocess=euler(sir_step,delta.t=1/7),
@@ -485,7 +485,7 @@ meas %>%
 #' - We need a variable to track these daily counts.
 #'   Let's modify our rprocess function above, adding a variable $H$ to tally the true incidence.
 #' 
-## ----rproc2R-------------------------------------------------------------
+## ----rproc2R------------------------------------------------------------------
 sir_step <- function (S, I, R, H, N, Beta, mu_IR, delta.t, ...) {
   dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
   dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
@@ -505,7 +505,7 @@ sir_init <- function (N, eta, ...) {
 #'   Since we want $H$ to tally only the incidence over the week, we'll need to reset it to zero at the beginning of each week.
 #'   We accomplish this using the `accumvars` argument to `pomp`:
 #' 
-## ----zero1R--------------------------------------------------------------
+## ----zero1R-------------------------------------------------------------------
 measSIR %>% 
   pomp(
     rprocess=euler(sir_step,delta.t=1/7),
@@ -518,7 +518,7 @@ measSIR %>%
 #' 
 #' - Now, to include the observations in the model, we must write either a `dmeasure` or an `rmeasure` component, or both:
 #' 
-## ----meas-modelR---------------------------------------------------------
+## ----meas-modelR--------------------------------------------------------------
 dmeas <- function (reports, H, rho, log, ...) {
  dbinom(x=reports, size=H, prob=rho, log=log)
 }
@@ -530,7 +530,7 @@ rmeas <- function (H, rho, ...) {
 #' 
 #' - We then put these into our `pomp` object:
 #' 
-## ----add-meas-modelR-----------------------------------------------------
+## ----add-meas-modelR----------------------------------------------------------
 measSIR %>% pomp(rmeasure=rmeas,dmeasure=dmeas) -> measSIR
 
 #' 
@@ -552,7 +552,7 @@ measSIR %>% pomp(rmeasure=rmeas,dmeasure=dmeas) -> measSIR
 #' 
 #' - For example, C snippets that encode the basic model components in `sir` are as follows.
 #' 
-## ----csnips--------------------------------------------------------------
+## ----csnips-------------------------------------------------------------------
 sir_step <- Csnippet("
   double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
   double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
@@ -580,7 +580,7 @@ rmeas <- Csnippet("
 #' 
 #' - A call to `pomp` replaces the basic model components with these, much faster, implementations:
 #' 
-## ----sir_pomp------------------------------------------------------------
+## ----sir_pomp-----------------------------------------------------------------
 measSIR %>%
   pomp(rprocess=euler(sir_step,delta.t=1/7),
     rinit=sir_init,
@@ -626,7 +626,7 @@ measSIR %>%
 #' 
 #' - Let's simulate the model at these parameters.
 #' 
-## ----sir_sim1------------------------------------------------------------
+## ----sir_sim1-----------------------------------------------------------------
 measSIR %>%
   simulate(params=c(Beta=7.5,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) -> sims
