@@ -41,10 +41,11 @@ In **R**, you can run `Sys.info()` to get a printout of the operating system and
 ### Install **R** and **RStudio**
 
 **R** and **RStudio** are free and open-source.
-You’ll need at least version 3.5.1 of **R**.
-The latest version is 3.6.0, so if you need to update, go ahead and install version 3.6.0.
+You’ll need at least version 4.0.0 of **R**.
 Source code and binaries are available on CRAN (https://cran.r-project.org/).
 Install *the latest version* of **RStudio** from [rstudio.com](https://www.rstudio.com/products/rstudio/download/).
+
+**For Windows users**, there is a [video tutorial on the installation of **R** and **Rstudio**](https://kinglab.eeb.lsa.umich.edu/kingaa/media/tutorials.html#R_and_Rstudio_Windows).
 
 ### Install needed packages
 
@@ -56,7 +57,7 @@ Open a session in **RStudio** and run the following:
 ```
 
 *[The `>` is the command prompt; it is not part of the command.
-Also, depending on your email client program, you may need to replace the quotation marks with plain keyboard double quotes.]*
+Also, depending on your email client propgram, you may need to replace the quotation marks with plain keyboard double quotes.]*
 
 The first command updates your installed packages.
 You may be prompted to specify a CRAN mirror:
@@ -74,12 +75,12 @@ If your machine runs Windows, you must install **Rtools**.
 This will give you the ability to compile C code and dynamically link it into an **R** session.
 
 [Download **Rtools** from CRAN](https://cran.r-project.org/bin/windows/Rtools/) and install it.
-When installing **Rtools**, it is sufficient to choose the “Package authoring installation” option.
-Also during the installation, **you must tick the "edit system PATH" box**.
+A [video tutorial demonstrating how to install **Rtools** is available](https://kinglab.eeb.lsa.umich.edu/kingaa/media/tutorials.html#Rtools).
+Note that, after installation, there is one more step to be completed:
+see the [**Rtools** installation instructions](https://cran.r-project.org/bin/windows/Rtools/) and/or the video tutorial.
 
-If, having installed the latest version of **Rtools** compatible with your **R**,  the scripts below fail, try installing a "frozen" version of **Rtools**.
+***It is essential that you install these tools before the course starts!***
 
-***It is critical that you install these programs before the course starts!***
 
 -------------------------------
 

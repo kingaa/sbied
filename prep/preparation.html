@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -269,7 +268,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -331,6 +329,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -396,14 +395,15 @@ hr {
 <h2>All users</h2>
 <div id="install-r-and-rstudio" class="section level3">
 <h3>Install <strong>R</strong> and <strong>RStudio</strong></h3>
-<p><strong>R</strong> and <strong>RStudio</strong> are free and open-source. You’ll need at least version 3.5.1 of <strong>R</strong>. The latest version is 3.6.0, so if you need to update, go ahead and install version 3.6.0. Source code and binaries are available on CRAN (<a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a>). Install <em>the latest version</em> of <strong>RStudio</strong> from <a href="https://www.rstudio.com/products/rstudio/download/">rstudio.com</a>.</p>
+<p><strong>R</strong> and <strong>RStudio</strong> are free and open-source. You’ll need at least version 4.0.0 of <strong>R</strong>. Source code and binaries are available on CRAN (<a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a>). Install <em>the latest version</em> of <strong>RStudio</strong> from <a href="https://www.rstudio.com/products/rstudio/download/">rstudio.com</a>.</p>
+<p><strong>For Windows users</strong>, there is a <a href="https://kinglab.eeb.lsa.umich.edu/kingaa/media/tutorials.html#R_and_Rstudio_Windows">video tutorial on the installation of <strong>R</strong> and <strong>Rstudio</strong></a>.</p>
 </div>
 <div id="install-needed-packages" class="section level3">
 <h3>Install needed packages</h3>
 <p>Open a session in <strong>RStudio</strong> and run the following:</p>
 <pre><code>&gt; update.packages()
 &gt; source(&quot;https://kingaa.github.io/sbied/prep/packages.R&quot;)</code></pre>
-<p><em>[The <code>&gt;</code> is the command prompt; it is not part of the command. Also, depending on your email client program, you may need to replace the quotation marks with plain keyboard double quotes.]</em></p>
+<p><em>[The <code>&gt;</code> is the command prompt; it is not part of the command. Also, depending on your email client propgram, you may need to replace the quotation marks with plain keyboard double quotes.]</em></p>
 <p>The first command updates your installed packages. You may be prompted to specify a CRAN mirror: choose one geographically near you. In <strong>RStudio</strong>, you can also push the “Update” button on the “Packages” tab to accomplish this.</p>
 <p>The second command runs a script on my website. It will install some needed packages if these are not already installed on your system.</p>
 <hr />
@@ -412,9 +412,8 @@ hr {
 <div id="windows-users" class="section level2">
 <h2>Windows users</h2>
 <p>If your machine runs Windows, you must install <strong>Rtools</strong>. This will give you the ability to compile C code and dynamically link it into an <strong>R</strong> session.</p>
-<p><a href="https://cran.r-project.org/bin/windows/Rtools/">Download <strong>Rtools</strong> from CRAN</a> and install it. When installing <strong>Rtools</strong>, it is sufficient to choose the “Package authoring installation” option. Also during the installation, <strong>you must tick the “edit system PATH” box</strong>.</p>
-<p>If, having installed the latest version of <strong>Rtools</strong> compatible with your <strong>R</strong>, the scripts below fail, try installing a “frozen” version of <strong>Rtools</strong>.</p>
-<p><strong><em>It is critical that you install these programs before the course starts!</em></strong></p>
+<p><a href="https://cran.r-project.org/bin/windows/Rtools/">Download <strong>Rtools</strong> from CRAN</a> and install it. A <a href="https://kinglab.eeb.lsa.umich.edu/kingaa/media/tutorials.html#Rtools">video tutorial demonstrating how to install <strong>Rtools</strong> is available</a>. Note that, after installation, there is one more step to be completed: see the <a href="https://cran.r-project.org/bin/windows/Rtools/"><strong>Rtools</strong> installation instructions</a> and/or the video tutorial.</p>
+<p><strong><em>It is essential that you install these tools before the course starts!</em></strong></p>
 <hr />
 </div>
 <div id="macosx-users" class="section level2">
