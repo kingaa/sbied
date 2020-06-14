@@ -8,3 +8,15 @@ admin
 prep/list.csv
 prep/spam.sh
 *\.Rout
+*/*.bbl
+*/*.nav
+*/*.log
+*/*.out
+*/*.snm
+*/*.toc
+*/*.vrb
+*/*.blg
+*/*.aux
+*/*~
+*~
+*/tmp
