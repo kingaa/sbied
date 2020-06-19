@@ -45,7 +45,7 @@ You’ll need at least version 4.0.0 of **R**.
 Source code and binaries are available on CRAN (https://cran.r-project.org/).
 Install *the latest version* of **RStudio** from [rstudio.com](https://www.rstudio.com/products/rstudio/download/).
 
-**For Windows users**, there is a [video tutorial on the installation of **R** and **Rstudio**](https://drive.google.com/file/d/1gy10tkQEnhsKgd7uxM6UvWDwMVGAnjPN/view?usp=sharing).
+**For Windows users**, there is a [video tutorial on the installation of **R** and **Rstudio**](https://youtu.be/n6mnN3lGj4s).
 
 ### Install needed packages
 
@@ -75,9 +75,9 @@ If your machine runs Windows, you must install **Rtools**.
 This will give you the ability to compile C code and dynamically link it into an **R** session.
 
 [Download **Rtools** from CRAN](https://cran.r-project.org/bin/windows/Rtools/) and install it.
-A [video tutorial demonstrating how to install **Rtools** is available](https://drive.google.com/file/d/1xHGmx45QCSdYBmPS-WujCwnT0E__YvdP/view?usp=sharing).
+A [video tutorial demonstrating how to install **Rtools** is available](https://youtu.be/lmIhiT_QsPE).
 Note that, after installation, there is one more step to be completed:
-see the [**Rtools** installation instructions](https://cran.r-project.org/bin/windows/Rtools/) and/or the [video tutorial](https://drive.google.com/file/d/1xHGmx45QCSdYBmPS-WujCwnT0E__YvdP/view?usp=sharing).
+see the [**Rtools** installation instructions](https://cran.r-project.org/bin/windows/Rtools/) and/or the [video tutorial](https://youtu.be/lmIhiT_QsPE).
 
 ***It is essential that you install these tools before the course starts!***
 
