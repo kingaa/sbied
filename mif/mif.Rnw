@@ -626,7 +626,11 @@ set.seed(1350254336)
   registerDoRNG(482947940)
   bake(file="local_search.rds",{
     <<local_search>>
+    attr(mifs_local,"ncpu") <- getDoParWorkers()
+    mifs_local
   }) -> mifs_local
+  t_loc <- attr(mifs_local,"system.time")
+  ncpu_loc <- attr(mifs_local,"ncpu")
   @
 \end{frame}
 
@@ -686,7 +690,7 @@ set.seed(1350254336)
   \end{itemize}
   Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate.
   
-  <<lik_local,eval=F,purl=FALSE>>=
+  <<lik_local,eval=FALSE,purl=FALSE>>=
   foreach(mf=mifs_local,.combine=rbind) %dopar% {
     library(pomp)
     library(tidyverse)
@@ -701,11 +705,14 @@ set.seed(1350254336)
   registerDoRNG(900242057)
   bake(file="lik_local.rds",{
     <<lik_local>>
+    attr(results,"ncpu") <- getDoParWorkers()
+    results
   }) -> results
   t_local <- attr(results,"system.time")
+  ncpu_local <- attr(results,"ncpu")
   @
   
-  This local investigation took \Sexpr{round(attr(mifs_local,"system.time")["elapsed"],0)}~sec for the maximization and \Sexpr{round(t_local["elapsed"],0)}~sec for the likelihood evaluation.
+  On \Sexpr{ncpu_local} processors, this local investigation took \Sexpr{round(t_loc[3],0)}~sec for the maximization and \Sexpr{round(t_local[3],0)}~sec for the likelihood evaluation.
   
   \framebreak
   
@@ -1327,14 +1334,14 @@ set.seed(1350254336)
     library(tidyverse)
     measSIR %>%
       mif2(params=guess, Np=2000, Nmif=100,
-           cooling.fraction.50=0.5,
+           partrans=parameter_trans(log="Beta",logit="eta"),
+           paramnames=c("Beta","eta"), cooling.fraction.50=0.5,
            rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02))
-           ) %>%
-      mif2(Nmif=100) %>%
+           ) %>% mif2(Nmif=100) %>%
       mif2(Nmif=100,cooling.fraction.50=0.3) %>%
       mif2(Nmif=100,cooling.fraction.50=0.1) -> mf
-    ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
-    ll <- logmeanexp(ll,se=TRUE)
+    replicate(10,mf %>% pfilter(Np=100000) %>% logLik()) %>%
+      logmeanexp(se=TRUE) -> ll
     mf %>% coef() %>% bind_rows() %>%
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> results

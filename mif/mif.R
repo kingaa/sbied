@@ -113,7 +113,11 @@ bake(file="local_search.rds",{
         rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02))
       )
   } -> mifs_local
+  attr(mifs_local,"ncpu") <- getDoParWorkers()
+  mifs_local
 }) -> mifs_local
+t_loc <- attr(mifs_local,"system.time")
+ncpu_loc <- attr(mifs_local,"ncpu")
 
 
 
@@ -138,8 +142,11 @@ bake(file="lik_local.rds",{
     mf %>% coef() %>% bind_rows() %>%
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> results
+  attr(results,"ncpu") <- getDoParWorkers()
+  results
 }) -> results
 t_local <- attr(results,"system.time")
+ncpu_local <- attr(results,"ncpu")
 
 pairs(~loglik+Beta+eta+rho,data=results,pch=16)
 
@@ -471,14 +478,14 @@ bake(file="mu_IR_profile1.rds",{
     library(tidyverse)
     measSIR %>%
       mif2(params=guess, Np=2000, Nmif=100,
-           cooling.fraction.50=0.5,
+           partrans=parameter_trans(log="Beta",logit="eta"),
+           paramnames=c("Beta","eta"), cooling.fraction.50=0.5,
            rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02))
-           ) %>%
-      mif2(Nmif=100) %>%
+           ) %>% mif2(Nmif=100) %>%
       mif2(Nmif=100,cooling.fraction.50=0.3) %>%
       mif2(Nmif=100,cooling.fraction.50=0.1) -> mf
-    ll <- replicate(10,mf %>% pfilter(Np=100000) %>% logLik())
-    ll <- logmeanexp(ll,se=TRUE)
+    replicate(10,mf %>% pfilter(Np=100000) %>% logLik()) %>%
+      logmeanexp(se=TRUE) -> ll
     mf %>% coef() %>% bind_rows() %>%
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> results
