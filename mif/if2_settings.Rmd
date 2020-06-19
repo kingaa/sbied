@@ -1,0 +1,131 @@
+---
+title: "Tuning IF2"
+author: "Edward Ionides and Aaron A. King"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+    code_folding: show
+    highlight: haddock
+    number_sections: FALSE
+    df_print: kable
+bibliography: ../sbied.bib
+csl: ../ecology.csl
+---
+
+```{css styles,echo=FALSE,purl=FALSE}
+div .nb {
+	background-color: #ffeca3;
+	border-style: solid;
+	border-width: 2;
+	border-color: #00274c;
+	padding: 1em;
+}
+hr {
+	border-width: 3;
+	border-color: #00274c;
+}
+```
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dlta[1]{{\Delta}{#1}}
+\newcommand\lik{\mathcal{L}}
+\newcommand\loglik{\ell}
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix non-commercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
+
+```{r knitr-opts,include=FALSE,purl=FALSE}
+library(knitr)
+prefix <- "if2_settings"
+opts_chunk$set(
+  progress=TRUE,
+  prompt=FALSE,
+  tidy=FALSE,
+  highlight=TRUE,
+  strip.white=TRUE,
+  warning=FALSE,
+  message=FALSE,
+  error=FALSE,
+  echo=TRUE,
+  cache=TRUE,
+  cache.extra=rand_seed,
+  results='markup',
+  fig.show='asis',
+  size='small',
+  fig.path=paste0("figure/",prefix,"-"),
+  cache.path=paste0("cache/",prefix,"-"),
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  dpi=100,
+  dev='png',
+  dev.args=list(bg='transparent')
+)
+options(keep.source=TRUE,encoding="UTF-8")
+```
+
+## Choosing the algorithmic settings for IF2
+
++ The initial parameter swarm, $\{ \Theta^0_j, j=1,\dots,J\}$, usually consists of $J$ identical replications of some starting parameter vector.
++ $J$ is set to be sufficient for particle filtering.
+  Because the addition of random perturbations acts to combat particle depletion, it is typically possible to take $J$ substantially smaller than the value needed to obtain precise likelihood estimates via `pfilter`.
+  By the time of the last iteration ($m=M$) one should not have effective sample size close to 1. 
++ Perturbations are usually chosen to be multivariate normal, with $\sigma_m$ being a scale factor for iteration $m$:
+$$h_n(\theta|\varphi;\sigma) \sim N[\varphi, \sigma^2_m V_n].$$
++ $V_n$ is usually taken to be diagonal,
+$$ V_n = \left( \begin{array}{ccccc}
+v_{1,n}^2 & 0 & 0 & \cdots & 0 \\
+0 & v_{2,n}^2 &  0 & \cdots & 0 \\
+0 & 0 & v_{3,n}^2 & \cdots & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & 0 & \cdots & v_{p,n}^2 \end{array}\right).$$
++ If $\theta_i$ is a parameter that affects the dynamics or observations throughout the time series, it is called a __regular parameter__, and it is often appropriate to specify $$v_{i,n} = v_i.$$
++ If $\theta_j$ is a parameter that affects only the initial conditions of the dynamic model, it is called an __initial value parameter__ (IVP) and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=0$} \\0 & \mbox{if $n>0$} \end{array}\right.$$
++ If $\theta_k$ is a break-point parameter that models how the system changes at time $t_q$, then $\theta_k$ is like an IVP at time $t_q$ and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=q$} \\	0 & \mbox{if $n\neq q$} \end{array}\right.$$
++ $\sigma_{1:M}$ is called a __cooling schedule__, following a thermodynamic analogy popularized by [simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing).
+  As $\sigma_m$ becomes small, the system cools toward a "freezing point".
+  If the algorithm is working successfully, the freezing point should be close to the lowest-energy state of the system, i.e., the MLE.
+  Typical choices of the cooling schedule are geometric, $\sigma_m = \alpha^m$, and hyperbolic, $\sigma_m \propto 1/(1+\alpha\,m)$.
+  In `mif2`, the cooling schedule is parameterized by $\sigma_{50}$, the cooling fraction after 50 IF2 iterations.
++ It is generally helpful to transform the parameters so that (on the estimation scale) they are real-valued, unconstrained, and have uncertainty on the order of 1 unit.
+  For example, one typically takes a logarithmic transformation of positive parameters and a logistic transformation of $[0,1]$ valued parameters.
++ On such a scale, it is surprisingly often effective to take $$v_i \sim 0.02$$ for regular parameters (RPs) and $$v_j \sim 0.1$$ for initial value parameters (IVPs).
++ We suppose that $\sigma_1=1$, since the scale of the parameters is addressed by the matrix $V_n$.
+  Early on in an investigation, one might take $M=100$ and $\sigma_M=0.1$.
+  As the investigation proceeds, consideration of diagnostic plots may suggest refinements. 
++ It is remarkable that useful general advice exists for the choice of algorithmic parameters that should in principle be model- and data-specific.
+  Here is one possible explanation:
+  the precision of interest is often the second significant figure and there are often order 100 observations (10 monthly observations would be too few to fit a mechanistic model;
+  1000 would be unusual for an epidemiological system). 
+
+--------------------------
+
+#### Exercise: Assessing and improving algorithmic parameters
+
+Develop your own heuristics to try to improve the performance of `mif2` in the [Consett measles example](./mif.pdf).
+Specifically, for a global optimization procedure carried out using random starting values in the specified box, let
+$\hat\Theta_{\mathrm{max}}$ be a random Monte Carlo estimate of the resulting MLE, and let $\hat\theta$ be the true (unknown) MLE.
+We can define the maximization error in the log likelihood to be
+$$e = \ell(\hat\theta) - E[\ell(\hat\Theta_{\mathrm{max}})].$$
+We cannot directly evaluate $e$, since there is also Monte Carlo error in our evaluation of $\ell(\theta)$, but we can compute it up to a known precision.
+Plan some code to estimates $e$ for a search procedure using a computational effort of $JM=2\times 10^7$, comparable to that used for each mif computation in the global search.
+Discuss the strengths and weaknesses of this quantification of optimization success.
+See if you can choose $J$ and $M$ subject to this constraint, together with choices of `rw.sd` and the cooling rate, `cooling.fraction.50`, to arrive at a quantifiably better procedure.
+Computationally, you may not be readily able to run your full procedure, but you could run a quicker version of it.
+
+--------------------------
+
+## [Back to IF2 lesson](./mif.pdf)
+## [Back to course homepage](../index.html)
+## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R)
+## [Files for this lesson on github](https://github.com/kingaa/sbied/tree/master/mif/)
+
+----------------------
+
+## References

@@ -2,28 +2,28 @@
 title: "Iterated filtering: principles and practice"
 author: "Edward Ionides and Aaron A. King"
 output:
-  html_document:
-    toc: yes
-    toc_depth: 3
-    code_folding: show
-    highlight: haddock
-    number_sections: FALSE
-    df_print: kable
+html_document:
+toc: yes
+toc_depth: 3
+code_folding: show
+highlight: haddock
+number_sections: FALSE
+df_print: kable
 bibliography: ../sbied.bib
 csl: ../ecology.csl
 ---
 
 ```{css styles,echo=FALSE,purl=FALSE}
 div .nb {
-	background-color: #ffeca3;
-	border-style: solid;
-	border-width: 2;
-	border-color: #00274c;
-	padding: 1em;
+    background-color: #ffeca3;
+    border-style: solid;
+    border-width: 2;
+    border-color: #00274c;
+    padding: 1em;
 }
 hr {
-	border-width: 3;
-	border-color: #00274c;
+    border-width: 3;
+    border-color: #00274c;
 }
 ```
 
@@ -45,28 +45,28 @@ Produced with **R** version `r getRversion()` and **pomp** version `r packageVer
 library(knitr)
 prefix <- "mif"
 opts_chunk$set(
-  progress=TRUE,
-  prompt=FALSE,
-  tidy=FALSE,
-  highlight=TRUE,
-  strip.white=TRUE,
-  warning=FALSE,
-  message=FALSE,
-  error=FALSE,
-  echo=TRUE,
-  cache=TRUE,
-  cache.extra=rand_seed,
-  results='markup',
-  fig.show='asis',
-  size='small',
-  fig.path=paste0("figure/",prefix,"-"),
-  cache.path=paste0("cache/",prefix,"-"),
-  fig.align='center',
-  fig.height=4,fig.width=6.83,
-  dpi=100,
-  dev='png',
-  dev.args=list(bg='transparent')
-)
+             progress=TRUE,
+             prompt=FALSE,
+             tidy=FALSE,
+             highlight=TRUE,
+             strip.white=TRUE,
+             warning=FALSE,
+             message=FALSE,
+             error=FALSE,
+             echo=TRUE,
+             cache=TRUE,
+             cache.extra=rand_seed,
+             results='markup',
+             fig.show='asis',
+             size='small',
+             fig.path=paste0("figure/",prefix,"-"),
+             cache.path=paste0("cache/",prefix,"-"),
+             fig.align='center',
+             fig.height=4,fig.width=6.83,
+             dpi=100,
+             dev='png',
+             dev.args=list(bg='transparent')
+           )
 options(keep.source=TRUE,encoding="UTF-8")
 ```
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
@@ -117,9 +117,9 @@ set.seed(557976883)
 - The volume of research indicates both the importance and the difficulty of the problem.
 
 - Let's start by considering three criteria to categorize inference methods:
-    + the plug-and-play property.
-    + full-information or feature-based
-    + frequentist or Bayesian.
++ the plug-and-play property.
++ full-information or feature-based
++ frequentist or Bayesian.
 
 <br>
 
@@ -130,15 +130,15 @@ set.seed(557976883)
 ### Plug-and-play (also called simulation-based) methods
 
 - Inference methodology that calls `rprocess` but not `dprocess` is said to be *plug-and-play*.
-  All popular modern Monte Carlo methods fall into this category. 
+All popular modern Monte Carlo methods fall into this category. 
 - Simulation-based is equivalent to plug-and-play. 
-    + Historically, simulation-based meant simulating forward from initial conditions to the end of the time series. 
-    + However, particle filtering methods instead consider each observation interval sequentially.
-      They carry out multiple, carefully selected, simulations over each interval.
-    + Plug-and-play methods can call `dmeasure`.
-      A method that uses only `rprocess` and `rmeasure` is called "doubly plug-and-play".
++ Historically, simulation-based meant simulating forward from initial conditions to the end of the time series. 
++ However, particle filtering methods instead consider each observation interval sequentially.
+They carry out multiple, carefully selected, simulations over each interval.
++ Plug-and-play methods can call `dmeasure`.
+A method that uses only `rprocess` and `rmeasure` is called "doubly plug-and-play".
 - Two *non-plug-and-play* methods (expectation-maximization (EM) algorithms and Markov chain Monte Carlo (MCMC)) have theoretical convergence problems for nonlinear POMP models.
-  The failures of these two workhorses of statistical computation have prompted development of alternative methodology.
+The failures of these two workhorses of statistical computation have prompted development of alternative methodology.
 
 <br>
 
@@ -153,9 +153,9 @@ set.seed(557976883)
 - Asymptotically, full-information methods are statistically efficient and feature-based methods are not.
 - In some cases, loss of statistical efficiency might be an acceptable tradeoff for advantages in computational efficiency.
 - However:
-	+ Good low-dimensional summary statistics can be hard to find. 
-	+ When using statistically inefficient methods, it can be hard to know how much information you are losing. 
-	+ Intuition and scientific reasoning can be inadequate tools to derive informative low-dimensional summary statistics [@shrestha11;@ionides11-statSci].
++ Good low-dimensional summary statistics can be hard to find. 
++ When using statistically inefficient methods, it can be hard to know how much information you are losing. 
++ Intuition and scientific reasoning can be inadequate tools to derive informative low-dimensional summary statistics [@shrestha11;@ionides11-statSci].
 
 <br>
 
@@ -166,14 +166,14 @@ set.seed(557976883)
 ### Bayesian and frequentist methods
 
 - Recently, plug-and-play Bayesian methods have been discovered:
-    + particle Markov chain Monte Carlo (PMCMC) [@Andrieu2010].
-    + approximate Bayesian computation (ABC) [@Toni2009].
++ particle Markov chain Monte Carlo (PMCMC) [@Andrieu2010].
++ approximate Bayesian computation (ABC) [@Toni2009].
 - Prior belief specification is both the strength and weakness of Bayesian methodology:
-    + The likelihood surface for nonlinear POMP models often contains nonlinear ridges and variations in curvature. 
-    + These situations bring into question the appropriateness of independent priors derived from expert opinion on marginal distributions of parameters.
-    + They also are problematic for specification of "flat" or "uninformative" prior beliefs.
-    + Expert opinion can be treated as data for non-Bayesian analysis.
-      However, our primary task is to identify the information in the data under investigation, so it can be helpful to use methods that do not force us to make our conclusions dependent on quantification of prior beliefs.
++ The likelihood surface for nonlinear POMP models often contains nonlinear ridges and variations in curvature. 
++ These situations bring into question the appropriateness of independent priors derived from expert opinion on marginal distributions of parameters.
++ They also are problematic for specification of "flat" or "uninformative" prior beliefs.
++ Expert opinion can be treated as data for non-Bayesian analysis.
+However, our primary task is to identify the information in the data under investigation, so it can be helpful to use methods that do not force us to make our conclusions dependent on quantification of prior beliefs.
 
 <br>
 
@@ -196,17 +196,17 @@ set.seed(557976883)
 
 <style>
 td, th {
-	vertical-align: center;
-	horizontal-align: center;
-	text-align: left;
-	padding: 10px;
-	border: 1px solid black;
+vertical-align: center;
+horizontal-align: center;
+text-align: left;
+padding: 10px;
+border: 1px solid black;
 }
 .rowhead {
-	transform: rotate(-90deg);
-	text-align: center;
-	padding-top: 10px;
-	padding-bottom: 10px;
+transform: rotate(-90deg);
+text-align: center;
+padding-top: 10px;
+padding-bottom: 10px;
 }
 </style>
 
@@ -224,7 +224,7 @@ td, th {
 
 1. Yule-Walker is the method of moments for ARMA, a linear Gaussian POMP.
 1. The Kalman filter gives the exact likelihood for a linear Gaussian POMP.
-   The extended Kalman filter gives an approximation for nonlinear models that can be used for quasi-likelihood or quasi-Bayesian inference.
+The extended Kalman filter gives an approximation for nonlinear models that can be used for quasi-likelihood or quasi-Bayesian inference.
 
 <br>
 
@@ -340,7 +340,7 @@ pushViewport(vp)
 grid.rect(x=c(1/4,2/4,3/4),y=1/2,width=1/8,height=1,just=c(0.5,0.5),gp=gpar(fill="white",lwd=2))
 grid.text(x=c(1/4,2/4,3/4),y=1/2,label=c(expression(S),expression(I),expression(R)),gp=gpar(fontsize=24))
 grid.text(x=unit(c(6/16,10/16),"npc"),y=unit(1/2,"npc")+unit(c(12,-12),"point"),
-  label=c(expression(mu[SI]),expression(mu[IR])),gp=gpar(fontsize=18))
+          label=c(expression(mu[SI]),expression(mu[IR])),gp=gpar(fontsize=18))
 grid.lines(x=c(5/16,7/16),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
 grid.lines(x=c(9/16,11/16),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
 popViewport()
@@ -975,7 +975,7 @@ The data appear to be consistent with reporting efficiencies in the `r signif(10
 
 The estimated parameters are one kind of model prediction.
 When we can estimate parameters using other data, we can test these predictions.
-In the case of a highly contagious, immunizing childhood infection such as measles, we can obtain an estimate of the reporting efficiency, $\rho$, in the case of a higby simply regressing cumulative cases on cumulative births [@Anderson1991] over many years.
+In the case of a highly contagious, immunizing childhood infection such as measles, we can obtain an estimate of the reporting efficiency, $\rho$, by simply regressing cumulative cases on cumulative births [@Anderson1991] over many years.
 When we do this for Consett, we see that the reporting efficiency is roughly 60%.
 Since such a value makes the outbreak data quite unlikely, the prediction does not appear to be borne out.
 We can conclude that one or more of our model assumptions is inconsistent with the data.
@@ -1187,17 +1187,17 @@ For various reasons, it can be surprisingly hard to make sure that the written e
 Here are some things to think about:
 
 1. Papers should be written to be readable.
-   Code must be written to run successfully.
-   People rarely choose to clutter papers with numerical details which they hope and believe are scientifically irrelevant.
-   What problems can arise due to the conflict between readability and reproducibility?
-   What solutions are available?
+Code must be written to run successfully.
+People rarely choose to clutter papers with numerical details which they hope and believe are scientifically irrelevant.
+What problems can arise due to the conflict between readability and reproducibility?
+What solutions are available?
 
 1. Suppose that there is an error in the coding of `rprocess` and suppose that plug-and-play statistical methodology is used to infer parameters.
-   As a conscientious researcher, you carry out a simulation study to check the soundness of your inference methodology on this model.
-   To do this, you use `simulate` to generate realizations from the fitted model and checking that your parameter inference procedure recovers the known parameters, up to some statistical error.
-   Will this procedure help to identify the error in `rprocess`?
-   If not, how might you debug `rprocess`?
-   What research practices help minimize the risk of errors in simulation code?
+As a conscientious researcher, you carry out a simulation study to check the soundness of your inference methodology on this model.
+To do this, you use `simulate` to generate realizations from the fitted model and checking that your parameter inference procedure recovers the known parameters, up to some statistical error.
+Will this procedure help to identify the error in `rprocess`?
+If not, how might you debug `rprocess`?
+What research practices help minimize the risk of errors in simulation code?
 
 <br>
 
@@ -1210,32 +1210,32 @@ Here are some things to think about:
 
 + The initial parameter swarm, $\{ \Theta^0_j, j=1,\dots,J\}$, usually consists of $J$ identical replications of some starting parameter vector.
 + $J$ is set to be sufficient for particle filtering.
-  Because the addition of random perturbations acts to combat particle depletion, it is typically possible to take $J$ substantially smaller than the value needed to obtain precise likelihood estimates via `pfilter`.
-  By the time of the last iteration ($m=M$) one should not have effective sample size close to 1. 
+Because the addition of random perturbations acts to combat particle depletion, it is typically possible to take $J$ substantially smaller than the value needed to obtain precise likelihood estimates via `pfilter`.
+By the time of the last iteration ($m=M$) one should not have effective sample size close to 1. 
 + Perturbations are usually chosen to be multivariate normal, with $\sigma_m$ being a scale factor for iteration $m$:
 $$h_n(\theta|\varphi;\sigma) \sim N[\varphi, \sigma^2_m V_n].$$
 + $V_n$ is usually taken to be diagonal,
 $$ V_n = \left( \begin{array}{ccccc}
-v_{1,n}^2 & 0 & 0 & \cdots & 0 \\
-0 & v_{2,n}^2 &  0 & \cdots & 0 \\
-0 & 0 & v_{3,n}^2 & \cdots & 0 \\
-\vdots & \vdots & \vdots & \ddots & \vdots \\
-0 & 0 & 0 & \cdots & v_{p,n}^2 \end{array}\right).$$
-+ If $\theta_i$ is a parameter that affects the dynamics or observations throughout the time series, it is called a __regular parameter__, and it is often appropriate to specify $$v_{i,n} = v_i.$$
-+ If $\theta_j$ is a parameter that affects only the initial conditions of the dynamic model, it is called an __initial value parameter__ (IVP) and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=0$} \\0 & \mbox{if $n>0$} \end{array}\right.$$
-+ If $\theta_k$ is a break-point parameter that models how the system changes at time $t_q$, then $\theta_k$ is like an IVP at time $t_q$ and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=q$} \\	0 & \mbox{if $n\neq q$} \end{array}\right.$$
-+ $\sigma_{1:M}$ is called a __cooling schedule__, following a thermodynamic analogy popularized by [simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing).
+  v_{1,n}^2 & 0 & 0 & \cdots & 0 \\
+  0 & v_{2,n}^2 &  0 & \cdots & 0 \\
+  0 & 0 & v_{3,n}^2 & \cdots & 0 \\
+  \vdots & \vdots & \vdots & \ddots & \vdots \\
+  0 & 0 & 0 & \cdots & v_{p,n}^2 \end{array}\right).$$
+  + If $\theta_i$ is a parameter that affects the dynamics or observations throughout the time series, it is called a __regular parameter__, and it is often appropriate to specify $$v_{i,n} = v_i.$$
+  + If $\theta_j$ is a parameter that affects only the initial conditions of the dynamic model, it is called an __initial value parameter__ (IVP) and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=0$} \\0 & \mbox{if $n>0$} \end{array}\right.$$
+  + If $\theta_k$ is a break-point parameter that models how the system changes at time $t_q$, then $\theta_k$ is like an IVP at time $t_q$ and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=q$} \\  0 & \mbox{if $n\neq q$} \end{array}\right.$$
+  + $\sigma_{1:M}$ is called a __cooling schedule__, following a thermodynamic analogy popularized by [simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing).
   As $\sigma_m$ becomes small, the system cools toward a "freezing point".
   If the algorithm is working successfully, the freezing point should be close to the lowest-energy state of the system, i.e., the MLE.
   Typical choices of the cooling schedule are geometric, $\sigma_m = \alpha^m$, and hyperbolic, $\sigma_m \propto 1/(1+\alpha\,m)$.
   In `mif2`, the cooling schedule is parameterized by $\sigma_{50}$, the cooling fraction after 50 IF2 iterations.
-+ It is generally helpful to transform the parameters so that (on the estimation scale) they are real-valued, unconstrained, and have uncertainty on the order of 1 unit.
+  + It is generally helpful to transform the parameters so that (on the estimation scale) they are real-valued, unconstrained, and have uncertainty on the order of 1 unit.
   For example, one typically takes a logarithmic transformation of positive parameters and a logistic transformation of $[0,1]$ valued parameters.
-+ On such a scale, it is surprisingly often effective to take $$v_i \sim 0.02$$ for regular parameters (RPs) and $$v_j \sim 0.1$$ for initial value parameters (IVPs).
-+ We suppose that $\sigma_1=1$, since the scale of the parameters is addressed by the matrix $V_n$.
+  + On such a scale, it is surprisingly often effective to take $$v_i \sim 0.02$$ for regular parameters (RPs) and $$v_j \sim 0.1$$ for initial value parameters (IVPs).
+  + We suppose that $\sigma_1=1$, since the scale of the parameters is addressed by the matrix $V_n$.
   Early on in an investigation, one might take $M=100$ and $\sigma_M=0.1$.
   As the investigation proceeds, consideration of diagnostic plots may suggest refinements. 
-+ It is remarkable that useful general advice exists for the choice of algorithmic parameters that should in principle be model- and data-specific.
+  + It is remarkable that useful general advice exists for the choice of algorithmic parameters that should in principle be model- and data-specific.
   Here is one possible explanation:
   the precision of interest is often the second significant figure and there are often order 100 observations (10 monthly observations would be too few to fit a mechanistic model;
   1000 would be unusual for an epidemiological system). 
