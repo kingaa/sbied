@@ -155,11 +155,8 @@ read_csv("measles_params.csv") %>%
   arrange(-loglik) %>%
   write_csv("measles_params.csv")
 
-if (file.exists("CLUSTER")) {
-  scan("CLUSTER",what=integer(0)) -> ncpu
-  library(doMPI)
-  cl <- startMPIcluster(ncpu,verbose=TRUE,logdir="/tmp")
-  registerDoMPI(cl)
+if (file.exists("CLUSTER.R")) {
+  source("CLUSTER.R")
 }
 
 set.seed(2062379496)

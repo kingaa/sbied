@@ -760,12 +760,9 @@ set.seed(1350254336)
 
   We are now ready to carry out likelihood maximizations from diverse starting points.
 
-  <<mpi,include=FALSE,purl=TRUE>>=
-  if (file.exists("CLUSTER")) {
-    scan("CLUSTER",what=integer(0)) -> ncpu
-    library(doMPI)
-    cl <- startMPIcluster(ncpu,verbose=TRUE,logdir="/tmp")
-    registerDoMPI(cl)
+  <<cluster_setup,include=FALSE,purl=TRUE>>=
+  if (file.exists("CLUSTER.R")) {
+    source("CLUSTER.R")
   }
   @
   
