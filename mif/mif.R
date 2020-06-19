@@ -73,8 +73,7 @@ library(foreach)
 library(doParallel)
 registerDoParallel()
 
-## library(doRNG)
-## registerDoRNG(625904618)
+
 
 
 

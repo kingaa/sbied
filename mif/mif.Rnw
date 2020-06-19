@@ -542,7 +542,7 @@ set.seed(1350254336)
   To initialize a parallel RNG, we use the \package{doRNG} package.
   The following ensures that the parallel computations will be both mutually independent and reproducible.
   
-  <<pf1,eval=FALSE>>=
+  <<pf1,eval=FALSE,purl=FALSE>>=
   library(doRNG)
   registerDoRNG(625904618)
   @ 
