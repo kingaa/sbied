@@ -226,9 +226,9 @@ set.seed(1350254336)
 \begin{frame}{The likelihood function}
   \begin{itemize}
   \item The basis for modern frequentist, Bayesian, and information-theoretic inference.
-  \item Method of maximum likelihood introduced by \citep{Fisher1922}.
+  \item Method of maximum likelihood introduced by \citet{Fisher1922}.
   \item The likelihood function itself is a representation of the what the data have to say about the parameters.
-  \item A good general reference on likelihood is by \citep{Pawitan2001}.
+  \item A good general reference on likelihood is by \citet{Pawitan2001}.
   \end{itemize}
 \end{frame}
 
@@ -509,6 +509,38 @@ set.seed(1350254336)
   \item It can be shown that the particle filter provides an unbiased estimate of the likelihood. This implies a consistent but biased estimate of the log likelihood.
   \end{itemize}
 
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks=0.8]
+  \frametitle{Parallel computing}
+  It will be helpful to parallelize most of the computations.
+  Most machines nowadays have multiple cores and using this computational capacity is as simple as:
+  \begin{enumerate}[(i)]
+  \item letting \Rlanguage know you plan to use multiple processors;
+  \item using the parallel for loop provided by the \package{foreach} package; and
+  \item paying proper attention to the use of parallel random number generators (RNG).
+  \end{enumerate}
+  For example:
+  
+  <<parallel-setup,eval=FALSE,purl=FALSE>>=
+  library(foreach)
+  library(doParallel)
+  registerDoParallel()
+  @ 
+  
+  The first two lines above load the \package{foreach} and \package{doParallel} packages, the latter being a ``backend'' for the \package{foreach} package.
+  The next line tells \package{foreach} that we will use the \package{doParallel} backend.
+  By default, \Rlanguage will guess how many cores are available and will run about half this number of concurrent \Rlanguage processes.
+\end{frame}
+
+\begin{frame}[fragile]{Parallel random number generators (RNG)}
+  To initialize a parallel RNG, we use the \package{doRNG} package.
+  The following ensures that the parallel computations will be both mutually independent and reproducible.
+  
+  <<pf1,eval=FALSE,purl=FALSE>>=
+  library(doRNG)
+  registerDoRNG(625904618)
+  @ 
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]{Particle filtering in \package{pomp}}
