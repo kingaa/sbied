@@ -1,0 +1,435 @@
+%\documentclass[handout]{beamer}
+\documentclass{beamer}
+\usepackage{natbib}
+\bibliographystyle{dcu}
+\input{../header.tex}
+
+\usepackage{hyperref}
+
+\newcommand\CHAPTER{1}
+
+\hypersetup{
+colorlinks=true,
+linkcolor=blue,
+filecolor=magenta,
+urlcolor=cyan,
+}
+
+\setbeamertemplate{footline}[frame number]
+
+\newcommand\eqspace{\quad\quad\quad}
+\newcommand\eqskip{\vspace{2.5mm}}
+
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+
+\newcommand\myeq{\hspace{10mm}}
+
+% \newcommand\answer[2]{\textcolor{blue}{#2}} % to show answers
+% \newcommand\answer[2]{{\color{blue}{#2}}} % to show answers
+\newcommand\answer[2]{#1} % to show blank space
+
+\begin{document}
+% knitr set up
+<<knitr_opts,echo=F,cache=F,purl=F>>=
+library(knitr)
+opts_chunk$set(
+  cache=FALSE,
+#  cache=TRUE,
+  eval=TRUE,
+  include=TRUE,
+  echo=TRUE,
+  purl=TRUE,
+  cache.path=paste0("tmp/cache"),
+  dev='png',
+  dev.args=list(bg='transparent'),
+  dpi=300,
+  error=FALSE,
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  fig.lp="fig:",
+  fig.path=paste0("tmp/figure"),
+  fig.show='asis',
+  highlight=TRUE,
+  message=FALSE,
+  progress=TRUE,
+  prompt=FALSE,
+#  results='asis',
+  results="markup",
+  size='small',
+  strip.white=TRUE,
+  tidy=FALSE,
+  warning=FALSE
+#  comment=NA # to remove ## on output
+)
+options(width = 60) # number of characters in R output before wrapping
+
+@
+
+<<prelims,echo=F,cache=F>>=
+set.seed(594709947L)
+library(ggplot2)
+theme_set(theme_bw())
+#library(doMC)
+library(pomp)
+stopifnot(packageVersion("pomp")>="3.0")
+@
+
+\begin{frame}[fragile]
+\frametitle{Chapter \CHAPTER. Introduction}
+\hspace{3cm} {\large \bf Objectives}
+\begin{itemize}
+\item Motivations from the study of epidemiological and ecological systems.
+\item Introducing partially observed Markov process (POMP) models.
+\item Introducing the **pomp** R package.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Epidemiological and Ecological Dynamics}
+\begin{itemize}
+\item Ecological systems are complex, open, nonlinear, and nonstationary.
+\item "Laws of Nature" are unavailable except in the most general form.
+\item It is useful to model them as stochastic systems.
+\item For any observable phenomenon, multiple competing explanations are possible.
+\item Central scientific goals:
+  \begin{itemize}
+  \item Which explanations are most favored by the data?
+  \item Which kinds of data are most informative?
+  \end{itemize}
+\item Central applied goals:
+  \begin{itemize}
+  \item How to design ecological or epidemiological intervention?
+  \item How to make accurate forecasts?
+  \end{itemize}
+\item Time series are particularly useful sources of data.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Noisy clockwork: Time series analysis of population fluctuations in animals}
+
+Obstacles for **ecological** modeling and inference via nonlinear mechanistic models enumerated by @Bjornstad2001
+\begin{enumerate}
+\item Combining measurement noise and process noise.
+\item Including covariates in mechanistically plausible ways.
+\item Using continuous-time models.
+\item Modeling and estimating interactions in coupled systems.
+\item Dealing with unobserved variables.
+\item Modeling spatial-temporal dynamics.
+\end{enumerate}
+The same issues arise for **epidemiological** modeling and inference via nonlinear mechanistic models.
+
+The *partially observed Markov process* modeling framework we focus on in this course addresses most of these problems effectively.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Course objectives}
+\begin{enumerate}
+\item To show how stochastic dynamical systems models can be used as scientific instruments.
+\item To teach statistically and computationally efficient approaches for performing scientific inference using POMP models.
+\item To give students the ability to formulate models of their own.
+\item To give students opportunities to work with such inference methods.
+\item To familiarize students with the **pomp** package.
+\item To provide documented examples for adaptation and re-use.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Questions and answers}
+\begin{enumerate}
+\item \href{https://doi.org/10.1126/scitranslmed.aaj1748}{How to explain the resurgence of pertussis in countries with sustained high vaccine coverage?}
+\item \href{http://dx.doi.org/10.1038/nature07084}{What roles are played by asymptomatic infection and waning immunity in cholera epidemics?}
+\item \href{http://dx.doi.org/10.1098/rsif.2009.0151}{What explains the seasonality of measles?}
+\item \href{http://dx.doi.org/10.1126/science.aat6777}{Can serotype-specific immunity explain the strain dynamics of human enteroviruses?}
+\item \href{http://dx.doi.org/10.1371/journal.pone.0072086}{Do subclinical infections of pertussis play an important epidemiological role?}
+\item \href{http://dx.doi.org/10.1093/aje/kwv044}{What is the contribution to the HIV epidemic of dynamic variation in sexual behavior of an individual over time? How does this compare to the role of heterogeneity between individuals?}
+\item \href{http://dx.doi.org/10.1371/journal.pcbi.1000898}{What explains the interannual variability of malaria?}
+\item \href{http://dx.doi.org/10.1098/rspb.2015.0347}{What will happen next in an Ebola outbreak?}
+\item \href{http://doi.org/10.1016/j.advwatres.2016.11.012}{Can hydrology explain the seasonality of cholera?}
+\item \href{http://doi.org/10.1073/pnas.1323688111}{What is the contribution of adults to polio transmission?}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Partially observed Markov process (POMP) models}
+\begin{itemize}
+
+\item Data $y^*_1,\dots,y^*_N$ collected at times $t_1<\dots<t_N$ are modeled as noisy, incomplete, and indirect observations of a Markov process $\{X(t), t\ge t_0\}$.
+
+\item This is a \myemph{partially observed Markov process (POMP)} model, also known as a hidden Markov model or a state space model.
+
+\item $\{X(t)\}$ is Markov if the history of the process, $\{X(s), s\le t\}$, is uninformative about the future of the process, $\{X(s), s\ge t\}$, given the current value of the process, $X(t)$.
+
+\item If all quantities important for the dynamics of the system are placed in the \myemph{state}, $X(t)$, then the Markov property holds by construction.
+
+\item Systems with delays can usually be rewritten as Markovian systems, at least approximately.
+
+\item An important special case: any system of differential equations $dx/dt=f(x)$ is Markovian.
+
+\item POMP models can include all the features desired by @Bjornstad2001.
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Schematic of the structure of a POMP}
+\begin{itemize}
+\item Arrows in the following diagram show causal relations.
+\includegraphics[width=500px]{pomp_schematic1.png}
+<<ssdiag1,echo=FALSE,purl=FALSE,fig.height=3,fig.width=6,fig.show='hide'>>=
+library(grid)
+library(gridExtra)
+vp <- viewport(x=unit(0.5,"npc"),y=unit(0.54,"npc"),
+               width=unit(0.5,"npc"),height=unit(0.5,"npc"))
+pushViewport(vp)
+
+grid.ellipse(x=0.5,y=0.2,angle=0,ar=2.5,size=20,gp=gpar(lwd=2,col='black'))
+grid.text(x=0.5,y=0.2,label="state process",gp=gpar(fontsize=12,fontface='bold'))
+
+grid.ellipse(x=0.2,y=0.7,angle=0,ar=2.5,size=18,gp=gpar(lwd=2,col='black'))
+grid.text(x=0.2,y=0.7,label="measurement\n process",gp=gpar(fontsize=12,fontface='bold'))
+
+grid.ellipse(x=0.7,y=0.8,angle=0,ar=1.5,size=16,gp=gpar(lwd=2,col='black'))
+grid.text(x=0.7,y=0.8,label="data",gp=gpar(fontsize=12,fontface='bold'))
+
+popViewport()
+@
+
+\item A key perspective to keep in mind is that \myemph{the model is to be viewed as the process that generated the data}.
+\item That is: the data are viewed as one realization of the model's stochastic process.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Notation for POMP models}
+\begin{itemize}
+\item Write $X_n=X(t_n)$ and $X_{0:N}=(X_0,\dots,X_N)$. Let $Y_n$ be a random variable modeling the observation at time $t_n$.
+\item The one-step transition density, $f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)$, together with the measurement density, $f_{Y_n|X_n}(y_n|x_n;\theta)$ and the initial density, $f_{X_0}(x_0;\theta)$, specify the entire POMP model.
+\item The joint density $f_{X_{0:N},Y_{1:N}}(x_{0:N},y_{1:N};\theta)$ can be written as
+\begin{equation*}
+f_{X_0}(x_0;\theta)\,\prod_{n=1}^N\!f_{X_n | X_{n-1}}(x_n|x_{n-1};\theta)\,f_{Y_n|X_n}(y_n|x_n;\theta)
+\end{equation*}
+\item The marginal density for $Y_{1:N}$ evaluated at the data, $y_{1:N}^*$, is
+\begin{equation*}
+f_{Y_{1:N}}(y^*_{1:N};\theta)=\int f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)\, dx_{0:N}
+\end{equation*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Another POMP model schematic}
+\begin{itemize}
+\item In the following diagram, arrows show dependence among model variables:
+<<ssdiag2,echo=FALSE,purl=FALSE,fig.height=3,fig.width=6>>=
+library(grid)
+vp <- viewport(x=unit(0.5,"npc"),y=unit(0.54,"npc"),
+               width=unit(0.96,"npc"),height=unit(0.96,"npc"))
+pushViewport(vp)
+
+fs <- 12
+x1 <- 0.6; y1 <- 0.88
+gp <- gpar(lty=2,col=grey(0.6),fontsize=12)
+grid.text(x=x1,y=y1,label="measurement model",just="centre",gp=gpar(fontsize=fs,col=grey(0.6)))
+grid.lines(x=unit(c(x1,3/12),"npc")+unit(c(0,2),"points"),y=unit(c(y1,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gp)
+grid.lines(x=unit(c(x1,6/12),"npc")+unit(c(0,2),"points"),y=unit(c(y1,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gp)
+grid.lines(x=unit(c(x1,8/12),"npc")+unit(c(0,-2),"points"),y=unit(c(y1,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gp)
+grid.lines(x=unit(c(x1,10/12),"npc")+unit(c(0,-2),"points"),y=unit(c(y1,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gp)
+
+x1 <- 0.4; y1 <- 0.14
+grid.text(x=x1,y=y1,label="process model",just="centre",gp=gp)
+grid.lines(x=unit(c(x1,4/24),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
+grid.lines(x=unit(c(x1,23/72),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
+grid.lines(x=unit(c(x1,31/72),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
+grid.lines(x=unit(c(x1,14/24),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
+grid.lines(x=unit(c(x1,18/24),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
+grid.lines(x=unit(c(x1,65/72),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
+
+grid.text(x=1/72,y=c(1/3,2/3),label=c("states","observations"),just="centre",rot=90,gp=gp)
+
+x1 <- unit(c(1,3,6,8,10,3,6,8,10)/12,"npc")
+y1 <- unit(c(rep(1,5),rep(2,4))/3,"npc")
+w <- unit(1/12,"npc")
+h <- unit(1/6,"npc")
+
+grid.lines(x=c(1/48,47/48),y=1/12,arrow=arrow(length=unit(0.02,"npc")))
+grid.text(x=x1[1:5],y=1/24,label=c(expression(italic(t[0])),expression(italic(t[1])),expression(italic(t[n-1])),expression(italic(t[n])),expression(italic(t[n+1]))))
+
+grid.rect(x=x1,y=y1,width=w,height=h,just=c(0.5,0.5),gp=gpar(fill="white",lwd=2))
+grid.text(x=x1,y=y1,label=c(
+  expression(italic(X[0])),expression(italic(X[1])),
+  expression(italic(X[n-1])),expression(italic(X[n])),
+  expression(italic(X[n+1])),
+  expression(italic(Y[1])),expression(italic(Y[n-1])),
+  expression(italic(Y[n])),expression(italic(Y[n+1]))),
+  gp=gpar(fontface=3))
+grid.text(x=c(4.5,11.5)/12,y=unit(1/3,"npc")+unit(2,"point"),label=quote(phantom(0)~cdots~phantom(0)),gp=gpar(fontsize=15))
+grid.lines(x=c(1,3)/12+c(1,-1)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(3,4)/12+c(1,1/3)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(5,6)/12+c(-1/3,-1)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(6,8)/12+c(1,-1)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(8,10)/12+c(1,-1)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(10,11)/12+c(1,1/3)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=3/12,y=c(1,2)/3+c(1,-1)/12,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=6/12,y=c(1,2)/3+c(1,-1)/12,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=8/12,y=c(1,2)/3+c(1,-1)/12,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+grid.lines(x=10/12,y=c(1,2)/3+c(1,-1)/12,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
+
+popViewport()
+@
+
+\item The state process, $X_n$, is Markovian, i.e.,
+
+$$f_{X_n|X_{0:n-1},Y_{1:n-1}}(x_n|x_{0:n-1},y_{1:n-1})=f_{X_n|X_{n-1}}(x_n|x_{n-1}).$$
+
+\item Moreover, the measurable random variable, $Y_n$, depends only on the state at that time:
+$$f_{Y_n|X_{0:N},Y_{1:n-1}}(y_n|x_{0:n},y_{1:n-1})=f_{Y_n|X_{n}}(y_n|x_n), \,\,\, \mbox{for $n=1,\dots,N$.}$$
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Moving from math to algorithms for POMP models}
+We specify some \myemph{basic model components} which can be used within algorithms:
+\begin{itemize}
+
+\item \code{rprocess}: a draw from $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
+
+\item \code{dprocess}: evaluation of $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
+
+\item \code{rmeasure}: a draw from $f_{Y_n|X_n}(y_n| x_n;\theta)$
+
+\item \code{dmeasure}: evaluation of $f_{Y_n|X_n}(y_n| x_n;\theta)$
+
+\item \code{rinit}: a draw from $f_{X_0}(x_0;\theta)$
+
+\end{itemize}
+These basic model components define the specific POMP model under consideration.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{What does it mean for methodology to be \myemph{simulation\-based}?}
+
+\begin{itemize}
+
+\item Simulating random processes is often much easier than evaluating their transition probabilities.
+
+\item In other words, we may be able to write \code{rprocess} but not \code{dprocess}.
+
+\item  \myemph{Simulation\-based} methods require the user to specify \code{rprocess} but not \code{dprocess}.
+
+\item  \myemph{Plug\-and\-play}, \myemph{likelihood\-free} and \myemph{equation\-free} are alternative terms for "simulation\-based" methods.
+
+\item Much development of simulation\-based statistical methodology has occurred in the past decade.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{The \myemph{pomp} package for POMP models}
+\begin{itemize}
+\item \myemph{pomp} is an  \myemph{R}  package for data analysis using partially observed Markov process (POMP) models.
+
+\item Note the distinction: lower case \myemph{pomp} is a software package; upper case 'POMP' is a class of models.
+
+\item \myemph{pomp} builds methodology for POMP models in terms of arbitrary user-specified POMP models.
+
+\item \myemph{pomp} provides tools, documentation, and examples to help users specify POMP models.
+
+\item \myemph{pomp} provides a platform for modification and sharing of models, data\-analysis workflows, and methodological development.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Structure of the \myemph{pomp} package}
+
+It is useful to divide the \myemph{pomp} package functionality into different levels:
+\begin{itemize}
+\item Basic model components
+\item Workhorses
+\item Elementary POMP algorithms
+\item Inference algorithms
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Basic model components}
+Basic model components are user-specified procedures that perform the elementary computations that specify a POMP model.
+There are nine of these:
+\begin{itemize}
+\item \code{rinit}: simulator for the initial-state distribution, i.e., the distribution of the latent state at time \code{t0}.
+\item \code{rprocess} and \code{dprocess}: simulator and density evaluation procedure, respectively, for the process model.
+\item \code{rmeasure} and \code{dmeasure}: simulator and density evaluation procedure, respectively, for the measurement model.
+\item \code{rprior} and \code{dprior}: simulator and density evaluation procedure, respectively, for the prior distribution.
+\item \code{skeleton}: evaluation of a deterministic skeleton.
+\item \code{partrans}: parameter transformations.
+\end{itemize}
+The scientist must specify whichever of these basic model components are required for the algorithms that the scientist uses.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Workhorses}
+Workhorses are \myemph{R} functions, built into the package, that cause the basic model component procedures to be executed.
+\begin{itemize}
+\item Each basic model component has a corresponding workhorse.
+
+\item Effectively, the workhorse is a vectorized wrapper around the basic model component.
+
+\item For example, the \code{rprocess()} function uses code specified by the \code{rprocess} model component, constructed via the \code{rprocess} argument to \code{pomp()}.
+
+\item The \code{rprocess} model component specifies how a single trajectory evolves at a single moment of time. The \code{rprocess()} workhorse combines these computations for arbitrary collections of times and arbitrary numbers of replications.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Elementary POMP algorithms}
+These are algorithms that interrogate the model or the model\/data confrontation without attempting to estimate parameters.
+There are currently four of these:
+\begin{itemize}
+\item \code{simulate} performs simulations of the POMP model, i.e., it samples from the joint distribution of latent states and observables.
+
+\item \code{pfilter} runs a sequential Monte Carlo (particle filter) algorithm to compute the likelihood and (optionally) estimate the prediction and filtering distributions of the latent state process.
+
+\item \code{probe} computes one or more uni\- or multi\-variate summary statistics on both actual and simulated data.
+
+\item \code{spect} estimates the power spectral density functions for the actual and simulated data.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{POMP inference algorithms}
+
+These are procedures that build on the elementary algorithms and are used for estimation of parameters and other inferential tasks.
+There are currently ten of these:
+\begin{itemize}
+\item \code{abc}: approximate Bayesian computation
+\item \code{bsmc2}: Liu-West algorithm for Bayesian SMC
+\item \code{pmcmc}: a particle MCMC algorithm
+\item \code{mif2}: iterated filtering (IF2)
+\item \code{enkf}, \code{eakf} ensemble and ensemble adjusted Kalman filters
+\item \code{traj\_objfun}: trajectory matching
+\item \code{spect\_objfun}: power spectrum matching
+\item \code{probe\_objfun}: probe matching
+\item \code{nlf\_objfun}: nonlinear forecasting
+\end{itemize}
+\emph{Objective function methods}:
+among the estimation algorithms just listed, four are methods that construct stateful objective functions that can be optimized using general-purpose numerical optimization algorithms such as \code{optim}, \code{subplex}, or the optimizers in the \myemph{nloptr} package.
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Acknowledgments}
+\begin{itemize}
+\item Versions of this material have been presented at \href{https://www.biostat.washington.edu/suminst/sismid}{Summer Institute in Statistics and Modeling in Infectious Diseases (SISMID)} in 2015-2018.
+
+\item Licensed under the \href{Creative Commons Attribution-NonCommercial license}{http://creativecommons.org/licenses/by-nc/4.0/}.
+Please share and remix noncommercially, mentioning its origin.
+\includegraphics[]{../graphics/cc-by-nc.png}
+\item Produced in \myemph{R} version \Sexpr{getRversion()} using \myemph{pomp} version \Sexpr{packageVersion('pomp')}.
+
+\end{itemize}
+\end{frame}
+
+
+\end{document}
