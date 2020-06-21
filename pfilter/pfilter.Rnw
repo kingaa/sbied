@@ -1075,12 +1075,15 @@ set.seed(1350254336)
 
 \section*{References}
 
-\begin{frame}{License and acknowledgments}
+\begin{frame}{License and links}
   Licensed under the \href{http://creativecommons.org/licenses/by-nc/4.0/}{\textcolor{blue}{Creative Commons Attribution-NonCommercial license}}.
   Please share and remix non-commercially, mentioning its origin.\\
   \includegraphics[height=24pt]{../graphics/cc-by-nc}
 
   Produced with \Rlanguage version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+
+  \href{../index.html}{\textcolor{blue}{Back to course homepage}}\\
+  \href{https://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R}{\textcolor{blue}{\Rlanguage code for this lesson}}\\
 \end{frame}
 
 \begin{frame}[allowframebreaks=0.8]{References}

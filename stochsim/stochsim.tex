@@ -1,5 +1,55 @@
 %\documentclass[handout]{beamer}
-\documentclass{beamer}
+\documentclass{beamer}\usepackage[]{graphicx}\usepackage[]{color}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
 \usepackage{natbib}
 \bibliographystyle{dcu}
 \input{../header.tex}
@@ -21,84 +71,17 @@
 % \newcommand\answer[2]{\textcolor{blue}{#2}} % to show answers
 % \newcommand\answer[2]{{\color{blue}{#2}}} % to show answers
 \newcommand\answer[2]{#1} % to show blank space
-
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
 % knitr set up
-<<knitr_opts,echo=F,cache=F,purl=F>>=
-library(knitr)
-opts_chunk$set(
-  cache=FALSE,
-#  cache=TRUE,
-  eval=TRUE,
-  include=TRUE,
-  echo=TRUE,
-  purl=TRUE,
-  cache.path=paste0("tmp/cache"),
-  dev='png',
-  dev.args=list(bg='transparent'),
-  dpi=300,
-  error=FALSE,
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=4,fig.width=6.83,
-  fig.lp="fig:",
-  fig.path=paste0("tmp/figure"),
-  fig.show='asis',
-  highlight=TRUE,
-  message=FALSE,
-  progress=TRUE,
-  prompt=FALSE,
-#  results='asis',
-  results="markup",
-  size='small',
-  strip.white=TRUE,
-  tidy=FALSE,
-  warning=FALSE
-#  comment=NA # to remove ## on output
-)
-options(width = 60) # number of characters in R output before wrapping
-
-@
-
-<<setup,echo=F,results=F,cache=F>>=
-myround<- function (x, digits = 1) {
-  # taken from the broman package
-  if (digits < 1) 
-    stop("This is intended for the case digits >= 1.")
-  if (length(digits) > 1) {
-    digits <- digits[1]
-    warning("Using only digits[1]")
-  }
-  tmp <- sprintf(paste("%.", digits, "f", sep = ""), x)
-  zero <- paste0("0.", paste(rep("0", digits), collapse = ""))
-  tmp[tmp == paste0("-", zero)] <- zero
-  tmp
-}
-
-set.seed(2050320976)
-
-options(
-  keep.source=TRUE,
-  encoding="UTF-8"
-)
-
-@
 
 
 
-<<prelims,echo=F,cache=F>>=
-set.seed(594709947L)
-library(ggplot2)
-theme_set(theme_bw())
-library(tidyverse)
-library(plyr)
-library(reshape2)
-library(foreach)
-#library(doMC)
-library(pomp)
-stopifnot(packageVersion("pomp")>="3.0")
-@
+
+
+
+
 
 \begin{frame}[fragile]
 \frametitle{Chapter \CHAPTER. Simulation of stochastic dynamic models}
@@ -483,25 +466,38 @@ Examine them:
 
 \ei
 
-<<meas-data1>>=
-read_csv("https://kingaa.github.io/sbied/stochsim/Measles_Consett_1948.csv") %>%
-  select(week,reports=cases) -> meas
-head(as.data.frame(meas),5)
-@
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{read_csv}\hlstd{(}\hlstr{"https://kingaa.github.io/sbied/stochsim/Measles_Consett_1948.csv"}\hlstd{)} \hlopt{%>%}
+  \hlkwd{select}\hlstd{(week,}\hlkwc{reports}\hlstd{=cases)} \hlkwb{->} \hlstd{meas}
+\hlkwd{head}\hlstd{(}\hlkwd{as.data.frame}\hlstd{(meas),}\hlnum{5}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##   week reports
+## 1    1       0
+## 2    2       0
+## 3    3       2
+## 4    4       0
+## 5    5       3
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 \end{frame}
 
 \begin{frame}[fragile]
 
-<<meas-data2,echo=FALSE>>=
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
 
-library(tidyverse)
+{\centering \includegraphics[width=\maxwidth]{tmp/figuremeas-data2-1} 
 
-meas %>%
-  ggplot(aes(x=week,y=reports))+
-  geom_line()+
-  geom_point()
-@
+}
+
+
+
+\end{knitrout}
 
 \end{frame}
 
@@ -565,16 +561,20 @@ $$\dlta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\mu_{IR}\dlta{t}}}.$$
 
 \ei
 
-<<rproc1R>>=
-sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t, ...) {
-  dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
-  dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
-  S <- S - dN_SI
-  I <- I + dN_SI - dN_IR
-  R <- R + dN_IR
-  c(S = S, I = I, R = R)
-}
-@
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{sir_step} \hlkwb{<-} \hlkwa{function} \hlstd{(}\hlkwc{S}\hlstd{,} \hlkwc{I}\hlstd{,} \hlkwc{R}\hlstd{,} \hlkwc{N}\hlstd{,} \hlkwc{Beta}\hlstd{,} \hlkwc{mu_IR}\hlstd{,} \hlkwc{delta.t}\hlstd{,} \hlkwc{...}\hlstd{) \{}
+  \hlstd{dN_SI} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(}\hlkwc{n}\hlstd{=}\hlnum{1}\hlstd{,}\hlkwc{size}\hlstd{=S,}\hlkwc{prob}\hlstd{=}\hlnum{1}\hlopt{-}\hlkwd{exp}\hlstd{(}\hlopt{-}\hlstd{Beta}\hlopt{*}\hlstd{I}\hlopt{/}\hlstd{N}\hlopt{*}\hlstd{delta.t))}
+  \hlstd{dN_IR} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(}\hlkwc{n}\hlstd{=}\hlnum{1}\hlstd{,}\hlkwc{size}\hlstd{=I,}\hlkwc{prob}\hlstd{=}\hlnum{1}\hlopt{-}\hlkwd{exp}\hlstd{(}\hlopt{-}\hlstd{mu_IR}\hlopt{*}\hlstd{delta.t))}
+  \hlstd{S} \hlkwb{<-} \hlstd{S} \hlopt{-} \hlstd{dN_SI}
+  \hlstd{I} \hlkwb{<-} \hlstd{I} \hlopt{+} \hlstd{dN_SI} \hlopt{-} \hlstd{dN_IR}
+  \hlstd{R} \hlkwb{<-} \hlstd{R} \hlopt{+} \hlstd{dN_IR}
+  \hlkwd{c}\hlstd{(}\hlkwc{S} \hlstd{= S,} \hlkwc{I} \hlstd{= I,} \hlkwc{R} \hlstd{= R)}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \end{frame}
 
@@ -585,11 +585,15 @@ sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t, ...) {
 
 \ei
 
-<<init1R>>=
-sir_init <- function(N, eta, ...) {
-  c(S = round(N*eta), I = 1, R = round(N*(1-eta)))
-}
-@
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{sir_init} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{N}\hlstd{,} \hlkwc{eta}\hlstd{,} \hlkwc{...}\hlstd{) \{}
+  \hlkwd{c}\hlstd{(}\hlkwc{S} \hlstd{=} \hlkwd{round}\hlstd{(N}\hlopt{*}\hlstd{eta),} \hlkwc{I} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{R} \hlstd{=} \hlkwd{round}\hlstd{(N}\hlopt{*}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{eta)))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \bi
 
@@ -597,13 +601,17 @@ sir_init <- function(N, eta, ...) {
 
 \ei
 
-<<pomp1R>>=
-meas %>%
-  pomp(times="week",t0=0,
-    rprocess=euler(sir_step,delta.t=1/7),
-    rinit=sir_init
-  ) -> measSIR
-@
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{meas} \hlopt{%>%}
+  \hlkwd{pomp}\hlstd{(}\hlkwc{times}\hlstd{=}\hlstr{"week"}\hlstd{,}\hlkwc{t0}\hlstd{=}\hlnum{0}\hlstd{,}
+    \hlkwc{rprocess}\hlstd{=}\hlkwd{euler}\hlstd{(sir_step,}\hlkwc{delta.t}\hlstd{=}\hlnum{1}\hlopt{/}\hlnum{7}\hlstd{),}
+    \hlkwc{rinit}\hlstd{=sir_init}
+  \hlstd{)} \hlkwb{->} \hlstd{measSIR}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \end{frame}
 
@@ -625,21 +633,25 @@ We modify our rprocess function above, adding a variable $H$ to tally the true i
 
 \begin{frame}[fragile]
 
-<<rproc2R>>=
-sir_step <- function (S, I, R, H, N, Beta, mu_IR, delta.t, ...) {
-  dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
-  dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
-  S <- S - dN_SI
-  I <- I + dN_SI - dN_IR
-  R <- R + dN_IR
-  H <- H + dN_IR;
-  c(S = S, I = I, R = R, H = H)
-}
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{sir_step} \hlkwb{<-} \hlkwa{function} \hlstd{(}\hlkwc{S}\hlstd{,} \hlkwc{I}\hlstd{,} \hlkwc{R}\hlstd{,} \hlkwc{H}\hlstd{,} \hlkwc{N}\hlstd{,} \hlkwc{Beta}\hlstd{,} \hlkwc{mu_IR}\hlstd{,} \hlkwc{delta.t}\hlstd{,} \hlkwc{...}\hlstd{) \{}
+  \hlstd{dN_SI} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(}\hlkwc{n}\hlstd{=}\hlnum{1}\hlstd{,}\hlkwc{size}\hlstd{=S,}\hlkwc{prob}\hlstd{=}\hlnum{1}\hlopt{-}\hlkwd{exp}\hlstd{(}\hlopt{-}\hlstd{Beta}\hlopt{*}\hlstd{I}\hlopt{/}\hlstd{N}\hlopt{*}\hlstd{delta.t))}
+  \hlstd{dN_IR} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(}\hlkwc{n}\hlstd{=}\hlnum{1}\hlstd{,}\hlkwc{size}\hlstd{=I,}\hlkwc{prob}\hlstd{=}\hlnum{1}\hlopt{-}\hlkwd{exp}\hlstd{(}\hlopt{-}\hlstd{mu_IR}\hlopt{*}\hlstd{delta.t))}
+  \hlstd{S} \hlkwb{<-} \hlstd{S} \hlopt{-} \hlstd{dN_SI}
+  \hlstd{I} \hlkwb{<-} \hlstd{I} \hlopt{+} \hlstd{dN_SI} \hlopt{-} \hlstd{dN_IR}
+  \hlstd{R} \hlkwb{<-} \hlstd{R} \hlopt{+} \hlstd{dN_IR}
+  \hlstd{H} \hlkwb{<-} \hlstd{H} \hlopt{+} \hlstd{dN_IR;}
+  \hlkwd{c}\hlstd{(}\hlkwc{S} \hlstd{= S,} \hlkwc{I} \hlstd{= I,} \hlkwc{R} \hlstd{= R,} \hlkwc{H} \hlstd{= H)}
+\hlstd{\}}
 
-sir_init <- function (N, eta, ...) {
-  c(S = round(N*eta), I = 1, R = round(N*(1-eta)), H = 0)
-}
-@
+\hlstd{sir_init} \hlkwb{<-} \hlkwa{function} \hlstd{(}\hlkwc{N}\hlstd{,} \hlkwc{eta}\hlstd{,} \hlkwc{...}\hlstd{) \{}
+  \hlkwd{c}\hlstd{(}\hlkwc{S} \hlstd{=} \hlkwd{round}\hlstd{(N}\hlopt{*}\hlstd{eta),} \hlkwc{I} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{R} \hlstd{=} \hlkwd{round}\hlstd{(N}\hlopt{*}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{eta)),} \hlkwc{H} \hlstd{=} \hlnum{0}\hlstd{)}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \end{frame}
 
@@ -653,13 +665,17 @@ sir_init <- function (N, eta, ...) {
 
 \ei
 
-<<zero1R>>=
-measSIR %>% 
-  pomp(
-    rprocess=euler(sir_step,delta.t=1/7),
-    rinit=sir_init,accumvars="H"
-  ) -> measSIR
-@
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{measSIR} \hlopt{%>%}
+  \hlkwd{pomp}\hlstd{(}
+    \hlkwc{rprocess}\hlstd{=}\hlkwd{euler}\hlstd{(sir_step,}\hlkwc{delta.t}\hlstd{=}\hlnum{1}\hlopt{/}\hlnum{7}\hlstd{),}
+    \hlkwc{rinit}\hlstd{=sir_init,}\hlkwc{accumvars}\hlstd{=}\hlstr{"H"}
+  \hlstd{)} \hlkwb{->} \hlstd{measSIR}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 
 \end{frame}
@@ -675,15 +691,19 @@ $$\mathrm{reports}_t \sim \dist{Binomial}{H(t)-H(t-1),\rho}.$$
 
 \ei
 
-<<meas-modelR>>=
-dmeas <- function (reports, H, rho, log, ...) {
- dbinom(x=reports, size=H, prob=rho, log=log)
-}
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{dmeas} \hlkwb{<-} \hlkwa{function} \hlstd{(}\hlkwc{reports}\hlstd{,} \hlkwc{H}\hlstd{,} \hlkwc{rho}\hlstd{,} \hlkwc{log}\hlstd{,} \hlkwc{...}\hlstd{) \{}
+ \hlkwd{dbinom}\hlstd{(}\hlkwc{x}\hlstd{=reports,} \hlkwc{size}\hlstd{=H,} \hlkwc{prob}\hlstd{=rho,} \hlkwc{log}\hlstd{=log)}
+\hlstd{\}}
 
-rmeas <- function (H, rho, ...) {
-  c(reports=rbinom(n=1, size=H, prob=rho))
-}
-@
+\hlstd{rmeas} \hlkwb{<-} \hlkwa{function} \hlstd{(}\hlkwc{H}\hlstd{,} \hlkwc{rho}\hlstd{,} \hlkwc{...}\hlstd{) \{}
+  \hlkwd{c}\hlstd{(}\hlkwc{reports}\hlstd{=}\hlkwd{rbinom}\hlstd{(}\hlkwc{n}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{size}\hlstd{=H,} \hlkwc{prob}\hlstd{=rho))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \bi
 
@@ -691,14 +711,15 @@ rmeas <- function (H, rho, ...) {
 
 \ei
 
-<<add-meas-modelR>>=
-measSIR %>% pomp(rmeasure=rmeas,dmeasure=dmeas) -> measSIR
-@
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{measSIR} \hlopt{%>%} \hlkwd{pomp}\hlstd{(}\hlkwc{rmeasure}\hlstd{=rmeas,}\hlkwc{dmeasure}\hlstd{=dmeas)} \hlkwb{->} \hlstd{measSIR}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
-<<test_R_pomp,include=FALSE,purl=FALSE>>=
-measSIR %>% 
-  simulate(params=c(Beta=8,mu_IR=0.5,rho=0.5,N=38000,eta=1/10))
-@
+
 
 \end{frame}
 
@@ -717,16 +738,20 @@ measSIR %>%
 
 \ei
 
-<<csnips>>=
-sir_step <- Csnippet("
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{sir_step} \hlkwb{<-} \hlkwd{Csnippet}\hlstd{(}\hlstr{"
   double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
   double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
   S -= dN_SI;
   I += dN_SI - dN_IR;
   R += dN_IR;
   H += dN_IR;
-")
-@
+"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \end{frame}
 
@@ -735,22 +760,26 @@ sir_step <- Csnippet("
 \item
 C snippets for the initializer and measurement model are:
 \ei
-<<more-csnips>>=
-sir_init <- Csnippet("
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{sir_init} \hlkwb{<-} \hlkwd{Csnippet}\hlstd{(}\hlstr{"
   S = nearbyint(eta*N);
   I = 1;
   R = nearbyint((1-eta)*N);
   H = 0;
-")
+"}\hlstd{)}
 
-dmeas <- Csnippet("
+\hlstd{dmeas} \hlkwb{<-} \hlkwd{Csnippet}\hlstd{(}\hlstr{"
   lik = dbinom(reports,H,rho,give_log);
-")
+"}\hlstd{)}
 
-rmeas <- Csnippet("
+\hlstd{rmeas} \hlkwb{<-} \hlkwd{Csnippet}\hlstd{(}\hlstr{"
   reports = rbinom(H,rho);
-")
-@
+"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 
 \end{frame}
@@ -763,17 +792,21 @@ rmeas <- Csnippet("
 
 \ei
 
-<<sir_pomp>>=
-measSIR %>%
-  pomp(rprocess=euler(sir_step,delta.t=1/7),
-    rinit=sir_init,
-    rmeasure=rmeas,
-    dmeasure=dmeas,
-    accumvars="H",
-    statenames=c("S","I","R","H"),
-    paramnames=c("Beta","mu_IR","N","eta","rho")
-  ) -> measSIR
-@
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{measSIR} \hlopt{%>%}
+  \hlkwd{pomp}\hlstd{(}\hlkwc{rprocess}\hlstd{=}\hlkwd{euler}\hlstd{(sir_step,}\hlkwc{delta.t}\hlstd{=}\hlnum{1}\hlopt{/}\hlnum{7}\hlstd{),}
+    \hlkwc{rinit}\hlstd{=sir_init,}
+    \hlkwc{rmeasure}\hlstd{=rmeas,}
+    \hlkwc{dmeasure}\hlstd{=dmeas,}
+    \hlkwc{accumvars}\hlstd{=}\hlstr{"H"}\hlstd{,}
+    \hlkwc{statenames}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"S"}\hlstd{,}\hlstr{"I"}\hlstd{,}\hlstr{"R"}\hlstd{,}\hlstr{"H"}\hlstd{),}
+    \hlkwc{paramnames}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"Beta"}\hlstd{,}\hlstr{"mu_IR"}\hlstd{,}\hlstr{"N"}\hlstd{,}\hlstr{"eta"}\hlstd{,}\hlstr{"rho"}\hlstd{)}
+  \hlstd{)} \hlkwb{->} \hlstd{measSIR}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \bi
 
@@ -809,9 +842,9 @@ For $\Rzero>5$, this equation predicts that $f>0.99$.
 \begin{frame}[fragile]
 \bi
 
-\item In the data, it looks like there were a total of $\Sexpr{sum(meas$reports)}$ infections.
-  Assuming 50% reporting, we have that $S_0\approx\Sexpr{sum(meas$reports)/0.5}$, so that
-  $\eta=\frac{S_0}{N}\approx\Sexpr{signif(2*sum(meas$reports)/38000,2)}$.
+\item In the data, it looks like there were a total of $521$ infections.
+  Assuming 50% reporting, we have that $S_0\approx1042$, so that
+  $\eta=\frac{S_0}{N}\approx0.027$.
 
 \item If the infectious period is roughly 2\~wk, then $1/\mu_{IR} \approx 2~\text{wk}$ and $\beta = \mu_{IR}\,\Rzero \approx 7.5~\text{wk}^{-1}$.
 
@@ -826,20 +859,31 @@ For $\Rzero>5$, this equation predicts that $f>0.99$.
 
 \ei
 
-<<sir_sim1_code,eval=F,echo=T>>=
-measSIR %>% simulate(params=c(Beta=7.5,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
-    nsim=20,format="data.frame",include.data=TRUE) -> sims
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{measSIR} \hlopt{%>%} \hlkwd{simulate}\hlstd{(}\hlkwc{params}\hlstd{=}\hlkwd{c}\hlstd{(}\hlkwc{Beta}\hlstd{=}\hlnum{7.5}\hlstd{,}\hlkwc{mu_IR}\hlstd{=}\hlnum{0.5}\hlstd{,}\hlkwc{rho}\hlstd{=}\hlnum{0.5}\hlstd{,}\hlkwc{eta}\hlstd{=}\hlnum{0.03}\hlstd{,}\hlkwc{N}\hlstd{=}\hlnum{38000}\hlstd{),}
+    \hlkwc{nsim}\hlstd{=}\hlnum{20}\hlstd{,}\hlkwc{format}\hlstd{=}\hlstr{"data.frame"}\hlstd{,}\hlkwc{include.data}\hlstd{=}\hlnum{TRUE}\hlstd{)} \hlkwb{->} \hlstd{sims}
 
-sims %>%
-  ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
-  geom_line()+ guides(color=FALSE)
-@
+\hlstd{sims} \hlopt{%>%}
+  \hlkwd{ggplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=week,}\hlkwc{y}\hlstd{=reports,}\hlkwc{group}\hlstd{=.id,}\hlkwc{color}\hlstd{=.id}\hlopt{==}\hlstr{"data"}\hlstd{))}\hlopt{+}
+  \hlkwd{geom_line}\hlstd{()}\hlopt{+} \hlkwd{guides}\hlstd{(}\hlkwc{color}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 \vspace{-2mm}
 
-<<sir_sim1_plot,echo=F,eval=T,out.width="8cm">>=
-<<sir_sim1_code>>
-@
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+
+{\centering \includegraphics[width=8cm]{tmp/figuresir_sim1_plot-1} 
+
+}
+
+
+
+\end{knitrout}
 
 This leaves something to be desired.
 In the exercises, you'll see if this model can do better.
@@ -861,19 +905,16 @@ In the exercises, you'll see if this model can do better.
 \myquestion. The SEIR model. Below is a diagram of the so-called SEIR model.
 This differs from the SIR model in that infected individuals must pass a period of latency before becoming infectious.
 
-<<seir-diagram,echo=FALSE,purl=FALSE,fig.height=3/4,fig.width=15/2>>=
-library(grid)
-vp <- viewport(width=unit(0.95,"npc"),height=unit(0.95,"npc"))
-pushViewport(vp)
-fs <- 24
-grid.rect(x=c(1/5,2/5,3/5,4/5),y=1/2,width=1/10,height=1,just=c(0.5,0.5),gp=gpar(fill="white",lwd=2))
-grid.text(x=c(1/5,2/5,3/5,4/5),y=1/2,label=c(expression(S),expression(E),expression(I),expression(R)),
-  gp=gpar(fontface=3,fontsize=fs))
-grid.lines(x=c(5/20,7/20),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
-grid.lines(x=c(9/20,11/20),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
-grid.lines(x=c(13/20,15/20),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
-popViewport()
-@
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+
+{\centering \includegraphics[width=\maxwidth]{tmp/figureseir-diagram-1} 
+
+}
+
+
+
+\end{knitrout}
 
 Modify the codes above to construct a \code{pomp} object containing the flu data and an SEIR model.
 Perform simulations as above and adjust parameters to get a sense of whether improvement is possible by including a latent period.
@@ -890,7 +931,7 @@ Perform simulations as above and adjust parameters to get a sense of whether imp
 Previous versions were presented at SISMID by ELI and AAK in 2015--2019.
 Carles Breto assisted in 2018.
 
-\item Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+\item Produced with R version 4.0.1 and \package{pomp} version 3.0.1.0.
 
 \item These notes are an updated version of previous Simulation-Based Inference for Epidemiological Dynamics courses taught by A. A. King and E. L. Ionides from 2015-2019.
 
