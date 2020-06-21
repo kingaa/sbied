@@ -88,7 +88,7 @@ set.seed(557976883)
 
 - It presupposes familiarity with building partially observed Markov process (POMP) objects in the **R** package **pomp** [@King2016]. 
 
-- This tutorial follows on from the [topic of carrying out particle filtering (also known as sequential Monte Carlo) via `pfilter` in **pomp**](../pfilter/pfilter.html). 
+- This tutorial follows on from the [topic of carrying out particle filtering (also known as sequential Monte Carlo) via `pfilter` in **pomp**](../pfilter/slides.pdf). 
 
 <br>
 

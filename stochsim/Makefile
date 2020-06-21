@@ -26,4 +26,4 @@ clean:
 	$(RM) Rplots.ps Rplots.pdf
 
 fresh: clean
-	$(RM) -r cache figure
+	$(RM) -r tmp

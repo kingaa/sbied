@@ -1,4 +1,4 @@
-TARGETS = pfilter.pdf pfilter_handout.pdf pfilter.R bootstrap.html deterministic.html \
+TARGETS = slides.pdf handout.pdf pfilter.R bootstrap.html deterministic.html \
 directSimulation.html directSimulation.R fisherSE.html \
 monteCarlo.html pf-in-Nelder-Mead.html pf-in-Nelder-Mead.R \
 loglikest.html loglikest.R expense.R basic_exercise_pfilter.html \
@@ -10,6 +10,8 @@ ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)
 endif
+
+slides.pdf handout.pdf: pfilter.tex
 
 .INTERMEDIATE: pfilter.tex
 

@@ -1,5 +1,3 @@
-\documentclass[t]{beamer}
-%%\documentclass[t,handout]{beamer}
 \usepackage[round,authoryear]{natbib}
 \usepackage{paralist}
 \usepackage{pgfpages}

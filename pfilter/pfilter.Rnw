@@ -1,5 +1,3 @@
-\documentclass[t]{beamer}
-%%\documentclass[t,handout]{beamer}
 \usepackage[round,authoryear]{natbib}
 \usepackage{paralist}
 \usepackage{pgfpages}
@@ -686,7 +684,7 @@ set.seed(1350254336)
 \begin{frame}{Profile likelihood estimation}
   This approach is generally preferable to the Fisher information for POMP models.
 
-  We will explain this method below and put it into practice in the \href{../mif/mif.pdf}{\textcolor{blue}{next lesson}}.
+  We will explain this method below and put it into practice in the \href{../mif/slides.pdf}{\textcolor{blue}{next lesson}}.
 \end{frame}
 
 \begin{frame}{The Bootstrap}
@@ -1083,7 +1081,7 @@ set.seed(1350254336)
   Produced with \Rlanguage version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
 
   \href{../index.html}{\textcolor{blue}{Back to course homepage}}\\
-  \href{https://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R}{\textcolor{blue}{\Rlanguage code for this lesson}}\\
+  \href{https://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R}{\textcolor{blue}{\Rlanguage code for this lesson}}\\
 \end{frame}
 
 \begin{frame}[allowframebreaks=0.8]{References}

@@ -1,4 +1,4 @@
-TARGETS = mif.R mif.pdf global_search.rds local_search.rds \
+TARGETS = mif.R slides.pdf handout.pdf global_search.rds local_search.rds \
 lik_local.rds measles_params.csv if2_settings.html 
 
 REXE = Rscript --vanilla
@@ -8,6 +8,8 @@ ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)
 endif
+
+slides.pdf handout.pdf: mif.tex
 
 .INTERMEDIATE: mif.tex
 
