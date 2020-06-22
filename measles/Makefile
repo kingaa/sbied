@@ -15,6 +15,12 @@ endif
 %.R: %.Rmd
 	Rscript --vanilla -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
 
+%.tex: %.Rnw
+	Rscript -e "knitr::knit(\"$*.Rnw\",output=\"$*.tex\")"
+
+%.pdf: %.tex
+	pdflatex $*.tex
+
 clean:
 	$(RM) *.o *.so *.log *.aux *.out *.nav *.snm *.toc *.bak
 	$(RM) Rplots.ps Rplots.pdf

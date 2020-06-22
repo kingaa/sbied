@@ -8,12 +8,6 @@
 
 \newcommand\CHAPTER{1}
 
-\hypersetup{
-colorlinks=true,
-linkcolor=blue,
-filecolor=magenta,
-urlcolor=cyan,
-}
 
 \setbeamertemplate{footline}[frame number]
 
@@ -81,7 +75,7 @@ stopifnot(packageVersion("pomp")>="3.0")
 \begin{itemize}
 \item Motivations from the study of epidemiological and ecological systems.
 \item Introducing partially observed Markov process (POMP) models.
-\item Introducing the **pomp** R package.
+\item Introducing the \myemph{pomp} R package.
 \end{itemize}
 \end{frame}
 
@@ -89,7 +83,7 @@ stopifnot(packageVersion("pomp")>="3.0")
 \frametitle{Epidemiological and Ecological Dynamics}
 \begin{itemize}
 \item Ecological systems are complex, open, nonlinear, and nonstationary.
-\item "Laws of Nature" are unavailable except in the most general form.
+\item``Laws of Nature" are unavailable except in the most general form.
 \item It is useful to model them as stochastic systems.
 \item For any observable phenomenon, multiple competing explanations are possible.
 \item Central scientific goals:
@@ -109,7 +103,7 @@ stopifnot(packageVersion("pomp")>="3.0")
 \begin{frame}[fragile]
 \frametitle{Noisy clockwork: Time series analysis of population fluctuations in animals}
 
-Obstacles for **ecological** modeling and inference via nonlinear mechanistic models enumerated by @Bjornstad2001
+Obstacles for \myemph{ecological} modeling and inference via nonlinear mechanistic models enumerated by \cite{Bjornstad2001}
 \begin{enumerate}
 \item Combining measurement noise and process noise.
 \item Including covariates in mechanistically plausible ways.
@@ -118,9 +112,9 @@ Obstacles for **ecological** modeling and inference via nonlinear mechanistic mo
 \item Dealing with unobserved variables.
 \item Modeling spatial-temporal dynamics.
 \end{enumerate}
-The same issues arise for **epidemiological** modeling and inference via nonlinear mechanistic models.
+The same issues arise for \myemph{epidemiological} modeling and inference via nonlinear mechanistic models.
 
-The *partially observed Markov process* modeling framework we focus on in this course addresses most of these problems effectively.
+The \textit{partially observed Markov process} modeling framework we focus on in this course addresses most of these problems effectively.
 \end{frame}
 
 \begin{frame}[fragile]
@@ -130,7 +124,7 @@ The *partially observed Markov process* modeling framework we focus on in this c
 \item To teach statistically and computationally efficient approaches for performing scientific inference using POMP models.
 \item To give students the ability to formulate models of their own.
 \item To give students opportunities to work with such inference methods.
-\item To familiarize students with the **pomp** package.
+\item To familiarize students with the \myemph{pomp} package.
 \item To provide documented examples for adaptation and re-use.
 \end{enumerate}
 \end{frame}
@@ -167,7 +161,7 @@ The *partially observed Markov process* modeling framework we focus on in this c
 
 \item An important special case: any system of differential equations $dx/dt=f(x)$ is Markovian.
 
-\item POMP models can include all the features desired by @Bjornstad2001.
+\item POMP models can include all the features desired by \cite{Bjornstad2001}.
 
 \end{itemize}
 \end{frame}
@@ -176,7 +170,7 @@ The *partially observed Markov process* modeling framework we focus on in this c
 \frametitle{Schematic of the structure of a POMP}
 \begin{itemize}
 \item Arrows in the following diagram show causal relations.
-\includegraphics[width=500px]{pomp_schematic1.png}
+\includegraphics[width=200px]{pomp_schematic1.png}
 <<ssdiag1,echo=FALSE,purl=FALSE,fig.height=3,fig.width=6,fig.show='hide'>>=
 library(grid)
 library(gridExtra)
@@ -220,8 +214,6 @@ f_{Y_{1:N}}(y^*_{1:N};\theta)=\int f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)
 
 \begin{frame}[fragile]
 \frametitle{Another POMP model schematic}
-\begin{itemize}
-\item In the following diagram, arrows show dependence among model variables:
 <<ssdiag2,echo=FALSE,purl=FALSE,fig.height=3,fig.width=6>>=
 library(grid)
 vp <- viewport(x=unit(0.5,"npc"),y=unit(0.54,"npc"),
@@ -278,13 +270,10 @@ grid.lines(x=10/12,y=c(1,2)/3+c(1,-1)/12,arrow=arrow(length=unit(0.02,"npc")),gp
 
 popViewport()
 @
-
+\begin{itemize}
 \item The state process, $X_n$, is Markovian, i.e.,
-
 $$f_{X_n|X_{0:n-1},Y_{1:n-1}}(x_n|x_{0:n-1},y_{1:n-1})=f_{X_n|X_{n-1}}(x_n|x_{n-1}).$$
-
-\item Moreover, the measurable random variable, $Y_n$, depends only on the state at that time:
-$$f_{Y_n|X_{0:N},Y_{1:n-1}}(y_n|x_{0:n},y_{1:n-1})=f_{Y_n|X_{n}}(y_n|x_n), \,\,\, \mbox{for $n=1,\dots,N$.}$$
+\item Moreover, $Y_n$, depends only on the state at that time: $f_{Y_n|X_{0:N},Y_{1:n-1}}(y_n|x_{0:n},y_{1:n-1})=f_{Y_n|X_{n}}(y_n|x_n), \,\,\, \mbox{for $n=1,\dots,N$.}$
 \end{itemize}
 \end{frame}
 
@@ -318,9 +307,9 @@ These basic model components define the specific POMP model under consideration.
 
 \item  \myemph{Simulation\-based} methods require the user to specify \code{rprocess} but not \code{dprocess}.
 
-\item  \myemph{Plug\-and\-play}, \myemph{likelihood\-free} and \myemph{equation\-free} are alternative terms for "simulation\-based" methods.
+\item  \myemph{Plug-and-play}, \myemph{likelihood-free} and \myemph{equation-free} are alternative terms for "simulation-based" methods.
 
-\item Much development of simulation\-based statistical methodology has occurred in the past decade.
+\item Much development of simulation-based statistical methodology has occurred in the past decade.
 \end{itemize}
 \end{frame}
 
@@ -335,7 +324,7 @@ These basic model components define the specific POMP model under consideration.
 
 \item \myemph{pomp} provides tools, documentation, and examples to help users specify POMP models.
 
-\item \myemph{pomp} provides a platform for modification and sharing of models, data\-analysis workflows, and methodological development.
+\item \myemph{pomp} provides a platform for modification and sharing of models, data-analysis workflows, and methodological development.
 \end{itemize}
 
 \end{frame}
@@ -429,6 +418,11 @@ Please share and remix noncommercially, mentioning its origin.
 \item Produced in \myemph{R} version \Sexpr{getRversion()} using \myemph{pomp} version \Sexpr{packageVersion('pomp')}.
 
 \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+\frametitle{References}
+\bibliography{../sbied.bib}
 \end{frame}
 
 
