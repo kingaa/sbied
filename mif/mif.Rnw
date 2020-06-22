@@ -1,5 +1,3 @@
-\documentclass[t]{beamer}
-%%\documentclass[t,handout]{beamer}
 \usepackage[round,authoryear]{natbib}
 \usepackage{paralist}
 \usepackage{pgfpages}
@@ -110,7 +108,7 @@ set.seed(1350254336)
   \begin{itemize}
   \item This tutorial covers likelihood estimation via the method of iterated filtering.
   \item It presupposes familiarity with building partially observed Markov process (POMP) objects in the \Rlanguage package \package{pomp} \citep{King2016}. 
-  \item This tutorial follows on from the \htmladdnormallink{topic of carrying out particle filtering (also known as sequential Monte Carlo) via \code{pfilter} in \package{pomp}}{../pfilter/pfilter.html}. 
+  \item This tutorial follows on from the \href{../pfilter/pfilter.html}{\textcolor{blue}{topic of particle filtering}} (also known as sequential Monte Carlo) via \code{pfilter} in \package{pomp}. 
   \end{itemize}
 \end{frame}
 
@@ -1451,7 +1449,18 @@ set.seed(1350254336)
 \end{frame}
 
 \begin{frame}{Extra Exercise: Choosing the algorithmic settings for IF2}
-  Have a look at \htmladdnormallink{\textcolor{blue}{our advice on tuning IF2}}{./if2_settings.html}.
+  Have a look at \href{./if2_settings.html}{\textcolor{blue}{our advice on tuning IF2}}.
+\end{frame}
+
+\begin{frame}{License and links}
+  Licensed under the \href{http://creativecommons.org/licenses/by-nc/4.0/}{\textcolor{blue}{Creative Commons Attribution-NonCommercial license}}.
+  Please share and remix non-commercially, mentioning its origin.\\
+  \includegraphics[height=24pt]{../graphics/cc-by-nc}
+
+  Produced with \Rlanguage version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+
+  \href{../index.html}{\textcolor{blue}{Back to course homepage}}\\
+  \href{https://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R}{\textcolor{blue}{\Rlanguage code for this lesson}}\\
 \end{frame}
 
 \begin{frame}[allowframebreaks=0.8]{References}

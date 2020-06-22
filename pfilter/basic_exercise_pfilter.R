@@ -1,26 +1,3 @@
-#' ---
-#' title: "Basic Exercise: log likelihood estimation by particle filtering"
-#' author: "Aaron A. King and Edward L. Ionides"
-#' output:
-#'   html_document:
-#'     toc: yes
-#'     toc_depth: 2
-#' bibliography: ../sbied.bib
-#' csl: ../ecology.csl
-#' ---
-#' 
-#' -----------------------------------
-#' 
-#' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-#' Please share and remix noncommercially, mentioning its origin.  
-#' ![CC-BY_NC](../graphics/cc-by-nc.png)
-#' 
-#' Produced in R version `r getRversion()`.
-#' 
-#' -----------------------------------
-#' 
-
-## ----prelims,include=FALSE,cache=FALSE-----------------------------------
 options(
   keep.source=TRUE,
   stringsAsFactors=FALSE,
@@ -36,47 +13,6 @@ library(magrittr)
 library(pomp)
 stopifnot(packageVersion("pomp")>"2.0.9")
 
-#' 
-#' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-#' \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
-#' \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-#' \newcommand\cov[2]{\mathrm{Cov}\left[{#1},{#2}\right]}
-#' \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-#' \newcommand\dd[1]{d{#1}}
-#' \newcommand\dlta[1]{{\Delta}{#1}}
-#' \newcommand\lik{\mathcal{L}}
-#' \newcommand\loglik{\ell}
-#' \newcommand\R{\mathbb{R}}
-#' \newcommand\data[1]{#1^*}
-#' \newcommand\params{\, ; \,}
-#' \newcommand\transpose{\scriptsize{T}}
-#' \newcommand\eqspace{\quad\quad\quad}
-#' \newcommand\profileloglik[1]{\ell^\mathrm{profile}_#1}
-#' 
-#' 
-#' Here are some desiderata for a Monte Carlo log likelihood approximation:
-#' 
-#' - Low Monte Carlo bias and variance. 
-#' 
-#' - Be presented together with estimates of the bias and variance so that we know the extent of Monte Carlo uncertainty in our results. 
-#' 
-#' - Be computed in a length of time appropriate for the circumstances.
-#' 
-#' Set up a likelihood evaluation for the `measSIR` model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine.
-#' Provide a Monte Carlo standard error for your estimate. Comment on the bias of your estimate.
-#' Optionally, take advantage of multiple cores on your computer to improve your estimate.
-#' 
-#' <br>
-#' 
-#' --------
-#' 
-#' ---------
-#' 
-#' ### Solution
-#' 
-#' - First, let's reconstruct the toy SIR model we were working with:
-#' 
-## ----model-construct-----------------------------------------------------
 library(tidyverse)
 library(pomp)
 
@@ -119,10 +55,6 @@ read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
     params=c(Beta=15,mu_IR=0.5,rho=0.5,eta=0.06,N=38000)
   ) -> measSIR
 
-#' 
-#' - Now, borrow code from the notes:
-#' 
-## ----pfilter-loglik,cache=T----------------------------------------------
 NP <- 50000
 REPLICATES <- 10
 timer <- system.time(
@@ -134,47 +66,8 @@ timer <- system.time(
 ll <- sapply(pf,logLik)
 logmeanexp(ll,se=TRUE)
 
-#' 
-#' - This took `r round(timer["elapsed"]/60,2)` minutes
-#' 
-#' - Since the time taken is approximately linear in `NP` and `REPLICATES`, we get a formula (for this machine) of
-#' $$\mbox{Runtime}\approx \frac{ \mathrm{NP}}{`r NP`} \times \frac{\mathrm{REPLICATES}}{ `r REPLICATES`} \times `r round(timer["elapsed"]/60,2)` \mbox{ minutes}.$$
-#' 
-#' - We can use this formula to select  `NP` and `REPLICATES` to give an appropriate runtime.
-#' 
-#' - `logmeanexp` averages the replications on the untransformed scale, not the log scale. It provides a standard error.
-#' 
-#' - On the untransformed scale, the particle filter gives an unbiased likelihood estimate, so `logmeanexp` gives an asymptotically consistent estimate of the log likelihood as `REPLICATES` increases toward infinity.
-#' 
-#' - `logmeanexp` gives an estimate that is biased downward, as an estimate of the log likelihood. This is due to the concavity of the log function and [Jensen's inequality](https://en.wikipedia.org/wiki/Jensen%27s_inequality). 
-#' 
-#' - We can be quantitative about the bias via a Taylor series approximation.
-#' Write the Monte Carlo likelihood estimate as $\lik\{1+\epsilon\}$, where the unbiasedness of the particle filter gives $\E[\epsilon]=0$. Then,
-#' $$\log\big(\lik\{1+\epsilon\}\big)\approx \log(\lik)+\epsilon-\epsilon^2/2,$$
-#' and so the bias in the log likelihood estimate is approximately half the variance of the log likelihood estimate.
-#' 
-#' <br>
-#' 
-#' ------------
-#' 
-#' -----------
-#' 
-#' ### More details on combining log likelihood estimates and deriving a standard error
-#' 
-#' - Let's take a better look at `logmeanexp`, starting by studying the code:
-#' 
-## ----logmeanexp----------------------------------------------------------
 logmeanexp
 
-#' 
-#' - We see that `logmeanexp` constructs its standard errors via a [jack-knife](https://en.wikipedia.org/wiki/Jackknife_resampling) calculation.
-#' 
-#' 
-#' - The standard errors from this approach are reasonable when the distribution of the likelihoods is not too skewed. However, a largest likelihood many log units higher than the others corresponds to a highly skewed distribution on the untransformed scale. It is on this untransformed scale that combining likelihood estimates by averaging is justified by the unbiased property of the particle filter. This could therefore lead to unstable standard errors. 
-#' 
-#' - Let's consider an example for which we suppose that the Monte Carlo estimate of the log likelihood is normally distributed. This assumption has asymptotic justification [@berard14]. We'll consider the two cases when the standard deviation on the log scale is given by sd=5 and sd=1.
-#' 
-## ----test-plot,fig.height=5,fig.width=5----------------------------------
 set.seed(23)
 sd5 <- replicate(10000,logmeanexp(rnorm(10,mean=0,sd=5),se=TRUE))
 sd1 <- replicate(10000,logmeanexp(rnorm(10,mean=0,sd=1),se=TRUE))
@@ -189,20 +82,3 @@ hist(t5,breaks=50,xlim=x_range,main="Error in SE units, with sd=5")
 abline(v=c(-2,2),col="red")
 hist(t1,breaks=50,xlim=x_range,main="Error in SE units, with sd=1")
 abline(v=c(-2,2),col="red")
-
-#' 
-#' - The coverage of a simple $\pm 2$ standard error confidence interval for the log likelihood (represented by the vertical red lines in the figure at $\pm 2$ SE units)  is `r sum(abs(t5)<2)/length(t5)*100` percent for the sd=5 case, and `r sum(abs(t1)<2)/length(t1)*100` percent for the sd=1 case.
-#' 
-#' - In particular, the left tail is long for the noisy likelihood estimates: when, by chance, you don't observe a high likelihood value, you become over-confident that such values won't happen.
-#' 
-#' - These results suggest that 'logmeanexp' standard errors are reasonably reliable when the standard deviation of the individual log likelihood estimates is around one, but should be interpreted cautiously as that standard deviation increases.
-#' 
-#' -----------------------
-#' 
-#' ## [Back](./pfilter.html)
-#' 
-#' --------------------------
-#' 
-#' ### References
-#' 
-#' 

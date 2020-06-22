@@ -1,0 +1,2 @@
+\documentclass[t]{beamer}
+\input{mif}

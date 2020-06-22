@@ -1,35 +1,3 @@
-#' ---
-#' title: "Likelihood by direct simulation: Consett measles example"
-#' author: "Aaron A. King and Edward L. Ionides"
-#' output:
-#'   html_document:
-#'     toc: yes
-#'     toc_depth: 4
-#' bibliography: ../sbied.bib
-#' csl: ../ecology.csl
-#' ---
-#' 
-#' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-#' \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
-#' \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-#' \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-#' \newcommand\dd[1]{d{#1}}
-#' \newcommand\dlta[1]{{\Delta}{#1}}
-#' \newcommand\lik{\mathcal{L}}
-#' \newcommand\loglik{\ell}
-#' 
-#' -----------------------------------
-#' 
-#' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-#' Please share and remix noncommercially, mentioning its origin.  
-#' ![CC-BY_NC](../graphics/cc-by-nc.png)
-#' 
-#' Produced in R version `r getRversion()`.
-#' 
-#' -----------------------------------
-#' 
-
-## ----prelims,include=FALSE,cache=FALSE-----------------------------------
 options(
   keep.source=TRUE,
   stringsAsFactors=FALSE,
@@ -43,12 +11,6 @@ library(pomp)
 stopifnot(packageVersion("pomp")>"2.0.9")
 set.seed(594709947L)
 
-#' 
-#' We're going to demonstrate what happens when we attempt to compute the likelihood for the Consett measles outbreak data by direct simulation from.
-#' 
-#' First, let's reconstruct the toy SIR model we were working with.
-#' 
-## ----model-construct-----------------------------------------------------
 library(tidyverse)
 library(pomp)
 
@@ -91,9 +53,6 @@ read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
     params=c(Beta=15,mu_IR=0.5,rho=0.5,eta=0.06,N=38000)
   ) -> measSIR
 
-#' 
-#' Let's generate a large number of simulated trajectories at some particular point in parameter space.
-## ----bbs-mc-like-2-------------------------------------------------------
 measSIR %>%
   simulate(nsim=5000,format="arrays") -> x
 sims <- coef(measSIR,"rho")*x$states["H",,]
@@ -101,41 +60,10 @@ matplot(time(measSIR),t(sims[1:50,]),type='l',lty=1,
   xlab="time",ylab=expression(rho*H),bty='l',col='blue')
 lines(time(measSIR),obs(measSIR,"reports"),lwd=2,col='black')
 
-#' 
-#' We can use the function `dmeasure` to evaluate the log likelihood of the data given the states, the model, and the parameters:
-## ----bbs-mc-like-3,cache=T-----------------------------------------------
 ell <- dmeasure(measSIR,y=obs(measSIR),x=x$states,times=time(measSIR),log=TRUE,
   params=coef(measSIR))
 dim(ell)
 
-#' According to the general equation for likelihood by direct simulation, we should sum up the log likelihoods across time:
-## ----bbs-mc-like-4-------------------------------------------------------
 ell <- apply(ell,1,sum)
 summary(ell)
 summary(exp(ell))
-
-#' 
-#' - The variability in the individual likelihoods is high and therefore the likelihood esitmate is imprecise.
-#' We will need many simulations to get an estimate of the likelihood sufficiently precise to be of any use in parameter estimation or model selection.
-#' 
-#' - What is the problem?
-#' 
-#' - Essentially, very few of the trajectories pass anywhere near the data and therefore almost all have extremely bad likelihoods.
-#' Moreover, once a trajectory diverges from the data, it almost never comes back.
-#' While the calculation is "correct" in that it will converge to the true likelihood as the number of simulations tends to $\infty$, we waste a lot of effort investigating trajectories of very low likelihood.
-#' 
-#' - This is a consequence of the fact that we are proposing trajectories in a way that is completely unconditional on the data.
-#' 
-#' - The problem will get much worse with longer data sets.
-#' 
-#' -----------------------
-#' 
-#' <a href="#" onclick="goBack()">Back</a>
-#' 
-#' <script>
-#' function goBack() {
-#'   window.history.back();
-#' }
-#' </script>
-#' 
-#' --------------------------
