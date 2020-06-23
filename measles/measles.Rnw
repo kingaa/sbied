@@ -5,25 +5,26 @@
 \input{../header.tex}
 
 \usepackage{hyperref}
+%\usepackage{listings}
 
 \newcommand\CHAPTER{5}
 
-\hypersetup{
-colorlinks=true,
-linkcolor=blue,
-filecolor=magenta,
-urlcolor=cyan,
-}
+% \hypersetup{
+% colorlinks=true,
+% linkcolor=blue,
+% filecolor=magenta,
+% urlcolor=cyan,
+% }
 
 \setbeamertemplate{footline}[frame number]
 
 \newcommand\eqspace{\quad\quad\quad}
 \newcommand\eqskip{\vspace{2.5mm}}
-
+\newcommand\dlta[1]{{\Delta}{#1}}
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
 
 \newcommand\myeq{\hspace{10mm}}
-
+%\lstset{breaklines=true,showstringspaces=false} % break long lines
 % \newcommand\answer[2]{\textcolor{blue}{#2}} % to show answers
 % \newcommand\answer[2]{{\color{blue}{#2}}} % to show answers
 \newcommand\answer[2]{#1} % to show blank space
@@ -62,6 +63,7 @@ opts_chunk$set(
   warning=FALSE
 #  comment=NA # to remove ## on output
 )
+# render_listings()
 options(width = 60) # number of characters in R output before wrapping
 line.color <- "red"
 plot.color <- "black"
@@ -82,7 +84,7 @@ set.seed(1109529108L)
 \begin{itemize}
 \item To display a published case study using plug-and-play methods with non-trivial model complexities.
 \item To show how extra-demographic stochasticity can be modeled.
-\item To demonstrate the use of covariates in **pomp**.
+\item To demonstrate the use of covariates in \package{pomp}.
 \item To demonstrate the use of profile likelihood in scientific inference.
 \item To discuss the interpretation of parameter estimates.
 \item To emphasize the potential need for extra sources of stochasticity in modeling.
@@ -90,7 +92,7 @@ set.seed(1109529108L)
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Motivation: challenges in inference from disease dynamics}
+\frametitle{Motivation: challenges in inference from disease dynamics I}
 \begin{itemize}
 
 \item Understanding, forecasting, managing epidemiological systems increasingly depends on models.
@@ -104,6 +106,12 @@ set.seed(1109529108L)
     \item have hidden variables
     \item can be measured only with (large) error
 \end{itemize}
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Motivation: challenges in inference from disease dynamics II}
+\begin{itemize}
+
 \item Dynamics of infectious disease outbreaks illustrate this well.
 
 \item Measles is the paradigm for a nonlinear ecological system that can be well described by low-dimensional nonlinear dynamics.
@@ -119,15 +127,16 @@ set.seed(1109529108L)
     \item spatial traveling waves
 \end{itemize}
 \item Much of this evidence has been amassed from fitting models to data, using a variety of methods.
-\item See @Rohani2010 for a review of some of the high points.
+\item See \cite{Rohani2010} for a review of some of the high points.
 \end{itemize}
+\textcolor{red}{Change eval to T if you want London-Liverpool-Hastings plot}
 <<load-data,echo=F,purl=F>>=
 daturl <- "https://kingaa.github.io/pomp/vignettes/twentycities.rda"
 datfile <- file.path(tempdir(),"twentycities.rda")
 download.file(daturl,destfile=datfile,mode="wb")
 load(datfile)
 @
-<<some-data-plot,echo=F,purl=F>>=
+<<some-data-plot,echo=F,,eval=F,purl=F>>=
 measles %>%
   subset(town %in% c("London","Liverpool","Hastings")) %>%
   ggplot(aes(x=date,y=cases))+
@@ -190,8 +199,8 @@ ggplot(mapping=aes(x=long,y=lat))+
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{City case counts}
-<<dataplot,echo=F,fig.height=12,purl=F>>=
+\frametitle{City case counts I: smallest 8 cities}
+<<dataplot,echo=F,fig.height=4,purl=F>>=
 demog %>%
   group_by(town) %>%
   summarize(mean.pop=mean(pop)) %>%
@@ -200,6 +209,7 @@ demog %>%
 
 measles %>%
   mutate(town=ordered(town,levels=meanpop$town)) %>%
+  filter(town %in% meanpop$town[1:8]) %>%
   ggplot(aes(x=date,y=cases))+
   geom_line()+
   scale_y_continuous(breaks=c(0,4,40,400,4000),trans=scales::log1p_trans())+
@@ -208,8 +218,22 @@ measles %>%
 \end{frame}
 
 \begin{frame}[fragile]
+\frametitle{City case counts II: largest 8 cities}
+<<dataplot2,echo=F,fig.height=4,purl=F>>=
+measles %>%
+  mutate(town=ordered(town,levels=meanpop$town)) %>%
+  filter(town %in% meanpop$town[13:20]) %>%
+  ggplot(aes(x=date,y=cases))+
+  geom_line()+
+  scale_y_continuous(breaks=c(0,4,40,400,4000),trans=scales::log1p_trans())+
+  facet_wrap(~town,ncol=2)+theme(text=element_text(size=7))
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
 \frametitle{Continuous-time Markov process model}
-<<seir-diagram,eecho=FALSE,cache=FALSE,purl=FALSE,eval=FALSE>>=
+<<seir-diagram,echo=FALSE,cache=FALSE,purl=FALSE,eval=FALSE>>=
 library(DiagrammeR)
 DiagrammeR("digraph SEIR {
   graph [rankdir=TD, overlap=false, fontsize = 10]
@@ -231,7 +255,7 @@ DiagrammeR("digraph SEIR {
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Continuous-time Markov process model}
+\frametitle{Continuous-time Markov process model I}
 \begin{itemize}
 \item Covariates:
 \begin{itemize}
@@ -246,11 +270,17 @@ $$\mu_{BS}(t) = (1-c)\,B(t-\tau)+c\,\delta(t-\lfloor t\rfloor)\,\int_{t-1}^{t}\,
     \item $\tau = \text{school-entry delay}$
     \item $\lfloor t \rfloor = \text{most recent 1 September before}\ t$
 \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Continuous-time Markov process model II}
+\begin{itemize}
 \item Force of infection:
 $$\mu_{SE}(t) = \tfrac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
 \begin{itemize}
     \item $\iota = \text{imported infections}$
-    \item $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ [@He2010;@bhadra11]
+    \item $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ [\cite{He2010,bhadra11}]
     \item school-term transmission:
 $$\beta(t) = \begin{cases}\beta_0\,\big(1+a(1-p)/p\big) &\text{during term}\\\beta_0\,(1-a) &\text{during vacation}\end{cases}$$
     \begin{itemize}
@@ -264,14 +294,14 @@ $$\beta(t) = \begin{cases}\beta_0\,\big(1+a(1-p)/p\big) &\text{during term}\\\be
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Implementation in **pomp**}
+\frametitle{Implementation in \package{pomp}}
 \begin{itemize}
 \item We'll load the packages we'll need, and set the random seed, to allow reproducibility.
-\item Note that we'll be making heavy use of the \myemph{tidyverse} methods.
-\item Also, we'll be using \myemph{ggplot2} for plotting: see \href{https://kingaa.github.io/R_Tutorial/viz.html#a-more-systematic-approach-the-grammar-of-graphics}{this brief tutorial}.
-\item Finally, we'll use the convenient **magrittr** syntax, which is explained \href{https://kingaa.github.io/R_Tutorial/munging.html#the-magrittr-syntax}{here}.
+\item Note that we'll be making heavy use of the \package{tidyverse} methods.
+\item Also, we'll be using \package{ggplot2} for plotting: see \href{https://kingaa.github.io/R_Tutorial/viz.html#a-more-systematic-approach-the-grammar-of-graphics}{this brief tutorial}.
+\item Finally, we'll use the convenient \package{magrittr} syntax, which is explained \href{https://kingaa.github.io/R_Tutorial/munging.html#the-magrittr-syntax}{here}.
 \end{itemize}
-<<prelims2,cache=FALSE>>=
+<<prelims2,cache=FALSE,echo=F>>=
 library(pomp)
 library(tidyverse)
 theme_set(theme_bw())
@@ -284,10 +314,10 @@ set.seed(594709947L)
 \begin{itemize}
 \item Now we'll load the data and covariates.The data are measles reports from 20 cities in England and Wales.
 \item We also have information on the population sizes and birth-rates in these cities; we'll treat these variables as covariates.
+\item We select the data for London and pre-process the measles and demography data.
 \end{itemize}
 
-We select the data for London and pre-process the measles and demography data.
-<<plot-data>>=
+<<plot-data, echo = F>>=
 measles %>%
   mutate(year=as.integer(format(date,"%Y"))) %>%
   filter(town=="London" & year>=1950 & year<1964) %>%
@@ -304,8 +334,8 @@ demog %>%
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Data and covariate plots}
-<<data-plot>>=
+\frametitle{Data and covariate plots I}
+<<data-plot,fig.height=2,echo=F>>=
 dat %>% ggplot(aes(x=time,y=cases))+geom_line()
 
 demogLondon %>%
@@ -313,10 +343,11 @@ demogLondon %>%
   ggplot(aes(x=year,y=value))+geom_point()+
   facet_wrap(~variable,ncol=1,scales="free_y")
 @
-
-Now, we smooth the covariates.
-Note that we delay the entry of newborns into the susceptible pool.
-<<prep-covariates>>=
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Data and covariate plots II}
+Now, we smooth the covariates. Note that we delay the entry of newborns into the susceptible pool.
+<<prep-covariates,echo=F>>=
 demogLondon %>%
   plyr::summarize(
     time=seq(from=min(year),to=max(year),by=1/12),
@@ -324,15 +355,25 @@ demogLondon %>%
     birthrate=predict(smooth.spline(x=year+0.5,y=births),x=time-4)$y
   ) -> covar
 @
-<<covarplot>>=
-plot(pop~time,data=covar,type='l')
+<<covarplot,fig.height=2,echo=F>>=
+par(mfrow = c(3,1))
+# Top panel
+par(mai=c(0.2,0,0,0))
+plot(pop~time,data=covar,type='l',xlab="")
+axis(1, labels = FALSE)
 points(pop~year,data=demogLondon)
-plot(birthrate~time,data=covar,type='l')
+# Middle panel
+par(mai=c(0.2,0,0,0))
+plot(birthrate~time,data=covar,type='l',xlab="")
+axis(1, labels = FALSE)
 points(births~year,data=demogLondon)
+# Bottom panel
+par(mai=c(0,0,0,0))
 plot(birthrate~I(time-4),data=covar,type='l')
 points(births~I(year+0.5),data=demogLondon)
 @
 \end{frame}
+
 
 \begin{frame}[fragile]
 \frametitle{The partially observed Markov process model}
@@ -340,7 +381,7 @@ points(births~I(year+0.5),data=demogLondon)
 We require a simulator for the BSEIR model. Notable complexities include:
 \begin{enumerate}
 \item Incorporation of the known birthrate.
-\item The birth-cohort effect: a specified fraction (`cohort`) of the cohort enter the susceptible pool all at once.
+\item The birth-cohort effect: a specified fraction (\code{cohort}) of the cohort enter the susceptible pool all at once.
 \item Seasonality in the transmission rate: during school terms, the transmission rate is higher than it is during holidays.
 \item Extra-demographic stochasticity in the form of a Gamma white-noise term acting multiplicatively on the force of infection.
 \item Demographic stochasticity implmented using Euler-multinomial distributions.
@@ -349,8 +390,8 @@ We require a simulator for the BSEIR model. Notable complexities include:
 
 \begin{frame}[fragile]
 \frametitle{Implementation of the process model}
-<<rprocess>>=
-rproc <- Csnippet("
+<<rprocess, echo = FALSE, tidy = TRUE>>=
+rproc1 <- "
   double beta, br, seas, foi, dw, births;
   double rate[6], trans[6];
 
@@ -372,8 +413,9 @@ rproc <- Csnippet("
   // expected force of infection
   foi = beta*pow(I+iota,alpha)/pop;
   // white noise (extrademographic stochasticity)
-  dw = rgammawn(sigmaSE,dt);
+  dw = rgammawn(sigmaSE,dt);"
 
+rproc2 <- "
   rate[0] = foi*dw/dt;  // stochastic force of infection
   rate[1] = mu;			    // natural S death
   rate[2] = sigma;		  // rate of ending of latent stage
@@ -395,7 +437,9 @@ rproc <- Csnippet("
   R = pop - S - E - I;
   W += (dw - dt)/sigmaSE;  // standardized i.i.d. white noise
   C += trans[4];           // true incidence
-")
+"
+rproc <- paste(rproc1,rproc2,sep='\n')
+rproc1
 @
 
 \begin{itemize}
@@ -422,7 +466,7 @@ rinit <- Csnippet("
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{The measurement model}
+\frametitle{The measurement model I}
 \begin{itemize}
 \item We'll model both under-reporting and measurement error.
 \item We want $\mathbb{E}[\text{cases}|C] = \rho\,C$, where $C$ is the true incidence and $0<\rho<1$ is the reporting efficiency.
@@ -433,6 +477,10 @@ $\text{cases|C} \sim f(\cdot|\rho,\psi,C)$,
 where $$f(c|\rho,\psi,C) = \Phi(c+\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2)-\Phi(c-\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2),$$
 where $\Phi(x,\mu,\sigma^2)$ is the c.d.f. of the normal distribution with mean $\mu$ and variance $\sigma^2$.
 \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{The measurement model II}
 The following computes $\mathbb{P}[\text{cases}|C]$.
 <<dmeasure>>=
 dmeas <- Csnippet("
@@ -472,7 +520,7 @@ rmeas <- Csnippet("
 dat %>%
   pomp(t0=with(dat,2*time[1]-time[2]),
     time="time",
-    rprocess=euler(rproc,delta.t=1/365.25),
+    rprocess=euler(Csnippet(rproc),delta.t=1/365.25),
     rinit=rinit,
     dmeasure=dmeas,
     rmeasure=rmeas,
@@ -487,8 +535,8 @@ dat %>%
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{}
-@He2010 estimated the parameters of this model.
+\frametitle{Estimates from \cite{He2010}}
+\cite{He2010} estimated the parameters of this model.
 The full set is included in the \myemph{R} code accompanying this document, where they are read into a data frame called `mles`.
 <<mles,include=FALSE>>=
 read.csv(text="
@@ -525,7 +573,7 @@ mle[paramnames] %>% unlist() -> theta
 mle %>% select(-S_0,-E_0,-I_0,-R_0)
 @
 
-We verify that we get the same likelihood as @He2010. \textcolor{red}{Change eval to T}
+We verify that we get the same likelihood as \cite{He2010}. \textcolor{red}{Change eval to T}
 
 <<pfilter1,eval=F>>=
 library(foreach)
@@ -545,9 +593,9 @@ logmeanexp(sapply(pfs,logLik),se=TRUE)
 
 \begin{frame}[fragile]
 \frametitle{Simulations at the MLE}
-<<sims1,fig.height=8>>=
+<<sims1,fig.height=2,echo=T>>=
 m1 %>%
-  simulate(params=theta,nsim=9,format="d",include.data=TRUE) %>%
+  simulate(params=theta,nsim=3,format="d",include.data=TRUE) %>%
   ggplot(aes(x=time,y=cases,group=.id,color=(.id=="data")))+
   guides(color=FALSE)+
   geom_line()+facet_wrap(~.id,ncol=2)
@@ -562,7 +610,7 @@ m1 %>%
 \item We can turn the likelihood maximization problem into an unconstrained maximization problem by transforming the parameters.
 
 \item Specifically, to enforce positivity, we log transform,
-to constrain parameters to the unit interval, we logit transform,
+to constrain parameters to $(0,1)$, we logit transform,
 and to confine parameters to the unit simplex, we use the log-barycentric transformation.
 \end{itemize}
 
@@ -572,7 +620,6 @@ pt <- parameter_trans(
   logit=c("cohort","amplitude"),
   barycentric=c("S_0","E_0","I_0","R_0")
 )
-
 m1 %>%
   pomp(partrans=pt,
     statenames=c("S","E","I","R","C","W"),
@@ -583,7 +630,7 @@ m1 %>%
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Results from @He2010}
+\frametitle{Results from \cite{He2010}}
 \href{./profile.html}{The linked document shows how a likelihood profile can be constructed using IF2}
 The fitting procedure used is as follows:
 \begin{itemize}
@@ -797,8 +844,9 @@ par(op)
 \begin{frame}[fragile]
 \frametitle{Notable findings}
 \hspace{3cm} {\large \bf Birth delay}
-<<delay,eval=TRUE,echo=FALSE,results="hide",purl=FALSE,fig.cap="Profile likelihood for birth-cohort delay, showing 95\\% and 99\\% critical values of the log likelihood.">>=
+<<delay,eval=TRUE,echo=FALSE,results="hide",purl=FALSE,fig.height=3,fig.cap="Profile likelihood for birth-cohort delay, showing 95\\% and 99\\% critical values of the log likelihood.">>=
 x <- read.csv('data/delay.csv',row.names=1)
+par(mai=c(0.2,0.3,0.2,0.2))
 plot(
   x$delay,
   x$loglik,
@@ -884,16 +932,12 @@ par(op)
 
 \begin{frame}[fragile]
 \frametitle{Problematic results}
-\hspace{3cm} {\large \bf $R_0$}
+\hspace{3cm} {\large \bf $R_0$ estimates inconsistent with literature}
 \begin{itemize}
-\item Recall that $R_0$ is the basic reproduction number: a measure of how communicable an infection is.
-\item Existing estimates of $R_0$ (c. 15--20) come from two sources:
-    \begin{itemize}
-    \item serology surveys
-    \item models fit to data using feature-based methods
-    \end{itemize}
+\item Recall that $R_0$ : a measure of how communicable an infection is.
+\item Existing estimates of $R_0$ (c. 15--20) come from two sources: serology surveys, and models fit to data using feature-based methods.
 \end{itemize}
-<<R0,echo=FALSE,results="hide",purl=FALSE>>=
+<<R0,echo=FALSE,results="hide",purl=FALSE,fig.height=3>>=
 best <- read.csv('data/R0profile.csv',row.names=1)
 
 op <- par(
@@ -958,7 +1002,7 @@ par(op)
 \begin{frame}[fragile]
 \frametitle{Problematic results}
 \hspace{3cm} {\large \bf Parameter estimates}
-<<est-table,echo=FALSE,purl=FALSE>>=
+<<est-table,echo=FALSE,size="scriptsize",purl=FALSE>>=
 mean.euler <- function(rate,dt=1/365) dt/(1-exp(-rate*dt))
 
 demog %>%
@@ -1114,7 +1158,7 @@ par(op)
 
 \begin{frame}[fragile]
 \frametitle{Simulations at the MLE}
-<<sims2>>=
+<<sims2,echo=F>>=
 m1 %>%
   simulate(params=theta,nsim=100,format="d",include.data=TRUE) %>%
   select(time,.id,cases) -> simdat
@@ -1145,7 +1189,7 @@ simdat %>%
 \frametitle{Exercises}
 \hspace{3cm} {\large \bf Exercise 1: Reformulate the model}
 \begin{itemize}
-\item Modify the @He2010 model to remove the cohort effect.
+\item Modify the \cite{He2010} model to remove the cohort effect.
 Run simulations and compute likelihoods to convince yourself that the resulting codes agree with the original ones for `cohort = 0`.
 \item Now modify the transmission seasonality to use a sinusoidal form. How many parameters must you use?
 Fixing the other parameters at their MLE values, compute and visualize a profile likelihood over these parameters.
@@ -1159,17 +1203,26 @@ How do your results compare with those at the MLE? Compare likelihoods but also 
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Chapter \CHAPTER. Case study: Measles in large and small towns}
-\hspace{3cm} {\large \bf Objectives}
+\frametitle{Acknowledgments}
 \begin{itemize}
-\item To display a published case study using plug-and-play methods with non-trivial model complexities.
-\item To show how extra-demographic stochasticity can be modeled.
-\item To demonstrate the use of covariates in **pomp**.
-\item To demonstrate the use of profile likelihood in scientific inference.
-\item To discuss the interpretation of parameter estimates.
-\item To emphasize the potential need for extra sources of stochasticity in modeling.
+\item Versions of this material have been presented at \href{https://www.biostat.washington.edu/suminst/sismid}{Summer Institute in Statistics and Modeling in Infectious Diseases (SISMID)} in 2015-2018.
+
+\item Licensed under the \href{Creative Commons Attribution-NonCommercial license}{http://creativecommons.org/licenses/by-nc/4.0/}.
+Please share and remix noncommercially, mentioning its origin.
+\includegraphics[]{../graphics/cc-by-nc.png}
+\item Produced in \myemph{R} version \Sexpr{getRversion()} using \package{pomp} version \Sexpr{packageVersion('pomp')}.
+
 \end{itemize}
 \end{frame}
+
+\begin{frame}[allowframebreaks]
+\frametitle{References}
+\bibliography{../sbied.bib}
+\end{frame}
+
+
+\end{document}
+
 
 
 
