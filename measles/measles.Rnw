@@ -59,6 +59,7 @@ opts_chunk$set(
   results="markup",
   size='small',
   strip.white=TRUE,
+  tidy.opts=list(width.cutoff=60),
   tidy=FALSE,
   warning=FALSE
 #  comment=NA # to remove ## on output
@@ -355,22 +356,29 @@ demogLondon %>%
     birthrate=predict(smooth.spline(x=year+0.5,y=births),x=time-4)$y
   ) -> covar
 @
-<<covarplot,fig.height=2,echo=F>>=
+<<covarplot,fig.height=3.5,echo=F>>=
 par(mfrow = c(3,1))
-# Top panel
-par(mai=c(0.2,0,0,0))
-plot(pop~time,data=covar,type='l',xlab="")
-axis(1, labels = FALSE)
+par(mai=c(0.5,0.5,0.2,0.2))
+plot(pop~time,data=covar,type='l',xlab="time")
 points(pop~year,data=demogLondon)
-# Middle panel
-par(mai=c(0.2,0,0,0))
-plot(birthrate~time,data=covar,type='l',xlab="")
-axis(1, labels = FALSE)
+plot(birthrate~time,data=covar,type='l',xlab="time")
 points(births~year,data=demogLondon)
-# Bottom panel
-par(mai=c(0,0,0,0))
-plot(birthrate~I(time-4),data=covar,type='l')
+plot(birthrate~I(time-4),data=covar,type='l',xlab="I(time-4)")
 points(births~I(year+0.5),data=demogLondon)
+# # Top panel
+# par(mai=c(0.2,0,0,0))
+# plot(pop~time,data=covar,type='l',xaxt="n",yaxt="y",xlab="")
+# #axis(1, labels = FALSE)
+# points(pop~year,data=demogLondon)
+# # Middle panel
+# par(mai=c(0.2,0,0,0))
+# plot(birthrate~time,data=covar,type='l',xaxt="n",xlab="")
+# #axis(1, labels = FALSE)
+# points(births~year,data=demogLondon)
+# # Bottom panel
+# par(mai=c(0,0,0,0))
+# plot(birthrate~I(time-4),data=covar,type='l')
+# points(births~I(year+0.5),data=demogLondon)
 @
 \end{frame}
 
@@ -389,7 +397,7 @@ We require a simulator for the BSEIR model. Notable complexities include:
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Implementation of the process model}
+\frametitle{Implementation of the process model I}
 <<rprocess, echo = FALSE, tidy = TRUE>>=
 rproc1 <- "
   double beta, br, seas, foi, dw, births;
@@ -403,19 +411,20 @@ rproc1 <- "
 
   // term-time seasonality
   t = (t-floor(t))*365.25;
-  if ((t>=7&&t<=100) || (t>=115&&t<=199) || (t>=252&&t<=300) || (t>=308&&t<=356))
+  if ((t>=7&&t<=100) ||
+      (t>=115&&t<=199) ||
+      (t>=252&&t<=300) || (t>=308&&t<=356))
       seas = 1.0+amplitude*0.2411/0.7589;
-    else
+  else
       seas = 1.0-amplitude;
-
+"
+rproc2 <- "
   // transmission rate
   beta = R0*(gamma+mu)*seas;
   // expected force of infection
   foi = beta*pow(I+iota,alpha)/pop;
   // white noise (extrademographic stochasticity)
-  dw = rgammawn(sigmaSE,dt);"
-
-rproc2 <- "
+  dw = rgammawn(sigmaSE,dt);
   rate[0] = foi*dw/dt;  // stochastic force of infection
   rate[1] = mu;			    // natural S death
   rate[2] = sigma;		  // rate of ending of latent stage
@@ -425,7 +434,8 @@ rproc2 <- "
 
   // Poisson births
   births = rpois(br*dt);
-
+"
+rproc3 <- "
   // transitions between classes
   reulermultinom(2,S,&rate[0],dt,&trans[0]);
   reulermultinom(2,E,&rate[2],dt,&trans[2]);
@@ -438,10 +448,27 @@ rproc2 <- "
   W += (dw - dt)/sigmaSE;  // standardized i.i.d. white noise
   C += trans[4];           // true incidence
 "
-rproc <- paste(rproc1,rproc2,sep='\n')
-rproc1
+rproc <- paste(rproc1,rproc2,rproc3,sep='\n')
+cat(rproc1,sep='\n')
 @
+\end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Implementation of the process model II}
+<<rprocess2, echo = FALSE, tidy = TRUE>>=
+cat(rproc2,sep='\n')
+@
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Implementation of the process model III}
+<<rprocess3, echo = FALSE, tidy = TRUE>>=
+cat(rproc3,sep='\n')
+@
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Implementation of the process model IV}
 \begin{itemize}
 \item In the above, $C$ represents the true incidence, i.e., the number of new infections occurring over an interval.
 \item Since recognized measles infections are quarantined, we argue that most infection occurs before case recognition so that true incidence is a measure of the number of individuals progressing from the I to the R compartment in a given interval.
@@ -473,8 +500,14 @@ rinit <- Csnippet("
 \item We'll also assume that $\mathrm{Var}[\text{cases}|C] = \rho\,(1-\rho)\,C + (\psi\,\rho\,C)^2$, where $\psi$ quantifies overdispersion.
 \item Note that when $\psi=0$, the variance-mean relation is that of the binomial distribution.
 To be specific, we'll choose
-$\text{cases|C} \sim f(\cdot|\rho,\psi,C)$,
-where $$f(c|\rho,\psi,C) = \Phi(c+\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2)-\Phi(c-\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2),$$
+$\text{cases|C} \sim f(\cdot|\rho,\psi,C)$, where
+\begin{align*}
+      f(c|\rho,\psi,C) \\
+        =&\Phi(c+\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2)-\\
+        &\Phi(c-\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2)
+    \end{align*}
+
+    %$$f(c|\rho,\psi,C) = \Phi(c+\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2)-\Phi(c-\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2),$$
 where $\Phi(x,\mu,\sigma^2)$ is the c.d.f. of the normal distribution with mean $\mu$ and variance $\sigma^2$.
 \end{itemize}
 \end{frame}
@@ -1158,7 +1191,7 @@ par(op)
 
 \begin{frame}[fragile]
 \frametitle{Simulations at the MLE}
-<<sims2,echo=F>>=
+<<sims2,echo=F,fig.height=2>>=
 m1 %>%
   simulate(params=theta,nsim=100,format="d",include.data=TRUE) %>%
   select(time,.id,cases) -> simdat
