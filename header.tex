@@ -1,12 +1,24 @@
+\usepackage[round,authoryear]{natbib}
+\usepackage{paralist}
+\usepackage{pgfpages}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xspace}        
+\usepackage{graphicx}
+\usepackage{url}
+
+\bibliographystyle{dcu}
 
 \usefonttheme[onlymath]{serif}
 % use article-like math letters, from http://tex.stackexchange.com/questions/34265/how-to-get-beamer-math-to-look-like-article-math
 
+
+
+
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
 \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
 \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-% \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-% \newcommand\dlta[1]{{\Delta}{#1}}
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\ell}
 \newcommand\Rzero{\mathfrak{R}_0}
@@ -15,7 +27,6 @@
 \newcommand\code[1]{\url{#1}}
 \newcommand\package[1]{\textbf{#1}}
 
-\usepackage{xspace}        
 \newcommand\Rlanguage{\textsf{R}\xspace}
 
 \newcommand\mylink[1]{\textcolor{blue}{#1}}
@@ -33,7 +44,7 @@
 
 \newcommand\Rspace{\mathcal{R}}
 
-\usepackage{amsmath}
+
 \renewcommand\vec[1]{\boldsymbol{\mathrm{#1}}}
 \newcommand\vect[1]{\vec{#1}}
 \newcommand\mat[1]{\mathbb{#1}}
@@ -74,6 +85,7 @@
 
 
 %% following a style where all math is in blue
+%% not currently used by SISMID slides
 \newcommand\mymath[1]{\begin{math}\textcolor{blue}{#1}\end{math}}
 \newcommand\m[1]{\mymath{#1}}
 \newcommand\mydisplaymath[1]{\begin{displaymath}\textcolor{blue}{#1}\end{displaymath}}
@@ -82,50 +94,31 @@
 \newcommand\altdisplaymath[1]{\vspace{1mm}\textcolor{blue}{\begin{math}\displaystyle #1 \end{math}}\vspace{1mm}}
 
 
-\usepackage{natbib}
-\usepackage{url}
-%\usepackage{ulem}
-%\renewcommand\emph[1]{{\it #1}} % the ulem package redefines \emph
-%\renewcommand\em{\it} % the ulem package redefines \emph
-
-
+%% not currently used in SISMID slides.
+%% a plain and space-efficient list useful for dense slides
 \newcommand\enumerateSpace{\hspace{2mm}}
-\usepackage{amssymb}
 \newenvironment {myitemize} {
                  \begin{list}{\textcolor{black}{$\bullet$} \hfill}
-%                 \begin{list}{\textcolor{blue}{{\small{$\blacktriangleright$}}} \hfill}
                  {\setlength{\labelwidth}{0.3 cm}
-                  %\setlength{\leftmargin}{0em}
                   \setlength{\leftmargin}{0.15cm}
                   \setlength{\itemindent}{0.15cm}
                   \setlength{\labelsep}{0cm}
                   \setlength{\parsep}{0.2 ex}
-%                  \setlength{\itemsep}{0.25 cm}
                   \setlength{\itemsep}{1 mm}
-%                   \setlength{\itemsep}{0.0 cm}
       \setlength{\topsep}{0.0cm}}} %space between title and 1st item
    {\end{list}}
 
+
 \usepackage{graphicx} % Allows including images
-%\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
-\mode<presentation> {
-
-\usetheme{Madrid}
-
-\setbeamertemplate{footline} 
-
-\setbeamertemplate{navigation symbols}{} 
-
-}
 
 \setlength{\parskip}{0mm}
 \setlength{\parindent}{0mm}
+
 %\newcommand\negBeforeCode{\vspace{-2mm}}
 %\newcommand\negAfterCode{\vspace{-3mm}}
 \newcommand\negBeforeCode{}
 \newcommand\negAfterCode{}
 
-%\renewenvironment{knitrout}{\vspace{-3mm}}{\vspace{-5mm}}
 
 
 

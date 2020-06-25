@@ -1,11 +1,22 @@
-\documentclass{beamer}
-\usepackage{natbib}
-\bibliographystyle{dcu}
+
 \input{../header.tex}
+
+
+\mode<beamer>{\usetheme{AnnArbor}}
+\mode<beamer>{\setbeamertemplate{footline}}
+\mode<beamer>{\setbeamertemplate{footline}[frame number]}
+\mode<beamer>{\setbeamertemplate{frametitle continuation}[from second][\insertcontinuationcountroman]}
+\mode<beamer>{\setbeamertemplate{navigation symbols}{}}
+
+\mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
+
+\title{Lesson 6:\\Case study: Polio}
+\author{Aaron A. King, Edward L. Ionides and Kidus Asfaw}
+
 
 \newcommand\CHAPTER{6}
 
-\setbeamertemplate{footline}[frame number]
+% \setbeamertemplate{footline}[frame number]
 
 \newcommand\eqspace{\quad\quad\quad}
 \newcommand\eqskip{\vspace{2.5mm}}
@@ -105,12 +116,21 @@ stopifnot(packageVersion("pomp")>="2.0")
 @
 
 
-\begin{frame}[fragile]
-\frametitle{Chapter \CHAPTER. Case study: Polio}
+\begin{frame}
+  \titlepage
+\end{frame}
 
-\hspace{3cm} {\large \bf Objectives}
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
 
-\vspace{3mm}
+
+\begin{frame}{Objectives}
+%\frametitle{Chapter \CHAPTER. Case study: Polio}
+
+%\hspace{3cm} {\large \bf Objectives}
+
+%\vspace{3mm}
 
 \begin{enumerate}
 
@@ -120,14 +140,15 @@ stopifnot(packageVersion("pomp")>="2.0")
 
 \item Practice maximizing the likelihood for such models. How to set up a global search for a maximum likelihood estimate. How to assess whether a search has been successful.
 
+\item Provide a workflow that can be adapted to related data analysis tasks.
+
 \end{enumerate}
 
 \end{frame}
 
-\begin{frame}[fragile]
+\section{Covariates}
 
-
-\frametitle{Reviewing covariates in time series analysis}
+\begin{frame}{Reviewing covariates in time series analysis}
 
 \bi
 
@@ -208,6 +229,8 @@ f_{Y_{n}|X_n}(y_{n}\given x_n\params\theta) &=& f_{Y_{n}|X_n}(y_{n}\given x_n\pa
 \ei
 
 \end{frame}
+
+\section{A POMP model for polio}
 
 \begin{frame}[fragile]
 
@@ -307,7 +330,7 @@ $$X_n=X(t_n)=\big(S^B_{1,n},...,S^B_{6,n}, I^B_n,I^O_n,R_n \big).$$
 $$\bar\lambda_n=\left( \beta_n \frac{I^O_n+I^B_n}{P_n} + \psi \right)$$
 where $P_n$ is census population interpolated to time $t_n$ and seasonality of transmission is modeled as
 $$\beta_n=\exp\left\{ \sum_{k=1}^K b_k\xi_k(t_n) \right\},$$
-with $\{\xi_k(t),k=1,\dots,K\}$ being a periodic B-spline basis with $K=6$.
+with $\{\xi_k(t),k=1,\dots,K\}$ a periodic B-spline basis with $K=6$.
 
 \item $P_n$ and $\xi_k(t_n)$ are \myemph{covariate time series}.
 
@@ -376,6 +399,8 @@ It is convenient to parameterize the estimated initial states as fractions of th
 \ei
 
 \end{frame}
+
+\section{A \texttt{pomp} representation of the POMP model}
 
 \begin{frame}[fragile]
 
@@ -609,6 +634,10 @@ polio <- pomp(
 
 \end{frame}
 
+\section{Logistics for the computations}
+
+%\subsection*{Controlling run time}
+
 \begin{frame}[fragile]
 
 \frametitle{Setting run levels to control computation time}
@@ -617,9 +646,9 @@ polio <- pomp(
 
 \item \code{run_level=1} will set all the algorithmic parameters to the first column of values in the following code, for debugging.
 
-\item Here, \code{Np} is the number of particles, and \code{Nmif} is the number of iterations of the optimization procedure carried. 
+\item Here, \code{Np} is the number of particles, \code{Nmif} is the number of iterations of the optimization procedure carried, other variables are defined for use later.
 
-\item \code{run_level=2} uses \code{Np=1000} and \code{Nmif=100}. enough effort in this case to gives reasonably stable results for a moderate amount of computational time.
+\item \code{run_level=2} uses enough effort to gives reasonably stable results at a moderate computational time.
 
 \item Larger values give more refined computations, implemented here by \code{run_level=3} which was run on a computing node.
 
@@ -643,11 +672,11 @@ polio_Nsim <-        switch(run_level, 50, 100, 500)
 
 \bi
 
-\item \code{run_level} is a facility that is convenient for when you are editing the source code. It plays no fundamental role in the final results. If you are not editing the source code, or using the code as a template for developing your own analysis, it has no function.
+\item Using \code{run_level} settings is convenient for editing source code. It plays no fundamental role in the final results. If you are not editing the source code, or using the code as a template for developing your own analysis, it has no function.
 
 \item When you edit a document with different \code{run_level} options, you can debug your code by editing \code{run_level=1}. Then, you can get preliminary assessment of whether your results are sensible with \code{run_level=2} and get finalized results, with reduced Monte Carlo error, by editing \code{run_level=3}.
 
-\item In practice, you probably want \code{run_level=1} to run in minutes, \code{run_level=2} to run in tens of minutes, and \code{run_level=3} to run in hours.
+\item We intend \code{run_level=1} to run in minutes, \code{run_level=2} to run in tens of minutes, and \code{run_level=3} to run in hours.
 
 \item You can increase or decrease the numbers of particles, or the number of mif2 iterations, or the number of global searches carried out, to make sure this procedure is practical on your machine.
  
@@ -666,14 +695,35 @@ Suppose you have selected a number of particles, \code{Np}, and number of iterat
 
 \end{frame}
 
+\subsection*{Parallel computation of the likelihood}
+
+\begin{frame}[fragile]
+
+\frametitle{Parallel set-up}
+
+\bi
+\item
+As discussed in earlier lessons, we ask {\Rlanguage} to access multiple processors and we set up a parallel random number generator.
+\ei
+
+<<parallel-setup,cache=FALSE>>=
+library(doParallel)
+registerDoParallel()
+library(doRNG)
+registerDoRNG(3899882)
+@
+
+\bi
+\item Our task, like most statistical computing, is \myemph{embarrassingly parallel}.
+\item Therefore, we can use a simple parallel for loop via \code{foreach()}
+\ei
+\end{frame}
+
+
 \begin{frame}[fragile]
 
 \frametitle{Likelihood evaluation at the starting parameter estimate}
 
-<<parallel-setup,cache=FALSE>>=
-require(doParallel)
-registerDoParallel()
-@
 
 <<pf1>>=
 stew(file=sprintf("pf1-%d.rda",run_level),{
@@ -681,7 +731,7 @@ stew(file=sprintf("pf1-%d.rda",run_level),{
     pf1 <- foreach(i=1:20,.packages='pomp') %dopar% pfilter(
       polio,Np=polio_Np)
   )
-},seed=493536993,kind="L'Ecuyer")
+})
 L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
 @
 
@@ -689,10 +739,82 @@ L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
 
 \item In  \Sexpr{round(t1["elapsed"],1)} seconds, we obtain a log likelihood estimate of \Sexpr{round(L1[1],2)} with a Monte standard error of \Sexpr{round(L1[2],2)}.
 
+\item Here, we use \code{stew()} to \myemph{cache} the results of the computation.
 \ei
 
 \end{frame}
 
+\subsection*{Caching results}
+
+\begin{frame}[fragile]
+\frametitle{Caching computations in Rmarkdown}
+
+\bi
+
+\item  It is not unusual for computations in a POMP analysis to take hours to run on many cores.
+
+\item  The computations for a final version of a manuscript may take days.
+
+\item  Usually, we use some mechanism like the different values of \code{run_level} so that preliminary versions of the manuscript take less time to run.
+
+\item  However, when editing the text or working on a different part of the manuscript, we don't want to re-run long pieces of code.
+
+\item  Saving results so that the code is only re-run when necessary is called \myemph{caching}.
+
+\ei
+
+\end{frame}
+
+\begin{frame}[fragile]
+\bi
+\item  You may already be familiar the versions of caching provided in {.Rmd} and {.Rnw} files. The argument \code{cache=TRUE} can be set individually for each chunk or as a global option.
+
+\item  When \code{cache=TRUE}, Rmarkdown/knitr caches the results of the chunk, meaning that a chunk will only be re-run if code in that chunk is edited.
+
+\item  You can force Rmarkdown/knitr to recompute all the chunks by deleting the \code{cache} subdirectory.
+\ei
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Practical advice for caching}
+\bi
+\item  What if changes elsewhere in the document affect the proper evaluation of your chunk, but you didn't edit any of the code in the chunk itself?
+Rmarkdown/knitr will get this wrong. \myemph{It will not recompute the chunk}.
+
+\item  A perfect caching system doesn't exist. \myemph{Always delete the entire cache and rebuild a fresh cache before finishing a manuscript.}
+
+\item  Rmarkdown/knitr caching is good for relatively small computations, such as producing figures or things that may take a minute or two and are annoying if you have to recompute them every time you make any edits to the text.
+
+\item  For longer computations, it is good to have full manual control. In \package{pomp}, this is provided by two related functions, \code{stew} and \code{bake}.
+
+\ei
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{\code{stew} and \code{bake}}
+\bi
+\item  Notice the function \code{stew} in the replicated particle filter code above.
+
+\item  Here, \code{stew} looks for a file called \code{pf-[run_level].rda}. 
+
+\item  If it finds this file, it simply loads the contents of this file.
+
+\item  If the file doesn't exist, it carries out the specified computation and saves it in a file of this name.
+
+\item  \code{bake} is similar to \code{stew}. The difference is that \code{bake} uses \code{readRDS} and \code{saveRDS}, whereas \code{stew} uses \code{load} and \code{save}. 
+
+\item  either way, the computation will not be re-run unless you manually delete \code{pf-[run_level].rda}.
+
+\item  \code{stew} and \code{bake} reset the seed appropriately whether or not the computation is recomputed. Othewise, caching risks adverse consequences for reproducibility.
+
+\ei
+
+\end{frame}   
+
+\section{Persistence of polio}
 
 \begin{frame}[fragile]
 
@@ -710,7 +832,7 @@ stew(sprintf("persistence-%d.rda",run_level),{
     sim <- foreach(i=1:polio_Nsim,
       .packages='pomp') %dopar% simulate(polio)
   )
-},seed=493536993,kind="L'Ecuyer")
+})
 @
 
 \end{frame}
@@ -731,9 +853,8 @@ imports_sim <- coef(polio)["psi"]*mean(sapply(sim,
 
 \vspace{-1mm}
 
- For the data, there were \Sexpr{no_cases_data} months with no reported cases, similar to the mean of \Sexpr{round(no_cases_sim,1)} for simulations from the fitted model. Months with no asyptomatic infections for the simulations were rare, on average \Sexpr{round(fadeout1_sim,1)} months per simulation. Months with fewer than 100 infections averaged \Sexpr{round(fadeout100_sim,1)} per simulation, which in the context of a reporting rate of \Sexpr{signif(coef(polio)["rho"],3)} can explain the absences of case reports. The mean monthly infections due to importations, modeled by $\psi$, is \Sexpr{round(imports_sim,1)}. This does not give much opportunity for local elimination of poliovirus. A profile over $\psi$ would show how sensitive this conclusion is to values of $\psi$ consistent with the data.
-
-
+ For the data, there were \Sexpr{no_cases_data} months with no reported cases, similar to the mean of \Sexpr{round(no_cases_sim,1)} for simulations from the fitted model. Months with no asyptomatic infections for the simulations were rare, on average \Sexpr{round(fadeout1_sim,1)} months per simulation. Months with fewer than 100 infections averaged \Sexpr{round(fadeout100_sim,1)} per simulation, which in the context of a reporting rate of \Sexpr{signif(coef(polio)["rho"],3)} can explain the absences of case reports. The mean monthly infections due to importations, modeled by $\psi$, is \Sexpr{round(imports_sim,1)}. This does not give much opportunity for local elimination of poliovirus.
+ 
 \end{frame}
 \begin{frame}[fragile]
 
@@ -760,6 +881,8 @@ plot(mle_simulation)
 \ei
 
 \end{frame}
+
+\section{Likelihood maximization}
 
 \begin{frame}[fragile]
 
@@ -803,7 +926,7 @@ stew(sprintf("mif-%d.rda",run_level),{
 	  pfilter(polio,params=coef(m2[[i]]),Np=polio_Np))),
         se=TRUE)
   })
-},seed=318817883,kind="L'Ecuyer")
+})
 @
 
 \end{frame}
@@ -896,7 +1019,7 @@ stew(file=sprintf("box_eval-%d.rda",run_level),{
 	  params=coef(m3[[i]]),Np=polio_Np))), 
         se=TRUE)
   })
-},seed=290860873,kind="L'Ecuyer")
+})
 @
 
 \end{frame}
@@ -904,9 +1027,10 @@ stew(file=sprintf("box_eval-%d.rda",run_level),{
 \begin{frame}[fragile]
 
 <<global-results>>=
-r3 <- data.frame(logLik=lik_m3[,1],logLik_se=lik_m3[,2],t(sapply(m3,coef)))
-if(run_level>1) write.table(
-  r3,file="polio_params_out.csv",append=TRUE,col.names=FALSE,row.names=FALSE)
+r3 <- data.frame(logLik=lik_m3[,1],logLik_se=lik_m3[,2],
+  t(sapply(m3,coef)))
+if(run_level>1) write.table(r3,file="polio_params_out.csv",
+  append=TRUE,col.names=FALSE,row.names=FALSE)
 summary(r3$logLik,digits=5)
 @
 
@@ -1023,10 +1147,9 @@ par(mai=c(0.8,0.8,0.1,0.1))
 
 \end{frame}
 
+\section{Profile likelihood}
 
-\begin{frame}[fragile]
-
-\frametitle{Profile likelihood}
+\begin{frame}[fragile]{Profile likelihood}
 
 \bi
 \item First, we must decide the ranges of parameter starting values for the searches.
@@ -1119,7 +1242,10 @@ bake(file="profile_rho.rds",{
 
 \begin{frame}[fragile]
 
-<<profile_rho_plot1,echo=F,fig.width=6,fig.height=6,out.width="10cm">>=
+
+\vspace{-3mm}
+
+<<profile_rho_plot1,echo=F,fig.width=6,fig.height=6,out.width="9.5cm">>=
 pairs(~loglik+psi+rho+tau+sigma_dem+sigma_env,data=subset(m4,loglik>max(loglik)-10))
 @
 
@@ -1135,7 +1261,7 @@ m4 %>%
 
 
 
-
+\section{Exercises}
 
 
 \begin{frame}[fragile]
@@ -1197,7 +1323,7 @@ plot(m3[r3$logLik>max(r3$logLik)-10])
 
 \vspace{-5mm}
 
-<<mif_diagnostics_plot,out.width="7.5cm",echo=F>>=
+<<mif_diagnostics_plot,out.width="7.2cm",echo=F>>=
 <<mif_diagnostics_code>>
 @
 
@@ -1212,7 +1338,7 @@ The likelihood is particularly important to keep in mind. If parameter estimates
 The presence of some weakly identified combinations of parameters is not fundamentally a scientific flaw; rather, our scientific inquiry looks to investigate which questions can and cannot be answered in the context of a set of data and modeling assumptions.
 \item As long as the search is demonstrably approaching the maximum likelihood region we should not necessarily be worried about the stability of parameter values (at least, from the point of diagnosing successful maximization).
 \item
-So, we zoom in on the likelihood convergence:
+So, we zoom in on the likelihood convergence plot:
 \ei
 
 \end{frame}
@@ -1237,10 +1363,9 @@ if(run_level>1) save(list = ls(all = TRUE), file = "Rout.rda")
 \frametitle{Acknowledgments and License}
 
 \bi
-\item This tutorial is prepared for the \href{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 12th Annual Summer Institute in Statistics and Modeling in Infectious Diseases, \href{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}.
+\item This lesson is prepared for the \href{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \href{https://www.biostat.washington.edu/suminst/sismid}{\mylink{SISMID 2020}}.
 
-\item Previous versions were presented at SISMID by ELI and AAK in 2015--2019.
-Carles Breto assisted in 2018.
+\item The materials build on \href{https://kingaa.github.io/sbied/acknowledge.html}{\mylink{previous versions of this course and related courses}}.
 
 \item Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
 
@@ -1248,7 +1373,7 @@ Carles Breto assisted in 2018.
 Licensed under the \href{http://creativecommons.org/licenses/by-nc/3.0/}{Creative Commons attribution-noncommercial license}.
 Please share and remix noncommercially, mentioning its origin.
 
-\includegraphics[width=2cm]{../cc-by-nc.png}
+\includegraphics[width=2cm]{../graphics/cc-by-nc.png}
 \ei
 
 \end{frame}

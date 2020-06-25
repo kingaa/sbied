@@ -1,33 +1,43 @@
-default: polio.html polio_model.R polio.R profile_rho.R \
-	polio_params.csv polio_wisconsin.csv local_search.rda \
-	global_search.rda profile_rho.rds sims.rds	
+TARGETS = slides.pdf handout.pdf polio.R
+REXE = Rscript
+
+default: $(TARGETS)
 ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)
 endif
 
+slides.pdf handout.pdf: polio.tex
+
+.INTERMEDIATE: polio.tex
+
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
+	$(REXE) -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
 
 %.html: %.md
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
+	$(REXE) -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
+
+%.R: %.Rnw
+	$(REXE) -e "knitr::purl(\"$*.Rnw\",output=\"$*.R\",documentation=0)"
 
 %.R: %.Rmd
-	Rscript --vanilla -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
+	$(REXE) -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=0)"
 
 %.tex: %.Rnw
-	Rscript -e "knitr::knit(\"$*.Rnw\",output=\"$*.tex\")"
+	$(REXE) -e "knitr::knit(\"$*.Rnw\",output=\"$*.tex\")"
 
 %.pdf: %.tex
-	pdflatex $*.tex
+	pdflatex $*
+	bibtex $*
+	pdflatex $*
+	pdflatex $*
 
 clean:
-	$(RM) *.o *.so *.log *.aux *.out *.nav *.snm *.toc *.bak
+	$(RM) *.o *.so *.log *.aux *.out *.nav *.snm *.toc *.bak *.vrb *.blg
 	$(RM) Rplots.ps Rplots.pdf
 
 fresh: clean
+	$(RM) *.bbl
 	$(RM) -r cache figure
-
-
