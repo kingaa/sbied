@@ -1,110 +1,17 @@
 \input{../header.tex}
 
-\mode<beamer>{\usetheme{AnnArbor}}
-\mode<beamer>{\setbeamertemplate{footline}}
-\mode<beamer>{\setbeamertemplate{footline}[frame number]}
-\mode<beamer>{\setbeamertemplate{frametitle continuation}[from second][\insertcontinuationcountroman]}
-\mode<beamer>{\setbeamertemplate{navigation symbols}{}}
-
-\mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
-
+\newcommand\CHAPTER{2}
 \title{Lesson 2:\\Simulation of stochastic dynamic models}
 \author{Aaron A. King, Edward L. Ionides and Kidus Asfaw}
 
-\newcommand\CHAPTER{2}
-
-\setbeamertemplate{footline}[frame number]
-
-\newcommand\eqspace{\quad\quad\quad}
-\newcommand\eqskip{\vspace{2.5mm}}
-
-\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-\newcommand\dlta{\Delta}
-
-\newcommand\myeq{\hspace{10mm}}
-
-% \newcommand\answer[2]{\textcolor{blue}{#2}} % to show answers
-% \newcommand\answer[2]{{\color{blue}{#2}}} % to show answers
-\newcommand\answer[2]{#1} % to show blank space
-
 \begin{document}
 
-% knitr set up
-<<knitr_opts,echo=F,cache=F,purl=F>>=
-library(knitr)
-opts_chunk$set(
-  cache=FALSE,
-#  cache=TRUE,
-  eval=TRUE,
-  include=TRUE,
-  echo=TRUE,
-  purl=TRUE,
-  cache.path=paste0("tmp/cache"),
-  dev='png',
-  dev.args=list(bg='transparent'),
-  dpi=300,
-  error=FALSE,
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=4,fig.width=6.83,
-  fig.lp="fig:",
-  fig.path=paste0("tmp/figure"),
-  fig.show='asis',
-  highlight=TRUE,
-  message=FALSE,
-  progress=TRUE,
-  prompt=FALSE,
-#  results='asis',
-  results="markup",
-  size='small',
-  strip.white=TRUE,
-  tidy=FALSE,
-  warning=FALSE
-#  comment=NA # to remove ## on output
-)
-options(width = 60) # number of characters in R output before wrapping
-
+<<setup, child='../setup.Rnw'>>=
 @
 
-<<setup,echo=F,results=F,cache=F>>=
-myround<- function (x, digits = 1) {
-  # taken from the broman package
-  if (digits < 1) 
-    stop("This is intended for the case digits >= 1.")
-  if (length(digits) > 1) {
-    digits <- digits[1]
-    warning("Using only digits[1]")
-  }
-  tmp <- sprintf(paste("%.", digits, "f", sep = ""), x)
-  zero <- paste0("0.", paste(rep("0", digits), collapse = ""))
-  tmp[tmp == paste0("-", zero)] <- zero
-  tmp
-}
-
-library(doParallel)
+<<doParallel,echo=F,cache=F>>=
 registerDoParallel()
-library(doRNG)
 registerDoRNG(2488820)
-
-options(
-  keep.source=TRUE,
-  encoding="UTF-8"
-)
-
-@
-
-
-
-<<prelims,echo=F,cache=F>>=
-library(ggplot2)
-theme_set(theme_bw())
-library(tidyverse)
-library(plyr)
-library(reshape2)
-library(foreach)
-#library(doMC)
-library(pomp)
-stopifnot(packageVersion("pomp")>="3.0")
 @
 
 \begin{frame}
@@ -264,14 +171,16 @@ $ \lim_{\delta\to 0} \frac{h(\delta)}{\delta} = 0$.
 \begin{frame}[fragile]
 
 \myexercise. What is the link between little $o$ notation and the derivative?
-
 Explain why 
 $$f(x+\delta)=f(x)+ \delta g(x) + o(\delta)$$ 
 is the same statement as
 $$ \frac{df}{dx} = g(x).$$
 What considerations might help you choose which of these notations to use?
 
-\answer{\vspace{50mm}}{todo}
+\vspace{3mm}
+
+\href{https://kingaa.github.io/sbied/stochsim/exercises.html#little-o-notation}{\mylink{Worked solution to the Exercise}}
+
 
 \end{frame}
 
@@ -279,8 +188,6 @@ What considerations might help you choose which of these notations to use?
 %
 % \myquestion. From Markov chain to ODE.
 % Find the expected value of $N_{SI}(t+\delta)-N_{SI}(t)$ and $N_{IR}(t+\delta)-N_{IR}(t)$ given the current state, $S(t)$, $I(t)$ and $R(t)$. Take the limit as $\delta\to 0$ and show that this gives the ODE model.
-%
-% \answer{\vspace{50mm}}{todo}
 %
 % \end{frame}
 
@@ -485,13 +392,17 @@ Conceptually, it is simplest to think of (1) or (2). Numerically, it is usually 
 
 \frametitle{Euler's method vs Gillspie's algorithm}
 
-\myexercise. A widely used, exact simulation method for continuous time Markov chains is  \href{https://en.wikipedia.org/wiki/Gillespie_algorithm}{Gillspie's algorithm}.
+\myexercise. A widely used, exact simulation method for continuous time Markov chains is  \href{https://en.wikipedia.org/wiki/Gillespie_algorithm}{\mylink{Gillspie's algorithm}}.
 We do not put much emphasis on Gillespie's algorithm here. Why? When would you prefer an implementation of Gillespie's algorithm to an Euler solution?
 
-\answer{\vspace{20mm}}{todo}
+\vspace{3mm}
+
+\href{https://kingaa.github.io/sbied/stochsim/exercises.html#euler-versus-gillespie}{\mylink{Worked solution to the Exercise}}
+
+\vspace{3mm}
 
 Numerically, Gillespie's algorithm is often approximated using so-called
-\href{https://en.wikipedia.org/wiki/Tau-leaping}{tau-leaping}
+\href{https://en.wikipedia.org/wiki/Tau-leaping}{\mylink{tau-leaping}}
 methods. These are closely related to Euler's approach. In this context, the Euler method has sometimes been called a tau-leaping.
 
 
@@ -599,10 +510,10 @@ meas %>%
 
 \item To implement the model in \package{pomp}, the first thing we need is a stochastic simulator for the unobserved state process.
 
-\item  We follow method 3 above, modeling the number, $\dlta{N_{SI}}$, moving from S to I over interval $\dlta{t}$ as
-$$\dlta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\beta\,I/N\dlta{t}}},$$
+\item  We follow method 3 above, modeling the number, $\Delta{N_{SI}}$, moving from S to I over interval $\Delta{t}$ as
+$$\Delta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\beta\,I/N\Delta{t}}},$$
 and the number moving from I to R as
-$$\dlta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\mu_{IR}\dlta{t}}}.$$
+$$\Delta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\mu_{IR}\Delta{t}}}.$$
 
 \ei
 
@@ -899,7 +810,9 @@ In the exercises, you'll see if this model can do better.
 
 \myexercise. Explore the SIR model. Fiddle with the parameters to see if you can't find a model for which the data are a more plausible realization.
 
-\href{./exercises.html#basic-exercise-explore-the-sir-model}{\mylink{Worked solution to the Exercise}}
+\vspace{3mm}
+
+\href{https://kingaa.github.io/sbied/stochsim/exercises.html#basic-exercise-explore-the-sir-model}{\mylink{Worked solution to the Exercise}}
 
 \end{frame}
 
@@ -926,7 +839,9 @@ popViewport()
 Modify the codes above to construct a \code{pomp} object containing the flu data and an SEIR model.
 Perform simulations as above and adjust parameters to get a sense of whether improvement is possible by including a latent period.
 
-\href{./exercises.html#basic-exercise-the-seir-model}{\mylink{Worked solution to the Exercise}}
+\vspace{3mm}
+
+\href{https://kingaa.github.io/sbied/stochsim/exercises.html#basic-exercise-the-seir-model}{\mylink{Worked solution to the Exercise}}
 
 \end{frame} 
 
@@ -935,6 +850,7 @@ Perform simulations as above and adjust parameters to get a sense of whether imp
 \frametitle{Acknowledgments and License}
 
 \bi
+
 \item This lesson is prepared for the \href{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \href{https://www.biostat.washington.edu/suminst/sismid}{\mylink{SISMID 2020}}.
 
 \item The materials build on \href{https://kingaa.github.io/sbied/acknowledge.html}{\mylink{previous versions of this course and related courses}}.
@@ -946,6 +862,7 @@ Licensed under the \href{http://creativecommons.org/licenses/by-nc/3.0/}{Creativ
 Please share and remix noncommercially, mentioning its origin.
 
 \includegraphics[width=2cm]{../graphics/cc-by-nc.png}
+
 \ei
 
 \end{frame}

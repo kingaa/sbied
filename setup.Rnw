@@ -6,6 +6,7 @@ library(tidyverse)
 library(plyr)
 library(reshape2)
 library(doParallel)
+library(doRNG)
 library(pomp)
 library(knitr)
 @
