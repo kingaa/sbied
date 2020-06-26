@@ -322,6 +322,9 @@ IO, infected older people
 
 \frametitle{Setting up the model}
 
+
+\vspace{-2mm}
+
 \bi
 
 \item Duration of infection is comparable to the one-month reporting aggregation, so a discrete time model may be appropriate.
@@ -383,19 +386,21 @@ $$Y_n= \max\{\mathrm{round}(Z_n),0\}, \quad Z_n\sim\mathrm{normal}\left(\rho I^O
 
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{Initial conditions}
 
-\frametitle{Initial conditions}
+\vspace{-2mm}
 
 \bi
 \item 
 Additional parameters are used to specify initial state values at time $t_0=1932+ 4/12$.
 \item 
 We will suppose there are parameters $\big(\tilde S^B_{1,0},...,\tilde S^B_{6,0}, \tilde I^B_0,\tilde I^O_0,\tilde S^O_0\big)$ that specify the population in each compartment at time $t_0$ via
-$$ S^B_{1,0}= {\tilde S}^B_{1,0} ,...,S^B_{6,0}= \tilde S^B_{6,0}, \quad I^B_{0}= P_0 \tilde I^B_{0},\quad S^O_{0}= P_0 \tilde S^O_{0}, \quad I^O_{0}= P_0 \tilde I^O_{0}.$$
+$$ \hspace{-2mm} S^B_{1,0}= {\tilde S}^B_{1,0} ,...,S^B_{6,0}= \tilde S^B_{6,0}, \quad I^B_{0}= P_0 \tilde I^B_{0},\quad S^O_{0}= P_0 \tilde S^O_{0}, \quad I^O_{0}= P_0 \tilde I^O_{0}.$$
 \item
 Following \citet{Martinez-Bakker2015}, we make an approximation for the initial conditions of ignoring infant infections at time $t_0$. 
-Thus, we set $\tilde I^B_{0}=0$ and use monthly births in the preceding months (ignoring infant mortality) to fix $\tilde S^B_{k,0}=B_{1-k}$ for $k=1,\dots,6$. The estimated initial conditions are then defined by the two parameters $\tilde I^O_{0}$ and $\tilde S^O_{0}$, since the initial recovered population, $R_0$, is specified by subtraction of all the other compartments from the total initial population, $P_0$.
+Thus, we set $\tilde I^B_{0}=0$ and use monthly births in the preceding months (ignoring infant mortality) to fix $\tilde S^B_{k,0}=B_{1-k}$ for $k=1,\dots,6$.
+
+\item Estimated initial conditions are specified by $\tilde I^O_{0}$ and $\tilde S^O_{0}$, since the initial recovered population, $R_0$, is obtained by subtracting all other compartments from the total initial population, $P_0$.
 \item 
 It is convenient to parameterize the estimated initial states as fractions of the population, whereas the initial states fixed at births are parameterized directly as a count.
 
@@ -548,6 +553,8 @@ polio_rprocess <- Csnippet("
 
 \begin{frame}[fragile]
 
+\vspace{-3mm}
+
 <<measure>>=
 polio_dmeasure <- Csnippet("
   double tol = 1.0e-25;
@@ -561,7 +568,6 @@ polio_dmeasure <- Csnippet("
   }
   if (give_log) lik = log(lik);
 ")
-
 polio_rmeasure <- Csnippet("
   cases = rnorm(rho*IO, sqrt( pow(tau*IO,2) + rho*IO ) );
   if (cases > 0.0) {
@@ -658,7 +664,7 @@ polio <- pomp(
 \ei
 
 <<run_level>>=
-run_level <- 1
+run_level <- 3
 polio_Np <-          switch(run_level,100, 1e3, 5e3)
 polio_Nmif <-        switch(run_level, 10, 100, 200)
 polio_Nreps_eval <-  switch(run_level,  2,  10,  20)
@@ -694,7 +700,10 @@ polio_Nsim <-        switch(run_level, 50, 100, 500)
 \myexercise. \myemph{Choosing algorithmic parameters}.\\
 Suppose you have selected a number of particles, \code{Np}, and number of iterated filtering iterations, \code{Nmif}, and number of Monte Carlo replications, \code{Reps}, that give a 10 minute maximization search using \code{mif2()}. Propose how you would adjust these to plan a more intensive search lasting about 2 hours.
 
-\answer{\vspace{40mm}}{todo}
+\vspace{3mm}
+
+\href{https://kingaa.github.io/sbied/polio/algorithmic-parameters-exercise.html}{\mylink{Worked solution to the Exercise}}
+
 
 \end{frame}
 
@@ -729,7 +738,7 @@ registerDoRNG(3899882)
 
 
 <<pf1>>=
-stew(file=sprintf("results/pf1-%d.rda",run_level),{
+stew(file="results/pf1.rda",{
   t1 <- system.time(
     pf1 <- foreach(i=1:20,.packages='pomp') %dopar% pfilter(
       polio,Np=polio_Np)
@@ -795,13 +804,13 @@ Rmarkdown/knitr will get this wrong. \myemph{It will not recompute the chunk}.
 
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}{\code{stew} and \code{bake}}
 
-\frametitle{\code{stew} and \code{bake}}
+
 \bi
 \item  Notice the function \code{stew} in the replicated particle filter code above.
 
-\item  Here, \code{stew} looks for a file called \code{pf-[run_level].rda}. 
+\item  Here, \code{stew} looks for a file called \code{results/pf1.rda}. 
 
 \item  If it finds this file, it simply loads the contents of this file.
 
@@ -809,7 +818,7 @@ Rmarkdown/knitr will get this wrong. \myemph{It will not recompute the chunk}.
 
 \item  \code{bake} is similar to \code{stew}. The difference is that \code{bake} uses \code{readRDS} and \code{saveRDS}, whereas \code{stew} uses \code{load} and \code{save}. 
 
-\item  either way, the computation will not be re-run unless you manually delete \code{pf-[run_level].rda}.
+\item  either way, the computation will not be re-run unless you manually delete \code{results/pf1.rda}.
 
 \item  \code{stew} and \code{bake} reset the seed appropriately whether or not the computation is recomputed. Othewise, caching risks adverse consequences for reproducibility.
 
@@ -830,7 +839,7 @@ The scientific purpose of fitting a model typically involves analyzing propertie
 \item For Wisconsin, using our model at the estimated MLE, we simulate in parallel as follows:
 \ei
 <<persistence-sim>>=
-stew(sprintf("results/persistence-%d.rda",run_level),{
+stew(file="results/persistence.rda",{
   t_sim <- system.time(
     sim <- foreach(i=1:polio_Nsim,
       .packages='pomp') %dopar% simulate(polio)
@@ -915,7 +924,7 @@ polio_rw.sd <- rw.sd(
 \begin{frame}[fragile]
 
 <<mif>>=
-stew(sprintf("results/mif-%d.rda",run_level),{
+stew(file="results/mif.rda",{
   t2 <- system.time({
     m2 <- foreach(i=1:polio_Nreps_local,
       .packages='pomp', .combine=c) %dopar% mif2(polio,
@@ -1007,21 +1016,20 @@ polio_box <- rbind(
 We then carry out a search identical to the local one except for the starting parameter values. This can be succinctly coded by calling \code{mif2} on the previously constructed object, \code{m2[[1]]}, with a reset starting value:
 
 <<box_eval>>=
-stew(file=sprintf("results/box_eval-%d.rda",run_level),{
-  t3 <- system.time({
-    m3 <- foreach(i=1:polio_Nreps_global,.packages='pomp',
-      .combine=c) %dopar% mif2(
-        m2[[1]],
-        params=c(apply(polio_box,1,function(x)runif(1,x[1],x[2])),
-	  polio_fixed_params)
-      )
-    lik_m3 <- foreach(i=1:polio_Nreps_global,.packages='pomp',
-      .combine=rbind) %dopar% logmeanexp(
-        replicate(polio_Nreps_eval,
+stew(file="results/box_eval.rda",{
+  time_start_box_eval <- Sys.time()
+  m3 <- foreach(i=1:polio_Nreps_global,.packages='pomp',
+    .combine=c) %dopar% mif2(m2[[1]],
+      params=c(apply(polio_box,1,function(x)runif(1,x[1],x[2])),
+	polio_fixed_params)
+    )
+  lik_m3 <- foreach(i=1:polio_Nreps_global,.packages='pomp',
+    .combine=rbind) %dopar% logmeanexp(
+      replicate(polio_Nreps_eval,
         logLik(pfilter(polio,
-	  params=coef(m3[[i]]),Np=polio_Np))), 
-        se=TRUE)
-  })
+	params=coef(m3[[i]]),Np=polio_Np))), 
+      se=TRUE)
+  time_end_box_eval <- Sys.time()
 })
 @
 
@@ -1077,7 +1085,7 @@ nb_mle <- optim(c(0,-5),nb_lik)
 
 \bi
 
-\item We see that a model with likelihood below \Sexpr{round(-nb_mle$value,1)} is unreasonable. This explains a cutoff around this value in the global searches: in these cases, the model is finding essentially IID explanations for the data.
+\item A model with likelihood below \Sexpr{round(-nb_mle$value,1)} is unreasonable. This explains a cutoff around this value in the global searches: in these cases, the model is finding essentially IID explanations for the data.
 
 \ei
 
@@ -1102,7 +1110,7 @@ arma_fit$loglik-sum(log_y)
 \bi
 
 \item This 7-parameter model, which knows nothing of susceptible depletion, attains a likelihood of \Sexpr{round( arma_fit$loglik-sum(log_y),1)}.
-\item Although the goal of mechanistic modeling here is not to beat non-mechanstic models, it is comforting that we're competitive with them.
+\item The aim of mechanistic modeling here is not to beat non-mechanstic models, but it is comforting that we're competitive with them.
 
 \ei
 
