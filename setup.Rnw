@@ -1,0 +1,70 @@
+
+<<packages,cache=FALSE,echo=FALSE,include=FALSE>>=
+library(ggplot2)
+theme_set(theme_bw())
+library(tidyverse)
+library(plyr)
+library(reshape2)
+library(doParallel)
+library(pomp)
+library(knitr)
+@
+
+<<setup-child,cache=FALSE,echo=FALSE>>=
+
+stopifnot(packageVersion("pomp")>="2.0")
+
+opts_chunk$set(
+  cache=FALSE,
+#  cache=TRUE,
+  eval=TRUE,
+  include=TRUE,
+  echo=TRUE,
+  purl=TRUE,
+  cache.path=paste0("tmp/cache"),
+  dev='png',
+  dev.args=list(bg='transparent'),
+  dpi=300,
+  error=FALSE,
+  fig.pos="h!",
+  fig.align='center',
+  fig.height=4,fig.width=6.83,
+  fig.lp="fig:",
+  fig.path=paste0("tmp/figure"),
+  fig.show='asis',
+  highlight=TRUE,
+  message=FALSE,
+  progress=TRUE,
+  prompt=FALSE,
+#  results='asis',
+  results="markup",
+  size='small',
+  strip.white=TRUE,
+  tidy=FALSE,
+  warning=FALSE
+#  comment=NA # to remove ## on output
+)
+
+myround<- function (x, digits = 1) {
+  # taken from the broman package
+  if (digits < 1) 
+    stop("This is intended for the case digits >= 1.")
+  if (length(digits) > 1) {
+    digits <- digits[1]
+    warning("Using only digits[1]")
+  }
+  tmp <- sprintf(paste("%.", digits, "f", sep = ""), x)
+  zero <- paste0("0.", paste(rep("0", digits), collapse = ""))
+  tmp[tmp == paste0("-", zero)] <- zero
+  tmp
+}
+
+options(
+  width = 60, # number of characters in R output before wrapping
+  keep.source=TRUE,
+  encoding="UTF-8"
+)
+
+
+@
+

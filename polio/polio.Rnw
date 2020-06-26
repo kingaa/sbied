@@ -1,118 +1,13 @@
 
 \input{../header.tex}
 
-
-\mode<beamer>{\usetheme{AnnArbor}}
-\mode<beamer>{\setbeamertemplate{footline}}
-\mode<beamer>{\setbeamertemplate{footline}[frame number]}
-\mode<beamer>{\setbeamertemplate{frametitle continuation}[from second][\insertcontinuationcountroman]}
-\mode<beamer>{\setbeamertemplate{navigation symbols}{}}
-
-\mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
-
+\newcommand\CHAPTER{6}
 \title{Lesson 6:\\Case study: Polio}
 \author{Aaron A. King, Edward L. Ionides and Kidus Asfaw}
 
-
-\newcommand\CHAPTER{6}
-
-% \setbeamertemplate{footline}[frame number]
-
-\newcommand\eqspace{\quad\quad\quad}
-\newcommand\eqskip{\vspace{2.5mm}}
-
-\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-\newcommand\dlta{\Delta}
-
-\newcommand\myeq{\hspace{10mm}}
-
-% \newcommand\answer[2]{\textcolor{blue}{#2}} % to show answers
-% \newcommand\answer[2]{{\color{blue}{#2}}} % to show answers
-\newcommand\answer[2]{#1} % to show blank space
-
-<<R_answer,echo=F,purl=F>>=
-# ANS = TRUE
- ANS=FALSE
-@
-
-\usepackage{bbm} % for blackboard bold 1
-
 \begin{document}
 
-% knitr set up
-<<knitr_opts,echo=F,cache=F,purl=F>>=
-library(knitr)
-opts_chunk$set(
-  cache=FALSE,
-#  cache=TRUE,
-  eval=TRUE,
-  include=TRUE,
-  echo=TRUE,
-  purl=TRUE,
-  cache.path=paste0("tmp/cache"),
-  dev='png',
-  dev.args=list(bg='transparent'),
-  dpi=300,
-  error=FALSE,
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=4,fig.width=6.83,
-  fig.lp="fig:",
-  fig.path=paste0("tmp/figure"),
-  fig.show='asis',
-  highlight=TRUE,
-  message=FALSE,
-  progress=TRUE,
-  prompt=FALSE,
-#  results='asis',
-  results="markup",
-  size='small',
-  strip.white=TRUE,
-  tidy=FALSE,
-  warning=FALSE
-#  comment=NA # to remove ## on output
-)
-options(width = 60) # number of characters in R output before wrapping
-
-@
-
-<<setup,echo=F,results=F,cache=F>>=
-myround<- function (x, digits = 1) {
-  # taken from the broman package
-  if (digits < 1) 
-    stop("This is intended for the case digits >= 1.")
-  if (length(digits) > 1) {
-    digits <- digits[1]
-    warning("Using only digits[1]")
-  }
-  tmp <- sprintf(paste("%.", digits, "f", sep = ""), x)
-  zero <- paste0("0.", paste(rep("0", digits), collapse = ""))
-  tmp[tmp == paste0("-", zero)] <- zero
-  tmp
-}
-
-set.seed(2050320976)
-
-options(
-  keep.source=TRUE,
-  encoding="UTF-8"
-)
-
-@
-
-
-
-<<prelims,echo=F,cache=F>>=
-set.seed(594709947L)
-library(ggplot2)
-theme_set(theme_bw())
-library(tidyverse)
-library(plyr)
-library(reshape2)
-library(foreach)
-#library(doMC)
-library(pomp)
-stopifnot(packageVersion("pomp")>="2.0")
+<<setup, child='../setup.Rnw'>>=
 @
 
 
@@ -126,11 +21,6 @@ stopifnot(packageVersion("pomp")>="2.0")
 
 
 \begin{frame}{Objectives}
-%\frametitle{Chapter \CHAPTER. Case study: Polio}
-
-%\hspace{3cm} {\large \bf Objectives}
-
-%\vspace{3mm}
 
 \begin{enumerate}
 

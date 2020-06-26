@@ -7,6 +7,7 @@
 \usepackage{xspace}        
 \usepackage{graphicx}
 \usepackage{url}
+% \usepackage{bbm} % for blackboard bold 1
 
 \bibliographystyle{dcu}
 
@@ -119,6 +120,13 @@
 \newcommand\negBeforeCode{}
 \newcommand\negAfterCode{}
 
+\mode<beamer>{\usetheme{AnnArbor}}
+\mode<beamer>{\setbeamertemplate{footline}}
+\mode<beamer>{\setbeamertemplate{footline}[frame number]}
+\mode<beamer>{\setbeamertemplate{frametitle continuation}[from second][\insertcontinuationcountroman]}
+\mode<beamer>{\setbeamertemplate{navigation symbols}{}}
+
+\mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
 
 
 
