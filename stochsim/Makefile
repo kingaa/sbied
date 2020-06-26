@@ -1,29 +1,43 @@
-default: stochsim.R stochsim.pdf bsflu_data.txt seir3_exercise.html seir3_exercise.R exer_ctmc_ode.html exercises.R exercises.html
+TARGETS = slides.pdf handout.pdf stochsim.R
+REXE = Rscript
+
+default: $(TARGETS)
 ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)
 endif
 
+slides.pdf handout.pdf: stochsim.tex
+
+.INTERMEDIATE: stochsim.tex
+
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
+	$(REXE) -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
 
 %.html: %.md
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
+	$(REXE) -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
+
+%.R: %.Rnw
+	$(REXE) -e "knitr::purl(\"$*.Rnw\",output=\"$*.R\",documentation=0)"
 
 %.R: %.Rmd
-	Rscript -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
+	$(REXE) -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=0)"
 
 %.tex: %.Rnw
-	Rscript -e "knitr::knit(\"$*.Rnw\",output=\"$*.tex\")"
+	$(REXE) -e "knitr::knit(\"$*.Rnw\",output=\"$*.tex\")"
 
 %.pdf: %.tex
-	pdflatex $*.tex
+	pdflatex $*
+	bibtex $*
+	pdflatex $*
+	pdflatex $*
 
 clean:
-	$(RM) *.o *.so *.log *.aux *.out *.nav *.snm *.toc *.bak
+	$(RM) *.o *.so *.log *.aux *.out *.nav *.snm *.toc *.bak *.vrb *.blg
 	$(RM) Rplots.ps Rplots.pdf
 
 fresh: clean
-	$(RM) -r tmp
+	$(RM) *.bbl
+	$(RM) -r cache figure

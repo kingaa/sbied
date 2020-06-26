@@ -1,10 +1,15 @@
-%\documentclass[handout]{beamer}
-\documentclass{beamer}
-\usepackage{natbib}
-\bibliographystyle{dcu}
 \input{../header.tex}
 
-\usepackage{hyperref}
+\mode<beamer>{\usetheme{AnnArbor}}
+\mode<beamer>{\setbeamertemplate{footline}}
+\mode<beamer>{\setbeamertemplate{footline}[frame number]}
+\mode<beamer>{\setbeamertemplate{frametitle continuation}[from second][\insertcontinuationcountroman]}
+\mode<beamer>{\setbeamertemplate{navigation symbols}{}}
+
+\mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
+
+\title{Lesson 2:\\Simulation of stochastic dynamic models}
+\author{Aaron A. King, Edward L. Ionides and Kidus Asfaw}
 
 \newcommand\CHAPTER{2}
 
@@ -76,7 +81,10 @@ myround<- function (x, digits = 1) {
   tmp
 }
 
-set.seed(2050320976)
+library(doParallel)
+registerDoParallel()
+library(doRNG)
+registerDoRNG(2488820)
 
 options(
   keep.source=TRUE,
@@ -88,7 +96,6 @@ options(
 
 
 <<prelims,echo=F,cache=F>>=
-set.seed(594709947L)
 library(ggplot2)
 theme_set(theme_bw())
 library(tidyverse)
@@ -100,12 +107,17 @@ library(pomp)
 stopifnot(packageVersion("pomp")>="3.0")
 @
 
-\begin{frame}[fragile]
-\frametitle{Chapter \CHAPTER. Simulation of stochastic dynamic models}
+\begin{frame}
+  \titlepage
+\end{frame}
 
-\hspace{3cm} {\large \bf Objectives}
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
 
-\vspace{3mm}
+
+\begin{frame}{Objectives}
+
 
 This tutorial develops some classes of dynamic models relevant to biological systems, especially for epidemiology.
 
@@ -125,15 +137,19 @@ This tutorial develops some classes of dynamic models relevant to biological sys
 
 \end{frame}
 
+\section{Compartment models}
+
+\subsection{Notation}
+
 \begin{frame}[fragile]
 
-\frametitle{Introduction: The SIR model}
+\frametitle{A basic compartment model: The SIR model}
 
 \bi
 \item
 We develop deterministic and stochastic representations of a susceptible-infected-recovered (SIR) system, a fundamental class of models for disease transmission dynamics.
 \item
-We set up  notation generalizing to more complex systems \citep{breto09}.
+We set up  notation applicable to general compartment models \citep{breto09}.
 \ei
 
 \input{../graphics/sir_diagram.tex}
@@ -180,7 +196,7 @@ counts individuals transitioning from $I$ to $R$. To include demography, we coul
 
 \begin{frame}[fragile]
 
-\frametitle{Recovering compartment processes from counting proceeses}
+\frametitle{Recovering compartment processes from counting proceeses  \rule[-2mm]{0mm}{3mm}}
 
 \bi
 
@@ -200,10 +216,13 @@ R(t) &=& R(0) + N_{IR}(t)
 
 \end{frame}
 
+
+\subsection{A deterministic interpretation}
+
 \begin{frame}[fragile]
 
 
-\frametitle{The ordinary differential equation (ODE) interpretation of the SIR model}
+\frametitle{The ordinary differential equation (ODE) interpretation of the SIR model \rule[-2mm]{0mm}{3mm}}
 
 Together with initial conditions specifying $S(0)$, $I(0)$ and $R(0)$, we just need to write down ODEs for the flow counting processes. These are,
 $$ dN_{SI}/dt = \mu_{SI}(t) \, S(t),$$
@@ -212,9 +231,11 @@ $$ dN_{IR}/dt = \mu_{IR}\, I(t).$$
 
 \end{frame}
 
+\subsection{A stochastic interpretation}
+
 \begin{frame}[fragile]
 
-\frametitle{The simple continuous-time Markov chain interpretation of the SIR model}
+\frametitle{The simple continuous-time Markov chain interpretation of the SIR model  \rule[-2mm]{0mm}{3mm}}
 
 \bi
 
@@ -242,7 +263,7 @@ $ \lim_{\delta\to 0} \frac{h(\delta)}{\delta} = 0$.
 
 \begin{frame}[fragile]
 
-\myquestion. What is the link between little $o$ notation and the derivative?
+\myexercise. What is the link between little $o$ notation and the derivative?
 
 Explain why 
 $$f(x+\delta)=f(x)+ \delta g(x) + o(\delta)$$ 
@@ -279,27 +300,31 @@ What considerations might help you choose which of these notations to use?
 
 \end{frame}
 
-\begin{frame}[fragile]
+\section{Euler's method}
 
-\frametitle{Euler's method for ordinary differential equations (ODEs)}
+\subsection{Numerical solution of deterministic dynamics}
+
+\begin{frame}{Euler's method for ordinary differential equations (ODEs)}
+
+\vspace{-2mm}
 
 \bi
 
 \item Euler (1707-1783) wanted a numeric solution of an ODE $dx/dt = h(x)$
 with an initial condition $x(0)$. 
 
-\item He supposed this ODE has some true solution $x(t)$ which could not be worked out analytically. He therefore wished to approximate $x(t)$ numerically.
+\item He supposed this ODE has some true solution $x(t)$ which could not be worked out analytically. He wanted to approximate $x(t)$ numerically.
 
 \item He initialized the numerical solution at the known starting value, 
 $$\tilde x(0)=x(0).$$
 
 \item For $k=1,2,\dots$, he supposed that the gradient $dx/dt$ is approximately constant over the small time interval $k\delta\le t\le (k+1)\delta$. 
-
-\item Therefore, he defined
+Therefore, he defined
 $$\tilde x\big( \,(k+1)\delta\,\big) = \tilde x( k\delta) + \delta \, h\big(\, \tilde x(k\delta)\,\big).$$
-This only defines $\tilde x(t)$ when $t$ is a multiple of $\delta$, but suppose $\tilde x(t)$ is constant between these discrete times.
 
-\item We now have a numerical scheme, stepping forwards in time increments of size $\delta$, that can be readily evaluated by computer (or by hand, if you are Euler). 
+\item This only defines $\tilde x(t)$ when $t$ is a multiple of $\delta$, but suppose $\tilde x(t)$ is constant between these discrete times.
+
+\item We now have a numerical scheme, stepping forwards in time increments of size $\delta$, that can be readily evaluated by computer.
 
 \ei
 
@@ -359,6 +384,8 @@ Arguably, the main purpose of the original model $x(t)$ is to give a succinct de
 
 \frametitle{Euler's method for a discrete SIR model}
 
+\vspace{-2mm}
+
 \bi
 
 \item Recall the simple continuous-time Markov chain interpretation of the SIR model without demography:
@@ -368,7 +395,7 @@ $$\begin{array}{lcl}
 \pr\big[N_{IR}(t+\delta)\equals N_{IR}(t)+1\big] &=& \mu_{IR} \, I(t) \delta + o(\delta).
 \end{array}$$
 
-\item We look for a numerical solution with state variables $\tilde S(k\delta)$, $\tilde I(k\delta)$, $\tilde R(k\delta)$. 
+\item We want a numerical solution with state variables $\tilde S(k\delta)$, $\tilde I(k\delta)$, $\tilde R(k\delta)$. 
 
 \item The counting processes for the flows between compartments are $\tilde N_{SI}(t)$ and $\tilde N_{IR}(t)$. The counting processes are related to the numbers of individuals in the compartments by the same flow equations we had before:
 $$\begin{array}{lcl} 
@@ -383,9 +410,13 @@ $$\begin{array}{lcl}
 
 \ei
 
+\subsection{Numerical solution of stochastic dynamics}
+
 \end{frame}
 \begin{frame}[fragile]
 \frametitle{Three different stochastic Euler solutions at times $t=k\delta$}
+
+\vspace{-3mm}
 
 \begin{enumerate}
 \item A Poisson approximation.
@@ -393,19 +424,18 @@ $$\tilde N_{SI}(t+\delta)= \tilde N_{SI}(t) + \mathrm{Poisson}\big[\mu_{SI}\big(
 where $\mathrm{Poisson}(\mu)$ is a Poisson random variable with mean $\mu$ and 
 $$\mu_{SI}\big(\tilde I(t)\big) = \beta\, \tilde I(t).$$
 
-\item A binomial approximation with transition probabilities approximated by rate times time.
+\item A binomial approximation,
 $$\tilde N_{SI}(t+\delta) = \tilde N_{SI}(t) + \mathrm{Binomial}\big[\tilde S(t),\mu_{SI}\big(\tilde I(t)\big) \, \delta\big),$$
-where $\mathrm{Binomial}(n,p)$ is a binomial random variable with mean $np$ and variance $np(1-p)$.
+where $\mathrm{Binomial}(n,p)$ is a binomial random variable with mean $np$ and variance $np(1-p)$. Here, $p=\mu_{SI}\big(\tilde I(t)\big) \, \delta$.
 
 \item A binomial approximation with exponential transition probabilities. 
-
 $$ \tilde N_{SI}(t+\delta)= \tilde N_{SI}(t) + \mathrm{Binomial}\big[\tilde S(t),1-\exp\big\{-\mu_{SI}\big(\tilde I(t)\big) \delta\big\}\big].$$
 
 \end{enumerate}
 
-\bi
-\item Conceptually, it is simplest to think of (1) or (2). Numerically, it is usually preferable to implement (3). 
-\ei
+\hrulefill
+
+Conceptually, it is simplest to think of (1) or (2). Numerically, it is usually preferable to implement (3). 
 
 \end{frame}
 
@@ -455,7 +485,7 @@ $$ \tilde N_{SI}(t+\delta)= \tilde N_{SI}(t) + \mathrm{Binomial}\big[\tilde S(t)
 
 \frametitle{Euler's method vs Gillspie's algorithm}
 
-\myquestion. A widely used, exact simulation method for continuous time Markov chains is  \href{https://en.wikipedia.org/wiki/Gillespie_algorithm}{Gillspie's algorithm}.
+\myexercise. A widely used, exact simulation method for continuous time Markov chains is  \href{https://en.wikipedia.org/wiki/Gillespie_algorithm}{Gillspie's algorithm}.
 We do not put much emphasis on Gillespie's algorithm here. Why? When would you prefer an implementation of Gillespie's algorithm to an Euler solution?
 
 \answer{\vspace{20mm}}{todo}
@@ -468,9 +498,16 @@ methods. These are closely related to Euler's approach. In this context, the Eul
 
 \end{frame}
 
+\section{Compartment models in \package{pomp}}
+
+\subsection{A basic pomp model for measles}
+
 \begin{frame}[fragile] 
 
-\frametitle{Compartmental models in \package{pomp}: The Consett measles outbreak}
+\frametitle{Compartment models in \package{pomp}: The Consett measles outbreak \rule[-2mm]{0mm}{3mm}}
+
+
+\vspace{-2mm}
 
 \bi
 
@@ -478,13 +515,15 @@ methods. These are closely related to Euler's approach. In this context, the Eul
 
 % <!--- population 38820, 737 births in the year. --->
 
-\item We download the data.
-Examine them:
+\item We download the data and examine them:
 
 \ei
 
+\vspace{-2mm}
+
 <<meas-data1>>=
-read_csv("https://kingaa.github.io/sbied/stochsim/Measles_Consett_1948.csv") %>%
+read_csv(paste0("https://kingaa.github.io/sbied/stochsim/",
+  "Measles_Consett_1948.csv")) %>%
   select(week,reports=cases) -> meas
 head(as.data.frame(meas),5)
 @
@@ -552,13 +591,15 @@ meas %>%
 
 \begin{frame}[fragile] 
 
-\frametitle{Implementing the model}
+\frametitle{Implementing the SIR model in \package{pomp}}
+
+\vspace{-2mm}
 
 \bi
 
 \item To implement the model in \package{pomp}, the first thing we need is a stochastic simulator for the unobserved state process.
 
-\item We've seen that there are several ways of approximating a stochastic compartment model for numerical purposes. We follow method 3 above, modeling the number, $\dlta{N_{SI}}$, moving from S to I over interval $\dlta{t}$ as
+\item  We follow method 3 above, modeling the number, $\dlta{N_{SI}}$, moving from S to I over interval $\dlta{t}$ as
 $$\dlta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\beta\,I/N\dlta{t}}},$$
 and the number moving from I to R as
 $$\dlta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\mu_{IR}\dlta{t}}}.$$
@@ -586,7 +627,7 @@ sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t, ...) {
 \ei
 
 <<init1R>>=
-sir_init <- function(N, eta, ...) {
+sir_rinit <- function(N, eta, ...) {
   c(S = round(N*eta), I = 1, R = round(N*(1-eta)))
 }
 @
@@ -601,7 +642,7 @@ sir_init <- function(N, eta, ...) {
 meas %>%
   pomp(times="week",t0=0,
     rprocess=euler(sir_step,delta.t=1/7),
-    rinit=sir_init
+    rinit=sir_rinit
   ) -> measSIR
 @
 
@@ -636,7 +677,7 @@ sir_step <- function (S, I, R, H, N, Beta, mu_IR, delta.t, ...) {
   c(S = S, I = I, R = R, H = H)
 }
 
-sir_init <- function (N, eta, ...) {
+sir_rinit <- function (N, eta, ...) {
   c(S = round(N*eta), I = 1, R = round(N*(1-eta)), H = 0)
 }
 @
@@ -657,7 +698,7 @@ sir_init <- function (N, eta, ...) {
 measSIR %>% 
   pomp(
     rprocess=euler(sir_step,delta.t=1/7),
-    rinit=sir_init,accumvars="H"
+    rinit=sir_rinit,accumvars="H"
   ) -> measSIR
 @
 
@@ -676,11 +717,11 @@ $$\mathrm{reports}_t \sim \dist{Binomial}{H(t)-H(t-1),\rho}.$$
 \ei
 
 <<meas-modelR>>=
-dmeas <- function (reports, H, rho, log, ...) {
+sir_dmeas <- function (reports, H, rho, log, ...) {
  dbinom(x=reports, size=H, prob=rho, log=log)
 }
 
-rmeas <- function (H, rho, ...) {
+sir_rmeas <- function (H, rho, ...) {
   c(reports=rbinom(n=1, size=H, prob=rho))
 }
 @
@@ -692,7 +733,7 @@ rmeas <- function (H, rho, ...) {
 \ei
 
 <<add-meas-modelR>>=
-measSIR %>% pomp(rmeasure=rmeas,dmeasure=dmeas) -> measSIR
+measSIR <- pomp(measSIR,rmeasure=sir_rmeas,dmeasure=sir_dmeas)
 @
 
 <<test_R_pomp,include=FALSE,purl=FALSE>>=
@@ -701,6 +742,8 @@ measSIR %>%
 @
 
 \end{frame}
+
+\subsection{C snippets}
 
 \begin{frame}[fragile] 
 \frametitle{Specifying model components using C snippets}
@@ -711,9 +754,9 @@ measSIR %>%
 
 \item \package{pomp} provides a facility for doing so with ease, using \myemph{C snippets}.
 
-\item A C snippet is a small piece of C code used to specify a basic model component.
+\item C snippets are small pieces of C code used to specify basic model components.
 
-\item For example, a C snippets encoding the rprocess for an \code{sir} model is as follows.
+\item For example, a C snippet encoding the rprocess for an \code{sir} model is as follows.
 
 \ei
 
@@ -736,18 +779,18 @@ sir_step <- Csnippet("
 C snippets for the initializer and measurement model are:
 \ei
 <<more-csnips>>=
-sir_init <- Csnippet("
+sir_rinit <- Csnippet("
   S = nearbyint(eta*N);
   I = 1;
   R = nearbyint((1-eta)*N);
   H = 0;
 ")
 
-dmeas <- Csnippet("
+sir_dmeas <- Csnippet("
   lik = dbinom(reports,H,rho,give_log);
 ")
 
-rmeas <- Csnippet("
+sir_rmeas <- Csnippet("
   reports = rbinom(H,rho);
 ")
 @
@@ -766,9 +809,9 @@ rmeas <- Csnippet("
 <<sir_pomp>>=
 measSIR %>%
   pomp(rprocess=euler(sir_step,delta.t=1/7),
-    rinit=sir_init,
-    rmeasure=rmeas,
-    dmeasure=dmeas,
+    rinit=sir_rinit,
+    rmeasure=sir_rmeas,
+    dmeasure=sir_dmeas,
     accumvars="H",
     statenames=c("S","I","R","H"),
     paramnames=c("Beta","mu_IR","N","eta","rho")
@@ -777,27 +820,31 @@ measSIR %>%
 
 \bi
 
-\item Note that, when using C snippets, one has to tell \code{pomp} which of the variables referenced in the C snippets are state variables and which are parameters.
+\item Note that, when using C snippets, one has to tell \package{pomp} which of the variables referenced in the C snippets are state variables and which are parameters.
 This is accomplished using the \code{statenames} and \code{paramnames} arguments.
 
 \ei
 
 \end{frame}
 
+\subsection{Choosing parameters}
+
 \begin{frame}[fragile] 
 
 \frametitle{Guessing plausible parameter values}
 
+\vspace{-2mm}
+
 \bi
 
-\item To check our codes are working as intended, we simulate. To do this, we'll need some parameters. A little thought will get us some ballpark estimates.
+\item To check the code is working properly, we simulate. This requires us to assign parameters. A little thought will get us some ballpark estimates.
 
 \item Recall that $\Rzero$ is the expected number of secondary infections resulting from one primary infection introduced into a fully susceptible population.
 For an SIR infection, one has that $\Rzero\approx\frac{L}{A}$, where $L$ is the lifespan of a host and $A$ is the mean age of infection.
 Analysis of age-stratified serology data establish that the mean age of infection for measles during this period was around 4--5yr \citep{Anderson1991}.
-Assuming a lifespan of 60--70yr, we have a rough estimate of $\Rzero\approx 15$.
+Assuming a lifespan of 60--70yr, we have $\Rzero\approx 15$.
 
-\item From the basic theory of SIR epidemics, we have the final-size equation
+\item The basic theory of SIR epidemics gives the final-size equation,
 $$\Rzero = -\frac{\log{(1-f)}}{f},$$
 where $f$ is the final size of the epidemic---the fraction of those susceptible at the beginning of the outbreak who ultimately become infected.
 For $\Rzero>5$, this equation predicts that $f>0.99$.
@@ -813,7 +860,7 @@ For $\Rzero>5$, this equation predicts that $f>0.99$.
   Assuming 50% reporting, we have that $S_0\approx\Sexpr{sum(meas$reports)/0.5}$, so that
   $\eta=\frac{S_0}{N}\approx\Sexpr{signif(2*sum(meas$reports)/38000,2)}$.
 
-\item If the infectious period is roughly 2\~wk, then $1/\mu_{IR} \approx 2~\text{wk}$ and $\beta = \mu_{IR}\,\Rzero \approx 7.5~\text{wk}^{-1}$.
+\item If the infectious period is roughly 2 weeks, then $1/\mu_{IR} \approx 2~\text{wk}$ and $\beta = \mu_{IR}\,\Rzero \approx 7.5~\text{wk}^{-1}$.
 
 \ei
 
@@ -829,7 +876,6 @@ For $\Rzero>5$, this equation predicts that $f>0.99$.
 <<sir_sim1_code,eval=F,echo=T>>=
 measSIR %>% simulate(params=c(Beta=7.5,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) -> sims
-
 sims %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+ guides(color=FALSE)
@@ -846,19 +892,21 @@ In the exercises, you'll see if this model can do better.
 
 \end{frame}
 
-\begin{frame}[fragile] 
 
-\frametitle{Exercises}
+\section{Exercises}
 
-\myquestion. Explore the SIR model. Fiddle with the parameters to see if you can't find a model for which the data are a more plausible realization.
+\begin{frame}[fragile]{Exercises}
 
-\href{./exercises.html#basic-exercise-explore-the-sir-model}{Worked solution to the Exercise}
+\myexercise. Explore the SIR model. Fiddle with the parameters to see if you can't find a model for which the data are a more plausible realization.
+
+\href{./exercises.html#basic-exercise-explore-the-sir-model}{\mylink{Worked solution to the Exercise}}
 
 \end{frame}
 
+
 \begin{frame}[fragile] 
 
-\myquestion. The SEIR model. Below is a diagram of the so-called SEIR model.
+\myexercise. The SEIR model. Below is a diagram of the so-called SEIR model.
 This differs from the SIR model in that infected individuals must pass a period of latency before becoming infectious.
 
 <<seir-diagram,echo=FALSE,purl=FALSE,fig.height=3/4,fig.width=15/2>>=
@@ -878,21 +926,20 @@ popViewport()
 Modify the codes above to construct a \code{pomp} object containing the flu data and an SEIR model.
 Perform simulations as above and adjust parameters to get a sense of whether improvement is possible by including a latent period.
 
-\href{./exercises.html#basic-exercise-the-seir-model}{Worked solution to the Exercise}
+\href{./exercises.html#basic-exercise-the-seir-model}{\mylink{Worked solution to the Exercise}}
 
 \end{frame} 
+
 
 \begin{frame}[fragile]
 \frametitle{Acknowledgments and License}
 
 \bi
-\item This tutorial is prepared for the \href{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 12th Annual Summer Institute in Statistics and Modeling in Infectious Diseases, \href{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}. 
-Previous versions were presented at SISMID by ELI and AAK in 2015--2019.
-Carles Breto assisted in 2018.
+\item This lesson is prepared for the \href{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \href{https://www.biostat.washington.edu/suminst/sismid}{\mylink{SISMID 2020}}.
+
+\item The materials build on \href{https://kingaa.github.io/sbied/acknowledge.html}{\mylink{previous versions of this course and related courses}}.
 
 \item Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
-
-\item These notes are an updated version of previous Simulation-Based Inference for Epidemiological Dynamics courses taught by A. A. King and E. L. Ionides from 2015-2019.
 
 \item
 Licensed under the \href{http://creativecommons.org/licenses/by-nc/3.0/}{Creative Commons attribution-noncommercial license}.

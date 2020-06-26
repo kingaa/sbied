@@ -246,7 +246,6 @@ f_{Y_{n}|X_n}(y_{n}\given x_n\params\theta) &=& f_{Y_{n}|X_n}(y_{n}\given x_n\pa
 
 \item We will follow the approach of \citet{Martinez-Bakker2015} for one state (Wisconsin). In the context of their model, we can quantify seasonality of transmission, the role of the birth rate in explaining the transmission dynamics, and the persistence mechanism of polio. 
 
-\item \citet{Martinez-Bakker2015} carrried out this analysis for all 48 contigous states and District of Columbia, and their data and code are publicly available. The data we study, in \code{polio_wisconsin.csv}, consist of \code{cases}, the monthly reported polio cases; \code{births}, the  monthly recorded births; \code{pop}, the annual census; \code{time}, date in years.
 
 \ei
 
@@ -254,9 +253,13 @@ f_{Y_{n}|X_n}(y_{n}\given x_n\params\theta) &=& f_{Y_{n}|X_n}(y_{n}\given x_n\pa
 
 \begin{frame}[fragile]
 
+\bi
+\item \citet{Martinez-Bakker2015} carried out this analysis for all 48 contigous states and District of Columbia, and their data and code are publicly available. The data we study, in \code{polio_wisconsin.csv}, consist of \code{cases}, the monthly reported polio cases; \code{births}, the  monthly recorded births; \code{pop}, the annual census; \code{time}, date in years.
+\ei
+
 <<data>>=
 polio_data <- read.csv("polio_wisconsin.csv",comment="#")
-head(polio_data,4)
+head(polio_data,5)
 @
 
 \end{frame}
@@ -636,7 +639,7 @@ polio <- pomp(
 
 \section{Logistics for the computations}
 
-%\subsection*{Controlling run time}
+\subsection*{Controlling run time}
 
 \begin{frame}[fragile]
 
@@ -655,7 +658,7 @@ polio <- pomp(
 \ei
 
 <<run_level>>=
-run_level=3
+run_level <- 1
 polio_Np <-          switch(run_level,100, 1e3, 5e3)
 polio_Nmif <-        switch(run_level, 10, 100, 200)
 polio_Nreps_eval <-  switch(run_level,  2,  10,  20)
@@ -708,7 +711,7 @@ As discussed in earlier lessons, we ask {\Rlanguage} to access multiple processo
 
 <<parallel-setup,cache=FALSE>>=
 library(doParallel)
-registerDoParallel()
+registerDoParallel(detectCores())
 library(doRNG)
 registerDoRNG(3899882)
 @
@@ -726,7 +729,7 @@ registerDoRNG(3899882)
 
 
 <<pf1>>=
-stew(file=sprintf("pf1-%d.rda",run_level),{
+stew(file=sprintf("results/pf1-%d.rda",run_level),{
   t1 <- system.time(
     pf1 <- foreach(i=1:20,.packages='pomp') %dopar% pfilter(
       polio,Np=polio_Np)
@@ -827,7 +830,7 @@ The scientific purpose of fitting a model typically involves analyzing propertie
 \item For Wisconsin, using our model at the estimated MLE, we simulate in parallel as follows:
 \ei
 <<persistence-sim>>=
-stew(sprintf("persistence-%d.rda",run_level),{
+stew(sprintf("results/persistence-%d.rda",run_level),{
   t_sim <- system.time(
     sim <- foreach(i=1:polio_Nsim,
       .packages='pomp') %dopar% simulate(polio)
@@ -912,7 +915,7 @@ polio_rw.sd <- rw.sd(
 \begin{frame}[fragile]
 
 <<mif>>=
-stew(sprintf("mif-%d.rda",run_level),{
+stew(sprintf("results/mif-%d.rda",run_level),{
   t2 <- system.time({
     m2 <- foreach(i=1:polio_Nreps_local,
       .packages='pomp', .combine=c) %dopar% mif2(polio,
@@ -1004,7 +1007,7 @@ polio_box <- rbind(
 We then carry out a search identical to the local one except for the starting parameter values. This can be succinctly coded by calling \code{mif2} on the previously constructed object, \code{m2[[1]]}, with a reset starting value:
 
 <<box_eval>>=
-stew(file=sprintf("box_eval-%d.rda",run_level),{
+stew(file=sprintf("results/box_eval-%d.rda",run_level),{
   t3 <- system.time({
     m3 <- foreach(i=1:polio_Nreps_global,.packages='pomp',
       .combine=c) %dopar% mif2(
@@ -1173,6 +1176,14 @@ library(tidyverse)
 
 \begin{frame}[fragile]
 
+\bi
+\item We must decide how many points to plot along the profile, and the number of Monte Carlo replicates at each point.
+\ei
+
+<<run_level_profile>>=
+polio_profile_pts <-  switch(run_level,  3,  5,  30)
+polio_profile_Nreps <- switch(run_level, 2,  3,  10)
+@
 
 \bi
 \item We build a dataframe with a row setting up each profile search 
@@ -1180,9 +1191,9 @@ library(tidyverse)
 
 <<profile_jobs>>=
   profileDesign(
-    rho=seq(0.01,0.025,length=30),
+    rho=seq(0.01,0.025,length=polio_profile_pts),
     lower=box["min",],upper=box["max",],
-    nprof=10
+    nprof=polio_profile_Nreps
   ) -> starts
 @
 
@@ -1216,21 +1227,21 @@ Otherwise, the following code to compute the profile is identical to a global sa
 \begin{frame}[fragile]
 
 <<profile_rho>>=
-bake(file="profile_rho.rds",{  
+bake(file="results/profile_rho.rds",{  
   foreach(start=iter(starts,"row"),.combine=rbind) %dopar% {
     library(pomp)
     polio %>% mif2(params=unlist(start),
-        Np=2000,
-        Nmif=300,
+        Np=polio_Np,
+        Nmif=ceiling(polio_Nmif/2),
         cooling.fraction.50=0.5,
         rw.sd=profile_rw.sd
       ) %>% mif2(
-        Np=5000,
-        Nmif=100,
+        Np=polio_Np,
+        Nmif=ceiling(polio_Nmif/2),
         cooling.fraction.50=0.1
       ) -> mf
-    replicate(10,
-      mf %>% pfilter(Np=5000) %>% logLik()
+    replicate(polio_Nreps_eval,
+      mf %>% pfilter(Np=polio_Np) %>% logLik()
     ) %>% logmeanexp(se=TRUE) -> ll    
     data.frame(as.list(coef(mf)),logLik=ll[1],logLik.se=ll[2])
   }
@@ -1246,7 +1257,7 @@ bake(file="profile_rho.rds",{
 \vspace{-3mm}
 
 <<profile_rho_plot1,echo=F,fig.width=6,fig.height=6,out.width="9.5cm">>=
-pairs(~loglik+psi+rho+tau+sigma_dem+sigma_env,data=subset(m4,loglik>max(loglik)-10))
+pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,data=subset(m4,logLik>max(logLik)-10))
 @
 
 <<save_profile_rho,echo=F>>=
