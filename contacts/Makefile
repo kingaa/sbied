@@ -1,36 +1,43 @@
-default: contacts.html contacts.R
+TARGETS = slides.pdf handout.pdf contacts.R
+REXE = Rscript
+
+default: $(TARGETS)
 ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)
 endif
 
-slides:
-	Rscript --vanilla -e "rmarkdown::render(\"contacts.Rmd\",output_format=\"slidy_presentation\")"
+slides.pdf handout.pdf: contacts.tex
 
-html:
-	Rscript --vanilla -e "rmarkdown::render(\"contacts.Rmd\",output_format=\"html_document\")"
-
+.INTERMEDIATE: contacts.tex
 
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
+	$(REXE) -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
 
 %.html: %.md
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
+	$(REXE) -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
+
+%.R: %.Rnw
+	$(REXE) -e "knitr::purl(\"$*.Rnw\",output=\"$*.R\",documentation=0)"
 
 %.R: %.Rmd
-	Rscript --vanilla -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
+	$(REXE) -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=0)"
 
 %.tex: %.Rnw
-	Rscript -e "knitr::knit(\"$*.Rnw\",output=\"$*.tex\")"
+	$(REXE) -e "knitr::knit(\"$*.Rnw\",output=\"$*.tex\")"
 
 %.pdf: %.tex
-	pdflatex $*.tex
+	pdflatex $*
+	bibtex $*
+	pdflatex $*
+	pdflatex $*
 
 clean:
-	$(RM) *.o *.so *.log *.aux *.out *.nav *.snm *.toc *.bak
+	$(RM) *.o *.so *.log *.aux *.out *.nav *.snm *.toc *.bak *.vrb *.blg
 	$(RM) Rplots.ps Rplots.pdf
 
 fresh: clean
+	$(RM) *.bbl
 	$(RM) -r cache figure

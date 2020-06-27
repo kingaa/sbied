@@ -1,127 +1,32 @@
-\documentclass{beamer}
-\usepackage{natbib}
-\bibliographystyle{dcu}
 \input{../header.tex}
 
 \newcommand\CHAPTER{8}
-
-\setbeamertemplate{footline}[frame number]
-
-\newcommand\eqspace{\quad\quad\quad}
-\newcommand\eqskip{\vspace{2.5mm}}
-
-\newcommand\myeq{\hspace{10mm}}
-
-% \newcommand\answer[2]{\textcolor{blue}{#2}} % to show answers
-% \newcommand\answer[2]{{\color{blue}{#2}}} % to show answers
-\newcommand\answer[2]{#1} % to show blank space
-
-<<R_answer,echo=F,purl=F>>=
-# ANS = TRUE
- ANS=FALSE
-@
-
-\usepackage{bbm} % for blackboard bold 1
+\title{Lesson {\CHAPTER}:\\Case study: Panel data on dynamic variation in sexual contact rates}
+\author{Aaron A. King, Edward L. Ionides and Kidus Asfaw}
 
 \begin{document}
 
-% knitr set up
-<<knitr_opts,echo=F,cache=F,purl=F>>=
-library(knitr)
-opts_chunk$set(
-  cache=FALSE,
-#  cache=TRUE,
-  eval=TRUE,
-  include=TRUE,
-  echo=TRUE,
-  purl=TRUE,
-  cache.path=paste0("tmp/cache"),
-  dev='png',
-  dev.args=list(bg='transparent'),
-  dpi=300,
-  error=FALSE,
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=4,fig.width=6.83,
-  fig.lp="fig:",
-  fig.path=paste0("tmp/figure"),
-  fig.show='asis',
-  highlight=TRUE,
-  message=FALSE,
-  progress=TRUE,
-  prompt=FALSE,
-#  results='asis',
-  results="markup",
-  size='small',
-  strip.white=TRUE,
-  tidy=FALSE,
-  warning=FALSE
-#  comment=NA # to remove ## on output
-)
-options(width = 60) # number of characters in R output before wrapping
-
+<<setup, child='../setup.Rnw'>>=
 @
 
-<<setup,echo=F,results=F,cache=F>>=
-myround<- function (x, digits = 1) {
-  # taken from the broman package
-  if (digits < 1) 
-    stop("This is intended for the case digits >= 1.")
-  if (length(digits) > 1) {
-    digits <- digits[1]
-    warning("Using only digits[1]")
-  }
-  tmp <- sprintf(paste("%.", digits, "f", sep = ""), x)
-  zero <- paste0("0.", paste(rep("0", digits), collapse = ""))
-  tmp[tmp == paste0("-", zero)] <- zero
-  tmp
-}
-
-#DEBUG <- TRUE
+<<parallel,echo=FALSE,cache=FALSE>>=
+# DEBUG <- TRUE
 DEBUG <- FALSE
 
-library(doParallel)
-cores <- detectCores()/2
+cores <- detectCores()
 registerDoParallel(cores)
-library(doRNG)
 registerDoRNG(2050320976)
-library(ggplot2)
-# theme_set(theme_bw())
-
-options(
-  keep.source=TRUE,
-  encoding="UTF-8"
-)
-
-options(
-  keep.source=TRUE,
-  encoding="UTF-8"
-)
-
 @
 
+\begin{frame}
+  \titlepage
+\end{frame}
 
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
 
-<<prelims,echo=F,cache=F>>=
-set.seed(594709947L)
-library(ggplot2)
-theme_set(theme_bw())
-library(tidyverse)
-library(plyr)
-library(reshape2)
-library(foreach)
-#library(doMC)
-library(pomp)
-stopifnot(packageVersion("pomp")>="2.0")
-@
-
-
-\begin{frame}[fragile]
-\frametitle{Chapter \CHAPTER. Case study: Panel data on dynamic variation in sexual contact rates \rule[-2.5mm]{0mm}{3mm}}
-
-\hspace{3cm} {\large \bf Objectives}
-
-\vspace{3mm}
+\begin{frame}{Objectives}
 
 \begin{enumerate}
 
@@ -133,10 +38,11 @@ stopifnot(packageVersion("pomp")>="2.0")
 
 \end{enumerate}
 
+\section{Panel data}
+
 \end{frame}
 
-\begin{frame}[fragile]
-\frametitle{Introduction to panel data}
+\begin{frame}{Introduction to panel data}
 
 \bi
 
@@ -153,6 +59,8 @@ stopifnot(packageVersion("pomp")>="2.0")
 \ei
 
 \end{frame}
+
+\section{Heterogeneity in sexual contact rates}
 
 \begin{frame}[fragile]
 
@@ -212,6 +120,8 @@ par(mai=c(0.8,0.8,0.1,0.1))
 @
 
 \end{frame}
+
+\frametitle{Modeling sexual contact rate heterogeneity}
 
 \begin{frame}[fragile]  
 
@@ -308,6 +218,8 @@ The parameters, $\sigma_X$, $\sigma_D$ and $\sigma_R$ control individual-level d
 
 \end{frame}
 
+\section{Interpreting a fitted model}
+
 \begin{frame}[fragile] 
 
 \frametitle{Consequences of dynamic behavior in an SI model for HIV}
@@ -361,6 +273,8 @@ Fig 4 of  \citet{romero-severson15}. The median of 500 simulations are shown as 
 
 \end{frame}
 
+\section{PanelPOMP models and \package{panelPomp}}
+
 \begin{frame}[fragile] 
 
 \frametitle{PanelPOMP models as an extension of POMP models}
@@ -377,7 +291,7 @@ Fig 4 of  \citet{romero-severson15}. The median of 500 simulations are shown as 
 
 \item Here, we only have shared parameters. The heterogeneities between individuals are modeled as \myemph{random effects} with distribution determined by these shared parameters.
 
-\item \package{pomp} methods were extended to PanelPOMP models by \citet{breto19}. 
+\item Iterated filtering for POMP models was extended to PanelPOMPs by \citet{breto19}. 
 
 \ei
 
@@ -413,17 +327,23 @@ contacts <- panelPompExample(pancon)
 
 \begin{frame}[fragile]
 
+\vspace{-3mm}
+
 \bi
 
 \item Let's start by exploring the \code{contacts} object
 
 \ei
 
+\vspace{-1mm}
+
 <<class_contacts>>=
 class(contacts)
 slotNames(contacts)
 class(unitobjects(contacts)[[1]])
 @
+
+\vspace{-2mm}
 
 \bi
 
@@ -438,6 +358,10 @@ class(unitobjects(contacts)[[1]])
 \begin{frame}[fragile]
 
 \myexercise. Suppose a PanelPOMP model has all its parameters unit-specific. Is there anything useful to be gained from the PanelPOMP structure, or is it preferable to analyze the data as a collection of POMP models?
+
+\vspace{3mm}
+
+\href{https://kingaa.github.io/sbied/contacts/Q-unit-specific.html}{\mylink{Worked solution}}
 
 
 \end{frame}
@@ -457,9 +381,11 @@ class(unitobjects(contacts)[[1]])
 
 \end{frame}
 
+\section{The likelihood for PanelPOMPs}
+
 \begin{frame}[fragile] 
 
-\frametitle{Likelihood evaluation for panelPomps}
+\frametitle{Likelihood evaluation for PanelPOMPs}
 
 \bi
 
@@ -511,27 +437,30 @@ As usuual for Monte Carlo calculations, it is useful to replicate the likelihood
 
 \ei
 
-<<timing_pfilter1,echo=F,cache=F>>=
-timing <- !file.exists("pfilter1.rda")
+<<t1-timing_start,echo=F,cache=F>>=
+timing <- !file.exists("results/pfilter1.rda")
 tic <- Sys.time()
 @
 
-<<pfilter1,cache=F>>=
-stew("pfilter1.rda",{
-  pf1_results <- foreach(i=1:20) %dopar% {
-    library(pomp)
-    library(panelPomp)
-    pf <- pfilter(contacts,Np= if(DEBUG) 10 else 2000)
-    list(logLik=logLik(pf),
-      unitLogLik=sapply(unitobjects(pf),logLik))
-      
-  }
+<<pfilter1-code,eval=F,echo=F>>=
+pf1_results <- foreach(i=1:20) %dopar% {
+  library(pomp)
+  library(panelPomp)
+  pf <- pfilter(contacts,Np= if(DEBUG) 10 else 2000)
+  list(logLik=logLik(pf),
+    unitLogLik=sapply(unitobjects(pf),logLik))
+}
+@
+
+<<pfilter1-eval,cache=F,echo=F>>=
+stew("results/pfilter1.rda",{
+<<pfilter1-code>>
 }) 
 @
 
-<<t1,echo=F,cache=F>>=
+<<t1-timing-end,echo=F,cache=F>>=
 t1 <- as.numeric(difftime(Sys.time(),tic,units="mins"))
-if(timing) save(t1,file="pfilter1-timing.rda") else load("pfilter1-timing.rda")
+if(timing) save(t1,file="results/pfilter1-timing.rda") else load("results/pfilter1-timing.rda")
 @
 
 \bi
@@ -542,9 +471,11 @@ if(timing) save(t1,file="pfilter1-timing.rda") else load("pfilter1-timing.rda")
 
 \end{frame}
 
+\subsection{Combining likelihood evaluations}
+
 \begin{frame}[fragile]  
 
-\frametitle{Combining Monte Carlo likelihood evaluations for PanelPOMPs}
+\frametitle{Combining Monte Carlo likelihood evaluations for PanelPOMPs \rule[-2mm]{0mm}{3mm}}
 
 \bi
 
@@ -609,6 +540,7 @@ panel_logmeanexp(pf1_loglik_matrix,MARGIN=1,se=T)
 
 \end{frame}
 
+
 \begin{frame}[fragile]
 
 \frametitle{Writing a PanelPOMP as a POMP}
@@ -626,6 +558,8 @@ panel_logmeanexp(pf1_loglik_matrix,MARGIN=1,se=T)
 \ei
 
 \end{frame}
+
+\subsection{Maximizing the likelihood}
 
 \begin{frame}[fragile]  
 
@@ -647,33 +581,38 @@ panel_logmeanexp(pf1_loglik_matrix,MARGIN=1,se=T)
 
 \begin{frame}[fragile]
 
-<<timing-mif1,echo=F,cache=F>>=
-timing <- !file.exists("mif1.rda")
+<<t2-timing-start,echo=F,cache=F>>=
+timing <- !file.exists("results/mif1.rda")
 tic <- Sys.time()
 @
 
-<<mif1,cache=F>>=
-stew("mif1.rda",{
-  mif_results <- foreach(i=1:10) %dopar% {
-    library(pomp); library(panelPomp)
-    mf <- mif2(contacts,
-      Nmif = if(DEBUG) 2 else 50,
-      Np = if(DEBUG) 5 else 1000,
-      cooling.fraction.50=0.1,
-      cooling.type="geometric",
-      transform=TRUE,
-      rw.sd=rw.sd(mu_X=0.02, sigma_X=0.02, mu_D = 0.02, sigma_D=0.02,
-        mu_R=0.02, sigma_R =0.02, alpha=0.02
-      )
+<<mif1-code,eval=F,echo=T>>=
+mif_results <- foreach(i=1:10) %dopar% {
+  library(pomp); library(panelPomp)
+  mf <- mif2(contacts,
+    Nmif = if(DEBUG) 2 else 50,
+    Np = if(DEBUG) 5 else 1000,
+    cooling.fraction.50=0.1,
+    cooling.type="geometric",
+    transform=TRUE,
+    rw.sd=rw.sd(mu_X=0.02, sigma_X=0.02,
+      mu_D = 0.02, sigma_D=0.02,
+      mu_R=0.02, sigma_R =0.02, alpha=0.02
     )
-    list(logLik=logLik(mf),params=coef(mf))
-  }
+  )
+  list(logLik=logLik(mf),params=coef(mf))
+}
+@
+
+<<mif1-stew,cache=F,eval=T,echo=F>>=
+stew("results/mif1.rda",{
+<<mif1-code>>
 })
 @
 
-<<t2,echo=F,cache=F>>=
+<<t2-timing-end,echo=F,cache=F>>=
 t2 <- difftime(Sys.time(),tic,units="mins")
-if(timing) save(t2,file="mif1-timing.rda") else load("mif1-timing.rda")
+if(timing) save(t2,file="results/mif1-timing.rda") else load("results/mif1-timing.rda")
 @
 
 \bi
@@ -703,27 +642,34 @@ Similar likelihood evaluation issues arise for \package{panelPomp} as for {pomp}
 
 \begin{frame}[fragile]
 
-<<echo=F,cache=F>>=
-timing <- !file.exists("mif1-lik-eval.rda")
+<<t3-timing-start,echo=F,cache=F>>=
+timing <- !file.exists("results/mif1-lik-eval.rda")
 tic <- Sys.time()
 @
- 
-<<mif1-lik-eval,cache=F>>=
-stew("mif1-lik-eval.rda",{
-  mif_logLik <-  sapply(mif_results,function(x)x$logLik)
-  mif_mle <- mif_results[[which.max(mif_logLik)]]$params
-  pf3_loglik_matrix <- foreach(i=1:10,.combine=rbind) %dopar% {
-    library(pomp)
-    library(panelPomp)
-    unitlogLik(pfilter(contacts,shared=mif_mle,Np=if(DEBUG) 50 else 2000))
-  }  
+
+<<mif1-lik-eval-code,eval=F,echo=T>>=
+mif_logLik <-  sapply(mif_results,function(x)x$logLik)
+mif_mle <- mif_results[[which.max(mif_logLik)]]$params
+pf3_loglik_matrix <- foreach(i=1:10,.combine=rbind) %dopar% {
+  library(pomp)
+  library(panelPomp)
+  unitlogLik(pfilter(contacts,shared=mif_mle,Np=if(DEBUG) 50 else 2000))
+}  
+@
+
+<<mif1-lik-eval,cache=F,echo=F>>=
+stew("results/mif1-lik-eval.rda",{
+<<mif1-lik-eval-code>>
 })
+@
+
+<<panel-logmeanexp>>=
 panel_logmeanexp(pf3_loglik_matrix,MARGIN=2,se=T)
 @
- 
-<<echo=F,cache=F>>=
+
+<<t3-timing-end,echo=F,cache=F>>=
 t3 <- difftime(Sys.time(),tic,units="mins")
-if(timing) save(t3,file="mif1-lik-eval-timing.rda") else load("mif1-lik-eval-timing.rda")
+if(timing) save(t3,file="results/mif1-lik-eval-timing.rda") else load("results/mif1-lik-eval-timing.rda")
 @
 
 \bi
@@ -732,15 +678,14 @@ if(timing) save(t3,file="mif1-lik-eval-timing.rda") else load("mif1-lik-eval-tim
 
 \end{frame}  
 
-
 \begin{frame}[fragile]
 \frametitle{Acknowledgments and License}
 
 \bi
-\item This tutorial is prepared for the \href{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 12th Annual Summer Institute in Statistics and Modeling in Infectious Diseases, \href{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}.
 
-\item Previous versions were presented at SISMID by ELI and AAK in 2015--2019.
-Carles Breto assisted in 2018.
+\item This lesson is prepared for the \href{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \href{https://www.biostat.washington.edu/suminst/sismid}{\mylink{SISMID 2020}}.
+
+\item The materials build on \href{https://kingaa.github.io/sbied/acknowledge.html}{\mylink{previous versions of this course and related courses}}.
 
 \item Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
 
@@ -748,11 +693,11 @@ Carles Breto assisted in 2018.
 Licensed under the \href{http://creativecommons.org/licenses/by-nc/3.0/}{Creative Commons attribution-noncommercial license}.
 Please share and remix noncommercially, mentioning its origin.
 
-\includegraphics[width=2cm]{../cc-by-nc.png}
+\includegraphics[width=2cm]{../graphics/cc-by-nc.png}
+
 \ei
 
 \end{frame}
-
 
 \begin{frame}[allowframebreaks]
 \frametitle{References}
