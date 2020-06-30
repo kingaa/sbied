@@ -41,7 +41,7 @@
 
 \mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
 
-\title{Lesson 2:\\Likelihood-based inference for POMP models}
+\title{Lesson 3:\\Likelihood-based inference for POMP models}
 \author{Aaron A. King and Edward L. Ionides}
 
 \begin{document}
@@ -91,23 +91,25 @@ theme_set(theme_bw())
 set.seed(1350254336)
 @
 
-\begin{frame}
-  \titlepage
-\end{frame}
+\maketitle
 
-\begin{frame}{Outline}
-  \tableofcontents
-\end{frame}
+\mode<article>{\tableofcontents}
+
+\mode<presentation>{
+  \begin{frame}{Outline}
+    \tableofcontents
+  \end{frame}
+}
 
 \section{Introduction}
 
 \begin{frame}{Objectives}
   Students completing this lesson will:
-  \begin{enumerate}[<+->]
-  \item Gain an understanding of the nature of the problem of likelihood computation for POMP models.
-  \item Be able to explain the simplest particle filter algorithm.
-  \item Gain experience in the visualization and exploration of likelihood surfaces.
-  \item Be able to explain the tools of likelihood-based statistical inference that become available given numerical accessibility of the likelihood function.
+  \begin{enumerate}
+  \item<+-> Gain an understanding of the nature of the problem of likelihood computation for POMP models.
+  \item<+-> Be able to explain the simplest particle filter algorithm.
+  \item<+-> Gain experience in the visualization and exploration of likelihood surfaces.
+  \item<+-> Be able to explain the tools of likelihood-based statistical inference that become available given numerical accessibility of the likelihood function.
   \end{enumerate}
 \end{frame}
 
@@ -928,14 +930,9 @@ set.seed(1350254336)
   \end{itemize}
 \end{frame}
 
-\section*{References}
-
 \begin{frame}{License, acknowledgments, and links}
 
   \begin{itemize}
-  \item
-    Produced with \Rlanguage version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
-
   \item
     This lesson is prepared for the \href{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \href{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}.
 
@@ -943,21 +940,29 @@ set.seed(1350254336)
     The materials build on \href{../acknowledge.html}{previous versions of this course and related courses}.
 
   \item
-    Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
-
-  \item
     Licensed under the \href{http://creativecommons.org/licenses/by-nc/4.0/}{\textcolor{blue}{Creative Commons Attribution-NonCommercial license}}.
     Please share and remix non-commercially, mentioning its origin.\\
     \includegraphics[height=24pt]{../graphics/cc-by-nc}
+
+  \item
+    Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+
   \end{itemize}
 
-\href{../index.html}{\textcolor{blue}{Back to course homepage}}\\
-  \href{https://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R}{\textcolor{blue}{\Rlanguage code for this lesson}}\\
+  \href{../index.html}{\textcolor{blue}{Back to course homepage}}
+  
+  \href{https://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R}{\textcolor{blue}{\Rlanguage codes for this lesson}}
 \end{frame}
 
-\begin{frame}[allowframebreaks=0.8]{References}
+\mode<presentation>{
+  \begin{frame}[allowframebreaks=0.8]{References}
+    \bibliographystyle{prslb}
+    \bibliography{../sbied}
+  \end{frame}
+}
+\mode<article>{
   \bibliographystyle{prslb}
   \bibliography{../sbied}
-\end{frame}
+}
 
 \end{document}
