@@ -2,7 +2,6 @@ library(tidyverse)
 library(pomp)
 options(stringsAsFactors=FALSE)
 stopifnot(packageVersion("pomp")>="3.0")
-theme_set(theme_bw())
 set.seed(1350254336)
 
 
@@ -106,8 +105,7 @@ p %>%
   geom_point()+
   facet_grid(~variable,scales="free_x")+
   guides(color=FALSE)+
-  labs(x="parameter value",color="")+
-  theme_bw()
+  labs(x="parameter value",color="")
 
 
 

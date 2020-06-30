@@ -2,7 +2,6 @@ library(tidyverse)
 library(pomp)
 stopifnot(getRversion() >= "4.0")
 stopifnot(packageVersion("pomp")>="3.0")
-theme_set(theme_bw())
 set.seed(1350254336)
 
 library(tidyverse)
@@ -126,8 +125,7 @@ mifs_local %>%
   ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
   geom_line()+
   guides(color=FALSE)+
-  facet_wrap(~variable,scales="free_y")+
-  theme_bw()
+  facet_wrap(~variable,scales="free_y")
 
 
 

@@ -105,14 +105,13 @@ measSIR %>%
        paramnames=c("Beta","mu_IR","N","eta","rho")
        ) -> measSIR
 
-## measSIR %>% simulate(params=c(Beta=7.5,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
-##                      nsim=20,format="data.frame",include.data=TRUE) -> sims
-## sims %>%
-##   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
-##   geom_line()+ guides(color=FALSE)
+measSIR %>%
+  simulate(
+    params=c(Beta=7.5,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
+    nsim=20,format="data.frame",include.data=TRUE
+  ) -> sims
 
-measSIR %>% simulate(params=c(Beta=7.5,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
-                     nsim=20,format="data.frame",include.data=TRUE) -> sims
 sims %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
-  geom_line()+ guides(color=FALSE)
+  geom_line()+
+  guides(color=FALSE)

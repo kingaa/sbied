@@ -38,8 +38,8 @@ opts_chunk$set(
   fig.show='asis',
   size='small',
   fig.lp="fig:",
-  fig.path=paste0("figure/",prefix,"-"),
-  cache.path=paste0("cache/",prefix,"-"),
+  fig.path=paste0("tmp/figure/",prefix,"-"),
+  cache.path=paste0("tmp/cache/",prefix,"-"),
   fig.pos="h!",
   fig.align='center',
   fig.height=4,fig.width=6.83,
@@ -53,7 +53,7 @@ options(keep.source=TRUE,encoding="UTF-8",scipen=6)
 library(plyr)
 library(tidyverse)
 library(pomp)
-stopifnot(packageVersion("pomp")>"2.0.9")
+stopifnot(packageVersion("pomp")>="3.0")
 theme_set(theme_bw())
 options(stringsAsFactors=FALSE)
 set.seed(1221234211)

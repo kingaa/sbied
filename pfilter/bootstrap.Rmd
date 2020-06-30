@@ -19,38 +19,7 @@ Produced in R version `r getRversion()`.
 
 -----------------------------------
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
-library(knitr)
-prefix <- "bootstrap"
-opts_chunk$set(
-  progress=TRUE,
-  prompt=FALSE,tidy=FALSE,highlight=TRUE,
-  strip.white=TRUE,
-  warning=FALSE,
-  message=FALSE,
-  error=FALSE,
-  echo=TRUE,
-  cache=TRUE,
-  results='markup',
-  fig.show='asis',
-  size='small',
-  fig.lp="fig:",
-  fig.path=paste0("figure/",prefix,"-"),
-  cache.path=paste0("cache/",prefix,"-"),
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=3,fig.width=4.85,
-  dpi=100,
-  dev='png',
-  dev.args=list(bg='transparent')
-  )
-```
-```{r prelims,include=FALSE,cache=FALSE}
-options(
-  keep.source=TRUE,
-  stringsAsFactors=FALSE,
-  encoding="UTF-8"
-  )
+```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 
 \newcommand\prob{\mathbb{P}}

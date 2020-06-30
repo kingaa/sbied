@@ -609,16 +609,17 @@ registerDoRNG(2488820)
 
   \item Let's simulate the model at these parameters.
 
-    <<sir_sim1_code,eval=F,echo=T>>=
-    measSIR %>% simulate(params=c(Beta=7.5,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
-                         nsim=20,format="data.frame",include.data=TRUE) -> sims
+    <<sir_sim1_plot,out.width="8cm">>=
+    measSIR %>%
+      simulate(
+        params=c(Beta=7.5,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
+        nsim=20,format="data.frame",include.data=TRUE
+      ) -> sims
+    
     sims %>%
       ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
-      geom_line()+ guides(color=FALSE)
-    @
-    
-    <<sir_sim1_plot,echo=F,eval=T,out.width="8cm">>=
-    <<sir_sim1_code>>
+      geom_line()+
+      guides(color=FALSE)
     @
     
     This leaves something to be desired.

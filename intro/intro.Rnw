@@ -14,40 +14,10 @@
 
 \setbeamertemplate{footline}[frame number]
 
-\begin{document}
-% knitr set up
-<<knitr_opts,echo=F,cache=F,purl=F>>=
-library(knitr)
-opts_chunk$set(
-             cache=TRUE,
-             eval=TRUE,
-             include=TRUE,
-             echo=TRUE,
-             purl=TRUE,
-             cache.path=paste0("tmp/cache"),
-             dev='png',
-             dev.args=list(bg='transparent'),
-             dpi=300,
-             error=FALSE,
-             fig.pos="h!",
-             fig.align='center',
-             fig.height=4,fig.width=6.83,
-             fig.lp="fig:",
-             fig.path=paste0("tmp/figure"),
-             fig.show='asis',
-             highlight=TRUE,
-             message=FALSE,
-             progress=TRUE,
-             prompt=FALSE,
-             results="markup",
-             size='small',
-             strip.white=TRUE,
-             tidy=FALSE,
-             warning=FALSE,
-             comment=NA
-           )
-options(width = 60) # number of characters in R output before wrapping
+<<setup,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
 @
+
+\begin{document}
 
 \maketitle
 

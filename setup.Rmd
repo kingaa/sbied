@@ -1,9 +1,8 @@
-<<ggplot-theme,include=FALSE,cache=FALSE,purl=FALSE>>=
+```{r ggplot-theme,include=FALSE,purl=FALSE,cache=FALSE}
 library(ggplot2)
 theme_set(theme_bw())
-@
 
-<<setup-child,include=FALSE,cache=FALSE,purl=FALSE>>=
+```{r setup-child,include=FALSE,purl=FALSE,cache=FALSE}
 library(knitr)
 opts_chunk$set(
   cache=TRUE,
@@ -39,4 +38,4 @@ options(
   keep.source=TRUE,
   encoding="UTF-8"
 )
-@
+```

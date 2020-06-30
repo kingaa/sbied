@@ -21,41 +21,14 @@ csl: ../ecology.csl
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
-library(knitr)
-prefix <- "loglikest"
-opts_chunk$set(
-  progress=TRUE,
-  prompt=FALSE,tidy=FALSE,highlight=TRUE,
-  strip.white=TRUE,
-  warning=FALSE,
-  message=FALSE,
-  error=FALSE,
-  echo=TRUE,
-  cache=TRUE,
-  cache.extra=rand_seed,
-  results='markup',
-  fig.show='asis',
-  size='small',
-  fig.lp="fig:",
-  fig.path=paste0("figure/",prefix,"-"),
-  cache.path=paste0("cache/",prefix,"-"),
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=4,fig.width=6.83,
-  dpi=100,
-  dev='png',
-  dev.args=list(bg='transparent')
-)
-options(keep.source=TRUE,encoding="UTF-8",scipen=6)
+```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 ```{r prelims,purl=TRUE,cache=FALSE}
 library(plyr)
 library(tidyverse)
-theme_set(theme_bw())
-options(stringsAsFactors=FALSE)
 library(pomp)
-stopifnot(packageVersion("pomp")>="2.1")
+stopifnot(getRversion()>="4.0")
+stopifnot(packageVersion("pomp")>="3.0")
 set.seed(1221234211)
 ```
 
