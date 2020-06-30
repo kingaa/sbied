@@ -1,2 +1,2 @@
 \documentclass[t]{beamer}
-\input{pfilter.tex}
+\input{main}

@@ -1,4 +1,4 @@
-TARGETS = mif.R slides.pdf handout.pdf notes.pdf \
+TARGETS = main.R slides.pdf handout.pdf notes.pdf \
 global_search.rds local_search.rds \
 lik_local.rds measles_params.csv if2_settings.html 
 
@@ -10,9 +10,9 @@ ifneq ($(INSTALLDIR),)
 	install -m0600 $^ $(INSTALLDIR)
 endif
 
-slides.pdf handout.pdf notes.pdf: mif.tex
+slides.pdf handout.pdf notes.pdf: main.tex
 
-.INTERMEDIATE: mif.tex
+.INTERMEDIATE: main.tex notes.tex slides.tex handout.tex
 
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \

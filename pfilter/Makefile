@@ -1,4 +1,4 @@
-TARGETS = slides.pdf handout.pdf notes.pdf pfilter.R \
+TARGETS = slides.pdf handout.pdf notes.pdf main.R \
 bootstrap.html deterministic.html \
 directSimulation.html directSimulation.R fisherSE.html \
 monteCarlo.html pf-in-Nelder-Mead.html pf-in-Nelder-Mead.R \
@@ -12,9 +12,9 @@ ifneq ($(INSTALLDIR),)
 	install -m0600 $^ $(INSTALLDIR)
 endif
 
-slides.pdf handout.pdf notes.pdf: pfilter.tex
+slides.pdf handout.pdf notes.pdf: main.tex
 
-.INTERMEDIATE: pfilter.tex
+.INTERMEDIATE: main.tex notes.tex handout.tex slides.tex
 
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \

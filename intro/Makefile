@@ -8,9 +8,9 @@ ifneq ($(INSTALLDIR),)
 	install -m0600 $^ $(INSTALLDIR)
 endif
 
-slides.pdf handout.pdf notes.pdf: intro.tex
+slides.pdf handout.pdf notes.pdf: main.tex
 
-.INTERMEDIATE: intro.tex
+.INTERMEDIATE: main.tex slides.tex notes.tex handout.tex
 
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \

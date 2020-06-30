@@ -339,7 +339,7 @@ set.seed(1350254336)
 
   Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our measles-outbreak case study.
   Here, we simply repeat the construction of the SIR model we looked at earlier.
-  The \Rlanguage code to do this is available \link{http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R}{for download}.
+  The \Rlanguage code to do this is available \link{http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/main.R}{for download}.
 
   <<model-construct,echo=FALSE,purl=TRUE>>=
   library(tidyverse)
@@ -894,7 +894,7 @@ set.seed(1350254336)
 
   \link{../index.html}{Back to course homepage}
   
-  \link{https://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R}{\Rlanguage codes for this lesson}
+  \link{https://raw.githubusercontent.com/kingaa/sbied/master/pfilter/main.R}{\Rlanguage codes for this lesson}
 \end{frame}
 
 \end{document}

@@ -1,4 +1,4 @@
-TARGETS = slides.pdf handout.pdf notes.pdf stochsim.R
+TARGETS = slides.pdf handout.pdf notes.pdf main.R
 REXE = Rscript
 
 default: $(TARGETS)
@@ -7,9 +7,9 @@ ifneq ($(INSTALLDIR),)
 	install -m0600 $^ $(INSTALLDIR)
 endif
 
-slides.pdf handout.pdf notes.pdf: stochsim.tex
+slides.pdf handout.pdf notes.pdf: main.tex
 
-.INTERMEDIATE: stochsim.tex
+.INTERMEDIATE: main.tex slides.tex handout.tex notes.tex
 
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
