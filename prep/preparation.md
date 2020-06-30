@@ -134,7 +134,7 @@ If, while trying to install from source, you receive the error,
 make: gfortran-4.8: No such file or directory
 ```
 or one that otherwise refers to `gfortran`, then it is likely that you do not have the necessary version of **gfortran** installed.
-Have a look at [these instructions](https://kingaa.github.io/mac-fortran.html) and contact me at the address above if these don’t work for you.
+Have a look at [these instructions](https://mac.r-project.org/tools/) and contact me at the address above if these don’t work for you.
 
 Some users have reported receiving an error complaining that 
 ```
