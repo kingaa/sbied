@@ -21,33 +21,7 @@ csl: ../ecology.csl
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
-library(knitr)
-prefix <- "seir3"
-opts_chunk$set(
-  progress=TRUE,
-  prompt=FALSE,tidy=FALSE,highlight=TRUE,
-  strip.white=TRUE,
-  warning=FALSE,
-  message=FALSE,
-  error=FALSE,
-  echo=TRUE,
-  cache=TRUE,
-  cache.extra=rand_seed,
-  results='markup',
-  fig.show='asis',
-  size='small',
-  fig.lp="fig:",
-  fig.path=paste0("tmp/figure/",prefix,"-"),
-  cache.path=paste0("tmp/cache/",prefix,"-"),
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=4,fig.width=6.83,
-  dpi=100,
-  dev='png',
-  dev.args=list(bg='transparent')
-)
-options(keep.source=TRUE,encoding="UTF-8",scipen=6)
+```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
 library(plyr)
@@ -161,8 +135,9 @@ In what ways do they still leave something to be desired?
 
 ----------------------------
 
-### [Back to Stochastic Simulation lesson](./stochsim.html)
-## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/seir3_exercise.R)
+### [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/seir3_exercise.R)
+### [Back to Stochastic Simulation lesson](./slides.pdf)
+### [Back to the course home page](../index.html)
 
 ----------------------------
 

@@ -1,4 +1,6 @@
-TARGETS = slides.pdf handout.pdf notes.pdf main.R
+TARGETS = slides.pdf handout.pdf notes.pdf main.R \
+exercises.html exercises.R exer_ctmc_ode.html \
+seir3_exercise.html seir3_exercise.R
 REXE = Rscript
 
 default: $(TARGETS)

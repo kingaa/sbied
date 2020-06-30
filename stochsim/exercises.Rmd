@@ -6,7 +6,7 @@ output:
     toc: yes
     toc_depth: 4
 bibliography: ../sbied.bib
-csl: ../ecology.csl
+csl: ../jss.csl
 ---
 
 [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
@@ -15,7 +15,7 @@ Please share and remix noncommercially, mentioning its origin.
 
 
 ```{r include=FALSE}
-source("stochsim.R")
+source("main.R")
 ```
 
 ## Exercise: Little o notation
@@ -145,8 +145,9 @@ measSEIR %>%
 
 ----------------------------
 
-### [Back to Stochastic Simulation lesson](./stochsim.html)
 ### [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/exercises.R)
+### [Back to Stochastic Simulation lesson](./slides.pdf)
+### [Back to the course home page](../index.html)
 
 ----------------------------
 

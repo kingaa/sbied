@@ -690,7 +690,7 @@ registerDoRNG(2488820)
 
   \link{../index.html}{Back to course homepage}
   
-  \link{https://raw.githubusercontent.com/kingaa/sbied/master/stochsim/stochsim.R}{\Rlanguage codes for this lesson}
+  \link{https://raw.githubusercontent.com/kingaa/sbied/master/stochsim/main.R}{\Rlanguage codes for this lesson}
 \end{frame}
 
 
