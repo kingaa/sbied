@@ -1,23 +1,12 @@
-
-<<packages,cache=FALSE,echo=FALSE,include=FALSE>>=
+<<packages>>=
 library(ggplot2)
 theme_set(theme_bw())
-library(tidyverse)
-library(plyr)
-library(reshape2)
-library(doParallel)
-library(doRNG)
-library(pomp)
-library(knitr)
 @
 
-<<setup-child,cache=FALSE,echo=FALSE>>=
-
-stopifnot(packageVersion("pomp")>="2.0")
-
+<<setup-child>>=
+library(knitr)
 opts_chunk$set(
-  cache=FALSE,
-#  cache=TRUE,
+  cache=TRUE,
   eval=TRUE,
   include=TRUE,
   echo=TRUE,
@@ -37,13 +26,12 @@ opts_chunk$set(
   message=FALSE,
   progress=TRUE,
   prompt=FALSE,
-#  results='asis',
   results="markup",
   size='small',
   strip.white=TRUE,
   tidy=FALSE,
-  warning=FALSE
-#  comment=NA # to remove ## on output
+  warning=FALSE,
+  comment=NA
 )
 
 myround<- function (x, digits = 1) {
@@ -65,7 +53,4 @@ options(
   keep.source=TRUE,
   encoding="UTF-8"
 )
-
-
 @
-

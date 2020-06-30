@@ -1,30 +1,33 @@
 \input{../header.tex}
 
 \newcommand\CHAPTER{8}
-\title{Lesson {\CHAPTER}:\\Case study: Panel data on dynamic variation in sexual contact rates}
-\author{Aaron A. King, Edward L. Ionides and Kidus Asfaw}
+\title{Lesson {\CHAPTER}:\\Case study: Panel data on dynamic variation\\ in sexual contact rates}
+\author{Aaron A. King, Edward L. Ionides, and Kidus Asfaw}
 
 \begin{document}
 
-<<setup, child='../setup.Rnw'>>=
+<<setup, child="../setup.Rnw",include=FALSE,cache=FALSE,purl=FALSE>>=
 @
 
-<<parallel,echo=FALSE,cache=FALSE>>=
+<<parallel,echo=FALSE,cache=FALSE,purl=TRUE>>=
 # DEBUG <- TRUE
 DEBUG <- FALSE
-
+library(doParallel)
+library(doRNG)
 cores <- detectCores()
 registerDoParallel(cores)
 registerDoRNG(2050320976)
 @
 
-\begin{frame}
-  \titlepage
-\end{frame}
+\maketitle
 
-\begin{frame}{Outline}
-  \tableofcontents
-\end{frame}
+\mode<article>{\tableofcontents}
+
+\mode<presentation>{
+  \begin{frame}{Outline}
+    \tableofcontents
+  \end{frame}
+}
 
 \begin{frame}{Objectives}
 
@@ -34,13 +37,12 @@ registerDoRNG(2050320976)
 
 \item See how POMP methods can be used to understand the outcomes of a longitudinal behavioral survey on sexual contact rates.
 
-\item Introduce the {\Rlanguage} package \package{panelPomp} that extends \package{pomp} to panel data.
+\item Introduce the \Rlanguage package \package{panelPomp} that extends \package{pomp} to panel data.
 
 \end{enumerate}
+\end{frame}
 
 \section{Panel data}
-
-\end{frame}
 
 \begin{frame}{Introduction to panel data}
 
@@ -52,7 +54,7 @@ registerDoRNG(2050320976)
 
 \item If each unit contain insufficient information to estimate model parameters, we infer \myemph{shared parameters} by pooling across the whole panel.
 
-\item We may have \myemph{Unit-specific parameters}, taking distinct values for each unit.
+\item We may have \myemph{unit-specific parameters}, taking distinct values for each unit.
 
 \item The goals of developing, fitting and criticizing mechanistic models for panel data are similar to analysis of a single time series.
 
@@ -501,7 +503,7 @@ logmeanexp(loglik1,se=T)
 
 \begin{frame}[fragile]
 
-\frametitle{\code{logmeanexp} versus \code{panel_logmeanexp}}
+\frametitle{\code{logmeanexp} versus \code{panel\_logmeanexp}}
 
 <<panel_logmeanexp>>=
 pf1_loglik_matrix <- sapply(pf1_results,function(x) x$unitLogLik)
@@ -510,7 +512,7 @@ panel_logmeanexp(pf1_loglik_matrix,MARGIN=1,se=T)
 
 \bi
 
-\item The improvement via \code{panel_logmeanexp} is small in this case, since the number of observation times is small.
+\item The improvement via \code{panel\_logmeanexp} is small in this case, since the number of observation times is small.
 
 \item For longer panels, the difference becomes more important.
 \ei
@@ -519,13 +521,13 @@ panel_logmeanexp(pf1_loglik_matrix,MARGIN=1,se=T)
 
 \begin{frame}[fragile] 
 
-\myexercise.  The difference between \code{panel_logmeanexp} and \code{logmeanexp}
+\myexercise.  The difference between \code{panel\_logmeanexp} and \code{logmeanexp}
 
 \bi
 
 \item The basic \code{pomp} approach averages the Monte Carlo likelihood estimates after aggregating the likelihood over units.
 
-\item The \code{panel_logmeanexp} averages separately for each unit before combining.
+\item The \code{panel\_logmeanexp} averages separately for each unit before combining.
 
 \item Why does the latter typically give a higher log likelihood estimate with lower Monte Carlo uncertainty?
 
