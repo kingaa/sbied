@@ -1,4 +1,4 @@
-\input{../header.tex}
+\input{../header}
 
 \def\CHAPTER{2}
 \title{Lesson 2:\\Simulation of stochastic dynamic models}

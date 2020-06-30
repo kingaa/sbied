@@ -45,4 +45,4 @@ clean:
 
 fresh: clean
 	$(RM) *.bbl
-	$(RM) -r cache figure
+	$(RM) -r tmp

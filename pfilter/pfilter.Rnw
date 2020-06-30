@@ -1,44 +1,4 @@
-\usepackage[round,authoryear]{natbib}
-\usepackage{paralist}
-\usepackage{pgfpages}
-\usepackage{mathtools}
-
-\usefonttheme[onlymath]{serif}
-
-\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
-\newcommand\E[1]{\expect{#1}}
-\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-\newcommand\dlta[1]{{\Delta}{#1}}
-\newcommand\lik{\mathcal{L}}
-\newcommand\loglik{\ell}
-\newcommand\R{\mathbb{R}}
-\newcommand\data[1]{#1^*}
-\newcommand\params{\, ; \,}
-\newcommand\profileloglik{\ell_\mathrm{profile}}
-\newcommand\Rzero{\mathfrak{R}_0}
-\newcommand\argmax{\mathop{\mathrm{argmax}}}
-\newcommand\argmin{\mathop{\mathrm{argmin}}}
-
-\newcommand\link[2]{\href{#1}{\textcolor{blue}{#2}}}
-
-\newcommand\code[1]{\texttt{#1}}
-\newcommand\package[1]{\textbf{#1}}
-
-\usepackage{xspace}        
-\newcommand\Rlanguage{\textsf{R}\xspace}
-
-\usepackage{amssymb}
-\usepackage{graphicx}
-
-\mode<beamer>{\usetheme{AnnArbor}}
-\mode<beamer>{\setbeamertemplate{footline}}
-\mode<beamer>{\setbeamertemplate{footline}[frame number]}
-\mode<beamer>{\setbeamertemplate{frametitle continuation}[from second][\insertcontinuationcountroman]}
-\mode<beamer>{\setbeamertemplate{navigation symbols}{}}
-
-\mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
+\input{../header}
 
 \def\CHAPTER{3}
 \title{Lesson \CHAPTER:\\Likelihood-based inference for POMP models}
@@ -906,12 +866,10 @@ set.seed(1350254336)
 
 \mode<presentation>{
   \begin{frame}[allowframebreaks=0.8]{References}
-    \bibliographystyle{prslb}
     \bibliography{../sbied}
   \end{frame}
 }
 \mode<article>{
-  \bibliographystyle{prslb}
   \bibliography{../sbied}
 }
 

@@ -245,7 +245,7 @@ it follows that $Y\!\sim\!\mathrm{uniform}(D)$.
 * Consider an analogy to throwing darts. If the darts are thrown in such a way as to be equally likely to land anywhere in $U$, then those that do land in $D$ are equally likely to land anywhere in $D$.
 
 
-```{r region-diagram,echo=F,fig.width=2,fig.height=2}
+```{r region-diagram,echo=F,fig.width=2,fig.height=1}
 op <- par(mar=c(0,1,0,1),mgp=c(2,1,0),font=4,family="sans")
 plot(c(0,1),c(0,1),type='n',ann=F,bty='o',tcl=0)
 t <- seq(0,1,by=0.001)
@@ -315,7 +315,7 @@ where $M$ is a constant chosen so that $Mg(x)\le f(x)$ for all $x$.
 
 2. if $U{\le}f(Y)$, then let $X=Y$ else repeat step 1.
 
-```{r rejection-method-diagram,echo=F,fig.width=2,fig.height=2}
+```{r rejection-method-diagram,echo=F,fig.width=2,fig.height=1}
 op <- par(mar=c(0,1,0,1),mgp=c(2,1,0),font=4,family="sans")
 x <- seq(-5,10,by=0.01)
 f <- 0.2*dnorm(x,mean=-2,sd=0.5)+0.5*dnorm(x,mean=1,sd=1)+0.3*dnorm(x,mean=6,sd=2)
