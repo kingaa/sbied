@@ -1,2 +1,2 @@
 \documentclass[t,handout]{beamer}
-\input{intro.tex}
+\input{intro}

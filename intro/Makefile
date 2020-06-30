@@ -1,4 +1,4 @@
-TARGETS = slides.pdf handout.pdf parus.csv ricker.R ricker.html
+TARGETS = slides.pdf handout.pdf notes.pdf parus.csv ricker.R ricker.html
 REXE = Rscript --vanilla
 
 default: $(TARGETS)
@@ -8,7 +8,7 @@ ifneq ($(INSTALLDIR),)
 	install -m0600 $^ $(INSTALLDIR)
 endif
 
-slides.pdf handout.pdf: intro.tex
+slides.pdf handout.pdf notes.pdf: intro.tex
 
 .INTERMEDIATE: intro.tex
 
@@ -41,4 +41,4 @@ clean:
 
 fresh: clean
 	$(RM) *.bbl
-	$(RM) -r figure cache
+	$(RM) -r tmp
