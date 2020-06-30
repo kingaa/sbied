@@ -17,7 +17,7 @@ csl: ecology.csl
 
 - All of these materials are [licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
 Please share and remix non-commercially, mentioning their origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
+![CC-BY_NC](graphics/cc-by-nc.png)
 
 - [Link to course homepage](./index.html)
 
