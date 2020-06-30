@@ -12,17 +12,28 @@
 \usefonttheme[onlymath]{serif}
 % use article-like math letters, from http://tex.stackexchange.com/questions/34265/how-to-get-beamer-math-to-look-like-article-math
 
-
-
-
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
 \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
 \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\ell}
 \newcommand\Rzero{\mathfrak{R}_0}
-
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)} % for probability distributions
+
+\newcommand{\scinot}[2]{#1{\times}10^{#2}}
+\newcommand{\dd}[1]{\mathrm{d}{#1}}
+\newcommand{\pd}[3][]{%
+  \def\ord{#1} \ifx\ord\empty%
+  \frac{\partial{#2}}{\partial{#3}}%
+  \else \frac{\partial^{#1}{#2}}{\partial{#3}^{#1}}%
+  \fi
+}
+\newcommand{\deriv}[3][]{%
+  \def\ord{#1} \ifx\ord\empty%
+  \frac{\dd{#2}}{\dd{#3}}%
+  \else \frac{\dd^{#1}{#2}}{\dd{#3}^{#1}}%
+  \fi
+}
 
 \newcommand\code[1]{\texttt{#1}}
 \newcommand\package[1]{\textbf{#1}}
@@ -36,9 +47,9 @@
 \newcommand\question{{\bf Question}}
 \newcommand\mysolution{{\bf Solution}}
 \newcounter{Qcounter}
-\newcommand\myquestion{{\stepcounter{Qcounter} \bf Question \CHAPTER.\theQcounter}}
+\newcommand\myquestion{{\stepcounter{Qcounter} Question \CHAPTER.\theQcounter}}
 \newcounter{Ecounter}
-\newcommand\myexercise{{\stepcounter{Ecounter} \bf Exercise \CHAPTER.\theEcounter}}
+\newcommand\myexercise{{\stepcounter{Ecounter} Exercise \CHAPTER.\theEcounter}}
 
 \newcommand\myexample{{\bf Example}}
 \newcommand\mydot{{\,\cdot\,}}

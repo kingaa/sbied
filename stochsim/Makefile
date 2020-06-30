@@ -1,4 +1,4 @@
-TARGETS = slides.pdf handout.pdf stochsim.R
+TARGETS = slides.pdf handout.pdf notes.pdf stochsim.R
 REXE = Rscript
 
 default: $(TARGETS)
@@ -7,7 +7,7 @@ ifneq ($(INSTALLDIR),)
 	install -m0600 $^ $(INSTALLDIR)
 endif
 
-slides.pdf handout.pdf: stochsim.tex
+slides.pdf handout.pdf notes.pdf: stochsim.tex
 
 .INTERMEDIATE: stochsim.tex
 
@@ -40,4 +40,4 @@ clean:
 
 fresh: clean
 	$(RM) *.bbl
-	$(RM) -r cache figure
+	$(RM) -r tmp
