@@ -29,10 +29,10 @@ Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutori
 
 
 0. [Instructions for preparing your laptop for the course exercises](./prep/preparation.html)
-1. Introduction: What is "Simulation-based Inference for Epidemiological Dynamics?" [Slides (PDF)](./intro/slides.pdf)&nbsp;&nbsp;&nbsp;[Handout (PDF)](./intro/handout.pdf)
+1. Introduction: What is "Simulation-based Inference for Epidemiological Dynamics?" [Slides (PDF)](./intro/slides.pdf)&nbsp;&nbsp;&nbsp;[Handout (PDF)](./intro/handout.pdf)[Notes (PDF)](./intro/notes.pdf)&nbsp;&nbsp;&nbsp;
 1. [Simulation of stochastic dynamic models](./stochsim/stochsim.html)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/stochsim.R)
 1. Likelihood for POMPs: theory and practice [Slides (PDF)](./pfilter/slides.pdf)&nbsp;&nbsp;&nbsp;[Handout (PDF)](./pfilter/handout.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./pfilter/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R)
-1. Iterated filtering: theory and practice [Slides (PDF)](./mif/slides.pdf)&nbsp;&nbsp;&nbsp;[Handout (PDF)](./mif/handout.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R)
+1. Iterated filtering: theory and practice [Slides (PDF)](./mif/slides.pdf)&nbsp;&nbsp;&nbsp;[Handout (PDF)](./mif/handout.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./mif/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R)
 1. [Case study: recurrent measles dynamics revealed in long time series.](./measles/measles.html)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/measles/measles.R)
 1. [Case study: polio.](./polio/polio.html)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/polio/polio.R)
 1. [Case study: Ebola, model diagnostics, and forecasting](./ebola/ebola.html)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola.R)
