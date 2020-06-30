@@ -1,6 +1,6 @@
 library(tidyverse)
 library(pomp)
-options(stringsAsFactors=FALSE)
+stopifnot(getRversion() >= "4.0")
 stopifnot(packageVersion("pomp")>="3.0")
 theme_set(theme_bw())
 set.seed(1350254336)

@@ -16,6 +16,8 @@
 \newcommand\code[1]{\texttt{#1}}
 \newcommand\package[1]{\textbf{#1}}
 
+\newcommand\link[2]{\href{#1}{#2}}
+
 \usepackage{xspace}        
 \newcommand\Rlanguage{\textsf{R}\xspace}
 
@@ -31,7 +33,7 @@
 \mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
 
 \title{Lesson 3.\\Iterated filtering: principles and practice}
-\author{Edward Ionides and Aaron A. King}
+\author{Edward Ionides, Aaron A. King, and Kidus Asfaw}
 
 \begin{document}
 
@@ -88,19 +90,21 @@ myround<- function (x, digits = 1) {
 <<prelims,echo=F,cache=F>>=
 library(tidyverse)
 library(pomp)
-options(stringsAsFactors=FALSE)
+stopifnot(getRversion() >= "4.0")
 stopifnot(packageVersion("pomp")>="3.0")
 theme_set(theme_bw())
 set.seed(1350254336)
 @
 
-\begin{frame}
-  \titlepage
-\end{frame}
+\maketitle
 
-\begin{frame}{Outline}
-  \tableofcontents
-\end{frame}
+\mode<article>{\tableofcontents}
+
+\mode<presentation>{
+  \begin{frame}{Outline}
+    \tableofcontents
+  \end{frame}
+}
 
 \section{Introduction}
 
@@ -108,15 +112,15 @@ set.seed(1350254336)
   \begin{itemize}
   \item This tutorial covers likelihood estimation via the method of iterated filtering.
   \item It presupposes familiarity with building partially observed Markov process (POMP) objects in the \Rlanguage package \package{pomp} \citep{King2016}. 
-  \item This tutorial follows on from the \href{../pfilter/pfilter.html}{\textcolor{blue}{topic of particle filtering}} (also known as sequential Monte Carlo) via \code{pfilter} in \package{pomp}. 
+  \item This tutorial follows on from the \href{../pfilter/pfilter.html}{topic of particle filtering} (also known as sequential Monte Carlo) via \code{pfilter} in \package{pomp}. 
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Objectives}
-  \begin{enumerate}[<+->]
-  \item To review the available options for inference on POMP models, to put iterated filtering in context.
-  \item To understand how iterated filtering algorithms carry out repeated particle filtering operations, with randomly perturbed parameter values, in order to maximize the likelihood.
-  \item To gain experience carrying out statistical investigations using iterated filtering in a relatively simple situation: fitting an SIR model to data from a measles outbreak.
+  \begin{enumerate}
+  \item<+-> To review the available options for inference on POMP models, to put iterated filtering in context.
+  \item<+-> To understand how iterated filtering algorithms carry out repeated particle filtering operations, with randomly perturbed parameter values, in order to maximize the likelihood.
+  \item<+-> To gain experience carrying out statistical investigations using iterated filtering in a relatively simple situation: fitting an SIR model to data from a measles outbreak.
   \end{enumerate}
 \end{frame}
 
@@ -1228,7 +1232,7 @@ set.seed(1350254336)
 
   We wrap the above in a \code{foreach} loop as before and take care to evaluate the likelihood at each end-point using \code{pfilter}.
 
-  See the \href{https://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R}{\textcolor{blue}{\Rlanguage code for this lesson}} to see exactly how this is done.
+  See the \href{https://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R}{\Rlanguage code for this lesson} to see exactly how this is done.
 
   <<exp_global_search_eval,include=FALSE>>=
   registerDoRNG(610408798)
@@ -1449,23 +1453,43 @@ set.seed(1350254336)
 \end{frame}
 
 \begin{frame}{Extra Exercise: Choosing the algorithmic settings for IF2}
-  Have a look at \href{./if2_settings.html}{\textcolor{blue}{our advice on tuning IF2}}.
+  Have a look at \href{./if2_settings.html}{our advice on tuning IF2}.
 \end{frame}
 
-\begin{frame}{License and links}
-  Licensed under the \href{http://creativecommons.org/licenses/by-nc/4.0/}{\textcolor{blue}{Creative Commons Attribution-NonCommercial license}}.
-  Please share and remix non-commercially, mentioning its origin.\\
-  \includegraphics[height=24pt]{../graphics/cc-by-nc}
+\begin{frame}{License, acknowledgments, and links}
 
-  Produced with \Rlanguage version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+  \begin{itemize}
+  \item
+    This lesson is prepared for the \link{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \link{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}.
 
-  \href{../index.html}{\textcolor{blue}{Back to course homepage}}\\
-  \href{https://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R}{\textcolor{blue}{\Rlanguage code for this lesson}}\\
+  \item
+    The materials build on \link{../acknowledge.html}{previous versions of this course and related courses}.
+
+  \item
+    Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
+    Please share and remix non-commercially, mentioning its origin.\\
+    \includegraphics[height=12pt]{../graphics/cc-by-nc}
+
+  \item
+    Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+
+  \end{itemize}
+
+  \link{../index.html}{Back to course homepage}
+  
+  \href{https://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R}{\Rlanguage code for this lesson}
+
 \end{frame}
 
-\begin{frame}[allowframebreaks=0.8]{References}
+\mode<presentation>{
+  \begin{frame}[allowframebreaks=0.8]{References}
+    \bibliographystyle{prslb}
+    \bibliography{../sbied}
+  \end{frame}
+}
+\mode<article>{
   \bibliographystyle{prslb}
   \bibliography{../sbied}
-\end{frame}
+}
 
 \end{document}

@@ -13,7 +13,6 @@
 \newcommand\dlta[1]{{\Delta}{#1}}
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\ell}
-\newcommand\equals{{=\,}}
 \newcommand\R{\mathbb{R}}
 \newcommand\data[1]{#1^*}
 \newcommand\params{\, ; \,}
@@ -22,7 +21,7 @@
 \newcommand\argmax{\mathop{\mathrm{argmax}}}
 \newcommand\argmin{\mathop{\mathrm{argmin}}}
 
-\newcommand\link[2]{\href{#1}{\textcolor{blue}{#2}}}
+\newcommand\link[2]{\href{#1}{#2}}
 
 \newcommand\code[1]{\texttt{#1}}
 \newcommand\package[1]{\textbf{#1}}
@@ -42,7 +41,7 @@
 \mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
 
 \title{Lesson 3:\\Likelihood-based inference for POMP models}
-\author{Aaron A. King and Edward L. Ionides}
+\author{Aaron A. King, Edward L. Ionides, Kidus Asfaw}
 
 \begin{document}
 
@@ -129,6 +128,13 @@ set.seed(1350254336)
   \item We seek to better understand these tools, and to figure out how to implement and interpret them in the specific context of POMP models.
   \end{itemize}
 \end{frame}
+
+\AtBeginSection[]{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
 
 \section{The likelihood function}
 
@@ -247,7 +253,7 @@ set.seed(1350254336)
 
   \begin{itemize}
   \item We work toward introducing the particle filter by first proposing a simpler method that usually doesn't work on anything but very short time series. 
-  \item Although \textbf{this section is a demonstration of what not to do}, it serves as an introduction to the general approach of \href{monteCarlo.html\#the-fundamental-theorem-of-monte-carlo-integration}{\textcolor{blue}{Monte Carlo integration}}.
+  \item Although \textbf{this section is a demonstration of what not to do}, it serves as an introduction to the general approach of \link{monteCarlo.html\#the-fundamental-theorem-of-monte-carlo-integration}{Monte Carlo integration}.
   \item First, let's rewrite the likelihood integral using an equivalent factorization. As an exercise, you could check how the equivalence of Eqns.~\ref{eq:L1} and \ref{eq:L2} follows algebraically from the Markov property and the definition of conditional density.
   \end{itemize}
   
@@ -264,7 +270,7 @@ set.seed(1350254336)
       \lik(\theta) = \E{\prod_{n=1}^{N}\!f_{Y_n|X_n}({y^*_n}| X_n; \theta)},
     \end{equation*}
     where the expectation is taken with $X_{0:N}\sim f_{X_{0:N}}(x_{0:N};\theta)$.
-  \item Now, using a \href{https://en.wikipedia.org/wiki/Law_of_large_numbers}{\textcolor{blue}{law of large numbers}}, we can approximate an expectation by the average of a Monte Carlo sample. Thus,
+  \item Now, using a \link{https://en.wikipedia.org/wiki/Law_of_large_numbers}{law of large numbers}, we can approximate an expectation by the average of a Monte Carlo sample. Thus,
     \begin{equation*}
       \lik(\theta) \approx \frac{1}{J} \sum_{j=1}^{J}\prod_{n=1}^{N}\!f_{Y_n|X_n}({y^*_n}| X^j_n; \theta),
     \end{equation*}
@@ -276,7 +282,7 @@ set.seed(1350254336)
   \item One way to see this is to notice that, once a simulated trajectory diverges from the data, it will seldom come back. 
     Simulations that lose track of the data will make a negligible contribution to the likelihood estimate.
     When simulating a long time series, almost all the simulated trajectories will eventually lose track of the data.
-  \item We can see this happening in practice for the measles outbreak data: \href{directSimulation.html}{\textcolor{blue}{supplementary material}}.
+  \item We can see this happening in practice for the measles outbreak data: \link{directSimulation.html}{supplementary material}.
   \end{itemize}
   
 \end{frame}
@@ -404,7 +410,7 @@ set.seed(1350254336)
 
   Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our measles-outbreak case study.
   Here, we simply repeat the construction of the SIR model we looked at earlier.
-  The \Rlanguage code to do this is available \href{http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R}{\textcolor{blue}{for download}}.
+  The \Rlanguage code to do this is available \link{http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R}{for download}.
 
   <<model-construct,echo=FALSE,purl=TRUE>>=
   library(tidyverse)
@@ -536,14 +542,14 @@ set.seed(1350254336)
   \item
     Neither of the two requirements above are typically met for POMP models.
   \item
-    A review of standard errors via Fisher information is provided as a \href{fisherSE.html}{supplement}.
+    A review of standard errors via Fisher information is provided as a \link{fisherSE.html}{supplement}.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Profile likelihood estimation}
   This approach is generally preferable to the Fisher information for POMP models.
 
-  We will explain this method below and put it into practice in the \href{../mif/slides.pdf}{\textcolor{blue}{next lesson}}.
+  We will explain this method below and put it into practice in the \link{../mif/slides.pdf}{next lesson}.
 \end{frame}
 
 \begin{frame}{The Bootstrap}
@@ -559,7 +565,7 @@ set.seed(1350254336)
     The simulation study takes time for you to develop and debug, time for you to explain, and time for the reader to understand and check what you have done.
     We usually carry out simulation studies to check our main conclusions only.
   \item
-    Further discussion of bootstrap methods for POMP models is provided as a \href{bootstrap.html}{supplement}.
+    Further discussion of bootstrap methods for POMP models is provided as a \link{bootstrap.html}{supplement}.
   \end{itemize}
 \end{frame}
 
@@ -582,7 +588,7 @@ set.seed(1350254336)
       \big\{\phi : \loglik(\hat\theta) - \profileloglik(\phi) < 1.92\big\}.
     \end{equation*}
   \item
-    This is known as a profile likelihood confidence interval. The cutoff $1.92$ is derived using \href{https://en.wikipedia.org/wiki/Likelihood-ratio_test\#Distribution:_Wilks.27s_theorem}{Wilks' theorem}, which we will discuss in more detail when we develop likelihood ratio tests.
+    This is known as a profile likelihood confidence interval. The cutoff $1.92$ is derived using \link{https://en.wikipedia.org/wiki/Likelihood-ratio_test\#Distribution:_Wilks.27s_theorem}{Wilks' theorem}, which we will discuss in more detail when we develop likelihood ratio tests.
   \item
     Although the asymptotic justification of Wilks' theorem is the same limit that justifies the Fisher information standard errors, profile likelihood confidence intervals tend to work better than Fisher information confidence intervals when $N$ is not so large---particularly when the log likelihood function is not close to quadratic near its maximum.
   \end{itemize}
@@ -761,7 +767,7 @@ set.seed(1350254336)
   Test your conjecture by running a sequence of particle filter operations, with increasing numbers of particles (\code{Np}), measuring the time taken for each one using \code{system.time}.
   Plot and interpret your results.
 
-  \href{http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/expense.R}{\textcolor{blue}{Worked solution to the Exercise}}
+  \link{http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/expense.R}{Worked solution to the Exercise}
 \end{frame}
 
 \begin{frame}{Basic Exercise: Log likelihood estimation}
@@ -788,7 +794,7 @@ set.seed(1350254336)
     Use \package{doParallel} to take advantage of multiple cores on your computer to improve your estimate.
   \end{itemize}
 
-  \href{./loglikest.html}{\textcolor{blue}{Worked solution to the Exercise}}
+  \link{./loglikest.html}{Worked solution to the Exercise}
 \end{frame}
 
 \begin{frame}{Optional Exercise: one-dimensional likelihood slice}
@@ -812,7 +818,7 @@ set.seed(1350254336)
   \item
     In practice this approach is unsatisfactory on all but the smallest POMP models. Standard numerical optimizers are not designed to maximize noisy and computationally expensive Monte Carlo functions.
   \item
-    Further investigation into this approach is available as a \href{pf-in-Nelder-Mead.html}{supplement}.
+    Further investigation into this approach is available as a \link{pf-in-Nelder-Mead.html}{supplement}.
   \item
     We'll present an \emph{iterated filtering algorithm} for maximizing the likelihood in a way that takes advantage of the structure of POMP models and the particle filter.
   \item
@@ -895,7 +901,7 @@ set.seed(1350254336)
     \end{equation*}
     So, we have constructed a profile likelihood confidence interval, consisting of the set of points on the profile likelihood within $1.92$ log units of the maximum.
   \item
-    This is an example of \href{http://www.stat.nus.edu.sg/~wloh/lecture17.pdf}{\textcolor{blue}{a general duality between confidence intervals and hypothesis tests}}.
+    This is an example of \link{http://www.stat.nus.edu.sg/~wloh/lecture17.pdf}{a general duality between confidence intervals and hypothesis tests}.
   \end{itemize}
 \end{frame}
 
@@ -924,7 +930,7 @@ set.seed(1350254336)
     However, viewed as a way to select a model with reasonable predictive skill from a range of possibilities, it is often useful.
   \item
     AIC does not penalize model complexity beyond the consequence of reduced predictive skill due to overfitting.
-    One can penalize complexity by incorporating a more severe penalty that the $2D$ term above, such as via \href{https://en.wikipedia.org/wiki/Bayesian_information_criterion}{\textcolor{blue}{BIC}}.
+    One can penalize complexity by incorporating a more severe penalty that the $2D$ term above, such as via \link{https://en.wikipedia.org/wiki/Bayesian_information_criterion}{BIC}.
   \item
     A practical approach is to use AIC, while taking care to view it as a procedure to select a reasonable predictive model and not as a formal hypothesis test.
   \end{itemize}
@@ -934,24 +940,24 @@ set.seed(1350254336)
 
   \begin{itemize}
   \item
-    This lesson is prepared for the \href{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \href{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}.
+    This lesson is prepared for the \link{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \link{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}.
 
   \item
-    The materials build on \href{../acknowledge.html}{previous versions of this course and related courses}.
+    The materials build on \link{../acknowledge.html}{previous versions of this course and related courses}.
 
   \item
-    Licensed under the \href{http://creativecommons.org/licenses/by-nc/4.0/}{\textcolor{blue}{Creative Commons Attribution-NonCommercial license}}.
+    Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
     Please share and remix non-commercially, mentioning its origin.\\
-    \includegraphics[height=24pt]{../graphics/cc-by-nc}
+    \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
     Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
 
   \end{itemize}
 
-  \href{../index.html}{\textcolor{blue}{Back to course homepage}}
+  \link{../index.html}{Back to course homepage}
   
-  \href{https://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R}{\textcolor{blue}{\Rlanguage codes for this lesson}}
+  \link{https://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R}{\Rlanguage codes for this lesson}
 \end{frame}
 
 \mode<presentation>{
