@@ -292,6 +292,15 @@ options(width = 60) # number of characters in R output before wrapping
   among the estimation algorithms just listed, four are methods that construct stateful objective functions that can be optimized using general-purpose numerical optimization algorithms such as \code{optim}, \code{subplex}, or the optimizers in the \package{nloptr} package.
 \end{frame}
 
+\mode<presentation>{
+  \begin{frame}[allowframebreaks=0.8]{References}
+    \bibliography{../sbied}
+  \end{frame}
+}
+\mode<article>{
+  \bibliography{../sbied}
+}
+
 \begin{frame}{License, acknowledgments, and links}
   \begin{itemize}
   \item
@@ -302,7 +311,7 @@ options(width = 60) # number of characters in R output before wrapping
 
   \item
     Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
-    Please share and remix non-commercially, mentioning its origin.\\
+    Please share and remix non-commercially, mentioning its origin.
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
@@ -316,14 +325,5 @@ options(width = 60) # number of characters in R output before wrapping
   
 \end{frame}
 
-
-\mode<presentation>{
-  \begin{frame}[allowframebreaks=0.8]{References}
-    \bibliography{../sbied}
-  \end{frame}
-}
-\mode<article>{
-  \bibliography{../sbied}
-}
 
 \end{document}

@@ -21,7 +21,7 @@
 \newcommand\argmax{\mathop{\mathrm{argmax}}}
 \newcommand\argmin{\mathop{\mathrm{argmin}}}
 
-\newcommand\link[2]{\href{#1}{#2}}
+\newcommand\link[2]{\href{#1}{\textcolor{blue}{#2}}}
 
 \newcommand\code[1]{\texttt{#1}}
 \newcommand\package[1]{\textbf{#1}}
@@ -936,6 +936,17 @@ set.seed(1350254336)
   \end{itemize}
 \end{frame}
 
+\mode<presentation>{
+  \begin{frame}[allowframebreaks=0.8]{References}
+    \bibliographystyle{prslb}
+    \bibliography{../sbied}
+  \end{frame}
+}
+\mode<article>{
+  \bibliographystyle{prslb}
+  \bibliography{../sbied}
+}
+
 \begin{frame}{License, acknowledgments, and links}
 
   \begin{itemize}
@@ -947,7 +958,7 @@ set.seed(1350254336)
 
   \item
     Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
-    Please share and remix non-commercially, mentioning its origin.\\
+    Please share and remix non-commercially, mentioning its origin.
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
@@ -959,16 +970,5 @@ set.seed(1350254336)
   
   \link{https://raw.githubusercontent.com/kingaa/sbied/master/pfilter/pfilter.R}{\Rlanguage codes for this lesson}
 \end{frame}
-
-\mode<presentation>{
-  \begin{frame}[allowframebreaks=0.8]{References}
-    \bibliographystyle{prslb}
-    \bibliography{../sbied}
-  \end{frame}
-}
-\mode<article>{
-  \bibliographystyle{prslb}
-  \bibliography{../sbied}
-}
 
 \end{document}
