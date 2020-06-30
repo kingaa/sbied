@@ -1,0 +1,93 @@
+<<flow-diagram>>=
+library(diagram)
+par(mar = c(1, 1, 1, 1))
+openplotmat()
+
+## set up top-to-bottom flow chart with elpos[i]
+## compartments on row i 
+elpos <- coordinates (c(2, 1, 4, 3))
+
+## matrix of directed arrows
+## compartments are numbered top-to-bottom and left-to-right
+fromto <- matrix(ncol = 2, byrow = TRUE,
+                 data = c(1, 3, 
+                          2, 3, 
+                          3, 4, 
+                          3, 5,
+                          3, 6,
+                          3, 7,
+                          4, 9,
+                          5, 9,
+                          6, 9,
+                          7, 9,
+                          10,9))
+
+nr <- nrow(fromto)
+arrpos <- matrix(ncol = 2, nrow = nr)
+for (i in 1:nr)
+  arrpos[i, ] <- straightarrow (to = elpos[fromto[i, 2], ],
+                                from = elpos[fromto[i, 1], ],
+                                lwd = 2, arr.pos = 0.6, arr.length = 0.5)
+
+my_cex = 0.9
+
+colorTab=matrix(ncol=2,byrow=TRUE,
+                data = c(
+                  "lightblue","blue",
+                  "orange","red",
+                  "orange","red",
+                  "orange","red",
+                  "orange","red",
+                  "orange","red",
+                  "orange","red",
+                  "lightblue","blue",
+                  "lightblue","blue",
+                  "lightblue","blue"
+                )
+                )
+
+textellipse(elpos[1,], 0.15, 0.1, 
+            lab = c("POMP","models"),
+            box.col = colorTab[1,1],
+            shadow.col = colorTab[1,2], shadow.size = 0.005, cex = my_cex)
+
+textellipse(elpos[2,], 0.15, 0.1,
+            lab = c("likelihood-based","inference"), 
+            box.col = colorTab[2,1],
+            shadow.col = colorTab[2,2], shadow.size = 0.005, cex = my_cex)
+
+textellipse(elpos[3,], 0.1, 0.1, 
+            lab = c("particle","filter"), 
+            box.col =  colorTab[3,1],
+            shadow.col = colorTab[3,2], shadow.size = 0.005, cex = my_cex)
+
+textrect (elpos[4,], 0.1, 0.08,
+          lab = c("maximum","likelihood"), 
+          box.col = colorTab[4,1],
+          shadow.col = colorTab[4,2], shadow.size = 0.005, cex = my_cex)
+
+textrect (elpos[5,], 0.1, 0.08,
+          lab = c("profile","intervals"), 
+          box.col = colorTab[5,1],
+          shadow.col = colorTab[5,2], shadow.size = 0.005, cex = my_cex)
+
+textrect (elpos[6,], 0.1, 0.08,
+          lab = c("likelihood","ratio test"), 
+          box.col = colorTab[6,1],
+          shadow.col = colorTab[6,2], shadow.size = 0.005, cex = my_cex)
+
+textrect(elpos[7,], 0.12, 0.08, 
+         lab = c("AIC for model","comparison"),
+         box.col = colorTab[7,1],
+         shadow.col = colorTab[7,2], shadow.size = 0.005, cex = my_cex)
+
+textellipse(elpos[9,], 0.1, 0.1, 
+            lab = c("data","analysis"),
+            box.col = colorTab[9,1],
+            shadow.col = colorTab[9,2], shadow.size = 0.005, cex = my_cex)
+
+textellipse(elpos[10,], 0.15, 0.1, 
+            lab = c("non-likelihood","model checks"),
+            box.col = colorTab[10,1],
+            shadow.col = colorTab[10,2], shadow.size = 0.005, cex = my_cex)
+@

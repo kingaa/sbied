@@ -1,34 +1,13 @@
-%\documentclass[handout]{beamer}
-\documentclass{beamer}
-\usepackage{natbib}
-\bibliographystyle{dcu}
-\input{../header.tex}
-
-\usepackage{hyperref}
-
-\newcommand\CHAPTER{1}
-
+\input{../header}
 
 \setbeamertemplate{footline}[frame number]
-
-\newcommand\eqspace{\quad\quad\quad}
-\newcommand\eqskip{\vspace{2.5mm}}
-
-\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-
-\newcommand\myeq{\hspace{10mm}}
-
-% \newcommand\answer[2]{\textcolor{blue}{#2}} % to show answers
-% \newcommand\answer[2]{{\color{blue}{#2}}} % to show answers
-\newcommand\answer[2]{#1} % to show blank space
 
 \begin{document}
 % knitr set up
 <<knitr_opts,echo=F,cache=F,purl=F>>=
 library(knitr)
 opts_chunk$set(
-  cache=FALSE,
-#  cache=TRUE,
+  cache=TRUE,
   eval=TRUE,
   include=TRUE,
   echo=TRUE,
@@ -48,13 +27,12 @@ opts_chunk$set(
   message=FALSE,
   progress=TRUE,
   prompt=FALSE,
-#  results='asis',
   results="markup",
   size='small',
   strip.white=TRUE,
   tidy=FALSE,
-  warning=FALSE
-#  comment=NA # to remove ## on output
+  warning=FALSE,
+  comment=NA
 )
 options(width = 60) # number of characters in R output before wrapping
 
@@ -62,25 +40,20 @@ options(width = 60) # number of characters in R output before wrapping
 
 <<prelims,echo=F,cache=F>>=
 set.seed(594709947L)
-library(ggplot2)
-theme_set(theme_bw())
-#library(doMC)
 library(pomp)
 stopifnot(packageVersion("pomp")>="3.0")
 @
 
-\begin{frame}[fragile]
-\frametitle{Chapter \CHAPTER. Introduction}
-\hspace{3cm} {\large \bf Objectives}
+\begin{frame}{Lesson 1. Introduction}
+{\large \bf Objectives}
 \begin{itemize}
 \item Motivations from the study of epidemiological and ecological systems.
 \item Introducing partially observed Markov process (POMP) models.
-\item Introducing the \myemph{pomp} R package.
+\item Introducing the \package{pomp} R package.
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]
-\frametitle{Epidemiological and Ecological Dynamics}
+\begin{frame}{Epidemiological and Ecological Dynamics}
 \begin{itemize}
 \item Ecological systems are complex, open, nonlinear, and nonstationary.
 \item``Laws of Nature" are unavailable except in the most general form.
@@ -100,8 +73,7 @@ stopifnot(packageVersion("pomp")>="3.0")
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]
-\frametitle{Noisy clockwork: Time series analysis of population fluctuations in animals}
+\begin{frame}{Noisy clockwork: Time series analysis of population fluctuations in animals}
 
 Obstacles for \myemph{ecological} modeling and inference via nonlinear mechanistic models enumerated by \cite{Bjornstad2001}
 \begin{enumerate}
@@ -124,7 +96,7 @@ The \textit{partially observed Markov process} modeling framework we focus on in
 \item To teach statistically and computationally efficient approaches for performing scientific inference using POMP models.
 \item To give students the ability to formulate models of their own.
 \item To give students opportunities to work with such inference methods.
-\item To familiarize students with the \myemph{pomp} package.
+\item To familiarize students with the \package{pomp} package.
 \item To provide documented examples for adaptation and re-use.
 \end{enumerate}
 \end{frame}
@@ -171,23 +143,7 @@ The \textit{partially observed Markov process} modeling framework we focus on in
 \begin{itemize}
 \item Arrows in the following diagram show causal relations.
 \includegraphics[width=200px]{pomp_schematic1.png}
-<<ssdiag1,echo=FALSE,purl=FALSE,fig.height=3,fig.width=6,fig.show='hide'>>=
-library(grid)
-library(gridExtra)
-vp <- viewport(x=unit(0.5,"npc"),y=unit(0.54,"npc"),
-               width=unit(0.5,"npc"),height=unit(0.5,"npc"))
-pushViewport(vp)
-
-grid.ellipse(x=0.5,y=0.2,angle=0,ar=2.5,size=20,gp=gpar(lwd=2,col='black'))
-grid.text(x=0.5,y=0.2,label="state process",gp=gpar(fontsize=12,fontface='bold'))
-
-grid.ellipse(x=0.2,y=0.7,angle=0,ar=2.5,size=18,gp=gpar(lwd=2,col='black'))
-grid.text(x=0.2,y=0.7,label="measurement\n process",gp=gpar(fontsize=12,fontface='bold'))
-
-grid.ellipse(x=0.7,y=0.8,angle=0,ar=1.5,size=16,gp=gpar(lwd=2,col='black'))
-grid.text(x=0.7,y=0.8,label="data",gp=gpar(fontsize=12,fontface='bold'))
-
-popViewport()
+<<ssdiag1,child="../graphics/state_space_diagram1.Rnw",echo=FALSE,purl=FALSE,fig.height=3,fig.width=6,fig.show='hide'>>=
 @
 
 \item A key perspective to keep in mind is that \myemph{the model is to be viewed as the process that generated the data}.
@@ -214,61 +170,7 @@ f_{Y_{1:N}}(y^*_{1:N};\theta)=\int f_{X_{0:N},Y_{1:N}}(x_{0:N},y^*_{1:N};\theta)
 
 \begin{frame}[fragile]
 \frametitle{Another POMP model schematic}
-<<ssdiag2,echo=FALSE,purl=FALSE,fig.height=3,fig.width=6>>=
-library(grid)
-vp <- viewport(x=unit(0.5,"npc"),y=unit(0.54,"npc"),
-               width=unit(0.96,"npc"),height=unit(0.96,"npc"))
-pushViewport(vp)
-
-fs <- 12
-x1 <- 0.6; y1 <- 0.88
-gp <- gpar(lty=2,col=grey(0.6),fontsize=12)
-grid.text(x=x1,y=y1,label="measurement model",just="centre",gp=gpar(fontsize=fs,col=grey(0.6)))
-grid.lines(x=unit(c(x1,3/12),"npc")+unit(c(0,2),"points"),y=unit(c(y1,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gp)
-grid.lines(x=unit(c(x1,6/12),"npc")+unit(c(0,2),"points"),y=unit(c(y1,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gp)
-grid.lines(x=unit(c(x1,8/12),"npc")+unit(c(0,-2),"points"),y=unit(c(y1,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gp)
-grid.lines(x=unit(c(x1,10/12),"npc")+unit(c(0,-2),"points"),y=unit(c(y1,1/2),"npc")+unit(c(-fs/2,0),"points"),gp=gp)
-
-x1 <- 0.4; y1 <- 0.14
-grid.text(x=x1,y=y1,label="process model",just="centre",gp=gp)
-grid.lines(x=unit(c(x1,4/24),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
-grid.lines(x=unit(c(x1,23/72),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
-grid.lines(x=unit(c(x1,31/72),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
-grid.lines(x=unit(c(x1,14/24),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
-grid.lines(x=unit(c(x1,18/24),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
-grid.lines(x=unit(c(x1,65/72),"npc"),y=unit(c(y1,1/3),"npc")+unit(c(fs/2,-fs/4),"points"),gp=gp)
-
-grid.text(x=1/72,y=c(1/3,2/3),label=c("states","observations"),just="centre",rot=90,gp=gp)
-
-x1 <- unit(c(1,3,6,8,10,3,6,8,10)/12,"npc")
-y1 <- unit(c(rep(1,5),rep(2,4))/3,"npc")
-w <- unit(1/12,"npc")
-h <- unit(1/6,"npc")
-
-grid.lines(x=c(1/48,47/48),y=1/12,arrow=arrow(length=unit(0.02,"npc")))
-grid.text(x=x1[1:5],y=1/24,label=c(expression(italic(t[0])),expression(italic(t[1])),expression(italic(t[n-1])),expression(italic(t[n])),expression(italic(t[n+1]))))
-
-grid.rect(x=x1,y=y1,width=w,height=h,just=c(0.5,0.5),gp=gpar(fill="white",lwd=2))
-grid.text(x=x1,y=y1,label=c(
-  expression(italic(X[0])),expression(italic(X[1])),
-  expression(italic(X[n-1])),expression(italic(X[n])),
-  expression(italic(X[n+1])),
-  expression(italic(Y[1])),expression(italic(Y[n-1])),
-  expression(italic(Y[n])),expression(italic(Y[n+1]))),
-  gp=gpar(fontface=3))
-grid.text(x=c(4.5,11.5)/12,y=unit(1/3,"npc")+unit(2,"point"),label=quote(phantom(0)~cdots~phantom(0)),gp=gpar(fontsize=15))
-grid.lines(x=c(1,3)/12+c(1,-1)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=c(3,4)/12+c(1,1/3)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=c(5,6)/12+c(-1/3,-1)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=c(6,8)/12+c(1,-1)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=c(8,10)/12+c(1,-1)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=c(10,11)/12+c(1,1/3)/24,y=1/3,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=3/12,y=c(1,2)/3+c(1,-1)/12,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=6/12,y=c(1,2)/3+c(1,-1)/12,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=8/12,y=c(1,2)/3+c(1,-1)/12,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-grid.lines(x=10/12,y=c(1,2)/3+c(1,-1)/12,arrow=arrow(length=unit(0.02,"npc")),gp=gpar(lwd=2))
-
-popViewport()
+<<ssdiag2,child="../graphics/state_space_diagram2.Rnw",echo=FALSE,purl=FALSE,fig.height=3,fig.width=6>>=
 @
 \begin{itemize}
 \item The state process, $X_n$, is Markovian, i.e.,
@@ -314,25 +216,25 @@ These basic model components define the specific POMP model under consideration.
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{The \myemph{pomp} package for POMP models}
+\frametitle{The \package{pomp} package for POMP models}
 \begin{itemize}
-\item \myemph{pomp} is an  \myemph{R}  package for data analysis using partially observed Markov process (POMP) models.
+\item \package{pomp} is an  \package{R}  package for data analysis using partially observed Markov process (POMP) models.
 
-\item Note the distinction: lower case \myemph{pomp} is a software package; upper case 'POMP' is a class of models.
+\item Note the distinction: lower case \package{pomp} is a software package; upper case 'POMP' is a class of models.
 
-\item \myemph{pomp} builds methodology for POMP models in terms of arbitrary user-specified POMP models.
+\item \package{pomp} builds methodology for POMP models in terms of arbitrary user-specified POMP models.
 
-\item \myemph{pomp} provides tools, documentation, and examples to help users specify POMP models.
+\item \package{pomp} provides tools, documentation, and examples to help users specify POMP models.
 
-\item \myemph{pomp} provides a platform for modification and sharing of models, data-analysis workflows, and methodological development.
+\item \package{pomp} provides a platform for modification and sharing of models, data-analysis workflows, and methodological development.
 \end{itemize}
 
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Structure of the \myemph{pomp} package}
+\frametitle{Structure of the \package{pomp} package}
 
-It is useful to divide the \myemph{pomp} package functionality into different levels:
+It is useful to divide the \package{pomp} package functionality into different levels:
 \begin{itemize}
 \item Basic model components
 \item Workhorses
@@ -358,7 +260,7 @@ The scientist must specify whichever of these basic model components are require
 
 \begin{frame}[fragile]
 \frametitle{Workhorses}
-Workhorses are \myemph{R} functions, built into the package, that cause the basic model component procedures to be executed.
+Workhorses are \package{R} functions, built into the package, that cause the basic model component procedures to be executed.
 \begin{itemize}
 \item Each basic model component has a corresponding workhorse.
 
@@ -402,20 +304,18 @@ There are currently ten of these:
 \item \code{nlf\_objfun}: nonlinear forecasting
 \end{itemize}
 \emph{Objective function methods}:
-among the estimation algorithms just listed, four are methods that construct stateful objective functions that can be optimized using general-purpose numerical optimization algorithms such as \code{optim}, \code{subplex}, or the optimizers in the \myemph{nloptr} package.
-
-
+among the estimation algorithms just listed, four are methods that construct stateful objective functions that can be optimized using general-purpose numerical optimization algorithms such as \code{optim}, \code{subplex}, or the optimizers in the \package{nloptr} package.
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}
 \frametitle{Acknowledgments}
 \begin{itemize}
 \item Versions of this material have been presented at \href{https://www.biostat.washington.edu/suminst/sismid}{Summer Institute in Statistics and Modeling in Infectious Diseases (SISMID)} in 2015-2018.
 
 \item Licensed under the \href{Creative Commons Attribution-NonCommercial license}{http://creativecommons.org/licenses/by-nc/4.0/}.
-Please share and remix noncommercially, mentioning its origin.
+Please share and remix noncommercially, mentioning its origin.\\
 \includegraphics[]{../graphics/cc-by-nc.png}
-\item Produced in \myemph{R} version \Sexpr{getRversion()} using \myemph{pomp} version \Sexpr{packageVersion('pomp')}.
+\item Produced in \package{R} version \Sexpr{getRversion()} using \package{pomp} version \Sexpr{packageVersion('pomp')}.
 
 \end{itemize}
 \end{frame}

@@ -15,4 +15,10 @@ csl: ecology.csl
 
 - Parts of these materials have been used for other courses such as [Model-based Inference in Ecology and Epidemiology](https://kingaa.github.io/short-course/) and [Analysis of Time Series](https://ionides.github.io/531w20/).
 
+- All of these materials are [licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix non-commercially, mentioning their origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+- [Link to course homepage](./index.html)
+
 ---------------------
