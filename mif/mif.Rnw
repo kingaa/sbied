@@ -32,7 +32,8 @@
 
 \mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
 
-\title{Lesson 4.\\Iterated filtering: principles and practice}
+\def\CHAPTER{4}
+\title{Lesson \CHAPTER.\\Iterated filtering: principles and practice}
 \author{Edward Ionides, Aaron A. King, and Kidus Asfaw}
 
 \begin{document}

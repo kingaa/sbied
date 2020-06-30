@@ -40,7 +40,8 @@
 
 \mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
 
-\title{Lesson 3:\\Likelihood-based inference for POMP models}
+\def\CHAPTER{3}
+\title{Lesson \CHAPTER:\\Likelihood-based inference for POMP models}
 \author{Aaron A. King, Edward L. Ionides, Kidus Asfaw}
 
 \begin{document}
