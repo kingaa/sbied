@@ -1,29 +1,44 @@
-default: measles.R measles.html profile.R profile.html sigmaSE-profile1.rds sigmaSE-profile2.rds
+TARGETS= main.R notes.pdf slides.pdf handout.pdf profile.R profile.html \
+sigmaSE-profile1.rds sigmaSE-profile2.rds
+REXE = Rscript --vanilla
+
+default: $(TARGETS)
 ifneq ($(INSTALLDIR),)
 	mkdir -p $(INSTALLDIR)
 	install -m0600 $^ $(INSTALLDIR)
 endif
 
+slides.pdf handout.pdf notes.pdf: main.tex
+
+.INTERMEDIATE: main.tex notes.tex slides.tex handout.tex
+
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
+	$(REXE) -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
 
 %.html: %.md
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
+	$(REXE) -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
+
+%.R: %.Rnw
+	$(REXE) -e "knitr::purl(\"$*.Rnw\",output=\"$*.R\",documentation=0)"
 
 %.R: %.Rmd
-	Rscript --vanilla -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
+	$(REXE) -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=0)"
 
 %.tex: %.Rnw
-	Rscript -e "knitr::knit(\"$*.Rnw\",output=\"$*.tex\")"
+	$(REXE) -e "knitr::knit(\"$*.Rnw\",output=\"$*.tex\")"
 
 %.pdf: %.tex
-	pdflatex $*.tex
+	pdflatex $*
+	bibtex $*
+	pdflatex $*
+	pdflatex $*
 
 clean:
-	$(RM) *.o *.so *.log *.aux *.out *.nav *.snm *.toc *.bak
+	$(RM) *.o *.so *.log *.aux *.out *.nav *.snm *.toc *.bak *.vrb *.blg
 	$(RM) Rplots.ps Rplots.pdf
 
 fresh: clean
-	$(RM) -r cache figure
+	$(RM) *.bbl
+	$(RM) -r tmp
