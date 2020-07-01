@@ -356,9 +356,9 @@ registerDoRNG(2050320976)
 
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{\myexercise. A PanelPOMP with all parameters unit-specific}
 
-  \myexercise. Suppose a PanelPOMP model has all its parameters unit-specific. Is there anything useful to be gained from the PanelPOMP structure, or is it preferable to analyze the data as a collection of POMP models?
+Suppose a PanelPOMP model has all its parameters unit-specific. Is there anything useful to be gained from the PanelPOMP structure, or is it preferable to analyze the data as a collection of POMP models?
 
   \vspace{3mm}
 
@@ -367,13 +367,10 @@ registerDoRNG(2050320976)
 
 \end{frame}
 
-\begin{frame}[fragile]  
+\begin{frame}[fragile]{\myexercise. Methods for panelPomps}
 
-  \myexercise. Methods for panelPomps.
+How would you find the \package{panelPomp} package methods available for working with a \code{panelPomp} object?  
 
-  \bi
-\item How would you find the \package{panelPomp} package methods available for working with a \code{panelPomp} object?  
-  \ei
 
   \vspace{3mm}
 
@@ -408,9 +405,7 @@ registerDoRNG(2050320976)
 
 \end{frame}
 
-\begin{frame}[fragile]
-
-  \myexercise. Consider what happens when we \code{pfilter} a \code{panelPomp}.
+\begin{frame}[fragile]{\myexercise. What happens when we \code{pfilter} a \code{panelPomp}}
 
   \bi
 
@@ -443,7 +438,7 @@ registerDoRNG(2050320976)
   tic <- Sys.time()
   @
   
-  <<pfilter1-code,eval=F,echo=F,purl=F>>=
+  <<pfilter1-code,eval=F,echo=T,purl=F>>=
   pf1_results <- foreach(i=1:20) %dopar% {
     library(pomp)
     library(panelPomp)
@@ -455,6 +450,7 @@ registerDoRNG(2050320976)
   
   <<pfilter1-eval,cache=F,echo=F>>=
   stew("results/pfilter1.rda",{
+    eval_cores <- cores
     <<pfilter1-code>>
   }) 
   @
@@ -466,7 +462,7 @@ registerDoRNG(2050320976)
   
   \bi
 
-\item This took \Sexpr{round(t1,1)} minutes using \Sexpr{cores} cores.
+\item This took \Sexpr{round(t1,1)} minutes using \Sexpr{eval_cores} cores.
 
   \ei
 
@@ -518,9 +514,7 @@ registerDoRNG(2050320976)
 
 \end{frame}
 
-\begin{frame}[fragile] 
-
-  \myexercise.  The difference between \code{panel\_logmeanexp} and \code{logmeanexp}
+\begin{frame}[fragile]{\myexercise.  The difference between \code{panel\_logmeanexp} and \code{logmeanexp}}
 
   \bi
 

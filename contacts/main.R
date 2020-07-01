@@ -30,6 +30,7 @@ tic <- Sys.time()
 
 
 stew("results/pfilter1.rda",{
+  eval_cores <- cores
   pf1_results <- foreach(i=1:20) %dopar% {
     library(pomp)
     library(panelPomp)
