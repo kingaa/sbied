@@ -6,7 +6,7 @@ options(
 )
 
 stopifnot(getRversion()>="4.0")
-stopifnot(packageVersion("pomp")>="3.0")
+stopifnot(packageVersion("pomp")>="3.0.3")
 
 set.seed(594709947L)
 library(tidyverse)
@@ -290,7 +290,8 @@ foreach(p=iter(params,by='row'),
   M1 %>% pfilter(params=p,Np=2000,save.states=TRUE) -> pf
 
 ## ----forecasts2d----------------------------------------------------------
-  pf@saved.states %>%  ## latent state for each particle
+  pf %>%
+    saved.states() %>% ## latent state for each particle
     tail(1) %>%        ## last timepoint only
     melt() %>%         ## reshape and rename the state variables
     spread(variable,value) %>%

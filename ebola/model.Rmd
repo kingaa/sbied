@@ -29,12 +29,11 @@ csl: ../jss.csl
 ```{r setup,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 
-```{r prelims}
+```{r load_chunks}
 read_chunk("ebola_model.R")
-set.seed(594709947L)
-library(tidyverse)
-library(pomp)
-stopifnot(packageVersion("pomp")>="3.0")
+```
+
+```{r prelims,include=FALSE}
 ```
 
 ## Objectives
