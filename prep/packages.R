@@ -25,6 +25,7 @@ lhs
 magrittr
 mvtnorm
 nloptr
+pkgbuild
 plyr
 RColorBrewer
 reshape2
