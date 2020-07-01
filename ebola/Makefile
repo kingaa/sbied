@@ -1,23 +1,5 @@
-default: ebola_data.csv ebola.html ebola-profiles.csv ebola_model.R model.html
-ifneq ($(INSTALLDIR),)
-	mkdir -p $(INSTALLDIR)
-	install -m0600 $^ $(INSTALLDIR)
-endif
+default: notes.pdf slides.pdf handout.pdf model.html
 
-%.html: %.Rmd
-	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
+main.tex model.html: ebola_model.R
 
-%.html: %.md
-	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
-
-%.R: %.Rmd
-	Rscript --vanilla -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
-
-clean:
-	$(RM) *.o *.so *.log *.aux *.out *.nav *.snm *.toc *.bak
-	$(RM) Rplots.ps Rplots.pdf
-
-fresh: clean
-	$(RM) -r cache figure
+include ../rules.mk

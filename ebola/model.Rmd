@@ -1,6 +1,6 @@
 ---
 title: "Ebola case study: model codes"
-author: "A. A. King, M. Domenech de Cell&egrave;s, F. M. G. Magpantay, P. Rohani"
+author: "Aaron A. King, Edward L. Ionides, Kidus Asfaw"
 output:
   html_document:
     toc: yes
@@ -13,7 +13,7 @@ output:
     number_sections: FALSE
     df_print: paged
 bibliography: ../sbied.bib
-csl: ../ecology.csl
+csl: ../jss.csl
 ---
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
@@ -26,57 +26,15 @@ csl: ../ecology.csl
 ------------------------------------
 
 
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
-
-Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
-
-------------------------------------
-
-```{r knitr-opts,include=FALSE,purl=FALSE}
-library(knitr)
-prefix <- "model"
-opts_chunk$set(
-  progress=TRUE,
-  prompt=FALSE,tidy=FALSE,highlight=TRUE,
-  strip.white=TRUE,
-  warning=FALSE,
-  message=FALSE,
-  error=FALSE,
-  echo=TRUE,
-  cache=TRUE,
-  results='markup',
-  fig.show='asis',
-  size='small',
-  fig.lp="fig:",
-  fig.path=paste0("figure/",prefix,"-"),
-  cache.path=paste0("cache/",prefix,"-"),
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=4,fig.width=6.83,
-  dpi=100,
-  dev='png',
-  dev.args=list(bg='transparent')
-  )
-read_chunk("ebola_model.R")
+```{r setup,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 
-```{r prelims,include=FALSE,cache=FALSE}
-options(
-  keep.source=TRUE,
-  stringsAsFactors=FALSE,
-  encoding="UTF-8"
-  )
-
+```{r prelims}
+read_chunk("ebola_model.R")
 set.seed(594709947L)
-library(ggplot2)
-theme_set(theme_bw())
-library(plyr)
-library(reshape2)
-library(magrittr)
+library(tidyverse)
 library(pomp)
-stopifnot(packageVersion("pomp")>="1.18")
+stopifnot(packageVersion("pomp")>="3.0")
 ```
 
 ## Objectives
@@ -151,9 +109,18 @@ It demonstrates one level of abstraction above the basic `pomp` constructor.
 
 --------------------------
 
-## [Back to Ebola case study](./ebola.html)
-## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola_model.R)
+## Acknowledgements and license
 
+This document is derived from @King2015 and the [data supplement archived datadryad.org](http://dx.doi.org/10.5061/dryad.r5f30).
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
+
+[Back to Ebola case study](./ebola.html)  
+[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola_model.R)  
 
 ----------------------
 

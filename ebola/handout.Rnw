@@ -1,0 +1,2 @@
+\documentclass[t,handout]{beamer}
+\input{main}

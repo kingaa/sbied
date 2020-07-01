@@ -1,0 +1,536 @@
+\input{../header}
+
+\def\CHAPTER{7}
+\title{Lesson \CHAPTER:\\Case study: forecasting Ebola}
+\author{Aaron A. King, Edward L. Ionides, Kidus Asfaw}
+
+% knitr set up
+<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
+@
+
+<<prelims,include=FALSE,cache=FALSE>>=
+set.seed(594709947L)
+stopifnot(getRversion()>="4.0")
+stopifnot(packageVersion("pomp")>="3.0")
+library(tidyverse)
+library(pomp)
+knitr::opts_chunk$set(purl=FALSE)
+read_chunk("ebola_model.R")
+@
+
+\begin{document}
+
+\maketitle
+
+\mode<article>{\tableofcontents}
+
+\mode<presentation>{
+  \begin{frame}{Outline}
+    \tableofcontents
+  \end{frame}
+}
+
+\section{Introduction}
+
+\begin{frame}{Objectives}
+  \begin{enumerate}
+  \item<+->
+    To explore the use of POMP models in the context of an outbreak of an
+    emerging infectious disease.
+  \item<+->
+    To demonstrate the use of diagnostic probes for model criticism.
+  \item<+->
+    To illustrate some forecasting methods based on POMP models.
+  \item<+->
+    To provide an example that can be modified to apply similar approaches
+    to other outbreaks of emerging infectious diseases.
+  \item<+->
+    This lesson follows \citet{King2015}, all codes for which are available on \link{http://dx.doi.org/10.5061/dryad.r5f30}{datadryad.org}.
+  \end{enumerate}
+
+\end{frame}
+
+\subsection{2014 West Africa EVD outbreak}
+
+\begin{frame}[allowframebreaks]{An emerging infectious disease outbreak}
+
+  Let's situate ourselves at the beginning of October 2014.
+  The WHO situation report contained data on the number of cases in each of Guinea, Sierra Leone, and Liberia.
+  Key questions included:
+
+  \begin{enumerate}
+  \item
+    How fast will the outbreak unfold?
+  \item
+    How large will it ultimately prove?
+  \item
+    What interventions will be most effective?
+  \end{enumerate}
+
+  \framebreak
+  
+  As is to be expected in the case of a fast-moving outbreak of a novel pathogen in an underdeveloped country, the answers to these questions were sought in a context far from ideal:
+
+  \begin{itemize}
+  \item
+    Case ascertainment is difficult and the case definition itself may be evolving.
+  \item
+    Surveillance effort is changing on the same timescale as the outbreak itself.
+  \item
+    The public health and behavioral response to the outbreak is rapidly changing.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Best practices}
+  \begin{itemize}
+  \item
+    The \citet{King2015} paper focused critical attention on the economical and therefore common practice of fitting deterministic transmission models to cumulative incidence data.
+  \item 
+    Specifically, \citet{King2015} showed how this practice easily leads to overconfident prediction that, worryingly, can mask their own presence.
+  \item 
+    The paper recommended the use of POMP models, for several reasons:
+    \begin{itemize}
+    \item
+      Such models can accommodate a wide range of hypothetical forms.
+    \item
+      They can be readily fit to incidence data, especially during the exponential growth phase of an outbreak.
+    \item
+      Stochastic models afford a more explicit treatment of uncertainty.
+    \item
+      POMP models come with a number of diagnostic approaches built-in, which can be used to assess model misspecification.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\section{Data and model}
+
+\subsection{Data}
+
+\begin{frame}[fragile,allowframebreaks]{Situation-report data}
+
+  The data and \package{pomp} codes used to represent the transmission models are presented in \link{./model.html}{a supplement}.
+
+  The data we focus on here are from the WHO Situation Report of 1 October 2014.
+  Supplementing these data are population estimates for the three countries.
+
+  <<get-data,include=FALSE>>=
+  @
+  
+  <<popsizes,include=FALSE>>=
+  @
+  
+  <<plot-data,echo=FALSE>>=
+  @
+\end{frame}
+
+\subsection{Model}
+
+\begin{frame}[fragile,allowframebreaks]{SEIR model with gamma-distributed latent period}
+
+  \begin{itemize}
+  \item
+    Many of the early modeling efforts used variants on the simple SEIR model.
+  \item 
+    Here, we'll focus on a variant that attempts a more careful description of the duration of the latent period.
+  \item 
+    Specifically, this model assumes that the amount of time an infection remains latent is
+    \begin{equation*}
+      \mathrm{LP} \sim \dist{Gamma}{m,\frac{1}{m\,\alpha}},
+    \end{equation*}
+    where $m$ is an integer.
+  \item 
+    This means that the latent period has expectation $1/\alpha$ and variance $1/(m\,\alpha)$. In this document, we'll fix $m=3$.
+    \framebreak
+  \item 
+    We implement Gamma distributions using the so-called \emph{linear chain trick}.
+  \end{itemize}
+
+  <<seir-diagram,include=FALSE,cache=FALSE,purl=FALSE,eval=FALSE>>=
+  library(DiagrammeR)
+  DiagrammeR("digraph SEIR {
+  graph [rankdir=LR, overlap=false, fontsize = 10]
+  node[shape=oval, label='S'] S;
+  node[shape=oval, label='E1'] E1;
+  node[shape=oval, label='E2'] E2;
+  node[shape=oval, label='E3'] E3;
+  node[shape=oval, label='I'] I;
+  S->E1 E1->E2 E2->E3 E3->I
+  node[shape=diamond, label='recovered'] R;
+  node[shape=diamond, label='  dead   '] d;
+  I->R I->d
+  }",type="grViz",engine="dot",height=100,width=800)
+  @
+  
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{model_diagram.png}
+  \end{center}
+  
+  <<rproc,include=FALSE>>=
+  @
+  
+  <<skel,include=FALSE>>=
+  @
+
+  \framebreak
+  
+  The observations are modeled as a negative binomial process conditional on the number of infections.
+  That is, if $C_t$ are the reported cases at week $t$ and $H_t$ is the true incidence, then we postulate that $C_t | H_t$ is negative binomial with
+  \begin{equation*}
+    \expect{C_t|H_t} = \rho\,H_t\] and \[\var{C_t|H_t} = \rho\,H_t\,(1+k\,\rho\,H_t).
+  \end{equation*}
+  The negative binomial process allows for overdispersion in the counts. This overdispersion is controlled by parameter $k$.
+
+  <<measmodel,include=FALSE>>=
+  @
+  
+  <<partrans,include=FALSE>>=
+  @
+  
+  <<pomp-construction,include=FALSE>>=
+  ebolaModel <- function (country=c("Guinea", "SierraLeone", "Liberia"),
+                          timestep = 0.1, nstageE = 3) {
+
+    ctry <- match.arg(country)
+    pop <- unname(populations[ctry])
+    nstageE <- as.integer(nstageE)
+
+    globs <- paste0("static int nstageE = ",nstageE,";")
+
+    dat <- subset(dat,country==ctry,select=-country)
+
+    ## Create the pomp object
+    dat %>% 
+      extract(c("week","cases")) %>%
+      pomp(
+        times="week",
+        t0=min(dat$week)-1,
+        globals=globs,
+        statenames=c("S",sprintf("E%1d",seq_len(nstageE)),
+                     "I","R","N_EI","N_IR"),
+        zeronames=c("N_EI","N_IR"),
+        paramnames=c("N","R0","alpha","gamma","rho","k",
+                     "S_0","E_0","I_0","R_0"),
+        dmeasure=dObs, rmeasure=rObs,
+        rprocess=discrete.time.sim(step.fun=rSim, delta.t=timestep),
+        skeleton=vectorfield(skel),
+        toEstimationScale=toEst,
+        fromEstimationScale=fromEst,
+        initializer=rInit) -> po
+  }
+
+  ebolaModel("Guinea") -> gin
+  ebolaModel("SierraLeone") -> sle
+  ebolaModel("Liberia") -> lbr
+  @
+\end{frame}
+
+\subsection{Parameter estimates}
+
+\begin{frame}[fragile,allowframebreaks]{Parameter estimates}
+
+  \begin{itemize}
+  \item
+    \citet{King2015} estimated parameters for this model for each country.
+  \item 
+    A Latin hypercube design was used to initiate a large number of iterated filtering runs.
+  \item 
+    Profile likelihoods were computed for each country against the parameters $k$ (the measurement model overdispersion) and $R_0$ (the basic reproductive ratio).
+  \item 
+    Full details are given \link{http://dx.doi.org/10.5061/dryad.r5f30}{on the datadryad.org site}.
+  \item 
+    The results of these calculations are loaded and displayed here.
+
+    <<load-profile,echo=FALSE>>=
+    @
+    
+  \item 
+    The following plots the profile likelihoods.
+    The horizontal line represents the critical value of the likelihood ratio test for $p=0.01$.
+
+    <<profiles-plots,results="hide",echo=FALSE>>=
+    @
+
+  \end{itemize}
+\end{frame}
+
+\section{Model Criticism}
+
+\begin{frame}[fragile,allowframebreaks]{Diagnostics \emph{or} Model Criticism}
+  \begin{itemize}
+  \item
+    Parameter estimation is the process of finding the parameters that are ``best'', in some sense, for a given model, from among the set of those that make sense for that model.
+  \item
+    Model selection, likewise, aims at identifying the ``best'' model, in some sense, from among a set of candidates.
+  \item
+    One can do both of these things more or less well, but no matter how carefully they are done, the best of a bad set of models is still bad.
+  \item
+    Let's investigate the model here, at its maximum-likelihood parameters, to see if we can identify problems.
+  \item
+    The guiding principle in this is that, if the model is ``good'', then the data are a plausible realization of that model.
+  \item
+    Therefore, we can compare the data directly against model simulations.
+  \item
+    Moreover, we can quantify the agreement between simulations and data in any way we like.
+  \item
+    Any statistic, or set of statistics, that can be applied to the data can also be applied to simulations.
+  \item
+    Shortcomings of the model should manifest themselves as discrepancies between the model-predicted distribution of such statistics and their value on the data.
+  \item
+    \package{pomp} provides tools to facilitate this process.
+  \item
+    Specifically, the \code{probe} function applies a set of user-specified \emph{probes} or summary statistics, to the model and the data, and quantifies the degree of disagreement in several ways.
+    
+  \item 
+    Let's see how this is done using the model for the Guinean outbreak.
+  \end{itemize}
+\end{frame}  
+
+\subsection{Simulation for diagnosis}
+
+\begin{frame}[fragile,allowframebreaks]{Model simulations}
+  
+  <<diagnostics1a>>=
+  @
+
+  \framebreak
+
+  <<diagnostics1b>>=
+  @
+
+\end{frame}
+
+\subsection{Diagnostic probes}
+  
+\begin{frame}[fragile,allowframebreaks]{Diagnostic probes}
+
+  \begin{itemize}
+  \item
+    The simulations appear to be growing a bit more quickly than the data.
+  \item
+    Let's try to quantify this.
+  \item
+    First, we'll write a function that estimates the exponential growth rate by linear regression.
+  \item
+    Then, we'll apply it to the data and to 500 simulations.
+
+  \item
+    In the following, \code{gin} is a pomp object containing the model and the data from the Guinea outbreak.
+
+    <<diagnostics-growth-rate,out.width="0.7\\textwidth">>=
+    @ 
+    
+  \item
+    Do these results bear out our suspicion that the model and data differ
+    in terms of growth rate?
+
+    \framebreak
+    
+  \item
+    The simulations also appear to be more highly variable around the trend
+    than do the data.
+
+    <<diagnostics-growth-rate-and-sd,out.width="0.7\\textwidth">>=
+    @
+
+  \item
+    Do we see evidence for lack of fit of model to data?
+    
+    \framebreak
+    
+  \item
+    Let's also look more carefully at the distribution of values about the trend using the 1st and 3rd quartiles.
+  \item
+    Also, it looks like the data are less jagged than the simulations.
+    We can quantify this using the autocorrelation function (ACF).
+
+    <<diagnostics2,fig.width=6,fig.height=6,out.width="0.65\\textwidth">>=
+    @ 
+
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{\myexercise. The Sierra Leone outbreak}
+
+  Apply probes to investigate the extent to which the SEIR model above is an adequate description of the data from the Sierra Leone outbreak.
+  Have a look at the probes provided with \package{pomp}: \code{?basic.probes}.
+  Try also to come up with some informative probes of your own. Discuss the implications of your findings.
+\end{frame}
+
+\section{Forecasting using POMP models}
+
+\subsection{Sources of uncertainty}
+
+\begin{frame}[fragile,allowframebreaks]{Forecasting and forecasting uncertainty}
+
+  \begin{itemize}
+  \item
+    To this point in the course, we've focused on using POMP models to answer scientific questions,
+    i.e., to compare alternative hypothetical explanations for the data in hand.
+  \item 
+    Of course, we can also use them to make forecasts.
+
+    \framebreak
+    
+  \item 
+    The key issues are to do with quantifying the forecast uncertainty.
+  \item 
+    This arises from four sources:
+    \begin{enumerate}
+    \item
+      measurement error
+    \item
+      process noise
+    \item
+      parametric uncertainty
+    \item
+      structural uncertainty
+    \end{enumerate}
+  \item    
+    Here, we'll explore how we can account for the first three of these in making forecasts for the Sierra Leone outbreak.
+  \end{itemize}
+\end{frame}
+
+\subsection{Forecasting Ebola: an empirical Bayes approach}
+
+\begin{frame}[fragile,allowframebreaks]{Parameter uncertainty}
+
+  We take an \link{https://en.wikipedia.org/wiki/Empirical_Bayes_method}{\emph{empirical Bayes}} approach.
+
+  First, we set up a collection of parameter vectors in a neighborhood of the maximum likelihood estimate containing the region of high likelihood.
+
+  <<forecasts1a,include=FALSE>>=
+  @ 
+  
+  <<forecasts1b,include=FALSE>>=
+  @ 
+  
+  <<forecasts1c>>=
+  @ 
+  
+  <<forecasts1d,eval=FALSE>>=
+  @
+
+  \framebreak
+
+  <<forecasts1d,echo=FALSE,fig.width=7,fig.height=7,out.width="0.65\\textwidth">>=
+  @
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]{Process noise and measurement error}
+      
+  Next, we carry out a particle filter at each parameter vector, which gives us estimates of both the likelihood and the filter distribution at that parameter value.
+  
+  <<forecasts2c,eval=FALSE>>=
+  @
+    
+  \framebreak
+
+  We extract the state variables at the end of the data for use as initial conditions for the forecasts.
+
+  <<forecasts2d,eval=FALSE>>=
+  @
+  
+  The final states are now stored in \code{x}.
+
+  \framebreak
+
+  We simulate forward from the initial condition, up to the desired forecast horizon, to give a forecast corresponding to the selected parameter vector.
+  We record the likelihood of the data given the parameter vector.
+  
+  <<forecasts2e,eval=FALSE>>=
+  @
+
+  \framebreak
+
+  Now, we create a new pomp object for the forecasting.
+
+  <<forecasts2f,eval=FALSE>>=
+  @
+  
+  \framebreak
+  
+  We set the initial conditions to the ones determined above and perform forecast simulations.
+
+  <<forecasts2g,eval=FALSE>>=
+  @
+  
+  \framebreak
+
+  We combine the calibration and projection simulations into a single data frame.
+  
+  <<forecasts2h,eval=FALSE>>=
+  @
+  
+  We repeat this procedure for each parameter vector, binding the results into a single data frame.
+  See \link{https://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola_model.R}{this lesson's \Rlanguage script} for details.
+
+  \framebreak
+  
+  <<get_forecasts,include=FALSE,cache=FALSE>>=
+  readRDS("forecasts.rds") -> sims
+  @ 
+  
+  We give these prediction distributions weights proportional to the estimated likelihoods of the parameter vectors.
+
+  <<forecasts2j>>=
+  @
+
+  We verify that our effective sample size is large.
+
+  <<forecasts2k>>=
+  @ 
+
+  \framebreak
+  
+  Finally, we compute quantiles of the forecast incidence.
+
+  <<forecasts2l>>=
+  @ 
+
+  \framebreak
+  
+  <<forecast-plots,echo=FALSE>>=
+  @
+  
+\end{frame}
+
+\section*{References}
+
+\mode<presentation>{
+  \begin{frame}[allowframebreaks=0.8]{References}
+    \bibliography{../sbied}
+  \end{frame}
+}
+\mode<article>{
+  \bibliography{../sbied}
+}
+
+\begin{frame}{License, acknowledgments, and links}
+
+  \begin{itemize}
+  \item
+    This lesson is prepared for the \link{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \link{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}.
+
+  \item
+    The materials build on \link{../acknowledge.html}{previous versions of this course and related courses}.
+
+  \item
+    Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
+    Please share and remix non-commercially, mentioning its origin.
+    \includegraphics[height=12pt]{../graphics/cc-by-nc}
+
+  \item
+    Produced with \Rlanguage version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+
+  \end{itemize}
+
+  \link{../index.html}{Back to course homepage}
+  
+  \link{model.html}{Model construction supplement}
+
+  \link{https://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola_model.R}{\Rlanguage codes for this lesson}
+\end{frame}
+
+\end{document}

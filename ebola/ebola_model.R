@@ -5,11 +5,12 @@ options(
   encoding="UTF-8"
 )
 
+stopifnot(getRversion()>="4.0")
+stopifnot(packageVersion("pomp")>="3.0")
+
 set.seed(594709947L)
 library(tidyverse)
-theme_set(theme_bw())
 library(pomp)
-stopifnot(packageVersion("pomp")>="2.1")
 
 ## ----get-data,include=FALSE----------------------------------------------
 read_csv("https://kingaa.github.io/sbied/ebola/ebola_data.csv") -> dat
@@ -143,8 +144,7 @@ ebolaModel("SierraLeone") -> sle
 ebolaModel("Liberia") -> lbr
 
 ## ----load-profile,echo=FALSE---------------------------------------------
-options(stringsAsFactors=FALSE)
-read_csv("https://kingaa.github.io/sbied/ebola/ebola-profiles.csv") -> profs
+read_csv("https://kingaa.github.io/sbied/ebola/ebola_profiles.csv") -> profs
 
 ## ----profiles-plots,results='hide',echo=FALSE----------------------------
 library(tidyverse)
@@ -164,16 +164,16 @@ profs %>%
   facet_grid(country~profile,scales='free')+
   labs(y=expression(l))
 
-## ----diagnostics1,echo=FALSE---------------------------------------------
+## ----diagnostics1a,echo=FALSE---------------------------------------------
 library(pomp)
 library(tidyverse)
-options(stringsAsFactors=FALSE)
 
 profs %>%
   filter(country=="Guinea") %>%
   filter(loglik==max(loglik)) %>%
   select(-loglik,-loglik.se,-country,-profile) -> coef(gin)
 
+## ----diagnostics1b,echo=FALSE---------------------------------------------
 gin %>%
   simulate(nsim=20,format="data.frame",include.data=TRUE) %>%
   mutate(
@@ -211,7 +211,8 @@ gin %>%
 ## ----diagnostics2,fig.height=6-------------------------------------------
 log1p.detrend <- function (y) {
   cases <- y["cases",]
-  y["cases",] <- as.numeric(residuals(lm(log1p(cases)~seq_along(cases))))
+  fit <- lm(log1p(cases)~seq_along(cases))
+  y["cases",] <- as.numeric(residuals(fit))
   y
 }
 
@@ -220,22 +221,24 @@ gin %>%
     probes=list(
       growth.rate.plus,
       probe.quantile(var="cases",prob=c(0.25,0.75)),
-      probe.acf(var="cases",lags=c(1,2,3),type="correlation",
+      probe.acf(var="cases",lags=c(1,2),type="correlation",
         transform=log1p.detrend))) %>%
   plot()
 
-## ----forecasts1----------------------------------------------------------
+## ----forecasts1a----------------------------------------------------------
 library(pomp)
 library(tidyverse)
-options(stringsAsFactors=FALSE)
 
 set.seed(988077383L)
 
 ## forecast horizon
 horizon <- 13
 
+## ----forecasts1b----------------------------------------------------------
+
 ## Weighted quantile function
-wquant <- function (x, weights, probs = c(0.025,0.5,0.975)) {
+wquant <- function (x, weights, probs = c(0.025,0.5,0.975))
+{
   idx <- order(x)
   x <- x[idx]
   weights <- weights[idx]
@@ -243,6 +246,8 @@ wquant <- function (x, weights, probs = c(0.025,0.5,0.975)) {
   rval <- approx(w,x,probs,rule=1)
   rval$y
 }
+
+## ----forecasts1c----------------------------------------------------------
 
 profs %>%
   filter(country=="SierraLeone") %>%
@@ -256,12 +261,15 @@ profs %>%
   column_to_rownames("parameter") %>%
   as.matrix() -> ranges
 
+## ----forecasts1d----------------------------------------------------------
+
 sobolDesign(lower=ranges[,'min'],
   upper=ranges[,'max'],
   nseq=20) -> params
 plot(params)
 
-## ----forecasts2----------------------------------------------------------
+## ----forecasts2a----------------------------------------------------------
+bake(file="forecasts.rds",{
 library(foreach)
 library(doParallel)
 library(iterators)
@@ -270,6 +278,7 @@ library(doRNG)
 registerDoParallel()
 registerDoRNG(887851050L)
 
+## ----forecasts2b----------------------------------------------------------
 foreach(p=iter(params,by='row'),
   .inorder=FALSE,
   .combine=bind_rows
@@ -277,27 +286,24 @@ foreach(p=iter(params,by='row'),
 
   library(pomp)
 
+## ----forecasts2c----------------------------------------------------------
   M1 <- ebolaModel("SierraLeone")
 
   M1 %>% pfilter(params=p,Np=2000,save.states=TRUE) -> pf
 
-  pf@saved.states %>%               # latent state for each particle
-    tail(1) %>%                     # last timepoint only
-    melt() %>%                      # reshape and rename the state variables
+## ----forecasts2d----------------------------------------------------------
+  pf@saved.states %>%  ## latent state for each particle
+    tail(1) %>%        ## last timepoint only
+    melt() %>%         ## reshape and rename the state variables
     spread(variable,value) %>%
     group_by(rep) %>%
-    summarize(
-      S_0=S,
-      E_0=E1+E2+E3,
-      I_0=I,
-      R_0=R
-    ) %>%
+    summarize(S_0=S, E_0=E1+E2+E3, I_0=I, R_0=R) %>%
     gather(variable,value,-rep) %>%
     spread(rep,value) %>%
     column_to_rownames("variable") %>%
     as.matrix() -> x
-  ## the final states are now stored in 'x' as initial conditions
 
+## ----forecasts2e----------------------------------------------------------
   ## set up a matrix of parameters
   pp <- parmat(unlist(p),ncol(x))
 
@@ -310,15 +316,14 @@ foreach(p=iter(params,by='row'),
       loglik=logLik(pf)
     ) -> calib
 
-  ## make a new 'pomp' object for the forecast simulations
+## ----forecasts2f----------------------------------------------------------
   M2 <- M1
   time(M2) <- max(time(M1))+seq_len(horizon)
   timezero(M2) <- max(time(M1))
 
-  ## set the initial conditions to the final states computed above
+## ----forecasts2g----------------------------------------------------------
   pp[rownames(x),] <- x
 
-  ## perform forecast simulations
   M2 %>%
     simulate(params=pp,format="data.frame") %>%
     select(.id,week,cases) %>%
@@ -327,23 +332,31 @@ foreach(p=iter(params,by='row'),
       loglik=logLik(pf)
     ) -> proj
 
-  bind_rows(calib,proj)
-} %>%
+## ----forecasts2h----------------------------------------------------------
+  bind_rows(calib,proj) -> sims
+
+## ----forecasts2i----------------------------------------------------------
+}}) -> sims
+
+## ----forecasts2j----------------------------------------------------------
+sims %>%
   mutate(weight=exp(loglik-mean(loglik))) %>%
   arrange(week,.id) -> sims
 
-## look at effective sample size
+## ----forecasts2k----------------------------------------------------------
 ess <- with(subset(sims,week==max(week)),weight/sum(weight))
 ess <- 1/sum(ess^2); ess
 
-## compute quantiles of the forecast incidence
+## ----forecasts2l----------------------------------------------------------
 sims %>%
   group_by(week,period) %>%
   summarize(
-    lower=wquant(cases,weights=weight,probs=0.025),
-    median=wquant(cases,weights=weight,probs=0.5),
-    upper=wquant(cases,weights=weight,probs=0.975)
+    p=c(0.025,0.5,0.975),
+    q=wquant(cases,weights=weight,probs=p),
+    label=c("lower","median","upper")
   ) %>%
+  select(-p) %>%
+  spread(label,q) %>%
   ungroup() %>%
   mutate(date=min(dat$date)+7*(week-1)) -> simq
 
@@ -355,4 +368,3 @@ simq %>%
   geom_point(data=subset(dat,country=="SierraLeone"),
     mapping=aes(x=date,y=cases),color='black')+
   labs(y="cases")
-
