@@ -248,7 +248,6 @@ wquant <- function (x, weights, probs = c(0.025,0.5,0.975))
 }
 
 ## ----forecasts1c----------------------------------------------------------
-
 profs %>%
   filter(country=="SierraLeone") %>%
   select(-country,-profile,-loglik.se) %>%
@@ -262,7 +261,6 @@ profs %>%
   as.matrix() -> ranges
 
 ## ----forecasts1d----------------------------------------------------------
-
 sobolDesign(lower=ranges[,'min'],
   upper=ranges[,'max'],
   nseq=20) -> params
@@ -303,11 +301,10 @@ foreach(p=iter(params,by='row'),
     column_to_rownames("variable") %>%
     as.matrix() -> x
 
-## ----forecasts2e----------------------------------------------------------
-  ## set up a matrix of parameters
+## ----forecasts2e1----------------------------------------------------------
   pp <- parmat(unlist(p),ncol(x))
 
-  ## generate simulations over the interval for which we have data
+## ----forecasts2e2----------------------------------------------------------
   M1 %>%
     simulate(params=pp,format="data.frame") %>%
     select(.id,week,cases) %>%

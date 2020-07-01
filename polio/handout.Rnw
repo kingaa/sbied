@@ -1,2 +1,2 @@
 \documentclass[t,handout]{beamer}
-\input{polio.tex}
+\input{main}

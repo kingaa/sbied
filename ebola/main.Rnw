@@ -120,7 +120,7 @@ read_chunk("ebola_model.R")
   <<popsizes,include=FALSE>>=
   @
   
-  <<plot-data,echo=FALSE>>=
+  <<plot-data,echo=FALSE,out.width="0.8\\textwidth">>=
   @
 \end{frame}
 
@@ -188,40 +188,6 @@ read_chunk("ebola_model.R")
   @
   
   <<pomp-construction,include=FALSE>>=
-  ebolaModel <- function (country=c("Guinea", "SierraLeone", "Liberia"),
-                          timestep = 0.1, nstageE = 3) {
-
-    ctry <- match.arg(country)
-    pop <- unname(populations[ctry])
-    nstageE <- as.integer(nstageE)
-
-    globs <- paste0("static int nstageE = ",nstageE,";")
-
-    dat <- subset(dat,country==ctry,select=-country)
-
-    ## Create the pomp object
-    dat %>% 
-      extract(c("week","cases")) %>%
-      pomp(
-        times="week",
-        t0=min(dat$week)-1,
-        globals=globs,
-        statenames=c("S",sprintf("E%1d",seq_len(nstageE)),
-                     "I","R","N_EI","N_IR"),
-        zeronames=c("N_EI","N_IR"),
-        paramnames=c("N","R0","alpha","gamma","rho","k",
-                     "S_0","E_0","I_0","R_0"),
-        dmeasure=dObs, rmeasure=rObs,
-        rprocess=discrete.time.sim(step.fun=rSim, delta.t=timestep),
-        skeleton=vectorfield(skel),
-        toEstimationScale=toEst,
-        fromEstimationScale=fromEst,
-        initializer=rInit) -> po
-  }
-
-  ebolaModel("Guinea") -> gin
-  ebolaModel("SierraLeone") -> sle
-  ebolaModel("Liberia") -> lbr
   @
 \end{frame}
 
@@ -248,7 +214,7 @@ read_chunk("ebola_model.R")
     The following plots the profile likelihoods.
     The horizontal line represents the critical value of the likelihood ratio test for $p=0.01$.
 
-    <<profiles-plots,results="hide",echo=FALSE>>=
+    <<profiles-plots,results="hide",echo=FALSE,out.width="0.8\\textwidth">>=
     @
 
   \end{itemize}
@@ -437,9 +403,15 @@ read_chunk("ebola_model.R")
   \framebreak
 
   We simulate forward from the initial condition, up to the desired forecast horizon, to give a forecast corresponding to the selected parameter vector.
-  We record the likelihood of the data given the parameter vector.
-  
-  <<forecasts2e,eval=FALSE>>=
+  To do this, we first set up a matrix of parameters:
+  <<forecasts2e1,eval=FALSE>>=
+  @
+
+  \framebreak
+
+  Then, we generate simulations over the ``calibration period'' (i.e., the time interval over which we have data).
+  We record the likelihood of the data given the parameter vector:
+  <<forecasts2e2,eval=FALSE>>=
   @
 
   \framebreak
@@ -496,9 +468,15 @@ read_chunk("ebola_model.R")
   
 \end{frame}
 
-\section*{References}
+\begin{frame}{\myexercise. Decomposing the uncertainty}
+  As we have discussed, the uncertainty shown in the forecasts above has three sources: parameter uncertainty, process noise, and measurement error.
+  Show how you can break the total uncertainty into these three components.
+  Produce plots similar to that above showing each of the components.
+\end{frame}
 
 \mode<presentation>{
+  \section*{References}
+
   \begin{frame}[allowframebreaks=0.8]{References}
     \bibliography{../sbied}
   \end{frame}
