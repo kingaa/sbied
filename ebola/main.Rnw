@@ -316,6 +316,8 @@ read_chunk("ebola_model.R")
   \end{itemize}
 \end{frame}
 
+\subsection{Exercise}
+
 \begin{frame}{\myexercise. The Sierra Leone outbreak}
 
   Apply probes to investigate the extent to which the SEIR model above is an adequate description of the data from the Sierra Leone outbreak.
@@ -468,6 +470,8 @@ read_chunk("ebola_model.R")
   
 \end{frame}
 
+\subsection{Exercise}
+
 \begin{frame}{\myexercise. Decomposing the uncertainty}
   As we have discussed, the uncertainty shown in the forecasts above has three sources: parameter uncertainty, process noise, and measurement error.
   Show how you can break the total uncertainty into these three components.
@@ -475,8 +479,6 @@ read_chunk("ebola_model.R")
 \end{frame}
 
 \mode<presentation>{
-  \section*{References}
-
   \begin{frame}[allowframebreaks=0.8]{References}
     \bibliography{../sbied}
   \end{frame}
