@@ -1,7 +1,6 @@
 \input{../header}
 
 \newcommand\CHAPTER{5}
-\def\CHAPTER{4}
 \title{Lesson \CHAPTER.\\Case study:\\Measles in large and small towns}
 \author{Aaron A. King, Edward Ionides, and Kidus Asfaw}
 
