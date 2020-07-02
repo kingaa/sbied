@@ -29,14 +29,14 @@ Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutori
 
 
 0. [Instructions for preparing your laptop for the course exercises](./prep/preparation.html)
-1. Introduction: What is "Simulation-based Inference for Epidemiological Dynamics"?&nbsp;&nbsp;&nbsp;[Slides (PDF)](./intro/slides.pdf)&nbsp;&nbsp;&nbsp;[Handout (PDF)](./intro/handout.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./intro/notes.pdf)
-1. Simulation of stochastic dynamic models.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./stochsim/slides.pdf)&nbsp;&nbsp;&nbsp;[Handout (PDF)](./stochsim/handout.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./stochsim/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/main.R)
-1. Likelihood for POMPs: theory and practice.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./pfilter/slides.pdf)&nbsp;&nbsp;&nbsp;[Handout (PDF)](./pfilter/handout.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./pfilter/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/main.R)
-1. Iterated filtering: theory and practice.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./mif/slides.pdf)&nbsp;&nbsp;&nbsp;[Handout (PDF)](./mif/handout.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./mif/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/mif/main.R)
-1. Case study: recurrent measles dynamics revealed in long time series. [Slides (PDF)](./measles/slides.pdf)&nbsp;&nbsp;&nbsp;[Handout (PDF)](./measles/handout.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./measles/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/measles/main.R)
-1. Case study: polio.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./polio/slides.pdf)&nbsp;&nbsp;&nbsp;[Handout (PDF)](./polio/handout.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./polio/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/polio/main.R)
-1. Case study: Ebola, model diagnostics, and forecasting&nbsp;&nbsp;&nbsp;[Slides (PDF)](./ebola/slides.pdf)&nbsp;&nbsp;&nbsp;[Handout (PDF)](./ebola/handout.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./ebola/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola_model.R)
-1. Case study: sexual contacts panel data.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./contacts/slides.pdf)&nbsp;&nbsp;&nbsp;[Handout (PDF)](./contacts/handout.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./contacts/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/contacts/main.R)
+1. Introduction: What is "Simulation-based Inference for Epidemiological Dynamics"?&nbsp;&nbsp;&nbsp;[Slides (PDF)](./intro/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./intro/notes.pdf)
+1. Simulation of stochastic dynamic models.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./stochsim/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./stochsim/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/main.R)
+1. Likelihood for POMPs: theory and practice.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./pfilter/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./pfilter/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/main.R)
+1. Iterated filtering: theory and practice.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./mif/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./mif/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/mif/main.R)
+1. Case study: recurrent measles dynamics revealed in long time series. [Slides (PDF)](./measles/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./measles/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/measles/main.R)
+1. Case study: polio.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./polio/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./polio/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/polio/main.R)
+1. Case study: Ebola, model diagnostics, and forecasting&nbsp;&nbsp;&nbsp;[Slides (PDF)](./ebola/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./ebola/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola_model.R)
+1. Case study: sexual contacts panel data.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./contacts/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./contacts/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/contacts/main.R)
 
 ----------------------
 

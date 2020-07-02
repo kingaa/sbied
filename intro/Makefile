@@ -1,3 +1,3 @@
-default: slides.pdf handout.pdf notes.pdf parus.csv ricker.R ricker.html
+default: slides.pdf notes.pdf parus.csv ricker.R ricker.html
 
 include ../rules.mk

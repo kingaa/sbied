@@ -1,4 +1,4 @@
-default: slides.pdf handout.pdf notes.pdf main.R \
+default: slides.pdf notes.pdf main.R \
 bootstrap.html deterministic.html \
 directSimulation.html directSimulation.R fisherSE.html \
 monteCarlo.html pf-in-Nelder-Mead.html pf-in-Nelder-Mead.R \
