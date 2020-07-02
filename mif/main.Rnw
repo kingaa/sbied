@@ -41,9 +41,9 @@ set.seed(1350254336)
 
 \begin{frame}{Objectives}
   \begin{enumerate}
-  \item<+-> To review the available options for inference on POMP models, to put iterated filtering in context.
-  \item<+-> To understand how iterated filtering algorithms carry out repeated particle filtering operations, with randomly perturbed parameter values, in order to maximize the likelihood.
-  \item<+-> To gain experience carrying out statistical investigations using iterated filtering in a relatively simple situation: fitting an SIR model to data from a measles outbreak.
+  \item To review the available options for inference on POMP models, to put iterated filtering in context.
+  \item To understand how iterated filtering algorithms carry out repeated particle filtering operations, with randomly perturbed parameter values, in order to maximize the likelihood.
+  \item To gain experience carrying out statistical investigations using iterated filtering in a relatively simple situation: fitting an SIR model to data from a measles outbreak.
   \end{enumerate}
 \end{frame}
 

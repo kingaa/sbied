@@ -40,3 +40,13 @@ options(
   encoding="UTF-8"
 )
 @
+
+<<knit_print>>=
+registerS3method(
+  "knit_print",
+  "data.frame",
+  function (x, ...) {
+    print(x,row.names=FALSE)
+  }
+)
+@

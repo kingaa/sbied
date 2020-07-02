@@ -34,10 +34,10 @@ set.seed(1350254336)
 \begin{frame}{Objectives}
   Students completing this lesson will:
   \begin{enumerate}
-  \item<+-> Gain an understanding of the nature of the problem of likelihood computation for POMP models.
-  \item<+-> Be able to explain the simplest particle filter algorithm.
-  \item<+-> Gain experience in the visualization and exploration of likelihood surfaces.
-  \item<+-> Be able to explain the tools of likelihood-based statistical inference that become available given numerical accessibility of the likelihood function.
+  \item Gain an understanding of the nature of the problem of likelihood computation for POMP models.
+  \item Be able to explain the simplest particle filter algorithm.
+  \item Gain experience in the visualization and exploration of likelihood surfaces.
+  \item Be able to explain the tools of likelihood-based statistical inference that become available given numerical accessibility of the likelihood function.
   \end{enumerate}
 \end{frame}
 
@@ -481,7 +481,7 @@ set.seed(1350254336)
   We will explain this method below and put it into practice in the \link{../mif/slides.pdf}{next lesson}.
 \end{frame}
 
-\begin{frame}{The Bootstrap}
+\begin{frame}{The bootstrap}
   \begin{itemize}
   \item
     If done carefully and well, this can be the best approach.

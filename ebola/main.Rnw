@@ -10,13 +10,6 @@
 <<read_chunks,include=FALSE,cache=FALSE>>=
 read_chunk("ebola_model.R")
 knitr::opts_chunk$set(purl=FALSE)
-registerS3method(
-  "knit_print",
-  "data.frame",
-  function (x, ...) {
-    print(x,row.names=FALSE)
-  }
-)
 @
 
 <<prelims,include=FALSE,cache=FALSE>>=
