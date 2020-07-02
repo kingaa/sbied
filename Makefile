@@ -7,7 +7,7 @@ modules:
 
 include rules.mk
 
-fresh: clean
-	$(RM) -r tmp
+.fresh:
 	for module in $(MODULES); do (cd $$module && $(MAKE) fresh); done
 
+fresh: .fresh
