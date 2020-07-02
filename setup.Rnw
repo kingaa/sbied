@@ -8,31 +8,31 @@ library(knitr)
 opts_chunk$set(
   cache=TRUE,
   cache.path="tmp/cache/",
+  comment=NA,
+  echo=TRUE,
   eval=TRUE,
   include=TRUE,
-  echo=TRUE,
-  purl=TRUE,
   dev='png',
   dev.args=list(bg='transparent'),
   dpi=300,
   error=FALSE,
-  fig.pos="h!",
   fig.align='center',
   fig.height=4,fig.width=6.83,
   fig.lp="fig:",
   fig.path="tmp/figure/",
+  fig.pos="h!",
   fig.show='asis',
   highlight=TRUE,
   message=FALSE,
   progress=TRUE,
   prompt=FALSE,
+  purl=TRUE,
   results="markup",
   size='small',
   strip.white=TRUE,
   tidy=FALSE,
-  warning=FALSE,
-  comment=NA
-)
+  warning=FALSE
+  )
 
 options(
   width=60, # number of characters in R output before wrapping

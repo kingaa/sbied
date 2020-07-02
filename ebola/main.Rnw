@@ -10,6 +10,13 @@
 <<read_chunks,include=FALSE,cache=FALSE>>=
 read_chunk("ebola_model.R")
 knitr::opts_chunk$set(purl=FALSE)
+registerS3method(
+  "knit_print",
+  "data.frame",
+  function (x, ...) {
+    print(x,row.names=FALSE)
+  }
+)
 @
 
 <<prelims,include=FALSE,cache=FALSE>>=
@@ -31,17 +38,17 @@ knitr::opts_chunk$set(purl=FALSE)
 
 \begin{frame}{Objectives}
   \begin{enumerate}
-  \item<+->
+  \item
     To explore the use of POMP models in the context of an outbreak of an
     emerging infectious disease.
-  \item<+->
+  \item
     To demonstrate the use of diagnostic probes for model criticism.
-  \item<+->
+  \item
     To illustrate some forecasting methods based on POMP models.
-  \item<+->
+  \item
     To provide an example that can be modified to apply similar approaches
     to other outbreaks of emerging infectious diseases.
-  \item<+->
+  \item
     This lesson follows \citet{King2015}, all codes for which are available on \link{http://dx.doi.org/10.5061/dryad.r5f30}{datadryad.org}.
   \end{enumerate}
 
@@ -202,13 +209,14 @@ knitr::opts_chunk$set(purl=FALSE)
   \item 
     Full details are given \link{http://dx.doi.org/10.5061/dryad.r5f30}{on the datadryad.org site}.
   \item 
-    The results of these calculations are loaded and displayed here.
+    Codes for this document are \link{https://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola_model.R}{available here}.
+    The results of these calculations are loaded and displayed in the following.
 
     <<load-profile,echo=FALSE>>=
     @
     
   \item 
-    The following plots the profile likelihoods.
+    The following are plots of the profile likelihoods.
     The horizontal line represents the critical value of the likelihood ratio test for $p=0.01$.
 
     <<profiles-plots,results="hide",echo=FALSE,out.width="0.8\\textwidth">>=
@@ -242,7 +250,7 @@ knitr::opts_chunk$set(purl=FALSE)
   \item
     \package{pomp} provides tools to facilitate this process.
   \item
-    Specifically, the \code{probe} function applies a set of user-specified \emph{probes} or summary statistics, to the model and the data, and quantifies the degree of disagreement in several ways.
+    Specifically, the \code{probe} function applies a set of user-specified summary statistics or \emph{probes}, to the model and the data, and quantifies the degree of disagreement in several ways.
     
   \item 
     Let's see how this is done using the model for the Guinean outbreak.
@@ -252,11 +260,17 @@ knitr::opts_chunk$set(purl=FALSE)
 \subsection{Simulation for diagnosis}
 
 \begin{frame}[fragile,allowframebreaks]{Model simulations}
-  
+
+  From our profile-likelihood calculations, we extract the MLE:
+
   <<diagnostics1a>>=
   @
 
+  Here, \code{profs} contains the profile-likelihood calculations displayed previously and \code{gin} is a pomp object containing the model and data for Guinea.
+  
   \framebreak
+
+  The following generates and plots some simulations on the same axes as the data.
 
   <<diagnostics1b>>=
   @
@@ -269,14 +283,19 @@ knitr::opts_chunk$set(purl=FALSE)
 
   \begin{itemize}
   \item
-    The simulations appear to be growing a bit more quickly than the data.
+    Does the data look like it could have come from the model?
+    \begin{itemize}
+    \item
+      The simulations appear to be growing a bit more quickly than the data.
+    \end{itemize}
   \item
     Let's try to quantify this.
-  \item
-    First, we'll write a function that estimates the exponential growth rate by linear regression.
-  \item
-    Then, we'll apply it to the data and to 500 simulations.
-
+    \begin{itemize}
+    \item
+      First, we'll write a function that estimates the exponential growth rate by linear regression.
+    \item
+      Then, we'll apply it to the data and to 500 simulations.
+    \end{itemize}
   \item
     In the following, \code{gin} is a pomp object containing the model and the data from the Guinea outbreak.
 
@@ -286,6 +305,11 @@ knitr::opts_chunk$set(purl=FALSE)
   \item
     Do these results bear out our suspicion that the model and data differ
     in terms of growth rate?
+
+    \framebreak
+    
+    <<diagnostics1b,echo=FALSE>>=
+    @
 
     \framebreak
     
@@ -338,7 +362,7 @@ knitr::opts_chunk$set(purl=FALSE)
     \framebreak
     
   \item 
-    The key issues are to do with quantifying the forecast uncertainty.
+    A set of key issues surrounds quantifying the forecast uncertainty.
   \item 
     This arises from four sources:
     \begin{enumerate}

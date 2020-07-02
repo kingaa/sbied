@@ -3073,7 +3073,7 @@ div.tocify {
 <span id="cb8-7"><a href="#cb8-7"></a></span>
 <span id="cb8-8"><a href="#cb8-8"></a>  globs &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;static int nstageE = &quot;</span>,nstageE,<span class="st">&quot;;&quot;</span>)</span>
 <span id="cb8-9"><a href="#cb8-9"></a></span>
-<span id="cb8-10"><a href="#cb8-10"></a>  dat &lt;-<span class="st"> </span><span class="kw">subset</span>(dat,country<span class="op">==</span>ctry,<span class="dt">select=</span><span class="op">-</span>country)</span>
+<span id="cb8-10"><a href="#cb8-10"></a>  dat <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(country<span class="op">==</span>ctry) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span>country) -&gt;<span class="st"> </span>dat</span>
 <span id="cb8-11"><a href="#cb8-11"></a></span>
 <span id="cb8-12"><a href="#cb8-12"></a>  <span class="co">## Create the pomp object</span></span>
 <span id="cb8-13"><a href="#cb8-13"></a>  dat <span class="op">%&gt;%</span></span>
