@@ -1,13 +1,14 @@
 ---
 title: "Simulation-based Inference for Epidemiological Dynamics"
-author: "Aaron A. King and Edward L. Ionides"
+author: "Aaron A. King, Edward L. Ionides, Kidus Asfaw"
 output: html_document
 bibliography: sbied.bib
-csl: ecology.csl
+csl: jss.csl
 
 ---
 
 ## Module description
+
 This module introduces statistical inference techniques and computational methods for dynamic models of epidemiological systems.
 The course will explore deterministic and stochastic formulations of epidemiological dynamics and develop inference methods appropriate for a range of models.
 Special emphasis will be on exact and approximate likelihood as the key elements in parameter estimation, hypothesis testing, and model selection. Specifically, the course will cover sequential Monte Carlo and synthetic likelihood techniques.
@@ -25,23 +26,25 @@ Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutori
 
 ----------------------
 
-## Schedule of Topics
+## Lessons
 
 
-0. [Instructions for preparing your laptop for the course exercises](./prep/preparation.html)
-1. Introduction: What is "Simulation-based Inference for Epidemiological Dynamics"?&nbsp;&nbsp;&nbsp;[Slides (PDF)](./intro/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./intro/notes.pdf)
-1. Simulation of stochastic dynamic models.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./stochsim/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./stochsim/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/main.R)
-1. Likelihood for POMPs: theory and practice.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./pfilter/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./pfilter/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/main.R)
-1. Iterated filtering: theory and practice.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./mif/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./mif/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/mif/main.R)
-1. Case study: recurrent measles dynamics revealed in long time series. [Slides (PDF)](./measles/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./measles/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/measles/main.R)
-1. Case study: polio.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./polio/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./polio/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/polio/main.R)
-1. Case study: Ebola, model diagnostics, and forecasting&nbsp;&nbsp;&nbsp;[Slides (PDF)](./ebola/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./ebola/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R)
-1. Case study: sexual contacts panel data.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./contacts/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./contacts/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/contacts/main.R)
+| &nbsp; | &nbsp; | &nbsp; | &nbsp; | &nbsp; |
+|:----------------------------------------|:---:|:---:|:---:|:--:|
+| **0. Instructions for preparing your laptop for the course exercises** | &nbsp; | [Page (HTML)](./prep/preparation.html) | &nbsp; | &nbsp; |
+| **1. Introduction: What is "Simulation-based Inference for Epidemiological Dynamics"?** | Lecture | [Slides (PDF)](./intro/slides.pdf) | [Notes (PDF)](./intro/notes.pdf) |
+| **2. Simulation of stochastic dynamic models.** | Lecture | [Slides (PDF)](./stochsim/slides.pdf) | [Notes (PDF)](./stochsim/notes.pdf) | [Script (**R**)](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/main.R) |
+| **3. Likelihood for POMPs: theory and practice.** | Lecture | [Slides (PDF)](./pfilter/slides.pdf) | [Notes (PDF)](./pfilter/notes.pdf) | [Script (**R**)](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/main.R) |
+| **4. Iterated filtering: theory and practice.** | Lecture | [Slides (PDF)](./mif/slides.pdf) | [Notes (PDF)](./mif/notes.pdf) | [Script (**R**)](http://raw.githubusercontent.com/kingaa/sbied/master/mif/main.R) |
+| **5. Case study: recurrent measles dynamics revealed in long time series.** | Lecture | [Slides (PDF)](./measles/slides.pdf) | [Notes (PDF)](./measles/notes.pdf) | [Script (**R**)](http://raw.githubusercontent.com/kingaa/sbied/master/measles/main.R) |
+| **6. Case study: polio.** | Lecture | [Slides (PDF)](./polio/slides.pdf) | [Notes (PDF)](./polio/notes.pdf) | [Script (**R**)](http://raw.githubusercontent.com/kingaa/sbied/master/polio/main.R) |
+| **7. Case study: Ebola, model diagnostics, and forecasting.** | Lecture | [Slides (PDF)](./ebola/slides.pdf) | [Notes (PDF)](./ebola/notes.pdf) | [Script (**R**)](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R) |
+| **8. Case study: sexual contacts panel data.** | <a href="https://youtu.be/mcGGmxJBEHw" target="_blank">Lecture</a> | [Slides (PDF)](./contacts/slides.pdf) | [Notes (PDF)](./contacts/notes.pdf) | [Script (**R**)](http://raw.githubusercontent.com/kingaa/sbied/master/contacts/main.R) |
 
-----------------------
+------------------------------------
 
-[**pomp** homepage](https://kingaa.github.io/pomp/)  
 [Acknowledgements](./acknowledge.html)  
 [Source code for these notes](http://github.com/kingaa/sbied/)  
+[**pomp** homepage](https://kingaa.github.io/pomp/)  
 
 ----------------------
