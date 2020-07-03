@@ -1,5 +1,5 @@
 default: notes.pdf slides.pdf model.html
 
-main.tex model.html: ebola_model.R
+main.tex model.html: codes.R
 
 include ../rules.mk

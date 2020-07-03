@@ -8,7 +8,7 @@
 @
 
 <<read_chunks,include=FALSE,cache=FALSE>>=
-read_chunk("ebola_model.R")
+read_chunk("codes.R")
 knitr::opts_chunk$set(purl=FALSE)
 @
 
@@ -41,9 +41,10 @@ knitr::opts_chunk$set(purl=FALSE)
   \item
     To provide an example that can be modified to apply similar approaches
     to other outbreaks of emerging infectious diseases.
-  \item
-    This lesson follows \citet{King2015}, all codes for which are available on \link{http://dx.doi.org/10.5061/dryad.r5f30}{datadryad.org}.
   \end{enumerate}
+  \vspace{2ex}
+  
+  This lesson follows \citet{King2015}, all codes for which are available on \link{http://dx.doi.org/10.5061/dryad.r5f30}{datadryad.org}.
 
 \end{frame}
 
@@ -202,7 +203,7 @@ knitr::opts_chunk$set(purl=FALSE)
   \item 
     Full details are given \link{http://dx.doi.org/10.5061/dryad.r5f30}{on the datadryad.org site}.
   \item 
-    Codes for this document are \link{https://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola_model.R}{available here}.
+    Codes for this document are \link{https://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R}{available here}.
     The results of these calculations are loaded and displayed in the following.
 
     <<load-profile,echo=FALSE>>=
@@ -452,7 +453,7 @@ knitr::opts_chunk$set(purl=FALSE)
   @
   
   We repeat this procedure for each parameter vector, binding the results into a single data frame.
-  See \link{https://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola_model.R}{this lesson's \Rlanguage script} for details.
+  See \link{https://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R}{this lesson's \Rlanguage script} for details.
 
   \framebreak
   
@@ -524,7 +525,7 @@ knitr::opts_chunk$set(purl=FALSE)
   
   \link{model.html}{Model construction supplement}
 
-  \link{https://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola_model.R}{\Rlanguage codes for this lesson}
+  \link{https://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R}{\Rlanguage codes for this lesson}
 \end{frame}
 
 \end{document}

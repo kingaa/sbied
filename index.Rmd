@@ -35,7 +35,7 @@ Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutori
 1. Iterated filtering: theory and practice.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./mif/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./mif/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/mif/main.R)
 1. Case study: recurrent measles dynamics revealed in long time series. [Slides (PDF)](./measles/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./measles/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/measles/main.R)
 1. Case study: polio.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./polio/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./polio/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/polio/main.R)
-1. Case study: Ebola, model diagnostics, and forecasting&nbsp;&nbsp;&nbsp;[Slides (PDF)](./ebola/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./ebola/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/ebola_model.R)
+1. Case study: Ebola, model diagnostics, and forecasting&nbsp;&nbsp;&nbsp;[Slides (PDF)](./ebola/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./ebola/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R)
 1. Case study: sexual contacts panel data.&nbsp;&nbsp;&nbsp;[Slides (PDF)](./contacts/slides.pdf)&nbsp;&nbsp;&nbsp;[Notes (PDF)](./contacts/notes.pdf)&nbsp;&nbsp;&nbsp;[(**R** script)](http://raw.githubusercontent.com/kingaa/sbied/master/contacts/main.R)
 
 ----------------------

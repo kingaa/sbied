@@ -30,7 +30,7 @@ slides.pdf handout.pdf notes.pdf: main.tex
 clean:
 	$(RM) *.bak
 	$(RM) *.o *.so
-	$(RM) *.log *.aux *.out *.blg *.toc *.nav *.snm *.vrb
+	$(RM) *.log *.aux *.out *.blg *.toc *.nav *.snm *.vrb *.brf
 	$(RM) Rplots.*
 
 fresh: clean

@@ -1,8 +1,7 @@
+tmp
 figure
 cache
 papers
-www
-tmp
 admin
 prep/list.csv
 prep/spam.sh
@@ -18,5 +17,6 @@ prep/spam.sh
 *\.vrb
 *\.blg
 *\.aux
+*\.brf
 *\.bak
 *~
