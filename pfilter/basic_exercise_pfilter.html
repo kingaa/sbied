@@ -369,7 +369,7 @@ summary {
 
 <div id="TOC">
 <ul>
-<li><a href="#back"><span>Back</span></a></li>
+<li><a href="#back-to-the-lesson"><span>Back to the lesson</span></a></li>
 </ul>
 </div>
 
@@ -451,8 +451,8 @@ logmeanexp(ll,se=TRUE)</code></pre>
 <pre><code>                   se 
 -208.12677   13.31851 </code></pre>
 <ul>
-<li><p>This took 0.48 minutes</p></li>
-<li><p>Since the time taken is approximately linear in <code>NP</code> and <code>REPLICATES</code>, we get a formula (for this machine) of <span class="math display">\[\mbox{Runtime}\approx \frac{ \mathrm{NP}}{5\times 10^{4}} \times \frac{\mathrm{REPLICATES}}{ 10} \times 0.48 \mbox{ minutes}.\]</span></p></li>
+<li><p>This took 0.46 minutes</p></li>
+<li><p>Since the time taken is approximately linear in <code>NP</code> and <code>REPLICATES</code>, we get a formula (for this machine) of <span class="math display">\[\mbox{Runtime}\approx \frac{ \mathrm{NP}}{5\times 10^{4}} \times \frac{\mathrm{REPLICATES}}{ 10} \times 0.46 \mbox{ minutes}.\]</span></p></li>
 <li><p>We can use this formula to select <code>NP</code> and <code>REPLICATES</code> to give an appropriate runtime.</p></li>
 <li><p><code>logmeanexp</code> averages the replications on the untransformed scale, not the log scale. It provides a standard error.</p></li>
 <li><p>On the untransformed scale, the particle filter gives an unbiased likelihood estimate, so <code>logmeanexp</code> gives an asymptotically consistent estimate of the log likelihood as <code>REPLICATES</code> increases toward infinity.</p></li>
@@ -484,7 +484,7 @@ logmeanexp(ll,se=TRUE)</code></pre>
         mean
     }
 }
-&lt;bytecode: 0x55ae27dca560&gt;
+&lt;bytecode: 0x55dab12905a0&gt;
 &lt;environment: namespace:pomp&gt;</code></pre>
 <ul>
 <li><p>We see that <code>logmeanexp</code> constructs its standard errors via a <a href="https://en.wikipedia.org/wiki/Jackknife_resampling">jack-knife</a> calculation.</p></li>
@@ -513,8 +513,8 @@ abline(v=c(-2,2),col=&quot;red&quot;)</code></pre>
 </ul>
 <hr />
 </div>
-<div id="back" class="section level2">
-<h2><a href="./pfilter.html">Back</a></h2>
+<div id="back-to-the-lesson" class="section level2">
+<h2><a href="./index.html">Back to the lesson</a></h2>
 <hr />
 <div id="references" class="section level3 unnumbered">
 <h3>References</h3>

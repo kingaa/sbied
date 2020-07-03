@@ -1,3 +1,5 @@
+## Worked solution to exercise 3.1
+
 library(tidyverse)
 library(pomp)
 stopifnot(packageVersion("pomp")>="2.1")

@@ -193,7 +193,7 @@ abline(v=c(-2,2),col="red")
 
 -----------------------
 
-## [Back](./pfilter.html)
+## [Back to the lesson](./index.html)
 
 --------------------------
 

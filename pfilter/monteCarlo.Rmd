@@ -331,13 +331,7 @@ par(op)
 
 -----------------------
 
-<a href="#" onclick="goBack()">Back</a>
-
-<script>
-function goBack() {
-  window.history.back();
-}
-</script>
+[Back to the lesson](./index.html)
 
 --------------------------
 

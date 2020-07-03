@@ -124,12 +124,6 @@ While the calculation is "correct" in that it will converge to the true likeliho
 
 -----------------------
 
-<a href="#" onclick="goBack()">Back</a>
-
-<script>
-function goBack() {
-  window.history.back();
-}
-</script>
+[Back to the lesson](./index.html)
 
 --------------------------

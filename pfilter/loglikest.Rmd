@@ -1,5 +1,5 @@
 ---
-title: 'Worked solution to "log likelihood estimation" Exercise'
+title: "Worked solution to Exercise 3.2"
 author: "Aaron A. King"
 output:
   html_document:
@@ -131,7 +131,7 @@ lls %>%
 
 -----------
 
-## [Back to main lesson](./pfilter.html)
+## [Back to main lesson](./index.html)
 ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/loglikest.R)
 
 -----------

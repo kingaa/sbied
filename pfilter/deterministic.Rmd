@@ -151,12 +151,6 @@ $\hat y_n = \expect{Y_n \vert X_n=x_n(\theta)}$, and $y_n^*$ is data.
 
 -----------------------
 
-<a href="#" onclick="goBack()">Back</a>
-
-<script>
-function goBack() {
-  window.history.back();
-}
-</script>
+[Back to the lesson](./index.html)
 
 --------------------------

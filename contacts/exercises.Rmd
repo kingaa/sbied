@@ -129,4 +129,8 @@ However, they are inconsistent, since $\hat\lambda^{(k)}_u$ is a biased estimate
 
 -----------
 
+[Back to the lesson](index.html)  
+
+-----------
+
 ## References
