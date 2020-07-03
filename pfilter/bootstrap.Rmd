@@ -6,7 +6,7 @@ output:
     toc: no
     toc_depth: 4
 bibliography: ../sbied.bib
-csl: ../ecology.csl
+csl: ../jss.csl
 ---
 
 -----------------------------------

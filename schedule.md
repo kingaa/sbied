@@ -3,7 +3,7 @@ title: "Simulation-based Inference for Epidemiological Dynamics"
 subtitle: "Tentative Schedule"
 output: html_document
 bibliography: sbied.bib
-csl: ecology.csl
+csl: jss.csl
 
 ---
 

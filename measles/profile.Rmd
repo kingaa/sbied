@@ -10,7 +10,7 @@ output:
     number_sections: FALSE
     df_print: paged
 bibliography: ../sbied.bib
-csl: ../ecology.csl
+csl: ../jss.csl
 
 ---
 

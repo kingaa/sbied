@@ -10,7 +10,7 @@ output:
     number_sections: FALSE
     df_print: kable
 bibliography: ../sbied.bib
-csl: ../ecology.csl
+csl: ../jss.csl
 ---
 
 ```{css styles,echo=FALSE,purl=FALSE}

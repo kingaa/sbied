@@ -7,7 +7,7 @@ output:
     toc_depth: 4
     df_print: paged
 bibliography: ../../sbied.bib
-csl: ../../ecology.csl
+csl: ../../jss.csl
 ---
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}

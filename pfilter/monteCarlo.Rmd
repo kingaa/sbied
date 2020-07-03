@@ -6,7 +6,7 @@ output:
     toc: yes
     toc_depth: 4
 bibliography: ../sbied.bib
-csl: ../ecology.csl
+csl: ../jss.csl
 ---
 
 \newcommand\prob{\mathbb{P}}
