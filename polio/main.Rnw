@@ -920,17 +920,19 @@ library(pomp)
   <<box_eval>>=
   stew(file="results/box_eval.rda",{
     time_start_box_eval <- Sys.time()
-    m3 <- foreach(i=1:polio_Nreps_global,.packages='pomp',
-                  .combine=c) %dopar% mif2(m2[[1]],
-                                           params=c(apply(polio_box,1,function(x)runif(1,x[1],x[2])),
-                                                    polio_fixed_params)
-                                           )
+    m3 <- foreach(i=1:polio_Nreps_global,
+                  .packages='pomp',.combine=c) %dopar%
+      mif2(m2[[1]],
+           params=c(apply(polio_box,1,function(x)runif(1,x[1],x[2])),
+                    polio_fixed_params)
+           )
     lik_m3 <- foreach(i=1:polio_Nreps_global,.packages='pomp',
-                      .combine=rbind) %dopar% logmeanexp(
-                                                replicate(polio_Nreps_eval,
-                                                          logLik(pfilter(polio,
-                                                                         params=coef(m3[[i]]),Np=polio_Np))), 
-                                                se=TRUE)
+                      .combine=rbind) %dopar%
+      logmeanexp(
+        replicate(polio_Nreps_eval,
+                  logLik(pfilter(polio,
+                                 params=coef(m3[[i]]),Np=polio_Np))), 
+        se=TRUE)
     time_end_box_eval <- Sys.time()
   })
   @
@@ -942,8 +944,9 @@ library(pomp)
   <<global-results>>=
   r3 <- data.frame(logLik=lik_m3[,1],logLik_se=lik_m3[,2],
                    t(sapply(m3,coef)))
-  if(run_level>1) write.table(r3,file="polio_params_out.csv",
-                              append=TRUE,col.names=FALSE,row.names=FALSE)
+  if(run_level>1)
+    write.table(r3,file="polio_params_out.csv",
+                append=TRUE,col.names=FALSE,row.names=FALSE)
   summary(r3$logLik,digits=5)
   @
   
@@ -967,9 +970,7 @@ library(pomp)
   
 \end{frame}
 
-\begin{frame}[fragile]
-
-  \frametitle{Benchmark likelihoods for non-mechanistic models}
+\begin{frame}[fragile,allowframebreaks]{Benchmark likelihoods for non-mechanistic models}
 
   \bi
 \item To understand these global searches, many of which may correspond to parameter values having no meaningful scientific interpretation, it is helpful to put the log likelihoods in the context of some non-mechanistic benchmarks.
@@ -979,8 +980,10 @@ library(pomp)
   \ei
 
   <<nbinom>>=
-  nb_lik <- function(theta) -sum(dnbinom(as.vector(obs(polio)),
-                                         size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))
+  nb_lik <- function(theta)
+    -sum(dnbinom(as.vector(obs(polio)),
+                 size=exp(theta[1]),
+                 prob=exp(theta[2]),log=TRUE))
   nb_mle <- optim(c(0,-5),nb_lik)
   -nb_mle$value
   @
@@ -1116,15 +1119,16 @@ library(pomp)
   \ei
 
   <<profile_rw_sd>>=
-  profile_rw.sd <- polio_rw.sd <- rw.sd(
-                     rho=0,
-                     b1=polio_rw.sd_rp,b2=polio_rw.sd_rp,b3=polio_rw.sd_rp,
-                     b4=polio_rw.sd_rp,b5=polio_rw.sd_rp,b6=polio_rw.sd_rp,
-                     psi=polio_rw.sd_rp,
-                     tau=polio_rw.sd_rp, sigma_dem=polio_rw.sd_rp,
-                     sigma_env=polio_rw.sd_rp,
-                     IO_0=ivp(polio_rw.sd_ivp), SO_0=ivp(polio_rw.sd_ivp)
-                   )
+  profile_rw.sd <- polio_rw.sd <-
+    rw.sd(
+      rho=0,
+      b1=polio_rw.sd_rp,b2=polio_rw.sd_rp,b3=polio_rw.sd_rp,
+      b4=polio_rw.sd_rp,b5=polio_rw.sd_rp,b6=polio_rw.sd_rp,
+      psi=polio_rw.sd_rp,
+      tau=polio_rw.sd_rp, sigma_dem=polio_rw.sd_rp,
+      sigma_env=polio_rw.sd_rp,
+      IO_0=ivp(polio_rw.sd_ivp), SO_0=ivp(polio_rw.sd_ivp)
+    )
   @
   
   \bi
