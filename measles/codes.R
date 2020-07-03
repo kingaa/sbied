@@ -33,7 +33,6 @@ rproc <- Csnippet("
   else
       seas = 1.0-amplitude;
 
-  
   // transmission rate
   beta = R0*(gamma+mu)*seas;
 
@@ -65,7 +64,7 @@ rproc <- Csnippet("
   W += (dw - dt)/sigmaSE;  // standardized i.i.d. white noise
   C += trans[4];           // true incidence
 ")
-## ----initializer-------------------------------------------------
+## ----rinit-------------------------------------------------
 rinit <- Csnippet("
   double m = pop/(S_0+E_0+I_0+R_0);
   S = nearbyint(m*S_0);
