@@ -1,4 +1,6 @@
-REXE = Rscript --vanilla
+# REXE = Rscript --vanilla
+# For some reason, --vanilla fails on my Mac 
+REXE = Rscript --no-save --no-restore --no-init-file
 
 slides.pdf handout.pdf notes.pdf: main.tex
 

@@ -7,6 +7,10 @@
 <<setup, child='../setup.Rnw'>>=
 @
 
+<<libraries,cache=F,echo=F,eval=T>>=
+library(pomp)
+@
+
 \begin{document}
 
 \maketitle
@@ -144,7 +148,7 @@
 \begin{frame}[fragile]
 
   \bi
-\item \citet{Martinez-Bakker2015} carried out this analysis for all 48 contigous states and District of Columbia, and their data and code are publicly available. The data we study, in \code{polio\_wisconsin.csv}, consist of \code{cases}, the monthly reported polio cases; \code{births}, the  monthly recorded births; \code{pop}, the annual census; \code{time}, date in years.
+\item \citet{Martinez-Bakker2015} carried out this analysis for all 48 contiguous states and District of Columbia, and their data and code are publicly available. The data we study, in \code{polio\_wisconsin.csv}, consist of \code{cases}, the monthly reported polio cases; \code{births}, the  monthly recorded births; \code{pop}, the annual census; \code{time}, date in years.
   \ei
 
   <<data>>=
@@ -197,7 +201,7 @@
 \begin{frame}[fragile]
 
   \includegraphics[width=6cm]{polio_fig1A.png} \hspace{-5mm}\parbox[b]{5.5cm}{
-    SBk, suscepbible babies $k$ months\\
+    SBk, susceptible babies $k$ months\\
     IB, infected babies\\
     SO, susceptible older people\\
     IO, infected older people
@@ -317,7 +321,7 @@
   @
   \bi
 \item 
-  We do not explictly code $R$, since it is defined implicitly as the total population minus the sum of the other compartments. Due to lifelong immunity, individuals in $R$ play no role in the dynamics. Even occasional negative values of $R$ (due to a discrepancy between the census and the mortality model) would not be a fatal flaw.
+  We do not explicitly code $R$, since it is defined implicitly as the total population minus the sum of the other compartments. Due to lifelong immunity, individuals in $R$ play no role in the dynamics. Even occasional negative values of $R$ (due to a discrepancy between the census and the mortality model) would not be a fatal flaw.
   \ei
 \end{frame}
 
@@ -712,7 +716,7 @@
 
 \item  either way, the computation will not be re-run unless you manually delete \code{results/pf1.rda}.
 
-\item  \code{stew} and \code{bake} reset the seed appropriately whether or not the computation is recomputed. Othewise, caching risks adverse consequences for reproducibility.
+\item  \code{stew} and \code{bake} reset the seed appropriately whether or not the computation is recomputed. Otherwise, caching risks adverse consequences for reproducibility.
 
   \ei
 
@@ -758,7 +762,7 @@
   \vspace{-1mm}
   
   For the data, there were \Sexpr{no_cases_data} months with no reported cases, similar to the mean of \Sexpr{round(no_cases_sim,1)} for simulations from the fitted model.
-  Months with no asyptomatic infections for the simulations were rare, on average \Sexpr{round(fadeout1_sim,1)} months per simulation.
+  Months with no asymptomatic infections for the simulations were rare, on average \Sexpr{round(fadeout1_sim,1)} months per simulation.
   Months with fewer than 100 infections averaged \Sexpr{round(fadeout100_sim,1)} per simulation, which in the context of a reporting rate of \Sexpr{signif(coef(polio)["rho"],3)} can explain the absences of case reports.
   The mean monthly infections due to importations, modeled by $\psi$, is \Sexpr{round(imports_sim,1)}.
   This does not give much opportunity for local elimination of poliovirus.
@@ -784,7 +788,7 @@
 
 \item We see from this simulation that the fitted model can generate report histories that look qualitatively similar to the data. However, there are things to notice in the reconstructed latent states. Specifically, the pool of older susceptibles, $S^O(t)$, is mostly increasing. The reduced case burden in the data in the time interval 1932--1945 is explained by a large initial recovered ($R$) population, which implies much higher levels of polio before 1932. There were large epidemics of polio in the USA early in the 20th century, so this is not implausible.
 
-\item A liklihood profile over the parameter $\tilde S^O_0$ could help to clarify to what extent this is a critical feature of how the model explains the data.
+\item A likelihood profile over the parameter $\tilde S^O_0$ could help to clarify to what extent this is a critical feature of how the model explains the data.
 
   \ei
 
@@ -993,7 +997,7 @@
 \begin{frame}[fragile]
   \frametitle{ARMA models as benchmarks}
   \bi
-\item Linear, Gaussian auto-regressive moving-average (ARMA) models provide non-mechansitic fits to the data including flexible dependence relationships.
+\item Linear, Gaussian auto-regressive moving-average (ARMA) models provide non-mechanistic fits to the data including flexible dependence relationships.
 \item We fit to $\log(y_n^*+1)$ and correct the likelihood back to the scale appropriate for the untransformed data:
 
   \ei
@@ -1008,7 +1012,7 @@
   \bi
 
 \item This 7-parameter model, which knows nothing of susceptible depletion, attains a likelihood of \Sexpr{round( arma_fit$loglik-sum(log_y),1)}.
-\item The aim of mechanistic modeling here is not to beat non-mechanstic models, but it is comforting that we're competitive with them.
+\item The aim of mechanistic modeling here is not to beat non-mechanistic models, but it is comforting that we're competitive with them.
 
   \ei
 
@@ -1125,7 +1129,7 @@
   
   \bi
 \item
-  Otherwise, the following code to compute the profile is identical to a global saerch $\dots$
+  Otherwise, the following code to compute the profile is identical to a global search $\dots$
   \ei
 
 \end{frame}
@@ -1210,7 +1214,7 @@
 \begin{frame}[fragile]
 
   \myexercise. \myemph{Demography and discrete time}.
-  It can be surprisingly hard to include birth, death, immigration, emmigration and aging into a disease model in satisfactory ways. Consider the strengths and weaknesses of the analysis presented, and list changes to the model that might be improvements. 
+  It can be surprisingly hard to include birth, death, immigration, emigration and aging into a disease model in satisfactory ways. Consider the strengths and weaknesses of the analysis presented, and list changes to the model that might be improvements. 
 
   In an imperfect world, it is nice to check the extent to which the conclusions are insensitive to alternative modeling decisions.  These are testable hypotheses, which can be addressed within a plug-and-play inference framework. Identify what would have to be done to investigate the changes you have proposed. Optionally, you could have a go at coding something up to see if it makes a difference.
 

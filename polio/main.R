@@ -1,3 +1,5 @@
+library(pomp)
+
 library(tidyverse)
 polio_data <- read_csv("polio_wisconsin.csv",comment="#")
 head(polio_data,5)
