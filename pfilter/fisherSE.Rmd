@@ -70,12 +70,6 @@ $$ \data{\theta_d} \pm 1.96 \big[{\data{I}}^{-1}\big]_{dd}^{1/2}.$$
 
 -----------------------
 
-<a href="#" onclick="goBack()">Back</a>
-
-<script>
-function goBack() {
-  window.history.back();
-}
-</script>
+[Back to the lesson](./index.html)
 
 --------------------------

@@ -1,5 +1,4 @@
-default: slides.pdf notes.pdf main.R \
-exercises.html exercises.R exer_ctmc_ode.html \
-seir3_exercise.html seir3_exercise.R
+default: index.html slides.pdf notes.pdf main.R \
+exercises.html exercises.R
 
 include ../rules.mk

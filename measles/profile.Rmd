@@ -475,11 +475,10 @@ pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma),
 
 --------------------------
 
-## [Back to measles lesson](./measles.html)
+## [Back to the lesson](./index.html)
 ## [Back to course homepage](../index.html)
 ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/measles/profile.R)
 
 ----------------------
 
 ## References
-
