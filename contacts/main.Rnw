@@ -219,7 +219,7 @@ registerDoRNG(2050320976)
 
 \end{frame}
 
-\section{Interpreting a fitted model}
+\section{Simulation-based investigation of the fitted model}
 
 \begin{frame}[fragile] 
 
@@ -274,7 +274,7 @@ registerDoRNG(2050320976)
 
 \end{frame}
 
-\section{PanelPOMP models and \package{panelPomp}}
+\section{PanelPOMP models and the \package{panelPomp} package}
 
 \begin{frame}[fragile] 
 
@@ -379,7 +379,7 @@ How would you find the \package{panelPomp} package methods available for working
 
 \end{frame}
 
-\section{The likelihood for PanelPOMPs}
+\section{Likelihood-based inference for PanelPOMPs}
 
 \begin{frame}[fragile] 
 
