@@ -6,7 +6,7 @@ output:
     toc: no
     toc_depth: 4
 bibliography: ../sbied.bib
-csl: ../ecology.csl
+csl: ../jss.csl
 ---
 
 \newcommand\prob[1]{\mathbb{P}\big[{#1}\big]}
@@ -56,7 +56,8 @@ Difficulties that might arise with non-negativity constraints can occurr when th
 
 ----------------------------
 
-## [Back to Stochastic Simulation lesson](./stochsim.html)
+### [Back to Stochastic Simulation lesson](./slides.pdf)
+### [Back to the course home page](../index.html)
 
 ----------------------------
 

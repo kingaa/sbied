@@ -1,36 +1,3 @@
-default: contacts.html contacts.R
-ifneq ($(INSTALLDIR),)
-	mkdir -p $(INSTALLDIR)
-	install -m0600 $^ $(INSTALLDIR)
-endif
+default: slides.pdf notes.pdf main.R exercises.html
 
-slides:
-	Rscript --vanilla -e "rmarkdown::render(\"contacts.Rmd\",output_format=\"slidy_presentation\")"
-
-html:
-	Rscript --vanilla -e "rmarkdown::render(\"contacts.Rmd\",output_format=\"html_document\")"
-
-
-%.html: %.Rmd
-	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
-
-%.html: %.md
-	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
-
-%.R: %.Rmd
-	Rscript --vanilla -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
-
-%.tex: %.Rnw
-	Rscript -e "knitr::knit(\"$*.Rnw\",output=\"$*.tex\")"
-
-%.pdf: %.tex
-	pdflatex $*.tex
-
-clean:
-	$(RM) *.o *.so *.log *.aux *.out *.nav *.snm *.toc *.bak
-	$(RM) Rplots.ps Rplots.pdf
-
-fresh: clean
-	$(RM) -r cache figure
+include ../rules.mk

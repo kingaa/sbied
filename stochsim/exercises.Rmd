@@ -1,12 +1,12 @@
 ---
-title: "Worked solutions to basic exercises"
-author: "Aaron King and Carles Bret&oacute;"
+title: "Worked solutions to exercises on simulation of stochastic dynamic models"
+author: "Aaron King, Carles Bret&oacute; and Edward Ionides"
 output:
   html_document:
     toc: yes
     toc_depth: 4
 bibliography: ../sbied.bib
-csl: ../ecology.csl
+csl: ../jss.csl
 ---
 
 [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
@@ -15,10 +15,27 @@ Please share and remix noncommercially, mentioning its origin.
 
 
 ```{r include=FALSE}
-source("stochsim.R")
+source("main.R")
 ```
 
-## Basic Exercise: Explore the SIR model
+## Exercise: Little o notation
+
+We combine $f(x+\delta)=f(x)+ \delta g(x) + o(\delta)$, the definition that $ h(\delta)=o(\delta)$ means $ \lim_{\delta\to 0} \frac{h(\delta)}{\delta} = 0$.
+Thus, we get
+$$\lim_{\delta\to 0} \frac{f(x+\delta)-f(x)}{\delta} = g(x)$$
+which matches the definition that $df(x)/dx = g(x)$.
+
+Little o notation is compact, and so is useful for simplifying complex expressions. The downside is that we have to put in the work to convert it to limit statements if we want to check that the math is formally correct.
+
+--------------
+
+## Exercise: Euler versus Gillespie
+
+For reasons explained in the lesson, we may not be critically worried about whether a numerical simulation method gives an exact solution to the systems defining a continuous time equation. The Gillespie algorithm gives an exact solution (if rates are constant) at the expense of additional computation time. We may on occastion want an exact simulator, and in that case Gillespie can be used.
+
+-------------
+
+## Exercise: Explore the SIR model
 
 In the simulated outbreaks, the overall incidence is much too low, and the outbreak dies out after only a few weeks. 
 To attempt to simulate data for which the observed data is a more plausible realization, we might try increasing the force of infection.
@@ -69,7 +86,7 @@ measSIR %>%
 
 
 
-## Basic Exercise: The SEIR model
+## Exercise: The SEIR model
 
 The existing code may be modified as follows:
 
@@ -128,8 +145,9 @@ measSEIR %>%
 
 ----------------------------
 
-### [Back to Stochastic Simulation lesson](./stochsim.html)
 ### [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/exercises.R)
+### [Back to Stochastic Simulation lesson](./slides.pdf)
+### [Back to the course home page](../index.html)
 
 ----------------------------
 

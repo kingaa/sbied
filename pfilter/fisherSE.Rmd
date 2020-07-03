@@ -6,7 +6,7 @@ output:
     toc: yes
     toc_depth: 4
 bibliography: ../sbied.bib
-csl: ../ecology.csl
+csl: ../jss.csl
 ---
 
 -----------------------------------
@@ -19,42 +19,11 @@ Produced in R version `r getRversion()`.
 
 -----------------------------------
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
-library(knitr)
-prefix <- "fisherSE"
-opts_chunk$set(
-  progress=TRUE,
-  prompt=FALSE,tidy=FALSE,highlight=TRUE,
-  strip.white=TRUE,
-  warning=FALSE,
-  message=FALSE,
-  error=FALSE,
-  echo=TRUE,
-  cache=TRUE,
-  results='markup',
-  fig.show='asis',
-  size='small',
-  fig.lp="fig:",
-  fig.path=paste0("figure/",prefix,"-"),
-  cache.path=paste0("cache/",prefix,"-"),
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=3,fig.width=4.85,
-  dpi=100,
-  dev='png',
-  dev.args=list(bg='transparent')
-  )
+```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
-options(
-  keep.source=TRUE,
-  stringsAsFactors=FALSE,
-  encoding="UTF-8"
-  )
-
 set.seed(594709947L)
 library(ggplot2)
-theme_set(theme_bw())
 library(plyr)
 library(reshape2)
 library(magrittr)

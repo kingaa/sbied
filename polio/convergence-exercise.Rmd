@@ -5,53 +5,13 @@ output:
   html_document:
     toc: no
 bibliography: ../sbied.bib
-csl: ../ecology.csl
+csl: ../jss.csl
 ---
 
 
 -----------------------------------
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
-library(knitr)
-prefix <- "nelder"
-opts_chunk$set(
-  progress=TRUE,
-  prompt=FALSE,tidy=FALSE,highlight=TRUE,
-  strip.white=TRUE,
-  warning=FALSE,
-  message=FALSE,
-  error=FALSE,
-  echo=TRUE,
-  cache=TRUE,
-  results='markup',
-  fig.show='asis',
-  size='small',
-  fig.lp="fig:",
-  fig.path=paste0("figure/",prefix,"-"),
-  cache.path=paste0("cache/",prefix,"-"),
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=3,fig.width=4.85,
-  dpi=100,
-  dev='png',
-  dev.args=list(bg='transparent')
-  )
-```
-```{r prelims,include=FALSE,cache=FALSE}
-options(
-  keep.source=TRUE,
-  stringsAsFactors=FALSE,
-  encoding="UTF-8"
-  )
-
-set.seed(594709947L)
-library(ggplot2)
-theme_set(theme_bw())
-library(plyr)
-library(reshape2)
-library(magrittr)
-library(pomp)
-stopifnot(packageVersion("pomp")>"2.0.9")
+```{r knitr-opts,child="../setup.Rmd"}
 ```
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
@@ -103,7 +63,3 @@ Please share and remix noncommercially, mentioning its origin.
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
 This version produced in R `r getRversion()` on `r format(Sys.Date(), "%B %d, %Y")`.
-
-
-
-

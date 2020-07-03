@@ -1,2 +1,0 @@
-\documentclass[t,handout]{beamer}
-\input{measles.tex}

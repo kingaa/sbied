@@ -10,7 +10,7 @@ output:
     number_sections: FALSE
     df_print: kable
 bibliography: ../sbied.bib
-csl: ../ecology.csl
+csl: ../jss.csl
 ---
 
 ```{css styles,echo=FALSE,purl=FALSE}
@@ -41,33 +41,7 @@ Please share and remix non-commercially, mentioning its origin.
 
 Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
-library(knitr)
-prefix <- "if2_settings"
-opts_chunk$set(
-  progress=TRUE,
-  prompt=FALSE,
-  tidy=FALSE,
-  highlight=TRUE,
-  strip.white=TRUE,
-  warning=FALSE,
-  message=FALSE,
-  error=FALSE,
-  echo=TRUE,
-  cache=TRUE,
-  cache.extra=rand_seed,
-  results='markup',
-  fig.show='asis',
-  size='small',
-  fig.path=paste0("figure/",prefix,"-"),
-  cache.path=paste0("cache/",prefix,"-"),
-  fig.align='center',
-  fig.height=4,fig.width=6.83,
-  dpi=100,
-  dev='png',
-  dev.args=list(bg='transparent')
-)
-options(keep.source=TRUE,encoding="UTF-8")
+```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 
 ## Choosing the algorithmic settings for IF2

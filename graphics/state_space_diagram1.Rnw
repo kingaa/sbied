@@ -1,0 +1,21 @@
+<<ssdiag1>>=
+library(grid)
+library(gridExtra)
+vp <- viewport(
+  x=unit(0.5,"npc"),y=unit(0.54,"npc"),
+  width=unit(0.5,"npc"),height=unit(0.5,"npc")
+)
+
+pushViewport(vp)
+
+grid.ellipse(x=0.5,y=0.2,angle=0,ar=2.5,size=20,gp=gpar(lwd=2,col='black'))
+grid.text(x=0.5,y=0.2,label="state process",gp=gpar(fontsize=12,fontface='bold'))
+
+grid.ellipse(x=0.2,y=0.7,angle=0,ar=2.5,size=18,gp=gpar(lwd=2,col='black'))
+grid.text(x=0.2,y=0.7,label="measurement\n process",gp=gpar(fontsize=12,fontface='bold'))
+
+grid.ellipse(x=0.7,y=0.8,angle=0,ar=1.5,size=16,gp=gpar(lwd=2,col='black'))
+grid.text(x=0.7,y=0.8,label="data",gp=gpar(fontsize=12,fontface='bold'))
+
+popViewport()
+@

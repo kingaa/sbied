@@ -6,7 +6,7 @@ output:
     toc: yes
     toc_depth: 4
 bibliography: ../sbied.bib
-csl: ../ecology.csl
+csl: ../jss.csl
 ---
 
 \newcommand\prob{\mathbb{P}}
@@ -39,44 +39,11 @@ Produced with **R** version `r getRversion()`.
 
 -----------------------------------
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
-library(knitr)
-prefix <- "monteCarlo"
-opts_chunk$set(
-  progress=TRUE,
-  prompt=FALSE,tidy=FALSE,highlight=TRUE,
-  strip.white=TRUE,
-  warning=FALSE,
-  message=FALSE,
-  error=FALSE,
-  echo=TRUE,
-  cache=TRUE,
-  results='markup',
-  fig.show='asis',
-  size='small',
-  fig.lp="fig:",
-  fig.path=paste0("figure/",prefix,"-"),
-  cache.path=paste0("cache/",prefix,"-"),
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=4,fig.width=6.83,
-  dpi=300,
-  dev='png',
-  dev.args=list(bg='transparent')
-  )
+```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
-options(
-  keep.source=TRUE,
-  stringsAsFactors=FALSE,
-  encoding="UTF-8"
-  )
-
 set.seed(594709947L)
 library(tidyverse)
-theme_set(theme_bw())
-library(pomp)
-stopifnot(packageVersion("pomp")>="2.1")
 ```
 
 ## Objectives
@@ -278,7 +245,7 @@ it follows that $Y\!\sim\!\mathrm{uniform}(D)$.
 * Consider an analogy to throwing darts. If the darts are thrown in such a way as to be equally likely to land anywhere in $U$, then those that do land in $D$ are equally likely to land anywhere in $D$.
 
 
-```{r region-diagram,echo=F,,fig.width=2,fig.height=2}
+```{r region-diagram,echo=F,fig.width=2,fig.height=1}
 op <- par(mar=c(0,1,0,1),mgp=c(2,1,0),font=4,family="sans")
 plot(c(0,1),c(0,1),type='n',ann=F,bty='o',tcl=0)
 t <- seq(0,1,by=0.001)
@@ -294,9 +261,7 @@ lines(xy[,1],xy[,2])
 text(x=c(0.05,0.5,0.9),y=c(0.95,0.75,0.1),labels=c("U","D","A"))
 arrows(0.88,0.1,0.44,0.28,lwd=1.5,length=0.1)
 par(op)
-```    
-
-
+```
 
 <br>
 
@@ -350,7 +315,7 @@ where $M$ is a constant chosen so that $Mg(x)\le f(x)$ for all $x$.
 
 2. if $U{\le}f(Y)$, then let $X=Y$ else repeat step 1.
 
-```{r rejection-method-diagram,echo=F,fig.width=2,fig.height=2}
+```{r rejection-method-diagram,echo=F,fig.width=2,fig.height=1}
 op <- par(mar=c(0,1,0,1),mgp=c(2,1,0),font=4,family="sans")
 x <- seq(-5,10,by=0.01)
 f <- 0.2*dnorm(x,mean=-2,sd=0.5)+0.5*dnorm(x,mean=1,sd=1)+0.3*dnorm(x,mean=6,sd=2)

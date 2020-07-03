@@ -1,0 +1,13 @@
+<<seir-diagram>>=
+library(grid)
+vp <- viewport(width=unit(0.95,"npc"),height=unit(0.95,"npc"))
+pushViewport(vp)
+fs <- 24
+grid.rect(x=c(1/5,2/5,3/5,4/5),y=1/2,width=1/10,height=1,just=c(0.5,0.5),gp=gpar(fill="white",lwd=2))
+grid.text(x=c(1/5,2/5,3/5,4/5),y=1/2,label=c(expression(S),expression(E),expression(I),expression(R)),
+  gp=gpar(fontface=3,fontsize=fs))
+grid.lines(x=c(5/20,7/20),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(9/20,11/20),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
+grid.lines(x=c(13/20,15/20),y=1/2,arrow=arrow(length=unit(0.1,"npc")),gp=gpar(lwd=2))
+popViewport()
+@

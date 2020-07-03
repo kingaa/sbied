@@ -1,0 +1,6 @@
+\documentclass{article}
+\usepackage{beamerarticle}
+\usepackage[top=1in,left=1in,footskip=1in]{geometry}
+\usepackage[unicode=true,bookmarksnumbered=false,bookmarksopen=false,breaklinks=true,backref=section,colorlinks=true,urlcolor=blue,citecolor=black,linkcolor=blue,filecolor=blue]{hyperref}
+\setjobnamebeamerversion{slides}
+\input{main}

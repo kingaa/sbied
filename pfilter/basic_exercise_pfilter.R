@@ -1,17 +1,10 @@
-options(
-  keep.source=TRUE,
-  stringsAsFactors=FALSE,
-  encoding="UTF-8"
-  )
-
 set.seed(594709947L)
 library(ggplot2)
-theme_set(theme_bw())
 library(plyr)
 library(reshape2)
 library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>"2.0.9")
+stopifnot(packageVersion("pomp")>="3.0")
 
 library(tidyverse)
 library(pomp)

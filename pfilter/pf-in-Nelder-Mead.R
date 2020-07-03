@@ -1,80 +1,9 @@
-#' ---
-#' title: "Direct maximization of the particle filter likelihood"
-#' author: "Aaron A. King and Edward L. Ionides"
-#' output:
-#'   html_document:
-#'     toc: yes
-#'     toc_depth: 4
-#' bibliography: ../sbied.bib
-#' csl: ../ecology.csl
-#' ---
-#' 
-#' -----------------------------------
-#' 
-#' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-#' Please share and remix noncommercially, mentioning its origin.  
-#' ![CC-BY_NC](../graphics/cc-by-nc.png)
-#' 
-#' Produced in R version `r getRversion()`.
-#' 
-#' -----------------------------------
-#' 
-
-## ----prelims,include=FALSE,cache=FALSE-----------------------------------
-options(
-  keep.source=TRUE,
-  stringsAsFactors=FALSE,
-  encoding="UTF-8"
-  )
-
 library(plyr)
 library(tidyverse)
-theme_set(theme_bw())
 library(pomp)
-stopifnot(packageVersion("pomp")>="2.1")
+stopifnot(packageVersion("pomp")>="3.0")
 set.seed(594709947L)
 
-#' 
-#' \newcommand\prob{\mathbb{P}}
-#' \newcommand\E{\mathbb{E}}
-#' \newcommand\var{\mathrm{Var}}
-#' \newcommand\cov{\mathrm{Cov}}
-#' \newcommand\loglik{\ell}
-#' \newcommand\R{\mathbb{R}}
-#' \newcommand\data[1]{#1^*}
-#' \newcommand\params{\, ; \,}
-#' \newcommand\transpose{\scriptsize{T}}
-#' \newcommand\eqspace{\quad\quad\quad}
-#' \newcommand\lik{\mathscr{L}}
-#' \newcommand\loglik{\ell}
-#' \newcommand\profileloglik[1]{\ell^\mathrm{profile}_#1}
-#' \newcommand\Rzero{\mathfrak{R}_0}
-#' 
-#' In the toy example we've been working with, the default parameter set is not particularly close to the MLE.
-#' One way to find the MLE is to try optimizing the estimated likelihood directly.
-#' There are of course many standard optimization algorithms we might use for this.
-#' However, three issues arise immediately:
-#' 
-#' 1. The particle filter gives us a stochastic estimate of the likelihood.
-#' We can reduce this variability by making $J$ larger, but we cannot make it go away.
-#' If we use a deterministic optimizer (i.e., one that assumes the objective function is evaluated deterministically), then we must control this variability somehow.
-#' For example, we can fix the seed of the pseudo-random number generator (RNG).
-#' A side effect will be that the objective function becomes jagged, marked by many small local knolls and pits.
-#' Alternatively, we can use a stochastic optimization algorithm, with which we will be only be able to obtain estimates of our MLE.
-#' This is the trade-off between a rough and a noisy objective function.
-#' 1. Because the particle filter gives us just an estimate of the likelihood and no information about the derivative, we must choose an algorithm that is "derivative-free".
-#' There are many such, but we can expect less efficiency than would be possible with derivative information.
-#' Note that finite differencing is not an especially promising way of constructing derivatives. 
-#' The price would be a $n$-fold increase in cpu time, where $n$ is the dimension of the parameter space.
-#' Also, since the likelihood is noisily estimated, we would expect the derivative estimates to be even noisier.
-#' 1. Finally, the parameters set we must optimize over is not unbounded.
-#' In particular, we must have $\beta,\mu_{IR}>0$ and $0<\rho,\eta<1$.
-#' We must therefore select an optimizer that can solve this *constrained maximization problem*, or find some of way of turning it into an unconstrained maximization problem.
-#' For example, we can transform the parameters onto a scale on which there are no constraints.
-#' 
-#' Let's try this out on the toy SIR model we were working with, reconstructed as follows.
-#' 
-## ----model-construct-----------------------------------------------------
 library(tidyverse)
 library(pomp)
 
@@ -116,30 +45,12 @@ read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
     params=c(Beta=15,mu_IR=0.5,rho=0.5,eta=0.06,N=38000)
   ) -> measSIR
 
-#' 
-#' Here, let's opt for deterministic optimization of a rough function.
-#' We'll try using `optim`'s default method: Nelder-Mead, fixing the random-number generator seed to make the likelihood calculation deterministic.
-#' Since Nelder-Mead is an unconstrained optimizer, we must transform the parameters.
-#' The following introduces such a transformation into the `pomp` object.
-## ----partrans------------------------------------------------------------
 measSIR %>%
   pomp(partrans=parameter_trans(log=c("Beta","mu_IR"),logit=c("rho","eta")),
     paramnames=c("Beta","mu_IR","eta","rho")) -> measSIR
 
-#' 
-#' We can think of the parameters that we furnished when creating `measSIR` as a kind of reference point in parameter space.
-## ----ref-params----------------------------------------------------------
 coef(measSIR)
 
-#' 
-#' The following constructs a function returning the negative log likelihood of the data at a given point in parameter space.
-#' The parameters to be estimated are named in the `est` argument;
-#' the others will remain fixed at the reference values.
-#' Note how the `freeze` function is used to fix the seed of the RNG.
-#' Note too, how this function returns a large (and therefore bad) value when the particle filter encounters and error.
-#' This behavior makes the objective function more robust.
-#' 
-## ----like-optim-1--------------------------------------------------------
 neg.ll <- function (par, est) {
   try(
     freeze({
@@ -154,9 +65,6 @@ neg.ll <- function (par, est) {
   if (inherits(pf,"try-error")) 1e10 else -logLik(pf)
 }
 
-#' 
-#' Now we call `optim` to minimize this function:
-## ----like-optim-2--------------------------------------------------------
 ## use Nelder-Mead with fixed RNG seed
 estpars <- c("Beta","mu_IR","eta")
 optim(
@@ -176,49 +84,9 @@ fit$val
 lls <- replicate(n=5,logLik(pfilter(mle,Np=20000)))
 ll <- logmeanexp(lls,se=TRUE); ll
 
-#' 
-#' We plot some simulations at these parameters.
-## ----sims1---------------------------------------------------------------
 mle %>% simulate(nsim=10,format="data.frame",include.data=TRUE) -> sims
 
-#' The data are shown in blue.
-#' The `r max(sims$.id)` simulations are shown in red.
-## ----sims1-plot,echo=F---------------------------------------------------
 sims %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   guides(color=FALSE)+
   geom_line()
-
-#' 
-#' <br>
-#' 
-#' --------------------------
-#' 
-#' #### Exercise: Global maximization
-#' 
-#' The search of parameter space we conducted above was local.
-#' It is possible that we found a local maximum, but that other maxima exist with higher likelihoods.
-#' Conduct a more thorough search by initializing the Nelder-Mead starting points across a wider region of parameter space.
-#' Do you find any other local maxima?
-#' 
-#' <br>
-#' 
-#' --------
-#' 
-#' #### Exercise: Fit more parameters.
-#' 
-#' Try to estimate $\beta$, $\mu_{IR}$, $\rho$, and $\eta$ simultaneously.
-#' Does your estimate of $\Rzero$ differ from the value we computed from the raw data?
-#' How do you interpret the agreement or lack thereof?
-#' 
-#' --------------------------
-#' 
-#' <a href="#" onclick="goBack()">Back</a>
-#' 
-#' <script>
-#' function goBack() {
-#'   window.history.back();
-#' }
-#' </script>
-#' 
-#' --------------------------

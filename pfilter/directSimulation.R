@@ -1,14 +1,7 @@
-options(
-  keep.source=TRUE,
-  stringsAsFactors=FALSE,
-  encoding="UTF-8"
-)
-
 library(plyr)
 library(tidyverse)
-theme_set(theme_bw())
 library(pomp)
-stopifnot(packageVersion("pomp")>"2.0.9")
+stopifnot(packageVersion("pomp")>="3.0")
 set.seed(594709947L)
 
 library(tidyverse)

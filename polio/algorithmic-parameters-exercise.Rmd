@@ -1,0 +1,56 @@
+---
+title: "Exercise: choosing algorithmic paramters"
+author: "Edward L. Ionides, Aaron A. King and Kidus Asfaw"
+output:
+  html_document:
+    toc: no
+bibliography: ../sbied.bib
+csl: ../jss.csl
+---
+
+```{r knitr-opts,child="../setup.Rmd"}
+```
+
+-----------------------------------
+
+### Exercise
+
+Suppose you have selected a number of particles, `Np`, and number of iterated filtering iterations, `Nmif`, and number of Monte Carlo replications, `Reps`, that give a 10 minute maximization search using `mif2()`. Propose how you would adjust these to plan a more intensive search lasting about 2 hours.
+
+<br>
+
+--------
+
+---------
+
+### Solution
+
+* First, suppose we are working on a single processor. The time taken is approximately linear in `Np`, `Nmif` and `Reps`. An initial suggestion might be to scale all of them by an equal factor, i.e.,
+```{r}
+(120/10)^(1/3)
+```
+
+* If you increase `Nmif`, you might also want to increase the `cooling.factor.50` argument to `mif2` to slow down the cooling. Or not. Looking at convergence plots will give some guide. If the convergence plots become flat at large iterations, there may not be much to be gained by further increasing `Nmif`
+
+* `Reps` gives the number of independent Monte Carlo replications. It is nice to have `Reps` large enough to get a good measure of uncertainty. `Reps=20` may be large enough to do that. Larger values of `Reps` may have a chance of identifying some hard-to-find mode in the likelihood if it exists.
+
+* Increasing `Np` can help considerably, with diminishing returns once the Monte Carlo error on the likelihood falls below one log unit. 
+
+* If you can increase the number of processors, for example by running your code on a computing node with 40 cores, you can set `Reps` to match the number of cores (or multiples of the number of cores) and then you can increase `Nmif` and `Np` by a corresponding factor while keeping the run time constant.
+
+* You can experiment with what values of the algorithmic parameters let you consistently get multiple searches ending close to the maximum you have identified. How to do this depends on your model and data, so there is not much substitute for experimentation.
+
+
+-----------------------------------
+
+----------------------------------
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+This version produced in R `r getRversion()` on `r format(Sys.Date(), "%B %d, %Y")`.
+
+
+
+
