@@ -1,8 +1,3 @@
-<<ggplot-theme,include=FALSE,cache=FALSE,purl=FALSE>>=
-library(ggplot2)
-theme_set(theme_bw())
-@
-
 <<setup-child,include=FALSE,cache=FALSE,purl=FALSE>>=
 library(knitr)
 opts_chunk$set(
@@ -39,9 +34,10 @@ options(
   keep.source=TRUE,
   encoding="UTF-8"
 )
-@
 
-<<knit_print>>=
+library(ggplot2)
+theme_set(theme_bw())
+
 registerS3method(
   "knit_print",
   "data.frame",
