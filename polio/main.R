@@ -224,31 +224,36 @@ polio_box <- rbind(
 
 stew(file="results/box_eval.rda",{
   time_start_box_eval <- Sys.time()
-  m3 <- foreach(i=1:polio_Nreps_global,.packages='pomp',
-                .combine=c) %dopar% mif2(m2[[1]],
-                                         params=c(apply(polio_box,1,function(x)runif(1,x[1],x[2])),
-                                                  polio_fixed_params)
-                                         )
+  m3 <- foreach(i=1:polio_Nreps_global,
+                .packages='pomp',.combine=c) %dopar%
+    mif2(m2[[1]],
+         params=c(apply(polio_box,1,function(x)runif(1,x[1],x[2])),
+                  polio_fixed_params)
+         )
   lik_m3 <- foreach(i=1:polio_Nreps_global,.packages='pomp',
-                    .combine=rbind) %dopar% logmeanexp(
-                                              replicate(polio_Nreps_eval,
-                                                        logLik(pfilter(polio,
-                                                                       params=coef(m3[[i]]),Np=polio_Np))), 
-                                              se=TRUE)
+                    .combine=rbind) %dopar%
+    logmeanexp(
+      replicate(polio_Nreps_eval,
+                logLik(pfilter(polio,
+                               params=coef(m3[[i]]),Np=polio_Np))), 
+      se=TRUE)
   time_end_box_eval <- Sys.time()
 })
 
 r3 <- data.frame(logLik=lik_m3[,1],logLik_se=lik_m3[,2],
                  t(sapply(m3,coef)))
-if(run_level>1) write.table(r3,file="polio_params_out.csv",
-                            append=TRUE,col.names=FALSE,row.names=FALSE)
+if(run_level>1)
+  write.table(r3,file="polio_params_out.csv",
+              append=TRUE,col.names=FALSE,row.names=FALSE)
 summary(r3$logLik,digits=5)
 
 pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
       data=subset(r3,logLik>max(logLik)-20))
 
-nb_lik <- function(theta) -sum(dnbinom(as.vector(obs(polio)),
-                                       size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))
+nb_lik <- function(theta)
+  -sum(dnbinom(as.vector(obs(polio)),
+               size=exp(theta[1]),
+               prob=exp(theta[2]),log=TRUE))
 nb_mle <- optim(c(0,-5),nb_lik)
 -nb_mle$value
 
