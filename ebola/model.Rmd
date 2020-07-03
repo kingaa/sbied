@@ -118,7 +118,7 @@ Please share and remix noncommercially, mentioning its origin.
 
 Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
-[Back to Ebola case study](./ebola.html)  
+[Back to Ebola case study](./slides.pdf)  
 [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R)  
 
 ----------------------
