@@ -1,33 +1,57 @@
-%\documentclass[handout]{beamer}
-\documentclass{beamer}
-\usepackage{natbib}
-\bibliographystyle{dcu}
-\input{../header.tex}
+\usepackage[round,authoryear]{natbib}
+\usepackage{paralist}
+\usepackage{pgfpages}
+\usepackage{mathtools}
+\usepackage{listings}
+\usepackage{color}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{language=C,showstringspaces=false,keywordstyle=\color{blue},commentstyle=\color{mygreen},basicstyle=\footnotesize}
 
+\usefonttheme[onlymath]{serif}
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\E[1]{\expect{#1}}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dlta[1]{{\Delta}{#1}}
+\newcommand\lik{\mathcal{L}}
+\newcommand\loglik{\ell}
+\newcommand\equals{{=\,}}
+\newcommand\Rlanguage{\textsf{R}\xspace}
+\newcommand\data[1]{#1^*}
+\newcommand\params{\, ; \,}
+\newcommand\profileloglik{\ell_\mathrm{profile}}
+\newcommand\Rzero{\mathfrak{R}_0}
+\newcommand\argmax{\mathop{\mathrm{argmax}}}
+\newcommand\argmin{\mathop{\mathrm{argmin}}}
+\newcommand\answer[2]{#1} % to show blank space
+\newcommand\eqspace{\quad\quad\quad}
+\newcommand\eqskip{\vspace{2.5mm}}
+\newcommand\myeq{\hspace{10mm}}
+\newcommand\code[1]{\texttt{#1}}
+\newcommand\package[1]{\textbf{#1}}
+
+\usepackage{xspace}        
+\usepackage{amssymb}
+\usepackage{graphicx}
 \usepackage{hyperref}
-%\usepackage{listings}
 
 \newcommand\CHAPTER{5}
 
-% \hypersetup{
-% colorlinks=true,
-% linkcolor=blue,
-% filecolor=magenta,
-% urlcolor=cyan,
-% }
 
 \setbeamertemplate{footline}[frame number]
 
-\newcommand\eqspace{\quad\quad\quad}
-\newcommand\eqskip{\vspace{2.5mm}}
-\newcommand\dlta[1]{{\Delta}{#1}}
-\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\mode<beamer>{\usetheme{AnnArbor}}
+\mode<beamer>{\setbeamertemplate{footline}}
+\mode<beamer>{\setbeamertemplate{footline}[frame number]}
+\mode<beamer>{\setbeamertemplate{frametitle continuation}[from second][\insertcontinuationcountroman]}
+\mode<beamer>{\setbeamertemplate{navigation symbols}{}}
 
-\newcommand\myeq{\hspace{10mm}}
-%\lstset{breaklines=true,showstringspaces=false} % break long lines
-% \newcommand\answer[2]{\textcolor{blue}{#2}} % to show answers
-% \newcommand\answer[2]{{\color{blue}{#2}}} % to show answers
-\newcommand\answer[2]{#1} % to show blank space
+\mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
+
 
 \begin{document}
 % knitr set up
@@ -396,10 +420,8 @@ We require a simulator for the BSEIR model. Notable complexities include:
 \end{enumerate}
 \end{frame}
 
-\begin{frame}[fragile]
-\frametitle{Implementation of the process model I}
 <<rprocess, echo = FALSE, tidy = TRUE>>=
-rproc1 <- "
+rproc <- Csnippet("
   double beta, br, seas, foi, dw, births;
   double rate[6], trans[6];
 
@@ -417,8 +439,7 @@ rproc1 <- "
       seas = 1.0+amplitude*0.2411/0.7589;
   else
       seas = 1.0-amplitude;
-"
-rproc2 <- "
+
   // transmission rate
   beta = R0*(gamma+mu)*seas;
   // expected force of infection
@@ -434,8 +455,7 @@ rproc2 <- "
 
   // Poisson births
   births = rpois(br*dt);
-"
-rproc3 <- "
+
   // transitions between classes
   reulermultinom(2,S,&rate[0],dt,&trans[0]);
   reulermultinom(2,E,&rate[2],dt,&trans[2]);
@@ -447,30 +467,70 @@ rproc3 <- "
   R = pop - S - E - I;
   W += (dw - dt)/sigmaSE;  // standardized i.i.d. white noise
   C += trans[4];           // true incidence
-"
-rproc <- paste(rproc1,rproc2,rproc3,sep='\n')
-cat(rproc1,sep='\n')
+")
 @
-\end{frame}
 
-\begin{frame}[fragile]
-\frametitle{Implementation of the process model II}
-<<rprocess2, echo = FALSE, tidy = TRUE>>=
-cat(rproc2,sep='\n')
-@
-\end{frame}
+\begin{frame}[fragile,allowframebreaks]
+\frametitle{Implementation of the process model}
+\begin{lstlisting}
+  double beta, br, seas, foi, dw, births;
+  double rate[6], trans[6];
+  
+  // cohort effect
+  if (fabs(t-floor(t)-251.0/365.0) < 0.5*dt)
+    br = cohort*birthrate/dt + (1-cohort)*birthrate;
+  else
+    br = (1.0-cohort)*birthrate;
 
-\begin{frame}[fragile]
-\frametitle{Implementation of the process model III}
-<<rprocess3, echo = FALSE, tidy = TRUE>>=
-cat(rproc3,sep='\n')
-@
+  // term-time seasonality
+  t = (t-floor(t))*365.25;
+  if ((t>=7 && t<=100) ||
+      (t>=115 && t<=199) ||
+      (t>=252 && t<=300) ||
+      (t>=308 && t<=356))
+      seas = 1.0+amplitude*0.2411/0.7589;
+  else
+      seas = 1.0-amplitude;
+
+  
+  // transmission rate
+  beta = R0*(gamma+mu)*seas;
+
+  // expected force of infection
+  foi = beta*pow(I+iota,alpha)/pop;
+  
+  // white noise (extrademographic stochasticity)
+  dw = rgammawn(sigmaSE,dt);
+  
+  rate[0] = foi*dw/dt;  // stochastic force of infection
+  rate[1] = mu;         // natural S death
+  rate[2] = sigma;      // rate of ending of latent stage
+  rate[3] = mu;         // natural E death
+  rate[4] = gamma;      // recovery
+  rate[5] = mu;         // natural I death
+
+  // Poisson births
+  births = rpois(br*dt);
+  
+  // transitions between classes
+  reulermultinom(2,S,&rate[0],dt,&trans[0]);
+  reulermultinom(2,E,&rate[2],dt,&trans[2]);
+  reulermultinom(2,I,&rate[4],dt,&trans[4]);
+
+  S += births   - trans[0] - trans[1];
+  E += trans[0] - trans[2] - trans[3];
+  I += trans[2] - trans[4] - trans[5];
+  R = pop - S - E - I;
+  W += (dw - dt)/sigmaSE;  // standardized i.i.d. white noise
+  C += trans[4];           // true incidence
+\end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Implementation of the process model IV}
 \begin{itemize}
-\item In the above, $C$ represents the true incidence, i.e., the number of new infections occurring over an interval.
+\item The above code is in the \code{C} programming language. As shown in the remaining components (e.g. \code{rinit} below), we create an \code{R} string with these codes and pass the resulting string to the \code{Csnippet} function.
+\item In the above, the variable named \code{C} represents the true incidence, i.e., the number of new infections occurring over an interval.
 \item Since recognized measles infections are quarantined, we argue that most infection occurs before case recognition so that true incidence is a measure of the number of individuals progressing from the I to the R compartment in a given interval.
 \end{itemize}
 \end{frame}
@@ -553,7 +613,7 @@ rmeas <- Csnippet("
 dat %>%
   pomp(t0=with(dat,2*time[1]-time[2]),
     time="time",
-    rprocess=euler(Csnippet(rproc),delta.t=1/365.25),
+    rprocess=euler(rproc,delta.t=1/365.25),
     rinit=rinit,
     dmeasure=dmeas,
     rmeasure=rmeas,
@@ -570,7 +630,7 @@ dat %>%
 \begin{frame}[fragile]
 \frametitle{Estimates from \cite{He2010}}
 \cite{He2010} estimated the parameters of this model.
-The full set is included in the \myemph{R} code accompanying this document, where they are read into a data frame called `mles`.
+The full set is included in the \Rlanguage code accompanying this document, where they are read into a data frame called `mles`.
 <<mles,include=FALSE>>=
 read.csv(text="
 town,loglik,loglik.sd,mu,delay,sigma,gamma,rho,R0,amplitude,alpha,iota,cohort,psi,S_0,E_0,I_0,R_0,sigmaSE
@@ -1243,20 +1303,15 @@ How do your results compare with those at the MLE? Compare likelihoods but also 
 \item Licensed under the \href{Creative Commons Attribution-NonCommercial license}{http://creativecommons.org/licenses/by-nc/4.0/}.
 Please share and remix noncommercially, mentioning its origin.
 \includegraphics[]{../graphics/cc-by-nc.png}
-\item Produced in \myemph{R} version \Sexpr{getRversion()} using \package{pomp} version \Sexpr{packageVersion('pomp')}.
+\item Produced in \Rlanguage version \Sexpr{getRversion()} using \package{pomp} version \Sexpr{packageVersion('pomp')}.
 
 \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks]
 \frametitle{References}
-\bibliography{../sbied.bib}
+  \bibliographystyle{dcu}
+  \bibliography{../sbied.bib}
 \end{frame}
-
-
-\end{document}
-
-
-
 
 \end{document}
