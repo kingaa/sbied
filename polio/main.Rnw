@@ -3,6 +3,7 @@
 \newcommand\CHAPTER{6}
 \title{Lesson 6:\\Case study: Polio}
 \author{Aaron A. King, Edward L. Ionides, and Kidus Asfaw}
+\date{}
 
 <<setup, child='../setup.Rnw'>>=
 @
@@ -345,9 +346,9 @@ library(pomp)
     t=polio_data$time,
     B=polio_data$births,
     P=predict(smooth.spline(x=1931:1954,
-                            y=polio_data$pop[seq(12,24*12,by=12)]))$y,
+      y=polio_data$pop[seq(12,24*12,by=12)]))$y,
     periodic.bspline.basis(t,nbasis=polio_K,
-                           degree=3,period=1,names="xi%d"),
+      degree=3,period=1,names="xi%d"),
     times="t"
   )
   @
@@ -390,7 +391,7 @@ library(pomp)
 
   <<fixed_names>>=
   polio_fp_names <- c("delta","K",
-                      "SB1_0","SB2_0","SB3_0","SB4_0","SB5_0","SB6_0")
+           "SB1_0","SB2_0","SB3_0","SB4_0","SB5_0","SB6_0")
   polio_paramnames <- c(polio_rp_names,
                         polio_ivp_names,polio_fp_names)
   covar_index_t0 <- which(abs(polio_covar@times-polio_t0)<0.01)
@@ -414,7 +415,8 @@ library(pomp)
 
   <<polio_read_mle>>=
   polio_params_guess <- c(b1=3,b2=0,b3=1.5,b4=6,b5=5,b6=3,
-                          psi=0.002,rho=0.01,tau=0.001,sigma_dem=0.04,sigma_env=0.5,
+                          psi=0.002,rho=0.01,tau=0.001,
+			  sigma_dem=0.04,sigma_env=0.5,
                           SO_0=0.12,IO_0=0.001,polio_fixed_params)
   @
   
@@ -590,9 +592,8 @@ library(pomp)
 
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{\myexercise. Choosing algorithmic parameters}
 
-  \myexercise. \myemph{Choosing algorithmic parameters}.\\
   Suppose you have selected a number of particles, \code{Np}, and number of iterated filtering iterations, \code{Nmif}, and number of Monte Carlo replications, \code{Reps}, that give a 10 minute maximization search using \code{mif2()}. Propose how you would adjust these to plan a more intensive search lasting about 2 hours.
 
   \vspace{3mm}
@@ -837,7 +838,7 @@ library(pomp)
                         .packages='pomp', .combine=rbind) %dopar%
         logmeanexp(
           replicate(polio_Nreps_eval,logLik(
-                                       pfilter(polio,params=coef(m2[[i]]),Np=polio_Np))),
+             pfilter(polio,params=coef(m2[[i]]),Np=polio_Np))),
           se=TRUE)
     })
   })
@@ -920,18 +921,16 @@ library(pomp)
   <<box_eval>>=
   stew(file="results/box_eval.rda",{
     time_start_box_eval <- Sys.time()
-    m3 <- foreach(i=1:polio_Nreps_global,
-                  .packages='pomp',.combine=c) %dopar%
-      mif2(m2[[1]],
-           params=c(apply(polio_box,1,function(x)runif(1,x[1],x[2])),
-                    polio_fixed_params)
-           )
+    m3 <- foreach(i=1:polio_Nreps_global,.packages='pomp',
+      .combine=c) %dopar% mif2(m2[[1]],
+        params=c(apply(polio_box,1,function(x)runif(1,x[1],x[2])),
+        polio_fixed_params)
+                                           )
     lik_m3 <- foreach(i=1:polio_Nreps_global,.packages='pomp',
-                      .combine=rbind) %dopar%
-      logmeanexp(
+      .combine=rbind) %dopar% logmeanexp(
         replicate(polio_Nreps_eval,
-                  logLik(pfilter(polio,
-                                 params=coef(m3[[i]]),Np=polio_Np))), 
+          logLik(pfilter(polio,
+            params=coef(m3[[i]]),Np=polio_Np))), 
         se=TRUE)
     time_end_box_eval <- Sys.time()
   })
@@ -944,9 +943,8 @@ library(pomp)
   <<global-results>>=
   r3 <- data.frame(logLik=lik_m3[,1],logLik_se=lik_m3[,2],
                    t(sapply(m3,coef)))
-  if(run_level>1)
-    write.table(r3,file="polio_params_out.csv",
-                append=TRUE,col.names=FALSE,row.names=FALSE)
+  if(run_level>1) write.table(r3,file="polio_params_out.csv",
+    append=TRUE,col.names=FALSE,row.names=FALSE)
   summary(r3$logLik,digits=5)
   @
   
@@ -970,7 +968,9 @@ library(pomp)
   
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]{Benchmark likelihoods for non-mechanistic models}
+\begin{frame}[fragile]
+
+  \frametitle{Benchmark likelihoods for non-mechanistic models}
 
   \bi
 \item To understand these global searches, many of which may correspond to parameter values having no meaningful scientific interpretation, it is helpful to put the log likelihoods in the context of some non-mechanistic benchmarks.
@@ -980,10 +980,8 @@ library(pomp)
   \ei
 
   <<nbinom>>=
-  nb_lik <- function(theta)
-    -sum(dnbinom(as.vector(obs(polio)),
-                 size=exp(theta[1]),
-                 prob=exp(theta[2]),log=TRUE))
+  nb_lik <- function(theta) - sum(dnbinom(as.vector(obs(polio)),
+                    size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))
   nb_mle <- optim(c(0,-5),nb_lik)
   -nb_mle$value
   @
@@ -1118,18 +1116,17 @@ library(pomp)
 \item Note that $\rho$ is not perturbed in the IF iterations for the purposes of the profile calculation.
   \ei
 
-  <<profile_rw_sd>>=
-  profile_rw.sd <- polio_rw.sd <-
-    rw.sd(
-      rho=0,
-      b1=polio_rw.sd_rp,b2=polio_rw.sd_rp,b3=polio_rw.sd_rp,
-      b4=polio_rw.sd_rp,b5=polio_rw.sd_rp,b6=polio_rw.sd_rp,
-      psi=polio_rw.sd_rp,
-      tau=polio_rw.sd_rp, sigma_dem=polio_rw.sd_rp,
-      sigma_env=polio_rw.sd_rp,
-      IO_0=ivp(polio_rw.sd_ivp), SO_0=ivp(polio_rw.sd_ivp)
-    )
-  @
+<<profile_rw_sd>>=
+  profile_rw.sd <- polio_rw.sd <- rw.sd(
+    rho=0,
+    b1=polio_rw.sd_rp,b2=polio_rw.sd_rp,b3=polio_rw.sd_rp,
+    b4=polio_rw.sd_rp,b5=polio_rw.sd_rp,b6=polio_rw.sd_rp,
+    psi=polio_rw.sd_rp,
+    tau=polio_rw.sd_rp, sigma_dem=polio_rw.sd_rp,
+    sigma_env=polio_rw.sd_rp,
+    IO_0=ivp(polio_rw.sd_ivp), SO_0=ivp(polio_rw.sd_ivp)
+  )
+@
   
   \bi
 \item
@@ -1189,9 +1186,9 @@ library(pomp)
 \section{Exercises}
 
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{\myexercise. Initial values}.
 
-  \myexercise. \myemph{Initial values}. When carrying out parameter estimation for dynamic systems, we need to specify beginning values for both the dynamic system (in the state space) and the parameters (in the parameter space). By convention, we use  \myemph{initial values} for the initialization of the dynamic system and \myemph{starting values} for initialization of the parameter search.
+When carrying out parameter estimation for dynamic systems, we need to specify beginning values for both the dynamic system (in the state space) and the parameters (in the parameter space). By convention, we use  \myemph{initial values} for the initialization of the dynamic system and \myemph{starting values} for initialization of the parameter search.
 
   Discuss issues in specifying and inferring initial conditions, with particular reference to this polio example. 
 
@@ -1204,9 +1201,8 @@ library(pomp)
 
 \end{frame}
 
-\begin{frame}[fragile]
-
-  \myexercise. \myemph{Parameter estimation using randomized starting values}.
+\begin{frame}[fragile]{\myexercise. Parameter estimation using randomized starting values}
+  
   Think about possible improvements on the assignment of randomized starting values for the parameter estimation searches. Propose and try out a modification of the procedure. Does it make a difference?
 
   \vspace{3mm}
@@ -1215,9 +1211,8 @@ library(pomp)
 
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{\myexercise. Demography and discrete time}
 
-  \myexercise. \myemph{Demography and discrete time}.
   It can be surprisingly hard to include birth, death, immigration, emigration and aging into a disease model in satisfactory ways. Consider the strengths and weaknesses of the analysis presented, and list changes to the model that might be improvements. 
 
   In an imperfect world, it is nice to check the extent to which the conclusions are insensitive to alternative modeling decisions.  These are testable hypotheses, which can be addressed within a plug-and-play inference framework. Identify what would have to be done to investigate the changes you have proposed. Optionally, you could have a go at coding something up to see if it makes a difference.
@@ -1228,11 +1223,11 @@ library(pomp)
 
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[fragile]{\myexercise. Diagnosing filtering and maximization convergence}
 
-  \myexercise. \myemph{Diagnosing filtering and maximization convergence}.
   Are there outliers in the data (i.e., observations that do not fit well with our model)? Are we using unnecessarily large amounts of computer time to get our results? Are there indications that we would should run our computations for longer? Or maybe with different choices of algorithmic settings?
   In particular, \code{cooling.fraction.50} gives the fraction by which the random walk standard deviation is decreased ("cooled") in 50 iterations. If \code{cooling.fraction.50} is too small, the search will "freeze" too soon, evidenced by flat parallel lines in the convergence diagnostics. If \code{cooling.fraction.50} is too large, the researcher may run of of time, patience or computing budget (or all three) before the parameter trajectories approach an MLE.
+  Use the diagnostic plots on the following slides, or other calculations, to address these issues.
 
   \vspace{3mm}
 
@@ -1272,7 +1267,7 @@ library(pomp)
 
   <<likelihood_convergence,out.width="10cm">>=
   loglik_convergence <- do.call(cbind,
-                                traces(m3[r3$logLik>max(r3$logLik)-10],"loglik"))
+    traces(m3[r3$logLik>max(r3$logLik)-10],"loglik"))
   matplot(loglik_convergence,type="l",lty=1,
           ylim=max(loglik_convergence,na.rm=T)+c(-10,0))
   @
