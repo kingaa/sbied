@@ -1,36 +1,32 @@
-```{r ggplot-theme,include=FALSE,purl=FALSE,cache=FALSE}
-library(ggplot2)
-theme_set(theme_bw())
-
 ```{r setup-child,include=FALSE,purl=FALSE,cache=FALSE}
 library(knitr)
 opts_chunk$set(
   cache=TRUE,
   cache.path="tmp/cache/",
-  eval=TRUE,
-  include=TRUE,
+  comment=NA,
   echo=TRUE,
-  purl=TRUE,
+  eval=TRUE,
   dev='png',
   dev.args=list(bg='transparent'),
   dpi=300,
   error=FALSE,
-  fig.pos="h!",
   fig.align='center',
   fig.height=4,fig.width=6.83,
   fig.lp="fig:",
   fig.path="tmp/figure/",
+  fig.pos="h!",
   fig.show='asis',
   highlight=TRUE,
+  include=TRUE,
   message=FALSE,
   progress=TRUE,
   prompt=FALSE,
+  purl=TRUE,
   results="markup",
   size='small',
   strip.white=TRUE,
   tidy=FALSE,
-  warning=FALSE,
-  comment=NA
+  warning=FALSE
 )
 
 options(
@@ -38,4 +34,7 @@ options(
   keep.source=TRUE,
   encoding="UTF-8"
 )
+
+library(ggplot2)
+theme_set(theme_bw())
 ```

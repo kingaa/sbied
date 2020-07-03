@@ -22,37 +22,10 @@ Please share and remix noncommercially, mentioning its origin.
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 This document has its origins in the [Getting Started vignette](https://kingaa.github.io/pomp/vignettes/getting_started.html).
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
-library(knitr)
-prefix <- "ricker"
-opts_chunk$set(
-  progress=TRUE,
-  prompt=FALSE,tidy=FALSE,highlight=TRUE,
-  strip.white=TRUE,
-  warning=FALSE,
-  message=FALSE,
-  error=FALSE,
-  echo=TRUE,
-  cache=TRUE,
-  cache.extra=rand_seed,
-  results='markup',
-  fig.show='asis',
-  size='small',
-  fig.lp="fig:",
-  fig.path=paste0("tmp/figure/",prefix,"-"),
-  cache.path=paste0("tmp/cache/",prefix,"-"),
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=4,fig.width=6.83,
-  dpi=100,
-  dev='png',
-  dev.args=list(bg='transparent')
-)
-options(keep.source=TRUE,encoding="UTF-8")
+```{r knitr-opts,child="../setup.Rmd"}
 ```
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
 library(pomp)
-options(stringsAsFactors=FALSE)
 stopifnot(getRversion()>="4.0")
 stopifnot(packageVersion("pomp")>="3.0")
 ```

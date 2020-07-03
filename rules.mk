@@ -32,9 +32,10 @@ slides.pdf handout.pdf notes.pdf: main.tex
 clean:
 	$(RM) *.bak
 	$(RM) *.o *.so
-	$(RM) *.log *.aux *.out *.nav *.snm *.toc *.vrb *.blg
-	$(RM) Rplots.ps Rplots.pdf
+	$(RM) *.log *.aux *.out *.blg *.toc *.nav *.snm *.vrb *.brf
+	$(RM) Rplots.*
 
 fresh: clean
 	$(RM) *.bbl
 	$(RM) -r tmp
+

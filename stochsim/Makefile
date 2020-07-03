@@ -1,4 +1,4 @@
-default: slides.pdf handout.pdf notes.pdf main.R \
+default: slides.pdf notes.pdf main.R \
 exercises.html exercises.R exer_ctmc_ode.html \
 seir3_exercise.html seir3_exercise.R
 

@@ -11,44 +11,10 @@ csl: ../ecology.csl
 
 -----------------------------------
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
-library(knitr)
-prefix <- "nelder"
-opts_chunk$set(
-  progress=TRUE,
-  prompt=FALSE,tidy=FALSE,highlight=TRUE,
-  strip.white=TRUE,
-  warning=FALSE,
-  message=FALSE,
-  error=FALSE,
-  echo=TRUE,
-  cache=TRUE,
-  results='markup',
-  fig.show='asis',
-  size='small',
-  fig.lp="fig:",
-  fig.path=paste0("figure/",prefix,"-"),
-  cache.path=paste0("cache/",prefix,"-"),
-  fig.pos="h!",
-  fig.align='center',
-  fig.height=3,fig.width=4.85,
-  dpi=100,
-  dev='png',
-  dev.args=list(bg='transparent')
-  )
+```{r knitr-opts,child="../setup.Rmd"}
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
-options(
-  keep.source=TRUE,
-  stringsAsFactors=FALSE,
-  encoding="UTF-8"
-  )
-
 set.seed(594709947L)
-library(ggplot2)
-theme_set(theme_bw())
-library(plyr)
-library(reshape2)
 library(magrittr)
 library(pomp)
 stopifnot(packageVersion("pomp")>"2.0.9")
@@ -92,7 +58,8 @@ The transformed scale may be more reasonable for selecting uniformly distributed
 We can change our code as follows to implement this for the polio profile calculation.
 
 
-```{r,echo=F}
+```{r echo=F}
+library(tidyverse)
 read_csv("https://kingaa.github.io/sbied/polio/polio_wisconsin.csv",comment="#")  %>% as.data.frame() -> polio_data
 
 initial_births <- set_names(polio_data$births[11:16],c("SB1_0","SB2_0","SB3_0","SB4_0","SB5_0","SB6_0"))
@@ -106,24 +73,24 @@ box <- rbind(c(est_params/2,fixed_params),c(est_params*2,fixed_params))
 rownames(box) <- c("min","max")
 ```
 
-```{r,eval=F}
-  profileDesign(
-    rho=seq(0.01,0.025,length=30),
-    lower=box["min",],upper=box["max",],
-    nprof=10
-  ) -> starts
+```{r eval=F}
+profileDesign(
+  rho=seq(0.01,0.025,length=30),
+  lower=box["min",],upper=box["max",],
+  nprof=10
+) -> starts
 ```
 
 becomes
 
-```{r,eval=F}
-  profileDesign(
-    rho=seq(log(0.01),log(0.025),length=30),     
-    lower=partrans(polio,box["min",],dir="toEst")[colnames(box)!="rho"],     
-    upper=partrans(polio,box["max",],dir="toEst")[colnames(box)!="rho"],
-    nprof=10
-  ) -> trans_starts
-  starts <- data.frame(t(partrans(polio,t(trans_starts),dir="fromEst")))
+```{r eval=F}
+profileDesign(
+  rho=seq(log(0.01),log(0.025),length=30),     
+  lower=partrans(polio,box["min",],dir="toEst")[colnames(box)!="rho"],     
+  upper=partrans(polio,box["max",],dir="toEst")[colnames(box)!="rho"],
+  nprof=10
+) -> trans_starts
+starts <- data.frame(t(partrans(polio,t(trans_starts),dir="fromEst")))
 ```
 
 A comparable change was also made for the global search. The results from running the modified version are at [starting-values-exercise/polio.html](starting-values-exercise/polio.html). The maximized log likelihood of -794.6 is not a substantial improvement on the previous value of -794.5, indeed it is a little worse. However, the pairs plot of estimates from the global search does reveal an advantage for the modified scale. The distinct mode with low $\sigma_{\mathrm{env}}$ is better explored with the modified starting value distribution. When making uniform draws on an untransformed scale, very few initial values explore a region where a parameter has small order of magnitude. In this case, the small $\sigma_{\mathrm{env}}$ mode has likelihood around 15 log units short of the maximum so it is not a competitive explanation of the data. However, in some other situation, this shows how transforming the starting value distribution could be useful.
@@ -138,7 +105,3 @@ Please share and remix noncommercially, mentioning its origin.
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
 This version produced in R `r getRversion()` on `r format(Sys.Date(), "%B %d, %Y")`.
-
-
-
-

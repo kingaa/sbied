@@ -1,48 +1,3 @@
-#' ---
-#' title: "Measles profile computation"
-#' author: "Aaron A. King"
-#' output:
-#'   html_document:
-#'     toc: yes
-#'     toc_depth: 4
-#'     code_folding: show
-#'     highlight: haddock
-#'     number_sections: FALSE
-#'     df_print: paged
-#' bibliography: ../sbied.bib
-#' csl: ../ecology.csl
-#' 
-#' ---
-#' 
-#' \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-#' \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
-#' \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-#' \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-#' \newcommand\dlta[1]{{\Delta}{#1}}
-#' \newcommand\scinot[2]{$#1 \times 10^{#2}$\xspace}
-#' \newcommand{\mortality}{m}
-#' \newcommand{\birth}{b}
-#' \newcommand{\loglik}{\ell}
-#' \newcommand{\immigration}{\iota}
-#' \newcommand{\amplitude}{a}
-#' \newcommand{\cohort}{c}
-#' \newcommand{\R}{\textsf{R}}
-#' \newcommand{\Rzero}{{R_0}}
-#' 
-#' [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-#' Please share and remix noncommercially, mentioning its origin.  
-#' ![CC-BY_NC](../graphics/cc-by-nc.png)
-#' 
-#' Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
-#' 
-
-
-#' 
-#' ## Build the `pomp` object
-#' 
-#' ### Preliminaries
-#' 
-## ----mpi-setup,include=FALSE,purl=TRUE,cache=FALSE-----------------------
 library(foreach)
 if (file.exists("CLUSTER")) {
  library(doMPI)
@@ -54,24 +9,12 @@ if (file.exists("CLUSTER")) {
   registerDoMC()
 }
 
-#' 
-#' Load the packages we'll need, and set the random seed, to allow reproducibility.
-## ----prelims,cache=FALSE-------------------------------------------------
 set.seed(594709947L)
 library(tidyverse)
 theme_set(theme_bw())
 library(pomp)
 stopifnot(packageVersion("pomp")>="2.1")
 
-#' 
-#' ### Data and covariates
-#' 
-#' Now we'll load the data and covariates.
-#' The data are measles reports from 20 cities in England and Wales.
-#' We also have information on the population sizes and birth-rates in these cities;
-#' we'll treat these variables as covariates.
-#' 
-## ----load-data-----------------------------------------------------------
 daturl <- "https://kingaa.github.io/pomp/vignettes/twentycities.rda"
 datfile <- file.path(tempdir(),"twentycities.rda")
 
@@ -91,9 +34,6 @@ demog %>%
   filter(town=="London") %>%
   select(-town) -> demog
 
-#' 
-#' 
-## ----prep-covariates-----------------------------------------------------
 demog %>% 
   plyr::summarize(
     time=seq(from=min(year),to=max(year),by=1/12),
@@ -101,12 +41,6 @@ demog %>%
     birthrate=predict(smooth.spline(x=year+0.5,y=births),x=time-4)$y
   ) -> covar
 
-#' 
-#' ### The (unobserved) process model
-#' 
-#' The following implements a simulator.
-#' 
-## ----rprocess------------------------------------------------------------
 rproc <- Csnippet("
   double beta, br, seas, foi, dw, births;
   double rate[6], trans[6];
@@ -154,11 +88,6 @@ rproc <- Csnippet("
   C += trans[4];           // true incidence
 ")
 
-#' 
-#' We complete the process model definition by specifying the distribution of initial unobserved states.
-#' The following codes assume that the fraction of the population in each of the four compartments is known.
-#' 
-## ----initializer---------------------------------------------------------
 rinit <- Csnippet("
   double m = pop/(S_0+E_0+I_0+R_0);
   S = nearbyint(m*S_0);
@@ -169,21 +98,6 @@ rinit <- Csnippet("
   C = 0;
 ")
 
-#' 
-#' ### The measurement model
-#' 
-#' We'll model both under-reporting and measurement error.
-#' We want $\mathbb{E}[\text{cases}|C] = \rho\,C$, where $C$ is the true incidence and $0<\rho<1$ is the reporting efficiency.
-#' We'll also assume that $\mathrm{Var}[\text{cases}|C] = \rho\,(1-\rho)\,C + (\psi\,\rho\,C)^2$, where $\psi$ quantifies overdispersion.
-#' Note that when $\psi=0$, the variance-mean relation is that of the binomial distribution.
-#' To be specific, we'll choose
-#' $\text{cases|C} \sim f(\cdot|\rho,\psi,C)$,
-#' where $$f(c|\rho,\psi,C) = \Phi(c+\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2)-\Phi(c-\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2),$$
-#' where $\Phi(x,\mu,\sigma^2)$ is the c.d.f. of the normal distribution with mean $\mu$ and variance $\sigma^2$.
-#' 
-#' The following computes $\mathbb{P}[\text{cases}|C]$.
-#' 
-## ----dmeasure------------------------------------------------------------
 dmeas <- Csnippet("
   double m = rho*C;
   double v = m*(1.0-rho+psi*psi*m);
@@ -195,10 +109,6 @@ dmeas <- Csnippet("
   }
 ")
 
-#' 
-#' The following codes simulate $\text{cases} | C$.
-#' 
-## ----rmeasure------------------------------------------------------------
 rmeas <- Csnippet("
   double m = rho*C;
   double v = m*(1.0-rho+psi*psi*m);
@@ -211,27 +121,12 @@ rmeas <- Csnippet("
   }
 ")
 
-#' 
-#' ### Parameter transformations
-#' 
-#' The parameters are constrained to be positive, and some of them are constrained to lie between $0$ and $1$.
-#' We can turn the likelihood maximization problem into an unconstrained maximization problem by transforming the parameters.
-#' The following Csnippets implement such a transformation and its inverse.
-#' 
-## ----transforms----------------------------------------------------------
 pt <- parameter_trans(
   log=c("sigma","gamma","sigmaSE","psi","R0"),
   logit=c("cohort","amplitude"),
   barycentric=c("S_0","E_0","I_0","R_0")
 )
 
-#' 
-#' ### ML point estimates
-#' 
-#' @He2010 estimated the parameters of this model.
-#' The full set is included in the *R* code accompanying this document, where they are read into a data frame called `mles`.
-#' 
-## ----mles,include=FALSE--------------------------------------------------
 read.csv(text="
 town,loglik,loglik.sd,mu,delay,sigma,gamma,rho,R0,amplitude,alpha,iota,cohort,psi,S_0,E_0,I_0,R_0,sigmaSE
 Bedwellty,-1125.1,0.14,0.02,4,57.9,146,0.311,24.7,0.16,0.937,0.0396,0.351,0.951,0.0396,2.64e-05,2.45e-05,0.96,0.0611
@@ -255,18 +150,12 @@ Nottingham,-2703.5,0.53,0.02,4,70.2,115,0.609,22.6,0.157,0.982,0.17,0.34,0.258,0
 Oswestry,-696.1,0.49,0.02,4,37.3,168,0.631,52.9,0.339,1.04,0.0298,0.263,0.476,0.0218,1.56e-05,1.61e-05,0.978,0.0699
 Sheffield,-2810.7,0.21,0.02,4,54.3,62.2,0.649,33.1,0.313,1.02,0.853,0.225,0.175,0.0291,6.04e-05,8.86e-05,0.971,0.0428
 ",stringsAsFactors=FALSE) -> mles
-
-## ----mle-----------------------------------------------------------------
 mles %>% filter(town=="London") -> mle
 paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
   "rho","sigmaSE","psi","cohort","amplitude",
   "S_0","E_0","I_0","R_0")
 mle[paramnames] %>% unlist() -> theta
 
-#' 
-#' ### Construct and verify the `pomp` object
-#' 
-## ----pomp-construct------------------------------------------------------
 dat %>% 
   pomp(t0=with(dat,2*time[1]-time[2]),
     time="time",
@@ -285,21 +174,6 @@ dat %>%
   ) -> m1
 
 
-#' 
-#' ## Profile over $\sigma_{SE}$
-#' 
-#' ### Initial set of mifs
-#' 
-#' To compute a likelihood profile over a given parameter (or set of parameters) across some range, we first construct a grid of points spanning that range.
-#' At each point in the grid, we fix the focal parameter (or set of parameters) at that value and maximize the likelihood over the remaining parameters.
-#' To ensure that this optimization is global, we initiate multiple optimizers at a variety of points across the space.
-#' The **pomp** function `profileDesign` is useful in constructing such a set of starting points for the optimization.
-#' 
-#' The following code constructs a data frame, each row of which is a starting point for an optimization.
-#' We will be profiling over $\sigma_SE$ (`sigmaSE` in the code), fixing $\mu=0.02$ and $\alpha=1$.
-#' To simplify the calculation still further, we will hold $\rho$ and $\iota$ at their ML point estimates.
-#' 
-## ----sigmaSE-prof-design-------------------------------------------------
 estpars <- setdiff(names(theta),c("sigmaSE","mu","alpha","rho","iota"))
 
 theta["alpha"] <- 1
@@ -323,12 +197,6 @@ pd <- as.data.frame(t(partrans(m1,t(pd),"fromEst")))
 
 pairs(~sigmaSE+R0+mu+sigma+gamma+S_0+E_0,data=pd)
 
-#' 
-#' **pomp** provides two functions, `bake` and `stew`, that save the results of expensive computations.
-#' We'll run the profile computations in parallel.
-#' Note that again, care must be taken with the parallel random number generator.
-#' 
-## ----sigmaSE-prof-round1,eval=TRUE,cache=FALSE---------------------------
 bake("sigmaSE-profile1.rds",{
   
   foreach (p=iter(pd,"row"),
@@ -376,18 +244,8 @@ bake("sigmaSE-profile1.rds",{
   }
 }) -> sigmaSE_prof
 
-#' 
-#' The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r signif(mean(sigmaSE_prof$etime)*3600/120,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.
-#' Let's examine the results.
-#' 
 
-#' 
-#' ### Refining the estimates
-#' 
-#' Next, we'll skim off the top 20 likelihoods for each value of the $\sigma_{SE}$ parameter.
-#' We'll put these through another round of miffing.
-#' 
-## ----sigmaSE-prof-round2,cache=FALSE-------------------------------------
+
 sigmaSE_prof %>%
   mutate(sigmaSE=exp(signif(log(sigmaSE),5))) %>%
   group_by(sigmaSE) %>%
@@ -441,24 +299,3 @@ bake("sigmaSE-profile2.rds",{
       etime = as.numeric(etime))
   }
 }) -> sigmaSE_prof
-
-#' 
-#' The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r signif(mean(sigmaSE_prof$etime)/550*3600,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.
-#' 
-
-#' 
-#' It is useful to plot profile traces, which show how the other parameters vary along the profile.
-#' In this case, these display clear relationships between intensity of extra-demographic stochasticity, $R_0$, and durations of the infectious and latent periods.
-#' 
-
-#' 
-#' --------------------------
-#' 
-#' ## [Back to measles lesson](./measles.html)
-#' ## [Back to course homepage](../index.html)
-#' ## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/measles/profile.R)
-#' 
-#' ----------------------
-#' 
-#' ## References
-#' 

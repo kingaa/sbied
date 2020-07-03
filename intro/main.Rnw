@@ -33,9 +33,9 @@
 
 \begin{frame}{Objectives for this lesson}
   \begin{itemize}
-  \item<+-> To understand the motivations for simulation-based inference in the study of epidemiological and ecological systems.
-  \item<+-> To introduce the class of partially observed Markov process (POMP) models.
-  \item<+-> To introduce the \package{pomp} \Rlanguage package.
+  \item To understand the motivations for simulation-based inference in the study of epidemiological and ecological systems.
+  \item To introduce the class of partially observed Markov process (POMP) models.
+  \item To introduce the \package{pomp} \Rlanguage package.
   \end{itemize}
 \end{frame}
 
@@ -81,12 +81,12 @@
 \begin{frame}
   \frametitle{Course objectives}
   \begin{enumerate}
-  \item<+-> To show how stochastic dynamical systems models can be used as scientific instruments.
-  \item<+-> To teach statistically and computationally efficient approaches for performing scientific inference using POMP models.
-  \item<+-> To give students the ability to formulate models of their own.
-  \item<+-> To give students opportunities to work with such inference methods.
-  \item<+-> To familiarize students with the \package{pomp} package.
-  \item<+-> To provide documented examples for adaptation and re-use.
+  \item To show how stochastic dynamical systems models can be used as scientific instruments.
+  \item To teach statistically and computationally efficient approaches for performing scientific inference using POMP models.
+  \item To give students the ability to formulate models of their own.
+  \item To give students opportunities to work with such inference methods.
+  \item To familiarize students with the \package{pomp} package.
+  \item To provide documented examples for adaptation and re-use.
   \end{enumerate}
 \end{frame}
 

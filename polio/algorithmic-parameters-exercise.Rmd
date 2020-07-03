@@ -8,6 +8,8 @@ bibliography: ../sbied.bib
 csl: ../ecology.csl
 ---
 
+```{r knitr-opts,child="../setup.Rmd"}
+```
 
 -----------------------------------
 

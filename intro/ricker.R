@@ -1,5 +1,4 @@
 library(pomp)
-options(stringsAsFactors=FALSE)
 stopifnot(getRversion()>="4.0")
 stopifnot(packageVersion("pomp")>="3.0")
 

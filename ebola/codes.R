@@ -115,7 +115,7 @@ ebolaModel <- function (country=c("Guinea", "SierraLeone", "Liberia"),
 
   globs <- paste0("static int nstageE = ",nstageE,";")
 
-  dat <- subset(dat,country==ctry,select=-country)
+  dat %>% filter(country==ctry) %>% select(-country) -> dat
 
   ## Create the pomp object
   dat %>%
@@ -159,15 +159,12 @@ profs %>%
   filter(loglik==max(loglik)) %>%
   ungroup() %>%
   ggplot(aes(x=value,y=dll))+
-  geom_point(color='red')+
+  geom_point(color="red")+
   geom_hline(yintercept=-0.5*qchisq(p=0.99,df=1))+
-  facet_grid(country~profile,scales='free')+
+  facet_grid(country~profile,scales="free")+
   labs(y=expression(l))
 
 ## ----diagnostics1a,echo=FALSE---------------------------------------------
-library(pomp)
-library(tidyverse)
-
 profs %>%
   filter(country=="Guinea") %>%
   filter(loglik==max(loglik)) %>%
@@ -183,7 +180,7 @@ gin %>%
   ggplot(aes(x=date,y=cases,group=.id,color=is.data,alpha=is.data))+
   geom_line()+
   guides(color=FALSE,alpha=FALSE)+
-  scale_color_manual(values=c(no=gray(0.6),yes='red'))+
+  scale_color_manual(values=c(no=gray(0.6),yes="red"))+
   scale_alpha_manual(values=c(no=0.5,yes=1))
 
 ## ----diagnostics-growth-rate---------------------------------------------
@@ -261,9 +258,11 @@ profs %>%
   as.matrix() -> ranges
 
 ## ----forecasts1d----------------------------------------------------------
-sobolDesign(lower=ranges[,'min'],
-  upper=ranges[,'max'],
-  nseq=20) -> params
+sobolDesign(
+  lower=ranges[,"min"],
+  upper=ranges[,"max"],
+  nseq=20
+) -> params
 plot(params)
 
 ## ----forecasts2a----------------------------------------------------------
@@ -277,7 +276,7 @@ registerDoParallel()
 registerDoRNG(887851050L)
 
 ## ----forecasts2b----------------------------------------------------------
-foreach(p=iter(params,by='row'),
+foreach(p=iter(params,by="row"),
   .inorder=FALSE,
   .combine=bind_rows
 ) %dopar% {
@@ -342,8 +341,9 @@ sims %>%
   arrange(week,.id) -> sims
 
 ## ----forecasts2k----------------------------------------------------------
-ess <- with(subset(sims,week==max(week)),weight/sum(weight))
-ess <- 1/sum(ess^2); ess
+sims %>%
+  filter(week==max(week)) %>%
+  summarize(ess=sum(weight)^2/sum(weight^2))
 
 ## ----forecasts2l----------------------------------------------------------
 sims %>%
@@ -363,6 +363,6 @@ simq %>%
   ggplot(aes(x=date))+
   geom_ribbon(aes(ymin=lower,ymax=upper,fill=period),alpha=0.3,color=NA)+
   geom_line(aes(y=median,color=period))+
-  geom_point(data=subset(dat,country=="SierraLeone"),
-    mapping=aes(x=date,y=cases),color='black')+
+  geom_point(data=filter(dat,country=="SierraLeone"),
+    mapping=aes(x=date,y=cases),color="black")+
   labs(y="cases")
