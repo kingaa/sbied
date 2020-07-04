@@ -38,7 +38,6 @@ set.seed(1109529108L)
 }
 
 \section{Introduction}
-
 \begin{frame}{Objectives}
   \begin{itemize}
   \item To display a published case study using plug-and-play methods with non-trivial model complexities.
@@ -49,8 +48,6 @@ set.seed(1109529108L)
   \item To emphasize the potential need for extra sources of stochasticity in modeling.
   \end{itemize}
 \end{frame}
-
-\subsection{Motivation}
 
 \begin{frame}[fragile,allowframebreaks=0.8]{Challenges in inference from disease dynamics}
   \begin{itemize}
@@ -97,16 +94,18 @@ set.seed(1109529108L)
   @
 \end{frame}
 
-\subsection{Case study}
-
+\section{Model and implementation}
+\subsection{Overview}
 \begin{frame}[allowframebreaks]{Measles in England and Wales}
   \begin{itemize}
   \item We revisit a classic measles data set, weekly case reports in 954 urban centers in England and Wales during the pre-vaccine era (1950--1963).
   \item We examine questions regarding:
-  \item measles extinction and recolonization
-  \item transmission rates
-  \item seasonality
-  \item resupply of susceptibles
+  \begin{itemize}
+    \item measles extinction and recolonization
+    \item transmission rates
+    \item seasonality
+    \item resupply of susceptibles
+  \end{itemize}
   \item We use a model that
     \begin{enumerate}
     \item expresses our current understanding of measles dynamics
@@ -119,9 +118,10 @@ set.seed(1109529108L)
   \end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{He, Ionides, \& King, \emph{J. R. Soc. Interface} (2010)}
-  \textbf{Data sets:}
+\subsection{Data sets}
+\begin{frame}[allowframebreaks]{Data sets}
   \begin{itemize}
+  \item He, Ionides, \& King, \emph{J. R. Soc. Interface} (2010)
   \item Twenty towns, including
     \begin{itemize}
     \item 10 largest
@@ -177,7 +177,7 @@ set.seed(1109529108L)
   @
 \end{frame}
 
-
+\subsection{Modeling}
 \begin{frame}{Continuous-time Markov process model}
   <<seir-diagram,echo=FALSE,cache=FALSE,purl=FALSE,eval=FALSE>>=
   library(DiagrammeR)
@@ -233,7 +233,7 @@ set.seed(1109529108L)
   \item Overdispersed binomial measurement model: $\mathrm{cases}_t\,\vert\,\dlta{N}_{IR}=z_t \sim \dist{Normal}{\rho\,z_t,\rho\,(1-\rho)\,z_t+(\psi\,\rho\,z_t)^2}$
   \end{itemize}
 \end{frame}
-
+\subsection{Model implementation in \package{pomp}}
 \begin{frame}[fragile]{Implementation in \package{pomp}}
   \begin{itemize}
   \item We'll load the packages we'll need, and set the random seed, to allow reproducibility.
@@ -431,7 +431,8 @@ cat(rproc@text)
          ) -> m1
   @
 \end{frame}
-
+\section{Estimation}
+\subsection{\cite{He2010}}
 \begin{frame}[fragile]
   \frametitle{Estimates from \cite{He2010}}
   \cite{He2010} estimated the parameters of this model.
@@ -486,7 +487,7 @@ cat(rproc@text)
   logmeanexp(sapply(pfs,logLik),se=TRUE)
   @
 \end{frame}
-
+\subsection{Simulation and estimation}
 \begin{frame}[fragile]
   \frametitle{Simulations at the MLE}
   <<sims1,fig.height=2,echo=T>>=
@@ -497,7 +498,7 @@ cat(rproc@text)
     geom_line()+facet_wrap(~.id,ncol=2)
   @
 \end{frame}
-
+\subsection{Parameter estimation}
 \begin{frame}[fragile]
   \frametitle{Parameter transformations}
   \begin{itemize}
@@ -536,7 +537,8 @@ cat(rproc@text)
   \item We constructed profile likelihoods to quantify uncertainty in London and Hastings.
   \end{itemize}
 \end{frame}
-
+\section{Findings}
+\subsection{Notable findings}
 \begin{frame}[fragile]
   \frametitle{Imported infections}
   $$\text{force of infection} = \mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
@@ -673,8 +675,7 @@ cat(rproc@text)
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Notable findings}
-  \hspace{3cm} {\large \bf Cohort effect}
+  \frametitle{Cohort effect}
   <<cohort-effect,echo=FALSE,results="hide",purl=FALSE>>=
   best <- read.csv('data/cohort.csv',row.names=1)
 
@@ -738,8 +739,7 @@ cat(rproc@text)
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Notable findings}
-  \hspace{3cm} {\large \bf Birth delay}
+  \frametitle{Birth delay}
   <<delay,eval=TRUE,echo=FALSE,results="hide",purl=FALSE,fig.height=3,fig.cap="Profile likelihood for birth-cohort delay, showing 95\\% and 99\\% critical values of the log likelihood.">>=
   x <- read.csv('data/delay.csv',row.names=1)
   par(mai=c(0.2,0.3,0.2,0.2))
@@ -755,8 +755,7 @@ cat(rproc@text)
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Notable findings}
-  \hspace{3cm} {\large \bf Reporting rate}
+  \frametitle{Reporting rate}
   <<report-rate,echo=FALSE,results="hide",purl=FALSE>>=
   mles %>% select(town,rho) -> est.rho
 
@@ -798,8 +797,7 @@ cat(rproc@text)
 
 
 \begin{frame}[fragile]
-  \frametitle{Notable findings}
-  \hspace{3cm} {\large \bf Predicted vs observed critical community size}
+  \frametitle{Predicted vs observed critical community size}
   <<fadeouts,echo=FALSE,results="hide",purl=FALSE>>=
   op <- par(
     font=2,
@@ -825,10 +823,9 @@ cat(rproc@text)
   par(op)
   @
 \end{frame}
-
+\subsection{Problematic results}
 \begin{frame}[fragile]
-  \frametitle{Problematic results}
-  \hspace{3cm} {\large \bf $R_0$ estimates inconsistent with literature}
+  \frametitle{$R_0$ estimates inconsistent with literature}
   \begin{itemize}
   \item Recall that $R_0$ : a measure of how communicable an infection is.
   \item Existing estimates of $R_0$ (c. 15--20) come from two sources: serology surveys, and models fit to data using feature-based methods.
@@ -896,7 +893,7 @@ cat(rproc@text)
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Problematic results}
+  \frametitle{Parameter estimates}
   <<est-table,echo=FALSE,size="tiny",purl=FALSE>>=
   mean.euler <- function(rate,dt=1/365) dt/(1-exp(-rate*dt))
 
@@ -937,8 +934,7 @@ $r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Problematic results}
-  \hspace{3cm} {\large \bf Extrademographic stochasticity}
+  \frametitle{Extrademographic stochasticity}
   $$\mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
   <<env-noise,echo=FALSE,results="hide",purl=FALSE,out.width="4in">>=
   best <- read.csv('data/env_noise.csv',row.names=1)
@@ -1044,7 +1040,7 @@ $r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
   par(op)
   @
 \end{frame}
-
+\section{Questions}
 \begin{frame}[fragile]
   \frametitle{Questions}
   \begin{itemize}
