@@ -933,8 +933,7 @@ set.seed(1109529108L)
 
 \begin{frame}[fragile]
   \frametitle{Problematic results}
-  \hspace{3cm} {\large \bf Parameter estimates}
-  <<est-table,echo=FALSE,size="scriptsize",purl=FALSE>>=
+  <<est-table,echo=FALSE,size="tiny",purl=FALSE>>=
   mean.euler <- function(rate,dt=1/365) dt/(1-exp(-rate*dt))
 
   demog %>%
@@ -963,7 +962,10 @@ set.seed(1109529108L)
     subset(select=-town) -> tab
   tab %>%
     rbind(r=cors[names(tab)]) %>%
-    signif(3)
+    signif(2) %>%
+    #as_tibble() %>%
+    #print(n=20, width=Inf)
+    knitr::kable("latex")
 @
 
 $r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
