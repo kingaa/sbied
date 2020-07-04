@@ -471,13 +471,11 @@ cat(rproc@text)
   mle %>% select(-S_0,-E_0,-I_0,-R_0)
   @
   
-  We verify that we get the same likelihood as \cite{He2010}. \textcolor{red}{Change eval to T}
+  We verify that we get the same likelihood as \cite{He2010}.
 
-  <<pfilter1,eval=F>>=
-  library(foreach)
-  library(doParallel)
-  library(doRNG)
-
+  <<pfilter1,eval=T,cache=T,size="small">>=
+  library(foreach);library(doParallel);library(doRNG)
+  
   registerDoParallel()
   registerDoRNG(998468235L)
 
@@ -512,7 +510,7 @@ cat(rproc@text)
     and to confine parameters to the unit simplex, we use the log-barycentric transformation.
   \end{itemize}
 
-  <<transforms>>=
+  <<transforms,size="scriptsize">>=
   pt <- parameter_trans(
     log=c("sigma","gamma","sigmaSE","psi","R0"),
     logit=c("cohort","amplitude"),
@@ -542,7 +540,7 @@ cat(rproc@text)
 \begin{frame}[fragile]
   \frametitle{Imported infections}
   $$\text{force of infection} = \mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
-  <<imports,results="hide",echo=FALSE,purl=FALSE>>=
+  <<imports,results="hide",echo=FALSE,purl=FALSE,out.width="4in">>=
   best <- read.csv('data/iota.csv',row.names=1)
 
   op <- par(
@@ -942,7 +940,7 @@ $r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
   \frametitle{Problematic results}
   \hspace{3cm} {\large \bf Extrademographic stochasticity}
   $$\mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
-  <<env-noise,echo=FALSE,results="hide",purl=FALSE>>=
+  <<env-noise,echo=FALSE,results="hide",purl=FALSE,out.width="4in">>=
   best <- read.csv('data/env_noise.csv',row.names=1)
   mean.euler <- function(rate,dt=1/365) dt/(1-exp(-rate*dt))
   best$IP <- mean.euler(best[,'gamma'])*365
