@@ -487,7 +487,7 @@ cat(rproc@text)
   logmeanexp(sapply(pfs,logLik),se=TRUE)
   @
 \end{frame}
-\subsection{Simulation and estimation}
+\subsection{Simulations}
 \begin{frame}[fragile]
   \frametitle{Simulations at the MLE}
   <<sims1,fig.height=2,echo=T>>=
