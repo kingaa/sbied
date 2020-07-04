@@ -26,9 +26,9 @@ polio_covar <- covariate_table(
   t=polio_data$time,
   B=polio_data$births,
   P=predict(smooth.spline(x=1931:1954,
-                          y=polio_data$pop[seq(12,24*12,by=12)]))$y,
+    y=polio_data$pop[seq(12,24*12,by=12)]))$y,
   periodic.bspline.basis(t,nbasis=polio_K,
-                         degree=3,period=1,names="xi%d"),
+    degree=3,period=1,names="xi%d"),
   times="t"
 )
 
@@ -39,7 +39,7 @@ polio_ivp_names <- c("SO_0","IO_0")
 polio_paramnames <- c(polio_rp_names,polio_ivp_names)
 
 polio_fp_names <- c("delta","K",
-                    "SB1_0","SB2_0","SB3_0","SB4_0","SB5_0","SB6_0")
+         "SB1_0","SB2_0","SB3_0","SB4_0","SB5_0","SB6_0")
 polio_paramnames <- c(polio_rp_names,
                       polio_ivp_names,polio_fp_names)
 covar_index_t0 <- which(abs(polio_covar@times-polio_t0)<0.01)
@@ -50,7 +50,8 @@ polio_fixed_params <- c(delta=1/60,K=polio_K,
                         polio_initial_births)
 
 polio_params_guess <- c(b1=3,b2=0,b3=1.5,b4=6,b5=5,b6=3,
-                        psi=0.002,rho=0.01,tau=0.001,sigma_dem=0.04,sigma_env=0.5,
+                        psi=0.002,rho=0.01,tau=0.001,
+			  sigma_dem=0.04,sigma_env=0.5,
                         SO_0=0.12,IO_0=0.001,polio_fixed_params)
 
 polio_rprocess <- Csnippet("
@@ -197,7 +198,7 @@ stew(file="results/mif.rda",{
                       .packages='pomp', .combine=rbind) %dopar%
       logmeanexp(
         replicate(polio_Nreps_eval,logLik(
-                                     pfilter(polio,params=coef(m2[[i]]),Np=polio_Np))),
+           pfilter(polio,params=coef(m2[[i]]),Np=polio_Np))),
         se=TRUE)
   })
 })
@@ -224,36 +225,31 @@ polio_box <- rbind(
 
 stew(file="results/box_eval.rda",{
   time_start_box_eval <- Sys.time()
-  m3 <- foreach(i=1:polio_Nreps_global,
-                .packages='pomp',.combine=c) %dopar%
-    mif2(m2[[1]],
-         params=c(apply(polio_box,1,function(x)runif(1,x[1],x[2])),
-                  polio_fixed_params)
-         )
+  m3 <- foreach(i=1:polio_Nreps_global,.packages='pomp',
+    .combine=c) %dopar% mif2(m2[[1]],
+      params=c(apply(polio_box,1,function(x)runif(1,x[1],x[2])),
+      polio_fixed_params)
+                                         )
   lik_m3 <- foreach(i=1:polio_Nreps_global,.packages='pomp',
-                    .combine=rbind) %dopar%
-    logmeanexp(
+    .combine=rbind) %dopar% logmeanexp(
       replicate(polio_Nreps_eval,
-                logLik(pfilter(polio,
-                               params=coef(m3[[i]]),Np=polio_Np))), 
+        logLik(pfilter(polio,
+          params=coef(m3[[i]]),Np=polio_Np))), 
       se=TRUE)
   time_end_box_eval <- Sys.time()
 })
 
 r3 <- data.frame(logLik=lik_m3[,1],logLik_se=lik_m3[,2],
                  t(sapply(m3,coef)))
-if(run_level>1)
-  write.table(r3,file="polio_params_out.csv",
-              append=TRUE,col.names=FALSE,row.names=FALSE)
+if(run_level>1) write.table(r3,file="polio_params_out.csv",
+  append=TRUE,col.names=FALSE,row.names=FALSE)
 summary(r3$logLik,digits=5)
 
 pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
       data=subset(r3,logLik>max(logLik)-20))
 
-nb_lik <- function(theta)
-  -sum(dnbinom(as.vector(obs(polio)),
-               size=exp(theta[1]),
-               prob=exp(theta[2]),log=TRUE))
+nb_lik <- function(theta) - sum(dnbinom(as.vector(obs(polio)),
+                  size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))
 nb_mle <- optim(c(0,-5),nb_lik)
 -nb_mle$value
 
@@ -292,15 +288,15 @@ profileDesign(
   nprof=polio_profile_Nreps
 ) -> starts
 
-profile_rw.sd <- polio_rw.sd <- rw.sd(
-                   rho=0,
-                   b1=polio_rw.sd_rp,b2=polio_rw.sd_rp,b3=polio_rw.sd_rp,
-                   b4=polio_rw.sd_rp,b5=polio_rw.sd_rp,b6=polio_rw.sd_rp,
-                   psi=polio_rw.sd_rp,
-                   tau=polio_rw.sd_rp, sigma_dem=polio_rw.sd_rp,
-                   sigma_env=polio_rw.sd_rp,
-                   IO_0=ivp(polio_rw.sd_ivp), SO_0=ivp(polio_rw.sd_ivp)
-                 )
+  profile_rw.sd <- polio_rw.sd <- rw.sd(
+    rho=0,
+    b1=polio_rw.sd_rp,b2=polio_rw.sd_rp,b3=polio_rw.sd_rp,
+    b4=polio_rw.sd_rp,b5=polio_rw.sd_rp,b6=polio_rw.sd_rp,
+    psi=polio_rw.sd_rp,
+    tau=polio_rw.sd_rp, sigma_dem=polio_rw.sd_rp,
+    sigma_env=polio_rw.sd_rp,
+    IO_0=ivp(polio_rw.sd_ivp), SO_0=ivp(polio_rw.sd_ivp)
+  )
 
 bake(file="results/profile_rho.rds",{  
   foreach(start=iter(starts,"row"),.combine=rbind) %dopar% {
@@ -334,6 +330,6 @@ m4 %>%
 plot(m3[r3$logLik>max(r3$logLik)-10])
 
 loglik_convergence <- do.call(cbind,
-                              traces(m3[r3$logLik>max(r3$logLik)-10],"loglik"))
+  traces(m3[r3$logLik>max(r3$logLik)-10],"loglik"))
 matplot(loglik_convergence,type="l",lty=1,
         ylim=max(loglik_convergence,na.rm=T)+c(-10,0))
