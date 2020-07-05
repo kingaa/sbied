@@ -6,7 +6,7 @@ opts_chunk$set(
   comment=NA,
   echo=TRUE,
   eval=TRUE,
-  dev='png',
+  dev='CairoPNG',
   dev.args=list(bg='transparent'),
   dpi=300,
   error=FALSE,
