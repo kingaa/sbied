@@ -200,18 +200,16 @@ paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
 mle[paramnames] %>% unlist() -> theta
 mle %>% select(-S_0,-E_0,-I_0,-R_0)
 
-## library(foreach)
-## library(doParallel)
-## library(doRNG)
-## 
-## registerDoParallel()
-## registerDoRNG(998468235L)
-## 
-## foreach(i=1:4) %dopar% {
-##   library(pomp)
-##   pfilter(m1,Np=10000,params=theta)
-## } -> pfs
-## logmeanexp(sapply(pfs,logLik),se=TRUE)
+library(foreach);library(doParallel);library(doRNG)
+
+registerDoParallel()
+registerDoRNG(998468235L)
+
+foreach(i=1:4) %dopar% {
+  library(pomp)
+  pfilter(m1,Np=10000,params=theta)
+} -> pfs
+logmeanexp(sapply(pfs,logLik),se=TRUE)
 
 m1 %>%
   simulate(params=theta,nsim=3,format="d",include.data=TRUE) %>%
@@ -264,11 +262,15 @@ simdat %>%
   spread(p,q) %>%
   ggplot(aes(x=time,y=med,color=data,fill=data,ymin=lo,ymax=hi))+
   geom_ribbon(alpha=0.2)+
-  guides(data=FALSE)
+  guides(data=FALSE)+
+  labs(y="cases") -> pl1
 
 simdat %>%
   filter(.id=="data" | .id <= "5") %>%
   mutate(data=.id=="data") %>%
   ggplot(aes(x=time,y=cases,group=.id,color=data))+
   geom_line()+
-  guides(color=FALSE)
+  guides(color=FALSE) -> pl2
+
+library(cowplot)
+plot_grid(pl1,pl2,ncol=1,align="hv",axis="tblr")
