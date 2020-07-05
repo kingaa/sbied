@@ -3,6 +3,7 @@
 \newcommand\CHAPTER{5}
 \title{Lesson \CHAPTER.\\Case study:\\Measles in large and small towns}
 \author{Aaron A. King, Edward Ionides, and Kidus Asfaw}
+\date{}
 
 <<setup,echo=F,cache=F,purl=F,child="../setup.Rnw">>=
 @
