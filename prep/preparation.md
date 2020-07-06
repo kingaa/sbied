@@ -86,14 +86,15 @@ A <a href="https://youtu.be/lmIhiT_QsPE" target="_blank">video tutorial demonstr
 ## MacOSX users
 
 So that you can compile C code and dynamically link it into an **R** session, you will need to have the **Xcode** app installed.
-This is gratis and can be installed via the App Store or downloaded from [developer.apple.com](https://developer.apple.com/download/).
+This is gratis and can be installed via the App Store or downloaded from [developer.apple.com](https://developer.apple.com/download/). Video tutorials demonstrating how to [check if you need to install Xcode](https://youtu.be/j0kqPpMecp4), [how to install Xcode](https://youtu.be/aryEseip6Mk), and [how to install pomp once you have installed Xcode](https://youtu.be/ikvJcN3Zi2w) are available.
 
 Note that you must go beyond merely installing the **Xcode** app.
 After you've installed the app, open a unix terminal (listed as the **Terminal** app under "Utilities" in the Finder) and run the following line
 ```
 xcode-select --install
 ```
-This will install the "Command Line Tools" that are needed to compile native C codes.
+This will install the "Command Line Tools" that are needed to compile native C codes. Running this command is tantamount to the part of the Xcode installation tutorial video where we complete the installation using the graphical user interface.
+
 
 ------------------------------------
 
