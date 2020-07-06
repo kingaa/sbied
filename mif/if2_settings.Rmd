@@ -82,7 +82,7 @@ v_{1,n}^2 & 0 & 0 & \cdots & 0 \\
 
 #### Exercise: Assessing and improving algorithmic parameters
 
-Develop your own heuristics to try to improve the performance of `mif2` in the [Consett measles example](./mif.pdf).
+Develop your own heuristics to try to improve the performance of `mif2` in the [Consett measles example](./main.pdf).
 Specifically, for a global optimization procedure carried out using random starting values in the specified box, let
 $\hat\Theta_{\mathrm{max}}$ be a random Monte Carlo estimate of the resulting MLE, and let $\hat\theta$ be the true (unknown) MLE.
 We can define the maximization error in the log likelihood to be
