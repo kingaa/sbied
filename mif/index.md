@@ -11,7 +11,7 @@ output: html_document
 | Lecture                | [Video]()                 |
 | Lecture slides         | [PDF](slides.pdf)         |
 | Lecture notes          | [PDF](notes.pdf)          |
-| Supplement: Tuning IF2 | [html](if2_settings.html) |
+| Supplement: Tuning IF2 | [HTML](if2_settings.html) |
 
 ----------------------
 
