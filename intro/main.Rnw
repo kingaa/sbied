@@ -11,6 +11,7 @@
 \def\CHAPTER{1}
 \title{Lesson \CHAPTER:\\Introduction to Simulation-based Inference\\for Epidemiological Dynamics}
 \author{Aaron A. King, Edward L. Ionides, Kidus Asfaw}
+\date{}
 
 \setbeamertemplate{footline}[frame number]
 
@@ -287,6 +288,9 @@
 
   \item
     Produced with \Rlanguage version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+
+  \item
+    Compiled on \today.
 
   \end{itemize}
 
