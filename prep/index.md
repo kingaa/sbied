@@ -53,7 +53,7 @@ Open a session in **RStudio** and run the following:
 
 ```
 > update.packages()
-> source("https://kingaa.github.io/sbied/prep/packages.R")
+> source("https://kingaa.github.io/sbied/tree/master/prep/packages.R")
 ```
 
 *[The `>` is the command prompt; it is not part of the command.

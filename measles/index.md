@@ -15,6 +15,6 @@ output: html_document
 
 [Back to course homepage](../index.html)  
 [Acknowledgements](../acknowledge.html)  
-[Source code for these notes](http://github.com/kingaa/sbied/measles/)  
+[Source code for these notes](http://github.com/kingaa/sbied/tree/master/measles/)  
 
 ----------------------

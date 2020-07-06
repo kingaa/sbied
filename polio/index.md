@@ -21,6 +21,6 @@ output: html_document
 
 [Back to course homepage](../index.html)  
 [Acknowledgements](../acknowledge.html)  
-[Source code for these notes](http://github.com/kingaa/sbied/polio/)  
+[Source code for these notes](http://github.com/kingaa/sbied/tree/master/polio/)  
 
 ----------------------

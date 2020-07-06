@@ -7,57 +7,56 @@ csl: jss.csl
 
 ---
 
----------------------
+***All times are EDT (UTC-04:00)***
 
-## Monday 8:30am-5:00pm
 
-- 8:30am: speed introductions
-	- (name; main field; one pathogen you're interested in)
-- 8:45: intro to POMP (EI)
-- 9:15: intro to pomp (AK), from "The pomp package for POMP models"
-- 9:45: exercise: debugging pomp installation and trying basic commands
-- 10:00: BREAK
-- 10:30: compartment models (EI)
-- 11:00: building models in pomp (AK)
-- 11:30: exercise: extending the bsflu model
-- 12:00pm: LUNCH
-- 1:30: discussing issues arising in bsflu exercise (AK)
-- 2:00: foundations of likelihood-based inference (EI)
-- 3:00: BREAK
-- 3:30: SMC background
-- 4:00: SMC in pomp
-- 4:30: exercise: playing with the bsflu likelihood via pfilter
-- 5:00: ADJOURN
 
 ---------------------
 
-## Tuesday 8:30am-5:00pm
+## Before 15 July 2020
 
-- 8:30am: discussion of issues arising, including parallel computing; slices vs profiles; interpreting log likelihood plots
-- 9:00: POMP inference methods, leading to description of IF2
-- 9:30: IF2 for bsflu in pomp
-- 10:00: BREAK
-- 10:30: IF2 for bsflu in pomp continued (practical details)
-- 11:00: exercise: miffing bsflu
-- 11:45: discussion of issues arising with mif2
-- 12:00pm: LUNCH
-- 1:30am: measles (AK)
-- 3:00: BREAK
-- 3:30: overdispersion in dynamic models (EI)
-- 5:00: ADJOURN
+All participants must [prepare their laptops for the course by following the detailed instructions given](https://kingaa.github.io/sbied/prep/).
+
+All sessions will be on the following zoom link.
 
 ---------------------
 
-## Wednesday 8:30am-12:00pm
+## Weds 15 July 2020 14:30--17:30
 
-- 3:30: polio (EI)
-- 8:30am: ebola (AK)
-- 10:00: BREAK
-- 10:30: contacts (EI)
-- 12:00pm: ADJOURN
+- **Required by 14:30** View the [Introduction to Simulation-based Lecture]().
+  Send questions by slack channel.
+- **Required by 14:30** View the [Stochastic simulation lecture]().
+  Send questions by slack channel.
+- 14:30: Opening plenary session: Discussion
+- 15:30: Breakout groups work on stochastic simulation exercises
+- 16:30: BREAK
+- 16:45: Plenary session: discussion of stochastic simulation exercises
+- 17:30  ADJOURN
+
+---------------------
+
+## Thursday 16 July 2020 11:00--17:30
+
+- **Required by 11:00** View the [Likelihood for POMPs lecture]().
+- 11:00: Plenary discussion
+- 12:00: Breakout groups work on particle filtering argument
+- 13:30: BREAK
+- 14:00: Plenary session: discussion of stochastic simulation exercises
+- **Required by 15:00** View the [Iterated filtering lecture]().
+- 15:00: discussion an work on iterated filtering exercises
+
+---------------------
+
+## Friday 17 July 2020 11:00--17:30
+
+- **Required by 11:00** View the [Measles case study lecture]().
+
+- **Required by 15:00** View the [Polio case study lecture]().
+
+
 	
 ------------------------------
 
 ## [Back to course homepage](./index.html)
 
-----------------------
+------------------------------

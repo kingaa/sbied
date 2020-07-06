@@ -16,6 +16,6 @@ output: html_document
 
 [Back to course homepage](../index.html)  
 [Acknowledgements](../acknowledge.html)  
-[Source code for these notes](http://github.com/kingaa/sbied/mif/)  
+[Source code for these notes](http://github.com/kingaa/sbied/tree/master/mif/)  
 
 ----------------------

@@ -26,6 +26,6 @@ pf-in-Nelder-Mead.html
 
 [Back to course homepage](../index.html)  
 [Acknowledgements](../acknowledge.html)  
-[Source code for these notes](http://github.com/kingaa/sbied/pfilter/)  
+[Source code for these notes](http://github.com/kingaa/sbied/tree/master/pfilter/)  
 
 ----------------------
