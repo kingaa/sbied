@@ -11,7 +11,6 @@
 \def\CHAPTER{1}
 \title{Lesson \CHAPTER:\\Introduction to Simulation-based Inference\\for Epidemiological Dynamics}
 \author{Aaron A. King, Edward L. Ionides, Kidus Asfaw}
-\date{}
 
 \setbeamertemplate{footline}[frame number]
 

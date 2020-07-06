@@ -519,6 +519,9 @@ knitr::opts_chunk$set(purl=FALSE)
   \item
     Produced with \Rlanguage version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
 
+  \item
+    Compiled on \today.
+
   \end{itemize}
 
   \link{../index.html}{Back to course homepage}
