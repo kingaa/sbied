@@ -6,15 +6,16 @@ output: html_document
 
 ----------------------
 
-| &nbsp; | &nbsp; |
-|:----------------------------|:---:|
-|Lecture slides | [PDF](slides.pdf) |
-|Lecture notes  | [PDF](notes.pdf) |
-|Worked solution to Exercise 6.1 | [HTML](algorithmic-parameters-exercise.html) |
-|Worked solution to Exercise 6.2 | [HTML](initial-values-exercise.html) |
-|Worked solution to Exercise 6.3 | [HTML](starting-values-exercise.html) |
-|Worked solution to Exercise 6.4 | [HTML](demography-exercise.html) |
-|Worked solution to Exercise 6.4 | [HTML](convergence-exercise.html) |
+| &nbsp;                          | &nbsp;                                                                            |
+|:--------------------------------|:---------------------------------------------------------------------------------:|
+| Lecture                         | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2RuunOUW3MqFcrcgydWhgS8) |
+| Lecture slides                  | [PDF](slides.pdf)                                                                 |
+| Lecture notes                   | [PDF](notes.pdf)                                                                  |
+| Worked solution to Exercise 6.1 | [HTML](algorithmic-parameters-exercise.html)                                      |
+| Worked solution to Exercise 6.2 | [HTML](initial-values-exercise.html)                                              |
+| Worked solution to Exercise 6.3 | [HTML](starting-values-exercise.html)                                             |
+| Worked solution to Exercise 6.4 | [HTML](demography-exercise.html)                                                  |
+| Worked solution to Exercise 6.4 | [HTML](convergence-exercise.html)                                                 |
 
 
 ----------------------

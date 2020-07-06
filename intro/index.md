@@ -6,11 +6,12 @@ output: html_document
 
 ----------------------
 
-| &nbsp; | &nbsp; |
-|:----------------------------|:---:|
-|Lecture slides | [PDF](slides.pdf) |
-|Lecture notes  | [PDF](notes.pdf) |
-|Another example  | [HTML](ricker.html) |
+| &nbsp;          | &nbsp;                                                                            |
+|:----------------|:---------------------------------------------------------------------------------:|
+| Lecture         | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2Sns4ChQCJy6T7Nz00r5zXV) |
+| Lecture slides  | [PDF](slides.pdf)                                                                 |
+| Lecture notes   | [PDF](notes.pdf)                                                                  |
+| Another example | [HTML](ricker.html)                                                               |
 
 ----------------------
 
