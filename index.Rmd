@@ -30,7 +30,7 @@ Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutori
 
 | &nbsp; | &nbsp; | &nbsp; | &nbsp; | &nbsp; |
 |:----------------------------------------|:---:|:---:|:---:|:--:|
-| **0. Instructions for preparing your laptop for the course exercises** | &nbsp; | [Page (HTML)](./prep/preparation.html) | &nbsp; | &nbsp; |
+| **0. Instructions for preparing your laptop for the course exercises** | &nbsp; | [Page (HTML)](./prep/index.html) | &nbsp; | &nbsp; |
 | **1. Introduction: What is "Simulation-based Inference for Epidemiological Dynamics"?** | Lecture | [Slides (PDF)](./intro/slides.pdf) | [Notes (PDF)](./intro/notes.pdf) |
 | **2. Simulation of stochastic dynamic models.** | Lecture | [Slides (PDF)](./stochsim/slides.pdf) | [Notes (PDF)](./stochsim/notes.pdf) | [Script (**R**)](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/main.R) |
 | **3. Likelihood for POMPs: theory and practice.** | Lecture | [Slides (PDF)](./pfilter/slides.pdf) | [Notes (PDF)](./pfilter/notes.pdf) | [Script (**R**)](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/main.R) |

@@ -14,7 +14,7 @@ The schedule is quite full, so it is important that you take a little time befor
    Make sure you follow these instructions *carefully* and *thoroughly*!
    Make sure you follow the instructions to *test* your system before you are finished!
 
-	[The full installation instructions are here: follow them carefully!](https://kingaa.github.io/sbied/prep/preparation.html)
+	[The full installation instructions are here: follow them carefully!](https://kingaa.github.io/sbied/prep/)
 
 	Once you are finished, please fill out [this online form](https://docs.google.com/forms/d/1mPYOdqjCS2V3E80uLww8IZxJIKuvnTmcaAcHJgQtO48) to give me information about your computing system.
 
