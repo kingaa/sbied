@@ -3,6 +3,7 @@
 \def\CHAPTER{2}
 \title{Lesson 2:\\Simulation of stochastic dynamic models}
 \author{Aaron A. King, Edward L. Ionides, and Kidus Asfaw}
+\date{}
 
 \begin{document}
 
@@ -403,8 +404,6 @@ registerDoRNG(2488820)
 
 \end{frame}
 
-%\end{document}
-
 \begin{frame}[fragile,allowframebreaks]{Implementing the SIR model in \package{pomp}}
 
   \begin{itemize}
@@ -486,8 +485,10 @@ registerDoRNG(2488820)
   @
 
 \item Now, we'll model the data as a binomial process,
-  $$\mathrm{reports}_t \sim \dist{Binomial}{H(t)-H(t-1),\rho}.$$
-
+  \begin{equation*}
+    \mathrm{reports}_t \sim \dist{Binomial}{H(t),\rho}.
+  \end{equation*}
+  
 \item Now, to include the observations in the model, we must write either a \code{dmeasure} or an \code{rmeasure} component, or both:
 
   <<meas-modelR>>=
@@ -602,7 +603,7 @@ registerDoRNG(2488820)
     For $\Rzero>5$, this equation predicts that $f>0.99$.
 
   \item In the data, it looks like there were a total of $\Sexpr{sum(meas$reports)}$ infections.
-    Assuming 50% reporting, we have that $S_0\approx\Sexpr{sum(meas$reports)/0.5}$, so that
+    Assuming 50\% reporting, we have that $S_0\approx\Sexpr{sum(meas$reports)/0.5}$, so that
     $\eta=\frac{S_0}{N}\approx\Sexpr{signif(2*sum(meas$reports)/38000,2)}$.
 
   \item If the infectious period is roughly 2 weeks, then $1/\mu_{IR} \approx 2~\text{wk}$ and $\beta = \mu_{IR}\,\Rzero \approx 7.5~\text{wk}^{-1}$.
@@ -685,6 +686,9 @@ registerDoRNG(2488820)
 
   \item
     Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+
+  \item
+    Compiled on \today.
 
   \end{itemize}
 
