@@ -177,6 +177,13 @@ registerDoRNG(2488820)
   \ei
 \end{frame}
 
+\AtBeginSection[]{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
 \section{Euler's method}
 
 \subsection{Numerical solution of deterministic dynamics}
