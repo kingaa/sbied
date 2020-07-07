@@ -24,7 +24,7 @@ sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t, ...) {
   c(S = S, I = I, R = R)
 }
 
-sir_rinit <- function(N, eta, ...) {
+sir_rinit <- function (N, eta, ...) {
   c(S = round(N*eta), I = 1, R = round(N*(1-eta)))
 }
 
@@ -35,7 +35,8 @@ meas %>%
        rinit=sir_rinit
        ) -> measSIR
 
-sir_step <- function (S, I, R, H, N, Beta, mu_IR, delta.t, ...) {
+sir_step <- function (S, I, R, H, N, Beta, mu_IR, delta.t, ...)
+{
   dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
   dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
   S <- S - dN_SI

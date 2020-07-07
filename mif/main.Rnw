@@ -69,7 +69,7 @@ set.seed(1350254336)
   \end{itemize}
 \end{frame}
 
-\subsection{The plug-and-play property}
+\subsection*{The plug-and-play property}
 
 \begin{frame}[allowframebreaks=0.7]{Plug-and-play (also called simulation-based) methods}
   \begin{itemize}
@@ -86,7 +86,7 @@ set.seed(1350254336)
   \end{itemize}
 \end{frame}
 
-\subsection{Full information vs.~feature-based methods}
+\subsection*{Full information vs.~feature-based methods}
 
 \begin{frame}[allowframebreaks=0.7]
   \frametitle{Full-information and feature-based methods}  
@@ -104,7 +104,7 @@ set.seed(1350254336)
   \end{itemize}
 \end{frame}
 
-\subsection{Bayesian vs.~frequentist approaches}
+\subsection*{Bayesian vs.~frequentist approaches}
 
 \begin{frame}[allowframebreaks=0.7]
   \frametitle{Bayesian and frequentist methods}
@@ -242,7 +242,7 @@ set.seed(1350254336)
 
 \section{Iterated filtering in practice}
 
-\subsection{An example problem}
+\subsection*{An example problem}
 
 \begin{frame}[fragile]
   \frametitle{Applying IF2 to the Consett measles outbreak}
@@ -422,7 +422,7 @@ set.seed(1350254336)
   The above plot shows the data (\code{reports}), along with the \emph{effective sample size} of the particle filter (\code{ess}) and the log likelihood of each observation conditional on the preceding ones (\code{cond.logLik}).
 \end{frame}
 
-\subsection{Setting up the estimation problem}
+\subsection*{Setting up the estimation problem}
 
 \begin{frame}[fragile]
   \frametitle{Setting up the estimation problem}
@@ -516,7 +516,7 @@ set.seed(1350254336)
   @
 \end{frame}
 
-\subsection{A local search of the likelihood surface}
+\subsection*{A local search of the likelihood surface}
 
 \begin{frame}[fragile,allowframebreaks=0.9]{A local search of the likelihood surface}
   
@@ -664,7 +664,9 @@ set.seed(1350254336)
   and move on to a more thorough exploration of the likelihood surface.
 \end{frame}
 
-\subsection{A global search}
+\section{Searching for the MLE}
+
+\subsection*{A global search}
 
 \begin{frame}[fragile,allowframebreaks]
   \frametitle{A global search of the likelihood surface}
@@ -797,7 +799,7 @@ set.seed(1350254336)
   @
 \end{frame}
 
-\subsection{Profile likelihood}
+\subsection*{Profile likelihood}
 
 \begin{frame}[fragile,allowframebreaks]{Profile likelihood over $\eta$}
 
@@ -1061,6 +1063,10 @@ set.seed(1350254336)
   The data appear to be consistent with reporting efficiencies in the \Sexpr{signif(100*rho_ci$min,2)}--\Sexpr{signif(100*rho_ci$max,2)}\% range (95\% CI).
 \end{frame}
 
+\section{The investigation continues\dots.}
+
+\subsection*{Making predictions}
+
 \begin{frame}[allowframebreaks=0.7]{Parameter estimates as model predictions}
   
   \begin{itemize}
@@ -1078,11 +1084,12 @@ set.seed(1350254336)
 
 \end{frame}
 
-\subsection{Expanding the search}
+\subsection*{Searching in another direction}
 
-\begin{frame}[fragile,allowframebreaks]{Expanding the search}
+\begin{frame}[fragile,allowframebreaks]{Another global search}
 
-  To expand the search, we'll construct a random design of starting parameters as before.
+  We will estimate the model under the assumption that $\rho=0.6$, but without making assumptions about the duration of the infectious period.
+  As before, we'll construct a random design of starting parameters.
   
   <<exp_global_search1>>=
   set.seed(55266255)
@@ -1317,7 +1324,7 @@ set.seed(1350254336)
 
 \section{Exercises}
 
-\begin{frame}{Basic Exercise: Fitting the SEIR model}
+\begin{frame}{\myexercise. Fitting the SEIR model}
   Following the template above, estimate the parameters and likelihood of the SEIR model you implemented in the earlier lessons.
   Specifically:
   \begin{enumerate}[(a)]
@@ -1330,12 +1337,12 @@ set.seed(1350254336)
   In particular, choose the number of starts, number of particles employed, and the number of IF2 iterations to perform in view of the size and speed of your machine.
 \end{frame}
 
-\begin{frame}{Extra Exercise: Modify the measurement model}
+\begin{frame}{\myexercise. Modify the measurement model}
   The binomial measurement model used here assumes that the reporting rate is fixed through time and that all infections are equally likely to be reported.
   Formulate an alternative measurement model and maximize the likelihood to compare it with existing results.
 \end{frame}
 
-\begin{frame}{Extra Exercise: Construct a profile likelihood}
+\begin{frame}{\myexercise. Construct a profile likelihood}
   How strong is the evidence about the contact rate, $\beta$, given this model and data?
   Use \code{mif2} to construct a profile likelihood.
   Due to time constraints, you may be able to compute only a preliminary version.
@@ -1344,7 +1351,7 @@ set.seed(1350254336)
   Is this more or less well determined than $\beta$ for this model and data?
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Extra Exercise: Checking the source code}
+\begin{frame}[allowframebreaks]{\myexercise. Checking the source code}
 
   Check the source code for the \code{measSIR} pomp object.
   Does the code implement the model described?
@@ -1374,7 +1381,7 @@ set.seed(1350254336)
   \end{enumerate}
 \end{frame}
 
-\begin{frame}{Extra Exercise: Choosing the algorithmic settings for IF2}
+\begin{frame}{\myexercise: Choosing the algorithmic settings for IF2}
   Have a look at \link{./if2_settings.html}{our advice on tuning IF2}.
 \end{frame}
 
