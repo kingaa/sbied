@@ -249,6 +249,22 @@ window.initializeCodeFolding = function(show) {
 
 }
 </script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
 
 
 
@@ -452,7 +468,7 @@ v_{1,n}^2 &amp; 0 &amp; 0 &amp; \cdots &amp; 0 \\
 <hr />
 <div id="exercise-assessing-and-improving-algorithmic-parameters" class="section level4">
 <h4>Exercise: Assessing and improving algorithmic parameters</h4>
-<p>Develop your own heuristics to try to improve the performance of <code>mif2</code> in the <a href="./main.pdf">Consett measles example</a>. Specifically, for a global optimization procedure carried out using random starting values in the specified box, let <span class="math inline">\(\hat\Theta_{\mathrm{max}}\)</span> be a random Monte Carlo estimate of the resulting MLE, and let <span class="math inline">\(\hat\theta\)</span> be the true (unknown) MLE. We can define the maximization error in the log likelihood to be <span class="math display">\[e = \ell(\hat\theta) - E[\ell(\hat\Theta_{\mathrm{max}})].\]</span> We cannot directly evaluate <span class="math inline">\(e\)</span>, since there is also Monte Carlo error in our evaluation of <span class="math inline">\(\ell(\theta)\)</span>, but we can compute it up to a known precision. Plan some code to estimates <span class="math inline">\(e\)</span> for a search procedure using a computational effort of <span class="math inline">\(JM=2\times 10^7\)</span>, comparable to that used for each mif computation in the global search. Discuss the strengths and weaknesses of this quantification of optimization success. See if you can choose <span class="math inline">\(J\)</span> and <span class="math inline">\(M\)</span> subject to this constraint, together with choices of <code>rw.sd</code> and the cooling rate, <code>cooling.fraction.50</code>, to arrive at a quantifiably better procedure. Computationally, you may not be readily able to run your full procedure, but you could run a quicker version of it.</p>
+<p>Develop your own heuristics to try to improve the performance of <code>mif2</code> in the <a href="./notes.pdf">Consett measles example</a>. Specifically, for a global optimization procedure carried out using random starting values in the specified box, let <span class="math inline">\(\hat\Theta_{\mathrm{max}}\)</span> be a random Monte Carlo estimate of the resulting MLE, and let <span class="math inline">\(\hat\theta\)</span> be the true (unknown) MLE. We can define the maximization error in the log likelihood to be <span class="math display">\[e = \ell(\hat\theta) - E[\ell(\hat\Theta_{\mathrm{max}})].\]</span> We cannot directly evaluate <span class="math inline">\(e\)</span>, since there is also Monte Carlo error in our evaluation of <span class="math inline">\(\ell(\theta)\)</span>, but we can compute it up to a known precision. Plan some code to estimates <span class="math inline">\(e\)</span> for a search procedure using a computational effort of <span class="math inline">\(JM=2\times 10^7\)</span>, comparable to that used for each mif computation in the global search. Discuss the strengths and weaknesses of this quantification of optimization success. See if you can choose <span class="math inline">\(J\)</span> and <span class="math inline">\(M\)</span> subject to this constraint, together with choices of <code>rw.sd</code> and the cooling rate, <code>cooling.fraction.50</code>, to arrive at a quantifiably better procedure. Computationally, you may not be readily able to run your full procedure, but you could run a quicker version of it.</p>
 <hr />
 <p><a href="./index.html"><strong>Back to IF2 lesson</strong></a><br />
 <a href="../index.html"><strong>Back to course homepage</strong></a><br />
