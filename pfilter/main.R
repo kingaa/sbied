@@ -62,7 +62,6 @@ library(doParallel)
 library(doRNG)
 registerDoParallel()
 registerDoRNG(652643293)
-
 foreach (i=1:10, .combine=c) %dopar% {
   measSIR %>% pfilter(Np=5000)
 } -> pf

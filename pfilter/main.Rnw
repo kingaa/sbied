@@ -396,12 +396,13 @@ set.seed(1350254336)
   @
   
   We can run a few particle filters to get an estimate of the Monte Carlo variability:
-  <<pfilter-2,cache=TRUE>>=
+  <<pfilter-2,echo=FALSE,cache=TRUE>>=
   library(doParallel)
   library(doRNG)
   registerDoParallel()
   registerDoRNG(652643293)
-
+  @
+  <<pfilter-3,cache=TRUE>>=
   foreach (i=1:10, .combine=c) %dopar% {
     measSIR %>% pfilter(Np=5000)
   } -> pf
@@ -588,13 +589,6 @@ set.seed(1350254336)
   }) -> p
   @ 
   
-  \begin{itemize}
-  \item
-    Note that we've used the \package{foreach} package with the \package{doParallel} backend to parallelize these computations.
-  \item
-    To ensure that we have high-quality random numbers in each parallel \Rlanguage session, we use a parallel random number generator provided by the \package{doRNG} package and initialized by the \code{registerDoRNG} call.
-  \end{itemize}
-
   <<like-slice-plot,echo=FALSE>>=
   library(tidyverse)
 
