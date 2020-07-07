@@ -25,7 +25,6 @@ stopifnot(packageVersion("pomp")>"2.0.9")
 \newcommand\cov[2]{\mathrm{Cov}\left[{#1},{#2}\right]}
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
 \newcommand\dd[1]{d{#1}}
-\newcommand\dlta[1]{{\Delta}{#1}}
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\ell}
 \newcommand\R{\mathbb{R}}

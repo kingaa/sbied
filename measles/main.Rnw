@@ -230,7 +230,7 @@ set.seed(1109529108L)
       \item The factor $(1-p)/p$ ensures that the average transmission rate is $\beta_0$.
       \end{itemize}
     \end{itemize}
-  \item Overdispersed binomial measurement model: $\mathrm{cases}_t\,\vert\,\dlta{N}_{IR}=z_t \sim \dist{Normal}{\rho\,z_t,\rho\,(1-\rho)\,z_t+(\psi\,\rho\,z_t)^2}$
+  \item Overdispersed binomial measurement model: $\mathrm{cases}_t\,\vert\,\Delta{N}_{IR}=z_t \sim \dist{Normal}{\rho\,z_t,\rho\,(1-\rho)\,z_t+(\psi\,\rho\,z_t)^2}$
   \end{itemize}
 \end{frame}
 \subsection{Model implementation in \package{pomp}}
