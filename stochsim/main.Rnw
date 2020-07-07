@@ -70,7 +70,7 @@ registerDoRNG(2488820)
 
 \begin{frame}[allowframebreaks=0.8]{General notation for compartment models}
   \bi
-\item To develop a systemtic notation, it turns out to be convenient to keep track of the flows between compartments as well as the number of individuals in each compartment. Let
+\item To develop a systematic notation, it turns out to be convenient to keep track of the flows between compartments as well as the number of individuals in each compartment. Let
   $$N_{SI}(t)$$
   count the number of individuals who have transitioned from $S$ to $I$ by time $t$. We say that $N_{SI}(t)$ is a \myemph{counting process}. A similarly constructed process
   $$N_{IR}(t)$$
@@ -176,6 +176,13 @@ registerDoRNG(2488820)
   Setting up the model using counting processes, as we have done here, turns out to be useful for this.
   \ei
 \end{frame}
+
+\AtBeginSection[]{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
 
 \section{Euler's method}
 
@@ -322,9 +329,9 @@ registerDoRNG(2488820)
 %
 %\end{frame}
 
-\begin{frame}{\myexercise. Euler's method vs Gillspie's algorithm}
+\begin{frame}{\myexercise. Euler's method vs Gillespie's algorithm}
 
-  A widely used, exact simulation method for continuous time Markov chains is  \link{https://en.wikipedia.org/wiki/Gillespie_algorithm}{Gillspie's algorithm}.
+  A widely used, exact simulation method for continuous time Markov chains is  \link{https://en.wikipedia.org/wiki/Gillespie_algorithm}{Gillespie's algorithm}.
   We do not put much emphasis on Gillespie's algorithm here. Why? When would you prefer an implementation of Gillespie's algorithm to an Euler solution?
 
   \vspace{3mm}
@@ -397,7 +404,7 @@ registerDoRNG(2488820)
 
 \item In this case, we'll assume that the stochasticity is purely demographic, i.e., that each individual in a compartment at any given time faces the same risk of exiting the compartment.
 
-\item \myemph{Demographic stochasticity} is the unavoidable randomness that arises from chance events occuring in a discrete and finite population.
+\item \myemph{Demographic stochasticity} is the unavoidable randomness that arises from chance events occurring in a discrete and finite population.
 
   \ei
 
