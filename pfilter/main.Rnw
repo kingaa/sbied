@@ -132,7 +132,7 @@ set.seed(1350254336)
   \framebreak
   
   \begin{itemize}
-  \item The latent process $X(t)$ may be defined at all times, but we are particulary interested in its value at observation times. Therefore, we write 
+  \item The latent process $X(t)$ may be defined at all times, but we are particularly interested in its value at observation times. Therefore, we write 
     $$X_n=X(t_n).$$ 
   \item We write collections of random variables using the notation $X_{0:N}=(X_0,\dots,X_N)$.
   \item The one-step transition density, $f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)$, together with the measurement density, $f_{Y_n|X_n}(y_n|x_n;\theta)$ and the initial density, $f_{X_0}(x_0;\theta)$, specify the entire joint density via
@@ -197,7 +197,7 @@ set.seed(1350254336)
   \begin{itemize}
   \item Notice, using the representation in Eqn.~\ref{eq:L2}, that the likelihood can be written as an expectation,
     \begin{equation*}
-      \lik(\theta) = \E{\prod_{n=1}^{N}\!f_{Y_n|X_n}({y^*_n}| X_n; \theta)},
+      \lik(\theta) = \E \left[ \prod_{n=1}^{N}\!f_{Y_n|X_n}({y^*_n}| X_n; \theta) \right],
     \end{equation*}
     where the expectation is taken with $X_{0:N}\sim f_{X_{0:N}}(x_{0:N};\theta)$.
   \item Now, using a \link{https://en.wikipedia.org/wiki/Law_of_large_numbers}{law of large numbers}, we can approximate an expectation by the average of a Monte Carlo sample. Thus,
@@ -507,15 +507,15 @@ set.seed(1350254336)
   \item
     The \textbf{profile log likelihood function} of $\phi$ is defined to be
     \begin{equation*}
-      \profileloglik(\phi) = \max_{\psi}\loglik(\phi,\psi).
+      \profileloglik{{}}(\phi) = \max_{\psi}\loglik(\phi,\psi).
     \end{equation*}
     In general, the profile likelihood of one parameter is constructed by maximizing the likelihood function over all other parameters.
   \item
-    Note that, $\max_{\phi}\profileloglik(\phi) = \max_{\theta}\loglik(\theta)$ and that maximizing the profile likelihood $\profileloglik(\phi)$ gives the MLE, $\hat{\theta}$. Why?
+    Note that, $\max_{\phi}\profileloglik{{}}(\phi) = \max_{\theta}\loglik(\theta)$ and that maximizing the profile likelihood $\profileloglik{{}}(\phi)$ gives the MLE, $\hat{\theta}$. Why?
   \item
     An approximate 95\% confidence interval for $\phi$ is given by
     \begin{equation*}
-      \big\{\phi : \loglik(\hat\theta) - \profileloglik(\phi) < 1.92\big\}.
+      \big\{\phi : \loglik(\hat\theta) - \profileloglik{{}}(\phi) < 1.92\big\}.
     \end{equation*}
   \item
     This is known as a profile likelihood confidence interval. The cutoff $1.92$ is derived using \link{https://en.wikipedia.org/wiki/Likelihood-ratio_test\#Distribution:_Wilks.27s_theorem}{Wilks' theorem}, which we will discuss in more detail when we develop likelihood ratio tests.
@@ -712,7 +712,7 @@ set.seed(1350254336)
     It should be computed in a length of time appropriate for the circumstances.
   \end{itemize}
 
-  Set up a likelihood evaluation for the flu model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine.
+  Set up a likelihood evaluation for the measles model, choosing the numbers of particles and replications so that your evaluation takes approximately one minute on your machine.
 
   \begin{itemize}
   \item
@@ -743,7 +743,7 @@ set.seed(1350254336)
   \item
     Likelihood maximization is key to profile intervals, likelihood ratio tests and AIC as well as the computation of the MLE.
   \item
-    An initial approach to likelihood maximization might be to stick the particle filter log likelhood estimate into a standard numerical optimizer, such as the Nelder-Mead algorithm.
+    An initial approach to likelihood maximization might be to stick the particle filter log likelihood estimate into a standard numerical optimizer, such as the Nelder-Mead algorithm.
   \item
     In practice this approach is unsatisfactory on all but the smallest POMP models. Standard numerical optimizers are not designed to maximize noisy and computationally expensive Monte Carlo functions.
   \item
@@ -810,7 +810,7 @@ set.seed(1350254336)
 \begin{frame}[allowframebreaks]{Wilks' theorem and profile likelihood}
   \begin{itemize}
   \item
-    Suppose we have an MLE, written $\hat\theta=(\hat\phi,\hat\psi)$, and a profile log likelihood for $\phi$, given by $\profileloglik(\phi)$.
+    Suppose we have an MLE, written $\hat\theta=(\hat\phi,\hat\psi)$, and a profile log likelihood for $\phi$, given by $\profileloglik{{}}(\phi)$.
   \item
     Consider the likelihood ratio test for the nested hypotheses
     \begin{equation*}
@@ -822,11 +822,11 @@ set.seed(1350254336)
   \item
     We can compute the 95\%-ile for a chi-squared distribution with one degree of freedom: \code{qchisq(0.95,df=1)}$=\Sexpr{signif(qchisq(0.95,df=1),4)}$.
   \item
-    Wilks' theorem then gives us a hypothesis test with approximate size $5\%$ that rejects $H^{\langle 0\rangle}$ if $\profileloglik(\hat\phi)-\profileloglik(\phi_0)<3.84/2$.
+    Wilks' theorem then gives us a hypothesis test with approximate size $5\%$ that rejects $H^{\langle 0\rangle}$ if $\profileloglik{{}}(\hat\phi)-\profileloglik{{}}(\phi_0)<3.84/2$.
   \item
     It follows that, with probability $95\%$, the true value of $\phi$ falls in the set
     \begin{equation*}
-      \big\{\phi: \profileloglik(\hat\phi)-\profileloglik(\phi)<1.92\big\}.
+      \big\{\phi: \profileloglik{{}}(\hat\phi)-\profileloglik{{}}(\phi)<1.92\big\}.
     \end{equation*}
     So, we have constructed a profile likelihood confidence interval, consisting of the set of points on the profile likelihood within $1.92$ log units of the maximum.
   \item
@@ -890,6 +890,9 @@ set.seed(1350254336)
 
   \item
     Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+
+  \item
+    Compiled on \today.
 
   \end{itemize}
 

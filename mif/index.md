@@ -6,11 +6,12 @@ output: html_document
 
 ----------------------
 
-| &nbsp; | &nbsp; |
-|:----------------------------|:---:|
-|Lecture slides | [PDF](slides.pdf) |
-|Lecture notes  | [PDF](notes.pdf) |
-|Supplement: Tuning IF2 | [html](if2_settings.html) |
+| &nbsp;                 | &nbsp;                    |
+|:-----------------------|:-------------------------:|
+| Lecture                | [Video]()                 |
+| Lecture slides         | [PDF](slides.pdf)         |
+| Lecture notes          | [PDF](notes.pdf)          |
+| Supplement: Tuning IF2 | [HTML](if2_settings.html) |
 
 ----------------------
 

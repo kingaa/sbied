@@ -402,7 +402,7 @@ hr {
 <h3>Install needed packages</h3>
 <p>Open a session in <strong>RStudio</strong> and run the following:</p>
 <pre><code>&gt; update.packages()
-&gt; source(&quot;https://kingaa.github.io/sbied/tree/master/prep/packages.R&quot;)</code></pre>
+&gt; source(&quot;https://kingaa.github.io/sbied/prep/packages.R&quot;)</code></pre>
 <p><em>[The <code>&gt;</code> is the command prompt; it is not part of the command. Also, depending on your email client propgram, you may need to replace the quotation marks with plain keyboard double quotes.]</em></p>
 <p>The first command updates your installed packages. You may be prompted to specify a CRAN mirror: choose one geographically near you. In <strong>RStudio</strong>, you can also push the “Update” button on the “Packages” tab to accomplish this.</p>
 <p>The second command runs a script on my website. It will install some needed packages if these are not already installed on your system.</p>
@@ -449,7 +449,7 @@ install_github(&quot;kingaa/pomp&quot;)</code></pre>
 <pre><code>make: gfortran-4.8: No such file or directory</code></pre>
 <p>or one that otherwise refers to <code>gfortran</code>, then it is likely that you do not have the necessary version of <strong>gfortran</strong> installed. Have a look at <a href="https://mac.r-project.org/tools/">these instructions</a> and contact me at the address above if these don’t work for you.</p>
 <p>Some users have reported receiving an error complaining that</p>
-<pre><code>'stdlib.h' file not found</code></pre>
+<pre><code>&#39;stdlib.h&#39; file not found</code></pre>
 <p>This indicates that the command-line tools from <strong>Xcode</strong> have not been properly installed. In a unix terminal, run</p>
 <pre><code>xcode-select --install</code></pre>
 <p>to correct this problem.</p>

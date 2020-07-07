@@ -699,6 +699,9 @@ if(timing) save(t3,file="results/mif1-lik-eval-timing.rda") else load("results/m
   \item
     Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
 
+  \item
+    Compiled on \today.
+
   \end{itemize}
 
   \link{../index.html}{Back to course homepage}

@@ -6,11 +6,13 @@ output: html_document
 
 ----------------------
 
-| &nbsp; | &nbsp; |
-|:----------------------------|:---:|
-|Lecture slides | [PDF](slides.pdf) |
-|Lecture notes  | [PDF](notes.pdf) |
-|Supplement: profile likelihood calculation | [HTML](profile.html) |
+| &nbsp;                                     | &nbsp;               |
+|:-------------------------------------------|:--------------------:|
+| Lecture                                    | [Video]()            |
+| Lecture slides                             | [PDF](slides.pdf)    |
+| Lecture notes                              | [PDF](notes.pdf)     |
+| Supplement: profile likelihood calculation | [HTML](profile.html) |
+
 ----------------------
 
 [Back to course homepage](../index.html)  

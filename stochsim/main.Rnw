@@ -3,7 +3,6 @@
 \def\CHAPTER{2}
 \title{Lesson 2:\\Simulation of stochastic dynamic models}
 \author{Aaron A. King, Edward L. Ionides, and Kidus Asfaw}
-\date{}
 
 \begin{document}
 
@@ -699,4 +698,3 @@ registerDoRNG(2488820)
 
 
 \end{document}
-
