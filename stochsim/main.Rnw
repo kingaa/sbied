@@ -124,13 +124,13 @@ registerDoRNG(2488820)
 
   \begin{equation*}
     \begin{aligned}
-      \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)+1\big] &=& \mu_{SI}(t) \, S(t) \delta + o(\delta)
+      \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)+1\big] &\equals& \mu_{SI}(t) \, S(t) \delta + o(\delta)
       \\
-      \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)\big] &=& 1-\mu_{SI}(t) \, S(t) \delta + o(\delta)
+      \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)\big] &\equals& 1-\mu_{SI}(t) \, S(t) \delta + o(\delta)
       \\
-      \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)+1\big] &=& \mu_{IR} \, I(t) \delta + o(\delta)
+      \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)+1\big] &\equals& \mu_{IR} \, I(t) \delta + o(\delta)
       \\
-      \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)\big] &=& 1-\mu_{IR}(t) \, I(t) \delta + o(\delta)
+      \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)\big] &\equals& 1-\mu_{IR}(t) \, I(t) \delta + o(\delta)
     \end{aligned}
   \end{equation*}
 
@@ -197,7 +197,8 @@ registerDoRNG(2488820)
   with an initial condition $x(0)$. 
 
 \item
-  He supposed this ODE has some true solution $x(t)$ which could not be worked out analytically. He wanted to approximate $x(t)$ numerically.
+  He supposed this ODE has some true solution $x(t)$ which could not be worked out analytically.
+  He wanted an approximation $\tilde{x}(t)$ of $x(t)$.
 
 \item He initialized the numerical solution at the known starting value, 
   $$\tilde x(0)=x(0).$$
@@ -249,9 +250,9 @@ registerDoRNG(2488820)
 \item Recall the simple continuous-time Markov chain interpretation of the SIR model without demography:
   \begin{equation*}
     \begin{aligned}
-      \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)+1\big] &=& \mu_{SI}(t) \, S(t) \delta + o(\delta),
+      \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)+1\big] &\equals& \mu_{SI}(t) \, S(t) \delta + o(\delta),
       \\
-      \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)+1\big] &=& \mu_{IR} \, I(t) \delta + o(\delta).
+      \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)+1\big] &\equals& \mu_{IR} \, I(t) \delta + o(\delta).
     \end{aligned}
   \end{equation*}
 \item We want a numerical solution with state variables $\tilde S(k\delta)$, $\tilde I(k\delta)$, $\tilde R(k\delta)$. 
@@ -290,19 +291,23 @@ registerDoRNG(2488820)
 
   \hrulefill
 
-  Analytically, it is usually easiest to reason using (1) or (2).
+  Analytically, it is usually easiest to reason using (1) or (2).\\
   Practically, it is usually preferable to work with (3). 
 
 \end{frame}
 
-\begin{frame}[allowframebreaks=0.8]{Compartment models as stochastic differential equations}
+\begin{frame}[allowframebreaks=0.9]{Compartment models as stochastic differential equations}
   \bi
 \item The Euler method extends naturally to stochastic differential equations (SDEs).
 \item A natural way to add stochastic variation to an ODE $dx/dt=h(x)$ is
-  $$ dX/dt = h(X) + \sigma \, dB/dt$$
+  \begin{equation*}
+    \deriv{X}{t} = h(X)+\sigma\,\deriv{B}{t}
+  \end{equation*}
   where $\{B(t)\}$ is Brownian motion and so $dB/dt$ is Brownian noise.
 \item An Euler approximation $\tilde X(t)$ is 
-  $$ \tilde X\big( \,(k+1)\delta\,\big) = \tilde X( k\delta) + \delta\, h\big(\, \tilde X(k\delta)\,\big) + \sigma \sqrt{\delta} \, Z_k$$
+  \begin{equation*}
+    \tilde{X}\big( \,(k+1)\delta\,\big) = \tilde{X}( k\delta) + \delta\, h\big(\, \tilde{X}k\delta)\,\big) + \sigma \sqrt{\delta} \, Z_k
+  \end{equation*}
   where $Z_1,Z_2,\dots$ is a sequence of independent standard normal random variables, i.e.,  $Z_k\sim N[0,1]$.
 \item Although SDEs are often considered an advanced topic in probability, the Euler approximation doesn't demand much more than familiarity with the normal distribution.
   \ei
@@ -342,7 +347,9 @@ registerDoRNG(2488820)
 
   Numerically, Gillespie's algorithm is often approximated using so-called
   \link{https://en.wikipedia.org/wiki/Tau-leaping}{tau-leaping}
-  methods. These are closely related to Euler's approach. In this context, the Euler method has sometimes been called a tau-leaping.
+  methods.
+  These are closely related to Euler's approach.
+  In this context, the Euler method has sometimes been called tau-leaping.
 
 
 
@@ -417,9 +424,9 @@ registerDoRNG(2488820)
   \item To implement the model in \package{pomp}, the first thing we need is a stochastic simulator for the unobserved state process.
 
   \item  We follow method 3 above, modeling the number, $\Delta{N_{SI}}$, moving from S to I over interval $\Delta{t}$ as
-    $$\Delta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\beta\,I/N\Delta{t}}},$$
+    $$\Delta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\beta\,\frac{I}{N}\,\Delta{t}}},$$
     and the number moving from I to R as
-    $$\Delta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\mu_{IR}\Delta{t}}}.$$
+    $$\Delta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\mu_{IR}\,\Delta{t}}}.$$
     
     \framebreak
 

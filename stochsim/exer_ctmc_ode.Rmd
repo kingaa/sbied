@@ -13,7 +13,6 @@ csl: ../jss.csl
 \newcommand\expect[1]{\mathbb{E}\big[{#1}\big]}
 \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-\newcommand\dlta[1]{{\Delta}{#1}}
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\ell}
 
@@ -23,18 +22,18 @@ Please share and remix noncommercially, mentioning its origin.
 
 ## Optional Exercise: From Markov chain to ODE
 
-The expected value of the random variables $\dlta{N}_{SI}(t) = N_{SI}(t+\delta)-N_{SI}(t)$, which take values on the finite set $\{0,\ldots,N\}$, is
+The expected value of the random variables $\Delta{N}_{SI}(t) = N_{SI}(t+\delta)-N_{SI}(t)$, which take values on the finite set $\{0,\ldots,N\}$, is
 $$
 \begin{aligned}
-\expect{\dlta{N}_{SI}(t) \,|\, S(t), I(t), R(t)} &= \sum_{x=0}^{N} x\prob{\dlta{N}_{SI}(t)=x} \\
- &= \prob{\dlta{N}_{SI}(t)=1 \,|\, S(t), I(t), R(t)} + o(\delta) \\
+\expect{\Delta{N}_{SI}(t) \,|\, S(t), I(t), R(t)} &= \sum_{x=0}^{N} x\prob{\Delta{N}_{SI}(t)=x} \\
+ &= \prob{\Delta{N}_{SI}(t)=1 \,|\, S(t), I(t), R(t)} + o(\delta) \\
  &= \mu_{SI}(t)\,S(t)\,\delta + o(\delta)\\
 \end{aligned}
 $$
 Taking the limit as $\delta\to 0$ gives back the original ODE rate
 $$
 \begin{aligned}
-\lim_{\delta\to 0}\frac{\expect{\dlta{N}_{SI}(t) \,|\, S(t), I(t), R(t)}}{\delta} &= \lim_{\delta\to 0}\frac{\mu_{SI}(t)\,S(t)\,\delta}{\delta} + \lim_{\delta\to 0}\frac{o(\delta)}{\delta} = \mu_{SI}(t)\,S(t)
+\lim_{\delta\to 0}\frac{\expect{\Delta{N}_{SI}(t) \,|\, S(t), I(t), R(t)}}{\delta} &= \lim_{\delta\to 0}\frac{\mu_{SI}(t)\,S(t)\,\delta}{\delta} + \lim_{\delta\to 0}\frac{o(\delta)}{\delta} = \mu_{SI}(t)\,S(t)
 \\
 \end{aligned}
 $$

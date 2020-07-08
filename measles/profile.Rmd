@@ -18,7 +18,6 @@ csl: ../jss.csl
 \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
 \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-\newcommand\dlta[1]{{\Delta}{#1}}
 \newcommand\scinot[2]{$#1 \times 10^{#2}$\xspace}
 \newcommand{\mortality}{m}
 \newcommand{\birth}{b}
