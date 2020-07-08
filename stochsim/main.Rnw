@@ -42,6 +42,13 @@ registerDoRNG(2488820)
 
 \section{Compartment models}
 
+\AtBeginSection[]{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
 \subsection{Example: the SIR model}
 
 \begin{frame}[allowframebreaks=0.8]{A basic compartment model: The SIR model}
@@ -176,13 +183,6 @@ registerDoRNG(2488820)
   Setting up the model using counting processes, as we have done here, turns out to be useful for this.
   \ei
 \end{frame}
-
-\AtBeginSection[]{
-  \begin{frame}<beamer>
-    \frametitle{Outline}
-    \tableofcontents[currentsection]
-  \end{frame}
-}
 
 \section{Euler's method}
 
