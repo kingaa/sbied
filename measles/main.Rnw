@@ -400,7 +400,7 @@ cat(rproc@text)
   The following computes $\mathbb{P}[\text{cases}|C]$.
   <<dmeasure,include=FALSE>>=
   @
-  \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+  \begin{lstlisting}[basicstyle=\ttfamily\tiny]
     <<dmeas_listing,echo=FALSE,results="asis">>=
     cat(dmeas@text)
     @ 
