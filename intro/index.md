@@ -8,10 +8,22 @@ output: html_document
 
 | &nbsp;          | &nbsp;                                                                            |
 |:----------------|:---------------------------------------------------------------------------------:|
-| Lecture         | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2Sns4ChQCJy6T7Nz00r5zXV) |
+| Lecture         | [Youtube playlist](https://www.youtube.com/playlist?list=PLluGwj6FGt2Sns4ChQCJy6T7Nz00r5zXV) |
 | Lecture slides  | [PDF](slides.pdf)                                                                 |
 | Lecture notes   | [PDF](notes.pdf)                                                                  |
 | Another example | [HTML](ricker.html)                                                               |
+
+----------------------
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLluGwj6FGt2Sns4ChQCJy6T7Nz00r5zXV" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<!---
+<video controls>
+<source src="https://youtu.be/oWyxd3eH5sE" type="video/mp4"/>
+Your browser does not support the video element.
+</video> 
+-->
+
 
 ----------------------
 
