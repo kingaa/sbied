@@ -339,7 +339,7 @@ set.seed(1109529108L)
   \item The birth-cohort effect: a specified fraction (\code{cohort}) of the cohort enter the susceptible pool all at once.
   \item Seasonality in the transmission rate: during school terms, the transmission rate is higher than it is during holidays.
   \item Extra-demographic stochasticity in the form of a Gamma white-noise term acting multiplicatively on the force of infection.
-  \item Demographic stochasticity implmented using Euler-multinomial distributions.
+  \item Demographic stochasticity implemented using Euler-multinomial distributions.
   \end{enumerate}
 \end{frame}
 
