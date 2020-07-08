@@ -557,11 +557,13 @@ set.seed(1350254336)
 \end{frame}
 
 \begin{frame}{\myexercise. Slices and profiles}
-
-What is the difference between a likelihood slice and a profile? What is the consequence of this difference for the statistical interpretation of these plots? How should you decide whether to compute a profile or a slice?
-
-\vspace{3mm}
-
+  
+  What is the difference between a likelihood slice and a profile?
+  What is the consequence of this difference for the statistical interpretation of these plots?
+  How should you decide whether to compute a profile or a slice?
+  
+  \vspace{3mm}
+  
   \link{./Q_slice.html}{Worked solution to the Exercise}
 
 \end{frame}

@@ -25,7 +25,7 @@ slides.pdf handout.pdf notes.pdf: main.tex
 
 %.pdf: %.tex
 	pdflatex $*
-	bibtex $*
+	-bibtex $*
 	pdflatex $*
 	pdflatex $*
 
