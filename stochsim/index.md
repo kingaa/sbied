@@ -6,12 +6,12 @@ output: html_document
 
 ----------------------
 
-| &nbsp;                            | &nbsp;                 |
-|:----------------------------------|:----------------------:|
-| Lecture                           | [Video]()              |
-| Lecture slides                    | [PDF](slides.pdf)      |
-| Lecture notes                     | [PDF](notes.pdf)       |
-| Worked solutions to the Exercises | [HTML](exercises.html) |
+| &nbsp;                            | &nbsp;                                                                            |
+|:----------------------------------|:---------------------------------------------------------------------------------:|
+| Lecture                           | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2RBA4OQ_OdJj5CEJSjRGxut) |
+| Lecture slides                    | [PDF](slides.pdf)                                                                 |
+| Lecture notes                     | [PDF](notes.pdf)                                                                  |
+| Worked solutions to the Exercises | [HTML](exercises.html)                                                            |
 
 ----------------------
 
