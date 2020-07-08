@@ -17,6 +17,7 @@ output: html_document
 | Supplement: Standard errors via the observed Fisher information                            | [HTML](fisherSE.html)               |
 | Supplement: Monte Carlo Methods                                                            | [HTML](monteCarlo.html)             |
 | Supplement: Direct maximization of the particle filter likelihood                          | [HTML](./pf-in-Nelder-Mead.html)    |
+| Worked solution to Exercise 3.1                                                            | [HTML](Q_slice.html)                |
 | Worked solution to Exercise 3.1                                                            | [**R**](expense.R)                  |
 | Worked solution to Exercise 3.2                                                            | [HTML](loglikest.html)              |
 | Another worked solution to Exercise 3.2                                                    | [HTML](basic_exercise_pfilter.html) |

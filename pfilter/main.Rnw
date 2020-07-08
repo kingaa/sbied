@@ -525,7 +525,7 @@ set.seed(1350254336)
   \end{itemize}
 \end{frame}
 
-\section{The geometry of inference}
+\section{Geometry of the likelihood function}
 
 \begin{frame}[allowframebreaks]{The likelihood surface}
   \begin{itemize}
@@ -544,15 +544,31 @@ set.seed(1350254336)
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]{Exploring the likelihood surface: slices}
+\begin{frame}{Exploring the likelihood surface: slices}
   \begin{itemize}
-  \item
-    To get an idea of what the likelihood surface looks like in the neighborhood of a point in parameter space, we can construct some likelihood \emph{slices}. We'll make slices in the $\beta$ and $\mu_{IR}$ directions. Both slices will pass through the central point.
-  \item
-    What is the difference between a likelihood slice and a profile? What is the consequence of this difference for the statistical interpretation of these plots? How should you decide whether to compute a profile or a slice?
+  \item To get an idea of what the likelihood surface looks like in the neighborhood of a point in parameter space, we can construct some likelihood \myemph{slices}.
+    \item A likelihood slice is a cross-section through the likelihood surface.
+    
+    \item We'll make slices for our Consett measles POMP model, in the $\beta$ and $\mu_{IR}$ directions.
+
+\item Both slices will pass through our current candidate parameter vector, stored in the \code{pomp} model object.
   \end{itemize}
 
-  \framebreak
+\end{frame}
+
+\begin{frame}{\myexercise. Slices and profiles}
+  
+  What is the difference between a likelihood slice and a profile?
+  What is the consequence of this difference for the statistical interpretation of these plots?
+  How should you decide whether to compute a profile or a slice?
+  
+  \vspace{3mm}
+  
+  \link{./Q_slice.html}{Worked solution to the Exercise}
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]{Slicing the measles SIR likelihood}
 
   <<like-slice1,eval=FALSE,purl=FALSE>>=
   sliceDesign(

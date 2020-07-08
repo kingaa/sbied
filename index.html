@@ -368,107 +368,35 @@ summary {
 </div>
 
 
+<hr />
 <div id="module-description" class="section level2">
 <h2>Module description</h2>
 <p>This module introduces statistical inference techniques and computational methods for dynamic models of epidemiological systems. The course will explore deterministic and stochastic formulations of epidemiological dynamics and develop inference methods appropriate for a range of models. Special emphasis will be on exact and approximate likelihood as the key elements in parameter estimation, hypothesis testing, and model selection. Specifically, the course will cover sequential Monte Carlo and synthetic likelihood techniques. Students will learn to implement these in R to carry out maximum likelihood and Bayesian inference. Knowledge of the material in Module 1 is assumed. Students new to R should complete a <a href="https://kingaa.github.io/R_Tutorial/">tutorial</a> before the module.</p>
+<hr />
 </div>
 <div id="course-objectives" class="section level2">
 <h2>Course objectives</h2>
 <ol style="list-style-type: decimal">
-<li>to introduce partially observed Markov process (POMP) models as tools for scientific investigation and public health policy</li>
-<li>to give students the ability to formulate POMP models of their own</li>
-<li>to teach efficient approaches for performing scientific inference using POMP models</li>
-<li>to familiarize students with the <strong>pomp</strong> package</li>
-<li>to give students opportunities to work with such inference methods</li>
-<li>to provide documented examples for student re-use</li>
+<li>To introduce partially observed Markov process (POMP) models as tools for scientific investigation and public health policy.</li>
+<li>To give students the ability to formulate POMP models of their own.</li>
+<li>To teach efficient approaches for performing scientific inference using POMP models.</li>
+<li>To familiarize students with the <strong>pomp</strong> package.</li>
+<li>To give students opportunities to work with such inference methods.</li>
+<li>To provide documented examples for student re-use.</li>
 </ol>
 <hr />
 </div>
 <div id="lessons" class="section level2">
 <h2>Lessons</h2>
-<table style="width:100%;">
-<colgroup>
-<col width="68%"></col>
-<col width="8%"></col>
-<col width="8%"></col>
-<col width="8%"></col>
-<col width="6%"></col>
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left"> </th>
-<th align="center"> </th>
-<th align="center"> </th>
-<th align="center"> </th>
-<th align="center"> </th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><strong>0. Instructions for preparing your laptop for the course exercises</strong></td>
-<td align="center"> </td>
-<td align="center"><a href="./prep/index.html">Page (HTML)</a></td>
-<td align="center"> </td>
-<td align="center"> </td>
-</tr>
-<tr class="even">
-<td align="left"><a href="./intro/"><strong>1. Introduction: What is “Simulation-based Inference for Epidemiological Dynamics”?</strong></a></td>
-<td align="center"><a href="https://www.youtube.com/playlist?list=PLluGwj6FGt2Sns4ChQCJy6T7Nz00r5zXV" target="_blank">Lecture</a></td>
-<td align="center"><a href="./intro/slides.pdf">Slides (PDF)</a></td>
-<td align="center"><a href="./intro/notes.pdf">Notes (PDF)</a></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="./stochsim/"><strong>2. Simulation of stochastic dynamic models.</strong></a></td>
-<td align="center">Lecture</td>
-<td align="center"><a href="./stochsim/slides.pdf">Slides (PDF)</a></td>
-<td align="center"><a href="./stochsim/notes.pdf">Notes (PDF)</a></td>
-<td align="center"><a href="http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/main.R">Script (<strong>R</strong>)</a></td>
-</tr>
-<tr class="even">
-<td align="left"><a href="./pfilter/"><strong>3. Likelihood for POMPs: theory and practice.</strong></a></td>
-<td align="center">Lecture</td>
-<td align="center"><a href="./pfilter/slides.pdf">Slides (PDF)</a></td>
-<td align="center"><a href="./pfilter/notes.pdf">Notes (PDF)</a></td>
-<td align="center"><a href="http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/main.R">Script (<strong>R</strong>)</a></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="./mif/"><strong>4. Iterated filtering: theory and practice.</strong></a></td>
-<td align="center">Lecture</td>
-<td align="center"><a href="./mif/slides.pdf">Slides (PDF)</a></td>
-<td align="center"><a href="./mif/notes.pdf">Notes (PDF)</a></td>
-<td align="center"><a href="http://raw.githubusercontent.com/kingaa/sbied/master/mif/main.R">Script (<strong>R</strong>)</a></td>
-</tr>
-<tr class="even">
-<td align="left"><a href="./mif/"><strong>5. Case study: recurrent measles dynamics revealed in long time series.</strong></a></td>
-<td align="center">Lecture</td>
-<td align="center"><a href="./measles/slides.pdf">Slides (PDF)</a></td>
-<td align="center"><a href="./measles/notes.pdf">Notes (PDF)</a></td>
-<td align="center"><a href="http://raw.githubusercontent.com/kingaa/sbied/master/measles/main.R">Script (<strong>R</strong>)</a></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="./polio/"><strong>6. Case study: polio.</strong></a></td>
-<td align="center"><a href="https://www.youtube.com/playlist?list=PLluGwj6FGt2RuunOUW3MqFcrcgydWhgS8" target="_blank">Lecture</a></td>
-<td align="center"><a href="./polio/slides.pdf">Slides (PDF)</a></td>
-<td align="center"><a href="./polio/notes.pdf">Notes (PDF)</a></td>
-<td align="center"><a href="http://raw.githubusercontent.com/kingaa/sbied/master/polio/main.R">Script (<strong>R</strong>)</a></td>
-</tr>
-<tr class="even">
-<td align="left"><a href="./ebola/"><strong>7. Case study: Ebola, model diagnostics, and forecasting.</strong></a></td>
-<td align="center"><a href="https://www.youtube.com/playlist?list=PLluGwj6FGt2R5iGmfPTO9slNQyfJlAV4Z" target="_blank">Lecture</a></td>
-<td align="center"><a href="./ebola/slides.pdf">Slides (PDF)</a></td>
-<td align="center"><a href="./ebola/notes.pdf">Notes (PDF)</a></td>
-<td align="center"><a href="http://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R">Script (<strong>R</strong>)</a></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="./contacts/"><strong>8. Case study: sexual contacts panel data.</strong></a></td>
-<td align="center"><a href="https://www.youtube.com/playlist?list=PLluGwj6FGt2SzWigyV88kFPZ2OEW18pQS" target="_blank">Lecture</a></td>
-<td align="center"><a href="./contacts/slides.pdf">Slides (PDF)</a></td>
-<td align="center"><a href="./contacts/notes.pdf">Notes (PDF)</a></td>
-<td align="center"><a href="http://raw.githubusercontent.com/kingaa/sbied/master/contacts/main.R">Script (<strong>R</strong>)</a></td>
-</tr>
-</tbody>
-</table>
+<p><a href="./prep/index.html"><strong>0. Instructions for preparing your laptop for the course exercises</strong></a></p>
+<p><a href="./intro/"><strong>1. Introduction: What is “Simulation-based Inference for Epidemiological Dynamics”?</strong></a></p>
+<p><a href="./stochsim/"><strong>2. Simulation of stochastic dynamic models.</strong></a></p>
+<p><a href="./pfilter/"><strong>3. Likelihood for POMPs: theory and practice.</strong></a></p>
+<p><a href="./mif/"><strong>4. Iterated filtering: theory and practice.</strong></a></p>
+<p><a href="./mif/"><strong>5. Case study: recurrent measles dynamics revealed in long time series.</strong></a></p>
+<p><a href="./polio/"><strong>6. Case study: polio.</strong></a></p>
+<p><a href="./ebola/"><strong>7. Case study: Ebola, model diagnostics, and forecasting.</strong></a></p>
+<p><a href="./contacts/"><strong>8. Case study: sexual contacts panel data.</strong></a></p>
 <hr />
 <p><a href="./acknowledge.html">Acknowledgements</a><br />
 <a href="http://github.com/kingaa/sbied/">Source code for these notes</a><br />

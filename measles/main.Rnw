@@ -94,6 +94,13 @@ set.seed(1109529108L)
   @
 \end{frame}
 
+\AtBeginSection[]{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
 \section{Model and implementation}
 \subsection{Overview}
 \begin{frame}[allowframebreaks]{Measles in England and Wales}
@@ -526,6 +533,8 @@ cat(rproc@text)
 @
 \end{frame}
 
+\section{Findings}
+
 \begin{frame}[fragile]
   \frametitle{Results from \cite{He2010}}
   \link{./profile.html}{The linked document shows how a likelihood profile can be constructed using IF2}
@@ -537,7 +546,7 @@ cat(rproc@text)
   \item We constructed profile likelihoods to quantify uncertainty in London and Hastings.
   \end{itemize}
 \end{frame}
-\section{Findings}
+
 \subsection{Notable findings}
 \begin{frame}[fragile]
   \frametitle{Imported infections}
@@ -1040,7 +1049,7 @@ $r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
   par(op)
   @
 \end{frame}
-\section{Questions}
+
 \begin{frame}[fragile]
   \frametitle{Questions}
   \begin{itemize}
@@ -1082,6 +1091,8 @@ $r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
   plot_grid(pl1,pl2,ncol=1,align="hv",axis="tblr")
   @
 \end{frame}
+
+\section{Exercises}
 
 \begin{frame}{\myexercise. Reformulate the model}
   \begin{itemize}
