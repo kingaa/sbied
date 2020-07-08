@@ -665,7 +665,7 @@ registerDoRNG(2488820)
   <<seir-diagram,child="../graphics/seir_diagram.Rnw",echo=FALSE,purl=FALSE,fig.height=3/4,fig.width=15/2>>=
   @
   
-  Modify the codes above to construct a \code{pomp} object containing the flu data and an SEIR model.
+  Modify the codes above to construct a \code{pomp} object containing the Consett measles data and an SEIR model.
   Perform simulations as above and adjust parameters to get a sense of whether improvement is possible by including a latent period.
 
   \vspace{3mm}
