@@ -1,0 +1,49 @@
+---
+title: "The difference between a likelihood slice and a profile"
+author: "Aaron A. King, Edward L. Ionides, Kidus Asfaw"
+output:
+  html_document:
+    toc: no
+bibliography: ../sbied.bib
+csl: ../jss.csl
+---
+
+
+## Exercise
+
+What is the difference between a likelihood slice and a profile? What is the consequence of this difference for the statistical interpretation of these plots? How should you decide whether to compute a profile or a slice?
+
+-----------------
+
+## Solution
+
+* A likelihood surface with two parameters can be visualized as a mountain, with the elevation of the mountain at each spatial location corresponding to the value of the likelihood at this coordinate pair of parameters. 
+
+* Suppose we look at the mountain from the south, at a large distance.
+
+    + The profile likelihood is the silhouette of the mountain.
+
+    + The slice of the likelihood through the maximum likelihood estimate is the elevation at an east-west cross-section through the peak of the mountain.
+
+* The profile and the slice could be very different. For example, imagine the situation if the mountain's peak has sheer cliffs to the east and west, but a gradual ridge descending south-east to north-west.
+
+* For a mountain with elliptical contours with axes running north-south and east-west, the slice and profile are the same. This corresponds to the likelihood function for independent Gaussian measurements on two parameters.
+
+* The profile likelihood has useful statistical properties arising from its relationship to likelihood ratio tests and Wilks' theorem. It can therefore be used to construct confidence intervals.
+
+* A slice cannot usually be used to build confidence intervals.
+
+* A slice is much quicker to compute than a profile, since it involves likelihood evaluation along a range of parameter values whereas the profile involves likelihood maximization along this range.
+
+* A slice can be useful as a relatively quick, informal investigation of the likelihood. Profiles may be calculated in a later stage of the analysis, when we are ready to apply all the computational resources at our disposal.
+
+* If only one parameter is being estimated, a slice and a profile are the same thing!
+
+
+-----------------------------------
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+-----------------------------------
