@@ -865,11 +865,11 @@ set.seed(1350254336)
     Increasing the number of parameters leads to additional \textbf{overfitting} which can decrease predictive skill of the fitted model.
   \item
     Viewed as a hypothesis test, AIC may have weak statistical properties.
-    It can be a mistake to interpret AIC by making a claim that the favored model has been shown to provides a superior explanation of the data.
+    It can be a mistake to interpret AIC by making a claim that the favored model has been shown to provide a superior explanation of the data.
     However, viewed as a way to select a model with reasonable predictive skill from a range of possibilities, it is often useful.
   \item
     AIC does not penalize model complexity beyond the consequence of reduced predictive skill due to overfitting.
-    One can penalize complexity by incorporating a more severe penalty that the $2D$ term above, such as via \link{https://en.wikipedia.org/wiki/Bayesian_information_criterion}{BIC}.
+    One can penalize complexity by incorporating a more severe penalty than the $2D$ term above, such as via \link{https://en.wikipedia.org/wiki/Bayesian_information_criterion}{BIC}.
   \item
     A practical approach is to use AIC, while taking care to view it as a procedure to select a reasonable predictive model and not as a formal hypothesis test.
   \end{itemize}
