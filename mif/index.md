@@ -8,10 +8,14 @@ output: html_document
 
 | &nbsp;                 | &nbsp;                    |
 |:-----------------------|:-------------------------:|
-| Lecture                | [Video]()                 |
+| Lecture                | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2S9cNE-rD3CZJY6X_KydOMi)                 |
 | Lecture slides         | [PDF](slides.pdf)         |
 | Lecture notes          | [PDF](notes.pdf)          |
 | Supplement: Tuning IF2 | [HTML](if2_settings.html) |
+
+----------------------
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLluGwj6FGt2S9cNE-rD3CZJY6X_KydOMi" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ----------------------
 
