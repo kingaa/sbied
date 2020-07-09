@@ -19,7 +19,6 @@ dat %>%
 
 
 
-library(tidyverse)
 library(pomp)
 
 sir_step <- Csnippet("

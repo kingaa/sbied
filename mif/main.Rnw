@@ -310,13 +310,11 @@ set.seed(1350254336)
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]
-  \frametitle{Implementation in \package{pomp}}
+\begin{frame}[fragile,allowframebreaks]{Implementation in \package{pomp}}
 
   As before, we code the model using C snippets
 
   <<csnippets>>=
-  library(tidyverse)
   library(pomp)
 
   sir_step <- Csnippet("
@@ -683,7 +681,7 @@ set.seed(1350254336)
   \framebreak
 
   For our measles model, a box containing reasonable parameter values might be
-  $\beta\in (10,80)$, $\rho\in (0.2,0.9)$, $\eta\in (0,0.2)$.
+  $\beta\in (5,80)$, $\rho\in (0.2,0.9)$, $\eta\in (0,0.4)$.
 
   We are now ready to carry out likelihood maximizations from diverse starting points.
 
