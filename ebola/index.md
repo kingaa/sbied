@@ -16,10 +16,6 @@ output: html_document
 
 ----------------------
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLluGwj6FGt2R5iGmfPTO9slNQyfJlAV4Z" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-----------------------
-
 [Back to course homepage](../index.html)  
 [Acknowledgements](../acknowledge.html)  
 [Source code for these notes](http://github.com/kingaa/sbied/tree/master/ebola/)  
