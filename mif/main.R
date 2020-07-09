@@ -185,7 +185,8 @@ bake(file="global_search.rds",{
   } -> results
   attr(results,"ncpu") <- getDoParWorkers()
   results
-}) -> results
+}) %>%
+  filter(is.finite(loglik)) -> results
 t_global <- attr(results,"system.time")
 ncpu_global <- attr(results,"ncpu")
 read_csv("measles_params.csv") %>%

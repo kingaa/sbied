@@ -389,8 +389,7 @@ set.seed(1350254336)
   @
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks=0.7]
-  \frametitle{Testing the codes: simulation}
+\begin{frame}[fragile,allowframebreaks=0.7]{Testing the codes: simulation}
   Now to run and plot some simulations:
   <<init_sim>>=
   measSIR %>%
@@ -405,27 +404,31 @@ set.seed(1350254336)
   @ 
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks=0.9]
-  \frametitle{Testing the codes: filtering}
+\begin{frame}[fragile,allowframebreaks=0.95]{Testing the codes: filtering}
   Before engaging in iterated filtering, it is a good idea to check that the basic particle filter is working since we can't iterate something unless we can run it once!
   The simulations above check the \code{rprocess} and \code{rmeasure} codes;
   the particle filter depends on the \code{rprocess} and \code{dmeasure} codes and so is a check of the latter.
-  
+
   <<init_pfilter>>=
   measSIR %>%
     pfilter(Np=1000,params=params) -> pf
   @
   <<init_pfilter_plot,purl=F,dpi=200,out.width="0.7\\textwidth">>=
   plot(pf)
-  @ 
+  @
+
+  \vspace{-5mm}
+
+  The above plot shows the data (\code{reports}), along with the \emph{effective sample size} (ESS) of the particle filter (\code{ess}) and the log likelihood of each observation conditional on the preceding ones (\code{cond.logLik}).
+
+  The ESS is the equivalent number of independent particles.
+  In this case, the ESS is very small at several points.
   
-  The above plot shows the data (\code{reports}), along with the \emph{effective sample size} of the particle filter (\code{ess}) and the log likelihood of each observation conditional on the preceding ones (\code{cond.logLik}).
 \end{frame}
 
 \subsection*{Setting up the estimation problem}
 
-\begin{frame}[fragile]
-  \frametitle{Setting up the estimation problem}
+\begin{frame}[fragile]{Setting up the estimation problem}
 
   Let's assume that the population size, $N$, is known accurately.
   We'll fix that parameter.
@@ -441,8 +444,7 @@ set.seed(1350254336)
   We proceed to estimate $\beta$, $\eta$, and $\rho$.
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks=0.8]
-  \frametitle{Parallel computing}
+\begin{frame}[fragile,allowframebreaks=0.8]{Parallel computing}
   It will be helpful to parallelize most of the computations.
   Most machines nowadays have multiple cores and using this computational capacity is as simple as:
   \begin{enumerate}[(i)]
@@ -473,8 +475,7 @@ set.seed(1350254336)
   @ 
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Running a particle filter}
+\begin{frame}[fragile]{Running a particle filter}
 
   We proceed to carry out replicated particle filters at an initial guess of $\beta=\Sexpr{params["Beta"]}$, $\eta=\Sexpr{params["eta"]}$, and $\rho=\Sexpr{params["rho"]}$.
   
@@ -726,7 +727,8 @@ set.seed(1350254336)
     <<global_search2>>
     attr(results,"ncpu") <- getDoParWorkers()
     results
-  }) -> results
+  }) %>%
+    filter(is.finite(loglik)) -> results
   t_global <- attr(results,"system.time")
   ncpu_global <- attr(results,"ncpu")
   @ 
@@ -975,7 +977,7 @@ set.seed(1350254336)
     summarize(min=min(rho),max=max(rho)) -> rho_ci
   @
   
-  While the above profile trace is suggestive that the 95\% CI for $\eta$ must be between roughly \Sexpr{signif(100*rho_ci$min,1)}\% and \Sexpr{signif(100*rho_ci$max,1)}\%, to confirm this, we should construct a proper profile likelihood over $\rho$.
+  While the above profile trace is suggestive that the 95\% CI for $\rho$ must be between roughly \Sexpr{signif(100*rho_ci$min,1)}\% and \Sexpr{signif(100*rho_ci$max,1)}\%, to confirm this, we should construct a proper profile likelihood over $\rho$.
   We do so now.
 
   This time, we will initialize the IF2 computations at points we have already established have high likelihoods.
@@ -1338,7 +1340,10 @@ set.seed(1350254336)
 \end{frame}
 
 \begin{frame}{\myexercise. Modify the measurement model}
-  The binomial measurement model used here assumes that the reporting rate is fixed through time and that all infections are equally likely to be reported.
+  The binomial measurement model used here assumes that the reporting rate is fixed through time and that all infection reports are independent and equally likely.
+  Commonly, it is advisable to consider measurement models with \myemph{overdispersion}, i.e., more variability than the binomial (or Poisson) allows.
+  The negative binomial distribution, for instance, allows for overdispersed mean-variance relationships.
+  Similarly, the beta-binomial distribution adds overdispersion to the binomial.
   Formulate an alternative measurement model and maximize the likelihood to compare it with existing results.
 \end{frame}
 
