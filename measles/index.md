@@ -8,10 +8,14 @@ output: html_document
 
 | &nbsp;                                     | &nbsp;               |
 |:-------------------------------------------|:--------------------:|
-| Lecture                                    | [Video]()            |
+| Lecture                                    | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2SJzO5pfhVBdkBP6EbREGWM)            |
 | Lecture slides                             | [PDF](slides.pdf)    |
 | Lecture notes                              | [PDF](notes.pdf)     |
 | Supplement: profile likelihood calculation | [HTML](profile.html) |
+
+----------------------
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLluGwj6FGt2SJzO5pfhVBdkBP6EbREGWM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ----------------------
 
