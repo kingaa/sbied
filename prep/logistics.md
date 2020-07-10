@@ -7,30 +7,47 @@ We are looking forward to meeting you and having a lively discussion on ***Simul
 ***Wednesday, July 15***
 
 11:30 AM - 12:30 PM: Introductions and live panel discussion on mandatory lecture videos for lessons 1 and 2.
+
 12:30 PM - 12:45 PM: Set up Zoom breakout rooms.
+
 12:45 PM - 1:45 PM: Breakout rooms perform lesson 2 exercises.
+
 1:45 PM - 2:30 PM: Discussion of breakout group results.
 
 ***Thursday, July 16***
 
 8:00 AM - 9:00 AM: Live panel discussion on mandatory lecture videos for lesson 3.
+
 9:00 AM - 10:00 AM: Breakout groups perform lesson 3 exercises.
+
 10:00 AM - 10:45 AM: Discussion of breakout group results.
-10:45 AM - 11:30 AM: Break
+
+10:45 AM - 11:30 AM: Break.
+
 11:30 AM - 12:30 PM: Live panel discussion on mandatory lecture videos for lesson 4.
+
 12:30 PM - 1:30 PM: Breakout groups perform lesson 4 exercises.
-1:30 PM - 1:45 PM Break
+
+1:30 PM - 1:45 PM Break.
+
 1:45 PM - 2:30 PM: Discussion of breakout group results.
 
 ***Friday, July 17***
 
 8:00 AM - 9:00 AM: Live panel discussion on mandatory lecture videos for lesson 5.
+
 9:00 AM - 10:00 AM: Breakout groups perform lesson 5 exercises.
+
 10:00 AM - 10:45 AM: Discussion of breakout group results.
+
 10:45 AM - 11:30 AM: Break
+
 11:30 AM - 12:30 PM: Live panel discussion on mandatory lecture videos for lesson 6.
+
 12:30 PM - 1:30 PM: Breakout groups perform lesson 6 exercises.
+
 1:30 PM - 1:45 PM Break
+
 1:45 PM - 2:30 PM: Discussion of breakout group results.
 
 **Course logisitcs**
