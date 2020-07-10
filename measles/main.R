@@ -261,6 +261,7 @@ simdat %>%
          data=plyr::mapvalues(data,from=c(TRUE,FALSE),to=c("data","simulation"))) %>%
   spread(p,q) %>%
   ggplot(aes(x=time,y=med,color=data,fill=data,ymin=lo,ymax=hi))+
+  scale_color_manual(values=c(`TRUE`="blue",`FALSE`="red"))+
   geom_ribbon(alpha=0.2)+
   guides(data=FALSE)+
   labs(y="cases") -> pl1
@@ -270,6 +271,7 @@ simdat %>%
   mutate(data=.id=="data") %>%
   ggplot(aes(x=time,y=cases,group=.id,color=data))+
   geom_line()+
+  scale_color_manual(values=c(`TRUE`="blue",`FALSE`="red"))+
   guides(color=FALSE) -> pl2
 
 library(cowplot)
