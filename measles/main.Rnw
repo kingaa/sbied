@@ -751,7 +751,7 @@ cat(rproc@text)
   \frametitle{Birth delay}
   <<delay,eval=TRUE,echo=FALSE,results="hide",purl=FALSE,fig.height=3,fig.cap="Profile likelihood for birth-cohort delay, showing 95\\% and 99\\% critical values of the log likelihood.">>=
   x <- read.csv('data/delay.csv',row.names=1)
-  par(mai=c(0.2,0.3,0.2,0.2))
+  par(mai=c(1,0.6,0.2,0.2))
   plot(
     x$delay,
     x$loglik,
