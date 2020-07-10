@@ -1,92 +1,155 @@
 Dear Module 7 Participant:
 
-We are looking forward to meeting you and having a lively discussion on ***Simulation-based Inference for Epidemiological Dynamics***. We hope that you have been following the [instructions for preparing for the course](https://kingaa.github.io/sbied/prep/advance.html). Here, we will provide you some basic information about course logistics and ground rules for how we expect everyone to conduct themselves. These will help lessen the difficulties of online learning.
+We are looking forward to meeting you and having lively discussions on ***Simulation-based Inference for Epidemiological Dynamics***. 
+We hope that you have already followed the [instructions for preparing your computer for the course](https://kingaa.github.io/sbied/prep/advance.html).
+**If you have not yet done so, please do so soon:** if you run into difficulties, you will definitely want to have those ironed out *before* the course starts.
 
-**Course schedule (all times in Pacific Standard Time)**
+This email provides some information about the schedule and nature of Module activities and lays out some ground rules for course participation, which we hope will help smooth over some of the many difficulties associated with online learning.
 
-***Wednesday, July 15***
+### Tentative Course Schedule
 
-11:30 AM - 12:30 PM: Introductions and live panel discussion on mandatory lecture videos for lessons 1 and 2.
+***All times are EDT (UTC-04:00)***
 
-12:30 PM - 12:45 PM: Set up Zoom breakout rooms.
+**Wednesday, 15 July**  
+Before 14:30: View lecture videos for Lessons 1 and 2. Begin work on the Exercises  
+14:30--15:30: Introductions. Live plenary discussion on Lessons 1 and 2 lectures  
+15:30--15:45: Set up Zoom breakout rooms  
+15:45--16:45: Breakout groups work on Lesson 2 exercises  
+16:45--17:30: Live plenary discussion of breakout group results  
+17:30--18:30: Optional Office hour  
 
-12:45 PM - 1:45 PM: Breakout rooms perform lesson 2 exercises.
+**Thursday, 16 July**  
+Before 11:00: View lecture videos for Lessons 3 and 4. Begin work on the Exercises.  
+11:00--12:00: Live plenary discussion on Lesson 3 lectures  
+12:00--13:00: Breakout groups work on Lesson 3 exercises  
+13:00--13:45: Live plenary discussion of breakout group results  
+13:45--14:30: Break  
+14:30--15:30: Live plenary discussion on mandatory lecture videos for Lesson 4  
+15:30--16:30: Breakout groups work on Lesson 4 exercises  
+16:30--16:45: Break  
+16:45--17:30: Live plenary discussion of breakout group results  
+17:30--18:30: Optional Office hour  
 
-1:45 PM - 2:30 PM: Discussion of breakout group results.
+**Friday, 17 July**  
+Before 11:00: View lecture video for Lesson 5 and (optionally) one or more of Lessons 6, 7, 8  
+11:00--12:00: Live plenary discussion on mandatory lecture videos for Lesson 5  
+12:00--13:00: Breakout groups work on exercises from previous lessons  
+13:00--13:45: Live plenary discussion of breakout group results  
+13:45--14:30: Break  
+14:30--15:10: Live, optional, plenary discussion on Lesson 6  
+15:10--15:50: Live, optional, plenary discussion on Lesson 7  
+15:50--16:30: Live, optional, plenary discussion on Lesson 8  
+16:30--17:30: Live plenary discussion. Questions and answers. Concluding remarks.  
+17:30--18:30: Optional drop-in session: all topics welcomed.  
 
-***Thursday, July 16***
-
-8:00 AM - 9:00 AM: Live panel discussion on mandatory lecture videos for lesson 3.
-
-9:00 AM - 10:00 AM: Breakout groups perform lesson 3 exercises.
-
-10:00 AM - 10:45 AM: Discussion of breakout group results.
-
-10:45 AM - 11:30 AM: Break.
-
-11:30 AM - 12:30 PM: Live panel discussion on mandatory lecture videos for lesson 4.
-
-12:30 PM - 1:30 PM: Breakout groups perform lesson 4 exercises.
-
-1:30 PM - 1:45 PM Break.
-
-1:45 PM - 2:30 PM: Discussion of breakout group results.
-
-***Friday, July 17***
-
-8:00 AM - 9:00 AM: Live panel discussion on mandatory lecture videos for lesson 5.
-
-9:00 AM - 10:00 AM: Breakout groups perform lesson 5 exercises.
-
-10:00 AM - 10:45 AM: Discussion of breakout group results.
-
-10:45 AM - 11:30 AM: Break
-
-11:30 AM - 12:30 PM: Live panel discussion on mandatory lecture videos for lesson 6.
-
-12:30 PM - 1:30 PM: Breakout groups perform lesson 6 exercises.
-
-1:30 PM - 1:45 PM Break
-
-1:45 PM - 2:30 PM: Discussion of breakout group results.
-
-**Course logisitcs**
+### Course Organization
 
 The course will have four components:
 
-1. ***A mandatory self-learning component***, in which students are expected to watch the pre-recorded lecture prior to the live panel discussion that corresponds to the lecture. For example, before our live discussion panel on Wednesday, July 15, we expect students to have watched the lesson 1 and lesson 2 lecture videos. If you have any questions that come up while you are watching the videos, please use the #mod07simulationinference channel in the [SISMID Slack workspace](https://sismidworkspace.slack.com/) (to which you should all be invited by now via email - please let us know if you have not). We will be monitoring this channel and answering questions as soon as we can. We ask that you make an effort to ensure your question hasn't already been asked and answered.
+1. ***A mandatory self-learning component***, in which students are expected to watch and take notes on the pre-recorded lectures prior to the day's activities.
+   Links to the videos can be found on the [course website](https://kingaa.github.io/sbied/), along with PDF versions of the lecture notes and slides.
+   For example, before our live plenary on Wednesday, 15 July, we expect students to have watched the Lesson 1 and Lesson 2 lecture videos.
+   If you have any questions that come up while you are watching the videos, please pose these using the `#mod07simulationinference` channel in the SISMID Slack workspace, to which you should have by now been invited (please let us know if you have not!).
+   We will monitor this channel and attempt to answer all questions either via Slack, or in the live sessions.
+   This use of Slack will allow you check whether your question has been asked previously, to avoid the kind of unnecessary duplication that makes it hard for everyone.
 
-2. ***A live discussion***, during which instructors will go over salient discussion points related to the mandatory video for the discussion. We will also allow students to raise any additional questions that did not come up on Slack. Please see the ground rules section below for expectations for how we expect everyone to conduct themselves. Specifically, we ask that you mute your audio and turn off your video for this component unless you have a question. If you unmute your audio and turn on your video, we will assume you have a question and give you the floor. At the end of the live discussion, the instructors will set the stage for the breakout group exercises.
+2. ***Live plenary discussions***, during which instructors will elaborate important points raised in the lectures and address common questions posed over Slack.
+   During these sessions, feel free to raise any additional questions that come up.
+   We ask that you mute your audio and turn off your video at the start of each live plenary and keep them muted until you have a question.
+   When you do have a question, by unmuting your audio and video, you will become visible and will be given the floor to ask your question.
 
-3. ***Breakout group exercises***, in which each student will be assigned a Zoom breakout group of about 4 students, each of which will have a role. Having attended the live discussion for the lesson, students will be sent to these breakout groups to work on the exercises for the lesson. Within a breakout group, there will be four roles: coder, lecture-keeper, notetaker and reporter. Students will have the ability to request one of the instructors to enter the breakout room to provide assistance through the 'Ask for Help' feature. This is where we think students will get the most out of the course, so do not be shy. See the breakout room roles section below for the role details and the ground rules section for expectations.
+3. ***Breakout-group exercises***, in which each student will work in small groups, in breakout rooms, on the exercises.
+   Each breakout group will be composed of 4 or 5 students, will be assigned a breakout room of its own, and will persist for the duration of the course.
+   Within each breakout group, there will be five roles to be performed by group members; these are described below.
+   At their first meeting, groups should agree among themselves as to who should perform the roles.
+   Roles should be rotated periodically.
+3. ***Asking for help from a group***.
+   When a group wants help from the instructors, it can either post a question via Slack, send a member out of the breakout room to ask, leave the breakout room as a group to talk with the instructor, or use the 'Ask for Help' feature, which allows the group to request that one of the instructors visit the breakout room.
+   The breakout groups are where you will learn the most, so do not hesitate to ask for help when needed!
+   As needed, the instructors may pull everyone back for plenary discussion of points that arise in group activities.
+   See below for more on breakout group roles, rules, and expectations regarding breakout group activities.
+   
+4. ***Optional office hours.***
+   These are times when you should feel free to drop in with questions or when you need help.
 
-4. ***Breakout group results***, in which the reporters of each breakout group report the results of their group.
+### Course Ground Rules
 
-**Ground rules**
+In the spirit of ensuring an efficient and enjoyable learning experience for everyone, we establish the following specific rules to govern our conduct.
 
-The following are some specific rules that we have set in the spirit of ensuring a learning experience that is as smooth as possible.
+1. ***During live plenary discussions, turn on your audio and video only for questions***.
+   Live plenary discussions will be held over Zoom.
+   Please mute your audio and video *unless and until you have a question.* 
+   If you have a question, unmute yourself and turn on your video: 
+   this will act as a cue for us to recognize you.
+   The "chat" feature will be disabled during the live discussion.
+   Instead, use the course Slack channel to ask questions in real time.
+   At any one time, at least one of the instructors will be monitoring the Slack channel.
+1. ***When submitting over Slack, take some care to avoid unnecessary duplication.***
+   If someone has recently asked the same question, you can register your interest in having that question answered using the "reaction" buttons, without having to restate the question.
+1. ***Set your "name" in your Zoom session to what you want to be called***.
+   We will be able to view your name, as well as your face, when you ask a question, or when we visit you in a breakout room.
+   Having your name set in this way will help us recognize you.
+1. ***During the breakout discussions, keep both your audio and video on.***
+   The breakout sessions will be where you apply the lessons you learn and discover where you want to ask additional questions.
+   You will have a specific role in your group that your fellow group members will rely on you to perform.
+   To facilitate full engagement, keep your video and audio on during these sessions whenever appropriate.
+1. ***Be on guard against distractions.***
+   During the time in which your audio and video are on, do your best to minimize distracting sounds and sights that might distract your colleagues.
+   It is equally important that you recognize that the digital environment is full of its own distractions: 
+   do your best to eliminate the distractions that will prevent you from getting the most out of this intensive 2.5-day course.
+1. ***Speak up!***
+   We are striving for free-flowing discussions during the live plenary and breakout discussions.
+   These depend on your active participation!
+   This course is for **you**: make the most of it by getting the questions you have answered.
+   Don't worry that others may think you are holding us back with your questions:
+   we can guarantee that others will have the same question.
+1. ***Be courteous.***
+   We will strive to uphold a high standard of courtesy and professionalism among participants, including ourselves.
+   Treat others with respect and the dignity to which they are entitled, and with which you expect others to treat you.
+1. ***Dress comfortably, but professionally.***
+   You will be visible to your colleagues and instructors.
+1. ***Have a sense of humor!***
+   Many things will go wrong as we make our first-ever attempt at teaching this course remotely.
+   Let's be generous and tolerant toward one another, and always willing to laugh!
 
-1. ***During the live panel discussion, only turn your audio and video on for questions***.
-Live panel discussions will be held over Zoom. Students are expected to mute themselves and turn off their video *unless they have a question.* If you have a question, unmute yourself and turn on your video, and this will act as a cue for us to call on you. The chat feature will be disabled during the live discussion.
+### Breakout Room Roles
 
-2. ***During the breakout discussions, keep both your audio and video on.***
-The breakout sessions will be where you apply the lessons you learn. In addition, you will have a specific role in your group. To facilitate full engagement, we expect your video and audio to be on for these sessions.
+The breakout groups assigned at the beginning of the course will be maintained throughout.
+The following roles are designed to make sure everyone in a group contributes to the group effort, and that every important task has someone to look after it.
+At the first breakout-group meeting, decide among yourselves who will perform each role and change the roles periodically, but not during a single session!
+None of these roles is a full-time job: 
+everyone is expected to contributed thought and effort toward the group's work, 
+and everyone is expected to listen to and engage with, the contributions of the other group members.
 
-3. ***Be congnizant of distractions.***
-During the time in which your audio and video are on, we expect you to extend professional courtesy to your colleagues and minimize any distracting sounds or images.
+1. **Keeper.** 
+   The Keeper is responsible for keeping time, and keeping track of the various online resources that are in play, including the lecture notes, the videos, monitoring the Slack channel, and helping the group with the Zoom controls.
+   The Keeper's job is to keep the group apprised of the time, of relevant Slack activity, and to be able to quickly and unobtrusively help the group navigate the online tools.
+1. **Taker.** 
+   The Taker takes notes on the group's activities.
+   What questions are being addressed?
+   What hypotheses formulated?
+   What approaches tried?
+   What results obtained?
+   What questions arise?
+   What answers gained?
+   The Taker should strive for complete but very concise notes and will be responsible for making sure that every group member has access to them.
+   The Taker might choose to create a shared online document (using Google docs, for example) for this purpose.
+   The group may decide to allow all group members to edit such a document, but the Taker shall be responsible for making the first draft of the notes for each session.
+1. **Hacker.** 
+   All group members are expected to do hands-on work with the methods we are teaching.
+   In any given group session, the Hacker, however, will have prime responsibility for screen-shared coding and full responsibility for making sure that all group members have an up-to-date version of the group's codes at the end of each breakout-group session.
+   Since the coding is central to the course's goals, the Hacker should make sure that the group is aware of and involved in all the coding.
+1. **Slacker.**
+   The Slacker is responsible for preparing a pr&eacute;cis of the group's efforts and progress, to be passed, via the course Slack channel, to the instructors and the rest of the group.
+   This should be at most a paragraph, focused on communicating the essentials only: 
+   what exercises were tackled, what approaches taken, what progress made, what difficulties encountered.
+1. **Skipper.** 
+   The Skipper is tasked with keeping the group focused and running smoothly and happily.
+   It's only a happy group that does good work.
+   As Skipper, pay attention to making sure everyone is getting their needs met and that the group is not losing sight of its goals.
+   
+For groups that have only four members, the Keeper and Skipper roles may be combined, as may the Keeper and Slacker roles.
 
-4. ***Speak up.***
-We don't want to give the impression that we discourage free-flowing discussions during the live panel and breakout discussions. On the contrary, we hope you see these protocols as the foundation upon which we can all build a productive and engaging conversation about the topics of the course. As such, we expect you to turn in as many questions as you have on Slack while you watch the pre-recorded lectures as well as voice any relevant questions or thoughts that come up during the live panel sessions.
-
-**Breakout room roles.**
-
-1. ***Coder***: this person will take input from all team members and code up the solution to the exercises.
-
-2. ***Lecture-keeper***: this person will be the point person in directing the group's attention to the most relevant parts of the lecture video and slides for the exercises.
-
-3. ***Notetaker***: this person will take note of the discussions (whether or not they end up being the final takeaways) and results of the group.
-
-4. ***Reporter***: this person will report the results of the group to the larger classroom when we all come back together and discuss results.
-
+[Some closing language...]
 
 ---Aaron, Ed, and Kidus

@@ -32,7 +32,7 @@ Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutori
 
 ## Lessons
 
-[**0. Instructions for preparing your laptop for the course exercises**](./prep/index.html)
+[**0. Instructions for preparing your laptop for the course exercises**](./prep/)
 
 [**1. Introduction: What is "Simulation-based Inference for Epidemiological Dynamics"?**](./intro/)
 
