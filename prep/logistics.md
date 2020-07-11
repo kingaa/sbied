@@ -35,7 +35,7 @@ A password will be sent to you by email and Slack.
 ***To enter the Zoom session, you must first register using the email at which you receive the invitation.**
 
 **Wednesday, 15 July**  
-Before 14:30: View lecture videos for Lessons 1 and 2. Begin work on the Exercises  
+Before 14:30: View lecture videos for Lessons 1 and 2. Begin work on the Exercises 2.3 and 2.4.  
 14:30--15:30: Introductions. Live plenary discussion on Lessons 1 and 2 lectures  
 15:30--15:45: Set up Zoom breakout rooms  
 15:45--16:45: Breakout groups work on Lesson 2 exercises  
@@ -70,7 +70,7 @@ Before 11:00: View lecture video for Lesson 5 and (optionally) one or more of Le
 
 ### Course Organization
 
-The course will have four components:
+The course will have five components:
 
 1. ***A mandatory self-learning component***, in which students are expected to watch and take notes on the pre-recorded lectures prior to the day's activities.
    Links to the videos can be found on the [course website](https://kingaa.github.io/sbied/), along with PDF versions of the lecture notes and slides.
@@ -79,12 +79,20 @@ The course will have four components:
    We will monitor this channel and attempt to answer all questions either via Slack, or in the live sessions.
    This use of Slack will allow you check whether your question has been asked previously, to avoid the kind of unnecessary duplication that makes it hard for everyone.
 
+1. ***Exercises.***
+   Each lesson includes exercises intended to consolidate and challenge your understanding of key concepts and methods.
+   To get the most out of the course, you will have to grapple with these Exercises on your own.
+   Accordingly, you must make a start on each assigned Exercise prior to the day's live sessions.  
+   The amount of progress you make is less important than the fact that you have started thinking about and working on the Exercise before the live session.
+   Questions that arise in the first phase of work on an Exercise should be sent to the course Slack channel prior to the day's session.
+   See below for guidance on use of the Slack channel.
+
 2. ***Live plenary discussions***, during which instructors will elaborate important points raised in the lectures and address common questions posed over Slack.
    During these sessions, feel free to raise any additional questions that come up.
    We ask that you mute your audio and turn off your video at the start of each live plenary and keep them muted until you have a question.
    When you do have a question, by unmuting your audio and video, you will become visible and will be given the floor to ask your question.
 
-3. ***Breakout-group exercises***, in which each student will work in small groups, in breakout rooms, on the exercises.
+3. ***Breakout-group sessions***, in which each student will work in small groups, in breakout rooms, on the Exercises.
    Each breakout group will be composed of 4 or 5 students, will be assigned a breakout room of its own, and will persist for the duration of the course.
    Within each breakout group, there will be five roles to be performed by group members; these are described below.
    At their first meeting, groups should agree among themselves as to who should perform the roles.
