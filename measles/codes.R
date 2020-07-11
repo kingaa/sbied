@@ -82,10 +82,12 @@ dmeas <- Csnippet("
   double v = m*(1.0-rho+psi*psi*m);
   double tol = 1.0e-18;
   if (cases > 0.0) {
-    lik = pnorm(cases+0.5,m,sqrt(v)+tol,1,0)-pnorm(cases-0.5,m,sqrt(v)+tol,1,0)+tol;
+    lik = pnorm(cases+0.5,m,sqrt(v)+tol,1,0)
+           - pnorm(cases-0.5,m,sqrt(v)+tol,1,0) + tol;
   } else {
-    lik = pnorm(cases+0.5,m,sqrt(v)+tol,1,0)+tol;
+    lik = pnorm(cases+0.5,m,sqrt(v)+tol,1,0) + tol;
   }
+  if (give_log) lik = log(lik);
 ")
 
 ## ----rmeasure-------------------------------------------------
@@ -137,7 +139,7 @@ covar1 %>%
 dat %>%
   pomp(t0=with(dat,2*time[1]-time[2]),
     time="time",
-    rprocess=euler(Csnippet(rproc),delta.t=1/365.25),
+    rprocess=euler(rproc,delta.t=1/365.25),
     rinit=rinit,
     dmeasure=dmeas,
     rmeasure=rmeas,
@@ -198,6 +200,8 @@ pt <- parameter_trans(
   logit=c("cohort","amplitude"),
   barycentric=c("S_0","E_0","I_0","R_0")
 )
+
+## ----fold-transforms-----------------------------------------------
 m1 %>%
   pomp(partrans=pt,
     statenames=c("S","E","I","R","C","W"),

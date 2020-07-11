@@ -12,14 +12,14 @@ read_chunk("codes.R")
 knitr::opts_chunk$set(purl=FALSE)
 @
 
-<<plot_colors,include=FALSE,purl=FALSE>>=
+<<plot_colors,include=FALSE>>=
 line.color <- "red"
 plot.color <- "black"
 @
 
 \begin{document}
 
-<<prelims,echo=F,cache=F,purl=FALSE>>=
+<<prelims,echo=F,cache=F>>=
 @
 
 \maketitle
@@ -74,9 +74,9 @@ plot.color <- "black"
   \item Much of this evidence has been amassed from fitting models to data, using a variety of methods.
   \item See \cite{Rohani2010} for a review of some of the high points.
   \end{itemize}
-  <<load-data,echo=FALSE,purl=FALSE>>=
+  <<load-data,echo=FALSE>>=
   @
-  <<some-data-plot,echo=F,eval=F,purl=F>>=
+  <<some-data-plot,echo=F,eval=F>>=
   measles %>%
     subset(town %in% c("London","Liverpool","Hastings")) %>%
     ggplot(aes(x=date,y=cases))+
@@ -136,7 +136,7 @@ plot.color <- "black"
 \end{frame}
 
 \begin{frame}{Map of cities in the analysis}
-  <<map,echo=F,purl=F>>=
+  <<map,echo=F>>=
   read_csv("data/GB_Coast.csv") %>%
     rename(long=Long,lat=Lat) -> coast
 
@@ -182,7 +182,7 @@ plot.color <- "black"
 \subsection{Modeling}
 
 \begin{frame}{Continuous-time Markov process model}
-  <<seir-diagram,echo=FALSE,cache=FALSE,purl=FALSE,eval=FALSE>>=
+  <<seir-diagram,echo=FALSE,cache=FALSE,eval=FALSE>>=
   library(DiagrammeR)
   DiagrammeR("digraph SEIR {
   graph [rankdir=TD, overlap=false, fontsize = 10]
@@ -318,7 +318,7 @@ plot.color <- "black"
 
 \begin{frame}[fragile,allowframebreaks]{Implementation of the process model}
 \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
-<<rproc_listing,echo=FALSE,results="asis",purl=F>>=
+<<rproc_listing,echo=FALSE,results="asis">>=
 cat(rproc@text)
 @ 
 \end{lstlisting}
@@ -337,7 +337,7 @@ cat(rproc@text)
   <<rinit,include=FALSE>>=
   @
   \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
-    <<rinit_listing,echo=FALSE,results="asis",purl=F>>=
+    <<rinit_listing,echo=FALSE,results="asis">>=
     cat(rinit@text)
     @ 
   \end{lstlisting}
@@ -366,8 +366,8 @@ cat(rproc@text)
   The following computes $\mathbb{P}[\text{cases}|C]$.
   <<dmeasure,include=FALSE>>=
   @
-  \begin{lstlisting}[basicstyle=\ttfamily\tiny]
-    <<dmeas_listing,echo=FALSE,results="asis",purl=F>>=
+  \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+    <<dmeas_listing,echo=FALSE,results="asis">>=
     cat(dmeas@text)
     @ 
   \end{lstlisting}
@@ -378,7 +378,7 @@ cat(rproc@text)
   <<rmeasure,include=FALSE>>=
   @
   \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
-    <<rmeas_listing,echo=FALSE,results="asis",purl=F>>=
+    <<rmeas_listing,echo=FALSE,results="asis">>=
     cat(rmeas@text)
     @ 
   \end{lstlisting}
@@ -404,9 +404,9 @@ cat(rproc@text)
   
   We verify that we get the same likelihood as \cite{He2010}.
 
-  <<pfilter1a,eval=F,size="small">>=
+  <<pfilter1a,eval=F>>=
   @
-  <<pfilter1_eval,eval=T,include=F,cache=F,purl=F>>=
+  <<pfilter1_eval,eval=T,include=F,cache=F>>=
   bake("pfilter1.rds",{
     <<pfilter1a>>
   }) -> pfs
@@ -440,8 +440,11 @@ cat(rproc@text)
     and to confine parameters to the unit simplex, we use the log-barycentric transformation.
   \end{itemize}
 
-  <<transforms,size="scriptsize">>=
+  <<transforms>>=
   @
+  <<fold-transforms,include=F,purl=T>>=
+  @ 
+
 \end{frame}
 
 \section{Findings}
@@ -461,7 +464,7 @@ cat(rproc@text)
 
 \begin{frame}[fragile]{Imported infections}
   $$\text{force of infection} = \mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
-  <<imports,results="hide",echo=FALSE,purl=FALSE,out.width="4in">>=
+  <<imports,results="hide",echo=FALSE,out.width="4in">>=
   best <- read.csv('data/iota.csv',row.names=1)
 
   op <- par(
@@ -530,7 +533,7 @@ cat(rproc@text)
 \end{frame}
 
 \begin{frame}[fragile]{Seasonality}
-  <<amplitude,results="hide",echo=FALSE,purl=FALSE>>=
+  <<amplitude,results="hide",echo=FALSE>>=
   best <- read.csv('data/amplitude.csv',row.names=1)
 
   op <- par(
@@ -593,7 +596,7 @@ cat(rproc@text)
 \end{frame}
 
 \begin{frame}[fragile]{Cohort effect}
-  <<cohort-effect,echo=FALSE,results="hide",purl=FALSE>>=
+  <<cohort-effect,echo=FALSE,results="hide">>=
   best <- read.csv('data/cohort.csv',row.names=1)
 
   op <- par(
@@ -656,7 +659,7 @@ cat(rproc@text)
 \end{frame}
 
 \begin{frame}[fragile]{Birth delay}
-  <<delay,eval=TRUE,echo=FALSE,results="hide",purl=FALSE,fig.height=5,out.width="0.7\\textwidth">>=
+  <<delay,eval=TRUE,echo=FALSE,results="hide",fig.height=5,out.width="0.7\\textwidth">>=
   x <- read.csv('data/delay.csv',row.names=1)
 #  par(mai=c(1,0.6,0.2,0.2))
   plot(
@@ -675,7 +678,7 @@ cat(rproc@text)
 \end{frame}
 
 \begin{frame}[fragile]{Reporting rate}
-  <<report-rate,echo=FALSE,results="hide",purl=FALSE>>=
+  <<report-rate,echo=FALSE,results="hide">>=
   mles %>% select(town,rho) -> est.rho
 
   demog %>%
@@ -716,7 +719,7 @@ cat(rproc@text)
 
 
 \begin{frame}[fragile]{Predicted vs observed critical community size}
-  <<fadeouts,echo=FALSE,results="hide",purl=FALSE>>=
+  <<fadeouts,echo=FALSE,results="hide">>=
   op <- par(
     font=2,
     fig=c(0,1,0,1),
@@ -749,7 +752,7 @@ cat(rproc@text)
   \item Recall that $R_0$ : a measure of how communicable an infection is.
   \item Existing estimates of $R_0$ (c. 15--20) come from two sources: serology surveys, and models fit to data using feature-based methods.
   \end{itemize}
-  <<R0,echo=FALSE,results="hide",purl=FALSE,fig.height=3>>=
+  <<R0,echo=FALSE,results="hide",fig.height=3>>=
   best <- read.csv('data/R0profile.csv',row.names=1)
 
   op <- par(
@@ -812,7 +815,7 @@ cat(rproc@text)
 \end{frame}
 
 \begin{frame}[fragile]{Parameter estimates}
-  <<est-table,echo=FALSE,size="tiny",purl=FALSE>>=
+  <<est-table,echo=FALSE,size="tiny">>=
   mean.euler <- function(rate,dt=1/365) dt/(1-exp(-rate*dt))
 
   demog %>%
@@ -851,7 +854,7 @@ $r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
 
 \begin{frame}[fragile]{Extrademographic stochasticity}
   $$\mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
-  <<env-noise,echo=FALSE,results="hide",purl=FALSE,out.width="4in">>=
+  <<env-noise,echo=FALSE,results="hide",out.width="4in">>=
   best <- read.csv('data/env_noise.csv',row.names=1)
   mean.euler <- function(rate,dt=1/365) dt/(1-exp(-rate*dt))
   best$IP <- mean.euler(best[,'gamma'])*365
