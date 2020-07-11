@@ -7,24 +7,19 @@
 <<setup,echo=F,cache=F,purl=F,child="../setup.Rnw">>=
 @
 
-<<read_chunks,include=FALSE,cache=FALSE>>=
+<<read_chunks,include=FALSE,cache=FALSE,purl=FALSE>>=
 read_chunk("codes.R")
 knitr::opts_chunk$set(purl=FALSE)
 @
 
-<<plot_colors,include=FALSE>>=
+<<plot_colors,include=FALSE,purl=FALSE>>=
 line.color <- "red"
 plot.color <- "black"
 @
 
 \begin{document}
 
-<<prelims,echo=F,cache=F>>=
-stopifnot(packageVersion("pomp")>="3.0")
-stopifnot(packageVersion("dplyr")>="1.0")
-library(pomp)
-library(tidyverse)
-set.seed(1109529108L)
+<<prelims,echo=F,cache=F,purl=FALSE>>=
 @
 
 \maketitle
@@ -38,6 +33,7 @@ set.seed(1109529108L)
 }
 
 \section{Introduction}
+
 \begin{frame}{Objectives}
   \begin{itemize}
   \item To display a published case study using plug-and-play methods with non-trivial model complexities.
@@ -79,10 +75,6 @@ set.seed(1109529108L)
   \item See \cite{Rohani2010} for a review of some of the high points.
   \end{itemize}
   <<load-data,echo=FALSE,purl=FALSE>>=
-  daturl <- "https://kingaa.github.io/pomp/vignettes/twentycities.rda"
-  datfile <- file.path(tempdir(),"twentycities.rda")
-  download.file(daturl,destfile=datfile,mode="wb")
-  load(datfile)
   @
   <<some-data-plot,echo=F,eval=F,purl=F>>=
   measles %>%
@@ -102,7 +94,9 @@ set.seed(1109529108L)
 }
 
 \section{Model and implementation}
+
 \subsection{Overview}
+
 \begin{frame}[allowframebreaks]{Measles in England and Wales}
   \begin{itemize}
   \item We revisit a classic measles data set, weekly case reports in 954 urban centers in England and Wales during the pre-vaccine era (1950--1963).
@@ -126,6 +120,7 @@ set.seed(1109529108L)
 \end{frame}
 
 \subsection{Data sets}
+
 \begin{frame}[allowframebreaks]{Data sets}
   \begin{itemize}
   \item He, Ionides, \& King, \emph{J. R. Soc. Interface} (2010)
@@ -155,7 +150,7 @@ set.seed(1109529108L)
 \end{frame}
 
 \begin{frame}{City case counts I: smallest 8 cities}
-  <<dataplot,echo=F,fig.height=4,purl=F>>=
+  <<dataplot,echo=F,fig.height=4>>=
   demog %>%
     group_by(town) %>%
     summarize(mean.pop=mean(pop)) %>%
@@ -173,7 +168,7 @@ set.seed(1109529108L)
 \end{frame}
 
 \begin{frame}{City case counts II: largest 8 cities}
-  <<dataplot2,echo=F,fig.height=4,purl=F>>=
+  <<dataplot2,echo=F,fig.height=4>>=
   measles %>%
     mutate(town=ordered(town,levels=meanpop$town)) %>%
     filter(town %in% meanpop$town[13:20]) %>%
@@ -185,6 +180,7 @@ set.seed(1109529108L)
 \end{frame}
 
 \subsection{Modeling}
+
 \begin{frame}{Continuous-time Markov process model}
   <<seir-diagram,echo=FALSE,cache=FALSE,purl=FALSE,eval=FALSE>>=
   library(DiagrammeR)
@@ -240,7 +236,9 @@ set.seed(1109529108L)
   \item Overdispersed binomial measurement model: $\mathrm{cases}_t\,\vert\,\Delta{N}_{IR}=z_t \sim \dist{Normal}{\rho\,z_t,\rho\,(1-\rho)\,z_t+(\psi\,\rho\,z_t)^2}$
   \end{itemize}
 \end{frame}
+
 \subsection{Model implementation in \package{pomp}}
+
 \begin{frame}[fragile]{Implementation in \package{pomp}}
   \begin{itemize}
   \item We'll load the packages we'll need, and set the random seed, to allow reproducibility.
@@ -248,12 +246,6 @@ set.seed(1109529108L)
   \item Also, we'll be using \package{ggplot2} for plotting: see \link{https://kingaa.github.io/R_Tutorial/viz.html\#a-more-systematic-approach-the-grammar-of-graphics}{this brief tutorial}.
   \item Finally, we'll use the convenient \package{magrittr} syntax, which is explained \link{https://kingaa.github.io/R_Tutorial/munging.html\#the-magrittr-syntax}{here}.
   \end{itemize}
-  <<prelims2,cache=FALSE,echo=F>>=
-  library(pomp)
-  library(tidyverse)
-  theme_set(theme_bw())
-  set.seed(594709947L)
-  @
 \end{frame}
 
 \begin{frame}[fragile]{Data and covariates}
@@ -266,18 +258,6 @@ set.seed(1109529108L)
   \end{itemize}
 
   <<london-data,echo=FALSE>>=
-  measles %>%
-    mutate(year=as.integer(format(date,"%Y"))) %>%
-    filter(town=="London" & year>=1950 & year<1964) %>%
-    mutate(
-      time=(julian(date,origin=as.Date("1950-01-01")))/365.25+1950
-    ) %>%
-    filter(time>1950 & time<1964) %>%
-    select(time,cases) -> dat
-
-  demog %>%
-    filter(town=="London") %>%
-    select(-town) -> demogLondon
   @
 \end{frame}
 
@@ -288,19 +268,9 @@ set.seed(1109529108L)
 
   Now, we smooth the covariates. Note that we delay the entry of newborns into the susceptible pool.
   <<prep-covariates,echo=FALSE>>=
-  demogLondon %>%
-    summarize(
-      time=seq(from=min(year),to=max(year),by=1/12),
-      pop=predict(smooth.spline(x=year,y=pop),x=time)$y,
-      birthrate=predict(smooth.spline(x=year+0.5,y=births),x=time-4)$y,
-      birthrate1=predict(smooth.spline(x=year+0.5,y=births),x=time)$y
-    ) -> covar1
-
-  covar1 %>%
-    select(-birthrate1) -> covar
   @
 
-  <<covarplot,out.width="1\\textwidth",echo=FALSE,purl=FALSE>>=
+  <<covarplot,out.width="1\\textwidth",echo=FALSE>>=
   library(cowplot)
   demogLondon %>%
     select(year,pop) %>%
@@ -348,35 +318,32 @@ set.seed(1109529108L)
 
 \begin{frame}[fragile,allowframebreaks]{Implementation of the process model}
 \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
-<<rproc_listing,echo=FALSE,results="asis">>=
+<<rproc_listing,echo=FALSE,results="asis",purl=F>>=
 cat(rproc@text)
 @ 
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Process model observations}
+\begin{frame}[fragile]{Process model observations}
   \begin{itemize}
   \item In the above, \code{C} represents the true incidence, i.e., the number of new infections occurring over an interval.
   \item Since recognized measles infections are quarantined, we argue that most infection occurs before case recognition so that true incidence is a measure of the number of individuals progressing from the I to the R compartment in a given interval.
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{State initializations}
+\begin{frame}[fragile]{State initializations}
   We complete the process model definition by specifying the distribution of initial unobserved states.
   The following codes assume that the fraction of the population in each of the four compartments is known.
   <<rinit,include=FALSE>>=
   @
   \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
-    <<rinit_listing,echo=FALSE,results="asis">>=
+    <<rinit_listing,echo=FALSE,results="asis",purl=F>>=
     cat(rinit@text)
     @ 
   \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{The measurement model I}
+\begin{frame}[fragile]{The measurement model I}
   \begin{itemize}
   \item We'll model both under-reporting and measurement error.
   \item We want $\mathbb{E}[\text{cases}|C] = \rho\,C$, where $C$ is the true incidence and $0<\rho<1$ is the reporting efficiency.
@@ -395,108 +362,62 @@ cat(rproc@text)
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{The measurement model II}
+\begin{frame}[fragile]{The measurement model II}
   The following computes $\mathbb{P}[\text{cases}|C]$.
   <<dmeasure,include=FALSE>>=
   @
   \begin{lstlisting}[basicstyle=\ttfamily\tiny]
-    <<dmeas_listing,echo=FALSE,results="asis">>=
+    <<dmeas_listing,echo=FALSE,results="asis",purl=F>>=
     cat(dmeas@text)
     @ 
   \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Case simulations}
+\begin{frame}[fragile]{Case simulations}
   The following codes simulate $\text{cases} | C$.
   <<rmeasure,include=FALSE>>=
   @
   \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
-    <<rmeas_listing,echo=FALSE,results="asis">>=
+    <<rmeas_listing,echo=FALSE,results="asis",purl=F>>=
     cat(rmeas@text)
     @ 
   \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Constructing the `pomp` object}
+\begin{frame}[fragile]{Constructing the pomp object}
   <<pomp-construction>>=
-  dat %>%
-    pomp(t0=with(dat,2*time[1]-time[2]),
-         time="time",
-         rprocess=euler(Csnippet(rproc),delta.t=1/365.25),
-         rinit=rinit,
-         dmeasure=dmeas,
-         rmeasure=rmeas,
-         covar=covariate_table(covar,times="time"),
-         accumvars=c("C","W"),
-         statenames=c("S","E","I","R","C","W"),
-         paramnames=c("R0","mu","sigma","gamma","alpha","iota",
-                      "rho","sigmaSE","psi","cohort","amplitude",
-                      "S_0","E_0","I_0","R_0")
-         ) -> m1
   @
 \end{frame}
+
 \section{Estimation}
+
 \subsection{\cite{He2010}}
-\begin{frame}[fragile]
-  \frametitle{Estimates from \cite{He2010}}
+
+\begin{frame}[fragile]{Estimates from \cite{He2010}}
   \cite{He2010} estimated the parameters of this model.
   The full set is included in the \Rlanguage code accompanying this document, where they are read into a data frame called \code{mles}.
   <<mles,include=FALSE>>=
-  read.csv(text="
-  town,loglik,loglik.sd,mu,delay,sigma,gamma,rho,R0,amplitude,alpha,iota,cohort,psi,S_0,E_0,I_0,R_0,sigmaSE
-  Bedwellty,-1125.1,0.14,0.02,4,57.9,146,0.311,24.7,0.16,0.937,0.0396,0.351,0.951,0.0396,2.64e-05,2.45e-05,0.96,0.0611
-  Birmingham,-3239.3,1.55,0.02,4,45.6,32.9,0.544,43.4,0.428,1.01,0.343,0.331,0.178,0.0264,8.96e-05,0.000335,0.973,0.0611
-  Bradford,-2586.6,0.68,0.02,4,45.6,129,0.599,32.1,0.236,0.991,0.244,0.297,0.19,0.0365,7.41e-06,4.59e-06,0.964,0.0451
-  Bristol,-2681.6,0.5,0.02,4,64.3,82.6,0.626,26.8,0.203,1.01,0.441,0.344,0.201,0.0358,9.62e-06,5.37e-06,0.964,0.0392
-  Cardiff,-2364.9,0.73,0.02,4,39,143,0.602,34.4,0.223,0.996,0.141,0.267,0.27,0.0317,1.01e-05,9.21e-06,0.968,0.0539
-  Consett,-1362.9,0.73,0.02,4,42.6,172,0.65,35.9,0.2,1.01,0.0731,0.31,0.406,0.0322,1.83e-05,1.97e-05,0.968,0.0712
-  Dalton.in.Furness,-726.1,0.3,0.02,4,73.6,257,0.455,28.3,0.203,0.989,0.0386,0.421,0.818,0.0387,2.23e-05,2.36e-05,0.961,0.0779
-  Halesworth,-318.6,0.51,0.02,4,49.6,210,0.754,33.1,0.381,0.948,0.00912,0.547,0.641,0.0526,1.99e-05,2.82e-05,0.947,0.0748
-  Hastings,-1583.7,0.21,0.02,4,56.3,74.1,0.695,34.2,0.299,1,0.186,0.329,0.396,0.0233,5.61e-06,3.4e-06,0.977,0.0955
-  Hull,-2729.4,0.39,0.02,4,42.1,73.9,0.582,38.9,0.221,0.968,0.142,0.275,0.256,0.0371,1.2e-05,1.13e-05,0.963,0.0636
-  Leeds,-2918.6,0.23,0.02,4,40.7,35.1,0.666,47.8,0.267,1,1.25,0.592,0.167,0.0262,6.04e-05,3e-05,0.974,0.0778
-  Lees,-548.1,1.1,0.02,4,45.6,244,0.612,29.7,0.153,0.968,0.0311,0.648,0.681,0.0477,2.66e-05,2.08e-05,0.952,0.0802
-  Liverpool,-3403.1,0.34,0.02,4,49.4,39.3,0.494,48.1,0.305,0.978,0.263,0.191,0.136,0.0286,0.000184,0.00124,0.97,0.0533
-  London,-3804.9,0.16,0.02,4,28.9,30.4,0.488,56.8,0.554,0.976,2.9,0.557,0.116,0.0297,5.17e-05,5.14e-05,0.97,0.0878
-  Manchester,-3250.9,0.66,0.02,4,34.4,56.8,0.55,32.9,0.29,0.965,0.59,0.362,0.161,0.0489,2.41e-05,3.38e-05,0.951,0.0551
-  Mold,-296.5,0.25,0.02,4,67.4,301,0.131,21.4,0.271,1.04,0.0145,0.436,2.87,0.064,2.61e-05,2.27e-05,0.936,0.0544
-  Northwich,-1195.1,2.25,0.02,4,45.6,147,0.795,30.1,0.423,0.948,0.0602,0.236,0.402,0.0213,1.32e-05,1.58e-05,0.979,0.0857
-  Nottingham,-2703.5,0.53,0.02,4,70.2,115,0.609,22.6,0.157,0.982,0.17,0.34,0.258,0.05,1.36e-05,1.41e-05,0.95,0.038
-  Oswestry,-696.1,0.49,0.02,4,37.3,168,0.631,52.9,0.339,1.04,0.0298,0.263,0.476,0.0218,1.56e-05,1.61e-05,0.978,0.0699
-  Sheffield,-2810.7,0.21,0.02,4,54.3,62.2,0.649,33.1,0.313,1.02,0.853,0.225,0.175,0.0291,6.04e-05,8.86e-05,0.971,0.0428
-  ",stringsAsFactors=FALSE) -> mles
   @
   
   <<mle,include=FALSE>>=
-  mles %>% filter(town=="London") -> mle
-  paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
-                  "rho","sigmaSE","psi","cohort","amplitude",
-                  "S_0","E_0","I_0","R_0")
-  mle[paramnames] %>% unlist() -> theta
-  mle %>% select(-S_0,-E_0,-I_0,-R_0)
   @
   
   We verify that we get the same likelihood as \cite{He2010}.
 
-  <<pfilter1,eval=T,cache=T,size="small">>=
-  library(foreach);library(doParallel);library(doRNG)
-  
-  registerDoParallel()
-  registerDoRNG(998468235L)
-
-  foreach(i=1:4) %dopar% {
-    library(pomp)
-    pfilter(m1,Np=10000,params=theta)
-  } -> pfs
-  logmeanexp(sapply(pfs,logLik),se=TRUE)
+  <<pfilter1a,eval=F,size="small">>=
+  @
+  <<pfilter1_eval,eval=T,include=F,cache=F,purl=F>>=
+  bake("pfilter1.rds",{
+    <<pfilter1a>>
+  }) -> pfs
+  @ 
+  <<pfilter1b,eval=T,size="small">>=
   @
 \end{frame}
+
 \subsection{Simulations}
-\begin{frame}[fragile]
-  \frametitle{Simulations at the MLE}
+
+\begin{frame}[fragile]{Simulations at the MLE}
   <<sims1,fig.height=2,echo=T>>=
   m1 %>%
     simulate(params=theta,nsim=3,format="d",include.data=TRUE) %>%
@@ -505,9 +426,10 @@ cat(rproc@text)
     geom_line()+facet_wrap(~.id,ncol=2)
   @
 \end{frame}
+
 \subsection{Parameter estimation}
-\begin{frame}[fragile]
-  \frametitle{Parameter transformations}
+
+\begin{frame}[fragile]{Parameter transformations}
   \begin{itemize}
   \item The parameters are constrained to be positive, and some of them are constrained to lie between $0$ and $1$.
 
@@ -519,24 +441,12 @@ cat(rproc@text)
   \end{itemize}
 
   <<transforms,size="scriptsize">>=
-  pt <- parameter_trans(
-    log=c("sigma","gamma","sigmaSE","psi","R0"),
-    logit=c("cohort","amplitude"),
-    barycentric=c("S_0","E_0","I_0","R_0")
-  )
-  m1 %>%
-    pomp(partrans=pt,
-         statenames=c("S","E","I","R","C","W"),
-         paramnames=c("R0","mu","sigma","gamma","alpha","iota",
-                      "rho","sigmaSE","psi","cohort","amplitude",
-                      "S_0","E_0","I_0","R_0")) -> m1
-@
+  @
 \end{frame}
 
 \section{Findings}
 
-\begin{frame}[fragile]
-  \frametitle{Results from \cite{He2010}}
+\begin{frame}[fragile]{Results from \cite{He2010}}
   \link{./profile.html}{The linked document shows how a likelihood profile can be constructed using IF2}
   The fitting procedure used is as follows:
   \begin{itemize}
@@ -548,8 +458,8 @@ cat(rproc@text)
 \end{frame}
 
 \subsection{Notable findings}
-\begin{frame}[fragile]
-  \frametitle{Imported infections}
+
+\begin{frame}[fragile]{Imported infections}
   $$\text{force of infection} = \mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
   <<imports,results="hide",echo=FALSE,purl=FALSE,out.width="4in">>=
   best <- read.csv('data/iota.csv',row.names=1)
@@ -619,8 +529,7 @@ cat(rproc@text)
   @
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Seasonality}
+\begin{frame}[fragile]{Seasonality}
   <<amplitude,results="hide",echo=FALSE,purl=FALSE>>=
   best <- read.csv('data/amplitude.csv',row.names=1)
 
@@ -683,8 +592,7 @@ cat(rproc@text)
   @
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Cohort effect}
+\begin{frame}[fragile]{Cohort effect}
   <<cohort-effect,echo=FALSE,results="hide",purl=FALSE>>=
   best <- read.csv('data/cohort.csv',row.names=1)
 
@@ -747,24 +655,26 @@ cat(rproc@text)
   @
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Birth delay}
-  <<delay,eval=TRUE,echo=FALSE,results="hide",purl=FALSE,fig.height=3,fig.cap="Profile likelihood for birth-cohort delay, showing 95\\% and 99\\% critical values of the log likelihood.">>=
+\begin{frame}[fragile]{Birth delay}
+  <<delay,eval=TRUE,echo=FALSE,results="hide",purl=FALSE,fig.height=5,out.width="0.7\\textwidth">>=
   x <- read.csv('data/delay.csv',row.names=1)
-  par(mai=c(1,0.6,0.2,0.2))
+#  par(mai=c(1,0.6,0.2,0.2))
   plot(
     x$delay,
     x$loglik,
-    type='o',
+    type='n',
     xlab=expression(paste(tau,' (yr)')),
     ylab='profile log likelihood'
   )
+  points(x$delay,x$loglik,col='black')
+  lines(x$delay,x$loglik,col='red')
   abline(h=max(x$loglik)-0.5*qchisq(p=c(0.95,0.99),df=1),lty='33')
   @
+
+  Profile likelihood for birth-cohort delay, showing 95\% and 99\% critical values of the log likelihood.
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Reporting rate}
+\begin{frame}[fragile]{Reporting rate}
   <<report-rate,echo=FALSE,results="hide",purl=FALSE>>=
   mles %>% select(town,rho) -> est.rho
 
@@ -805,8 +715,7 @@ cat(rproc@text)
 \end{frame}
 
 
-\begin{frame}[fragile]
-  \frametitle{Predicted vs observed critical community size}
+\begin{frame}[fragile]{Predicted vs observed critical community size}
   <<fadeouts,echo=FALSE,results="hide",purl=FALSE>>=
   op <- par(
     font=2,
@@ -832,9 +741,10 @@ cat(rproc@text)
   par(op)
   @
 \end{frame}
+
 \subsection{Problematic results}
-\begin{frame}[fragile]
-  \frametitle{$R_0$ estimates inconsistent with literature}
+
+\begin{frame}[fragile]{$R_0$ estimates inconsistent with literature}
   \begin{itemize}
   \item Recall that $R_0$ : a measure of how communicable an infection is.
   \item Existing estimates of $R_0$ (c. 15--20) come from two sources: serology surveys, and models fit to data using feature-based methods.
@@ -901,8 +811,7 @@ cat(rproc@text)
   @
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Parameter estimates}
+\begin{frame}[fragile]{Parameter estimates}
   <<est-table,echo=FALSE,size="tiny",purl=FALSE>>=
   mean.euler <- function(rate,dt=1/365) dt/(1-exp(-rate*dt))
 
@@ -933,8 +842,6 @@ cat(rproc@text)
   tab %>%
     rbind(r=cors[names(tab)]) %>%
     signif(2) %>%
-    #as_tibble() %>%
-    #print(n=20, width=Inf)
     knitr::kable("latex")
 @
 
@@ -942,8 +849,7 @@ $r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
 
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Extrademographic stochasticity}
+\begin{frame}[fragile]{Extrademographic stochasticity}
   $$\mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
   <<env-noise,echo=FALSE,results="hide",purl=FALSE,out.width="4in">>=
   best <- read.csv('data/env_noise.csv',row.names=1)
@@ -1050,8 +956,7 @@ $r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
   @
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Questions}
+\begin{frame}[fragile]{Questions}
   \begin{itemize}
   \item What does it mean that parameter estimates from the fitting disagree with estimates from other data?
   \item How can one interpret the correlation between infectious period and city size in the parameter estimates?
@@ -1059,33 +964,41 @@ $r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Simulations at the MLE}
+\begin{frame}[fragile]{Simulations at the MLE}
   <<sims2,echo=F,fig.height=4>>=
   m1 %>%
     simulate(params=theta,nsim=100,format="d",include.data=TRUE) %>%
     select(time,.id,cases) -> simdat
 
   simdat %>%
-    mutate(data=.id=="data") %>%
-    plyr::ddply(~time+data,plyr::summarize,
-                p=c(0.05,0.5,0.95),
-                q=quantile(cases,prob=p,names=FALSE)
-                ) %>%
-    mutate(p=plyr::mapvalues(p,from=c(0.05,0.5,0.95),to=c("lo","med","hi")),
-           data=plyr::mapvalues(data,from=c(TRUE,FALSE),to=c("data","simulation"))) %>%
+    mutate(
+      data=if_else(.id=="data","data","simulation")
+    ) %>%
+    group_by(time,data) %>%
+    summarize(
+      p=c("lo","med","hi"),
+      q=quantile(cases,prob=c(0.05,0.5,0.95),names=FALSE)
+    ) %>%
+    ungroup() %>%
     spread(p,q) %>%
     ggplot(aes(x=time,y=med,color=data,fill=data,ymin=lo,ymax=hi))+
-    geom_ribbon(alpha=0.2)+
-    guides(data=FALSE)+
-    labs(y="cases") -> pl1
+    scale_color_manual(values=c(data="blue",simulation="red"))+
+    scale_fill_manual(values=c(data="blue",simulation="red"))+
+    geom_ribbon(alpha=0.2,color=NA)+
+    geom_line()+
+    guides(fill=FALSE)+
+    labs(y="cases",x="",title="London") -> pl1
 
   simdat %>%
     filter(.id=="data" | .id <= "5") %>%
-    mutate(data=.id=="data") %>%
-    ggplot(aes(x=time,y=cases,group=.id,color=data))+
+    mutate(
+      data=if_else(.id=="data","data","simulation")
+    ) %>%
+    ggplot(aes(x=time,y=cases,group=.id,color=data,alpha=data))+
     geom_line()+
-    guides(color=FALSE) -> pl2
+    scale_color_manual(values=c(data="blue",simulation="red"))+
+    scale_alpha_manual(values=c(data=1,simulation=0.3))+
+    guides(color=FALSE,alpha=FALSE) -> pl2
 
   library(cowplot)
   plot_grid(pl1,pl2,ncol=1,align="hv",axis="tblr")
@@ -1144,7 +1057,7 @@ $r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
 
   \link{../index.html}{Back to course homepage}
   
-  \link{https://raw.githubusercontent.com/kingaa/sbied/master/measles/main.R}{\Rlanguage code for this lesson}
+  \link{https://raw.githubusercontent.com/kingaa/sbied/master/measles/codes.R}{\Rlanguage codes for this lesson}
 
 \end{frame}
 
