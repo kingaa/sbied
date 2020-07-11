@@ -11,6 +11,7 @@ output: html_document
 | Lecture                         | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2RuunOUW3MqFcrcgydWhgS8) |
 | Lecture slides                  | [PDF](slides.pdf)                                                                 |
 | Lecture notes                   | [PDF](notes.pdf)                                                                  |
+| **R** script for the lesson     | [**R**](main.R)                                                                   |
 | Worked solution to Exercise 6.1 | [HTML](algorithmic-parameters-exercise.html)                                      |
 | Worked solution to Exercise 6.2 | [HTML](initial-values-exercise.html)                                              |
 | Worked solution to Exercise 6.3 | [HTML](starting-values-exercise.html)                                             |
