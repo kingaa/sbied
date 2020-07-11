@@ -1,14 +1,38 @@
+-----------------------------
+
 Dear Module 7 Participant:
 
-We are looking forward to meeting you and having lively discussions on ***Simulation-based Inference for Epidemiological Dynamics***. 
-We hope that you have already followed the [instructions for preparing your computer for the course](https://kingaa.github.io/sbied/prep/advance.html).
+We are looking forward to meeting you and having lively discussions on ***Simulation-based Inference for Epidemiological Dynamics***!
+This page provides information about the nature and schedule of Module activities and lays out some ground rules for course participation, which we hope will help smooth over some of the many difficulties associated with online learning.
+
+**Please read through this message several days before the course starts.**
+
+------------------------------
+
+### Important Information
+
+We hope that you have already followed the [instructions for preparing your computer for the course](https://kingaa.github.io/sbied/prep/).
 **If you have not yet done so, please do so soon:** if you run into difficulties, you will definitely want to have those ironed out *before* the course starts.
 
-This email provides some information about the schedule and nature of Module activities and lays out some ground rules for course participation, which we hope will help smooth over some of the many difficulties associated with online learning.
+Note also that there are mandatory activities ***prior to each day's meeting***.
+For example, make sure that you have watched the video lectures for Lessons 1 and 2 (linked from the [course website](https://kingaa.github.io/sbied/)), and make a start on the Lesson 2 Exercises, before we meet on 15 July.
+
+-----------------------------
+
+### Course Website
+
+The course website is https://kingaa.github.io/sbied/.
+All course materials can be found there.
+
+-----------------------------
 
 ### Tentative Course Schedule
 
 ***All times are EDT (UTC-04:00)***
+
+**The Zoom meeting ID is [925 2722 9135](https://umich.zoom.us/j/92527229135).**
+A password will be sent to you by email and Slack.
+***To enter the Zoom session, you must first register using the email at which you receive the invitation.**
 
 **Wednesday, 15 July**  
 Before 14:30: View lecture videos for Lessons 1 and 2. Begin work on the Exercises  
@@ -42,6 +66,8 @@ Before 11:00: View lecture video for Lesson 5 and (optionally) one or more of Le
 16:30--17:30: Live plenary discussion. Questions and answers. Concluding remarks.  
 17:30--18:30: Optional drop-in session: all topics welcomed.  
 
+-----------------------------
+
 ### Course Organization
 
 The course will have four components:
@@ -62,8 +88,8 @@ The course will have four components:
    Each breakout group will be composed of 4 or 5 students, will be assigned a breakout room of its own, and will persist for the duration of the course.
    Within each breakout group, there will be five roles to be performed by group members; these are described below.
    At their first meeting, groups should agree among themselves as to who should perform the roles.
-   Roles should be rotated periodically.
-3. ***Asking for help from a group***.
+   Roles should be rotated periodically.  
+   ***Asking for help from a group***.
    When a group wants help from the instructors, it can either post a question via Slack, send a member out of the breakout room to ask, leave the breakout room as a group to talk with the instructor, or use the 'Ask for Help' feature, which allows the group to request that one of the instructors visit the breakout room.
    The breakout groups are where you will learn the most, so do not hesitate to ask for help when needed!
    As needed, the instructors may pull everyone back for plenary discussion of points that arise in group activities.
@@ -71,6 +97,8 @@ The course will have four components:
    
 4. ***Optional office hours.***
    These are times when you should feel free to drop in with questions or when you need help.
+
+-----------------------------
 
 ### Course Ground Rules
 
@@ -112,6 +140,8 @@ In the spirit of ensuring an efficient and enjoyable learning experience for eve
    Many things will go wrong as we make our first-ever attempt at teaching this course remotely.
    Let's be generous and tolerant toward one another, and always willing to laugh!
 
+-----------------------------
+
 ### Breakout Room Roles
 
 The breakout groups assigned at the beginning of the course will be maintained throughout.
@@ -151,6 +181,4 @@ and everyone is expected to listen to and engage with, the contributions of the 
    
 For groups that have only four members, the Keeper and Slacker roles may be combined, as may the Keeper and Seeker roles.
 
-[Some closing language...]
-
----Aaron, Ed, and Kidus
+-----------------------------
