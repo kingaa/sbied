@@ -122,8 +122,9 @@ everyone is expected to contributed thought and effort toward the group's work,
 and everyone is expected to listen to and engage with, the contributions of the other group members.
 
 1. **Keeper.** 
-   The Keeper is responsible for keeping time, and keeping track of the various online resources that are in play, including the lecture notes, the videos, monitoring the Slack channel, and helping the group with the Zoom controls.
-   The Keeper's job is to keep the group apprised of the time, of relevant Slack activity, and to be able to quickly and unobtrusively help the group navigate the online tools.
+   The Keeper is responsible for keeping time, keeping track of the group's goals, and keeping the group focused and running smoothly and happily.
+   It's only a happy group that does good work.
+   As Keeper, pay attention to making sure everyone is getting their needs met, everyone is able to contribute, and that the group is not losing sight of its goals.
 1. **Taker.** 
    The Taker takes notes on the group's activities.
    What questions are being addressed?
@@ -137,18 +138,18 @@ and everyone is expected to listen to and engage with, the contributions of the 
    The group may decide to allow all group members to edit such a document, but the Taker shall be responsible for making the first draft of the notes for each session.
 1. **Hacker.** 
    All group members are expected to do hands-on work with the methods we are teaching.
-   In any given group session, the Hacker, however, will have prime responsibility for screen-shared coding and full responsibility for making sure that all group members have an up-to-date version of the group's codes at the end of each breakout-group session.
-   Since the coding is central to the course's goals, the Hacker should make sure that the group is aware of and involved in all the coding.
+   In any given group session, however, the Hacker will have prime responsibility for producing the definitive version of the group's codes and full responsibility for making sure that all group members have an up-to-date version of the definitive version at the end of each breakout-group session.
+   Since learning to write correct and efficient code is central to the course's goals, the Hacker should make sure that the group is fully involved in all the coding.
 1. **Slacker.**
-   The Slacker is responsible for preparing a pr&eacute;cis of the group's efforts and progress, to be passed, via the course Slack channel, to the instructors and the rest of the group.
+   The Slacker takes responsibility for the group's interface with the course Slack channel.
+   In addition, the Slacker is responsible for preparing a pr&eacute;cis of the group's efforts and progress, to be passed, via the course Slack channel, to the instructors and the rest of the group.
    This should be at most a paragraph, focused on communicating the essentials only: 
    what exercises were tackled, what approaches taken, what progress made, what difficulties encountered.
-1. **Skipper.** 
-   The Skipper is tasked with keeping the group focused and running smoothly and happily.
-   It's only a happy group that does good work.
-   As Skipper, pay attention to making sure everyone is getting their needs met, everyone is able to contribute, and that the group is not losing sight of its goals.
+1. **Seeker.** 
+   The Seeker is tasked with looking for information to help answer group questions.
+   A good Seeker has all the course materials at his or her fingertips and can rapidly share search results with the group.
    
-For groups that have only four members, the Keeper and Skipper roles may be combined, as may the Keeper and Slacker roles.
+For groups that have only four members, the Keeper and Slacker roles may be combined, as may the Keeper and Seeker roles.
 
 [Some closing language...]
 
