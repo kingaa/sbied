@@ -146,7 +146,7 @@ and everyone is expected to listen to and engage with, the contributions of the 
 1. **Skipper.** 
    The Skipper is tasked with keeping the group focused and running smoothly and happily.
    It's only a happy group that does good work.
-   As Skipper, pay attention to making sure everyone is getting their needs met and that the group is not losing sight of its goals.
+   As Skipper, pay attention to making sure everyone is getting their needs met, everyone is able to contribute, and that the group is not losing sight of its goals.
    
 For groups that have only four members, the Keeper and Skipper roles may be combined, as may the Keeper and Slacker roles.
 
