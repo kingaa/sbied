@@ -47,26 +47,27 @@ Before 14:30: View lecture videos for Lessons 1 and 2. Begin work on the Exercis
 
 **Thursday, 16 July**  
 Before 11:00: View lecture videos for Lessons 3 and 4. Begin work on the Exercises.  
-11:00--12:00: Live plenary discussion on Lesson 3 lectures  
+11:00--12:00: Live plenary discussion on Lesson 3 lecture  
 12:00--13:00: Breakout groups work on Lesson 3 exercises  
-13:00--13:45: Live plenary discussion of breakout group results  
+13:00--13:45: Live plenary discussion of breakout group progress  
 13:45--14:30: Break  
-14:30--15:30: Live plenary discussion on mandatory lecture videos for Lesson 4  
+14:30--15:30: Live plenary discussion on Lesson 4 lecture  
 15:30--16:30: Breakout groups work on Lesson 4 exercises  
 16:30--16:45: Break  
-16:45--17:30: Live plenary discussion of breakout group results  
+16:45--17:30: Live plenary discussion of breakout group progress  
 17:30--18:30: Optional Office hour  
 
 **Friday, 17 July**  
 Before 11:00: View lecture video for Lesson 5 and (optionally) one or more of Lessons 6, 7, 8  
-11:00--12:00: Live plenary discussion on mandatory lecture videos for Lesson 5  
-12:00--13:00: Breakout groups work on exercises from previous lessons  
-13:00--13:45: Live plenary discussion of breakout group results  
+11:00--12:00: Live plenary discussion on Lesson 5 lecture  
+12:00--13:00: Breakout groups work on exercises from Lessons 2--4  
+13:00--13:45: Live plenary discussion of breakout group progress  
 13:45--14:30: Break  
 14:30--15:10: Live, optional, plenary discussion on Lesson 6  
 15:10--15:50: Live, optional, plenary discussion on Lesson 7  
 15:50--16:30: Live, optional, plenary discussion on Lesson 8  
 16:30--17:30: Live plenary discussion. Questions and answers. Concluding remarks.  
+14:30--16:30: Those not attending a plenary discussion can use the time to work individually or in groups on the Exercises.  
 17:30--18:30: Optional drop-in session: all topics welcomed.  
 
 -----------------------------
