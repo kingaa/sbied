@@ -1,13 +1,10 @@
+---
+title: Syllabus for SISMID Module 7
+subtitle: Simulation-based Inference for Epidemiological Dynamics
+date: "15--17 July 2020"
+---
+
 -----------------------------
-
-Dear Module 7 Participant:
-
-We are looking forward to meeting you and having lively discussions on ***Simulation-based Inference for Epidemiological Dynamics***!
-This page provides information about the nature and schedule of Module activities and lays out some ground rules for course participation, which we hope will help smooth over some of the many difficulties associated with online learning.
-
-**Please read through this message several days before the course starts.**
-
-------------------------------
 
 ### Important Information
 
@@ -15,7 +12,7 @@ We hope that you have already followed the [instructions for preparing your comp
 **If you have not yet done so, please do so soon:** if you run into difficulties, you will definitely want to have those ironed out *before* the course starts.
 
 Note also that there are mandatory activities ***prior to each day's meeting***.
-For example, make sure that you have watched the video lectures for Lessons 1 and 2 (linked from the [course website](https://kingaa.github.io/sbied/)), and make a start on the Lesson 2 Exercises, before we meet on 15 July.
+For example, make sure that you have watched the video lectures for Lessons 1 and 2 (linked from the course website), and make a start on the Lesson 2 Exercises, before we meet on 15 July.
 
 -----------------------------
 
@@ -32,7 +29,7 @@ All course materials can be found there.
 
 **The Zoom meeting ID is [925 2722 9135](https://umich.zoom.us/j/92527229135).**
 A password will be sent to you by email and Slack.
-***To enter the Zoom session, you must first register using the email at which you receive the invitation.**
+***To enter the Zoom session, you must first register using the link that was sent you.**
 
 **Wednesday, 15 July**  
 Before 14:30: View lecture videos for Lessons 1 and 2. Begin work on the Exercises 2.3 and 2.4.  
