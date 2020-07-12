@@ -13,6 +13,7 @@ We hope that you have already followed the [instructions for preparing your comp
 
 Note also that there are mandatory activities ***prior to each day's meeting***.
 For example, make sure that you have watched the video lectures for Lessons 1 and 2 (linked from the course website), and make a start on the Lesson 2 Exercises, before we meet on 15 July.
+See the schedule below for details.
 
 -----------------------------
 
@@ -20,6 +21,8 @@ For example, make sure that you have watched the video lectures for Lessons 1 an
 
 The course website is https://kingaa.github.io/sbied/.
 All course materials can be found there.
+These include links to Youtube lecture videos, copies of the lecture slides, lecture notes, **R** scripts containing codes used in the lectures, and supplementary material on various background topics or topics touched tangentially in the lectures.
+Exercises are given in the lectures and can be found on the slides and in the notes.
 
 -----------------------------
 
@@ -29,7 +32,10 @@ All course materials can be found there.
 
 **The Zoom meeting ID is [925 2722 9135](https://umich.zoom.us/j/92527229135).**
 A password will be sent to you by email and Slack.
-***To enter the Zoom session, you must first register using the link that was sent you.**
+***To enter the Zoom session, you must first register using the link that was sent you.***
+
+The following schedule will be updated frequently.
+Bookmark this page so that you can check it at least twice per day.
 
 **Wednesday, 15 July**  
 Before 14:30: View lecture videos for Lessons 1 and 2. Begin work on the Exercises 2.3 and 2.4.  
@@ -72,7 +78,7 @@ The course will have five components:
 1. ***A mandatory self-learning component***, in which students are expected to watch and take notes on the pre-recorded lectures prior to the day's activities.
    Links to the videos can be found on the [course website](https://kingaa.github.io/sbied/), along with PDF versions of the lecture notes and slides.
    For example, before our live plenary on Wednesday, 15 July, we expect students to have watched the Lesson 1 and Lesson 2 lecture videos.
-   If you have any questions that come up while you are watching the videos, please pose these using the `#mod07simulationinference` channel in the SISMID Slack workspace, to which you should have by now been invited (please let us know if you have not!).
+   If you have any questions that come up while you are watching the videos, please pose these using the `#mod07simulationinference` channel in the SISMID Slack workspace.
    We will monitor this channel and attempt to answer all questions either via Slack, or in the live sessions.
    This use of Slack will allow you check whether your question has been asked previously, to avoid the kind of unnecessary duplication that makes it hard for everyone.
 
@@ -84,12 +90,12 @@ The course will have five components:
    Questions that arise in the first phase of work on an Exercise should be sent to the course Slack channel prior to the day's session.
    See below for guidance on use of the Slack channel.
 
-2. ***Live plenary discussions***, during which instructors will elaborate important points raised in the lectures and address common questions posed over Slack.
+1. ***Live plenary discussions***, during which instructors will elaborate important points raised in the lectures and address common questions posed over Slack.
    During these sessions, feel free to raise any additional questions that come up.
-   We ask that you mute your audio and turn off your video at the start of each live plenary and keep them muted until you have a question.
+   We ask that you mute your audio and video at the start of each live plenary and keep them muted until you have a question.
    When you do have a question, by unmuting your audio and video, you will become visible and will be given the floor to ask your question.
 
-3. ***Breakout-group sessions***, in which each student will work in small groups, in breakout rooms, on the Exercises.
+1. ***Breakout-group sessions***, in which each student will work in small groups, in breakout rooms, on the Exercises.
    Each breakout group will be composed of 4 or 5 students, will be assigned a breakout room of its own, and will persist for the duration of the course.
    Within each breakout group, there will be five roles to be performed by group members; these are described below.
    At their first meeting, groups should agree among themselves as to who should perform the roles.
@@ -100,7 +106,7 @@ The course will have five components:
    As needed, the instructors may pull everyone back for plenary discussion of points that arise in group activities.
    See below for more on breakout group roles, rules, and expectations regarding breakout group activities.
    
-4. ***Optional office hours.***
+1. ***Optional office hours.***
    These are times when you should feel free to drop in with questions or when you need help.
 
 -----------------------------
@@ -150,11 +156,11 @@ In the spirit of ensuring an efficient and enjoyable learning experience for eve
 ### Breakout Room Roles
 
 The breakout groups assigned at the beginning of the course will be maintained throughout.
-The following roles are designed to make sure everyone in a group contributes to the group effort, and that every important task has someone to look after it.
+The following roles are designed to help the group function smoothly, and to make sure everyone in a group contributes to the group effort, and that every important task has someone to look after it.
 At the first breakout-group meeting, decide among yourselves who will perform each role and change the roles periodically, but not during a single session!
 None of these roles is a full-time job: 
-everyone is expected to contributed thought and effort toward the group's work, 
-and everyone is expected to listen to and engage with, the contributions of the other group members.
+everyone is expected to contribute thought and effort toward the group's work, 
+and everyone is expected to listen to, and engage with, the contributions of the other group members.
 
 1. **Keeper.** 
    The Keeper is responsible for keeping time, keeping track of the group's goals, and keeping the group focused and running smoothly and happily.
@@ -166,18 +172,19 @@ and everyone is expected to listen to and engage with, the contributions of the 
    What hypotheses formulated?
    What approaches tried?
    What results obtained?
-   What questions arise?
-   What answers gained?
+   What questions arose?
+   What answers were discovered?
    The Taker should strive for complete but very concise notes and will be responsible for making sure that every group member has access to them.
    The Taker might choose to create a shared online document (using Google docs, for example) for this purpose.
    The group may decide to allow all group members to edit such a document, but the Taker shall be responsible for making the first draft of the notes for each session.
 1. **Hacker.** 
    All group members are expected to do hands-on work with the methods we are teaching.
-   In any given group session, however, the Hacker will have prime responsibility for producing the definitive version of the group's codes and full responsibility for making sure that all group members have an up-to-date version of the definitive version at the end of each breakout-group session.
+   In any given group session, however, the Hacker will have prime responsibility for producing the definitive version of the group's codes and full responsibility for making sure that all group members have access to the definitive version at the end of each breakout-group session.
+   Again, the group may decide to use a shared online document for this purpose.
    Since learning to write correct and efficient code is central to the course's goals, the Hacker should make sure that the group is fully involved in all the coding.
 1. **Slacker.**
    The Slacker takes responsibility for the group's interface with the course Slack channel.
-   In addition, the Slacker is responsible for preparing a pr&eacute;cis of the group's efforts and progress, to be passed, via the course Slack channel, to the instructors and the rest of the group.
+   In addition, the Slacker is responsible for preparing a pr&eacute;cis of the group's efforts and progress, to be passed, via the course Slack channel, to the instructors and the rest of the group at the end of the session.
    This should be at most a paragraph, focused on communicating the essentials only: 
    what exercises were tackled, what approaches taken, what progress made, what difficulties encountered.
 1. **Seeker.** 

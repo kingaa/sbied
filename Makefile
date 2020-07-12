@@ -1,6 +1,6 @@
 MODULES = prep intro stochsim pfilter mif polio ebola measles contacts
 
-default: index.html acknowledge.html modules
+default: index.html syllabus.html acknowledge.html modules
 
 modules:
 	for module in $(MODULES); do ($(MAKE) -C $$module); done
