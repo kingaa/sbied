@@ -167,11 +167,11 @@
 \begin{frame}{Moving from math to algorithms for POMP models}
   We specify some \myemph{basic model components} which can be used within algorithms:
   \begin{itemize}
-  \item \code{rprocess}: a draw from $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
-  \item \code{dprocess}: evaluation of $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
-  \item \code{rmeasure}: a draw from $f_{Y_n|X_n}(y_n| x_n;\theta)$
-  \item \code{dmeasure}: evaluation of $f_{Y_n|X_n}(y_n| x_n;\theta)$
-  \item \code{rinit}: a draw from $f_{X_0}(x_0;\theta)$
+  \item `rprocess': a draw from $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
+  \item `dprocess': evaluation of $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
+  \item `rmeasure': a draw from $f_{Y_n|X_n}(y_n| x_n;\theta)$
+  \item `dmeasure': evaluation of $f_{Y_n|X_n}(y_n| x_n;\theta)$
+  \item `rinit': a draw from $f_{X_0}(x_0;\theta)$
   \end{itemize}
   These basic model components define the specific POMP model under consideration.
 \end{frame}
@@ -179,8 +179,8 @@
 \begin{frame}{What is a simulation-based method?}
   \begin{itemize}
   \item Simulating random processes is often much easier than evaluating their transition probabilities.
-  \item In other words, we may be able to write \code{rprocess} but not \code{dprocess}.
-  \item  \myemph{Simulation-based} methods require the user to specify \code{rprocess} but not \code{dprocess}.
+  \item In other words, we may be able to write rprocess but not dprocess.
+  \item  \myemph{Simulation-based} methods require the user to specify rprocess but not dprocess.
   \item  \myemph{Plug-and-play}, \myemph{likelihood-free} and \myemph{equation-free} are alternative terms for ``simulation-based'' methods.
   \item Much development of simulation-based statistical methodology has occurred in the past decade.
   \end{itemize}
