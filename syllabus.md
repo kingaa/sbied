@@ -31,7 +31,7 @@ Exercises are given in the lectures and can be found on the slides and in the no
 ***All times are EDT (UTC-04:00)***
 
 **The Zoom meeting ID is [925 2722 9135](https://umich.zoom.us/j/92527229135).**
-A password will be sent to you by email and Slack.
+A password will be sent over the course Slack channel.
 ***To enter the Zoom session, you must first register using the link that was sent you.***
 
 The following schedule will be updated frequently.

@@ -4,9 +4,11 @@ library(stringi)
 batchsize <- 30
 replyto <- "kingaa.sismid@gmail.com"
 subject <- "SISMID Module 7 Advance Instructions"
-cmd <- 'REPLYTO=%s mutt -s "%s" -b %s -e "%s" -- %s < advance.html\n'
-tweaks <- "set content_type=text/html"
-  
+cmd <- 'REPLYTO=%s mutt -s "%s" -b %s -e "%s" -- %s < %s\n'
+##tweaks <- "set content_type=text/html"
+tweaks <- ""
+file <- "welcome.md"
+
 read_csv("list.csv",col_types="cc") %>%
   mutate(
     batch=1+seq_along(email)%/%batchsize,
@@ -21,7 +23,8 @@ read_csv("list.csv",col_types="cc") %>%
       subj=subject,
       bcc=paste(email,collapse=","),
       tweaks=tweaks,
-      to=replyto
+      to=replyto,
+      file=file
     )
   ) %>%
   pull(command) %>%
