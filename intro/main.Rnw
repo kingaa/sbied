@@ -214,12 +214,12 @@
   Basic model components are user-specified procedures that perform the elementary computations that specify a POMP model.
   There are nine of these:
   \begin{itemize}
-  \item \code{rinit}: simulator for the initial-state distribution, i.e., the distribution of the latent state at time $t_0$.
-  \item \code{rprocess} and \code{dprocess}: simulator and density evaluation procedure, respectively, for the process model.
-  \item \code{rmeasure} and \code{dmeasure}: simulator and density evaluation procedure, respectively, for the measurement model.
-  \item \code{rprior} and \code{dprior}: simulator and density evaluation procedure, respectively, for the prior distribution.
-  \item \code{skeleton}: evaluation of a deterministic skeleton.
-  \item \code{partrans}: parameter transformations.
+  \item `rinit': simulator for the initial-state distribution, i.e., the distribution of the latent state at time $t_0$.
+  \item `rprocess' and `dprocess': simulator and density evaluation procedure, respectively, for the process model.
+  \item `rmeasure' and `dmeasure': simulator and density evaluation procedure, respectively, for the measurement model.
+  \item `rprior' and `dprior': simulator and density evaluation procedure, respectively, for the prior distribution.
+  \item `skeleton': evaluation of a deterministic skeleton.
+  \item `partrans': parameter transformations.
   \end{itemize}
   The scientist must specify whichever of these basic model components are required for the algorithms that the scientist uses.
 \end{frame}
@@ -229,8 +229,9 @@
   \begin{itemize}
   \item Each basic model component has a corresponding workhorse.
   \item Effectively, the workhorse is a vectorized wrapper around the basic model component.
-  \item For example, the \code{rprocess()} function uses code specified by the \code{rprocess} model component, constructed via the \code{rprocess} argument to \code{pomp()}.
-  \item The \code{rprocess} model component specifies how a single trajectory evolves at a single moment of time. The \code{rprocess()} workhorse combines these computations for arbitrary collections of times and arbitrary numbers of replications.
+  \item For example, the \code{rprocess()} function uses code specified by the rprocess model component, constructed via the \code{rprocess} argument to \code{pomp()}.
+  \item The rprocess model component specifies how a single trajectory evolves at a single moment of time.
+    The \code{rprocess()} workhorse combines these computations for arbitrary collections of times and arbitrary numbers of replications.
   \end{itemize}
 \end{frame}
 
