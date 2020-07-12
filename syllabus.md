@@ -178,20 +178,21 @@ and everyone is expected to listen to, and engage with, the contributions of the
    The Taker should strive for complete but very concise notes and will be responsible for making sure that every group member has access to them.
    The Taker might choose to create a shared online document (using Google docs, for example) for this purpose.
    The group may decide to allow all group members to edit such a document, but the Taker shall be responsible for making the first draft of the notes for each session.
+1. **Seeker.** 
+   The Seeker is tasked with looking for information to help answer group questions.
+   A good Seeker has all the course materials at his or her fingertips and can rapidly share search results with the group.
+   
 1. **Hacker.** 
    All group members are expected to do hands-on work with the methods we are teaching.
    In any given group session, however, the Hacker will have prime responsibility for producing the definitive version of the group's codes and full responsibility for making sure that all group members have access to the definitive version at the end of each breakout-group session.
    Again, the group may decide to use a shared online document for this purpose.
    Since learning to write correct and efficient code is central to the course's goals, the Hacker should make sure that the group is fully involved in all the coding.
 1. **Slacker.**
-   The Slacker takes responsibility for the group's interface with the course Slack channel.
+   The Slacker takes responsibility for monitoring the group's interface with the course Slack channel.
    In addition, the Slacker is responsible for preparing a pr&eacute;cis of the group's efforts and progress, to be passed, via the course Slack channel, to the instructors and the rest of the group at the end of the session.
    This should be at most a paragraph, focused on communicating the essentials only: 
    what exercises were tackled, what approaches taken, what progress made, what difficulties encountered.
-1. **Seeker.** 
-   The Seeker is tasked with looking for information to help answer group questions.
-   A good Seeker has all the course materials at his or her fingertips and can rapidly share search results with the group.
-   
+
 For groups that have only four members, the Keeper and Slacker roles may be combined, as may the Keeper and Seeker roles.
 
 -----------------------------
