@@ -23,7 +23,7 @@ First follow the instructions for "all users", then those for your specific oper
 
 <div class="nb"> 
 
-**Important note:** If you run into problems, send a note to kingaa.sismid@gmail.com with a detailed description of the problem you've encountered.
+**Important note:** If you run into problems, send a direct message to `@Aaron A. King` on the course Slack channel with a detailed description of the problem you've encountered.
 In this message, **be certain to include all of the following information**:
 
 - the operating system you’re running,
