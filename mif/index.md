@@ -6,12 +6,13 @@ output: html_document
 
 ----------------------
 
-| &nbsp;                 | &nbsp;                    |
-|:-----------------------|:-------------------------:|
-| Lecture                | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2S9cNE-rD3CZJY6X_KydOMi)                 |
-| Lecture slides         | [PDF](slides.pdf)         |
-| Lecture notes          | [PDF](notes.pdf)          |
-| Supplement: Tuning IF2 | [HTML](if2_settings.html) |
+| &nbsp;                      | &nbsp;                                                                            |
+|:----------------------------|:---------------------------------------------------------------------------------:|
+| Lecture                     | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2S9cNE-rD3CZJY6X_KydOMi) |
+| Lecture slides              | [PDF](slides.pdf)                                                                 |
+| Lecture notes               | [PDF](notes.pdf)                                                                  |
+| **R** script for the lesson | [**R**](main.R)                                                                   |
+| Supplement: Tuning IF2      | [HTML](if2_settings.html)                                                         |
 
 ----------------------
 

@@ -11,6 +11,7 @@ output: html_document
 | Lecture                           | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2RBA4OQ_OdJj5CEJSjRGxut) |
 | Lecture slides                    | [PDF](slides.pdf)                                                                 |
 | Lecture notes                     | [PDF](notes.pdf)                                                                  |
+| **R** script for the lesson       | [**R**](main.R)                                                                   |
 | Worked solutions to the Exercises | [HTML](exercises.html)                                                            |
 
 ----------------------

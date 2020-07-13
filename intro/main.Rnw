@@ -167,11 +167,11 @@
 \begin{frame}{Moving from math to algorithms for POMP models}
   We specify some \myemph{basic model components} which can be used within algorithms:
   \begin{itemize}
-  \item \code{rprocess}: a draw from $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
-  \item \code{dprocess}: evaluation of $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
-  \item \code{rmeasure}: a draw from $f_{Y_n|X_n}(y_n| x_n;\theta)$
-  \item \code{dmeasure}: evaluation of $f_{Y_n|X_n}(y_n| x_n;\theta)$
-  \item \code{rinit}: a draw from $f_{X_0}(x_0;\theta)$
+  \item `rprocess': a draw from $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
+  \item `dprocess': evaluation of $f_{X_n|X_{n-1}}(x_n| x_{n-1};\theta)$
+  \item `rmeasure': a draw from $f_{Y_n|X_n}(y_n| x_n;\theta)$
+  \item `dmeasure': evaluation of $f_{Y_n|X_n}(y_n| x_n;\theta)$
+  \item `rinit': a draw from $f_{X_0}(x_0;\theta)$
   \end{itemize}
   These basic model components define the specific POMP model under consideration.
 \end{frame}
@@ -179,8 +179,8 @@
 \begin{frame}{What is a simulation-based method?}
   \begin{itemize}
   \item Simulating random processes is often much easier than evaluating their transition probabilities.
-  \item In other words, we may be able to write \code{rprocess} but not \code{dprocess}.
-  \item  \myemph{Simulation-based} methods require the user to specify \code{rprocess} but not \code{dprocess}.
+  \item In other words, we may be able to write rprocess but not dprocess.
+  \item  \myemph{Simulation-based} methods require the user to specify rprocess but not dprocess.
   \item  \myemph{Plug-and-play}, \myemph{likelihood-free} and \myemph{equation-free} are alternative terms for ``simulation-based'' methods.
   \item Much development of simulation-based statistical methodology has occurred in the past decade.
   \end{itemize}
@@ -214,12 +214,12 @@
   Basic model components are user-specified procedures that perform the elementary computations that specify a POMP model.
   There are nine of these:
   \begin{itemize}
-  \item \code{rinit}: simulator for the initial-state distribution, i.e., the distribution of the latent state at time $t_0$.
-  \item \code{rprocess} and \code{dprocess}: simulator and density evaluation procedure, respectively, for the process model.
-  \item \code{rmeasure} and \code{dmeasure}: simulator and density evaluation procedure, respectively, for the measurement model.
-  \item \code{rprior} and \code{dprior}: simulator and density evaluation procedure, respectively, for the prior distribution.
-  \item \code{skeleton}: evaluation of a deterministic skeleton.
-  \item \code{partrans}: parameter transformations.
+  \item `rinit': simulator for the initial-state distribution, i.e., the distribution of the latent state at time $t_0$.
+  \item `rprocess' and `dprocess': simulator and density evaluation procedure, respectively, for the process model.
+  \item `rmeasure' and `dmeasure': simulator and density evaluation procedure, respectively, for the measurement model.
+  \item `rprior' and `dprior': simulator and density evaluation procedure, respectively, for the prior distribution.
+  \item `skeleton': evaluation of a deterministic skeleton.
+  \item `partrans': parameter transformations.
   \end{itemize}
   The scientist must specify whichever of these basic model components are required for the algorithms that the scientist uses.
 \end{frame}
@@ -229,8 +229,9 @@
   \begin{itemize}
   \item Each basic model component has a corresponding workhorse.
   \item Effectively, the workhorse is a vectorized wrapper around the basic model component.
-  \item For example, the \code{rprocess()} function uses code specified by the \code{rprocess} model component, constructed via the \code{rprocess} argument to \code{pomp()}.
-  \item The \code{rprocess} model component specifies how a single trajectory evolves at a single moment of time. The \code{rprocess()} workhorse combines these computations for arbitrary collections of times and arbitrary numbers of replications.
+  \item For example, the \code{rprocess()} function uses code specified by the rprocess model component, constructed via the \code{rprocess} argument to \code{pomp()}.
+  \item The rprocess model component specifies how a single trajectory evolves at a single moment of time.
+    The \code{rprocess()} workhorse combines these computations for arbitrary collections of times and arbitrary numbers of replications.
   \end{itemize}
 \end{frame}
 
