@@ -1,0 +1,704 @@
+\input{../header}
+
+\def\CHAPTER{9}
+\title{Lesson \CHAPTER:\\Modeling stochasticity: Overdispersion in the Consett measles data.\\IN DEVELOPMENT}
+\author{Aaron A. King, Edward L. Ionides, Kidus Asfaw}
+
+\begin{document}
+
+% knitr set up
+<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
+@
+
+
+<<prelims,echo=F,cache=F>>=
+#DEBUG <- TRUE
+DEBUG <- FALSE
+library(tidyverse)
+library(pomp)
+options(stringsAsFactors=FALSE)
+stopifnot(packageVersion("pomp")>="3.0")
+set.seed(33445278)
+@
+
+\maketitle
+
+\mode<article>{\tableofcontents}
+
+\mode<presentation>{
+  \begin{frame}{Outline}
+    \tableofcontents
+  \end{frame}
+}
+
+\section{Introduction}
+
+
+\begin{frame}{Objectives}
+
+\begin{itemize}
+
+\item We investigates the consequences of modeling overdispersion in the 
+on the Consett measles outbreak dataset.
+
+\item More broadly, we consider the question of whether a model has sufficient stochasticity to explain the data.
+
+\item We extend the model used to demonstrate iterated filtering in Lesson~4.
+
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}{Introduction}
+
+
+\begin{itemize}
+
+\item  This investigation provides a relatively simple example to better understand overdispersed Markov chain models that are essential for large populations such as the [city-level measles case study](../measles/measles.html).
+
+\item We investigate whether fitting models with dynamic overdispersion (i.e., environmental stochasticity, also known as extra-demographic stochasticity) is helpful even for this relatively small population, for which demographic stochasticity is relatively large.
+
+\item We consider the respective roles of overdispersion in the measurement model and the dynamic model.
+
+\item We think about scientific interpretations of overdispersion if it is statistically evident.
+
+\item We demonstrate a way to implement overdispersion for POMP models using \package{pomp}.
+
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{background on mean-variance relationships and overdispersion}
+
+\begin{itemize}
+
+\item A good statistical model should describe both the mean (center) and variance (spread) of the data.
+
+\item In the language of forecasting, we want point predictions and uncertainty estimates.
+
+\item Appropriate modeling of uncertainty in the data is closely linked to appropriate assessment of uncertainty in parameter estimates (confidence intervals and hypothesis tests).
+
+\item Some basic models (especially for count data) constrain the variance as a function of the mean.
+
+\item A famous example arises in Poisson regression. The Poisson distribution has variance equal to its mean.
+What if the data have higher variance than its mean?
+This \myemph{overdispersion} is common. Checking and correcting for it are standard practice in generalized linear model regression analysis.
+
+\item Overdispersion is also common in dynamic models. It can be natural to write down models building on Poisson or binomial increments, which therefore include specific mean-variance assumptions.
+
+\item These dynamic models may contain nonlinearities that complicate the mean-variance relationship, but the underlying issue remains. 
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Adding overdispersion to the basic SIR model}
+
+\begin{itemize}
+\item Recall the case report data on the 1948 measles outbreak in Consett, UK.
+\end{itemize}
+
+  <<load_data>>=
+  library(tidyverse)
+
+  courseurl <- "https://kingaa.github.io/sbied/"
+  datafile <- "mif/Measles_Consett_1948.csv"
+
+  read_csv(paste0(courseurl,datafile)) %>%
+    select(week,reports=cases) %>%
+    filter(week<=42) -> consett_data
+  @
+
+\end{frame}
+
+\begin{frame}[fragile]{Specification of a basic SIR model}
+  \begin{itemize}
+  \item Our model is a variation on a basic SIR Markov chain
+  \item State: $X(t)=(S(t),I(t),R(t))$; numbers of hosts in susceptible, infectious, and recovered classes.
+  \item Assume: a single infection in week 0, i.e., that $I(0)=1$.
+    \item Each individual in $S$ transitions to $I$ at rate $\mu_{SI}=\beta\,I(t)/N$.
+    \item Each individual in $I$ transitions at rate $\mu_{IR}$ to $R$.
+    \item $1/\mu_{IR}$ is the mean infectious period.
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Adding overdispersion to the latent stochastic process}
+
+\begin{itemize}
+
+\item We are going to extend the basic model to include stochastic variation by incorporating multiplicative noise,
+$$\mu_{SI}=\beta\frac{I(t)}{N}d\Gamma/dt.$$
+
+\item Here, $\Gamma(t)$ is a gamma process with $\expect{\Gamma(t)}=t$ and $\var{\Gamma(t)}=\sigma^2 t$.
+
+\item Thus, $\sigma^2$ is the \myemph{infinitesimal variance parameter} of the noise process, which we will call the \myemph{extrademographic process noise} parameter.
+
+\item We do not include overdispersion in the $I\to R$ transition, on the assumption this is a purely demographic process. This assumption could be checked.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{\myexercise. Why do we use multiplicative noise?}
+
+What difficulties arise if we use additive noise such as 
+$$\mu_{SI}^\prime=\beta\frac{I(t)}{N} + dW/dt$$
+Where $dW/dt$ is some white noise process?
+
+\end{frame}
+
+\begin{frame}{Gamma noise}
+
+\begin{itemize}
+
+\item The gamma process has the property of being non-negative, which is the main reason it may be preferable to Gaussian noise.
+
+\item The gamma process is a pure jump process, constant between jumps. There are an infinite number of jumps in any finite time interval, but almost all of them are negligibly small. Thus, the derivative of the gamma process doesn't exist in the usual sense, but one can still give formal meaning to $d\Gamma/dt$. All this is similar to Gaussian noise, which can also be considered as the formal derivative of a non-differentiable process (Brownian motion).
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Adding overdispersion to the measurement model}
+
+\begin{itemize}
+
+\item Overdispersion in the measurement model may be appropriate for similar reasons. Measurement overdispersion might be considered together with, or in place of, dynamic overdispersion. 
+
+\item Adding gamma noise to a Poisson measurement model leads to a negative binomial measurement model. The overdispersion parameter is $\psi$, with the variance for mean $\mu$ being $\mu+\mu^2/\psi$ and the Poisson model being recovered in the limit as $\psi\to\infty$.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]{Latent variables, observed variables and parameters}
+
+\begin{itemize}
+
+\item We code the state variables ($S$, $I$ and the accumulator variable $H$) as follows, noting that we do not need a representation of $R=N-S-I$.
+
+\end{itemize}
+
+<<measles_statenames>>=
+consett_statenames <- c("S","I","H")
+@
+
+\begin{itemize}
+
+\item Similarly, the parameters ($\beta$, $\eta$, $\mu_{IR}$, $\rho$, $N$, $\sigma$, $\psi$) are:
+
+\end{itemize}
+
+<<measles_paramnames>>=
+consett_paramnames <- c("Beta","mu_IR","eta","rho","N","sigma","psi")
+@
+
+\begin{itemize}
+
+\item The data variable name is taken from \code{consett\_data}:
+
+\end{itemize}
+
+<<obsnames,purl=FALSE>>=
+colnames(consett_data)
+@
+
+The model code is available for inspection:
+<<csnippet_measurement_od_equi,echo=F,eval=F>>=
+##### for comparison, here are two redundant equidispersed models
+  consett_dmeas <- Csnippet("
+  lik = dbinom(reports,H,rho,give_log);
+  ")
+
+  consett_rmeas <- Csnippet("
+  reports = rbinom(H,rho);
+  ")
+
+consett_dmeas <- Csnippet("
+  lik = dpois(reports,rho*H,give_log);
+")
+consett_rmeas <- Csnippet("
+  reports = rpois(rho*H);
+")
+@
+
+<<csnippet_measurement_od>>=
+consett_dmeas <- Csnippet("
+  lik = dnbinom_mu(reports, psi, rho*H, give_log);
+")
+
+consett_rmeas <- Csnippet("
+  reports = rnbinom_mu(psi, rho*H);
+")
+@
+
+<<csnippet_proc_od>>=
+
+consett_step <- Csnippet("
+  double dGamma = rgammawn(sigma,dt);
+  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dGamma));
+  double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  H += dN_IR;
+  ")
+@
+
+<<consett_rinit>>=
+  consett_rinit <- Csnippet("
+  S = nearbyint(eta*N);
+  I = 1;
+  H = 0;
+  ")
+  @
+
+  <<od_pomp_construct>>=
+  consett_data %>%
+    pomp(
+      times="week",t0=0,
+      rprocess=euler(consett_step,delta.t=1/7),
+      rinit=consett_rinit,
+      rmeasure=consett_rmeas,
+      dmeasure=consett_dmeas,
+      accumvars="H",
+      statenames=consett_statenames,
+      paramnames=consett_paramnames
+    ) -> consett
+  @ 
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Testing the codes}
+  To develop and debug code, it is useful to have testing codes that run quickly and fail if the codes are not working correctly.
+
+  As such a test, here we run some simulations and a particle filter.
+
+  We'll use the following parameters, derived from our earlier explorations, but adding in some small amount of overdispersion.
+  
+  <<start_params>>=
+  params <- c(Beta=20,mu_IR=2,rho=0.5,eta=0.1,N=38000,
+    sigma=0.1,psi=0.1)
+  @
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks=0.7]{Testing the codes: simulation}
+  Now to run and plot some simulations:
+  <<init_sim>>=
+  consett %>%
+    simulate(params=params,nsim=10,format="data.frame") -> y
+  @
+  <<init_sim_plot,purl=FALSE,out.width="0.8\\textwidth">>=
+  y %>%
+    ggplot(aes(x=week,y=reports,group=.id,color=factor(.id)))+
+    geom_line()+
+    scale_color_brewer(type="qual",palette=3)+
+    guides(color=FALSE)
+  @ 
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks=0.95]{Testing the codes: filtering}
+  Before engaging in iterated filtering, it is a good idea to check that the basic particle filter is working since we can't iterate something unless we can run it once!
+  The simulations above check the \code{rprocess} and \code{rmeasure} codes;
+  the particle filter depends on the \code{rprocess} and \code{dmeasure} codes and so is a check of the latter.
+
+  <<init_pfilter>>=
+  consett %>%
+    pfilter(Np=if(DEBUG) 100 else 1000,params=params) -> pf
+  @
+  <<init_pfilter_plot,purl=F,dpi=200,out.width="0.7\\textwidth">>=
+  plot(pf)
+  @
+
+  \vspace{-5mm}
+
+  The above plot shows the data (\code{reports}), along with the \emph{effective sample size} (ESS) of the particle filter (\code{ess}) and the log likelihood of each observation conditional on the preceding ones (\code{cond.logLik}).
+
+  The ESS is the equivalent number of independent particles.
+  In this case, the ESS is very small at several points.
+  
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Setting up the estimation problem}
+
+  We follow the assumptions from the iterated filtering lesson, while adding overdispersion.
+  We treat the population size, $N$, as known from the census.
+  We also fix the infectious period in our model to 3.5~da, i.e., $\mu_{IR}=2~\mathrm{wk}^{-1}$.
+  
+  <<fixed_params>>=
+  fixed_params <- c(N=38000, mu_IR=2)
+  @
+  
+  We proceed to estimate $\beta$, $\eta$, $\rho$, $\sigma$ and $\psi$.
+\end{frame}
+
+\begin{frame}[fragile]{Setup for parallel computing}
+
+<<parallel-setup,cache=FALSE>>=
+library(doParallel)
+registerDoParallel(detectCores())
+library(doRNG)
+registerDoRNG(582998)
+@
+
+\end{frame}
+
+\begin{frame}[fragile]{Running a particle filter}
+
+  We proceed to carry out replicated particle filters at an initial guess of $\beta=\Sexpr{params["Beta"]}$, $\eta=\Sexpr{params["eta"]}$, and $\rho=\Sexpr{params["rho"]}$.
+  
+  <<pf2,eval=FALSE,purl=FALSE>>=
+  foreach(i=1:10,.combine=c) %dopar% {
+    library(pomp)
+    consett %>% pfilter(params=params,Np=10000)
+  } -> pf
+
+  pf %>% logLik() %>% logmeanexp(se=TRUE) -> L_pf
+  L_pf
+  @ 
+
+  <<pf,echo=FALSE>>=
+  <<pf1>>
+  tic <- Sys.time()
+  <<pf2>>
+  toc <- Sys.time()
+  @
+
+  <<init_csv,cache=FALSE,echo=F>>=
+  pf[[1]] %>% coef() %>% bind_rows() %>%
+    bind_cols(loglik=L_pf[1],loglik.se=L_pf[2]) %>%
+    write_csv("measles_params.csv")
+  @
+
+  In \Sexpr{round(toc-tic,2)} seconds, using \Sexpr{min(getDoParWorkers(),length(pf))} cores, we obtain an unbiased likelihood estimate of \Sexpr{round(L_pf[1],1)} with a Monte Carlo standard error of \Sexpr{signif(L_pf[2],2)}.
+\end{frame}
+
+\subsection*{A local search of the likelihood surface}
+
+\begin{frame}[fragile,allowframebreaks=0.9]{A local search of the likelihood surface}
+  
+  Let's carry out a local search using \code{mif2} around this point in parameter space. 
+
+  \begin{itemize}
+  \item We need to choose the \code{rw.sd} and \code{cooling.fraction.50} algorithmic parameters.
+  \item Since $\beta$, $\sigma$ and $\psi$ will be estimated on the log scale, and we expect that multiplicative perturbations of these parameters will have roughly similar effects on the likelihood, we'll use a perturbation size of $0.02$, which we imagine will have a small but non-negligible effect.
+  \item For simplicity, we'll use the same perturbation size on $\rho$ and $\eta$.
+  \item We fix \code{cooling.fraction.50=0.5}, so that after 50 \code{mif2} iterations, the perturbations are reduced to half their original magnitudes.
+  \end{itemize}
+  
+  <<local_search,eval=FALSE,purl=FALSE>>=
+  foreach(i=1:20,.combine=c) %dopar% {
+    library(pomp)
+    library(tidyverse)
+    consett %>%
+      mif2(
+        params=params,
+        Np=if(DEBUG) 50 else 2000, Nmif=if(DEBUG) 2 else 50,
+        partrans=parameter_trans(
+          log=c("Beta","sigma","psi"),
+          logit=c("rho","eta")
+        ),
+        paramnames=consett_paramnames,
+        cooling.fraction.50=0.5,
+        rw.sd=rw.sd(Beta=0.02, rho=0.02, sigma=0.02, psi=0.02, eta=ivp(0.02))
+      )
+  } -> mifs_local
+  @ 
+  <<local_search_eval,echo=FALSE>>=
+  registerDoRNG(482947940)
+  bake(file="results/local_search.rds",{
+    <<local_search>>
+    attr(mifs_local,"ncpu") <- getDoParWorkers()
+    mifs_local
+  }) -> mifs_local
+  t_loc <- attr(mifs_local,"system.time")
+  ncpu_loc <- attr(mifs_local,"ncpu")
+  @
+\end{frame}
+
+\begin{frame}[fragile,allowframebreaks]{Iterated filtering diagnostics}
+  We obtain some diagnostic plots with the \code{plot} command applied to \code{mifs\_local}.
+  Here is a way to get a prettier version:
+  
+  <<local_search_plot,out.height="0.7\\textheight">>=
+  mifs_local %>%
+    traces() %>%
+    melt() %>%
+    ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
+    geom_line()+
+    guides(color=FALSE)+
+    facet_wrap(~variable,scales="free_y")
+  @
+  
+  \framebreak
+
+  \begin{itemize}
+  \item We see that the likelihood eventually increases as the iterations proceed, though there is considerable variability due to
+    \begin{enumerate}[(a)]
+    \item the poorness of our starting guess and
+    \item the stochastic nature of this Monte Carlo algorithm.
+    \end{enumerate}
+  \item We see movement in the parameters, though considerable variability remains.
+  \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile,allowframebreaks]{Estimating the likelihood}
+  Although the filtering carried out by \code{mif2} in the final filtering iteration generates an approximation to the likelihood at the resulting point estimate, this is not good enough for reliable inference.
+  \begin{itemize}
+  \item Partly, this is because parameter perturbations are applied in the last filtering iteration, so that the likelihood reported by \code{mif2} is not identical to that of the model of interest.
+  \item Partly, this is because \code{mif2} is usually carried out with fewer particles than are needed for a good likelihood evaluation.
+  \end{itemize}
+  Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate.
+  
+  <<lik_local,eval=FALSE,purl=FALSE>>=
+  foreach(mf=mifs_local,.combine=rbind) %dopar% {
+    library(pomp)
+    library(tidyverse)
+    evals <- replicate(if(DEBUG) 2 else 10,
+      logLik(pfilter(mf,Np=if(DEBUG) 50 else 20000)))
+    ll <- logmeanexp(evals,se=TRUE)
+    mf %>% coef() %>% bind_rows() %>%
+      bind_cols(loglik=ll[1],loglik.se=ll[2])
+  } -> results
+  @
+  
+  <<lik_local_eval,include=FALSE>>=
+  registerDoRNG(900242057)
+  bake(file="results/lik_local.rds",{
+    <<lik_local>>
+    attr(results,"ncpu") <- getDoParWorkers()
+    results
+  }) -> results
+  t_local <- attr(results,"system.time")
+  ncpu_local <- attr(results,"ncpu")
+  @
+  
+  On \Sexpr{ncpu_local} processors, this local investigation took \Sexpr{round(t_loc[3],0)}~sec for the maximization and \Sexpr{round(t_local[3],0)}~sec for the likelihood evaluation.
+  
+  \framebreak
+  
+  These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
+
+  <<pairs_local,fig.width=6,fig.height=6,dpi=200,out.width="0.7\\textwidth">>=
+  pairs(~loglik+Beta+eta+rho+sigma+psi,data=results,pch=16)
+  @
+
+\end{frame}
+
+\begin{frame}[fragile]{Building up a picture of the likelihood surface}
+  This plot shows a hint of a ridge in the likelihood surface (cf.~the $\beta$-$\eta$ panel).
+  However, the sampling is as yet too sparse to give a clear picture.
+
+  We add these newly explored points to our database,
+
+  <<local_database,cache=FALSE>>=
+  read_csv("measles_params.csv") %>%
+    bind_rows(results) %>%
+    arrange(-loglik) %>%
+    write_csv("measles_params.csv")
+  @
+
+  and move on to a more thorough exploration of the likelihood surface.
+\end{frame}
+
+\section{Searching for the MLE}
+
+\subsection*{A global search}
+
+\begin{frame}[fragile,allowframebreaks]{A global search of the likelihood surface}
+
+  \begin{itemize}
+  \item When carrying out parameter estimation for dynamic systems, we need to specify beginning values for both the dynamic system (in the state space) and the parameters (in the parameter space).
+  \item To avoid confusion, we use the term ``initial values'' to refer to the state of the system at $t_0$ and ``starting values'' to refer to the point in parameter space at which a search is initialized.
+  \item Practical parameter estimation involves trying many starting values for the parameters.
+  \item One way to approach this is to choose a large box in parameter space that contains all remotely sensible parameter vectors.
+  \item If an estimation method gives stable conclusions with starting values drawn randomly from this box, this gives some confidence that an adequate global search has been carried out. 
+  \end{itemize}
+
+  \framebreak
+
+  For our measles model, a box containing reasonable parameter values might be
+  $\beta\in (5,80)$, $\rho\in (0.2,0.9)$, $\eta\in (0,0.4)$.
+
+  We are now ready to carry out likelihood maximizations from diverse starting points.
+
+  <<cluster_setup,include=FALSE,purl=TRUE>>=
+  if (file.exists("CLUSTER.R")) {
+    source("CLUSTER.R")
+  }
+  @
+  
+  <<global_search1>>=
+  set.seed(2062379496)
+
+  runifDesign(
+    lower=c(Beta=5,rho=0.2,eta=0,sigma=0.01,psi=1),
+    upper=c(Beta=80,rho=0.9,eta=0.4,sigma=0.2,psi=10),
+    nseq=300
+  ) -> guesses
+
+  mf1 <- mifs_local[[1]]
+  @
+  
+  <<global_search2,eval=FALSE,purl=FALSE>>=
+  registerDoRNG(1270401374)
+  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+    library(pomp)
+    library(tidyverse)
+    mf1 %>%
+      mif2(params=c(unlist(guess),fixed_params)) %>%
+      mif2(Nmif=if(DEBUG) 2 else 100) -> mf
+    replicate(
+      if(DEBUG) 2 else 10,
+      mf %>% pfilter(Np= if(DEBUG) 100 else 100000) %>% logLik()
+    ) %>%
+      logmeanexp(se=TRUE) -> ll
+    mf %>% coef() %>% bind_rows() %>%
+      bind_cols(loglik=ll[1],loglik.se=ll[2])
+  } -> results
+  @ 
+  <<global_search_eval,include=FALSE>>=
+  bake(file="results/global_search.rds",{
+    <<global_search2>>
+    attr(results,"ncpu") <- getDoParWorkers()
+    results
+  }) %>%
+    filter(is.finite(loglik)) -> results
+  t_global <- attr(results,"system.time")
+  ncpu_global <- attr(results,"ncpu")
+  @ 
+  <<cache=FALSE,include=FALSE>>=
+  read_csv("measles_params.csv") %>%
+    bind_rows(results) %>%
+    filter(is.finite(loglik)) %>%
+    arrange(-loglik) %>%
+    write_csv("measles_params.csv")
+  @ 
+  
+  \begin{itemize}
+  \item The above codes run one search from each of \Sexpr{nrow(guesses)} starting values.
+  \item Each search consists of an initial run of \Sexpr{nrow(traces(mf1))-1} IF2 iterations, followed by another 100 iterations.
+  \item These codes exhibit a general \package{pomp} behavior:
+    \begin{itemize}
+    \item Re-running a command on an object (i.e., \code{mif2} on \code{mf1}) created by the same command preserves the algorithmic arguments.
+    \item In particular, running \code{mif2} on the result of a \code{mif2} computation re-runs IF2 from the endpoint of the first run.
+    \item In the second computation, by default, all algorithmic parameters are preserved;
+      here we overrode the default choice of \code{Nmif}.
+    \end{itemize}
+  \item Following the \code{mif2} computations, the particle filter is used to evaluate the likelihood, as before.
+  \end{itemize}
+
+  \framebreak
+
+  \begin{itemize}
+  \item In contrast to the local-search codes above, here we return only the endpoint of the search, together with the likelihood estimate and its standard error in a named vector.
+  \item The best result of this search had a likelihood of \Sexpr{round(max(results$loglik),1)} with a standard error of \Sexpr{round(results$loglik.se[which.max(results$loglik)],2)}.
+  \item This took \Sexpr{round(t_global["elapsed"]/60,1)} minutes altogether using \Sexpr{ncpu_global} processors.
+  \end{itemize}
+
+  \framebreak
+  
+  Again, we attempt to visualize the global geometry of the likelihood surface using a scatterplot matrix.
+  In particular, here we plot both the starting values (grey) and the IF2 estimates (red).
+
+  <<pairs_global1>>=
+  read_csv("measles_params.csv") %>%
+    filter(loglik>max(loglik)-50) %>%
+    bind_rows(guesses) %>%
+    mutate(type=if_else(is.na(loglik),"guess","result")) %>%
+    arrange(type) -> all
+
+  pairs(~loglik+Beta+eta+rho+sigma+psi, data=all,
+        col=ifelse(all$type=="guess",grey(0.5),"red"),pch=16)
+  @
+
+  \framebreak
+
+  \begin{itemize}
+  \item We see that optimization attempts from diverse remote starting points converge on a particular region in parameter space.
+  \item The estimates have comparable likelihoods, despite their considerable variability.
+  \item This gives us some confidence in our maximization procedure. 
+  \end{itemize}
+  \framebreak
+
+  The projections of the estimates give us ``poor man's profiles'':
+
+  <<pairs_global2>>=
+  all %>%
+    filter(type=="result") %>%
+    filter(loglik>max(loglik)-10) %>%
+    ggplot(aes(x=eta,y=loglik))+
+    geom_point()+
+    labs(
+      x=expression("eta"),
+      title="poor man's profile likelihood"
+    )
+  @
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}{\myexercise. A profile over $\sigma$}
+
+\begin{itemize}
+
+\item Is there evidence for the inclusion of overdispersion on the latent process?
+
+\item The profile for $\rho$ shows very little pattern for $\sigma$, which could be because the amount of information about $\sigma$ is small in the context of this model (i.e., the profile has low curvature -- it is close to flat).
+
+\item Construct a profile likelihood for $\sigma$ to investigate whether this is the case. 
+
+\item You'll have to work out a suitable range of $\sigma$ for the profile. The above figure suggests that the interval used for $\sigma$ in the profile for $\rho$ may be too narrow.
+
+\end{itemize}
+
+\end{frame}
+
+\mode<presentation>{
+  \begin{frame}[allowframebreaks=0.8]{References}
+    \bibliography{../sbied}
+  \end{frame}
+}
+\mode<article>{
+  \bibliography{../sbied}
+}
+
+\begin{frame}{License, acknowledgments, and links}
+
+  \begin{itemize}
+  \item
+    This lesson is prepared for the \link{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \link{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}.
+
+  \item
+    The materials build on \link{../acknowledge.html}{previous versions of this course and related courses}.
+
+  \item
+    Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
+    Please share and remix non-commercially, mentioning its origin.
+    \includegraphics[height=12pt]{../graphics/cc-by-nc}
+
+  \item
+    Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+
+  \item
+    Compiled on \today.
+
+  \end{itemize}
+
+  \link{../index.html}{Back to course homepage}
+  
+  \link{https://raw.githubusercontent.com/kingaa/sbied/master/pfilter/main.R}{\Rlanguage codes for this lesson}
+\end{frame}
+
+\end{document}
