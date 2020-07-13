@@ -8,7 +8,7 @@ output: html_document
 
 | &nbsp;                          | &nbsp;                                                                            |
 |:--------------------------------|:---------------------------------------------------------------------------------:|
-| Lecture                         | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2RuunOUW3MqFcrcgydWhgS8) |
+| Lecture                         | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2QCHiHqWASOu0VdyPRGwKrV) |
 | Lecture slides                  | [PDF](slides.pdf)                                                                 |
 | Lecture notes                   | [PDF](notes.pdf)                                                                  |
 | **R** script for the lesson     | [**R**](main.R)                                                                   |
@@ -18,6 +18,10 @@ output: html_document
 | Worked solution to Exercise 6.4 | [HTML](demography-exercise.html)                                                  |
 | Worked solution to Exercise 6.4 | [HTML](convergence-exercise.html)                                                 |
 
+
+----------------------
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLluGwj6FGt2QCHiHqWASOu0VdyPRGwKrV" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ----------------------
 
