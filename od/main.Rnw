@@ -55,7 +55,7 @@ on the Consett measles outbreak dataset.
 
 \begin{itemize}
 
-\item  This investigation provides a relatively simple example to better understand overdispersed Markov chain models that are essential for large populations such as the [city-level measles case study](../measles/measles.html).
+\item  This investigation provides a relatively simple example to better understand overdispersed Markov chain models that are essential for large populations such as the \link{../measles/measles.html}{city-level measles case study}.
 
 \item We investigate whether fitting models with dynamic overdispersion (i.e., environmental stochasticity, also known as extra-demographic stochasticity) is helpful even for this relatively small population, for which demographic stochasticity is relatively large.
 
@@ -71,7 +71,7 @@ on the Consett measles outbreak dataset.
 
 
 
-\begin{frame}{background on mean-variance relationships and overdispersion}
+\begin{frame}[allowframebreaks]{Mean-variance relationships and overdispersion}
 
 \begin{itemize}
 
@@ -87,6 +87,12 @@ on the Consett measles outbreak dataset.
 What if the data have higher variance than its mean?
 This \myemph{overdispersion} is common. Checking and correcting for it are standard practice in generalized linear model regression analysis.
 
+\ei
+
+\framebreak
+
+\bi
+
 \item Overdispersion is also common in dynamic models. It can be natural to write down models building on Poisson or binomial increments, which therefore include specific mean-variance assumptions.
 
 \item These dynamic models may contain nonlinearities that complicate the mean-variance relationship, but the underlying issue remains. 
@@ -95,24 +101,8 @@ This \myemph{overdispersion} is common. Checking and correcting for it are stand
 
 \end{frame}
 
-\begin{frame}[fragile]{Adding overdispersion to the basic SIR model}
+\section{Adding overdispersion to the basic SIR model}
 
-\begin{itemize}
-\item Recall the case report data on the 1948 measles outbreak in Consett, UK.
-\end{itemize}
-
-  <<load_data>>=
-  library(tidyverse)
-
-  courseurl <- "https://kingaa.github.io/sbied/"
-  datafile <- "mif/Measles_Consett_1948.csv"
-
-  read_csv(paste0(courseurl,datafile)) %>%
-    select(week,reports=cases) %>%
-    filter(week<=42) -> consett_data
-  @
-
-\end{frame}
 
 \begin{frame}[fragile]{Specification of a basic SIR model}
   \begin{itemize}
@@ -175,6 +165,22 @@ Where $dW/dt$ is some white noise process?
 
 \end{frame}
 
+\begin{frame}[fragile]{Consett revisited}
+Recall the case report data on the 1948 measles outbreak in Consett, UK.
+
+  <<load_data>>=
+  library(tidyverse)
+
+  courseurl <- "https://kingaa.github.io/sbied/"
+  datafile <- "mif/Measles_Consett_1948.csv"
+
+  read_csv(paste0(courseurl,datafile)) %>%
+    select(week,reports=cases) %>%
+    filter(week<=42) -> consett_data
+  @
+
+\end{frame}
+
 \begin{frame}[fragile,allowframebreaks]{Latent variables, observed variables and parameters}
 
 \begin{itemize}
@@ -182,6 +188,8 @@ Where $dW/dt$ is some white noise process?
 \item We code the state variables ($S$, $I$ and the accumulator variable $H$) as follows, noting that we do not need a representation of $R=N-S-I$.
 
 \end{itemize}
+
+\vspace{-2mm}
 
 <<measles_statenames>>=
 consett_statenames <- c("S","I","H")
@@ -193,21 +201,29 @@ consett_statenames <- c("S","I","H")
 
 \end{itemize}
 
+\vspace{-2mm}
+
 <<measles_paramnames>>=
-consett_paramnames <- c("Beta","mu_IR","eta","rho","N","sigma","psi")
+consett_paramnames <- c("Beta","mu_IR","eta","rho",
+  "N","sigma","psi")
 @
 
 \begin{itemize}
 
-\item The data variable name is taken from \code{consett\_data}:
+\item The data variable name is taken from \code{consett\_data}.
 
 \end{itemize}
+
+\vspace{-2mm}
 
 <<obsnames,purl=FALSE>>=
 colnames(consett_data)
 @
 
-The model code is available for inspection:
+\framebreak
+
+We now write the modified Csnippets.
+
 <<csnippet_measurement_od_equi,echo=F,eval=F>>=
 ##### for comparison, here are two redundant equidispersed models
   consett_dmeas <- Csnippet("
@@ -316,9 +332,7 @@ consett_step <- Csnippet("
   \vspace{-5mm}
 
   The above plot shows the data (\code{reports}), along with the \emph{effective sample size} (ESS) of the particle filter (\code{ess}) and the log likelihood of each observation conditional on the preceding ones (\code{cond.logLik}).
-
-  The ESS is the equivalent number of independent particles.
-  In this case, the ESS is very small at several points.
+The ESS looks better than without overdispersion: the overdispersion helps to explain outliers.
   
 \end{frame}
 
@@ -514,18 +528,8 @@ registerDoRNG(582998)
 
 \begin{frame}[fragile,allowframebreaks]{A global search of the likelihood surface}
 
-  \begin{itemize}
-  \item When carrying out parameter estimation for dynamic systems, we need to specify beginning values for both the dynamic system (in the state space) and the parameters (in the parameter space).
-  \item To avoid confusion, we use the term ``initial values'' to refer to the state of the system at $t_0$ and ``starting values'' to refer to the point in parameter space at which a search is initialized.
-  \item Practical parameter estimation involves trying many starting values for the parameters.
-  \item One way to approach this is to choose a large box in parameter space that contains all remotely sensible parameter vectors.
-  \item If an estimation method gives stable conclusions with starting values drawn randomly from this box, this gives some confidence that an adequate global search has been carried out. 
-  \end{itemize}
-
-  \framebreak
-
   For our measles model, a box containing reasonable parameter values might be
-  $\beta\in (5,80)$, $\rho\in (0.2,0.9)$, $\eta\in (0,0.4)$.
+  $\beta\in (5,80)$, $\rho\in (0.2,0.9)$, $\eta\in (0,0.4)$, $\sigma \in(0.01,0.2)$, $\psi\in(1,10)$.
 
   We are now ready to carry out likelihood maximizations from diverse starting points.
 
@@ -582,23 +586,9 @@ registerDoRNG(582998)
     write_csv("measles_params.csv")
   @ 
   
-  \begin{itemize}
-  \item The above codes run one search from each of \Sexpr{nrow(guesses)} starting values.
-  \item Each search consists of an initial run of \Sexpr{nrow(traces(mf1))-1} IF2 iterations, followed by another 100 iterations.
-  \item These codes exhibit a general \package{pomp} behavior:
-    \begin{itemize}
-    \item Re-running a command on an object (i.e., \code{mif2} on \code{mf1}) created by the same command preserves the algorithmic arguments.
-    \item In particular, running \code{mif2} on the result of a \code{mif2} computation re-runs IF2 from the endpoint of the first run.
-    \item In the second computation, by default, all algorithmic parameters are preserved;
-      here we overrode the default choice of \code{Nmif}.
-    \end{itemize}
-  \item Following the \code{mif2} computations, the particle filter is used to evaluate the likelihood, as before.
-  \end{itemize}
-
-  \framebreak
 
   \begin{itemize}
-  \item In contrast to the local-search codes above, here we return only the endpoint of the search, together with the likelihood estimate and its standard error in a named vector.
+
   \item The best result of this search had a likelihood of \Sexpr{round(max(results$loglik),1)} with a standard error of \Sexpr{round(results$loglik.se[which.max(results$loglik)],2)}.
   \item This took \Sexpr{round(t_global["elapsed"]/60,1)} minutes altogether using \Sexpr{ncpu_global} processors.
   \end{itemize}
@@ -622,9 +612,12 @@ registerDoRNG(582998)
   \framebreak
 
   \begin{itemize}
-  \item We see that optimization attempts from diverse remote starting points converge on a particular region in parameter space.
-  \item The estimates have comparable likelihoods, despite their considerable variability.
-  \item This gives us some confidence in our maximization procedure. 
+  \item We see that the optimization searches head to a parameter subspace with  high $\eta$ and low $\rho$.
+  \item According to this fit, there are many susceptibles and a large latent epidemic which depletes them.
+  \item We do not think this was happening in reality.
+  \item One curve cannot reliably fit many parameters!
+  \item We have pushed up the likelihood bar - previous models under consideration had a log likelihood of around 120, so we have gained over 15 points of log likelihood.
+  \item We would be happier to do this while maintaing a plausible model. That will require more work.
   \end{itemize}
   \framebreak
 
@@ -643,10 +636,130 @@ registerDoRNG(582998)
   @
 \end{frame}
 
+\section{Adding a reservoir}
+
+\begin{frame}[fragile,allowframebreaks]{Adding a reservoir}
+
+\bi
+\item Perhaps allowing for occasional cases to arrive from neighboring cities will help to explain the data?
+\item We add a ``reservoir'' term, $\iota$, corresponding to a number of infected individuals visiting, on average, on any given day.
+\item Here, we fix this at $\iota=0.05$, following results from \citet{He2010}.
+\item We find the optimization still tends toward a regime with high $\eta$ and low $\rho$, without increasing the maximized likelihood.
+\item With only one epidemic, it may be hard to get good information on the reporting rate.
+\item We could try other changes. These models have many parameters for the amount of data, but it would be nice to show that there exist models with both competitive likelihood and interpretable parameters.
+\item Further work is needed!
+\ei
+
+<<consett2_csnippet_proc_od>>=
+
+consett2_step <- Csnippet("
+  double dGamma = rgammawn(sigma,dt);
+  double dN_SI = rbinom(S,1-exp(-Beta*(I+iota)/N*dGamma));
+  double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  H += dN_IR;
+  ")
+@
+
+<<consett2_rinit>>=
+  consett2_rinit <- Csnippet("
+  S = nearbyint(eta*N);
+  I = 0;
+  H = 0;
+  ")
+  @
+
+  <<consett2_od_pomp_construct>>=
+  consett2_paramnames <- c(consett_paramnames,"iota")
+  consett %>%
+    pomp(
+      rprocess=euler(consett2_step,delta.t=1/7),
+      rinit=consett2_rinit,
+      statenames=consett_statenames,
+      paramnames=consett2_paramnames
+    ) -> consett2
+  @
+
+  <<consett2_fixed_params>>=
+  consett2_fixed_params <- c(N=38000, mu_IR=2, iota=0.05)
+  @
+
+\end{frame}
 
 
+  <<consett2_global_search1>>=
 
+#  DEBUG <- TRUE
 
+  set.seed(2062379496)
+
+  runifDesign(
+    lower=c(Beta=5,rho=0.2,eta=0,sigma=0.01,psi=1),
+    upper=c(Beta=80,rho=0.9,eta=0.4,sigma=0.2,psi=10),
+    nseq=if(DEBUG) 20 else 300
+  ) -> consett2_guesses
+
+  @
+  
+  <<consett2_global_search2,eval=FALSE,purl=FALSE>>=
+  registerDoRNG(1270401374)
+  foreach(guess=iter(consett2_guesses,"row"),
+      .combine=rbind) %dopar% {
+    library(pomp)
+    library(tidyverse)
+    consett2 %>%
+      mif2(
+        params=c(unlist(guess),consett2_fixed_params),
+        Np=if(DEBUG) 50 else 2000, Nmif=if(DEBUG) 2 else 50,
+        partrans=parameter_trans(
+          log=c("Beta","sigma","psi"),
+          logit=c("rho","eta")
+        ),
+        paramnames=consett2_paramnames,
+        cooling.fraction.50=0.5,
+        rw.sd=rw.sd(Beta=0.02, rho=0.02,
+	  sigma=0.02, psi=0.02, eta=ivp(0.02))
+    ) %>%
+      mif2(Nmif=if(DEBUG) 2 else 100) -> mf
+    replicate(
+      if(DEBUG) 2 else 10,
+      mf %>% pfilter(Np= if(DEBUG) 100 else 10000) %>% logLik()
+    ) %>%
+      logmeanexp(se=TRUE) -> ll
+    mf %>% coef() %>% bind_rows() %>%
+      bind_cols(loglik=ll[1],loglik.se=ll[2])
+  } -> consett2_results
+  @ 
+  <<consett2_global_search_eval,include=FALSE>>=
+  bake(file="results/consett2_global_search.rds",{
+    <<consett2_global_search2>>
+    attr(consett2_results,"ncpu") <- getDoParWorkers()
+    consett2_results
+  }) %>%
+    filter(is.finite(loglik)) -> consett2_results
+  consett2_t_global <- attr(consett2_results,"system.time")
+  consett2_ncpu_global <- attr(consett2_results,"ncpu")
+  @
+  
+  <<consett2_archive,cache=FALSE,include=FALSE>>=
+  consett2_results %>%
+    filter(is.finite(loglik)) %>%
+    arrange(-loglik) %>%
+    write_csv("consett2_measles_params.csv")
+  @ 
+ 
+
+  <<consett2_pairs_global,echo=F>>=
+  read_csv("consett2_measles_params.csv") %>%
+    filter(loglik>max(loglik)-50) %>%
+    bind_rows(guesses) %>%
+    mutate(type=if_else(is.na(loglik),"guess","result")) %>%
+    arrange(type) -> consett2_all
+
+  pairs(~loglik+Beta+eta+rho+sigma+psi, data=consett2_all,
+        col=ifelse(all$type=="guess",grey(0.5),"red"),pch=16)
+  @
 
 
 \begin{frame}{\myexercise. A profile over $\sigma$}
@@ -655,7 +768,7 @@ registerDoRNG(582998)
 
 \item Is there evidence for the inclusion of overdispersion on the latent process?
 
-\item The profile for $\rho$ shows very little pattern for $\sigma$, which could be because the amount of information about $\sigma$ is small in the context of this model (i.e., the profile has low curvature -- it is close to flat).
+\item The scatterplots show little pattern for $\sigma$, which could be because the amount of information about $\sigma$ is small in the context of this model (i.e., the profile has low curvature -- it is close to flat).
 
 \item Construct a profile likelihood for $\sigma$ to investigate whether this is the case. 
 
