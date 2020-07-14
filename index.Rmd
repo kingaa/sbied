@@ -53,7 +53,8 @@ Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutori
 ------------------------------------
 
 [Acknowledgements](./acknowledge.html)  
-[Source code for these notes](http://github.com/kingaa/sbied/)  
+[Source code for these notes](https://github.com/kingaa/sbied/)  
 [**pomp** homepage](https://kingaa.github.io/pomp/)  
+[SISMID homepage](https://www.biostat.washington.edu/suminst/sismid/)  
 
 ----------------------

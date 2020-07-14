@@ -163,6 +163,8 @@ Revisit the [instructions above](#windows-users).
 
 ------------------------------
 
-#### [Back to course homepage](../)
+[**Back to course homepage**](../)  
+[**Pre-course insructions for Windows users (Video)](https://www.youtube.com/playlist?list=PLluGwj6FGt2R3iM5CAEfIIof5dQfHVRgz)  
+[**Pre-course insructions for MacOS users (Video)](https://www.youtube.com/playlist?list=PLluGwj6FGt2S8GmrOF3s68LlsWoTRmuMQ)  
 
 ------------------------------

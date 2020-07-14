@@ -51,7 +51,7 @@ Think about possible improvements on the assignment of randomized starting value
 The starting points are determined by the specification of the region in which they are chosen, and how they are selected within this region.
 We have followed a fairly simple and natural choice to make independent uniform draws from a specified box.
 `profileDesign()` also supports a pseudo-random Sobol design rather than independent draws.
-Whether a specified box has a reasonable extent can be checked by plotting the starting values on a scatterplot with the candidate maximizations obtained, as demonstrated in the [global search example](../mif/mif.html#a-global-search-of-the-likelihood-surface-using-randomized-starting-values) from the [iterated filtering tutorial](../mif/mif.html).
+Whether a specified box has a reasonable extent can be checked by plotting the starting values on a scatterplot with the candidate maximizations obtained, as demonstrated in the [global search example](../mif) from the [iterated filtering tutorial](../mif).
 
 The transformed scale may be more reasonable for selecting uniformly distributed starting values. For example, if we are not sure about the order of magnitude of a non-negative parameter, and we set its box interval to $[0.1,10]$, we likely want to spend half our search effort with initial values in the interval $[0.1,1]$. Sampling unformly on the log scale achieves this. 
 We can change our code as follows to implement this for the polio profile calculation.

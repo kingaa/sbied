@@ -38,7 +38,7 @@ The following schedule will be updated frequently.
 Bookmark this page so that you can check it at least twice per day.
 
 **Wednesday, 15 July**  
-Before 14:30: View lecture videos for Lessons 1 and 2. Begin work on the Exercises 2.3 and 2.4.  
+Before 14:30: View lecture videos for Lessons 1 and 2 (c.&nbsp;2.5hr). Begin work on the Exercises 2.3 and 2.4.  
 14:30--15:30: Introductions. Live plenary discussion on Lessons 1 and 2 lectures  
 15:30--15:45: Set up Zoom breakout rooms  
 15:45--16:45: Breakout groups work on Lesson 2 exercises  
@@ -46,7 +46,7 @@ Before 14:30: View lecture videos for Lessons 1 and 2. Begin work on the Exercis
 17:30--18:30: Optional Office hour  
 
 **Thursday, 16 July**  
-Before 11:00: View lecture videos for Lessons 3 and 4. Begin work on the Exercises.  
+Before 11:00: View lecture videos for Lessons 3 and 4 (c.&nbsp;4hr). Begin work on the Exercises.  
 11:00--12:00: Live plenary discussion on Lesson 3 lecture  
 12:00--13:00: Breakout groups work on Lesson 3 exercises  
 13:00--13:45: Live plenary discussion of breakout group progress  
@@ -58,7 +58,7 @@ Before 11:00: View lecture videos for Lessons 3 and 4. Begin work on the Exercis
 17:30--18:30: Optional Office hour  
 
 **Friday, 17 July**  
-Before 11:00: View lecture video for Lesson 5 and (optionally) one or more of Lessons 6, 7, 8  
+Before 11:00: View lecture video for Lesson 5 and (optionally) one or more of Lessons 6, 7, 8 (c.&nbsp;1.5--3hr)  
 11:00--12:00: Live plenary discussion on Lesson 5 lecture  
 12:00--13:00: Breakout groups work on exercises from Lessons 2--4  
 13:00--13:45: Live plenary discussion of breakout group progress  

@@ -255,7 +255,7 @@ registerDoRNG(2050320976)
   }
   \hspace{8mm}
   \parbox{4.5cm}{
-    Fig 4 of  \citet{romero-severson15}. The median of 500 simulations are shown as lines and the $75^{th}$ and $25^{th}$ quantiles are shown as gray envelopes.
+    Fig 4 of  \citet{romero-severson15}. The median of 500 simulations are shown as lines and the $75^{th}$ and $25^{th}$ percentiles are shown as gray envelopes.
 
   }
 \end{frame}

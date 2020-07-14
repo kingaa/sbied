@@ -597,7 +597,7 @@ library(pomp)
 
   \vspace{3mm}
 
-  \link{https://kingaa.github.io/sbied/polio/algorithmic-parameters-exercise.html}{Worked solution to the Exercise}
+  \link{algorithmic-parameters-exercise.html}{Worked solution to the Exercise}
 
 
 \end{frame}
@@ -615,7 +615,7 @@ library(pomp)
 
   <<parallel-setup,cache=FALSE>>=
   library(doParallel)
-  registerDoParallel(detectCores())
+  registerDoParallel()
   library(doRNG)
   registerDoRNG(3899882)
   @
@@ -1195,7 +1195,7 @@ When carrying out parameter estimation for dynamic systems, we need to specify b
 
   \vspace{3mm}
 
-  \link{https://kingaa.github.io/sbied/polio/initial-values-exercise.html}{Worked solution to the Exercise}
+  \link{initial-values-exercise.html}{Worked solution to the Exercise}
 
 
 \end{frame}
@@ -1206,7 +1206,7 @@ When carrying out parameter estimation for dynamic systems, we need to specify b
 
   \vspace{3mm}
 
-  \link{https://kingaa.github.io/sbied/polio/starting-values-exercise.html}{Worked solution to the Exercise}
+  \link{starting-values-exercise.html}{Worked solution to the Exercise}
 
 \end{frame}
 
@@ -1218,19 +1218,24 @@ When carrying out parameter estimation for dynamic systems, we need to specify b
 
   \vspace{3mm}
 
-  \link{https://kingaa.github.io/sbied/polio/demography-exercise.html}{Worked solution to the Exercise}
+  \link{demography-exercise.html}{Worked solution to the Exercise}
 
 \end{frame}
 
 \begin{frame}[fragile]{\myexercise. Diagnosing filtering and maximization convergence}
 
-  Are there outliers in the data (i.e., observations that do not fit well with our model)? Are we using unnecessarily large amounts of computer time to get our results? Are there indications that we would should run our computations for longer? Or maybe with different choices of algorithmic settings?
-  In particular, \code{cooling.fraction.50} gives the fraction by which the random walk standard deviation is decreased ("cooled") in 50 iterations. If \code{cooling.fraction.50} is too small, the search will "freeze" too soon, evidenced by flat parallel lines in the convergence diagnostics. If \code{cooling.fraction.50} is too large, the researcher may run of of time, patience or computing budget (or all three) before the parameter trajectories approach an MLE.
-  Use the diagnostic plots on the following slides, or other calculations, to address these issues.
+  Are there outliers in the data (i.e., observations that do not fit well with our model)?
+  Are we using unnecessarily large amounts of computer time to get our results?
+  Are there indications that we would should run our computations for longer?
+  Or maybe with different choices of algorithmic settings?
+  In particular, \code{cooling.fraction.50} gives the fraction by which the random walk standard deviation is decreased ("cooled") in 50 iterations.
+  If \code{cooling.fraction.50} is too small, the search will ``freeze'' too soon, evidenced by flat parallel lines in the convergence diagnostics.
+  If \code{cooling.fraction.50} is too large, the researcher may run of of time, patience or computing budget (or all three) before the parameter trajectories approach an MLE.
+  Use the diagnostic plots below, or other calculations, to address these issues.
 
   \vspace{3mm}
 
-  \link{https://kingaa.github.io/sbied/polio/convergence-exercise.html}{Worked solution to the Exercise}
+  \link{convergence-exercise.html}{Worked solution to the Exercise}
 
 \end{frame}
 

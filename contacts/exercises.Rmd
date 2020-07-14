@@ -43,12 +43,32 @@ cat(paste(c(xx$info[[2]],"\n"),collapse="\n"))
 
 And then check out the promising ones:
 
+`?panelPomp_methods`
 
-```{r eval=F,echo=T}
-?panelPomp_methods
+```{css help_page_style,echo=FALSE}
+#help {
+	text-align: left;
+	border-width: 2px;
+	width: 90%;
+	height: 50ex;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 10px;
+	padding-bottom: 20px;
+}
+```
+```{r help_page,cache=FALSE,include=FALSE,purl=FALSE}
+pgpth <- "help_page.html"
+tools::Rd2HTML(
+         utils:::.getHelpFile(help(panelPomp_methods,package="panelPomp")),
+         stylesheet="https://cran.r-project.org/R.css",
+         out=pgpth
+        )
 ```
 
-------------------------
+<iframe id="help" src="`r pgpth`"></iframe>
+
+--------------------------------
 
 ## Exercise 8.3
 
