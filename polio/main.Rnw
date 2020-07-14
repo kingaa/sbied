@@ -615,7 +615,7 @@ library(pomp)
 
   <<parallel-setup,cache=FALSE>>=
   library(doParallel)
-  registerDoParallel(detectCores())
+  registerDoParallel()
   library(doRNG)
   registerDoRNG(3899882)
   @

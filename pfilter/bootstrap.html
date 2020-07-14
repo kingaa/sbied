@@ -377,7 +377,7 @@ summary {
 <ul>
 <li><p>Suppose we want to know the statistical behavior of the estimator <span class="math inline">\(\hat\theta({y_{1:N}})\)</span> for models in a neighborhood of the MLE, <span class="math inline">\(\theta^*=\hat\theta(y_{1:N}^*)\)</span>.</p></li>
 <li><p>In particular, let’s consider the problem of estimating uncertainty about <span class="math inline">\(\theta_1\)</span>. We want to assess the behavior of the maximum likelihood estimator, <span class="math inline">\(\hat\theta({y_{1:N}})\)</span>, and possibly the coverage of an associated confidence interval estimator, <span class="math inline">\(\big[\hat\theta_{1,\mathrm lo}({y_{1:N}}),\hat\theta_{1,\mathrm hi}({y_{1:N}})\big]\)</span>. The confidence interval estimator could be constructed using either the Fisher information method or the profile likelihood approach.</p></li>
-<li>The following simulation study lets us address the following goals: <br><br>
+<li><p>The following simulation study lets us address the following goals: <br><br></p>
 <ol style="list-style-type: upper-alpha">
 <li>Evaluate the coverage of a proposed confidence interval estimator, <span class="math inline">\([\hat\theta_{1,\mathrm lo},\hat\theta_{1,\mathrm hi}]\)</span>, <br><br></li>
 <li>Construct a standard error for <span class="math inline">\(\theta_1^*\)</span>, <br><br></li>
@@ -387,7 +387,7 @@ summary {
 <ol style="list-style-type: decimal">
 <li><p>Generate <span class="math inline">\(J\)</span> independent Monte Carlo simulations, <span class="math display">\[Y_{1:N}^{[j]} \sim f_{Y_{1:N}}(y_{1:N}\, ; \,\theta^*)\mbox{ for } j\in 1:J.\]</span></p></li>
 <li><p>For each simulation, evaluate the maximum likelihood estimator, <span class="math display">\[ \theta^{[j]} = \hat\theta\big(Y_{1:N}^{[j]}\big)\mbox{ for } j\in 1:J,\]</span> and, if desired, the confidence interval estimator, <span class="math display">\[ \big[\theta^{[j]}_{1,\mathrm lo},\theta^{[j]}_{1,\mathrm hi}\big] = \big[\hat\theta_{1,\mathrm lo}({X^{[j]}_{1:N}}),\hat\theta_{1,\mathrm hi}({X^{[j]}_{1:N}})\big].\]</span></p></li>
-<li>We can use these simulations to obtain solutions to our goals for uncertainty assessment:<br><br>
+<li><p>We can use these simulations to obtain solutions to our goals for uncertainty assessment:<br><br></p>
 <ol style="list-style-type: upper-alpha">
 <li>For large <span class="math inline">\(J\)</span>, the coverage of the proposed confidence interval estimator is well approximated, for models in a neighborhood of <span class="math inline">\(\theta^*\)</span>, by the proportion of the intervals <span class="math inline">\(\big[\theta^{[j]}_{1,\mathrm lo},\theta^{[j]}_{1,\mathrm hi}\big]\)</span> that include <span class="math inline">\(\theta_1^*\)</span>.<br><br></li>
 <li>The sample standard deviation of <span class="math inline">\(\{ \theta^{[j]}_1, j\in 1:J\}\)</span> is a natural standard error to associate with $.<br><br></li>

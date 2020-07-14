@@ -253,7 +253,7 @@ registerDoRNG(2050320976)
   }
   \hspace{8mm}
   \parbox{4.5cm}{
-    Fig 4 of  \citet{romero-severson15}. The median of 500 simulations are shown as lines and the $75^{th}$ and $25^{th}$ quantiles are shown as gray envelopes.
+    Fig 4 of  \citet{romero-severson15}. The median of 500 simulations are shown as lines and the $75^{th}$ and $25^{th}$ percentiles are shown as gray envelopes.
 
   }
 \end{frame}
@@ -648,7 +648,10 @@ mif_mle <- mif_results[[which.max(mif_logLik)]]$params
 pf3_loglik_matrix <- foreach(i=1:10,.combine=rbind) %dopar% {
   library(pomp)
   library(panelPomp)
-  unitlogLik(pfilter(contacts,shared=mif_mle,Np=if(DEBUG) 50 else 2000))
+  unitlogLik(
+    pfilter(contacts,shared=mif_mle,
+            Np=if(DEBUG) 50 else 2000)
+  )
 }  
 @
 

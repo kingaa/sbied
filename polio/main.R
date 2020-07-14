@@ -139,7 +139,7 @@ polio_Nreps_global <-switch(run_level, 10,  20, 100)
 polio_Nsim <-        switch(run_level, 50, 100, 500) 
 
 library(doParallel)
-registerDoParallel(detectCores())
+registerDoParallel()
 library(doRNG)
 registerDoRNG(3899882)
 

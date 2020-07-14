@@ -306,8 +306,8 @@ Assume the same measurement model as before.
 
 ----------------------------
 
-## [Back to course homepage](../index.html)
-## [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/intro/ricker.R)
+[**Back to course homepage**](../index.html)  
+[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/intro/ricker.R)  
 
 ----------------------------
 

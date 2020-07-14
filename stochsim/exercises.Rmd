@@ -20,7 +20,7 @@ source("main.R")
 
 ## Exercise: Little o notation
 
-We combine $f(x+\delta)=f(x)+ \delta g(x) + o(\delta)$, the definition that $ h(\delta)=o(\delta)$ means $ \lim_{\delta\to 0} \frac{h(\delta)}{\delta} = 0$.
+We combine $f(x+\delta)=f(x)+ \delta\,g(x) + o(\delta)$, the definition that $h(\delta)=o(\delta)$ means $\lim_{\delta\to 0} \frac{h(\delta)}{\delta} = 0$.
 Thus, we get
 $$\lim_{\delta\to 0} \frac{f(x+\delta)-f(x)}{\delta} = g(x)$$
 which matches the definition that $df(x)/dx = g(x)$.
@@ -145,9 +145,9 @@ measSEIR %>%
 
 ----------------------------
 
-### [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/exercises.R)
-### [Back to Stochastic Simulation lesson](./slides.pdf)
-### [Back to the course home page](../index.html)
+[**Back to the course home page**](../index.html)  
+[**Back to Stochastic Simulation lesson**](./index.html)  
+[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/exercises.R)  
 
 ----------------------------
 

@@ -86,7 +86,10 @@ mif_mle <- mif_results[[which.max(mif_logLik)]]$params
 pf3_loglik_matrix <- foreach(i=1:10,.combine=rbind) %dopar% {
   library(pomp)
   library(panelPomp)
-  unitlogLik(pfilter(contacts,shared=mif_mle,Np=if(DEBUG) 50 else 2000))
+  unitlogLik(
+    pfilter(contacts,shared=mif_mle,
+            Np=if(DEBUG) 50 else 2000)
+  )
 }  
 })
 
