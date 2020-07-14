@@ -245,6 +245,4 @@ Groups that have only three members:
 
 [Link to pre-module survey](https://catalyst.uw.edu/webq/survey/nelsod6/393410)
 
-----------------------------
-
 [**Course homepage**](./index.html)  
