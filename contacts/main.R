@@ -1,4 +1,5 @@
 DEBUG <- FALSE
+# DEBUG <- TRUE
 library(doParallel)
 library(doRNG)
 cores <- detectCores()
@@ -24,24 +25,19 @@ class(unitobjects(contacts)[[1]])
 
 coef(contacts)
 
-timing <- !file.exists("results/pfilter1.rda")
-tic <- Sys.time()
-
 
 
 stew("results/pfilter1.rda",{
+  tic <- Sys.time()
   eval_cores <- cores
   pf1_results <- foreach(i=1:20) %dopar% {
-    library(pomp)
     library(panelPomp)
     pf <- pfilter(contacts,Np= if(DEBUG) 10 else 2000)
     list(logLik=logLik(pf),
          unitLogLik=sapply(unitobjects(pf),logLik))
   }
+  t1 <- as.numeric(difftime(Sys.time(),tic,units="mins"))
 }) 
-
-t1 <- as.numeric(difftime(Sys.time(),tic,units="mins"))
-if(timing) save(t1,file="results/pfilter1-timing.rda") else load("results/pfilter1-timing.rda")
 
 loglik1 <- sapply(pf1_results,function(x) x$logLik)
 logmeanexp(loglik1,se=T)
@@ -49,51 +45,39 @@ logmeanexp(loglik1,se=T)
 pf1_loglik_matrix <- sapply(pf1_results,function(x) x$unitLogLik)
 panel_logmeanexp(pf1_loglik_matrix,MARGIN=1,se=T)
 
-timing <- !file.exists("results/mif1.rda")
-tic <- Sys.time()
-
 
 
 stew("results/mif1.rda",{
-mif_results <- foreach(i=1:10) %dopar% {
+  mif_cores <- cores
+  tic <- Sys.time()
+mif_results <- foreach(i=1:20) %dopar% {
   library(pomp); library(panelPomp)
   mf <- mif2(contacts,
-             Nmif = if(DEBUG) 2 else 50,
-             Np = if(DEBUG) 5 else 1000,
-             cooling.fraction.50=0.1,
-             cooling.type="geometric",
-             transform=TRUE,
-             rw.sd=rw.sd(mu_X=0.02, sigma_X=0.02,
-                         mu_D = 0.02, sigma_D=0.02,
-                         mu_R=0.02, sigma_R =0.02, alpha=0.02
-                         )
-             )
+    Nmif = if(DEBUG) 2 else 50,
+    Np = if(DEBUG) 5 else 1000,
+    cooling.type="geometric", # needed for panelPomp 0.10
+    cooling.fraction.50=0.5,
+    rw.sd=rw.sd(mu_X=0.02, sigma_X=0.02,mu_D = 0.02,
+      sigma_D=0.02,mu_R=0.02, alpha=0.02)
+  )
   list(logLik=logLik(mf),params=coef(mf))
 }
+  t2 <- difftime(Sys.time(),tic,units="mins")
 })
-
-t2 <- difftime(Sys.time(),tic,units="mins")
-if(timing) save(t2,file="results/mif1-timing.rda") else load("results/mif1-timing.rda")
-
-timing <- !file.exists("results/mif1-lik-eval.rda")
-tic <- Sys.time()
 
 
 
 stew("results/mif1-lik-eval.rda",{
+tic <- Sys.time()
 mif_logLik <-  sapply(mif_results,function(x)x$logLik)
 mif_mle <- mif_results[[which.max(mif_logLik)]]$params
 pf3_loglik_matrix <- foreach(i=1:10,.combine=rbind) %dopar% {
-  library(pomp)
   library(panelPomp)
-  unitlogLik(
-    pfilter(contacts,shared=mif_mle,
-            Np=if(DEBUG) 50 else 2000)
-  )
+  unitlogLik(pfilter(contacts,
+    shared=mif_mle,Np=if(DEBUG) 50 else 10000))
 }  
+t3 <- difftime(Sys.time(),tic,units="mins")
+mif_lik_eval_cores <- cores
 })
 
 panel_logmeanexp(pf3_loglik_matrix,MARGIN=2,se=T)
-
-t3 <- difftime(Sys.time(),tic,units="mins")
-if(timing) save(t3,file="results/mif1-lik-eval-timing.rda") else load("results/mif1-lik-eval-timing.rda")

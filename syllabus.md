@@ -66,8 +66,8 @@ Before 11:00: View lecture video for Lesson 5 and (optionally) one or more of Le
 14:30--15:10: Live, optional, plenary discussion on Lesson 6  
 15:10--15:50: Live, optional, plenary discussion on Lesson 7  
 15:50--16:30: Live, optional, plenary discussion on Lesson 8  
-16:30--17:30: Live plenary discussion. Questions and answers. Concluding remarks.  
 14:30--16:30: Those not attending a plenary discussion can use the time to work individually or in groups on the Exercises.  
+16:30--17:30: Live plenary discussion. Questions and answers. Concluding remarks.  
 17:30--18:30: Optional drop-in session: all topics welcomed.  
 
 -----------------------------
@@ -126,13 +126,13 @@ In the spirit of ensuring an efficient and enjoyable learning experience for eve
    At any one time, at least one of the instructors will be monitoring the Slack channel.
 1. ***When submitting over Slack, take some care to avoid unnecessary duplication.***
    If someone has recently asked the same question, you can register your interest in having that question answered using the "reaction" buttons, without having to restate the question.
-1. ***Set your "name" in your Zoom session to what you want to be called***.
-   We will be able to view your name, as well as your face, when you ask a question, or when we visit you in a breakout room.
-   Having your name set in this way will help us recognize you.
 1. ***During the breakout discussions, keep both your audio and video on.***
    The breakout sessions will be where you apply the lessons you learn and discover where you want to ask additional questions.
    You will have a specific role in your group that your fellow group members will rely on you to perform.
    To facilitate full engagement, keep your video and audio on during these sessions whenever appropriate.
+1. ***Set your "name" in your Zoom session to what you want to be called***.
+   We will be able to view your name, as well as your face, when you ask a question, or when we visit you in a breakout room.
+   Having your name set in this way will help us recognize you.
 1. ***Be on guard against distractions.***
    During the time in which your audio and video are on, do your best to minimize distracting sounds and sights that might distract your colleagues.
    It is equally important that you recognize that the digital environment is full of its own distractions: 
