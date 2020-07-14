@@ -11,6 +11,7 @@
 
 <<parallel,echo=FALSE,cache=FALSE,purl=TRUE>>=
 DEBUG <- FALSE
+# DEBUG <- TRUE
 library(doParallel)
 library(doRNG)
 cores <- detectCores()
@@ -40,6 +41,7 @@ registerDoRNG(2050320976)
 
   \end{enumerate}
 \end{frame}
+
 
 \section{Panel data}
 
@@ -433,14 +435,8 @@ How would you find the \package{panelPomp} package methods available for working
 
   \ei
 
-  <<t1-timing_start,echo=F,cache=F>>=
-  timing <- !file.exists("results/pfilter1.rda")
-  tic <- Sys.time()
-  @
-  
   <<pfilter1-code,eval=F,echo=T,purl=F>>=
   pf1_results <- foreach(i=1:20) %dopar% {
-    library(pomp)
     library(panelPomp)
     pf <- pfilter(contacts,Np= if(DEBUG) 10 else 2000)
     list(logLik=logLik(pf),
@@ -450,14 +446,11 @@ How would you find the \package{panelPomp} package methods available for working
   
   <<pfilter1-eval,cache=F,echo=F>>=
   stew("results/pfilter1.rda",{
+    tic <- Sys.time()
     eval_cores <- cores
     <<pfilter1-code>>
+    t1 <- as.numeric(difftime(Sys.time(),tic,units="mins"))
   }) 
-  @
-  
-  <<t1-timing-end,echo=F,cache=F>>=
-  t1 <- as.numeric(difftime(Sys.time(),tic,units="mins"))
-  if(timing) save(t1,file="results/pfilter1-timing.rda") else load("results/pfilter1-timing.rda")
   @
   
   \bi
@@ -570,49 +563,42 @@ How would you find the \package{panelPomp} package methods available for working
 
 \item As an example of an iterated filtering investigation, let's carry out a local search, starting at the current estimate of the MLE.
 
+\item Following \citet{romero-severson15} we fix $\sigma_R=0$.
   \ei
 
 \end{frame}
 
 \begin{frame}[fragile]
 
-  <<t2-timing-start,echo=F,cache=F>>=
-  timing <- !file.exists("results/mif1.rda")
-  tic <- Sys.time()
-  @
-  
   <<mif1-code,eval=F,echo=T,purl=F>>=
-  mif_results <- foreach(i=1:10) %dopar% {
+  mif_results <- foreach(i=1:20) %dopar% {
     library(pomp); library(panelPomp)
     mf <- mif2(contacts,
-               Nmif = if(DEBUG) 2 else 50,
-               Np = if(DEBUG) 5 else 1000,
-               cooling.fraction.50=0.1,
-               cooling.type="geometric",
-               transform=TRUE,
-               rw.sd=rw.sd(mu_X=0.02, sigma_X=0.02,
-                           mu_D = 0.02, sigma_D=0.02,
-                           mu_R=0.02, sigma_R =0.02, alpha=0.02
-                           )
-               )
+      Nmif = if(DEBUG) 2 else 50,
+      Np = if(DEBUG) 5 else 1000,
+      cooling.type="geometric", # needed for panelPomp 0.10
+      cooling.fraction.50=0.5,
+      rw.sd=rw.sd(mu_X=0.02, sigma_X=0.02,mu_D = 0.02,
+        sigma_D=0.02,mu_R=0.02, alpha=0.02)
+    )
     list(logLik=logLik(mf),params=coef(mf))
   }
 @
 
 <<mif1-stew,cache=F,eval=T,echo=F>>=
 stew("results/mif1.rda",{
+  mif_cores <- cores
+  tic <- Sys.time()
 <<mif1-code>>
+  t2 <- difftime(Sys.time(),tic,units="mins")
 })
-@
-
-<<t2-timing-end,echo=F,cache=F>>=
-t2 <- difftime(Sys.time(),tic,units="mins")
-if(timing) save(t2,file="results/mif1-timing.rda") else load("results/mif1-timing.rda")
 @
 
 \bi
 
-\item This is a relatively quick search, taking \Sexpr{round(as.numeric(t2),1)} minutes.
+\item This search took \Sexpr{round(as.numeric(t2),1)} minutes on \Sexpr{mif_cores} cores.
+
+\item We see that \code{panelPomp} iterated filtering is set up similarly to its \code{pomp} cousin. 
 
 \ei
 
@@ -637,24 +623,22 @@ Similar likelihood evaluation issues arise for \package{panelPomp} as for {pomp}
 
 \begin{frame}[fragile]
 
-<<t3-timing-start,echo=F,cache=F>>=
-timing <- !file.exists("results/mif1-lik-eval.rda")
-tic <- Sys.time()
-@
-
 <<mif1-lik-eval-code,eval=F,echo=T,purl=F>>=
 mif_logLik <-  sapply(mif_results,function(x)x$logLik)
 mif_mle <- mif_results[[which.max(mif_logLik)]]$params
 pf3_loglik_matrix <- foreach(i=1:10,.combine=rbind) %dopar% {
-  library(pomp)
   library(panelPomp)
-  unitlogLik(pfilter(contacts,shared=mif_mle,Np=if(DEBUG) 50 else 2000))
+  unitlogLik(pfilter(contacts,
+    shared=mif_mle,Np=if(DEBUG) 50 else 10000))
 }  
 @
 
 <<mif1-lik-eval,cache=F,echo=F>>=
 stew("results/mif1-lik-eval.rda",{
+tic <- Sys.time()
 <<mif1-lik-eval-code>>
+t3 <- difftime(Sys.time(),tic,units="mins")
+mif_lik_eval_cores <- cores
 })
 @
 
@@ -662,13 +646,11 @@ stew("results/mif1-lik-eval.rda",{
 panel_logmeanexp(pf3_loglik_matrix,MARGIN=2,se=T)
 @
 
-<<t3-timing-end,echo=F,cache=F>>=
-t3 <- difftime(Sys.time(),tic,units="mins")
-if(timing) save(t3,file="results/mif1-lik-eval-timing.rda") else load("results/mif1-lik-eval-timing.rda")
-@
-
 \bi
-\item This took \Sexpr{round(as.numeric(t3),1)} minutes.
+\item This took \Sexpr{round(as.numeric(t3),1)} minutes on \Sexpr{mif_lik_eval_cores} cores.
+
+\item Here, the local search found a lower likelhood that the published MLE. Longer searches with more cooling, and/or more Monte Carlo replications, may be needed to reliably obtain accurate maximization.
+
 \ei
 
 \end{frame}  
