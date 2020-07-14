@@ -198,3 +198,9 @@ For groups that have only four members, the Seeker and Taker roles may be combin
 For groups that have only three members, the Seeker, Taker, and Keeper roles may be combined into one.
 
 -----------------------------
+
+## Pre-module Survey
+
+To help us understand your background and goals a bit better, please fill out this short [pre-module survey](https://catalyst.uw.edu/webq/survey/nelsod6/393410) at the beginning of the course.
+
+-----------------------------

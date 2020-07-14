@@ -26,7 +26,7 @@ p {
 
 The course will have five components:
 
-1\.&nbsp;&nbsp;&nbsp;***A mandatory self-learning component***.
+1\.&nbsp;&nbsp;&nbsp;***A mandatory self-learning component***
 
 - Videos linked from the [course website](https://kingaa.github.io/sbied/)
 - PDF versions of the lecture notes and slides
@@ -36,7 +36,7 @@ The course will have five components:
 
 --------------------
 
-2\.&nbsp;&nbsp;&nbsp;***Exercises.***
+2\.&nbsp;&nbsp;&nbsp;***Exercises***
 
 - Intended to consolidate and challenge your understanding of key concepts and methods
 - Grapple with these Exercises on your own first
@@ -66,7 +66,7 @@ The course will have five components:
 
 ------------------------------
 
-5\.&nbsp;&nbsp;&nbsp;***Optional office hours.***
+5\.&nbsp;&nbsp;&nbsp;***Optional office hours***
 
 - Drop in with questions or when you need help
 
@@ -96,7 +96,7 @@ In the spirit of ensuring an efficient and enjoyable learning experience for eve
 
 8. ***Dress comfortably, but professionally.***
 
-9. ***Have a sense of humor!***
+9. ***Don't forget to laugh!***
 
 -----------------------------
 
@@ -240,6 +240,10 @@ Groups that have only three members:
 **16:30--17:30:** Live plenary discussion. Questions and answers. Concluding remarks.  
 **17:30--18:30:** Optional drop-in session: all topics welcomed.  
 </div>
+
+----------------------------
+
+[Link to pre-module survey](https://catalyst.uw.edu/webq/survey/nelsod6/393410)
 
 ----------------------------
 
