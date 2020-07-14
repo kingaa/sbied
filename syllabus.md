@@ -195,6 +195,6 @@ and everyone is expected to listen to, and engage with, the contributions of the
 
 For groups that have only four members, the Seeker and Taker roles may be combined, as may the Seeker and Keeper roles.
 
-For groups that have only three members, the Seeker, Taker, and Keepe roles may be combined into one.
+For groups that have only three members, the Seeker, Taker, and Keeper roles may be combined into one.
 
 -----------------------------
