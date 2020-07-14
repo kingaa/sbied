@@ -16,7 +16,7 @@ output: html_document
 | Worked solution to Exercise 6.2 | [HTML](initial-values-exercise.html)                                              |
 | Worked solution to Exercise 6.3 | [HTML](starting-values-exercise.html)                                             |
 | Worked solution to Exercise 6.4 | [HTML](demography-exercise.html)                                                  |
-| Worked solution to Exercise 6.4 | [HTML](convergence-exercise.html)                                                 |
+| Worked solution to Exercise 6.5 | [HTML](convergence-exercise.html)                                                 |
 
 
 ----------------------
