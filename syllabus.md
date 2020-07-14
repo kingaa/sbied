@@ -26,6 +26,46 @@ Exercises are given in the lectures and can be found on the slides and in the no
 
 -----------------------------
 
+### Course Organization
+
+The course will have five components:
+
+1. ***A mandatory self-learning component***, in which students are expected to watch and take notes on the pre-recorded lectures prior to the day's activities.
+   Links to the videos can be found on the [course website](https://kingaa.github.io/sbied/), along with PDF versions of the lecture notes and slides.
+   For example, before our live plenary on Wednesday, 15 July, we expect students to have watched the Lesson 1 and Lesson 2 lecture videos.
+   If you have any questions that come up while you are watching the videos, please pose these using the `#mod07simulationinference` channel in the SISMID Slack workspace.
+   We will monitor this channel and attempt to answer all questions either via Slack, or in the live sessions.
+   This use of Slack will allow you check whether your question has been asked previously, to avoid the kind of unnecessary duplication that makes it hard for everyone.
+
+1. ***Exercises.***
+   Each lesson includes exercises intended to consolidate and challenge your understanding of key concepts and methods.
+   To get the most out of the course, you will have to grapple with these Exercises on your own.
+   Accordingly, you must make a start on each assigned Exercise prior to the day's live sessions.  
+   The amount of progress you make is less important than the fact that you have started thinking about and working on the Exercise before the live session.
+   Questions that arise in the first phase of work on an Exercise should be sent to the course Slack channel prior to the day's session.
+   See below for guidance on use of the Slack channel.
+
+1. ***Live plenary discussions***, during which instructors will elaborate important points raised in the lectures and address common questions posed over Slack.
+   During these sessions, feel free to raise any additional questions that come up.
+   We ask that you mute your audio and video at the start of each live plenary and keep them muted until you have a question.
+   When you do have a question, by unmuting your audio and video, you will become visible and will be given the floor to ask your question.
+
+1. ***Breakout-group sessions***, in which each student will work in small groups, in breakout rooms, on the Exercises.
+   Each breakout group will be composed of 4 or 5 students, will be assigned a breakout room of its own, and will persist for the duration of the course.
+   Within each breakout group, there will be five roles to be performed by group members; these are described below.
+   At their first meeting, groups should agree among themselves as to who should perform the roles.
+   Roles should be rotated periodically.  
+   ***Asking for help from a group***.
+   When a group wants help from the instructors, it can either (1) post a question via Slack, (2) send a member out of the breakout room to ask, (3) leave the breakout room as a group to talk with the instructor, or (4) use the 'Ask for Help' feature, which allows the group to request that one of the instructors visit the breakout room.
+   The breakout groups are where you will learn the most, so do not hesitate to ask for help when needed!
+   As needed, the instructors may pull everyone back for plenary discussion of points that arise in group activities.
+   See below for more on breakout group roles, rules, and expectations regarding breakout group activities.
+   
+1. ***Optional office hours.***
+   These are times when you should feel free to drop in with questions or when you need help.
+
+-----------------------------
+
 ### Tentative Course Schedule
 
 ***All times are EDT (UTC-04:00)***
@@ -69,46 +109,6 @@ Before 11:00: View lecture video for Lesson 5 and (optionally) one or more of Le
 14:30--16:30: Those not attending a plenary discussion can use the time to work individually or in groups on the Exercises.  
 16:30--17:30: Live plenary discussion. Questions and answers. Concluding remarks.  
 17:30--18:30: Optional drop-in session: all topics welcomed.  
-
------------------------------
-
-### Course Organization
-
-The course will have five components:
-
-1. ***A mandatory self-learning component***, in which students are expected to watch and take notes on the pre-recorded lectures prior to the day's activities.
-   Links to the videos can be found on the [course website](https://kingaa.github.io/sbied/), along with PDF versions of the lecture notes and slides.
-   For example, before our live plenary on Wednesday, 15 July, we expect students to have watched the Lesson 1 and Lesson 2 lecture videos.
-   If you have any questions that come up while you are watching the videos, please pose these using the `#mod07simulationinference` channel in the SISMID Slack workspace.
-   We will monitor this channel and attempt to answer all questions either via Slack, or in the live sessions.
-   This use of Slack will allow you check whether your question has been asked previously, to avoid the kind of unnecessary duplication that makes it hard for everyone.
-
-1. ***Exercises.***
-   Each lesson includes exercises intended to consolidate and challenge your understanding of key concepts and methods.
-   To get the most out of the course, you will have to grapple with these Exercises on your own.
-   Accordingly, you must make a start on each assigned Exercise prior to the day's live sessions.  
-   The amount of progress you make is less important than the fact that you have started thinking about and working on the Exercise before the live session.
-   Questions that arise in the first phase of work on an Exercise should be sent to the course Slack channel prior to the day's session.
-   See below for guidance on use of the Slack channel.
-
-1. ***Live plenary discussions***, during which instructors will elaborate important points raised in the lectures and address common questions posed over Slack.
-   During these sessions, feel free to raise any additional questions that come up.
-   We ask that you mute your audio and video at the start of each live plenary and keep them muted until you have a question.
-   When you do have a question, by unmuting your audio and video, you will become visible and will be given the floor to ask your question.
-
-1. ***Breakout-group sessions***, in which each student will work in small groups, in breakout rooms, on the Exercises.
-   Each breakout group will be composed of 4 or 5 students, will be assigned a breakout room of its own, and will persist for the duration of the course.
-   Within each breakout group, there will be five roles to be performed by group members; these are described below.
-   At their first meeting, groups should agree among themselves as to who should perform the roles.
-   Roles should be rotated periodically.  
-   ***Asking for help from a group***.
-   When a group wants help from the instructors, it can either post a question via Slack, send a member out of the breakout room to ask, leave the breakout room as a group to talk with the instructor, or use the 'Ask for Help' feature, which allows the group to request that one of the instructors visit the breakout room.
-   The breakout groups are where you will learn the most, so do not hesitate to ask for help when needed!
-   As needed, the instructors may pull everyone back for plenary discussion of points that arise in group activities.
-   See below for more on breakout group roles, rules, and expectations regarding breakout group activities.
-   
-1. ***Optional office hours.***
-   These are times when you should feel free to drop in with questions or when you need help.
 
 -----------------------------
 
@@ -193,6 +193,8 @@ and everyone is expected to listen to, and engage with, the contributions of the
    This should be at most a paragraph, focused on communicating the essentials only: 
    what exercises were tackled, what approaches taken, what progress made, what difficulties encountered.
 
-For groups that have only four members, the Keeper and Slacker roles may be combined, as may the Keeper and Seeker roles.
+For groups that have only four members, the Seeker and Taker roles may be combined, as may the Seeker and Keeper roles.
+
+For groups that have only three members, the Seeker, Taker, and Keepe roles may be combined into one.
 
 -----------------------------

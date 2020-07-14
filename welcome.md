@@ -169,8 +169,12 @@ everyone contributes toward the group's work, everyone listens to, everyone enga
 
 Groups that have only four members:
 
-- combine Keeper and Slacker, *or*
-- combine Keeper and Seeker
+- combine Seeker and Taker, *or*
+- combine Seeker and Keeper.
+
+Groups that have only three members:
+
+- combine Seeker, Keeper, and Taker roles in one.
 
 
 ## Tentative Schedule
