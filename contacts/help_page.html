@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Manipulating 'panelPomp' objects</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="https://cran.r-project.org/R.css" />
+</head><body>
+
+<table width="100%" summary="page for panelPomp_methods"><tr><td>panelPomp_methods</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Manipulating <code>panelPomp</code> objects</h2>
+
+<h3>Description</h3>
+
+<p>Tools for manipulating <code>panelPomp</code> objects.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+## S4 method for signature 'panelPomp'
+coef(object)
+
+## S4 replacement method for signature 'panelPomp'
+coef(object, ...) &lt;- value
+
+## S4 method for signature 'panelPomp'
+length(x)
+
+## S4 method for signature 'panelPomp'
+names(x)
+
+## S4 method for signature 'panelPomp'
+pparams(object)
+
+pParams(value)
+
+## S4 method for signature 'panelPomp'
+print(x, ...)
+
+## S4 method for signature 'panelPomp'
+show(object)
+
+## S4 method for signature 'panelPomp'
+unitobjects(object)
+
+## S4 method for signature 'panelPomp'
+window(x, start, end)
+
+## S4 method for signature 'panelPomp'
+x[i]
+
+## S4 method for signature 'panelPomp'
+x[[i]]
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>object, x</code></td>
+<td>
+<p>An object of class <code>panelPomp</code> or inheriting class 
+<code>panelPomp</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>....</p>
+</td></tr>
+<tr valign="top"><td><code>value</code></td>
+<td>
+<p>value to be assigned.</p>
+</td></tr>
+<tr valign="top"><td><code>start, end</code></td>
+<td>
+<p>position in original <code>times(pomp)</code> at which to start.</p>
+</td></tr>
+<tr valign="top"><td><code>i</code></td>
+<td>
+<p>unit index (indices) or name (names).</p>
+</td></tr>
+</table>
+
+
+<h3>Methods</h3>
+
+
+<dl>
+<dt>coef</dt><dd><p>Extracts coefficients of <code>panelPomp</code> objects.</p>
+</dd>
+<dt>coef&lt;-</dt><dd><p>Assign coefficients to <code>panelPomp</code> objects.</p>
+</dd>
+<dt>length</dt><dd><p>Count the number of units in <code>panelPomp</code> objects.</p>
+</dd>
+<dt>names</dt><dd><p>Get the unit names of <code>panelPomp</code> objects.</p>
+</dd>
+<dt>pparams</dt><dd><p>Extracts coefficients from <code>panelPomp</code> objects.</p>
+</dd>
+<dt>[]</dt><dd><p>Take a subset of units.</p>
+</dd>
+<dt>[[]]</dt><dd><p>Select the pomp object for a single unit.</p>
+</dd>
+<dt>window</dt><dd><p>Subset <code>panelPomp</code> objects by changing start time and
+end time.</p>
+</dd>
+</dl>
+
+
+
+<h3>Author(s)</h3>
+
+<p>Carles Breto, Aaron A. King.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>Other panelPomp methods: 
+<code>as()</code>
+</p>
+
+
+</body></html>
