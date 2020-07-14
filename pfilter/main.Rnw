@@ -480,7 +480,7 @@ set.seed(1350254336)
 \begin{frame}{Profile likelihood estimation}
   This approach is generally preferable to the Fisher information for POMP models.
 
-  We will explain this method below and put it into practice in the \link{../mif/slides.pdf}{next lesson}.
+  We will explain this method below and put it into practice in the \link{../mif/}{next lesson}.
 \end{frame}
 
 \begin{frame}{The bootstrap}
