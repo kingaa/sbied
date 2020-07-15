@@ -1,59 +1,59 @@
-Pre-assign Room Name,Email Address,Name
-room01,caijunthu@gmail.com,"Cai, Jun"
-room01,jiani.chen@uga.edu,"Chen, Jiani"
-room01,Quentin.Leclerc@lshtm.ac.uk,"Leclerc, Quentin"
-room01,manuela.runge@northwestern.edu,"Runge, Manuela"
-room01,jek118@pitt.edu,"Salerno, Jessica"
-room02,carlos.culquichicon@emory.edu,"Culquichicón, Carlos"
-room02,rlaufer@som.umaryland.edu,"Laufer, Rachel"
-room02,kmagnaye@uchicago.edu,"Magnaye, Kevin"
-room02,nicole.nova@stanford.edu,"Nova, Nicole"
-room02,Cstone@illinois.edu,"Stone, christopher"
-room03,zebulun.arendsee@usda.gov,"Arendsee, Zebulun"
-room03,damonmbayer@gmail.com,"Bayer, Damon"
-room03,yang.ge@uga.edu,"Ge, Yang"
-room03,kevinchenma@g.harvard.edu,"Ma, Kevin"
-room03,spencer.woody@utexas.edu,"Woody, Spencer"
-room04,baliu002@umn.edu,"Balius, Patrick"
-room04,evangelina.garza@cimat.mx,"Garza, Evangelina"
-room04,Mharris9@stanford.edu,"Harris, Mallory"
-room04,mcdonough@pstat.ucsb.edu,"McDonough, Matthew"
-room04,aadrita.nandi@northwestern.edu,"Nandi, Aadrita"
-room05,svbates@ncsu.edu,"Bates, Savannah"
-room05,jdurana@emory.edu,"Duran, Sebastian"
-room05,rsissema@uw.edu,"Issema, Rodal"
-room05,adria.sanjose@isglobal.org,"San José, Adrià"
-room05,vincent.sluydts@uantwerpen.be,"Sluydts, Vincent"
-room06,gwen.knight@lshtm.ac.uk,"Knight, Gwen"
-room06,s108080567@m108.nthu.edu.tw,"Li, Yu-An"
-room06,thiery.masserey@swisstph.ch,"Masserey, Thiery"
-room06,dorarajonhson@gmail.com,"Rajonhson, Dora"
-room06,mschnur3@jhmi.edu,"Schnure, Melissa"
-room07,kingca@ohsu.edu,"King, Caroline"
-room07,rnomura@uw.edu,"Nomura, Reed"
-room07,srhea@rti.org,"Rhea, Sarah"
-room07,kelsey.shaw10@gmail.com,"Shaw, Kelsey"
-room07,ssshin2@uci.edu,"Shin, Sanghyuk"
-room08,jdd65@pitt.edu,"DiSanto, Dominic"
-room08,v.harish@mail.utoronto.ca,"Harish, Vinyas"
-room08,yeongseon.park@emory.edu,"Park, Yeongseon"
-room08,m.ruiz.aravena@gmail.com,"Ruiz-Aravena, Manuel"
-room08,rx32940@uga.edu,"Xu, Ruijie"
-room09,xmeng@umass.edu,"Li, Tang"
-room09,ciara.nugent@utexas.edu,"Nugent, Ciara"
-room09,ifeoma.ozodiegwu@northwestern.edu,"Ozodiegwu, Ifeoma"
-room09,jross3@uw.edu,"Ross, Jennifer"
-room09,Helen.Wilson@warwick.ac.uk,"Wilson, Helen"
-room10,brooke.berger@colostate.edu,"Berger, Brooke"
-room10,igoldsteinh@gmail.com,"Goldstein, Isaac"
-room10,jordan.allen.johnson@emory.edu,"Johnson, Jordan"
-room10,kirkd@stanford.edu,"Kirk, Devin"
-room10,pasco@utexas.edu,"Pasco, Remy"
-room11,andrea2allen@gmail.com,"Allen, Andrea"
-room11,david.hufnagel@usda.gov,"Hufnagel, David"
-room11,nleung@fredhutch.org,"Leung, Tiffany"
-room11,awiens@nd.edu,"Wieler, Annaliese"
-room12,cayleefalvo@gmail.com,"Falvo, Caylee"
-room12,akawiecki@ucdavis.edu,"Kawiecki, Anna"
-room12,yunbinam@uw.edu,"Nam, Yunbi"
-room12,dongni.zhang@math.su.se,"Zhang, Dongni"
+Registrant,University/Organization,Position,Department,E-mail,Slack,Group,Timezone,Confirmed
+"Nova, Nicole",Stanford University,PhD Candidate,Biology,nicole.nova@stanford.edu,@Nicole Nova,room01,-7,
+"King, Caroline",Oregon Health & Science University,MD/PhD Student,Biomedical Engineering,kingca@ohsu.edu,@Caroline King,room01,-7,
+"Runge, Manuela",Northwestern University,Postdoctoral Fellow,Preventive Medicine,manuela.runge@northwestern.edu,@Manuela Runge,room01,-5,x
+"Allen, Andrea",ThoughtWorks,,,andrea2allen@gmail.com,@Andrea Allen,room01,-4,x
+"Magnaye, Kevin",University of Chicago,Graduate Student,Human Genetics,kmagnaye@uchicago.edu,@Kevin Magnaye,room01,-5,
+"Bayer, Damon","University of California, Irvine",PhD Student,Statistics,damonmbayer@gmail.com,@Damon Bayer,room02,-7,
+"Ruiz-Aravena, Manuel",Montana State University,Postdoctoral Researcher,Microbiology & Immunology,m.ruiz.aravena@gmail.com,@Manuel Ruiz,room02,-6,
+"Woody, Spencer",The University of Texas at Austin,Graduate Student,Department of Statistics and Data Sciences,spencer.woody@utexas.edu,@Spencer Woody (UT-Austin),room02,-6,
+"Wieler, Annaliese",University of Notre Dame,Graduate Student,Biological Sciences,awiens@nd.edu,@Annaliese Wieler,room02,-5,
+"Ozodiegwu, Ifeoma",NORTHWESTERN UNIV,Postdoctoral Fellow,Preventive Medicine,ifeoma.ozodiegwu@northwestern.edu,@ifeoma ozodiegwu,room02,-5,x
+"Harish, Vinyas",University of Toronto,MD/PhD Candidate,Faculty of Medicine & Dalla Lana School of Public Health,v.harish@mail.utoronto.ca,@Vinyas Harish,room03,-4,x
+"Culquichicón, Carlos",Emory University,Graduate student,Gangarosa Department of Environmental Health,carlos.culquichicon@emory.edu,@Carlos Culquichicon,room03,-4,
+"Laufer, Rachel",University of Maryland School of Medicine,Lead Research Analyst,Center for Vaccine Development and Global Health,rlaufer@som.umaryland.edu,@Rachel Laufer,room03,-4,x
+"Schnure, Melissa",Johns Hopkins Bloomberg School of Public Health,PhD Student,Epidemiology,mschnur3@jhmi.edu,@Melissa Schnure,room03,-4,x
+"Li, Yu-An",National Tsing Hua University,"No. 101, Sec. 2, Guangfu Rd., East Dist., Hsinchu City 300, Taiwan (R.O.C.)",Institute of Bioinformatics and Structural Biology.,s108080567@m108.nthu.edu.tw,@Yu-An Li,room03,8,
+"Ross, Jennifer",University of Washington,Acting Assistant Professor,Global Health,jross3@uw.edu,@Jennifer Ross,room04,-7,
+"Shin, Sanghyuk","University of California, Irvine",Assistant Professor,School of Nursing,ssshin2@uci.edu,@Sanghyuk Shin (UC Irvine),room04,-7,x
+"Berger, Brooke",Colorado State University,Graduate Assistant,Ecology,brooke.berger@colostate.edu,@Brooke Berger,room04,-6,
+"Chen, Jiani",University of Georgia,PhD student,Institute of Bioinformatics,jiani.chen@uga.edu,@Jiani Chen,room04,-4,x
+"Johnson, Jordan",Emory University,PhD Student,Epidemiology,jordan.allen.johnson@emory.edu,@Jordan Johnson,room04,-4,x
+"Goldstein, Isaac","University of California, Irvine",Graduate Student,Statistics,igoldsteinh@gmail.com,@Isaac Goldstein,room05,-7,
+"McDonough, Matthew","University of California, Santa Barbara",PhD Student,Department of Statistics and Applied Probability,mcdonough@pstat.ucsb.edu,@Matthew McDonough,room05,-7,
+"Balius, Patrick",University of Minnesota - Twin Cities,PhD Student,Environmental Health Sciences,baliu002@umn.edu,@Patrick Balius,room05,-5,
+"Ma, Kevin",Harvard TH Chan School of Public Health,,,kevinchenma@g.harvard.edu,@Kevin C. Ma,room05,-4,x
+"Salerno, Jessica",University of Pittsburgh,Student,Epidemiology,jek118@pitt.edu,@Jess Salerno,room05,-4,
+"Xu, Ruijie",The University of Georgia,,,rx32940@uga.edu,@Rachel Xu,room06,-4,x
+"Leclerc, Quentin",London School of Hygiene & Tropical Medicine,PhD Student,Department of Infectious Disease Epidemiology,Quentin.Leclerc@lshtm.ac.uk,@Quentin Leclerc,room06,1,x
+"San José, Adrià ",ISGlobal,Predoctoral Fellow,Climate and Health,adria.sanjose@isglobal.org,@Adrià  San José,room06,2,x
+"Zhang, Dongni",Stockholm University,PhD Student,Mathematical Statistics,dongni.zhang@math.su.se,@Dongni Zhang,room06,2,x
+"Park, Yeongseon",Emory University,Graduate Student,Graduate Division of Biological and Biomedical Sciences,yeongseon.park@emory.edu,@Yeongseon Park,room06,8,x
+"Nomura, Reed",,,,rnomura@uw.edu,@rnomura,room07,-7,
+"Pasco, Remy",The University of Texas at Austin,,Integrative Biology,pasco@utexas.edu,@Remy Pasco,room07,-5,x
+"DiSanto, Dominic",University of Pittsburgh,,Biostatistics,jdd65@pitt.edu,@Dominic Disanto,room07,-4,x
+"Rhea, Sarah",RTI International,Research Epidemiologist,Center for Applied Public Health Research,srhea@rti.org,@Sarah Rhea,room07,-4,x
+"Hufnagel, David","National Animal Disease Center, USDA-ARS",ORISE postdoctoral fellow,Virus and Prion Research Unit,david.hufnagel@usda.gov,@davehuf,room07,,
+"Kawiecki, Anna",,,,akawiecki@ucdavis.edu,@Anna Kawiecki,room08,-7,
+"Falvo, Caylee",Montana State University,Graduate student,Microbiology and Immunology,cayleefalvo@gmail.com,@Caylee Falvo,room08,-6,
+"Stone, christopher",University of illinois,,,Cstone@illinois.edu,@Chris Stone,room08,-5,
+"Nandi, Aadrita",Northwestern University,Postdoctoral Fellow,Preventive Medicine,aadrita.nandi@northwestern.edu,@Aadrita,room08,-5,
+"Duran, Sebastian",Emory University,Graduate Student,Laney Graduate School,jdurana@emory.edu,@Sebastian Duran,room08,-4,x
+"Harris, Mallory",Stanford,Grad student,Biology,Mharris9@stanford.edu,@Mallory Harris,room09,-7,
+"Leung, Tiffany",Fred Hutchinson Cancer Research Center,,Vaccine and Infectious Diseases Division,nleung@fredhutch.org,@Tiffany Leung,room09,-7,
+"Issema, Rodal",University of Washington,,,rsissema@uw.edu,@Rodal Issema,room09,-7,
+"Garza, Evangelina","Centro de Investigacion en Matematicas, A.C.",,,evangelina.garza@cimat.mx,@Evangelina Garza,room09,-5,
+"Nugent, Ciara",University of Texas at Austin,,Statistics and Data Sciences,ciara.nugent@utexas.edu,@Ciara Nugent,room09,-5,x
+"Nam, Yunbi",University of Washington,MS student,Biostatistics,yunbinam@uw.edu,@Yunbi Nam,room10,-7,
+"Kirk, Devin",Stanford University,Postdoctoral Scholar,Biology,kirkd@stanford.edu,@Devin Kirk,room10,-7,x
+"Li, Tang",University of Massachusetts Amherst,,,xmeng@umass.edu,@Tang,room10,-4,
+"Shaw, Kelsey",Emory University,PhD Candidate,Biology,kelsey.shaw10@gmail.com,@Kelsey Shaw,room10,-4,x
+"Arendsee, Zebulun",USDA ARS,postdoc,,zebulun.arendsee@usda.gov,@Zebulun Arendsee,room10,,
+"Bates, Savannah",North Carolina State University,PhD student,Mathematics,svbates@ncsu.edu,@Savannah Bates,room11,-4,x
+"Ge, Yang",University of Georgia,,Department of Epidemiology and Biostatistics,yang.ge@uga.edu,@Yang Ge,room11,-4,x
+"Masserey, Thiery","Swiss Tropical and Public Health Institute, Associated institute of the University of Basel",Graduate Student,Department of Epidemiology and Public Health,thiery.masserey@swisstph.ch,@thiery,room11,1,x
+"Wilson, Helen",University of Warwick,Student,School of Life Sciences,Helen.Wilson@warwick.ac.uk,@Helen Wilson,room11,1,
+"Knight, Gwen",London School of Hygiene and Tropical Medicine,Assistant Professor,IDE,gwen.knight@lshtm.ac.uk,@Gwen Knight,room12,1,x
+"Sluydts, Vincent",University of Antwerp,Senior Postdoc,Biology,vincent.sluydts@uantwerpen.be,@Vincent Sluydts,room12,2,
+"Rajonhson, Dora","Faculty of Tropical Medicine, Mahidol University",PhD candidate,Medical Entomology,dorarajonhson@gmail.com,@Dora Rajonhson,room12,7,
+"Cai, Jun",Tsinghua University,PhD Student,Department of Earth System Science,caijunthu@gmail.com,@Jun Cai,room12,8,x
