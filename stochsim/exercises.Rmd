@@ -85,6 +85,27 @@ measSIR %>%
 ```
 
 
+-------------
+
+## Pro-tip
+
+***When using **Rstudio**, turn off automatic save and restore of global workspace.***
+By default, when you quit a session, **R** asks whether to save the global session to a hidden file, `.RData`, in the current working directory.
+Presumably because this behavior is annoying, **Rstudio**, by default, answers the "Do you want to save to `.RData`?" question for you, in the affirmative.
+Also by default, and with only an easily overlooked message in the startup banner, **R** loads such a file, re-establishing the workspace at the start of a session.
+Because the file is hidden, and the behavior is easy to forget about, this can lead to errors that are difficult to track down.
+[For example, situations where different results are obtained on different machines during a large parallel computation, despite all the code being precisely the same!]
+For these reasons, it's best to put a stop to all of this skulduggery.
+
+To do so, go to the "Tools" menu in **Rstudio** and select "Global Options".
+Make sure the "Restore .RData into workspace at startup" box is unticked.
+For good measure, set the "Save workspace to .RData on exit" to "Never".
+
+If you ever do want to save your workspace, it's as easy as `save.image(file="<filename>.rda")`;
+restoring the file is a matter of `load("<filename>.rda")`.
+When you do this, the file you create will be visible, as of course it should be since you gain nothing by hiding things from yourself!
+
+------------------------------
 
 ## Exercise: The SEIR model
 
