@@ -86,7 +86,7 @@ Before 14:30: View lecture videos for Lessons 1 and 2 (c.&nbsp;2.5hr). Begin wor
 17:30--18:30: Optional Office hour  
 
 **Thursday, 16 July**  
-Before 11:00: View lecture videos for Lessons 3 and 4 (c.&nbsp;4hr). Begin work on the Exercises.  
+Before 11:00: View lecture videos for Lessons 3 and 4 (c.&nbsp;4hr). Begin work on the Exercises, including Exercises 3.3 and 3.4.  
 11:00--12:00: Live plenary discussion on Lesson 3 lecture  
 12:00--13:00: Breakout groups work on Lesson 3 exercises  
 13:00--13:45: Live plenary discussion of breakout group progress  
