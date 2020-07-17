@@ -221,7 +221,7 @@ plot.color <- "black"
     \item $\lfloor t \rfloor = \text{most recent 1 September before}\ t$
     \end{itemize}
   \item Force of infection:
-    $$\mu_{SE}(t) = \tfrac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
+    $$\mu_{SE}(t) = \tfrac{\beta(t)}{N(t)}\,(I+\iota)^{\alpha}\,\zeta(t)$$
     \begin{itemize}
     \item $\iota = \text{imported infections}$
     \item $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ [\cite{He2010,bhadra11}]
@@ -463,7 +463,7 @@ cat(rproc@text)
 \subsection{Notable findings}
 
 \begin{frame}[fragile]{Imported infections}
-  $$\text{force of infection} = \mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)\,\zeta(t)$$
+  $$\text{force of infection} = \mu_{SE}=\frac{\beta(t)}{N(t)}\,(I+\iota)^{\alpha}\,\zeta(t)$$
   <<imports,results="hide",echo=FALSE,out.width="4in">>=
   best <- read.csv('data/iota.csv',row.names=1)
 
