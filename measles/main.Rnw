@@ -835,20 +835,32 @@ cat(rproc@text)
     gather(variable,value,-town,-pop) %>%
     group_by(variable) %>%
     summarize(
-      cor=cor(log(value),log(pop),use="all.obs",method="spearman")
-    ) -> cors
-  cors <- setNames(cors$cor,cors$variable)
+      cor=cor(value,pop,use="all.obs",method="spearman")
+    ) %>%
+    spread(variable,cor) -> cors
 
   est %>%
-    magrittr::set_rownames(est$town) %>%
-    subset(select=-town) -> tab
-  tab %>%
-    rbind(r=cors[names(tab)]) %>%
-    signif(2) %>%
-    knitr::kable("latex")
+    bind_rows(c(cors,town="$\\qquad r$")) %>%
+    gather(var,val,-town) %>%
+    mutate(val=signif(val,2)) %>%
+    spread(var,val) %>%
+    arrange(pop) %>%
+    mutate(
+      pop=coalesce(pop,1),
+      town=stringi::stri_replace_all_fixed(town,"."," ")
+    ) %>%
+    select(
+      town,
+      `$N_{1950}$`=pop,`$R_0$`=R0,IP,LP,`$\\alpha$`=alpha,
+      `$a$`=amplitude,`$\\iota$`=iota,`$\\psi$`=psi,`$\\rho$`=rho,
+      `$\\sigma_{SE}$`=sigmaSE
+    ) %>%
+    column_to_rownames("town") %>%
+    knitr::kable("latex",row.names=TRUE,escape=FALSE)
 @
 
-$r = \mathrm{cor}(\log{\hat\theta},\log{N_{1950}})$
+\vspace{1em}
+$r=\mathrm{cor}_{S}({\cdot},{N_{1950}})$ (Spearman rank correlation)
 
 \end{frame}
 

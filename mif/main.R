@@ -51,6 +51,10 @@ dat %>%
     rmeasure=rmeas,
     dmeasure=dmeas,
     accumvars="H",
+    partrans=parameter_trans(
+      log=c("Beta"),
+      logit=c("rho","eta")
+    ),
     statenames=c("S","I","H"),
     paramnames=c("Beta","mu_IR","eta","rho","N")
   ) -> measSIR
@@ -101,11 +105,6 @@ bake(file="local_search.rds",{
       mif2(
         params=params,
         Np=2000, Nmif=50,
-        partrans=parameter_trans(
-          log=c("Beta"),
-          logit=c("rho","eta")
-        ),
-        paramnames=c("Beta","rho","eta"),
         cooling.fraction.50=0.5,
         rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02))
       )
@@ -116,7 +115,16 @@ bake(file="local_search.rds",{
 t_loc <- attr(mifs_local,"system.time")
 ncpu_loc <- attr(mifs_local,"ncpu")
 
-
+## dat %>%
+##   pomp(
+##     times="week",t0=0,
+##     rprocess=euler(sir_step,delta.t=1/7),
+##     rinit=sir_init, rmeasure=rmeas, dmeasure=dmeas,
+##     partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
+##     accumvars="H", statenames=c("S","I","H"),
+##     paramnames=c("Beta","mu_IR","eta","rho","N"),
+##     cdir=".", cfile="measSIR"
+##   ) -> measSIR
 
 mifs_local %>%
   traces() %>%

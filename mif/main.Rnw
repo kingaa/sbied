@@ -359,6 +359,10 @@ set.seed(1350254336)
       rmeasure=rmeas,
       dmeasure=dmeas,
       accumvars="H",
+      partrans=parameter_trans(
+        log=c("Beta"),
+        logit=c("rho","eta")
+      ),
       statenames=c("S","I","H"),
       paramnames=c("Beta","mu_IR","eta","rho","N")
     ) -> measSIR
@@ -536,11 +540,6 @@ set.seed(1350254336)
       mif2(
         params=params,
         Np=2000, Nmif=50,
-        partrans=parameter_trans(
-          log=c("Beta"),
-          logit=c("rho","eta")
-        ),
-        paramnames=c("Beta","rho","eta"),
         cooling.fraction.50=0.5,
         rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02))
       )
@@ -564,7 +563,7 @@ set.seed(1350254336)
   It has been possible to circumvent this problem by adding \code{cdir="."} and \code{cfile=<filename>} as arguments in the call that created \code{measSIR}.
   Thus, for example,
   
-  <<eval=FALSE,purl=FALSE>>=
+  <<eval=FALSE,purl=TRUE>>=
   dat %>%
     pomp(
       times="week",t0=0,
