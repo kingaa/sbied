@@ -111,7 +111,8 @@ bake("sigmaSE-profile1.rds",{
       etime = as.numeric(etime)
     )
   }
-}) -> sigmaSE_prof
+}) %>%
+  filter(is.finite(loglik)) -> sigmaSE_prof
 
 
 

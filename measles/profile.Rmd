@@ -240,7 +240,8 @@ bake("sigmaSE-profile1.rds",{
       etime = as.numeric(etime)
     )
   }
-}) -> sigmaSE_prof
+}) %>%
+  filter(is.finite(loglik)) -> sigmaSE_prof
 ```
 
 The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r signif(mean(sigmaSE_prof$etime)*3600/120,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.

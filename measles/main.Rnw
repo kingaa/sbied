@@ -72,7 +72,7 @@ plot.color <- "black"
     \item spatial traveling waves
     \end{itemize}
   \item Much of this evidence has been amassed from fitting models to data, using a variety of methods.
-  \item See \cite{Rohani2010} for a review of some of the high points.
+  \item See \citet{Rohani2010} for a review of some of the high points.
   \end{itemize}
   <<load-data,echo=FALSE>>=
   @
@@ -224,7 +224,7 @@ plot.color <- "black"
     $$\mu_{SE}(t) = \tfrac{\beta(t)}{N(t)}\,(I+\iota)^{\alpha}\,\zeta(t)$$
     \begin{itemize}
     \item $\iota = \text{imported infections}$
-    \item $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ [\cite{He2010,bhadra11}]
+    \item $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ \citep{He2010,bhadra11}
     \item school-term transmission:
       $$\beta(t) = \begin{cases}\beta_0\,\big(1+a(1-p)/p\big) &\text{during term}\\\beta_0\,(1-a) &\text{during vacation}\end{cases}$$
       \begin{itemize}
@@ -391,10 +391,10 @@ cat(rproc@text)
 
 \section{Estimation}
 
-\subsection{\cite{He2010}}
+\subsection{\citet{He2010}}
 
-\begin{frame}[fragile]{Estimates from \cite{He2010}}
-  \cite{He2010} estimated the parameters of this model.
+\begin{frame}[fragile]{Estimates from \citet{He2010}}
+  \citet{He2010} estimated the parameters of this model.
   The full set is included in the \Rlanguage code accompanying this document, where they are read into a data frame called \code{mles}.
   <<mles,include=FALSE>>=
   @
@@ -402,7 +402,7 @@ cat(rproc@text)
   <<mle,include=FALSE>>=
   @
   
-  We verify that we get the same likelihood as \cite{He2010}.
+  We verify that we get the same likelihood as \citet{He2010}.
 
   <<pfilter1a,eval=F>>=
   @
@@ -449,7 +449,7 @@ cat(rproc@text)
 
 \section{Findings}
 
-\begin{frame}[fragile]{Results from \cite{He2010}}
+\begin{frame}[fragile]{Results from \citet{He2010}}
   \link{./profile.html}{The linked document shows how a likelihood profile can be constructed using IF2}
   The fitting procedure used is as follows:
   \begin{itemize}
@@ -1024,7 +1024,7 @@ $r=\mathrm{cor}_{S}({\cdot},{N_{1950}})$ (Spearman rank correlation)
 
 \begin{frame}{\myexercise. Reformulate the model}
   \begin{itemize}
-  \item Modify the \cite{He2010} model to remove the cohort effect.
+  \item Modify the \citet{He2010} model to remove the cohort effect.
     Run simulations and compute likelihoods to convince yourself that the resulting codes agree with the original ones for `cohort = 0`.
   \item Now modify the transmission seasonality to use a sinusoidal form. How many parameters must you use?
     Fixing the other parameters at their MLE values, compute and visualize a profile likelihood over these parameters.
