@@ -28,7 +28,7 @@ csl: ../jss.csl
 ```{r setup,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 
-```{r load_chunks}
+```{r load_chunks,include=FALSE}
 read_chunk("codes.R")
 ```
 

@@ -4,6 +4,20 @@ subtitle: Simulation-based Inference for Epidemiological Dynamics
 date: "15--17 July 2020"
 ---
 
+<style type="text/css">
+div .nb {
+	background-color: #ffeca3;
+	border-style: solid;
+	border-width: 2;
+	border-color: #00274c;
+	padding: 1em;
+}
+hr {
+	border-width: 3;
+	border-color: #00274c;
+}
+</style>
+
 -----------------------------
 
 ### Important Information
@@ -68,46 +82,59 @@ The course will have five components:
 
 ### Tentative Course Schedule
 
-***All times are EDT (UTC-04:00)***
-
-**The Zoom meeting ID is [925 2722 9135](https://umich.zoom.us/j/92527229135).**
-A password will be sent over the course Slack channel.
-***To enter the Zoom session, you must first register using the link that was sent you.***
-
 The following schedule will be updated frequently.
 Bookmark this page so that you can check it at least twice per day.
 
-**Wednesday, 15 July**  
+<div class="nb">
+***All listed times are Eastern Daylight Time (UTC-04:00)***  
+Be careful to translate to your local timezone!
+</div>
+
+#### Wednesday, 15 July
+
 Before 14:30: View lecture videos for Lessons 1 and 2 (c.&nbsp;2.5hr). Begin work on the Exercises 2.3 and 2.4.  
+
+**Session 1**__
 14:30--15:30: Introductions. Live plenary discussion on Lessons 1 and 2 lectures  
 15:30--15:45: Set up Zoom breakout rooms  
 15:45--16:45: Breakout groups work on Lesson 2 exercises  
 16:45--17:30: Live plenary discussion of breakout group results  
+
 17:30--18:30: Optional Office hour  
 
-**Thursday, 16 July**  
+#### Thursday, 16 July
+
 Before 11:00: View lecture videos for Lessons 3 and 4 (c.&nbsp;4hr). Begin work on the Exercises, including Exercises 3.3 and 3.4.  
+
+**Session 2**  
 11:00--12:00: Live plenary discussion on Lesson 3 lecture  
 12:00--13:00: Breakout groups work on Lesson 3 exercises  
 13:00--13:45: Live plenary discussion of breakout group progress  
-13:45--14:30: Break  
+
+**Session 3**  
 14:30--15:30: Live plenary discussion on Lesson 4 lecture  
 15:30--16:30: Breakout groups work on Lesson 4 exercises  
 16:30--16:45: Break  
 16:45--17:30: Live plenary discussion of breakout group progress  
+
 17:30--18:30: Optional Office hour  
 
-**Friday, 17 July**  
+#### Friday, 17 July
+
 Before 11:00: View lecture video for Lesson 5 and (optionally) one or more of Lessons 6, 7, 8 (c.&nbsp;1.5--3hr)  
+
+**Session 4**  
 11:00--12:00: Live plenary discussion on Lesson 5 lecture  
 12:00--13:00: Breakout groups work on exercises from Lessons 2--4  
 13:00--13:45: Live plenary discussion of breakout group progress  
-13:45--14:30: Break  
+
+**Session 5**  
 14:30--15:10: Live, optional, plenary discussion on Lesson 6  
 15:10--15:50: Live, optional, plenary discussion on Lesson 7  
 15:50--16:30: Live, optional, plenary discussion on Lesson 8  
 14:30--16:30: Those not attending a plenary discussion can use the time to work individually or in groups on the Exercises.  
 16:30--17:30: Live plenary discussion. Questions and answers. Concluding remarks.  
+
 17:30--18:30: Optional drop-in session: all topics welcomed.  
 
 -----------------------------
@@ -199,8 +226,10 @@ For groups that have only three members, the Seeker, Taker, and Keeper roles may
 
 -----------------------------
 
-## Pre-module Survey
+## Pre- and post-module surveys
 
 To help us understand your background and goals a bit better, please fill out this short [pre-module survey](https://catalyst.uw.edu/webq/survey/nelsod6/393410) at the beginning of the course.
+
+We will be grateful to you for filling out the [post-module survey](https://catalyst.uw.edu/webq/survey/nelsod6/393411) shortly after completing the course.
 
 -----------------------------
