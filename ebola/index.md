@@ -6,13 +6,13 @@ output: html_document
 
 ----------------------
 
-| &nbsp;                                    | &nbsp;                                                                            |
-|:------------------------------------------|:---------------------------------------------------------------------------------:|
-| Lecture                                   | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2QuMxA6ZM4MGAMqE3r022Dd) |
-| Lecture slides                            | [PDF](slides.pdf)                                                                 |
-| Lecture notes                             | [PDF](notes.pdf)                                                                  |
-| Supplement: constructing the Ebola models | [HTML](model.html)                                                                |
-| Model construction and analysis script    | [**R**](codes.R)                                                                  |
+| &nbsp;                                    | &nbsp;                                                                                    |
+|:------------------------------------------|:-----------------------------------------------------------------------------------------:|
+| Lecture                                   | [Video (40 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2QuMxA6ZM4MGAMqE3r022Dd) |
+| Lecture slides                            | [PDF](slides.pdf)                                                                         |
+| Lecture notes                             | [PDF](notes.pdf)                                                                          |
+| Supplement: constructing the Ebola models | [HTML](model.html)                                                                        |
+| Model construction and analysis script    | [**R**](codes.R)                                                                          |
 
 ----------------------
 

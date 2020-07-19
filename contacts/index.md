@@ -6,13 +6,13 @@ output: html_document
 
 ----------------------
 
-| &nbsp;                            | &nbsp;                                                                            |
-|:----------------------------------|:---------------------------------------------------------------------------------:|
-| Lecture                           | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2QvMjw6R4Fo7tYsNgcpRIwt) |
-| Lecture slides                    | [PDF](slides.pdf)                                                                 |
-| Lecture notes                     | [PDF](notes.pdf)                                                                  |
-| **R** script for the lesson       | [**R**](main.R)                                                                   |
-| Worked solutions to the Exercises | [HTML](exercises.html)                                                            |
+| &nbsp;                            | &nbsp;                                                                                    |
+|:----------------------------------|:-----------------------------------------------------------------------------------------:|
+| Lecture                           | [Video (30 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2QvMjw6R4Fo7tYsNgcpRIwt) |
+| Lecture slides                    | [PDF](slides.pdf)                                                                         |
+| Lecture notes                     | [PDF](notes.pdf)                                                                          |
+| **R** script for the lesson       | [**R**](main.R)                                                                           |
+| Worked solutions to the Exercises | [HTML](exercises.html)                                                                    |
 
 
 ----------------------

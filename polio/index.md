@@ -8,7 +8,7 @@ output: html_document
 
 | &nbsp;                          | &nbsp;                                                                            |
 |:--------------------------------|:---------------------------------------------------------------------------------:|
-| Lecture                         | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2QCHiHqWASOu0VdyPRGwKrV) |
+| Lecture                         | [Video (65 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2QCHiHqWASOu0VdyPRGwKrV) |
 | Lecture slides                  | [PDF](slides.pdf)                                                                 |
 | Lecture notes                   | [PDF](notes.pdf)                                                                  |
 | **R** script for the lesson     | [**R**](main.R)                                                                   |
