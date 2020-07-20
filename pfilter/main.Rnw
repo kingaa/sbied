@@ -571,7 +571,7 @@ set.seed(1350254336)
 \begin{frame}[fragile,allowframebreaks]{Slicing the measles SIR likelihood}
 
   <<like-slice1,eval=FALSE,purl=FALSE>>=
-  sliceDesign(
+  slice_design(
     center=coef(measSIR),
     Beta=rep(seq(from=5,to=20,length=40),each=3),
     mu_IR=rep(seq(from=0.2,to=2,length=40),each=3)

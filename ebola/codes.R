@@ -258,7 +258,7 @@ profs %>%
   as.matrix() -> ranges
 
 ## ----forecasts1d----------------------------------------------------------
-sobolDesign(
+sobol_design(
   lower=ranges[,"min"],
   upper=ranges[,"max"],
   nseq=20

@@ -165,7 +165,7 @@ if (file.exists("CLUSTER.R")) {
 
 set.seed(2062379496)
 
-runifDesign(
+runif_design(
   lower=c(Beta=5,rho=0.2,eta=0),
   upper=c(Beta=80,rho=0.9,eta=0.4),
   nseq=300
@@ -227,7 +227,7 @@ read_csv("measles_params.csv") %>%
 box
 
 set.seed(1196696958)
-profileDesign(
+profile_design(
   eta=seq(0.01,0.85,length=40),
   lower=box[1,c("Beta","rho")],
   upper=box[2,c("Beta","rho")],
@@ -376,7 +376,7 @@ results %>%
   summarize(min=min(rho),max=max(rho)) -> rho_ci
 
 set.seed(55266255)
-runifDesign(
+runif_design(
   lower=c(Beta=5,mu_IR=0.2,eta=0),
   upper=c(Beta=80,mu_IR=5,eta=0.4),
   nseq=1000
@@ -460,7 +460,7 @@ read_csv("measles_params.csv") %>%
   sapply(range) -> box
 
 set.seed(610408798)
-profileDesign(
+profile_design(
   mu_IR=seq(0.5,2,by=0.1),
   lower=box[1,c("Beta","eta")],
   upper=box[2,c("Beta","eta")],
