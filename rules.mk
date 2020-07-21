@@ -1,6 +1,7 @@
 # REXE = Rscript --vanilla
 # For some reason, --vanilla fails on my Mac 
 REXE = Rscript --no-save --no-restore --no-init-file
+ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 slides.pdf handout.pdf notes.pdf: main.tex
 
@@ -22,6 +23,8 @@ slides.pdf handout.pdf notes.pdf: main.tex
 
 %.tex: %.Rnw
 	$(REXE) -e "knitr::knit(\"$*.Rnw\",output=\"$*.tex\")"
+
+%.pdf: export BSTINPUTS=$(ROOT_DIR)
 
 %.pdf: %.tex
 	pdflatex $*
