@@ -1,0 +1,10 @@
+\documentclass{article}
+
+\newcommand\solution[1]{}
+
+<<sol-setup,echo=FALSE>>=
+SOLUTION <- FALSE
+saveRDS(SOLUTION,file="tmp.rds")
+@
+
+\input{main}

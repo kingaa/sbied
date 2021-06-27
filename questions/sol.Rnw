@@ -1,0 +1,10 @@
+\documentclass{article}
+
+\newcommand\solution[1]{ {\color{blue}{\bf Solution}. {#1}} }
+
+<<sol-setup,echo=FALSE>>=
+SOLUTION <- TRUE
+saveRDS(SOLUTION,file="tmp.rds")
+@
+
+\input{main}
