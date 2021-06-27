@@ -274,7 +274,7 @@ polio_params %>%
   select(-logLik,-logLik_se,-rho) %>% 
   gather(variable,value) %>%  
   group_by(variable) %>%
-  dplyr::summarize(min=min(value),max=max(value)) %>%
+  summarize(min=min(value),max=max(value)) %>%
   ungroup() %>%
   column_to_rownames(var="variable") %>%
   t() -> box

@@ -4,6 +4,20 @@ subtitle: Simulation-based Inference for Epidemiological Dynamics
 date: "15--17 July 2020"
 ---
 
+<style type="text/css">
+div .nb {
+	background-color: #ffeca3;
+	border-style: solid;
+	border-width: 2;
+	border-color: #00274c;
+	padding: 1em;
+}
+hr {
+	border-width: 3;
+	border-color: #00274c;
+}
+</style>
+
 -----------------------------
 
 ### Important Information
@@ -23,52 +37,6 @@ The course website is https://kingaa.github.io/sbied/.
 All course materials can be found there.
 These include links to Youtube lecture videos, copies of the lecture slides, lecture notes, **R** scripts containing codes used in the lectures, and supplementary material on various background topics or topics touched tangentially in the lectures.
 Exercises are given in the lectures and can be found on the slides and in the notes.
-
------------------------------
-
-### Tentative Course Schedule
-
-***All times are EDT (UTC-04:00)***
-
-**The Zoom meeting ID is [925 2722 9135](https://umich.zoom.us/j/92527229135).**
-A password will be sent over the course Slack channel.
-***To enter the Zoom session, you must first register using the link that was sent you.***
-
-The following schedule will be updated frequently.
-Bookmark this page so that you can check it at least twice per day.
-
-**Wednesday, 15 July**  
-Before 14:30: View lecture videos for Lessons 1 and 2. Begin work on the Exercises 2.3 and 2.4.  
-14:30--15:30: Introductions. Live plenary discussion on Lessons 1 and 2 lectures  
-15:30--15:45: Set up Zoom breakout rooms  
-15:45--16:45: Breakout groups work on Lesson 2 exercises  
-16:45--17:30: Live plenary discussion of breakout group results  
-17:30--18:30: Optional Office hour  
-
-**Thursday, 16 July**  
-Before 11:00: View lecture videos for Lessons 3 and 4. Begin work on the Exercises.  
-11:00--12:00: Live plenary discussion on Lesson 3 lecture  
-12:00--13:00: Breakout groups work on Lesson 3 exercises  
-13:00--13:45: Live plenary discussion of breakout group progress  
-13:45--14:30: Break  
-14:30--15:30: Live plenary discussion on Lesson 4 lecture  
-15:30--16:30: Breakout groups work on Lesson 4 exercises  
-16:30--16:45: Break  
-16:45--17:30: Live plenary discussion of breakout group progress  
-17:30--18:30: Optional Office hour  
-
-**Friday, 17 July**  
-Before 11:00: View lecture video for Lesson 5 and (optionally) one or more of Lessons 6, 7, 8  
-11:00--12:00: Live plenary discussion on Lesson 5 lecture  
-12:00--13:00: Breakout groups work on exercises from Lessons 2--4  
-13:00--13:45: Live plenary discussion of breakout group progress  
-13:45--14:30: Break  
-14:30--15:10: Live, optional, plenary discussion on Lesson 6  
-15:10--15:50: Live, optional, plenary discussion on Lesson 7  
-15:50--16:30: Live, optional, plenary discussion on Lesson 8  
-16:30--17:30: Live plenary discussion. Questions and answers. Concluding remarks.  
-14:30--16:30: Those not attending a plenary discussion can use the time to work individually or in groups on the Exercises.  
-17:30--18:30: Optional drop-in session: all topics welcomed.  
 
 -----------------------------
 
@@ -102,13 +70,72 @@ The course will have five components:
    At their first meeting, groups should agree among themselves as to who should perform the roles.
    Roles should be rotated periodically.  
    ***Asking for help from a group***.
-   When a group wants help from the instructors, it can either post a question via Slack, send a member out of the breakout room to ask, leave the breakout room as a group to talk with the instructor, or use the 'Ask for Help' feature, which allows the group to request that one of the instructors visit the breakout room.
+   When a group wants help from the instructors, it can either (1) post a question via Slack, (2) send a member out of the breakout room to ask, (3) leave the breakout room as a group to talk with the instructor, or (4) use the 'Ask for Help' feature, which allows the group to request that one of the instructors visit the breakout room.
    The breakout groups are where you will learn the most, so do not hesitate to ask for help when needed!
    As needed, the instructors may pull everyone back for plenary discussion of points that arise in group activities.
    See below for more on breakout group roles, rules, and expectations regarding breakout group activities.
    
 1. ***Optional office hours.***
    These are times when you should feel free to drop in with questions or when you need help.
+
+-----------------------------
+
+### Tentative Course Schedule
+
+The following schedule will be updated frequently.
+Bookmark this page so that you can check it at least twice per day.
+
+<div class="nb">
+***All listed times are Eastern Daylight Time (UTC-04:00)***  
+Be careful to translate to your local timezone!
+</div>
+
+#### Wednesday, 15 July
+
+Before 14:30: View lecture videos for Lessons 1 and 2 (c.&nbsp;2.5hr). Begin work on the Exercises 2.3 and 2.4.  
+
+**Session 1**__
+14:30--15:30: Introductions. Live plenary discussion on Lessons 1 and 2 lectures  
+15:30--15:45: Set up Zoom breakout rooms  
+15:45--16:45: Breakout groups work on Lesson 2 exercises  
+16:45--17:30: Live plenary discussion of breakout group results  
+
+17:30--18:30: Optional Office hour  
+
+#### Thursday, 16 July
+
+Before 11:00: View lecture videos for Lessons 3 and 4 (c.&nbsp;4hr). Begin work on the Exercises, including Exercises 3.3 and 3.4.  
+
+**Session 2**  
+11:00--12:00: Live plenary discussion on Lesson 3 lecture  
+12:00--13:00: Breakout groups work on Lesson 3 exercises  
+13:00--13:45: Live plenary discussion of breakout group progress  
+
+**Session 3**  
+14:30--15:30: Live plenary discussion on Lesson 4 lecture  
+15:30--16:30: Breakout groups work on Lesson 4 exercises  
+16:30--16:45: Break  
+16:45--17:30: Live plenary discussion of breakout group progress  
+
+17:30--18:30: Optional Office hour  
+
+#### Friday, 17 July
+
+Before 11:00: View lecture video for Lesson 5 and (optionally) one or more of Lessons 6, 7, 8 (c.&nbsp;1.5--3hr)  
+
+**Session 4**  
+11:00--12:00: Live plenary discussion on Lesson 5 lecture  
+12:00--13:00: Breakout groups work on exercises from Lessons 2--4  
+13:00--13:45: Live plenary discussion of breakout group progress  
+
+**Session 5**  
+14:30--15:10: Live, optional, plenary discussion on Lesson 6  
+15:10--15:50: Live, optional, plenary discussion on Lesson 7  
+15:50--16:30: Live, optional, plenary discussion on Lesson 8  
+14:30--16:30: Those not attending a plenary discussion can use the time to work individually or in groups on the Exercises.  
+16:30--17:30: Live plenary discussion. Questions and answers. Concluding remarks.  
+
+17:30--18:30: Optional drop-in session: all topics welcomed.  
 
 -----------------------------
 
@@ -126,13 +153,13 @@ In the spirit of ensuring an efficient and enjoyable learning experience for eve
    At any one time, at least one of the instructors will be monitoring the Slack channel.
 1. ***When submitting over Slack, take some care to avoid unnecessary duplication.***
    If someone has recently asked the same question, you can register your interest in having that question answered using the "reaction" buttons, without having to restate the question.
-1. ***Set your "name" in your Zoom session to what you want to be called***.
-   We will be able to view your name, as well as your face, when you ask a question, or when we visit you in a breakout room.
-   Having your name set in this way will help us recognize you.
 1. ***During the breakout discussions, keep both your audio and video on.***
    The breakout sessions will be where you apply the lessons you learn and discover where you want to ask additional questions.
    You will have a specific role in your group that your fellow group members will rely on you to perform.
    To facilitate full engagement, keep your video and audio on during these sessions whenever appropriate.
+1. ***Set your "name" in your Zoom session to what you want to be called***.
+   We will be able to view your name, as well as your face, when you ask a question, or when we visit you in a breakout room.
+   Having your name set in this way will help us recognize you.
 1. ***Be on guard against distractions.***
    During the time in which your audio and video are on, do your best to minimize distracting sounds and sights that might distract your colleagues.
    It is equally important that you recognize that the digital environment is full of its own distractions: 
@@ -193,6 +220,16 @@ and everyone is expected to listen to, and engage with, the contributions of the
    This should be at most a paragraph, focused on communicating the essentials only: 
    what exercises were tackled, what approaches taken, what progress made, what difficulties encountered.
 
-For groups that have only four members, the Keeper and Slacker roles may be combined, as may the Keeper and Seeker roles.
+For groups that have only four members, the Seeker and Taker roles may be combined, as may the Seeker and Keeper roles.
+
+For groups that have only three members, the Seeker, Taker, and Keeper roles may be combined into one.
+
+-----------------------------
+
+## Pre- and post-module surveys
+
+To help us understand your background and goals a bit better, please fill out this short [pre-module survey](https://catalyst.uw.edu/webq/survey/nelsod6/393410) at the beginning of the course.
+
+We will be grateful to you for filling out the [post-module survey](https://catalyst.uw.edu/webq/survey/nelsod6/393411) shortly after completing the course.
 
 -----------------------------

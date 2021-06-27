@@ -51,6 +51,10 @@ dat %>%
     rmeasure=rmeas,
     dmeasure=dmeas,
     accumvars="H",
+    partrans=parameter_trans(
+      log=c("Beta"),
+      logit=c("rho","eta")
+    ),
     statenames=c("S","I","H"),
     paramnames=c("Beta","mu_IR","eta","rho","N")
   ) -> measSIR
@@ -101,11 +105,6 @@ bake(file="local_search.rds",{
       mif2(
         params=params,
         Np=2000, Nmif=50,
-        partrans=parameter_trans(
-          log=c("Beta"),
-          logit=c("rho","eta")
-        ),
-        paramnames=c("Beta","rho","eta"),
         cooling.fraction.50=0.5,
         rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02))
       )
@@ -116,7 +115,16 @@ bake(file="local_search.rds",{
 t_loc <- attr(mifs_local,"system.time")
 ncpu_loc <- attr(mifs_local,"ncpu")
 
-
+## dat %>%
+##   pomp(
+##     times="week",t0=0,
+##     rprocess=euler(sir_step,delta.t=1/7),
+##     rinit=sir_init, rmeasure=rmeas, dmeasure=dmeas,
+##     partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
+##     accumvars="H", statenames=c("S","I","H"),
+##     paramnames=c("Beta","mu_IR","eta","rho","N"),
+##     cdir=".", cfile="measSIR"
+##   ) -> measSIR
 
 mifs_local %>%
   traces() %>%
@@ -157,7 +165,7 @@ if (file.exists("CLUSTER.R")) {
 
 set.seed(2062379496)
 
-runifDesign(
+runif_design(
   lower=c(Beta=5,rho=0.2,eta=0),
   upper=c(Beta=80,rho=0.9,eta=0.4),
   nseq=300
@@ -219,7 +227,7 @@ read_csv("measles_params.csv") %>%
 box
 
 set.seed(1196696958)
-profileDesign(
+profile_design(
   eta=seq(0.01,0.85,length=40),
   lower=box[1,c("Beta","rho")],
   upper=box[2,c("Beta","rho")],
@@ -368,7 +376,7 @@ results %>%
   summarize(min=min(rho),max=max(rho)) -> rho_ci
 
 set.seed(55266255)
-runifDesign(
+runif_design(
   lower=c(Beta=5,mu_IR=0.2,eta=0),
   upper=c(Beta=80,mu_IR=5,eta=0.4),
   nseq=1000
@@ -452,7 +460,7 @@ read_csv("measles_params.csv") %>%
   sapply(range) -> box
 
 set.seed(610408798)
-profileDesign(
+profile_design(
   mu_IR=seq(0.5,2,by=0.1),
   lower=box[1,c("Beta","eta")],
   upper=box[2,c("Beta","eta")],

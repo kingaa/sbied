@@ -75,7 +75,7 @@ logmeanexp(ll,se=TRUE)
 
 
 bake(file="like-slice.rds",{
-  sliceDesign(
+  slice_design(
     center=coef(measSIR),
     Beta=rep(seq(from=5,to=20,length=40),each=3),
     mu_IR=rep(seq(from=0.2,to=2,length=40),each=3)

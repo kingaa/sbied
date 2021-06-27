@@ -131,13 +131,13 @@ registerDoRNG(2488820)
 
   \begin{equation*}
     \begin{aligned}
-      \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)+1\big] &\equals& \mu_{SI}(t) \, S(t) \delta + o(\delta)
+      \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)+1\big] &\equals& \phantom{1-}\mu_{SI}(t)\,S(t)\,\delta + o(\delta)
       \\
-      \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)\big] &\equals& 1-\mu_{SI}(t) \, S(t) \delta + o(\delta)
+      \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)\big] &\equals& 1-\mu_{SI}(t)\,S(t)\,\delta + o(\delta)
       \\
-      \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)+1\big] &\equals& \mu_{IR} \, I(t) \delta + o(\delta)
+      \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)+1\big] &\equals& \phantom{1-}\mu_{IR}\,I(t)\,\delta + o(\delta)
       \\
-      \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)\big] &\equals& 1-\mu_{IR}(t) \, I(t) \delta + o(\delta)
+      \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)\big] &\equals& 1-\mu_{IR}(t)\,I(t)\,\delta + o(\delta)
     \end{aligned}
   \end{equation*}
 

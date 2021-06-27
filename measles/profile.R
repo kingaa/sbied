@@ -2,6 +2,9 @@
 
 if (file.exists("CLUSTER.R")) {
   source("CLUSTER.R")
+} else {
+  library(doParallel)
+  registerDoParallel()
 }
 
 set.seed(594709947L)
@@ -55,7 +58,7 @@ theta.t.hi <- theta.t.lo <- theta.t
 theta.t.lo[estpars] <- theta.t[estpars]-log(2)
 theta.t.hi[estpars] <- theta.t[estpars]+log(2)
 
-profileDesign(
+profile_design(
   sigmaSE=seq(from=log(0.02),to=log(0.2),length=20),
   lower=theta.t.lo,
   upper=theta.t.hi,
@@ -111,7 +114,8 @@ bake("sigmaSE-profile1.rds",{
       etime = as.numeric(etime)
     )
   }
-}) -> sigmaSE_prof
+}) %>%
+  filter(is.finite(loglik)) -> sigmaSE_prof
 
 
 

@@ -8,7 +8,7 @@ output: html_document
 
 | &nbsp;                          | &nbsp;                                                                            |
 |:--------------------------------|:---------------------------------------------------------------------------------:|
-| Lecture                         | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2QCHiHqWASOu0VdyPRGwKrV) |
+| Lecture                         | [Video (65 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2QCHiHqWASOu0VdyPRGwKrV) |
 | Lecture slides                  | [PDF](slides.pdf)                                                                 |
 | Lecture notes                   | [PDF](notes.pdf)                                                                  |
 | **R** script for the lesson     | [**R**](main.R)                                                                   |
@@ -16,7 +16,7 @@ output: html_document
 | Worked solution to Exercise 6.2 | [HTML](initial-values-exercise.html)                                              |
 | Worked solution to Exercise 6.3 | [HTML](starting-values-exercise.html)                                             |
 | Worked solution to Exercise 6.4 | [HTML](demography-exercise.html)                                                  |
-| Worked solution to Exercise 6.4 | [HTML](convergence-exercise.html)                                                 |
+| Worked solution to Exercise 6.5 | [HTML](convergence-exercise.html)                                                 |
 
 
 ----------------------

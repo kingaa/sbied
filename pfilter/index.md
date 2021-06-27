@@ -8,15 +8,15 @@ output: html_document
 
 | &nbsp;                                                                                     | &nbsp;                                                                            |
 |:-------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------:|
-| Lecture                                                                                    | [Video](https://www.youtube.com/playlist?list=PLluGwj6FGt2RRi-TRckg7Lud87ZKIJTZ8) |
+| Lecture                                                                                    | [Video (112 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2RRi-TRckg7Lud87ZKIJTZ8) |
 | Lecture slides                                                                             | [PDF](slides.pdf)                                                                 |
 | Lecture notes                                                                              | [PDF](notes.pdf)                                                                  |
 | **R** script for the lesson                                                                | [**R**](main.R)                                                                   |
-| Supplement: Bootstrap methods                                                              | [HTML](bootstrap.html)                                                            |
 | Supplement: Deterministic latent process models and their role in benchmarking POMP models | [HTML](deterministic.html)                                                        |
+| Supplement: Monte Carlo Methods                                                            | [HTML](monteCarlo.html)                                                           |
 | Supplement: Likelihood by direct simulation: Consett measles example                       | [HTML](directSimulation.html)                                                     |
 | Supplement: Standard errors via the observed Fisher information                            | [HTML](fisherSE.html)                                                             |
-| Supplement: Monte Carlo Methods                                                            | [HTML](monteCarlo.html)                                                           |
+| Supplement: Bootstrap methods                                                              | [HTML](bootstrap.html)                                                            |
 | Supplement: Direct maximization of the particle filter likelihood                          | [HTML](./pf-in-Nelder-Mead.html)                                                  |
 | Worked solution to Exercise 3.1                                                            | [HTML](Q_slice.html)                                                              |
 | Worked solution to Exercise 3.1                                                            | [**R**](expense.R)                                                                |

@@ -50,6 +50,9 @@ source("codes.R")
 ```{r mpi-setup,include=FALSE,purl=TRUE,cache=FALSE}
 if (file.exists("CLUSTER.R")) {
   source("CLUSTER.R")
+} else {
+  library(doParallel)
+  registerDoParallel()
 }
 ```
 
@@ -161,7 +164,7 @@ plot(simulate(m1))
 To compute a likelihood profile over a given parameter (or set of parameters) across some range, we first construct a grid of points spanning that range.
 At each point in the grid, we fix the focal parameter (or set of parameters) at that value and maximize the likelihood over the remaining parameters.
 To ensure that this optimization is global, we initiate multiple optimizers at a variety of points across the space.
-The **pomp** function `profileDesign` is useful in constructing such a set of starting points for the optimization.
+The **pomp** function `profile_design` is useful in constructing such a set of starting points for the optimization.
 
 The following code constructs a data frame, each row of which is a starting point for an optimization.
 We will be profiling over $\sigma_SE$ (`sigmaSE` in the code), fixing $\mu=0.02$ and $\alpha=1$.
@@ -178,7 +181,7 @@ theta.t.hi <- theta.t.lo <- theta.t
 theta.t.lo[estpars] <- theta.t[estpars]-log(2)
 theta.t.hi[estpars] <- theta.t[estpars]+log(2)
 
-profileDesign(
+profile_design(
   sigmaSE=seq(from=log(0.02),to=log(0.2),length=20),
   lower=theta.t.lo,
   upper=theta.t.hi,
@@ -240,7 +243,8 @@ bake("sigmaSE-profile1.rds",{
       etime = as.numeric(etime)
     )
   }
-}) -> sigmaSE_prof
+}) %>%
+  filter(is.finite(loglik)) -> sigmaSE_prof
 ```
 
 The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r signif(mean(sigmaSE_prof$etime)*3600/120,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.
