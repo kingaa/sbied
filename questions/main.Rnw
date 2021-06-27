@@ -94,6 +94,38 @@ library(pomp)
 logmeanexp(ll,se=TRUE)
 @
 
+\myquestion. What is the log likelihood (to the nearest unit) of the Dacca cholera data for the POMP model constructed in pomp via
+<<ebolaModel,echo=TRUE,eval=FALSE>>=
+d <- dacca(deltaI=0.08)
+@
+with cholera mortality rate 8\% and other parameters fixed at the default values.
+ 
+\begin{enumerate}[label=(\Alph*)]
+\item \label{A9a} -3764
+\item \label{A9b} -3765
+\item \label{A9c} -3766
+\item \label{A9d} -3767
+\item \label{A9e} -3768
+\end{enumerate}
+
+\solution{\ref{A9a}, calculated as follows:}
+
+<<Q9,eval=SOLUTION,echo=SOLUTION>>=
+d <- dacca(deltaI=0.08)
+library(doParallel)
+my_cores <- detectCores()
+registerDoParallel(my_cores)
+bake(file="Q9.rds",{
+  foreach(i=1:32,.combine=c) %dopar% {
+    library(pomp)
+    logLik(pfilter(d,Np=10000))
+  }
+}) -> cholera_loglik
+logmeanexp(cholera_loglik,se=TRUE)
+@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \medskip
 \def\CHAPTER{4}
