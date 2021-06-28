@@ -31,6 +31,190 @@ set.seed(1350254336)
 {\large\bf Questions on Lesson \CHAPTER: Simulation of stochastic dynamic models}
 \medskip
 
+\myquestion. Suppose you obtain the following error message when you build your pomp model using Csnippets.
+<<Q10-error-message,echo=FALSE>>=
+cat("
+Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error: 
+cannot compile shared-object library ‘/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_be9007eb030e47cb34264e3e779b6da9.so’: 
+status = 1
+compiler messages:
+clang -mmacosx-version-min=10.13 -I\"/Library/Frameworks/R.framework/Resources/include\" -DNDEBUG 
+-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include' 
+-I'/Users/ionides/sbied/questions'  -I/usr/local/include   -fPIC  -Wall -g -O2  
+-c /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_be9007eb030e47cb34264e3e779b6da9.c 
+-o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_be9007eb030e47cb34264e3e779b6da9.o
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_be9007eb030e47cb34264e3e779b6da9.c:39:5: 
+error: called object type 'int' is not a function or function pointer
+    W = 0; 
+    ^
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/5
+In addition: Warning message:
+In system2(command = R.home(\"bin/R\"), args = c(\"CMD\", \"SHLIB\", \"-c\",  :
+running command 'PKG_CPPFLAGS=\"-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include' 
+-I'/Users/ionides/sbied/questions'\" '/Library/Frameworks/R.framework/Resources/bin/R' 
+CMD SHLIB -c -o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_be9007eb030e47cb34264e3e779b6da9.so 
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_be9007eb030e47cb34264e3e779b6da9.c 
+2>&1' had status 1
+")
+@
+Which of the following is a plausible cause for this error?
+\begin{enumerate}[label=(\Alph*)]
+\item \label{A10a} Using R syntax within a C function that has the same name as an R function.
+\item \label{A10b} A parameter is missing from the \texttt{paramnames} argument to \texttt{pomp}.
+\item \label{A10c} Indexing past the end of an array because C labels indices starting at 0. 
+\item \label{A10d} Using \texttt{beta} as a parameter name when it is a declared C function.
+\item \label{A10e} A missing semicolon at the end of a line.
+\end{enumerate}
+
+
+\solution{\ref{A10e}. The error message was produced by the code below. \texttt{pomp} passes on the C compiler error message for you to inspect. Note the missing semicolon at the line end before \texttt{W=0;}.}
+
+<<Q10-error-code,eval=F,echo=SOLUTION>>=
+sir1 <- sir()
+sir2 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
+  paramnames=c(
+      "gamma","mu","iota",
+      "beta1","beta_sd","pop","rho",
+      "S_0","I_0","R_0"
+  ),
+  rinit=Csnippet("
+    double m = pop/(S_0+I_0+R_0);
+    S = nearbyint(m*S_0);
+    I = nearbyint(m*I_0);
+    R = nearbyint(m*R_0);
+    cases = 0
+    W = 0;"
+  )
+)    
+@
+
+
+\myquestion. Suppose you obtain the following error message when you build your pomp model using Csnippets.
+<<Q11-error-message,echo=FALSE>>=
+cat("
+Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error: 
+cannot compile shared-object library ‘/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_b675d99e691eda865610f570058ea3be.so’: status = 1
+compiler messages:
+clang -mmacosx-version-min=10.13 -I\"/Library/Frameworks/R.framework/Resources/include\" -DNDEBUG 
+-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include' -I'/Users/ionides/sbied/questions' 
+-I/usr/local/include   -fPIC  -Wall -g -O2  
+-c /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_b675d99e691eda865610f570058ea3be.c 
+-o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_b675d99e691eda865610f570058ea3be.o
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_b675d99e691eda865610f570058ea3be.c:33:16: 
+error: use of undeclared identifier 'pop'; did you mean 'pow'?
+    double m = pop/(S_0+I_0+R_0);
+               ^~~
+               pow
+/Applications/
+In addition: Warning message:
+In system2(command = R.home(\"bin/R\"), args = c(\"CMD\", \"SHLIB\", \"-c\",  :
+  running command 'PKG_CPPFLAGS=\"-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include' 
+-I'/Users/ionides/sbied/questions'\" '/Library/Frameworks/R.framework/Resources/bin/R' CMD SHLIB 
+-c -o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_b675d99e691eda865610f570058ea3be.so 
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_b675d99e691eda865610f570058ea3be.c 2>&1' had status 1
+")
+@
+Which of the following is a plausible cause for this error?
+\begin{enumerate}[label=(\Alph*)]
+\item \label{A11a} Using R syntax within a C function that has the same name as an R function.
+\item \label{A11b} A parameter is missing from the \texttt{paramnames} argument to \texttt{pomp}.
+\item \label{A11c} Indexing past the end of an array because C labels indices starting at 0. 
+\item \label{A11d} Using \texttt{beta} as a parameter name when it is a declared C function.
+\item \label{A11e} A missing semicolon at the end of a line.
+\end{enumerate}
+
+\solution{\ref{A11b}. The code generating this error is below. Here, \texttt{pop} is intended to be passed as a parameter, but it is missing from the \texttt{paramnames} argument. It could alternatively be defined as a global variable using the \texttt{globals} argument to \texttt{pomp}.}
+
+<<Q11-error-code,eval=F,echo=SOLUTION>>=
+sir3 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
+  paramnames=c(
+      "gamma","mu","iota",
+      "beta1","beta_sd","rho",
+      "S_0","I_0","R_0"
+  ),
+  rinit=Csnippet("
+    double m = pop/(S_0+I_0+R_0);
+    S = nearbyint(m*S_0);
+    I = nearbyint(m*I_0);
+    R = nearbyint(m*R_0);
+    cases = 0
+    W = 0;"
+  )
+)    
+@    
+
+\myquestion. Suppose you obtain the following error message when you build your pomp model using Csnippets.
+<<Q12-error-message,echo=FALSE>>=
+cat("
+Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error:
+cannot compile shared-object library ‘/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_77886fb66d95b4b9904440d86a4425b3.so’: status = 1
+compiler messages:
+clang -mmacosx-version-min=10.13 -I\"/Library/Frameworks/R.framework/Resources/include\" -DNDEBUG 
+-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include' 
+-I'/Users/ionides/sbied/questions'  -I/usr/local/include   -fPIC  -Wall -g -O2  
+-c /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_77886fb66d95b4b9904440d86a4425b3.c 
+-o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_77886fb66d95b4b9904440d86a4425b3.o
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_77886fb66d95b4b9904440d86a4425b3.c:39:36: 
+error: too many arguments to function call, expected 2, have 3
+      rep = nearbyint(rnorm(1,mean,sd));
+                      ~~~~~        ^~
+/Librar
+In addition: Warning message:
+In system2(command = R.home(\"bin/R\"), args = c(\"CMD\", \"SHLIB\", \"-c\",  :
+running command 'PKG_CPPFLAGS=\"-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include'
+-I'/Users/ionides/sbied/questions'\" '/Library/Frameworks/R.framework/Resources/bin/R' 
+CMD SHLIB -c -o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_77886fb66d95b4b9904440d86a4425b3.so 
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_77886fb66d95b4b9904440d86a4425b3.c 2>&1' had status 1
+")
+@
+Which of the following is a plausible cause for this error?
+\begin{enumerate}[label=(\Alph*)]
+\item \label{A12a} Using R syntax within a C function that has the same name as an R function.
+\item \label{A12b} A parameter is missing from the \texttt{paramnames} argument to \texttt{pomp}.
+\item \label{A12c} Indexing past the end of an array because C labels indices starting at 0. 
+\item \label{A12d} Using \texttt{beta} as a parameter name when it is a declared C function.
+\item \label{A12e} A missing semicolon at the end of a line.
+\end{enumerate}
+
+\solution{\ref{A12a}. The code producing the error is below. Within Csnippets, the C versions of R distribution functions are available but they have slightly different syntax from their more familiar R cousins.}
+
+<<Q12-error-code,eval=F,echo=SOLUTION>>=
+sir4 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
+  paramnames=c(
+      "gamma","mu","iota",
+      "beta1","beta_sd","pop","rho",
+      "S_0","I_0","R_0"
+  ),
+  rmeasure=Csnippet("
+      double mean, sd;
+      double rep;
+      mean = cases*rho;
+      sd = sqrt(cases*rho*(1-rho));
+      rep = nearbyint(rnorm(1,mean,sd));
+      reports = (rep > 0) ? rep : 0;"
+    )
+  )
+@
+
+%%%%%%%%%%%%%%%%%%%%5
 
 \myquestion. Let $V_n$ be a Markov process and let $W_n=h(V_n)$ for some function $h$. Which of the following statements are true?
 
