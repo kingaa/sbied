@@ -25,6 +25,9 @@ set.seed(1350254336)
 
 \maketitle
 
+
+%%%%%%%%% 222222222222
+
 \medskip
 \def\CHAPTER{2}
 \setcounter{Qcounter}{0}
@@ -256,6 +259,8 @@ v) If $V_n=(X_n,Y_n)$ where $X_n$ and $Y_n$ are a POMP model, and $h(X_n,Y_n)=Y_
 
 \solution{\ref{A1b}}
 
+%%%%%%%% 33333333333333333
+
 \medskip
 \def\CHAPTER{3}
 \setcounter{Qcounter}{0}
@@ -331,6 +336,19 @@ bake(file="Q9.rds",{
 logmeanexp(cholera_loglik,se=TRUE)
 @
 
+\medskip
+
+\myquestion. Effective sample size (ESS) is one of the main tools for diagnosing the success of a particle filter. It is shown if you plot an object of class \texttt{pfilterd\_pomp} which is created by applying \texttt{pfilter} to a \texttt{pomp} object. Suppose one or more time points have low ESS (say, less than 10) even when using a fairly large number of particles (say, $10^4$). What is the proper interpretation?
+
+\begin{enumerate}[label=(\Alph*)]
+\item \label{A14a} There is a problem with data, perhaps an error recording an observation.
+\item \label{A14b} There is a problem with the model which means that it cannot explain something in the data.
+\item \label{A14c} The model and data have no major problems, but the model happens to be problematic for the particle filter algorithm.
+\item \label{A14d} At least one of \ref{A14a}, \ref{A14b} and \ref{A14c}.
+\item \label{A14e} Either \ref{A14a} or \ref{A14b} or both, but not \ref{A14c}. If the model fits the data well, the particle filter is guaranteed to work well. 
+\end{enumerate}
+
+\solution{ \ref{A14d}. An example of a situation where the model fits the data well, but filtering is hard, arises when the measurement error is small relative to the process noise. In this case, the particles are scattered by the process noise and very few of them are compatible with the data due to the precise measurement. Thus, almost all the particles must be discarded as unfeasible given the data, corresponding to a low ESS.} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
