@@ -350,7 +350,7 @@ logmeanexp(cholera_loglik,se=TRUE)
 
 \solution{ \ref{A14d}. An example of a situation where the model fits the data well, but filtering is hard, arises when the measurement error is small relative to the process noise. In this case, the particles are scattered by the process noise and very few of them are compatible with the data due to the precise measurement. Thus, almost all the particles must be discarded as unfeasible given the data, corresponding to a low ESS.} 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% 44444444444444444
 
 \medskip
 \def\CHAPTER{4}
@@ -389,6 +389,66 @@ When there is a reproducible and stable phenomenon of decreasing likelihood, it 
 
 If the researchers calculate a sliced likelihood through the MLE and tell you it is a profile, but you are concerned they might have constructed a slice by mistake, it is hard to know without looking at the code. \ref{A7a} is the proper construction of a profile if the points are maximizations over the remaining parameters for a range of fixed values of rho. However, if the code does not involve maximization over other parameters at each value of rho, it cannot be a proper profile. It could be a slice accidentally explained to be a profile, and with a confidence interval constructed as if it were a profile. 
 }
+
+\medskip
+
+\vspace{-5mm}
+
+\resizebox{15cm}{!}{
+\includegraphics{Q15plot.pdf}
+}
+
+\vspace{-27mm}
+
+\myquestion. The iterated filtering convergence diagnostics plot shown above come from a \href{https://ionides.github.io/531w21/final_project/project06/blinded.html}{\textcolor{blue}{student project}}. What is the best interpretation?
+\begin{enumerate}[label=(\Alph*)]
+\item \label{A15a} Everything seems to be working fine. The likelihood is climbing. The replicated searches are giving consistent runs. The spread of convergence points for $\sigma_{\nu}$ and $H_0$ indicates weak identifability, which is a statistical fact worth noticing but not a weakness of the model.  
+\item \label{A15b} The consistently climbing likelihood is promising, but the failure of $\sigma_{\nu}$ and $H_0$ to converge needs attention. Additional searching is needed, experimenting with {\bf larger} values of the random walk perturbation standard deviation for these parameters to make sure the parameter space is properly searched. 
+\item \label{A15c} The consistently climbing likelihood is promising, but the failure of $\sigma_{\nu}$ and $H_0$ to converge needs attention. Additional searching is needed, experimenting with {\bf smaller} values of the random walk perturbation standard deviation for these parameters to make sure the parameter space is properly searched. 
+\item \label{A15d} The consistently climbing likelihood is promising, but the failure of $\sigma_{\nu}$ and $H_0$ to converge needs attention. This indicates weak identifiability which cannot be solved by improving the searching algorithm. Instead, we should change the model, or fix one or more parameters at scientifically plausible values, to resolve the identifiability issue before proceeding.
+\item \label{A15e} Although the log likelihood seems to be climbing during the search, until the convergence problems with $\sigma_{\nu}$ and $H_0$ have been addressed we should not be confident about the successful optimization of the likelihood function or the other parameter estimates. 
+\end{enumerate}
+
+\solution{\ref{A15a}.
+All searches are finding parameters with consistent likelihood. The discrepancies of a few log likelihood units put the parameter values within statistical uncertainty according to Wilks's Theorem. Therefore, the spread in the parameter estimates reflects uncertainty about the parameter given the data, rather than a lack of convergence. 
+
+That perspective suggests that the goal of the Monte Carlo optimizer is to get close to the MLE, measured by likelihood, rather than to obtain it exactly. Independent Mont Carlo searches can be combined via a profile likelihood to get a more exact point estimate and a confidence interval.
+
+Wide confidence intervals, also called weak identifability, are not necessarily a problem for the scientific investigation. Some parameters may be imprecisely estimable, while others can be obtained more precisely, and part of the analysis is to find which is in each category. It may also be of interest to investigate what extra precision can be obtained on one parameter by making assumptions about the value of another, as in \ref{A15d}, but this is not mandatory for proper inference.
+
+Overall, the convergence plots here look good. The plots show that the seaches are all started from a single high likelihood starting point. Now this has been done successfully, a natural next step would be to start some searches from more diverse starting points to look for any global features missed by this local search.
+
+}
+
+
+%%%%%%%%%%%
+
+\medskip
+
+\resizebox{15cm}{!}{
+\includegraphics{Q16plot.pdf}
+}
+
+\myquestion. The iterated filtering convergence diagnostics plot shown above come from a \href{https://ionides.github.io/531w21/final_project/project15/blinded.html}{\textcolor{blue}{student project}}, calculated using $10^3$ particles. What is the best interpretation?
+\begin{enumerate}[label=(\Alph*)]
+\item \label{A16a} Everything seems to be working fine. There is a clear consensus from the different searches concerning the highest likelihood that can be found. Therefore, the search is doing a good job of maximization. Occasional searches get lost, such as the purple line with a low likelihood, but that is not a problem.
+\item \label{A16b} The seaches obtain likelihood values spread over thousands of log units. We would like to see consistent convergence within a few log units. We should use more particles and/or more iterations to achieve this.
+\item \label{A16c} The seaches obtain likelihood values spread over thousands of log units. We would like to see consistent convergence within a few log units.
+We should compare the best likelihoods obtained with simple statistical models, such as an auto-regressive moving average model, to look for evidence of model misspecification.
+\item \label{A16d} The seaches obtain likelihood values spread over thousands of log units. We would like to see consistent convergence within a few log units.
+We should look at the effective sample size plot for the best fit we have found yet, to see whether there are problems with the particle filtering.
+\item \label{A16e} All of \ref{A16b}, \ref{A16d} and \ref{A16d}.
+\end{enumerate}
+
+\solution{\ref{A16e}.
+The authors of this project were able to show evidence of adequate global maximization for their model, but their maximized likelihood was 47 log units lower than ARMA model. The wide spread in likelihood, thousands of log units, shown in this convergence plot suggests that the numerics are not working smoothly.
+This could mean that more particles are needed: $10^3$ particles is relatively low for a particle filter.
+However, if the model fit is not great (as revealed by comparison against a benchmark) this makes the filtering harder as well as less scientifically satisfactory.
+If the model is fitting substantially below ARMA benchmarks, it is worth considering some extra time on model development. 
+Identifying time points with low effective sample size can help to identify which parts of the data are problemtic for the model to explain.
+}
+
+%%%%%%%%%%%% 555555555555555
 
 \medskip
 \def\CHAPTER{5}
