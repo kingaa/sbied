@@ -1,10 +1,11 @@
-# SISMID 2020 Module 7
+# SISMID 2021 Module 7
 
 Please complete this questionnaire to help us prepare for the short course.
 * Required
 
 1. What is your name? *
 1. What is your email address? *
+1. From what timezone will you be attending the course? *
 1. What is your operating system? *
    Mark only one oval.
 	- Linux or unix

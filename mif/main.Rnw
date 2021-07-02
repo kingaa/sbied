@@ -1339,11 +1339,10 @@ set.seed(1350254336)
 \end{frame}
 
 \begin{frame}{\myexercise. Modify the measurement model}
-  The binomial measurement model used here assumes that the reporting rate is fixed through time and that all infection reports are independent and equally likely.
-  Commonly, it is advisable to consider measurement models with \myemph{overdispersion}, i.e., more variability than the binomial (or Poisson) allows.
-  The negative binomial distribution, for instance, allows for overdispersed mean-variance relationships.
-  Similarly, the beta-binomial distribution adds overdispersion to the binomial.
-  Formulate an alternative measurement model and maximize the likelihood to compare it with existing results.
+  In all of the foregoing, we have assumed a fixed value of the dispersion parameter $k$, of the negative binomial measurement model.
+  Estimate $k$ along with the other parameters.
+  How much is the fit improved?
+  How do the MLE values of the other parameters change?
 \end{frame}
 
 \begin{frame}{\myexercise. Construct a profile likelihood}
@@ -1357,7 +1356,7 @@ set.seed(1350254336)
 
 \begin{frame}[allowframebreaks]{\myexercise. Checking the source code}
 
-  Check the source code for the \code{measSIR} pomp object.
+  Check the source code for the \code{measSIR} pomp object, using the \code{spy} command.
   Does the code implement the model described?
 
   \framebreak
