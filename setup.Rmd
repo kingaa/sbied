@@ -1,8 +1,9 @@
 ```{r setup-child,include=FALSE,purl=FALSE,cache=FALSE}
 library(knitr)
+if (!exists("params")) params <- list()
 opts_chunk$set(
   cache=TRUE,
-  cache.path="tmp/cache/",
+  cache.path=paste("tmp","cache",as.character(params$prefix),sep="/"),
   comment=NA,
   echo=TRUE,
   eval=TRUE,
@@ -13,7 +14,7 @@ opts_chunk$set(
   fig.align='center',
   fig.height=4,fig.width=6.83,
   fig.lp="fig:",
-  fig.path="tmp/figure/",
+  fig.path=paste("tmp","figure",as.character(params$prefix),sep="/"),
   fig.pos="h!",
   fig.show='asis',
   highlight=TRUE,

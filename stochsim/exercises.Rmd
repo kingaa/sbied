@@ -7,12 +7,16 @@ output:
     toc_depth: 4
 bibliography: ../sbied.bib
 csl: ../jss.csl
+params:
+  prefix: exercises/
 ---
 
 [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
+```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
+```
 
 ```{r include=FALSE}
 source("main.R")
@@ -42,22 +46,22 @@ To attempt to simulate data for which the observed data is a more plausible real
 
 ```{r}
 measSIR %>%
-  simulate(params=c(Beta=20,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
+  simulate(params=c(Beta=25,mu_IR=0.5,rho=0.5,k=10,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
-  guides(color=FALSE)
+  guides(color="none")
 ```
 
 Taking it farther....
 
 ```{r}
 measSIR %>%
-  simulate(params=c(Beta=40,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
+  simulate(params=c(Beta=40,mu_IR=0.5,rho=0.5,k=10,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
-  guides(color=FALSE)
+  guides(color="none")
 ```
 
 While this increases the overall incidence, the epidemic is now peaking too quickly.
@@ -65,11 +69,11 @@ To counteract this, we might try reducing the recovery rate.
 
 ```{r}
 measSIR %>%
-  simulate(params=c(Beta=40,mu_IR=0.2,rho=0.5,eta=0.03,N=38000),
+  simulate(params=c(Beta=40,mu_IR=0.2,rho=0.5,k=10,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
-  guides(color=FALSE)
+  guides(color="none")
 ```
 
 Additionally, we might have a look at the effects of changing the initial susceptible fraction, $\eta$.
@@ -77,11 +81,11 @@ It's possible to get something not too awful to contemplate by just manipulating
 
 ```{r}
 measSIR %>%
-  simulate(params=c(Beta=15,mu_IR=0.5,rho=0.5,eta=0.06,N=38000),
+  simulate(params=c(Beta=15,mu_IR=0.5,rho=0.5,k=10,eta=0.06,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
-  guides(color=FALSE)
+  guides(color="none")
 ```
 
 
@@ -145,22 +149,22 @@ Using the rough estimate that the latent period in measles is 8--10da, we take $
 
 ```{r}
 measSEIR %>%
-  simulate(params=c(Beta=15,mu_EI=0.8,mu_IR=1.3,rho=0.5,eta=0.06,N=38000),
+  simulate(params=c(Beta=30,mu_EI=0.8,mu_IR=1.3,rho=0.5,k=10,eta=0.06,N=38000),
     nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
-  guides(color=FALSE)
+  guides(color="none")
 ```
 
 Again one can increase the force of infection: 
 
 ```{r}
 measSEIR %>% 
-  simulate(params=c(Beta=40,mu_EI=0.8,mu_IR=1.3,rho=0.5,eta=0.06,N=38000),
+  simulate(params=c(Beta=40,mu_EI=0.8,mu_IR=1.3,rho=0.5,k=10,eta=0.06,N=38000),
   nsim=20,format="data.frame",include.data=TRUE) %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
-  guides(color=FALSE)
+  guides(color="none")
 ```
 
 

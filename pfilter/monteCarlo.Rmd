@@ -7,6 +7,8 @@ output:
     toc_depth: 4
 bibliography: ../sbied.bib
 csl: ../jss.csl
+params:
+  prefix: mc/
 ---
 
 \newcommand\prob{\mathbb{P}}
@@ -251,11 +253,11 @@ plot(c(0,1),c(0,1),type='n',ann=F,bty='o',tcl=0)
 t <- seq(0,1,by=0.001)
 xyc <- rbind(a=c(0.89,0.64),aa=c(0.63,0.81),b=c(0.67,0.96),c=c(0.21,0.89),d=c(0.35,0.35),
              e=c(0.03,0.4),f=c(0.28,0.04),g=c(0.75,0.03),h=c(0.6,0.6))
-basis <- periodic.bspline.basis(t,degree=2,nbasis=nrow(xyc),period=1)
+basis <- pomp::periodic.bspline.basis(t,degree=2,nbasis=nrow(xyc),period=1)
 xy <- basis%*%xyc
 lines(xy[,1],xy[,2],lwd=1.5)
 xyc <- rbind(a=c(0.37,0.33),b=c(0.51,0.33),c=c(0.51,0.23),d=c(0.37,0.23))
-basis <- periodic.bspline.basis(t,degree=1,nbasis=nrow(xyc),period=1)
+basis <- pomp::periodic.bspline.basis(t,degree=1,nbasis=nrow(xyc),period=1)
 xy <- basis%*%xyc
 lines(xy[,1],xy[,2])
 text(x=c(0.05,0.5,0.9),y=c(0.95,0.75,0.1),labels=c("U","D","A"))

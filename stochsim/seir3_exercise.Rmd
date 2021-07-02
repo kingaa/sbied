@@ -7,6 +7,8 @@ output:
     toc_depth: 4
 bibliography: ../sbied.bib
 csl: ../jss.csl
+params:
+  prefix: seir3_exercise/
 ---
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}

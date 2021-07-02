@@ -376,7 +376,7 @@ registerDoRNG(2488820)
     select(week,reports=cases) -> meas
   meas %>% as.data.frame() %>% head()
   @
-
+  
   \framebreak
   
   <<meas-data2,echo=FALSE>>=
@@ -430,106 +430,106 @@ registerDoRNG(2488820)
     
     \framebreak
 
-  <<rproc1R>>=
-  sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t, ...) {
-    dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
-    dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
-    S <- S - dN_SI
-    I <- I + dN_SI - dN_IR
-    R <- R + dN_IR
-    c(S = S, I = I, R = R)
-  }
-  @
-  
-  
-\item At day zero, we'll assume that $I=1$ but we don't know how many people are susceptible, so we'll treat this fraction, $\eta$, as a parameter to be estimated.
+    <<rproc1R>>=
+    sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t, ...) {
+      dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
+      dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
+      S <- S - dN_SI
+      I <- I + dN_SI - dN_IR
+      R <- R + dN_IR
+      c(S = S, I = I, R = R)
+    }
+    @
+    
+    
+  \item At day zero, we'll assume that $I=1$ but we don't know how many people are susceptible, so we'll treat this fraction, $\eta$, as a parameter to be estimated.
 
-  <<init1R>>=
-  sir_rinit <- function (N, eta, ...) {
-    c(S = round(N*eta), I = 1, R = round(N*(1-eta)))
-  }
-  @
-  
-\item We fold these basic model components, with the data, into a \code{pomp} object thus:
+    <<init1R>>=
+    sir_rinit <- function (N, eta, ...) {
+      c(S = round(N*eta), I = 1, R = round(N*(1-eta)))
+    }
+    @
+    
+  \item We fold these basic model components, with the data, into a \code{pomp} object thus:
 
-  <<pomp1R>>=
-  library(pomp)
-  meas %>%
-    pomp(times="week",t0=0,
-         rprocess=euler(sir_step,delta.t=1/7),
-         rinit=sir_rinit
-         ) -> measSIR
-  @
-  
-\item Now assume the case reports result from a process by which new infections are diagnosed and reported with probability $\rho$, which we can think of as the probability that a child's parents take the child to the doctor, who recognizes measles and reports it to the authorities.
+    <<pomp1R>>=
+    library(pomp)
+    meas %>%
+      pomp(times="week",t0=0,
+           rprocess=euler(sir_step,delta.t=1/7),
+           rinit=sir_rinit
+           ) -> measSIR
+    @
+    
+  \item Now assume the case reports result from a process by which new infections are diagnosed and reported with probability $\rho$, which we can think of as the probability that a child's parents take the child to the doctor, who recognizes measles and reports it to the authorities.
 
-\item Measles symptoms tend to be quite recognizable, and children with measles tend to be confined to bed. Therefore diagnosed cases have, presumably, a much lower transmission rate.
-  Accordingly, let's treat each week's \code{reports} as being related to the number of individuals who have moved from I to R over the course of that week.
+  \item Measles symptoms tend to be quite recognizable, and children with measles tend to be confined to bed. Therefore diagnosed cases have, presumably, a much lower transmission rate.
+    Accordingly, let's treat each week's \code{reports} as being related to the number of individuals who have moved from I to R over the course of that week.
 
-\item We need a variable to track these daily counts.
-  We modify our rprocess function above, adding a variable $H$ to tally the true incidence.
+  \item We need a variable to track these daily counts.
+    We modify our rprocess function above, adding a variable $H$ to tally the true incidence.
 
-  <<rproc2R>>=
-  sir_step <- function (S, I, R, H, N, Beta, mu_IR, delta.t, ...)
-  {
-    dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
-    dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
-    S <- S - dN_SI
-    I <- I + dN_SI - dN_IR
-    R <- R + dN_IR
-    H <- H + dN_IR;
-    c(S = S, I = I, R = R, H = H)
-  }
+    <<rproc2R>>=
+    sir_step <- function (S, I, R, H, N, Beta, mu_IR, delta.t, ...)
+    {
+      dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
+      dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
+      S <- S - dN_SI
+      I <- I + dN_SI - dN_IR
+      R <- R + dN_IR
+      H <- H + dN_IR;
+      c(S = S, I = I, R = R, H = H)
+    }
 
-  sir_rinit <- function (N, eta, ...) {
-    c(S = round(N*eta), I = 1, R = round(N*(1-eta)), H = 0)
-  }
-  @
-  
-\item In \package{pomp} terminology, $H$ is an \myemph{accumulator variable}.
-  Since we want $H$ to tally only the incidence over the week, we'll need to reset it to zero at the beginning of each week.
-  We accomplish this using the \code{accumvars} argument to \code{pomp}:
+    sir_rinit <- function (N, eta, ...) {
+      c(S = round(N*eta), I = 1, R = round(N*(1-eta)), H = 0)
+    }
+    @
+    
+  \item In \package{pomp} terminology, $H$ is an \myemph{accumulator variable}.
+    Since we want $H$ to tally only the incidence over the week, we'll need to reset it to zero at the beginning of each week.
+    We accomplish this using the \code{accumvars} argument to \code{pomp}:
 
-  <<zero1R>>=
-  measSIR %>% 
-    pomp(
-      rprocess=euler(sir_step,delta.t=1/7),
-      rinit=sir_rinit,accumvars="H"
-    ) -> measSIR
-  @
+    <<zero1R>>=
+    measSIR %>% 
+      pomp(
+        rprocess=euler(sir_step,delta.t=1/7),
+        rinit=sir_rinit,accumvars="H"
+      ) -> measSIR
+    @
+    
+  \item Now, we'll model the data as a negative binomial process,
+    \begin{equation*}
+      \mathrm{reports}_t \sim \dist{NegBin}{\rho\,H(t),k}.
+    \end{equation*}
+    
+  \item Now, to include the observations in the model, we must write either a \code{dmeasure} or an \code{rmeasure} component, or both:
 
-\item Now, we'll model the data as a binomial process,
-  \begin{equation*}
-    \mathrm{reports}_t \sim \dist{Binomial}{H(t),\rho}.
-  \end{equation*}
-  
-\item Now, to include the observations in the model, we must write either a \code{dmeasure} or an \code{rmeasure} component, or both:
+    <<meas-modelR>>=
+    sir_dmeas <- function (reports, H, rho, k, log, ...) {
+      dnbinom(x=reports, size=k, mu=rho*H, log=log)
+    }
 
-  <<meas-modelR>>=
-  sir_dmeas <- function (reports, H, rho, log, ...) {
-    dbinom(x=reports, size=H, prob=rho, log=log)
-  }
+    sir_rmeas <- function (H, rho, k, ...) {
+      c(reports=rnbinom(n=1, size=k, mu=rho*H))
+    }
+    @
+    
+  \item We then put these into our \code{pomp} object:
 
-  sir_rmeas <- function (H, rho, ...) {
-    c(reports=rbinom(n=1, size=H, prob=rho))
-  }
-  @
-  
-\item We then put these into our \code{pomp} object:
-
-  <<add-meas-modelR>>=
-  measSIR %>%
-    pomp(
-      rmeasure=sir_rmeas,
-      dmeasure=sir_dmeas
-    ) -> measSIR
-  @
-  
-  <<test_R_pomp,include=FALSE,purl=FALSE>>=
-  measSIR %>% 
-    simulate(params=c(Beta=8,mu_IR=0.5,rho=0.5,N=38000,eta=1/10))
-  @
-  
+    <<add-meas-modelR>>=
+    measSIR %>%
+      pomp(
+        rmeasure=sir_rmeas,
+        dmeasure=sir_dmeas
+      ) -> measSIR
+    @
+    
+    <<test_R_pomp,include=FALSE,purl=FALSE>>=
+    measSIR %>% 
+      simulate(params=c(Beta=8,mu_IR=0.5,rho=0.5,k=10,N=38000,eta=1/10))
+    @
+    
   \end{itemize}
 \end{frame}
 
@@ -570,11 +570,11 @@ registerDoRNG(2488820)
   ")
 
     sir_dmeas <- Csnippet("
-  lik = dbinom(reports,H,rho,give_log);
+  lik = dnbinom_mu(reports,k,rho*H,give_log);
   ")
 
     sir_rmeas <- Csnippet("
-  reports = rbinom(H,rho);
+  reports = rnbinom_mu(k,rho*H);
   ")
     @
     
@@ -588,7 +588,7 @@ registerDoRNG(2488820)
            dmeasure=sir_dmeas,
            accumvars="H",
            statenames=c("S","I","R","H"),
-           paramnames=c("Beta","mu_IR","N","eta","rho")
+           paramnames=c("Beta","mu_IR","N","eta","rho","k")
            ) -> measSIR
     @
     
@@ -627,7 +627,7 @@ registerDoRNG(2488820)
     <<sir_sim1_plot,out.width="8cm">>=
     measSIR %>%
       simulate(
-        params=c(Beta=7.5,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
+        params=c(Beta=7.5,mu_IR=0.5,rho=0.5,k=10,eta=0.03,N=38000),
         nsim=20,format="data.frame",include.data=TRUE
       ) -> sims
     

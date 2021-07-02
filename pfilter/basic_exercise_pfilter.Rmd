@@ -7,6 +7,8 @@ output:
     toc_depth: 2
 bibliography: ../sbied.bib
 csl: ../jss.csl
+params:
+  prefix: basic_exercise/
 ---
 
 -----------------------------------
@@ -69,48 +71,10 @@ Optionally, take advantage of multiple cores on your computer to improve your es
 
 - First, let's reconstruct the toy SIR model we were working with:
 
+```{r read_chunk,include=FALSE,purl=FALSE}
+knitr::read_chunk("model.R")
+```
 ```{r model-construct}
-library(tidyverse)
-library(pomp)
-
-sir_step <- Csnippet("
-  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
-  double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
-  S -= dN_SI;
-  I += dN_SI - dN_IR;
-  R += dN_IR;
-  H += dN_IR;
-")
-
-sir_init <- Csnippet("
-  S = nearbyint(eta*N);
-  I = 1;
-  R = nearbyint((1-eta)*N);
-  H = 0;
-")
-
-dmeas <- Csnippet("
-  lik = dbinom(reports,H,rho,give_log);
-")
-
-rmeas <- Csnippet("
-  reports = rbinom(H,rho);
-")
-
-read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
-  select(week,reports=cases) %>%
-  filter(week<=42) %>%
-  pomp(
-    times="week",t0=0,
-    rprocess=euler(sir_step,delta.t=1/7),
-    rinit=sir_init,
-    rmeasure=rmeas,
-    dmeasure=dmeas,
-    accumvars="H",
-    statenames=c("S","I","R","H"),
-    paramnames=c("Beta","mu_IR","eta","rho","N"),
-    params=c(Beta=15,mu_IR=0.5,rho=0.5,eta=0.06,N=38000)
-  ) -> measSIR
 ```
 
 - Now, borrow code from the notes:
@@ -128,7 +92,7 @@ ll <- sapply(pf,logLik)
 logmeanexp(ll,se=TRUE)
 ```
 
-- This took `r round(timer["elapsed"]/60,2)` minutes
+- This took `r round(timer["elapsed"],1)` seconds.
 
 - Since the time taken is approximately linear in `NP` and `REPLICATES`, we get a formula (for this machine) of
 $$\mbox{Runtime}\approx \frac{ \mathrm{NP}}{`r NP`} \times \frac{\mathrm{REPLICATES}}{ `r REPLICATES`} \times `r round(timer["elapsed"]/60,2)` \mbox{ minutes}.$$
@@ -142,7 +106,7 @@ $$\mbox{Runtime}\approx \frac{ \mathrm{NP}}{`r NP`} \times \frac{\mathrm{REPLICA
 - `logmeanexp` gives an estimate that is biased downward, as an estimate of the log likelihood. This is due to the concavity of the log function and [Jensen's inequality](https://en.wikipedia.org/wiki/Jensen%27s_inequality). 
 
 - We can be quantitative about the bias via a Taylor series approximation.
-Write the Monte Carlo likelihood estimate as $\lik\{1+\epsilon\}$, where the unbiasedness of the particle filter gives $\E[\epsilon]=0$. Then,
+Write the Monte Carlo likelihood estimate as $\lik\{1+\epsilon\}$, where the unbiasedness of the particle filter gives $\expect[\epsilon]=0$. Then,
 $$\log\big(\lik\{1+\epsilon\}\big)\approx \log(\lik)+\epsilon-\epsilon^2/2,$$
 and so the bias in the log likelihood estimate is approximately half the variance of the log likelihood estimate.
 

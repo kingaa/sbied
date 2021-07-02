@@ -36,11 +36,11 @@ H = 0;
 ")
 
 dmeas <- Csnippet("
-lik = dbinom(reports,H,rho,give_log);
+lik = dnbinom_mu(reports,k,rho*H,give_log);
 ")
 
 rmeas <- Csnippet("
-reports = rbinom(H,rho);
+reports = rnbinom_mu(k,rho*H);
 ")
 
 dat %>%
@@ -56,10 +56,10 @@ dat %>%
       logit=c("rho","eta")
     ),
     statenames=c("S","I","H"),
-    paramnames=c("Beta","mu_IR","eta","rho","N")
+    paramnames=c("Beta","mu_IR","eta","rho","k","N")
   ) -> measSIR
 
-params <- c(Beta=20,mu_IR=2,rho=0.5,eta=0.1,N=38000)
+params <- c(Beta=20,mu_IR=2,rho=0.5,k=10,eta=0.1,N=38000)
 
 measSIR %>%
   simulate(params=params,nsim=10,format="data.frame") -> y
@@ -69,7 +69,7 @@ measSIR %>%
   pfilter(Np=1000,params=params) -> pf
 
 
-fixed_params <- c(N=38000, mu_IR=2)
+fixed_params <- c(N=38000, mu_IR=2, k=10)
 
 library(foreach)
 library(doParallel)
@@ -131,7 +131,7 @@ mifs_local %>%
   melt() %>%
   ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
   geom_line()+
-  guides(color=FALSE)+
+  guides(color="none")+
   facet_wrap(~variable,scales="free_y")
 
 
@@ -383,6 +383,7 @@ runif_design(
 ) %>%
   mutate(
     rho=0.6,
+    k=10,
     N=38000
   ) -> guesses
 
@@ -468,7 +469,8 @@ profile_design(
 ) %>%
   mutate(
     N=38000,
-    rho=0.6
+    rho=0.6,
+    k=10
   ) -> guesses
 
 

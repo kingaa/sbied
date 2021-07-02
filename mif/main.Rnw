@@ -281,7 +281,7 @@ set.seed(1350254336)
   
   <<sir-diagram,echo=FALSE,purl=FALSE,fig.height=3/4,fig.width=6>>=
   library(grid)
-  vp <- viewport(width=unit(0.95,"npc"),height=unit(0.95,"npc"))
+  vp <- viewport(width=unit(0.9,"npc"),height=unit(0.9,"npc"))
   pushViewport(vp)
   grid.rect(x=c(1/4,2/4,3/4),y=1/2,width=1/8,height=1,just=c(0.5,0.5),gp=gpar(fill="white",lwd=2))
   grid.text(x=c(1/4,2/4,3/4),y=1/2,label=c(expression(S),expression(I),expression(R)),gp=gpar(fontsize=24))
@@ -340,11 +340,11 @@ set.seed(1350254336)
   The measurement model:
   <<sir_measure_model>>=
   dmeas <- Csnippet("
-  lik = dbinom(reports,H,rho,give_log);
+  lik = dnbinom_mu(reports,k,rho*H,give_log);
   ")
 
   rmeas <- Csnippet("
-  reports = rbinom(H,rho);
+  reports = rnbinom_mu(k,rho*H);
   ")
   @ 
   
@@ -364,7 +364,7 @@ set.seed(1350254336)
         logit=c("rho","eta")
       ),
       statenames=c("S","I","H"),
-      paramnames=c("Beta","mu_IR","eta","rho","N")
+      paramnames=c("Beta","mu_IR","eta","rho","k","N")
     ) -> measSIR
   @ 
 \end{frame}
@@ -387,7 +387,7 @@ set.seed(1350254336)
   We'll use the following parameters, derived from our earlier explorations:
   
   <<start_params>>=
-  params <- c(Beta=20,mu_IR=2,rho=0.5,eta=0.1,N=38000)
+  params <- c(Beta=20,mu_IR=2,rho=0.5,k=10,eta=0.1,N=38000)
   @
 \end{frame}
 
@@ -402,7 +402,7 @@ set.seed(1350254336)
     ggplot(aes(x=week,y=reports,group=.id,color=factor(.id)))+
     geom_line()+
     scale_color_brewer(type="qual",palette=3)+
-    guides(color=FALSE)
+    guides(color="none")
   @ 
 \end{frame}
 
@@ -440,7 +440,7 @@ set.seed(1350254336)
   Later, we'll relax this assumption.
   
   <<fixed_params>>=
-  fixed_params <- c(N=38000, mu_IR=2)
+  fixed_params <- c(N=38000, mu_IR=2, k=10)
   @
   
   We proceed to estimate $\beta$, $\eta$, and $\rho$.
@@ -588,19 +588,19 @@ set.seed(1350254336)
     melt() %>%
     ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
     geom_line()+
-    guides(color=FALSE)+
+    guides(color="none")+
     facet_wrap(~variable,scales="free_y")
   @
   
   \framebreak
 
   \begin{itemize}
-  \item We see that the likelihood eventually increases as the iterations proceed, though there is considerable variability due to
+  \item We see that the likelihood increases as the iterations proceed, though there is considerable variability due to
     \begin{enumerate}[(a)]
     \item the poorness of our starting guess and
     \item the stochastic nature of this Monte Carlo algorithm.
     \end{enumerate}
-  \item We see movement in the parameters, though considerable variability remains.
+  \item We see movement in the parameters, though variability remains.
   \end{itemize}
 \end{frame}
 
@@ -1099,6 +1099,7 @@ set.seed(1350254336)
   ) %>%
     mutate(
       rho=0.6,
+      k=10,
       N=38000
     ) -> guesses
   @
@@ -1249,7 +1250,8 @@ set.seed(1350254336)
   ) %>%
     mutate(
       N=38000,
-      rho=0.6
+      rho=0.6,
+      k=10
     ) -> guesses
   @
   

@@ -56,12 +56,12 @@ measSIR %>%
     rinit=sir_rinit,accumvars="H"
   ) -> measSIR
 
-sir_dmeas <- function (reports, H, rho, log, ...) {
-  dbinom(x=reports, size=H, prob=rho, log=log)
+sir_dmeas <- function (reports, H, rho, k, log, ...) {
+  dnbinom(x=reports, size=k, mu=rho*H, log=log)
 }
 
-sir_rmeas <- function (H, rho, ...) {
-  c(reports=rbinom(n=1, size=H, prob=rho))
+sir_rmeas <- function (H, rho, k, ...) {
+  c(reports=rnbinom(n=1, size=k, mu=rho*H))
 }
 
 measSIR %>%
@@ -89,11 +89,11 @@ sir_rinit <- Csnippet("
   ")
 
 sir_dmeas <- Csnippet("
-  lik = dbinom(reports,H,rho,give_log);
+  lik = dnbinom_mu(reports,k,rho*H,give_log);
   ")
 
 sir_rmeas <- Csnippet("
-  reports = rbinom(H,rho);
+  reports = rnbinom_mu(k,rho*H);
   ")
 
 measSIR %>%
@@ -103,12 +103,12 @@ measSIR %>%
        dmeasure=sir_dmeas,
        accumvars="H",
        statenames=c("S","I","R","H"),
-       paramnames=c("Beta","mu_IR","N","eta","rho")
+       paramnames=c("Beta","mu_IR","N","eta","rho","k")
        ) -> measSIR
 
 measSIR %>%
   simulate(
-    params=c(Beta=7.5,mu_IR=0.5,rho=0.5,eta=0.03,N=38000),
+    params=c(Beta=7.5,mu_IR=0.5,rho=0.5,k=10,eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE
   ) -> sims
 

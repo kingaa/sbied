@@ -6,6 +6,8 @@ output:
     toc: no
 bibliography: ../sbied.bib
 csl: ../jss.csl
+params:
+  prefix: qslice/
 ---
 
 
