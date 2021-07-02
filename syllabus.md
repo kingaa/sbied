@@ -86,56 +86,67 @@ The following schedule will be updated frequently.
 Bookmark this page so that you can check it at least twice per day.
 
 <div class="nb">
-***All listed times are Eastern Daylight Time (UTC-04:00)***  
+***All listed times are Pacific Daylight (Seattle) Time (UTC-07:00)***  
 Be careful to translate to your local timezone!
 </div>
 
-#### Wednesday, 15 July
+#### Monday, 12 July
 
-Before 14:30: View lecture videos for Lessons 1 and 2 (c.&nbsp;2.5hr). Begin work on the Exercises 2.3 and 2.4.  
+Before 8:00: View lecture videos for Lessons 1 and 2 (c.&nbsp;2.5hr or 100min at 1.5X).
+Send questions to Instructors via Slack.
+Begin work on the Exercises 2.3 and 2.4.  
+(Multiple guess questions).
 
-**Session 1**__
-14:30--15:30: Introductions. Live plenary discussion on Lessons 1 and 2 lectures  
-15:30--15:45: Set up Zoom breakout rooms  
-15:45--16:45: Breakout groups work on Lesson 2 exercises  
-16:45--17:30: Live plenary discussion of breakout group results  
+**Session 1**  
+8:00--8:30: Introductions. Organization. Lessons 1 and 2 Q&A.  
+8:30--9:45: Breakout groups work on Lesson 2 exercises.  
+9:45: Breakout group progress reports due.  
+9:45-10:15: Live plenary discussion of breakout group results.  
 
-17:30--18:30: Optional Office hour  
-
-#### Thursday, 16 July
-
-Before 11:00: View lecture videos for Lessons 3 and 4 (c.&nbsp;4hr). Begin work on the Exercises, including Exercises 3.3 and 3.4.  
+**Interlude**  
+10:15--12:15: View lecture videos for [Lesson 3](https://kingaa.github.io/sbied/pfilter/) (c.&nbsp;2hr or 80min at 1.5X).
+Questions to Slack.  
+11:45--12:15: Optional office hour (for those who have finished watching the Lesson 3 videos).  
 
 **Session 2**  
-11:00--12:00: Live plenary discussion on Lesson 3 lecture  
-12:00--13:00: Breakout groups work on Lesson 3 exercises  
-13:00--13:45: Live plenary discussion of breakout group progress  
+12:15--12:45: Lesson 3 Q&A.  
+12:45--14:00: Breakout groups work on Lesson 3 exercises.  
+14:00: Breakout groups progress reports due.  
+14:00--14:30: Live plenary discussion of breakout group progress.  
+
+#### Tuesday, 13 July
+
+Before 8:00: View lecture videos for Lesson 4, Parts I--IV (c.&nbsp;70min or 50min at 1.5X).
+Send questions to Instructors via Slack.  
+(Begin work on XXX).
+(Questions.)  
 
 **Session 3**  
-14:30--15:30: Live plenary discussion on Lesson 4 lecture  
-15:30--16:30: Breakout groups work on Lesson 4 exercises  
-16:30--16:45: Break  
-16:45--17:30: Live plenary discussion of breakout group progress  
+8:00--8:30: Lesson 4, Parts I--IV Q&A.  
+8:30--9:45: Breakout groups work on Lesson 4 exercises X and X.  
+9:45: Breakout groups progress reports due.  
+9:45--10:15: Live plenary discussion of breakout group progress.
 
-17:30--18:30: Optional Office hour  
-
-#### Friday, 17 July
-
-Before 11:00: View lecture video for Lesson 5 and (optionally) one or more of Lessons 6, 7, 8 (c.&nbsp;1.5--3hr)  
+**Interlude**  
+10:15--12:15: View lecture videos for [Lesson 4](https://kingaa.github.io/sbied/mif/), Parts V--VI (c.&nbsp;60min or 40min at 1.5X).
+Questions to Slack.  
+11:45--12:15: Optional office hour (for those who have finished watching the Lesson 4 videos).  
 
 **Session 4**  
-11:00--12:00: Live plenary discussion on Lesson 5 lecture  
-12:00--13:00: Breakout groups work on exercises from Lessons 2--4  
-13:00--13:45: Live plenary discussion of breakout group progress  
+12:15--12:45: Lesson 4, Parts V-VI Q&A.  
+12:45--14:00: Breakout groups work on exercises Lesson 4 advanced exercises X & X.  
+14:00--14:30: Live plenary discussion of breakout group progress.  
+
+#### Wednesday, 14 July
+
+Before 8:00: View lecture video for Lesson 5 (c.&nbsp;80min or 55min at 1.5X)  
 
 **Session 5**  
-14:30--15:10: Live, optional, plenary discussion on Lesson 6  
-15:10--15:50: Live, optional, plenary discussion on Lesson 7  
-15:50--16:30: Live, optional, plenary discussion on Lesson 8  
-14:30--16:30: Those not attending a plenary discussion can use the time to work individually or in groups on the Exercises.  
-16:30--17:30: Live plenary discussion. Questions and answers. Concluding remarks.  
-
-17:30--18:30: Optional drop-in session: all topics welcomed.  
+8:00--8:30: Lesson 5 Q&A.  
+8:30--9:30: Breakout groups discuss research topics and compile questions.  
+9:30--10:30: Plenary discussion of research topics and questions.  
+10:30--11:00: Concluding remarks.  
+11:00--12:00: Optional drop-in session: all topics welcomed.  
 
 -----------------------------
 
