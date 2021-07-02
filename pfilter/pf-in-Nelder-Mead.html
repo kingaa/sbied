@@ -188,6 +188,47 @@ pre code {
 <li>Finally, the parameters set we must optimize over is not unbounded. In particular, we must have <span class="math inline">\(\beta,\mu_{IR}&gt;0\)</span> and <span class="math inline">\(0&lt;\rho,\eta&lt;1\)</span>. We must therefore select an optimizer that can solve this <em>constrained maximization problem</em>, or find some of way of turning it into an unconstrained maximization problem. For example, we can transform the parameters onto a scale on which there are no constraints.</li>
 </ol>
 <p>Let’s try this out on the toy SIR model we were working with, reconstructed as follows.</p>
+<pre class="r"><code>library(tidyverse)
+library(pomp)
+
+sir_step &lt;- Csnippet(&quot;
+  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
+  double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  R += dN_IR;
+  H += dN_IR;
+&quot;)
+
+sir_init &lt;- Csnippet(&quot;
+  S = nearbyint(eta*N);
+  I = 1;
+  R = nearbyint((1-eta)*N);
+  H = 0;
+&quot;)
+
+dmeas &lt;- Csnippet(&quot;
+  lik = dnbinom_mu(reports,k,rho*H,give_log);
+  &quot;)
+
+rmeas &lt;- Csnippet(&quot;
+  reports = rnbinom_mu(k,rho*H);
+  &quot;)
+
+read_csv(&quot;https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv&quot;) %&gt;%
+  select(week,reports=cases) %&gt;%
+  filter(week&lt;=42) %&gt;%
+  pomp(
+    times=&quot;week&quot;,t0=0,
+    rprocess=euler(sir_step,delta.t=1/7),
+    rinit=sir_init,
+    rmeasure=rmeas,
+    dmeasure=dmeas,
+    accumvars=&quot;H&quot;,
+    statenames=c(&quot;S&quot;,&quot;I&quot;,&quot;R&quot;,&quot;H&quot;),
+    paramnames=c(&quot;Beta&quot;,&quot;mu_IR&quot;,&quot;eta&quot;,&quot;rho&quot;,&quot;k&quot;,&quot;N&quot;),
+    params=c(Beta=15,mu_IR=0.5,rho=0.5,k=10,eta=0.06,N=38000)
+  ) -&gt; measSIR</code></pre>
 <p>Here, let’s opt for deterministic optimization of a rough function. We’ll try using <code>optim</code>’s default method: Nelder-Mead, fixing the random-number generator seed to make the likelihood calculation deterministic. Since Nelder-Mead is an unconstrained optimizer, we must transform the parameters. The following introduces such a transformation into the <code>pomp</code> object.</p>
 <pre class="r"><code>measSIR %&gt;%
   pomp(partrans=parameter_trans(log=c(&quot;Beta&quot;,&quot;mu_IR&quot;),logit=c(&quot;rho&quot;,&quot;eta&quot;)),

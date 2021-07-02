@@ -11,6 +11,8 @@ output:
     df_print: kable
 bibliography: ../sbied.bib
 csl: ../jss.csl
+params:
+  prefix: settings/
 ---
 
 ```{css styles,echo=FALSE,purl=FALSE}

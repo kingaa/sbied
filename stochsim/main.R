@@ -53,7 +53,7 @@ sir_rinit <- function (N, eta, ...) {
 measSIR %>% 
   pomp(
     rprocess=euler(sir_step,delta.t=1/7),
-    rinit=sir_rinit,accumvars="H"
+    rinit=sir_rinit, accumvars="H"
   ) -> measSIR
 
 sir_dmeas <- function (reports, H, rho, k, log, ...) {
@@ -108,7 +108,8 @@ measSIR %>%
 
 measSIR %>%
   simulate(
-    params=c(Beta=7.5,mu_IR=0.5,rho=0.5,k=10,eta=0.03,N=38000),
+    params=c(Beta=7.5,mu_IR=0.5,rho=0.5,k=10,
+      eta=0.03,N=38000),
     nsim=20,format="data.frame",include.data=TRUE
   ) -> sims
 

@@ -15,7 +15,7 @@
 library(tidyverse)
 library(pomp)
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp")>="3.0")
+stopifnot(packageVersion("pomp")>="3.4")
 set.seed(1350254336)
 @
 
@@ -668,7 +668,7 @@ set.seed(1350254336)
   Test your conjecture by running a sequence of particle filter operations, with increasing numbers of particles (\code{Np}), measuring the time taken for each one using \code{system.time}.
   Plot and interpret your results.
 
-  \link{http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/expense.R}{Worked solution to the Exercise}
+  \link{./expense.html}{Worked solution to the Exercise}
 \end{frame}
 
 \begin{frame}{\myexercise. Log likelihood estimation}

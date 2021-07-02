@@ -215,8 +215,51 @@ pre code {
 <div id="solution" class="section level3">
 <h3>Solution</h3>
 <ul>
-<li><p>First, let’s reconstruct the toy SIR model we were working with:</p></li>
-<li><p>Now, borrow code from the notes:</p></li>
+<li>First, let’s reconstruct the toy SIR model we were working with:</li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+library(pomp)
+
+sir_step &lt;- Csnippet(&quot;
+  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
+  double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  R += dN_IR;
+  H += dN_IR;
+&quot;)
+
+sir_init &lt;- Csnippet(&quot;
+  S = nearbyint(eta*N);
+  I = 1;
+  R = nearbyint((1-eta)*N);
+  H = 0;
+&quot;)
+
+dmeas &lt;- Csnippet(&quot;
+  lik = dnbinom_mu(reports,k,rho*H,give_log);
+  &quot;)
+
+rmeas &lt;- Csnippet(&quot;
+  reports = rnbinom_mu(k,rho*H);
+  &quot;)
+
+read_csv(&quot;https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv&quot;) %&gt;%
+  select(week,reports=cases) %&gt;%
+  filter(week&lt;=42) %&gt;%
+  pomp(
+    times=&quot;week&quot;,t0=0,
+    rprocess=euler(sir_step,delta.t=1/7),
+    rinit=sir_init,
+    rmeasure=rmeas,
+    dmeasure=dmeas,
+    accumvars=&quot;H&quot;,
+    statenames=c(&quot;S&quot;,&quot;I&quot;,&quot;R&quot;,&quot;H&quot;),
+    paramnames=c(&quot;Beta&quot;,&quot;mu_IR&quot;,&quot;eta&quot;,&quot;rho&quot;,&quot;k&quot;,&quot;N&quot;),
+    params=c(Beta=15,mu_IR=0.5,rho=0.5,k=10,eta=0.06,N=38000)
+  ) -&gt; measSIR</code></pre>
+<ul>
+<li>Now, borrow code from the notes:</li>
 </ul>
 <pre class="r"><code>NP &lt;- 50000
 REPLICATES &lt;- 10
@@ -231,7 +274,7 @@ logmeanexp(ll,se=TRUE)</code></pre>
 <pre><code>                       se 
 -129.7757821    0.7798908 </code></pre>
 <ul>
-<li><p>This took 41.2 seconds.</p></li>
+<li><p>This took 41.5 seconds.</p></li>
 <li><p>Since the time taken is approximately linear in <code>NP</code> and <code>REPLICATES</code>, we get a formula (for this machine) of <span class="math display">\[\mbox{Runtime}\approx \frac{ \mathrm{NP}}{5\times 10^{4}} \times \frac{\mathrm{REPLICATES}}{ 10} \times 0.69 \mbox{ minutes}.\]</span></p></li>
 <li><p>We can use this formula to select <code>NP</code> and <code>REPLICATES</code> to give an appropriate runtime.</p></li>
 <li><p><code>logmeanexp</code> averages the replications on the untransformed scale, not the log scale. It provides a standard error.</p></li>
@@ -264,7 +307,7 @@ logmeanexp(ll,se=TRUE)</code></pre>
         mean
     }
 }
-&lt;bytecode: 0x55e0935925f0&gt;
+&lt;bytecode: 0x557b8556cb70&gt;
 &lt;environment: namespace:pomp&gt;</code></pre>
 <ul>
 <li><p>We see that <code>logmeanexp</code> constructs its standard errors via a <a href="https://en.wikipedia.org/wiki/Jackknife_resampling">jack-knife</a> calculation.</p></li>

@@ -177,6 +177,47 @@ pre code {
 <hr />
 <p>We’re going to demonstrate what happens when we attempt to compute the likelihood for the Consett measles outbreak data by direct simulation from.</p>
 <p>First, let’s reconstruct the toy SIR model we were working with.</p>
+<pre class="r"><code>library(tidyverse)
+library(pomp)
+
+sir_step &lt;- Csnippet(&quot;
+  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
+  double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
+  S -= dN_SI;
+  I += dN_SI - dN_IR;
+  R += dN_IR;
+  H += dN_IR;
+&quot;)
+
+sir_init &lt;- Csnippet(&quot;
+  S = nearbyint(eta*N);
+  I = 1;
+  R = nearbyint((1-eta)*N);
+  H = 0;
+&quot;)
+
+dmeas &lt;- Csnippet(&quot;
+  lik = dnbinom_mu(reports,k,rho*H,give_log);
+  &quot;)
+
+rmeas &lt;- Csnippet(&quot;
+  reports = rnbinom_mu(k,rho*H);
+  &quot;)
+
+read_csv(&quot;https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv&quot;) %&gt;%
+  select(week,reports=cases) %&gt;%
+  filter(week&lt;=42) %&gt;%
+  pomp(
+    times=&quot;week&quot;,t0=0,
+    rprocess=euler(sir_step,delta.t=1/7),
+    rinit=sir_init,
+    rmeasure=rmeas,
+    dmeasure=dmeas,
+    accumvars=&quot;H&quot;,
+    statenames=c(&quot;S&quot;,&quot;I&quot;,&quot;R&quot;,&quot;H&quot;),
+    paramnames=c(&quot;Beta&quot;,&quot;mu_IR&quot;,&quot;eta&quot;,&quot;rho&quot;,&quot;k&quot;,&quot;N&quot;),
+    params=c(Beta=15,mu_IR=0.5,rho=0.5,k=10,eta=0.06,N=38000)
+  ) -&gt; measSIR</code></pre>
 <p>Let’s generate a large number of simulated trajectories at some particular point in parameter space.</p>
 <pre class="r"><code>measSIR %&gt;%
   simulate(nsim=5000,format=&quot;arrays&quot;) -&gt; x

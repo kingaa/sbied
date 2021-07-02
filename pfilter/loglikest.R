@@ -8,6 +8,7 @@ stopifnot(getRversion()>="4.0")
 stopifnot(packageVersion("pomp")>="3.0")
 set.seed(1221234211)
 
+knitr::read_chunk("model.R")
 library(tidyverse)
 library(pomp)
 
@@ -29,14 +30,15 @@ sir_init <- Csnippet("
 
 dmeas <- Csnippet("
   lik = dnbinom_mu(reports,k,rho*H,give_log);
-")
+  ")
 
 rmeas <- Csnippet("
   reports = rnbinom_mu(k,rho*H);
-")
+  ")
 
 read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
   select(week,reports=cases) %>%
+  filter(week<=42) %>%
   pomp(
     times="week",t0=0,
     rprocess=euler(sir_step,delta.t=1/7),
@@ -48,12 +50,6 @@ read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
     paramnames=c("Beta","mu_IR","eta","rho","k","N"),
     params=c(Beta=15,mu_IR=0.5,rho=0.5,k=10,eta=0.06,N=38000)
   ) -> measSIR
-
-measSIR %>%
-  simulate(nsim=20,format="data.frame",include.data=TRUE) %>%
-  ggplot(aes(x=week,y=reports,color=(.id=="data"),group=.id))+
-  geom_line()+
-  guides(color=FALSE)
 
 measSIR %>% pfilter(Np=1000) -> pf
 logLik(pf)

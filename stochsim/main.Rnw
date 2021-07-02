@@ -494,7 +494,7 @@ registerDoRNG(2488820)
     measSIR %>% 
       pomp(
         rprocess=euler(sir_step,delta.t=1/7),
-        rinit=sir_rinit,accumvars="H"
+        rinit=sir_rinit, accumvars="H"
       ) -> measSIR
     @
     
@@ -627,7 +627,8 @@ registerDoRNG(2488820)
     <<sir_sim1_plot,out.width="8cm">>=
     measSIR %>%
       simulate(
-        params=c(Beta=7.5,mu_IR=0.5,rho=0.5,k=10,eta=0.03,N=38000),
+        params=c(Beta=7.5,mu_IR=0.5,rho=0.5,k=10,
+          eta=0.03,N=38000),
         nsim=20,format="data.frame",include.data=TRUE
       ) -> sims
     
@@ -636,8 +637,10 @@ registerDoRNG(2488820)
       geom_line()+
       guides(color=FALSE)
     @
+
+    The data are in blue; the \Sexpr{length(levels(sims$.id))-1} simulations are shown in red.
     
-    This leaves something to be desired.
+    Clearly, this leaves something to be desired.
     In the exercises, you'll see if this model can do better.
 
   \end{itemize}

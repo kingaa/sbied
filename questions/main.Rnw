@@ -390,6 +390,14 @@ When there is a reproducible and stable phenomenon of decreasing likelihood, it 
 If the researchers calculate a sliced likelihood through the MLE and tell you it is a profile, but you are concerned they might have constructed a slice by mistake, it is hard to know without looking at the code. \ref{A7a} is the proper construction of a profile if the points are maximizations over the remaining parameters for a range of fixed values of rho. However, if the code does not involve maximization over other parameters at each value of rho, it cannot be a proper profile. It could be a slice accidentally explained to be a profile, and with a confidence interval constructed as if it were a profile. 
 }
 
+\myquestion.
+Which of the following are true?
+\begin{enumerate}[label=(\Alph*)]
+\item A profile likelihood must lie \emph{above} every slice.
+\item A likelihood slice can be used to compute confidence intervals.
+\item A ppor man's profile must lie above the true profile.
+\end{enumerate}
+
 \medskip
 
 \vspace{-5mm}

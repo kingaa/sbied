@@ -1,7 +1,7 @@
 library(tidyverse)
 library(pomp)
 options(stringsAsFactors=FALSE)
-stopifnot(packageVersion("pomp")>="3.0")
+stopifnot(packageVersion("pomp")>="3.4")
 set.seed(1350254336)
 
 

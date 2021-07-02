@@ -43,7 +43,7 @@ We're going to demonstrate what happens when we attempt to compute the likelihoo
 
 First, let's reconstruct the toy SIR model we were working with.
 
-```{r read_chunk,include=FALSE,purl=FALSE}
+```{r read_chunk,include=FALSE,purl=TRUE}
 knitr::read_chunk("model.R")
 ```
 ```{r model-construct}
