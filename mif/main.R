@@ -141,7 +141,7 @@ bake(file="lik_local.rds",{
   foreach(mf=mifs_local,.combine=rbind) %dopar% {
     library(pomp)
     library(tidyverse)
-    evals <- replicate(10, logLik(pfilter(mf,Np=20000)))
+    evals <- replicate(10, logLik(pfilter(mf,Np=10000)))
     ll <- logmeanexp(evals,se=TRUE)
     mf %>% coef() %>% bind_rows() %>%
       bind_cols(loglik=ll[1],loglik.se=ll[2])
@@ -167,8 +167,8 @@ set.seed(2062379496)
 
 runif_design(
   lower=c(Beta=5,rho=0.2,eta=0),
-  upper=c(Beta=80,rho=0.9,eta=0.4),
-  nseq=300
+  upper=c(Beta=80,rho=0.9,eta=1),
+  nseq=400
 ) -> guesses
 
 mf1 <- mifs_local[[1]]
@@ -184,7 +184,7 @@ bake(file="global_search.rds",{
       mif2(Nmif=100) -> mf
     replicate(
       10,
-      mf %>% pfilter(Np=100000) %>% logLik()
+      mf %>% pfilter(Np=10000) %>% logLik()
     ) %>%
       logmeanexp(se=TRUE) -> ll
     mf %>% coef() %>% bind_rows() %>%
@@ -228,7 +228,7 @@ box
 
 set.seed(1196696958)
 profile_design(
-  eta=seq(0.01,0.85,length=40),
+  eta=seq(0.01,0.95,length=40),
   lower=box[1,c("Beta","rho")],
   upper=box[2,c("Beta","rho")],
   nprof=15, type="runif"
@@ -249,7 +249,7 @@ bake(file="eta_profile.rds",{
       mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
     replicate(
       10,
-      mf %>% pfilter(Np=100000) %>% logLik()) %>%
+      mf %>% pfilter(Np=10000) %>% logLik()) %>%
       logmeanexp(se=TRUE) -> ll
     mf %>% coef() %>% bind_rows() %>%
       bind_cols(loglik=ll[1],loglik.se=ll[2])
@@ -338,7 +338,7 @@ bake(file="rho_profile.rds",{
       mif2() -> mf
     replicate(
       10,
-      mf %>% pfilter(Np=100000) %>% logLik()) %>%
+      mf %>% pfilter(Np=10000) %>% logLik()) %>%
       logmeanexp(se=TRUE) -> ll
     mf %>% coef() %>% bind_rows() %>%
       bind_cols(loglik=ll[1],loglik.se=ll[2])
@@ -378,7 +378,7 @@ results %>%
 set.seed(55266255)
 runif_design(
   lower=c(Beta=5,mu_IR=0.2,eta=0),
-  upper=c(Beta=80,mu_IR=5,eta=0.4),
+  upper=c(Beta=80,mu_IR=5,eta=0.95),
   nseq=1000
 ) %>%
   mutate(
@@ -418,7 +418,7 @@ bake(file="global_search2.rds",{
       mif2(Nmif=100,cooling.fraction.50=0.1) -> mf
     replicate(
       10,
-      mf %>% pfilter(Np=100000) %>% logLik()
+      mf %>% pfilter(Np=10000) %>% logLik()
     ) %>% logmeanexp(se=TRUE) -> ll
     mf %>% coef() %>% bind_rows() %>%
       bind_cols(loglik=ll[1],loglik.se=ll[2])
