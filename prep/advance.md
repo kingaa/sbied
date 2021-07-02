@@ -1,3 +1,7 @@
+---
+pagetitle: Advance Instructions for SISMID Module 7
+---
+
 Dear Module 7 Participant:
 
 We are looking forward to seeing you online soon for our course on ***Simulation-based Inference for Epidemiological Dynamics***!
@@ -8,7 +12,7 @@ The schedule is quite full, so it is important that you take a little time befor
 **There are four important steps that you must take to prepare for the course.**
 
 1. Install or update **R**, **Rstudio**, the **pomp** package and its dependencies, and the necessary compilers, on your laptop.
-   You will need to have at least version 4.0.0 of **R** and at least version 1.3.959 of **Rstudio** installed on your computer.
+   You will need to have at least version 4.0.4 of **R** and at least version 1.4.1717 of **Rstudio** installed on your computer.
    **There will be no time for this during the 2.5-day workshop.**
    You should be aware that the *installation instructions depend on the operating system you use*.
    Make sure you follow these instructions *carefully* and *thoroughly*!

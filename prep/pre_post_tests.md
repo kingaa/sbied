@@ -1,3 +1,7 @@
+---
+pagetitle: Pre- and Post-Test Questions
+---
+
 # Module 7: Simulation-based Inference for Epidemiological Dynamics
 ## Pre-test Questions
 
