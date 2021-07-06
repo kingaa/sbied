@@ -1,7 +1,7 @@
 ---
 title: Syllabus for SISMID Module 7
 subtitle: Simulation-based Inference for Epidemiological Dynamics
-date: "15--17 July 2020"
+date: "12--14 July 2021"
 ---
 
 <style type="text/css">
@@ -23,10 +23,11 @@ hr {
 ### Important Information
 
 We hope that you have already followed the [instructions for preparing your computer for the course](https://kingaa.github.io/sbied/prep/).
-**If you have not yet done so, please do so soon:** if you run into difficulties, you will definitely want to have those ironed out *before* the course starts.
+**If you have not yet done so, please do so at your first opportunity:**
+if you run into difficulties, you will definitely want to have those ironed out *before* the course starts.
 
 Note also that there are mandatory activities ***prior to each day's meeting***.
-For example, make sure that you have watched the video lectures for Lessons 1 and 2 (linked from the course website), and make a start on the Lesson 2 Exercises, before we meet on 15 July.
+For example, make sure that you have watched the video lectures for Lessons 1 and 2 (linked from the course website) before we meet on 12 July.
 See the schedule below for details.
 
 -----------------------------
@@ -46,34 +47,34 @@ The course will have five components:
 
 1. ***A mandatory self-learning component***, in which students are expected to watch and take notes on the pre-recorded lectures prior to the day's activities.
    Links to the videos can be found on the [course website](https://kingaa.github.io/sbied/), along with PDF versions of the lecture notes and slides.
-   For example, before our live plenary on Wednesday, 15 July, we expect students to have watched the Lesson 1 and Lesson 2 lecture videos.
-   If you have any questions that come up while you are watching the videos, please pose these using the `#mod07simulationinference` channel in the SISMID Slack workspace.
+   For example, before our live plenary on Monday, 12 July, we expect students to have watched the Lesson 1 and Lesson 2 lecture videos.
+   If you have any questions that come up while you are watching the videos, please pose these using the `#m7_simulation-based_inference_epi_dynamics_2021` channel in the SISMID Slack workspace.
    We will monitor this channel and attempt to answer all questions either via Slack, or in the live sessions.
    This use of Slack will allow you check whether your question has been asked previously, to avoid the kind of unnecessary duplication that makes it hard for everyone.
 
 1. ***Exercises.***
    Each lesson includes exercises intended to consolidate and challenge your understanding of key concepts and methods.
-   To get the most out of the course, you will have to grapple with these Exercises on your own.
-   Accordingly, you must make a start on each assigned Exercise prior to the day's live sessions.  
-   The amount of progress you make is less important than the fact that you have started thinking about and working on the Exercise before the live session.
-   Questions that arise in the first phase of work on an Exercise should be sent to the course Slack channel prior to the day's session.
-   See below for guidance on use of the Slack channel.
-
+   To get the most out of the course, you will have to grapple with these Exercises on your own as well as in a group.
+   
 1. ***Live plenary discussions***, during which instructors will elaborate important points raised in the lectures and address common questions posed over Slack.
    During these sessions, feel free to raise any additional questions that come up.
    We ask that you mute your audio and video at the start of each live plenary and keep them muted until you have a question.
    When you do have a question, by unmuting your audio and video, you will become visible and will be given the floor to ask your question.
+   You may also use the "Raise Hand" feature to ask a question.
 
 1. ***Breakout-group sessions***, in which each student will work in small groups, in breakout rooms, on the Exercises.
-   Each breakout group will be composed of 4 or 5 students, will be assigned a breakout room of its own, and will persist for the duration of the course.
-   Within each breakout group, there will be five roles to be performed by group members; these are described below.
-   At their first meeting, groups should agree among themselves as to who should perform the roles.
-   Roles should be rotated periodically.  
-   ***Asking for help from a group***.
-   When a group wants help from the instructors, it can either (1) post a question via Slack, (2) send a member out of the breakout room to ask, (3) leave the breakout room as a group to talk with the instructor, or (4) use the 'Ask for Help' feature, which allows the group to request that one of the instructors visit the breakout room.
-   The breakout groups are where you will learn the most, so do not hesitate to ask for help when needed!
-   As needed, the instructors may pull everyone back for plenary discussion of points that arise in group activities.
-   See below for more on breakout group roles, rules, and expectations regarding breakout group activities.
+   There will be nine groups.
+   Each group member will have one or more of five roles:
+   these are described below.
+   At the beginning of each group meeting, group members should introduce themselves, and groups should quickly decide who should perform each role.  
+   Each group will be visited by an instructor once during each session according to the following schedule:
+   
+   - Groups 1--3: Minute 10--25
+   - Groups 4--6: Minute 30--45
+   - Groups 7--9: Minute 50--65
+   
+   Outside of these times, the instructors will be responding to questions posed over the Slack channel and Zoom "Ask for Help" requests.  
+   At the end of each breakout group session, a progress report should be submitted to the Slack channel.
    
 1. ***Optional office hours.***
    These are times when you should feel free to drop in with questions or when you need help.
@@ -92,58 +93,63 @@ Be careful to translate to your local timezone!
 
 #### Monday, 12 July
 
-Before 8:00: View lecture videos for Lessons 1 and 2 (c.&nbsp;2.5hr or 100min at 1.5X).
-Send questions to Instructors via Slack.
-Begin work on the Exercises 2.3 and 2.4.  
+Before 8:00:  
+View lecture videos for Lessons 1 and 2 (c.&nbsp;2.5hr or 100min at 1.5X).  
+Send questions to Instructors via Slack.  
+Optionally, begin work on Exercises 2.3 & 2.4.  
 (Multiple guess questions).
 
 **Session 1**  
 8:00--8:30: Introductions. Organization. Lessons 1 and 2 Q&A.  
-8:30--9:45: Breakout groups work on Lesson 2 exercises.  
-9:45: Breakout group progress reports due.  
+8:30--9:45: Breakout groups work on Exercises 2.3 & 2.4.  
+9:45: Breakout group progress reports due on Slack.  
 9:45-10:15: Live plenary discussion of breakout group results.  
 
 **Interlude**  
-10:15--12:15: View lecture videos for [Lesson 3](https://kingaa.github.io/sbied/pfilter/) (c.&nbsp;2hr or 80min at 1.5X).
+10:15--12:15: View lecture videos for [Lesson 3](https://kingaa.github.io/sbied/pfilter/) (c.&nbsp;2hr or 80min at 1.5x).
 Questions to Slack.  
 11:45--12:15: Optional office hour (for those who have finished watching the Lesson 3 videos).  
 
 **Session 2**  
 12:15--12:45: Lesson 3 Q&A.  
-12:45--14:00: Breakout groups work on Lesson 3 exercises.  
-14:00: Breakout groups progress reports due.  
+12:45--14:00: Breakout groups work on Exercises 3.1--3.4.  
+14:00: Breakout group progress reports due on Slack.  
 14:00--14:30: Live plenary discussion of breakout group progress.  
 
 #### Tuesday, 13 July
 
-Before 8:00: View lecture videos for Lesson 4, Parts I--IV (c.&nbsp;70min or 50min at 1.5X).
+Before 8:00:  
+View lecture videos for Lesson 4, Parts I--IV (c.&nbsp;70min or 50min at 1.5x).  
 Send questions to Instructors via Slack.  
-(Begin work on XXX).
+Optionally, begin work on Exercises 4.1.  
 (Questions.)  
 
 **Session 3**  
 8:00--8:30: Lesson 4, Parts I--IV Q&A.  
-8:30--9:45: Breakout groups work on Lesson 4 exercises X and X.  
-9:45: Breakout groups progress reports due.  
+8:30--9:45: Breakout groups work on Exercises 4.1 & 4.2.  
+9:45: Breakout group progress reports due on Slack.  
 9:45--10:15: Live plenary discussion of breakout group progress.
 
 **Interlude**  
-10:15--12:15: View lecture videos for [Lesson 4](https://kingaa.github.io/sbied/mif/), Parts V--VI (c.&nbsp;60min or 40min at 1.5X).
+10:15--12:15: View lecture videos for [Lesson 4](https://kingaa.github.io/sbied/mif/), Parts V--VI (c.&nbsp;60min or 40min at 1.5x).
 Questions to Slack.  
 11:45--12:15: Optional office hour (for those who have finished watching the Lesson 4 videos).  
 
 **Session 4**  
 12:15--12:45: Lesson 4, Parts V-VI Q&A.  
-12:45--14:00: Breakout groups work on exercises Lesson 4 advanced exercises X & X.  
+12:45--14:00: Breakout groups work on Exercises 4.1--4.4.  
+14:00: Breakout group progress reports due on Slack.  
 14:00--14:30: Live plenary discussion of breakout group progress.  
 
 #### Wednesday, 14 July
 
-Before 8:00: View lecture video for Lesson 5 (c.&nbsp;80min or 55min at 1.5X)  
+Before 8:00:  
+View lecture video for Lesson 5 (c.&nbsp;80min or 55min at 1.5x).  
 
 **Session 5**  
 8:00--8:30: Lesson 5 Q&A.  
 8:30--9:30: Breakout groups discuss research topics and compile questions.  
+9:30: Breakout group reports due on Slack.  
 9:30--10:30: Plenary discussion of research topics and questions.  
 10:30--11:00: Concluding remarks.  
 11:00--12:00: Optional drop-in session: all topics welcomed.  
@@ -159,12 +165,11 @@ In the spirit of ensuring an efficient and enjoyable learning experience for eve
    Please mute your audio and video *unless and until you have a question.* 
    If you have a question, unmute yourself and turn on your video: 
    this will act as a cue for us to recognize you.
+   You can also use the "Raise Hand" feature.
    The "chat" feature will be disabled during the live discussion.
-   Instead, use the course Slack channel to ask questions in real time.
-   At any one time, at least one of the instructors will be monitoring the Slack channel.
 1. ***When submitting over Slack, take some care to avoid unnecessary duplication.***
-   If someone has recently asked the same question, you can register your interest in having that question answered using the "reaction" buttons, without having to restate the question.
-1. ***During the breakout discussions, keep both your audio and video on.***
+   If someone has recently asked the same question, you can register your interest in having that question answered using the "add reaction" button, without having to restate the question.
+1. ***During the breakout discussions, keep both your audio and video on as much as possible.***
    The breakout sessions will be where you apply the lessons you learn and discover where you want to ask additional questions.
    You will have a specific role in your group that your fellow group members will rely on you to perform.
    To facilitate full engagement, keep your video and audio on during these sessions whenever appropriate.
@@ -178,7 +183,7 @@ In the spirit of ensuring an efficient and enjoyable learning experience for eve
 1. ***Speak up!***
    We are striving for free-flowing discussions during the live plenary and breakout discussions.
    These depend on your active participation!
-   This course is for **you**: make the most of it by getting the questions you have answered.
+   This course is for **you**: make the most of it by getting answers to your questions.
    Don't worry that others may think you are holding us back with your questions:
    we can guarantee that others will have the same question.
 1. ***Be courteous.***
@@ -187,7 +192,7 @@ In the spirit of ensuring an efficient and enjoyable learning experience for eve
 1. ***Dress comfortably, but professionally.***
    You will be visible to your colleagues and instructors.
 1. ***Have a sense of humor!***
-   Many things will go wrong as we make our first-ever attempt at teaching this course remotely.
+   In online courses, many things can go wrong.
    Let's be generous and tolerant toward one another, and always willing to laugh!
 
 -----------------------------
