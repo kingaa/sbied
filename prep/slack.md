@@ -11,7 +11,7 @@ Please go to https://kingaa.github.io/sbied/syllabus.html to see how the course 
 
 The live activities will be held over Zoom.
 **You must register first to be able to enter the Zoom session.**
-The link for registration is: https://umich.zoom.us/meeting/register/tJYode6qrDIrGdEzwy3LOeJLuAiznPiUgJ0_
+https://umich.zoom.us/meeting/register/tJEsceCurTwvGdz-yyCDgStyDgGW3ZuJ1V-j.
 After registering, you will receive a confirmation email containing information about joining the meeting.
 
 We're anticipating a stimulating and enjoyable time.  See you soon!
