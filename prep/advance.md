@@ -20,7 +20,7 @@ The schedule is quite full, so it is important that you take a little time befor
 
 	[The full installation instructions are here: follow them carefully!](https://kingaa.github.io/sbied/prep/)
 
-	Once you are finished, please fill out [this online form](https://docs.google.com/forms/d/1mPYOdqjCS2V3E80uLww8IZxJIKuvnTmcaAcHJgQtO48) to give me information about your computing system.
+	Once you are finished, please fill out [this online form](https://forms.gle/NygBzhUzewTk7XBb6) to give us information about your computing system.
 
 <div class="nb"> 
 In previous years, some students have come to the workshop, only to find that they cannot use their laptops because they have not followed the instructions carefully.
@@ -41,4 +41,4 @@ There will be no course materials in hardcopy: all the course materials are [ava
 
 We are looking forward to seeing you in the course!
 
----Aaron, Ed, and Kidus
+---Aaron, Ed, and Qianying

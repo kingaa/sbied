@@ -193,11 +193,12 @@ hr {
 </ul>
 <p>In particular, it is often easiest to send a screenshot or transcript showing the commands you’ve entered and the error messages you’ve received. In <strong>R</strong>, you can run <code>Sys.info()</code> to get a printout of the operating system and software version numbers.</p>
 </div>
+<hr />
 <div id="all-users" class="section level2">
 <h2>All users</h2>
 <div id="install-r-and-rstudio" class="section level3">
 <h3>Install <strong>R</strong> and <strong>RStudio</strong></h3>
-<p><strong>R</strong> and <strong>RStudio</strong> are free and open-source. You’ll need at least version 4.0.0 of <strong>R</strong>. Source code and binaries are available on CRAN (<a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a>). Install <em>the latest version</em> of <strong>RStudio</strong> from <a href="https://www.rstudio.com/products/rstudio/download/">rstudio.com</a>.</p>
+<p><strong>R</strong> and <strong>RStudio</strong> are free and open-source. You’ll need at least version 4.0.4 of <strong>R</strong>. Source code and binaries are available on CRAN (<a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a>). Install <em>the latest version</em> of <strong>RStudio</strong> from <a href="https://www.rstudio.com/products/rstudio/download/">rstudio.com</a>.</p>
 <p><strong>For Windows users</strong>, there is a <a href="https://youtu.be/n6mnN3lGj4s" target="_blank">video tutorial on the installation of <strong>R</strong> and <strong>Rstudio</strong></a>.</p>
 </div>
 <div id="install-needed-packages" class="section level3">
@@ -218,8 +219,8 @@ hr {
 <p><strong><em>It is essential that you install these tools before the course starts!</em></strong></p>
 <hr />
 </div>
-<div id="macosx-users" class="section level2">
-<h2>MacOSX users</h2>
+<div id="macos-users" class="section level2">
+<h2>MacOS users</h2>
 <p>So that you can compile C code and dynamically link it into an <strong>R</strong> session, you will need to have the <strong>Xcode</strong> app installed. This is gratis and can be installed via the App Store or downloaded from <a href="https://developer.apple.com/download/">developer.apple.com</a>. Video tutorials demonstrating how to <a href="https://youtu.be/j0kqPpMecp4">check if you need to install Xcode</a>, <a href="https://youtu.be/aryEseip6Mk">how to install Xcode</a>, and <a href="https://youtu.be/ikvJcN3Zi2w">how to install pomp once you have installed Xcode</a> are available.</p>
 <p>Note that you must go beyond merely installing the <strong>Xcode</strong> app. After you’ve installed the app, open a unix terminal (listed as the <strong>Terminal</strong> app under “Utilities” in the Finder) and run the following line</p>
 <pre><code>xcode-select --install</code></pre>
@@ -235,20 +236,24 @@ hr {
 <p>This will check whether you can work with <strong>pomp</strong>.</p>
 <p>If it fails, try the following:</p>
 <pre><code>&gt; source(&quot;https://kingaa.github.io/scripts/hello.R&quot;,echo=TRUE)</code></pre>
-<p>If this fails to give the “Hello!” message, you will need to follow the instructions below that correspond to your OS before re-trying the <code>pompTest.R</code> script.</p>
+<p>If this fails to give the two “Hello!” messages, you will need to follow the instructions below that correspond to your OS before re-trying the <code>pompTest.R</code> script.</p>
+<hr />
 </div>
-<div id="linux-and-unix" class="section level3">
-<h3>Linux and unix</h3>
+</div>
+<div id="troubleshooting" class="section level2">
+<h2>Troubleshooting</h2>
+<div id="linux-and-unix-users" class="section level3">
+<h3>Linux and unix users</h3>
 <p>If you have trouble with any of the scripts above, make sure you have the GNU compiler collection (GCC), including <strong>gfortran</strong>, installed on your computer. Linux distributions typically include this by default but it is not impossible that you have somehow avoided this.</p>
 </div>
-<div id="macosx" class="section level3">
-<h3>MacOSX</h3>
+<div id="macos-users-1" class="section level3">
+<h3>MacOS users</h3>
 <p>If the <code>pompTest.R</code> script fails because you cannot load <strong>pomp</strong>, try installing it from source. The easiest way to do this is to use the <strong>devtools</strong> package. Do</p>
 <pre><code>install.packages(&quot;devtools&quot;)
 library(devtools)
 install_github(&quot;kingaa/pomp&quot;)</code></pre>
 <p>If, while trying to install from source, you receive the error,</p>
-<pre><code>make: gfortran-4.8: No such file or directory</code></pre>
+<pre><code>make: gfortran-8.2: No such file or directory</code></pre>
 <p>or one that otherwise refers to <code>gfortran</code>, then it is likely that you do not have the necessary version of <strong>gfortran</strong> installed. Have a look at <a href="https://mac.r-project.org/tools/">these instructions</a> and contact me at the address above if these don’t work for you.</p>
 <p>Some users have reported receiving an error complaining that</p>
 <pre><code>&#39;stdlib.h&#39; file not found</code></pre>
@@ -256,15 +261,15 @@ install_github(&quot;kingaa/pomp&quot;)</code></pre>
 <pre><code>xcode-select --install</code></pre>
 <p>to correct this problem.</p>
 </div>
-<div id="windows" class="section level3">
-<h3>Windows</h3>
+<div id="windows-users-1" class="section level3">
+<h3>Windows users</h3>
 <p>You have probably failed to install the <strong>Rtools</strong> correctly. Revisit the <a href="#windows-users">instructions above</a>.</p>
 <hr />
 </div>
 </div>
 <div id="once-youve-finished" class="section level2">
 <h2>Once you’ve finished…</h2>
-<p>…please fill out <a href="https://docs.google.com/forms/d/1mPYOdqjCS2V3E80uLww8IZxJIKuvnTmcaAcHJgQtO48">this online form</a> to help us prepare.</p>
+<p>…please fill out <a href="https://forms.gle/NygBzhUzewTk7XBb6">this online form</a> to help us prepare.</p>
 <hr />
 <p><a href="../"><strong>Back to course homepage</strong></a><br />
 <a href="https://www.youtube.com/playlist?list=PLluGwj6FGt2R3iM5CAEfIIof5dQfHVRgz">**Pre-course insructions for Windows users (Video)</a><br />
