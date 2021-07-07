@@ -1,0 +1,163 @@
+---
+title: "Fitting the SEIR model"
+author: "Aaron A. King, Edward L. Ionides, Qianying Lin"
+output:
+  html_document:
+    toc: no
+bibliography: ../sbied.bib
+csl: ../jss.csl
+params:
+  prefix: Q_fit_seir/
+---
+
+```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd",eval=F}
+```
+
+## Exercise
+
+Following the template in Lesson 4, estimate the parameters and likelihood of the SEIR model you implemented in the earlier lessons.
+Specifically:
+
+(a) First conduct a local search and then a global search using the multi-stage, multi-start method displayed above.
+
+(b) How does the maximized likelihood compare with what we obtained for the SIR model?
+
+(c) How do the parameter estimates differ?
+
+You will need to tailor the intensity of your search to the computational resources at your disposal.
+In particular, choose the number of starts, number of particles employed, and the number of IF2 iterations to perform in view of the size and speed of your machine.
+
+-----------------
+
+## Solution (not yet complete)
+
+We start by building a pomp object combining the SEIR process model from [Exercise 2.4](../stochsim/exercises.html\#basic-exercise-the-seir-model) with the negative binomial measurement model used in Lessons 3 and 4.
+
+```{r seir_pomp_libs,echo=T,results="hide",message=F,warning=F}
+library(pomp)
+library(tidyverse)
+library(doParallel)
+library(doRNG)
+```
+
+```{r measles_data,echo=T,results="hide",message=F,warning=F}
+courseurl <- "https://kingaa.github.io/sbied/"
+datafile <- "mif/Measles_Consett_1948.csv"
+
+read_csv(paste0(courseurl,datafile)) %>%
+  select(week,reports=cases) %>%
+  filter(week<=42) -> dat
+```
+
+```{r seir_pomp}
+seir_step <- Csnippet("
+  double dN_SE = rbinom(S,1-exp(-Beta*I/N*dt));
+  double dN_EI = rbinom(E,1-exp(-mu_EI*dt));
+  double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
+  S -= dN_SE;
+  E += dN_SE - dN_EI;
+  I += dN_EI - dN_IR;
+  R += dN_IR;
+  H += dN_IR;
+")
+
+seir_rinit <- Csnippet("
+  S = nearbyint(eta*N);
+  E = 0;
+  I = 1;
+  R = nearbyint((1-eta)*N);
+  H = 0;
+")
+
+seir_dmeasure <- Csnippet("
+  lik = dnbinom_mu(reports,k,rho*H,give_log);
+")
+
+seir_rmeasure <- Csnippet("
+  reports = rnbinom_mu(k,rho*H);
+")
+
+## make changes to the measSIR pomp model imported from Lesson 4
+measles_seir <- pomp(dat,
+  times="week",t0=0,
+  accumvars="H",
+  rprocess=euler(seir_step,delta.t=1/7),
+  rinit=seir_rinit,
+  rmeasure=seir_rmeasure,
+  dmeasure=seir_dmeasure,
+  paramnames=c("N","Beta","mu_EI","mu_IR","eta","k","rho"),
+  partrans=parameter_trans(
+        log=c("Beta","mu_EI","mu_IR","k"),
+        logit=c("eta","rho")
+  ),
+  statenames=c("S","E","I","R","H")
+)
+
+coef(measles_seir) <- c(Beta=30,mu_EI=0.8,mu_IR=1.3,rho=0.5,k=10,eta=0.06,N=38000)
+```
+
+To debug the model and provide a sanity check on our parameter guesses, we first explore via simulation. Some simulations die out, but others lead to epidemics somewhat resembling the data.
+```{r simulate}
+set.seed(4)
+plot(simulate(measles_seir))
+```
+
+The next prerequisite is that we can successfully filter
+```{r pfilter}
+pf1 <- pfilter(measles_seir,1000)
+plot(pf1)
+logLik(pf1)
+```
+
+We now carry out a local search, estimating only 4 parameters for simplicity. For a thorough scientific analysis, one would also want to consider the evidence in the data concerning the other parameters that are fixed here.
+```{r local_search}
+mycores <- detectCores()
+registerDoParallel(mycores)
+registerDoRNG(482947940)
+bake(file="Q_fit_seir_local_search.rds",{
+  foreach(i=1:20,.combine=c) %dopar% {
+    library(pomp)
+    library(tidyverse)
+    measles_seir %>%
+      mif2(
+        Np=2000, Nmif=50,
+        cooling.fraction.50=0.5,
+        rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02),mu_EI=0.02)
+      )
+  }
+}) -> mifs_local
+```
+
+This consistently obtains log likelihoods around -104, substantially above the value of -120 found for the SIR model:
+```{r}
+sapply(mifs_local,logLik)
+```
+
+However, as usual, we should evaluate the likelihoods using a particle filter, rather than relying on the likelihood from the last filtering iteration of the perturbed model used by `mif2`.
+```{r local_search_evaluations}
+registerDoRNG(900242057)
+bake(file="Q_fit_seir_lik_local.rds",{
+  foreach(mf=mifs_local,.combine=rbind) %dopar% {
+    library(pomp)
+    library(tidyverse)
+    evals <- replicate(10, logLik(pfilter(mf,Np=5000)))
+    ll <- logmeanexp(evals,se=TRUE)
+    mf %>% coef() %>% bind_rows() %>%
+      bind_cols(loglik=ll[1],loglik.se=ll[2])
+  }
+}) -> local_logliks
+```
+
+In this case, there is not much discrepancy between the perturbed and unperturbed likelihoods. The small improvement (rather than disadvantage) from filtering with fixed parameters supports a hypothesis that the constant parameter model is reasonable here.
+```{r}
+local_logliks$loglik
+```
+
+-----------------------------------
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+[**Back to the lesson**](./index.html)  
+[**Course homepage**](../index.html)  
