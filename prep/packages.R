@@ -1,5 +1,5 @@
 ## check to see that the version of R is sufficiently recent
-minRversion <- "4.0.0"
+minRversion <- "4.0.4"
 rv <- getRversion()
 if (rv < minRversion)
   stop("R version >= ",minRversion," is required",call.=FALSE)
@@ -8,12 +8,10 @@ if (rv < minRversion)
 pkglist <- scan(
   what=character(0),
   text="
-bbmle
 coda
 colorspace
 cowplot
 deSolve
-dplyr
 foreach
 doParallel
 doRNG
@@ -21,18 +19,13 @@ ggplot2
 gridExtra
 gtable
 knitr
-lhs
 magrittr
 mvtnorm
 nloptr
-pkgbuild
 plyr
-RColorBrewer
 reshape2
 scales
-sos
 subplex
-tidyr
 tidyverse
 pomp
 "

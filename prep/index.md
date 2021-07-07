@@ -36,12 +36,14 @@ In **R**, you can run `Sys.info()` to get a printout of the operating system and
 
 </div>
 
+----------------------
+
 ## All users
 
 ### Install **R** and **RStudio**
 
 **R** and **RStudio** are free and open-source.
-You’ll need at least version 4.0.0 of **R**.
+You’ll need at least version 4.0.4 of **R**.
 Source code and binaries are available on CRAN (https://cran.r-project.org/).
 Install *the latest version* of **RStudio** from [rstudio.com](https://www.rstudio.com/products/rstudio/download/).
 
@@ -83,7 +85,7 @@ A <a href="https://youtu.be/lmIhiT_QsPE" target="_blank">video tutorial demonstr
 
 -------------------------------
 
-## MacOSX users
+## MacOS users
 
 So that you can compile C code and dynamically link it into an **R** session, you will need to have the **Xcode** app installed.
 This is gratis and can be installed via the App Store or downloaded from [developer.apple.com](https://developer.apple.com/download/).
@@ -97,7 +99,6 @@ After you've installed the app, open a unix terminal (listed as the **Terminal**
 xcode-select --install
 ```
 This will install the "Command Line Tools" that are needed to compile native C codes. Running this command is tantamount to the part of the Xcode installation tutorial video where we complete the installation using the graphical user interface.
-
 
 ------------------------------------
 
@@ -115,14 +116,18 @@ If it fails, try the following:
 ```
 > source("https://kingaa.github.io/scripts/hello.R",echo=TRUE)
 ```
-If this fails to give the "Hello!" message, you will need to follow the instructions below that correspond to your OS before re-trying the `pompTest.R` script.
+If this fails to give the two "Hello!" messages, you will need to follow the instructions below that correspond to your OS before re-trying the `pompTest.R` script.
 
-### Linux and unix
+---------------------------
+
+## Troubleshooting
+
+### Linux and unix users
 
 If you have trouble with any of the scripts above, make sure you have the GNU compiler collection (GCC), including **gfortran**, installed on your computer.
 Linux distributions typically include this by default but it is not impossible that you have somehow avoided this.
 
-### MacOSX
+### MacOS users
 
 If the `pompTest.R` script fails because you cannot load **pomp**, try installing it from source.
 The easiest way to do this is to use the **devtools** package.
@@ -134,7 +139,7 @@ install_github("kingaa/pomp")
 ```
 If, while trying to install from source, you receive the error,
 ```
-make: gfortran-4.8: No such file or directory
+make: gfortran-8.2: No such file or directory
 ```
 or one that otherwise refers to `gfortran`, then it is likely that you do not have the necessary version of **gfortran** installed.
 Have a look at [these instructions](https://mac.r-project.org/tools/) and contact me at the address above if these don’t work for you.
@@ -150,7 +155,7 @@ xcode-select --install
 ```
 to correct this problem.
 
-### Windows
+### Windows users
 
 You have probably failed to install the **Rtools** correctly.
 Revisit the [instructions above](#windows-users).
@@ -159,12 +164,12 @@ Revisit the [instructions above](#windows-users).
 
 ## Once you've finished...
 
-...please fill out [this online form](https://docs.google.com/forms/d/1mPYOdqjCS2V3E80uLww8IZxJIKuvnTmcaAcHJgQtO48) to help us prepare.
+...please fill out [this online form](https://forms.gle/chqrQK1k1mVuauic7) to help us prepare.
 
 ------------------------------
 
 [**Back to course homepage**](../)  
-[**Pre-course insructions for Windows users (Video)](https://www.youtube.com/playlist?list=PLluGwj6FGt2R3iM5CAEfIIof5dQfHVRgz)  
-[**Pre-course insructions for MacOS users (Video)](https://www.youtube.com/playlist?list=PLluGwj6FGt2S8GmrOF3s68LlsWoTRmuMQ)  
+[**Pre-course instructions for Windows users (Video)**](https://www.youtube.com/playlist?list=PLluGwj6FGt2R3iM5CAEfIIof5dQfHVRgz)  
+[**Pre-course instructions for MacOS users (Video)**](https://www.youtube.com/playlist?list=PLluGwj6FGt2S8GmrOF3s68LlsWoTRmuMQ)  
 
 ------------------------------
