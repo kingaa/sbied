@@ -1354,19 +1354,20 @@ set.seed(1350254336)
   Is this more or less well determined than $\beta$ for this model and data?
 \end{frame}
 
-\begin{frame}[allowframebreaks]{\myexercise. Checking the source code}
+\begin{frame}[allowframebreaks]{\myexercise. Checking the source code
+\addtocounter{Ecounter}{-1}
+%% A hack needed to stop multiple increments of the exercise counter
+%% when the exercise is split over multiple slides
+}
+
 
   Check the source code for the \code{measSIR} pomp object, using the \code{spy} command.
   Does the code implement the model described?
 
-  \framebreak
+\framebreak
 
-  For various reasons, it can be surprisingly hard to make sure that the written equations and the code are perfectly matched.
-  Here are some things to think about
-
-  Papers should be written to be readable.
-  Code must be written to run successfully.
-  People rarely choose to clutter papers with numerical details which they hope and believe are scientifically irrelevant.
+For various reasons, it can be surprisingly hard to make sure that the written equations and the code are perfectly matched.
+Papers should be written to be readable, and therefore people rarely choose to clutter papers with numerical details which they hope and believe are scientifically irrelevant.
   \begin{enumerate}[(a)]
   \item What problems can arise due to the conflict between readability and reproducibility?
   \item What solutions are available?
@@ -1382,7 +1383,16 @@ set.seed(1350254336)
   \item If not, how might you debug \code{rprocess}?
   \item What research practices help minimize the risk of errors in simulation code?
   \end{enumerate}
+
+  \vspace{1mm}
+
+  \link{./Q_check_code.html}{Worked solution to the Exercise}
+
 \end{frame}
+
+\addtocounter{Ecounter}{1}
+%% A hack needed to stop multiple increments of the exercise counter
+%% when the exercise is split over multiple slides
 
 \begin{frame}{\myexercise: Choosing the algorithmic settings for IF2}
   Have a look at \link{./if2_settings.html}{our advice on tuning IF2}.
