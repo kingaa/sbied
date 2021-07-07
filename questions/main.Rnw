@@ -397,10 +397,17 @@ If the researchers calculate a sliced likelihood through the MLE and tell you it
 Which of the following are true?
 \begin{enumerate}[label=(\Alph*)]
 \item A profile likelihood must lie \emph{above} every slice.
-\item A likelihood slice can be used to compute confidence intervals.
+\item Confidence intervals can be read from likelihood slices.
 \item A poor man's profile must lie above the true profile.
 \item A poor man's profile must lie below the true profile.
 \end{enumerate}
+
+\solution{
+  (A) is true.
+  (B) is not true in general.  If our model depends on a single scalar parameter, then a slice and a profile are the same thing.
+  (C) is false.
+  (D) is true.
+}
 
 \medskip
 
