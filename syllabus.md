@@ -73,7 +73,8 @@ The course will have five components:
    - Groups 4--6: Minute 30--45
    - Groups 7--9: Minute 50--65
    
-   Outside of these times, the instructors will be responding to questions posed over the Slack channel and Zoom "Ask for Help" requests.  
+   That is, Groups 1--3 will be visited for 15min, 10 minutes into each session, Groups 4--6 will be visited at the 30-minute mark, etc.
+   Outside of these times, the instructors will be answering questions posed over the Slack channel and responding to Zoom "Ask for Help" requests.  
    At the end of each breakout group session, a progress report should be submitted to the Slack channel.
    
 1. ***Optional office hours.***
@@ -94,7 +95,7 @@ Be careful to translate to your local timezone!
 #### Monday, 12 July
 
 Before 8:00:  
-View lecture videos for Lessons 1 and 2 (c.&nbsp;2.5hr or 100min at 1.5X).  
+View lecture videos for Lessons [1](https://kingaa.github.io/sbied/intro/) and [2](https://kingaa.github.io/sbied/stochsim/) (c.&nbsp;2.5hr or 100min at 1.5x).  
 Send questions to Instructors via Slack.  
 Optionally, begin work on Exercises 2.3 & 2.4.  
 (Multiple guess questions).
@@ -119,7 +120,7 @@ Questions to Slack.
 #### Tuesday, 13 July
 
 Before 8:00:  
-View lecture videos for Lesson 4, Parts I--IV (c.&nbsp;70min or 50min at 1.5x).  
+View lecture videos for [Lesson 4, Parts I--IV](https://kingaa.github.io/sbied/mif/) (c.&nbsp;70min or 50min at 1.5x).  
 Send questions to Instructors via Slack.  
 Optionally, begin work on Exercises 4.1.  
 (Questions.)  
@@ -131,7 +132,7 @@ Optionally, begin work on Exercises 4.1.
 9:45--10:15: Live plenary discussion of breakout group progress.
 
 **Interlude**  
-10:15--12:15: View lecture videos for [Lesson 4](https://kingaa.github.io/sbied/mif/), Parts V--VI (c.&nbsp;60min or 40min at 1.5x).
+10:15--12:15: View lecture videos for [Lesson 4, Parts V--VI](https://kingaa.github.io/sbied/mif/) (c.&nbsp;60min or 40min at 1.5x).
 Questions to Slack.  
 11:45--12:15: Optional office hour (for those who have finished watching the Lesson 4 videos).  
 
@@ -144,7 +145,7 @@ Questions to Slack.
 #### Wednesday, 14 July
 
 Before 8:00:  
-View lecture video for Lesson 5 (c.&nbsp;80min or 55min at 1.5x).  
+View lecture video for [Lesson 5](https://kingaa.github.io/sbied/measles/) (c.&nbsp;80min or 55min at 1.5x).  
 
 **Session 5**  
 8:00--8:30: Lesson 5 Q&A.  
@@ -153,47 +154,6 @@ View lecture video for Lesson 5 (c.&nbsp;80min or 55min at 1.5x).
 9:30--10:30: Plenary discussion of research topics and questions.  
 10:30--11:00: Concluding remarks.  
 11:00--12:00: Optional drop-in session: all topics welcomed.  
-
------------------------------
-
-### Course Ground Rules
-
-In the spirit of ensuring an efficient and enjoyable learning experience for everyone, we establish the following specific rules to govern our conduct.
-
-1. ***During live plenary discussions, turn on your audio and video only for questions***.
-   Live plenary discussions will be held over Zoom.
-   Please mute your audio and video *unless and until you have a question.* 
-   If you have a question, unmute yourself and turn on your video: 
-   this will act as a cue for us to recognize you.
-   You can also use the "Raise Hand" feature.
-   The "chat" feature will be disabled during the live discussion.
-1. ***When submitting over Slack, take some care to avoid unnecessary duplication.***
-   If someone has recently asked the same question, you can register your interest in having that question answered using the "add reaction" button, without having to restate the question.
-1. ***During the breakout discussions, keep both your audio and video on as much as possible.***
-   The breakout sessions will be where you apply the lessons you learn and discover where you want to ask additional questions.
-   You will have a specific role in your group that your fellow group members will rely on you to perform.
-   To facilitate full engagement, keep your video and audio on during these sessions whenever appropriate.
-1. ***Set your "name" in your Zoom session to what you want to be called***.
-   We will be able to view your name, as well as your face, when you ask a question, or when we visit you in a breakout room.
-   Having your name set in this way will help us recognize you.
-1. ***Be on guard against distractions.***
-   During the time in which your audio and video are on, do your best to minimize distracting sounds and sights that might distract your colleagues.
-   It is equally important that you recognize that the digital environment is full of its own distractions: 
-   do your best to eliminate the distractions that will prevent you from getting the most out of this intensive 2.5-day course.
-1. ***Speak up!***
-   We are striving for free-flowing discussions during the live plenary and breakout discussions.
-   These depend on your active participation!
-   This course is for **you**: make the most of it by getting answers to your questions.
-   Don't worry that others may think you are holding us back with your questions:
-   we can guarantee that others will have the same question.
-1. ***Be courteous.***
-   We will strive to uphold a high standard of courtesy and professionalism among participants, including ourselves.
-   Treat others with respect and the dignity to which they are entitled, and with which you expect others to treat you.
-1. ***Dress comfortably, but professionally.***
-   You will be visible to your colleagues and instructors.
-1. ***Have a sense of humor!***
-   In online courses, many things can go wrong.
-   Let's be generous and tolerant toward one another, and always willing to laugh!
 
 -----------------------------
 
@@ -239,6 +199,47 @@ and everyone is expected to listen to, and engage with, the contributions of the
 For groups that have only four members, the Seeker and Taker roles may be combined, as may the Seeker and Keeper roles.
 
 For groups that have only three members, the Seeker, Taker, and Keeper roles may be combined into one.
+
+-----------------------------
+
+### Course Ground Rules
+
+In the spirit of ensuring an efficient and enjoyable learning experience for everyone, we establish the following specific rules to govern our conduct.
+
+1. ***During live plenary discussions, turn on your audio and video only for questions***.
+   Live plenary discussions will be held over Zoom.
+   Please mute your audio and video *unless and until you have a question.* 
+   If you have a question, unmute yourself and turn on your video: 
+   this will act as a cue for us to recognize you.
+   You can also use the "Raise Hand" feature.
+   The "chat" feature will be disabled during the live discussion.
+1. ***When submitting over Slack, take some care to avoid unnecessary duplication.***
+   If someone has recently asked the same question, you can register your interest in having that question answered using the "add reaction" button, without having to restate the question.
+1. ***During the breakout discussions, keep both your audio and video on as much as possible.***
+   The breakout sessions will be where you apply the lessons you learn and discover where you want to ask additional questions.
+   You will have a specific role in your group that your fellow group members will rely on you to perform.
+   To facilitate full engagement, keep your video and audio on during these sessions whenever appropriate.
+1. ***Set your "name" in your Zoom session to what you want to be called***.
+   We will be able to view your name, as well as your face, when you ask a question, or when we visit you in a breakout room.
+   Having your name set in this way will help us recognize you.
+1. ***Be on guard against distractions.***
+   During the time in which your audio and video are on, do your best to minimize distracting sounds and sights that might distract your colleagues.
+   It is equally important that you recognize that the digital environment is full of its own distractions: 
+   do your best to eliminate the distractions that will prevent you from getting the most out of this intensive 2.5-day course.
+1. ***Speak up!***
+   We are striving for free-flowing discussions during the live plenary and breakout discussions.
+   These depend on your active participation!
+   This course is for **you**: make the most of it by getting answers to your questions.
+   Don't worry that others may think you are holding us back with your questions:
+   we can guarantee that others will have the same question.
+1. ***Be courteous.***
+   We will strive to uphold a high standard of courtesy and professionalism among participants, including ourselves.
+   Treat others with respect and the dignity to which they are entitled, and with which you expect others to treat you.
+1. ***Dress comfortably, but professionally.***
+   You will be visible to your colleagues and instructors.
+1. ***Have a sense of humor!***
+   In online courses, many things can go wrong.
+   Let's be generous and tolerant toward one another, and always willing to laugh!
 
 -----------------------------
 
