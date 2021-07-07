@@ -244,8 +244,8 @@ For groups that have only three members, the Seeker, Taker, and Keeper roles may
 
 ## Pre- and post-module surveys
 
-To help us understand your background and goals a bit better, please fill out this short [pre-module survey](https://catalyst.uw.edu/webq/survey/nelsod6/393410) at the beginning of the course.
+To help us understand your background and goals a bit better, please fill out this short [pre-module survey](https://forms.gle/G56pw5YmGZJeJ7zh7) at the beginning of the course.
 
-We will be grateful to you for filling out the [post-module survey](https://catalyst.uw.edu/webq/survey/nelsod6/393411) shortly after completing the course.
+We will be grateful to you for filling out the [post-module survey](https://forms.gle/ByhK41GbXn3Y6ark7) shortly after completing the course.
 
 -----------------------------
