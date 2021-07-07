@@ -285,7 +285,6 @@ $$
 \medskip
 
 \myquestion. A particle filter is repeated 5 times to evaluate the likelihood at a proposed maximum likelihood estimate, each time with $10^4$ particles. Suppose the log likelihood estimates are $-2446.0$, $-2444.0$, $-2443.0$, $-2442.0$, $-2440.0$. Which of the following is an appropriate estimate for the log likelihood at this parameter value and its standard error.
-\textcolor{red}{[Should the correct s.e. be 1.4?]}
 \begin{enumerate}[label=(\Alph*)]
 \item \label{A6a} Estimate $= -2443.0$, with standard error 1.0
 \item \label{A6b} Estimate $= -2443.0$, with standard error 2.2
@@ -398,10 +397,17 @@ If the researchers calculate a sliced likelihood through the MLE and tell you it
 Which of the following are true?
 \begin{enumerate}[label=(\Alph*)]
 \item A profile likelihood must lie \emph{above} every slice.
-\item A likelihood slice can be used to compute confidence intervals.
+\item Confidence intervals can be read from likelihood slices.
 \item A poor man's profile must lie above the true profile.
 \item A poor man's profile must lie below the true profile.
 \end{enumerate}
+
+\solution{
+  (A) is true.
+  (B) is not true in general.  If our model depends on a single scalar parameter, then a slice and a profile are the same thing.
+  (C) is false.
+  (D) is true.
+}
 
 \medskip
 
