@@ -95,10 +95,9 @@ Be careful to translate to your local timezone!
 #### Monday, 12 July
 
 Before 8:00:  
-View lecture videos for Lessons [1](https://kingaa.github.io/sbied/intro/) and [2](https://kingaa.github.io/sbied/stochsim/) (c.&nbsp;2.5hr or 100min at 1.5x).  
-Send questions to Instructors via Slack.  
-Optionally, begin work on Exercises 2.3 & 2.4.  
-(Multiple guess questions).
+- View lecture videos for Lessons [1](https://kingaa.github.io/sbied/intro/) and [2](https://kingaa.github.io/sbied/stochsim/) (c.&nbsp;2.5hr or 100min at 1.5x).  
+- Send questions to Instructors via Slack.  
+- Optionally, begin work on Exercises 2.3 & 2.4.  
 
 **Session 1**  
 8:00--8:30: Introductions. Organization. Lessons 1 and 2 Q&A.  
@@ -120,10 +119,9 @@ Questions to Slack.
 #### Tuesday, 13 July
 
 Before 8:00:  
-View lecture videos for [Lesson 4, Parts I--IV](https://kingaa.github.io/sbied/mif/) (c.&nbsp;70min or 50min at 1.5x).  
-Send questions to Instructors via Slack.  
-Optionally, begin work on Exercises 4.1.  
-(Questions.)  
+- View lecture videos for [Lesson 4, Parts I--IV](https://kingaa.github.io/sbied/mif/) (c.&nbsp;70min or 50min at 1.5x).  
+- Send questions to Instructors via Slack.  
+- Optionally, begin work on Exercises 4.1.  
 
 **Session 3**  
 8:00--8:30: Lesson 4, Parts I--IV Q&A.  
@@ -145,13 +143,15 @@ Questions to Slack.
 #### Wednesday, 14 July
 
 Before 8:00:  
-View lecture video for [Lesson 5](https://kingaa.github.io/sbied/measles/) (c.&nbsp;80min or 55min at 1.5x).  
+- View lecture video for [Lesson 5](https://kingaa.github.io/sbied/measles/) (c.&nbsp;80min or 55min at 1.5x).  
+- Work on the [Quiz](https://kingaa.github.io/sbied/questions/questions.pdf).  
+- Formulate questions for the instructors on the topic: How do simulation-based methods fit into your research agenda?  
 
 **Session 5**  
 8:00--8:30: Lesson 5 Q&A.  
-8:30--9:30: Breakout groups discuss research topics and compile questions.  
+8:30--9:30: Breakout groups develop consensus answers to the Quiz questions and select two research questions for the instructors from the group.  
 9:30: Breakout group reports due on Slack.  
-9:30--10:30: Plenary discussion of research topics and questions.  
+9:30--10:30: Plenary discussion.  
 10:30--11:00: Concluding remarks.  
 11:00--12:00: Optional drop-in session: all topics welcomed.  
 
@@ -184,7 +184,6 @@ and everyone is expected to listen to, and engage with, the contributions of the
 1. **Seeker.** 
    The Seeker is tasked with looking for information to help answer group questions.
    A good Seeker has all the course materials at his or her fingertips and can rapidly share search results with the group.
-   
 1. **Hacker.** 
    All group members are expected to do hands-on work with the methods we are teaching.
    In any given group session, however, the Hacker will have prime responsibility for producing the definitive version of the group's codes and full responsibility for making sure that all group members have access to the definitive version at the end of each breakout-group session.
@@ -196,12 +195,11 @@ and everyone is expected to listen to, and engage with, the contributions of the
    This should be at most a paragraph, focused on communicating the essentials only: 
    what exercises were tackled, what approaches taken, what progress made, what difficulties encountered.
 
-In groups with more than five members there can be multiple Hackers, Seekers, and/or Takers.
-If there are multiple Takers, however, there should still be just one progress report per group and one definitive version of the group's codes.
+In groups with more than five members there can be multiple Hackers and Seekers.
 
-For groups that have only four members, the Seeker and Taker roles may be combined, as may the Seeker and Keeper roles.
+For groups that have only four members, the Slacker and Taker roles may be combined, as may the Seeker and Keeper.
 
-For groups that have only three members, the Seeker, Taker, and Keeper roles may be combined into one.
+For groups that have only three members, the Slacker, Taker, and Keeper roles may be combined into one.
 
 -----------------------------
 
