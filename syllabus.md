@@ -159,9 +159,9 @@ View lecture video for [Lesson 5](https://kingaa.github.io/sbied/measles/) (c.&n
 
 ### Breakout Room Roles
 
-The breakout groups assigned at the beginning of the course will be maintained throughout.
+Breakout groups will be assigned anew at each session.
 The following roles are designed to help the group function smoothly, and to make sure everyone in a group contributes to the group effort, and that every important task has someone to look after it.
-At the first breakout-group meeting, decide among yourselves who will perform each role and change the roles periodically, but not during a single session!
+At the beginning of each breakout-group meeting, decide among yourselves who will perform each role.
 None of these roles is a full-time job: 
 everyone is expected to contribute thought and effort toward the group's work, 
 and everyone is expected to listen to, and engage with, the contributions of the other group members.
@@ -195,6 +195,9 @@ and everyone is expected to listen to, and engage with, the contributions of the
    In addition, the Slacker is responsible for preparing a pr&eacute;cis of the group's efforts and progress, to be passed, via the course Slack channel, to the instructors and the rest of the group at the end of the session.
    This should be at most a paragraph, focused on communicating the essentials only: 
    what exercises were tackled, what approaches taken, what progress made, what difficulties encountered.
+
+In groups with more than five members there can be multiple Hackers, Seekers, and/or Takers.
+If there are multiple Takers, however, there should still be just one progress report per group and one definitive version of the group's codes.
 
 For groups that have only four members, the Seeker and Taker roles may be combined, as may the Seeker and Keeper roles.
 
