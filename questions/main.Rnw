@@ -284,7 +284,8 @@ $$
 
 \medskip
 
-\myquestion. A particle filter is repeated 5 times to evaluate the likelihood at a proposed maximum likelihood estimate, each time with $10^4$ particles. Suppose the log likelihood estimates are $-2446.0$, $-2444.0$, $-2443.0$, $-2442.0$, $-2440.0$. Which of the following is an appropriate estimate for the log likelihood at this parameter value and its standard error. 
+\myquestion. A particle filter is repeated 5 times to evaluate the likelihood at a proposed maximum likelihood estimate, each time with $10^4$ particles. Suppose the log likelihood estimates are $-2446.0$, $-2444.0$, $-2443.0$, $-2442.0$, $-2440.0$. Which of the following is an appropriate estimate for the log likelihood at this parameter value and its standard error.
+\textcolor{red}{[Should the correct s.e. be 1.4?]}
 \begin{enumerate}[label=(\Alph*)]
 \item \label{A6a} Estimate $= -2443.0$, with standard error 1.0
 \item \label{A6b} Estimate $= -2443.0$, with standard error 2.2
@@ -338,7 +339,10 @@ logmeanexp(cholera_loglik,se=TRUE)
 
 \medskip
 
-\myquestion. Effective sample size (ESS) is one of the main tools for diagnosing the success of a particle filter. It is shown if you plot an object of class \texttt{pfilterd\_pomp} which is created by applying \texttt{pfilter} to a \texttt{pomp} object. Suppose one or more time points have low ESS (say, less than 10) even when using a fairly large number of particles (say, $10^4$). What is the proper interpretation?
+\myquestion. Effective sample size (ESS) is one of the main tools for diagnosing the success of a particle filter.
+If you plot an object of class \texttt{pfilterd\_pomp} (created by applying \texttt{pfilter} to a \texttt{pomp} object), the ESS is displayed.
+Suppose one or more time points have low ESS (say, less than 10) even when using a fairly large number of particles (say, $10^4$).
+What is the proper interpretation?
 
 \begin{enumerate}[label=(\Alph*)]
 \item \label{A14a} There is a problem with data, perhaps an error recording an observation.
@@ -395,7 +399,8 @@ Which of the following are true?
 \begin{enumerate}[label=(\Alph*)]
 \item A profile likelihood must lie \emph{above} every slice.
 \item A likelihood slice can be used to compute confidence intervals.
-\item A ppor man's profile must lie above the true profile.
+\item A poor man's profile must lie above the true profile.
+\item A poor man's profile must lie below the true profile.
 \end{enumerate}
 
 \medskip
@@ -489,7 +494,7 @@ Quite likely, with some persistence, a mechanistic specification will beat a sim
 
 \medskip
 
-\myquestion. A compartment model is first implemented as a system of ordinary differential equations (ODEs). This leads to qualitatively reasonable trajectories, but poor likelihood values. The researchers add stochasticity in an attempt to improve the fit of the model by interpreting the ODEs as rates of a Markov chain. The likelihood, maximized by iterated particle filtering, remains poor compared to ARMA benchmarks. In addition, the effective sample size for the particle filtering is low at many time points despite even using as many as $10^4$ particles. Which of the following is the most promising next step.
+\myquestion. A compartment model is first implemented as a system of ordinary differential equations (ODEs). This leads to qualitatively reasonable trajectories, but poor likelihood values. The researchers add stochasticity in an attempt to improve the fit of the model by interpreting the ODEs as rates of a Markov chain. The likelihood, maximized by iterated particle filtering, remains poor compared to ARMA benchmarks. In addition, the effective sample size for the particle filtering is low at many time points despite even using as many as $10^4$ particles. Which of the following is the most promising next step?
 \begin{enumerate}[label=(\Alph*)]
 \item \label{A5a} Increase to $10^5$ particles, moving the computations to a cluster if necessary.
 \item \label{A5b}  Add noise to one or more rates to allow for overdispersion.
@@ -504,7 +509,7 @@ Quite likely, with some persistence, a mechanistic specification will beat a sim
 \medskip
 
 \myquestion.
-You fit an SEIR model to the case report data on an immunizing disease for a city. The resulting confidence interval for the mean latent period is 12-21 days, but clinical evidence points to a latent period averaging about 7 days. Which of the following is the most appropriate response to this discrepancy.
+You fit an SEIR model to case reports of an immunizing disease from a city. The resulting confidence interval for the mean latent period is 12--21 days, but clinical evidence points to a latent period averaging about 7 days. Which of the following is the most appropriate response to this discrepancy.
 \begin{enumerate}[label=(\Alph*)]
 \item \label{A8a} The latent period may be confounded with some unmodeled aspect of the system, such as spatial or age structure. The model estimates an effective latent period at the population level, which may not perfectly match what is happening at the scale of individuals. One should be cautious of making a causal interpretation of models fitted to observational data. 
 \item \label{A8b} The discrepancy shows that something is substantially wrong with the model. Extra biological detail should be introduced with the goal of bringing the estimated parameter back in line with the known biology of the system.
