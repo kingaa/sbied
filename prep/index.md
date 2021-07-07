@@ -164,7 +164,7 @@ Revisit the [instructions above](#windows-users).
 
 ## Once you've finished...
 
-...please fill out [this online form](https://forms.gle/NygBzhUzewTk7XBb6) to help us prepare.
+...please fill out [this online form](https://forms.gle/chqrQK1k1mVuauic7) to help us prepare.
 
 ------------------------------
 
