@@ -285,13 +285,12 @@ $$
 \medskip
 
 \myquestion. A particle filter is repeated 5 times to evaluate the likelihood at a proposed maximum likelihood estimate, each time with $10^4$ particles. Suppose the log likelihood estimates are $-2446.0$, $-2444.0$, $-2443.0$, $-2442.0$, $-2440.0$. Which of the following is an appropriate estimate for the log likelihood at this parameter value and its standard error.
-\textcolor{red}{[Should the correct s.e. be 1.4?]}
 \begin{enumerate}[label=(\Alph*)]
 \item \label{A6a} Estimate $= -2443.0$, with standard error 1.0
 \item \label{A6b} Estimate $= -2443.0$, with standard error 2.2
 \item \label{A6c} Estimate $= -2443.0$, with standard error 5.0
 \item \label{A6d} Estimate $= -2441.4$, with standard error 2.2
-\item \label{A6e} Estimate $= -2441.4$, with standard error 1.0
+\item \label{A6e} Estimate $= -2441.4$, with standard error 1.4
 \end{enumerate}
 
 \solution{\ref{A6e}. Answers \ref{A6a}, \ref{A6b} and \ref{A6c} estimate using a mean on the log scale. However, the particle filter provides an unbiased likelihood estimate on a natural scale but not on a log scale. Note that the particle filter also has some bias for most quantities on a natural scale, which reduces to zero as the number of particles tends to infinity, but it happens to be unbiased for the likelihood. The standard error for the log of the mean of the likelihoods can be computed by the delta method or a jack-knife, for example using the logmeanexp function in pomp.
@@ -509,10 +508,10 @@ Quite likely, with some persistence, a mechanistic specification will beat a sim
 \medskip
 
 \myquestion.
-You fit an SEIR model to case reports of an immunizing disease from a city. The resulting confidence interval for the mean latent period is 12--21 days, but clinical evidence points to a latent period averaging about 7 days. Which of the following is the most appropriate response to this discrepancy.
+You fit an SEIR model to case reports of an immunizing disease from a city. The resulting confidence interval for the mean latent period is 12--21 days, but clinical evidence points to a latent period averaging about 7 days. Which of the following is the most appropriate response to this discrepancy?
 \begin{enumerate}[label=(\Alph*)]
 \item \label{A8a} The latent period may be confounded with some unmodeled aspect of the system, such as spatial or age structure. The model estimates an effective latent period at the population level, which may not perfectly match what is happening at the scale of individuals. One should be cautious of making a causal interpretation of models fitted to observational data. 
-\item \label{A8b} The discrepancy shows that something is substantially wrong with the model. Extra biological detail should be introduced with the goal of bringing the estimated parameter back in line with the known biology of the system.
+\item \label{A8b} The discrepancy shows that something is substantially wrong with the model. Extra biological detail must be introduced with the goal of bringing the estimated parameter back in line with the known biology of the system.
 \item \label{A8c} The discrepancy is problematic, but fortunately can readily be fixed. Since we know the clinical value of this parameter with reasonable accuracy, we should simply use this value in the model rather than estimating it.
 \item \label{A8d} If the model fits the data statistically better than any known alternative model, then we have to take the estimated parameter at face value. It is certainly possible that the estimates in the literature correspond to some different population, or different strain, or have some other measurement bias such as corresponding to severe cases resulting in hospitalization. The discrepancy does not show that our model was wrong.
 \item \label{A8e} This discrepancy suggests that we should take advantage of both C and D above by putting a Bayesian prior on the latent period. By quantifying the degree of our skepticism about the previously established clinical value of 7 days, we can optimally combine that uncertainty with the evidence from this dataset.
@@ -520,7 +519,8 @@ You fit an SEIR model to case reports of an immunizing disease from a city. The 
 
 \solution{\ref{A8a}.
 
-Transferring parameter estimates between scales is hard. An example is the difficulty of reconciling micro and macro economics. It is generally not possible to guarantee that a parameter means exactly the same thing in models at different scales. \ref{A8a} acknowledges this. The other answers, in various ways, assume that there should be a single parameter value that describes the system at all scales. 
+Transferring parameter estimates between scales is hard. An example is the difficulty of reconciling micro and macro economics. It is generally not possible to guarantee that a parameter means exactly the same thing in models at different scales. \ref{A8a} acknowledges this. The other answers, in various ways, assume that there should be a single parameter value that describes the system at all scales. We have some sympathy with \ref{A8d}, since it is reasonable to try to gain biological understanding by investigating why the fitted model is successful at explaining the data.
+
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%
