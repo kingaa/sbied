@@ -84,7 +84,7 @@ registerDoRNG(625904618)
 tic <- Sys.time()
 foreach(i=1:10,.combine=c) %dopar% {
   library(pomp)
-  measSIR %>% pfilter(params=params,Np=10000)
+  measSIR %>% pfilter(params=params,Np=5000)
 } -> pf
 
 pf %>% logLik() %>% logmeanexp(se=TRUE) -> L_pf

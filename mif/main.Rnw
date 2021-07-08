@@ -434,10 +434,9 @@ set.seed(1350254336)
 
   Let's assume that the population size, $N$, is known accurately.
   We'll fix that parameter.
-
   Let's also imagine that we have access to the results of household and clinical studies that have concluded that infected patients shed the virus for 3--4~da.
-  We'll use these results to constrain the infectious period in our model to 3.5~da, i.e., $\mu_{IR}=2~\mathrm{wk}^{-1}$.
-  Later, we'll relax this assumption.
+  We'll use these results to constrain the infectious period in our model to 3.5~da, i.e., $\mu_{IR}=2~\mathrm{wk}^{-1}$. We also fix $k=10$.
+  Later, we can relax our assumptions.
   
   <<fixed_params>>=
   fixed_params <- c(N=38000, mu_IR=2, k=10)
@@ -484,7 +483,7 @@ set.seed(1350254336)
   <<pf2,eval=FALSE,purl=FALSE>>=
   foreach(i=1:10,.combine=c) %dopar% {
     library(pomp)
-    measSIR %>% pfilter(params=params,Np=10000)
+    measSIR %>% pfilter(params=params,Np=5000)
   } -> pf
 
   pf %>% logLik() %>% logmeanexp(se=TRUE) -> L_pf

@@ -498,11 +498,12 @@ registerDoRNG(2488820)
       ) -> measSIR
     @
     
-  \item Now, we'll model the data as a negative binomial process,
+  \item Now, we'll model the data by a negative binomial variable,
     \begin{equation*}
       \mathrm{reports}_t \sim \dist{NegBin}{\rho\,H(t),k}.
     \end{equation*}
-    
+    with mean $\rho\,H(t)$ and variance $\rho H(t)+ \big(\rho H(t)\big)^2/k$. The binomial distribution does not have a separate variance parameter.
+
   \item Now, to include the observations in the model, we must write either a \code{dmeasure} or an \code{rmeasure} component, or both:
 
     <<meas-modelR>>=
