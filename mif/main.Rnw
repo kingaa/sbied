@@ -283,7 +283,7 @@ set.seed(1350254336)
   The above plot shows the data (\code{reports}), along with the \emph{effective sample size} (ESS) of the particle filter (\code{ess}) and the log likelihood of each observation conditional on the preceding ones (\code{cond.logLik}).
 
   The ESS is the equivalent number of independent particles.
-  In this case, the ESS is very small at several points.
+  In this case, the ESS appears to be everywhere adequate.
   
 \end{frame}
 
@@ -615,8 +615,8 @@ set.seed(1350254336)
     mutate(type=if_else(is.na(loglik),"guess","result")) %>%
     arrange(type) -> all
 
-  pairs(~loglik+Beta+eta+rho, data=all,
-        col=ifelse(all$type=="guess",grey(0.5),"red"),pch=16)
+  pairs(~loglik+Beta+eta+rho, data=all, pch=16, cex=0.3,
+        col=ifelse(all$type=="guess",grey(0.5),"red"))
   @
 
   \framebreak
@@ -939,7 +939,7 @@ set.seed(1350254336)
   set.seed(55266255)
   runif_design(
     lower=c(Beta=5,mu_IR=0.2,eta=0),
-    upper=c(Beta=80,mu_IR=5,eta=0.95),
+    upper=c(Beta=80,mu_IR=5,eta=0.99),
     nseq=1000
   ) %>%
     mutate(
@@ -981,8 +981,13 @@ set.seed(1350254336)
 
   <<exp_global_search2b,eval=FALSE,purl=FALSE>>=
   mf %>%
-    mif2(Nmif=100,rw.sd=rw.sd(Beta=0.01,mu_IR=0.01,eta=ivp(0.01))) %>%
-    mif2(Nmif=100,rw.sd=rw.sd(Beta=0.005,mu_IR=0.005,eta=ivp(0.005))) -> mf
+    mif2(
+      Nmif=100,rw.sd=rw.sd(Beta=0.01,mu_IR=0.01,eta=ivp(0.01))
+    ) %>%
+    mif2(
+      Nmif=100,
+      rw.sd=rw.sd(Beta=0.005,mu_IR=0.005,eta=ivp(0.005))
+    ) -> mf
   @ 
   
   \framebreak
@@ -1026,16 +1031,10 @@ set.seed(1350254336)
   read_csv("measles_params.csv") %>%
     filter(loglik>max(loglik)-20) -> all
 
-  pairs(~loglik+rho+mu_IR+Beta+eta,data=all,pch=16,
+  pairs(~loglik+rho+mu_IR+Beta+eta,data=all,pch=16,cex=0.3,
         col=if_else(round(all$rho,3)==0.6,1,4))
   @ 
   
-  \framebreak
-
-  <<>>=
-  pairs(~loglik+rho+mu_IR+Beta+eta,data=results,pch=16)
-  @ 
-
   \framebreak
 
   <<>>=
@@ -1071,7 +1070,7 @@ set.seed(1350254336)
   <<mu_IR_profile1b>>=
   set.seed(610408798)
   profile_design(
-    mu_IR=seq(0.5,2,by=0.1),
+    mu_IR=seq(0.2,2,by=0.1),
     lower=box[1,c("Beta","eta")],
     upper=box[2,c("Beta","eta")],
     nprof=100, type="runif"
@@ -1131,7 +1130,7 @@ set.seed(1350254336)
   <<mu_IR_profile_plot>>=
   results %>%
     group_by(round(mu_IR,2)) %>%
-    filter(rank(-loglik)<3) %>%
+    filter(rank(-loglik)<=1) %>%
     ungroup() %>%
     ggplot(aes(x=mu_IR,y=loglik))+
     geom_point()+
