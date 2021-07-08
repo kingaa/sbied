@@ -1,5 +1,7 @@
 ---
-title: "Worked solution to Exercise 3.2"
+title: |
+  | Worked solution to exercise 3.3:
+  | Precision and accuracy of particle-filter likelihood estimates
 author: "Aaron A. King"
 output:
   html_document:

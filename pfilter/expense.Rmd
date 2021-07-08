@@ -1,7 +1,7 @@
 ---
-pagetitle: Solution to Exercise 3.1
+pagetitle: Solution to Exercise 3.2
 title: |
-  | Worked solution to exercise 3.1:
+  | Worked solution to exercise 3.2:
   | Computational complexity of the particle filter
 author: "Aaron A. King and Edward L. Ionides"
 output:
