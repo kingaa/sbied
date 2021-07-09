@@ -1,7 +1,7 @@
 ---
-pagetitle: Solution to Exercise 3.1
+pagetitle: Solution to Exercise 3.2
 title: |
-  | Worked solution to exercise 3.1:
+  | Worked solution to exercise 3.2:
   | Computational complexity of the particle filter
 author: "Aaron A. King and Edward L. Ionides"
 output:
@@ -47,10 +47,8 @@ stopifnot(packageVersion("pomp")>="3.1")
 
 Construct the pomp object for the Consett measles example
 
-```{r read_chunk,include=FALSE,purl=TRUE,cache=FALSE}
-knitr::read_chunk("model.R")
-```
 ```{r model-construct}
+source("https://kingaa.github.io/sbied/pfilter/model.R")
 ```
 
 Now run particle filters of several sizes, measuring the amount of time elapses for each one.
@@ -86,7 +84,7 @@ summary(fit)
 ```
 
 The computational expense scales linearly with the number of particles.
-In this case, we require about `r signif(coef(fit)["Np"]*1000,2)`&nbsp;sec per 1000 particles.
+In this case, we require about `r signif(coef(fit)["Np"]*1e6,2)`&nbsp;&mu;s per 1000 particles.
 
 How does the computation scale with the length of the time series?
 
@@ -125,4 +123,4 @@ lm(time~n*Np,data=result) -> fit
 summary(fit)
 ```
 
-The marginal cost is about `r predict(fit,newdata=data.frame(n=c(41,42),Np=1000000)) %>% diff() %>% signif(2)`&nbsp;&mu;sec per 1000 particles per data-point.
+The marginal cost is about `r predict(fit,newdata=data.frame(n=c(41,42),Np=1000000)) %>% diff() %>% signif(2)`&nbsp;&mu;s per 1000 particles per data-point.

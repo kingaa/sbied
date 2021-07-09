@@ -1,5 +1,7 @@
 ---
-title: "Worked solution to Exercise 3.2"
+title: |
+  | Worked solution to exercise 3.3:
+  | Precision and accuracy of particle-filter likelihood estimates
 author: "Aaron A. King"
 output:
   html_document:
@@ -25,7 +27,6 @@ Please share and remix noncommercially, mentioning its origin.
 ```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 ```{r prelims,purl=TRUE,cache=FALSE}
-library(plyr)
 library(tidyverse)
 library(pomp)
 stopifnot(getRversion()>="4.0")
@@ -35,10 +36,8 @@ set.seed(1221234211)
 
 Model implementation
 
-```{r read_chunk,include=FALSE,purl=TRUE,cache=FALSE}
-knitr::read_chunk("model.R")
-```
 ```{r model-construct}
+source("https://kingaa.github.io/sbied/pfilter/model.R")
 ```
 
 Testing the particle filter:
@@ -49,39 +48,54 @@ logLik(pf)
 ```
 
 Now, we evaluate the dependence of log likelihood estimates 
-on particle size and number of independent filters
+on particle size and number of independent filters.
+We first set up a parallel computation environment.
 
-```{r comps,eval=FALSE}
+```{r parallel_setup,eval=FALSE,purl=FALSE}
 library(foreach)
 library(doParallel)
-
 registerDoParallel()
+```
+```{r cluster,purl=TRUE,include=FALSE}
+if (file.exists("CLUSTER.R")) {
+  source("CLUSTER.R")
+}
+```
 
-foreach (nfilt=c(10,100,1000),
-  .combine=rbind,.inorder=FALSE,
-  .options.multicore=list(set.seed=TRUE)) %:%
-  foreach (Np=c(1000,10000,100000), .combine=rbind) %:%
-  foreach (i=1:nfilt, .combine=rbind) %dopar% {
-    measSIR %>% pfilter(Np=Np) -> pf
-    logLik(pf) -> ll
-    data.frame(nfilt=nfilt,Np=Np,loglik=ll)
+```{r comps,eval=FALSE}
+expand_grid(
+  rep=1:1000,
+  Np=c(1000,10000,100000)
+) -> design
+
+foreach (p=iter(design,"row"),
+         .inorder=FALSE, .combine=rbind) %dopar%
+  {
+    library(pomp)
+    measSIR %>% pfilter(Np=p$Np) -> pf
+    cbind(p,loglik=logLik(pf))
   } -> lls
 ```
 ```{r comps-eval,include=FALSE}
-bake(file="loglikest-pfilter.rds",
-  seed=594717807L,kind="L'Ecuyer-CMRG",{
-    <<comps>> 
-    registerDoSEQ()
-    lls
- }) -> lls
+bake(file="loglikest-pfilter.rds",{
+  library(doRNG)
+  registerDoRNG(594717807L)
+  <<comps>> 
+  registerDoSEQ()
+  lls
+}) -> lls
 ```
 
 Violin plots are cute.
 
 ```{r plots}
-lls %>%
+expand_grid(
+  nfilt=c(10,100,1000),
+  lls
+) %>%
+  filter(rep<=nfilt) %>%
   ggplot(aes(x=Np,y=loglik,fill=ordered(nfilt),
-    group=interaction(nfilt,Np)))+
+             group=interaction(nfilt,Np)))+
   geom_violin(draw_quantiles=c(0.1,0.5,0.9),alpha=0.7)+
   scale_x_log10(breaks=unique(lls$Np))+
   labs(fill="nfilt")

@@ -152,8 +152,8 @@ read_csv("measles_params.csv") %>%
   mutate(type=if_else(is.na(loglik),"guess","result")) %>%
   arrange(type) -> all
 
-pairs(~loglik+Beta+eta+rho, data=all,
-      col=ifelse(all$type=="guess",grey(0.5),"red"),pch=16)
+pairs(~loglik+Beta+eta+rho, data=all, pch=16, cex=0.3,
+      col=ifelse(all$type=="guess",grey(0.5),"red"))
 
 all %>%
   filter(type=="result") %>%
@@ -322,7 +322,7 @@ results %>%
 set.seed(55266255)
 runif_design(
   lower=c(Beta=5,mu_IR=0.2,eta=0),
-  upper=c(Beta=80,mu_IR=5,eta=0.95),
+  upper=c(Beta=80,mu_IR=5,eta=0.99),
   nseq=1000
 ) %>%
   mutate(
@@ -348,8 +348,13 @@ bake(file="global_search2.rds",{
              logit="eta"), paramnames=c("Beta","mu_IR","eta"),
            rw.sd=rw.sd(Beta=0.02,mu_IR=0.02,eta=ivp(0.02))) -> mf
     mf %>%
-      mif2(Nmif=100,rw.sd=rw.sd(Beta=0.01,mu_IR=0.01,eta=ivp(0.01))) %>%
-      mif2(Nmif=100,rw.sd=rw.sd(Beta=0.005,mu_IR=0.005,eta=ivp(0.005))) -> mf
+      mif2(
+        Nmif=100,rw.sd=rw.sd(Beta=0.01,mu_IR=0.01,eta=ivp(0.01))
+      ) %>%
+      mif2(
+        Nmif=100,
+        rw.sd=rw.sd(Beta=0.005,mu_IR=0.005,eta=ivp(0.005))
+      ) -> mf
     replicate(
       10,
       mf %>% pfilter(Np=5000) %>% logLik()
@@ -373,10 +378,8 @@ read_csv("measles_params.csv") %>%
 read_csv("measles_params.csv") %>%
   filter(loglik>max(loglik)-20) -> all
 
-pairs(~loglik+rho+mu_IR+Beta+eta,data=all,pch=16,
+pairs(~loglik+rho+mu_IR+Beta+eta,data=all,pch=16,cex=0.3,
       col=if_else(round(all$rho,3)==0.6,1,4))
-
-pairs(~loglik+rho+mu_IR+Beta+eta,data=results,pch=16)
 
 results %>%
   filter(loglik>max(loglik)-20,loglik.se<1) %>%
@@ -397,7 +400,7 @@ read_csv("measles_params.csv") %>%
 
 set.seed(610408798)
 profile_design(
-  mu_IR=seq(0.5,2,by=0.1),
+  mu_IR=seq(0.2,2,by=0.1),
   lower=box[1,c("Beta","eta")],
   upper=box[2,c("Beta","eta")],
   nprof=100, type="runif"
@@ -443,7 +446,7 @@ read_csv("measles_params.csv") %>%
 
 results %>%
   group_by(round(mu_IR,2)) %>%
-  filter(rank(-loglik)<3) %>%
+  filter(rank(-loglik)<=1) %>%
   ungroup() %>%
   ggplot(aes(x=mu_IR,y=loglik))+
   geom_point()+
