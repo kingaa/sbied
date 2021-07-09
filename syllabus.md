@@ -144,7 +144,7 @@ Questions to Slack.
 
 Before 8:00:  
 - View lecture video for [Lesson 5](https://kingaa.github.io/sbied/measles/) (c.&nbsp;80min or 55min at 1.5x).  
-- Work on the [Quiz](https://kingaa.github.io/sbied/questions/questions.pdf).  
+- Work on the [Quiz](https://kingaa.github.io/sbied/quiz/quiz.pdf).  
 - Formulate questions for the instructors on the topic: How do simulation-based methods fit into your research agenda?  
 
 **Session 5**  
