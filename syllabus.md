@@ -119,7 +119,7 @@ Questions to Slack.
 #### Tuesday, 13 July
 
 Before 8:00:  
-- View lecture videos for [Lesson 4, Parts I--IV](https://kingaa.github.io/sbied/mif/) (c.&nbsp;70min or 50min at 1.5x).  
+- View lecture videos for [Lesson 4, Parts I--IV](https://kingaa.github.io/sbied/mif/) (c.&nbsp;55min or 38min at 1.5x).  
 - Send questions to Instructors via Slack.  
 - Optionally, begin work on Exercises 4.1.  
 
@@ -130,7 +130,7 @@ Before 8:00:
 9:45--10:15: Live plenary discussion of breakout group progress.
 
 **Interlude**  
-10:15--12:15: View lecture videos for [Lesson 4, Parts V--VI](https://kingaa.github.io/sbied/mif/) (c.&nbsp;60min or 40min at 1.5x).
+10:15--12:15: View lecture videos for [Lesson 4, Parts V--VI](https://kingaa.github.io/sbied/mif/) (c.&nbsp;55min or 38min at 1.5x).
 Questions to Slack.  
 11:45--12:15: Optional office hour (for those who have finished watching the Lesson 4 videos).  
 
