@@ -29,7 +29,7 @@ In particular, choose the number of starts, number of particles employed, and th
 
 -----------------
 
-## Solution (not yet complete)
+## Solution 
 
 We start by building a pomp object combining the SEIR process model from [Exercise 2.4](../stochsim/exercises.html\#basic-exercise-the-seir-model) with the negative binomial measurement model used in Lessons 3 and 4.
 
@@ -40,13 +40,8 @@ library(doParallel)
 library(doRNG)
 ```
 
-```{r measles_data,echo=T,results="hide",message=F,warning=F}
-courseurl <- "https://kingaa.github.io/sbied/"
-datafile <- "mif/Measles_Consett_1948.csv"
-
-read_csv(paste0(courseurl,datafile)) %>%
-  select(week,reports=cases) %>%
-  filter(week<=42) -> dat
+```{r sir_model,echo=T,results="hide",message=F,warning=F}
+source("https://kingaa.github.io/sbied/pfilter/model.R")
 ```
 
 ```{r seir_pomp}
@@ -69,22 +64,9 @@ seir_rinit <- Csnippet("
   H = 0;
 ")
 
-seir_dmeasure <- Csnippet("
-  lik = dnbinom_mu(reports,k,rho*H,give_log);
-")
-
-seir_rmeasure <- Csnippet("
-  reports = rnbinom_mu(k,rho*H);
-")
-
-## make changes to the measSIR pomp model imported from Lesson 4
-measles_seir <- pomp(dat,
-  times="week",t0=0,
-  accumvars="H",
+measSEIR <- pomp(measSIR,
   rprocess=euler(seir_step,delta.t=1/7),
   rinit=seir_rinit,
-  rmeasure=seir_rmeasure,
-  dmeasure=seir_dmeasure,
   paramnames=c("N","Beta","mu_EI","mu_IR","eta","k","rho"),
   partrans=parameter_trans(
         log=c("Beta","mu_EI","mu_IR","k"),
@@ -93,21 +75,23 @@ measles_seir <- pomp(dat,
   statenames=c("S","E","I","R","H")
 )
 
-coef(measles_seir) <- c(Beta=30,mu_EI=0.8,mu_IR=1.3,rho=0.5,k=10,eta=0.06,N=38000)
+coef(measSEIR) <- c(coef(measSIR),mu_EI=0.8)
+
 ```
 
 To debug the model and provide a sanity check on our parameter guesses, we first explore via simulation. Some simulations die out, but others lead to epidemics somewhat resembling the data.
 ```{r simulate}
-set.seed(4)
-plot(simulate(measles_seir))
+set.seed(1)
+plot(simulate(measSEIR))
 ```
 
-The next prerequisite is that we can successfully filter
+The next prerequisite is that we can successfully filter:
 ```{r pfilter}
-pf1 <- pfilter(measles_seir,1000)
+pf1 <- pfilter(measSEIR,1000)
 plot(pf1)
 logLik(pf1)
 ```
+The minimum effective sample size is `r round(min(pf1@eff.sample.size),0)`, which is not a complete disaster, and we should bear in mind that this is likely to improve when we fit the parameters.
 
 We now carry out a local search, estimating only 4 parameters for simplicity. For a thorough scientific analysis, one would also want to consider the evidence in the data concerning the other parameters that are fixed here.
 ```{r local_search}
@@ -118,7 +102,7 @@ bake(file="Q_fit_seir_local_search.rds",{
   foreach(i=1:20,.combine=c) %dopar% {
     library(pomp)
     library(tidyverse)
-    measles_seir %>%
+    measSEIR %>%
       mif2(
         Np=2000, Nmif=50,
         cooling.fraction.50=0.5,
@@ -128,12 +112,12 @@ bake(file="Q_fit_seir_local_search.rds",{
 }) -> mifs_local
 ```
 
-This consistently obtains log likelihoods around -104, substantially above the value of -120 found for the SIR model:
+This consistently obtains log likelihoods around -105, similar to those found with the SIR model:
 ```{r}
 sapply(mifs_local,logLik)
 ```
 
-However, as usual, we should evaluate the likelihoods using a particle filter, rather than relying on the likelihood from the last filtering iteration of the perturbed model used by `mif2`.
+As usual, we should evaluate the likelihoods using a particle filter, rather than relying on the likelihood from the last filtering iteration of the perturbed model used by `mif2`.
 ```{r local_search_evaluations}
 registerDoRNG(900242057)
 bake(file="Q_fit_seir_lik_local.rds",{
@@ -152,6 +136,56 @@ In this case, there is not much discrepancy between the perturbed and unperturbe
 ```{r}
 local_logliks$loglik
 ```
+
+```{r cluster_setup}
+  if (file.exists("CLUSTER.R")) {
+    source("CLUSTER.R")
+  }
+```
+  
+```{r global_search_design}
+  set.seed(2062379496)
+
+  runif_design(
+    lower=c(Beta=5,rho=0.2,eta=0,mu_EI=1/3),
+    upper=c(Beta=80,rho=0.9,eta=1,mu_EI=3),
+    nseq=100
+  ) -> guesses
+  fixed_params <- coef(measSEIR,c("mu_IR","k","N"))
+  mf1 <- mifs_local[[1]]
+```
+  
+```{r global_search}
+bake(file="Q_fit_seir_global_search.rds",{
+  registerDoRNG(1270401374)
+  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+    library(pomp)
+    library(tidyverse)
+    mf1 %>%
+      mif2(params=c(unlist(guess),fixed_params),Np=1000) %>%
+      mif2(Nmif=100) -> mf
+    replicate(
+      10,
+      mf %>% pfilter(Np=2000) %>% logLik()
+    ) %>%
+      logmeanexp(se=TRUE) -> ll
+    mf %>% coef() %>% bind_rows() %>%
+      bind_cols(loglik=ll[1],loglik.se=ll[2])
+  }
+}) -> results
+```
+
+The maximum log likelihood discovered is `r round(max(results$loglik,1))`, which confirms that the mode being investigated earlier by the local search is also the global mode. 
+
+```{r scatter_plot}
+pairs(~loglik+Beta+eta+rho+mu_EI,data=filter(results,loglik>max(loglik)-20))
+```
+
+This shows quite a different pattern from the corresponding figure for the SIR model in Section 5 of Lesson 4.
+After adding a latent class, higher values of the reporting rate and lower values of the initial susceptible fraction, $\eta$, are preferred.
+This regime matches our epidemiological expectations for endemic measles in the pre-vaccine era.
+Thus, adding a latent period to the model can substantially change the interpretation of the fitted model without substantially changing the overall fit measured by maximized likelihood.
+Profile likelihood calculations could help to clarify this finding.
 
 -----------------------------------
 

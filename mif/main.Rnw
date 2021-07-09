@@ -1164,6 +1164,11 @@ set.seed(1350254336)
 
   You will need to tailor the intensity of your search to the computational resources at your disposal.
   In particular, choose the number of starts, number of particles employed, and the number of IF2 iterations to perform in view of the size and speed of your machine.
+
+  \vspace{1mm}
+
+  \link{./Q_fit_seir.html}{Worked solution to the Exercise}
+
 \end{frame}
 
 \begin{frame}{\myexercise. Modify the measurement model}
