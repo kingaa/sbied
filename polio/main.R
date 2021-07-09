@@ -282,7 +282,7 @@ polio_params %>%
 polio_profile_pts <-  switch(run_level,  3,  5,  30)
 polio_profile_Nreps <- switch(run_level, 2,  3,  10)
 
-profileDesign(
+profile_design(
   rho=seq(0.01,0.025,length=polio_profile_pts),
   lower=box["min",],upper=box["max",],
   nprof=polio_profile_Nreps
