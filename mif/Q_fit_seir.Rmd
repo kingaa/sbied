@@ -76,7 +76,8 @@ measSEIR <- pomp(measSIR,
 )
 
 coef(measSEIR) <- c(coef(measSIR),mu_EI=0.8)
-
+fixed_params <- c(N=38000, mu_IR=2, k=10)
+coef(measSEIR,names(fixed_params)) <- fixed_params
 ```
 
 To debug the model and provide a sanity check on our parameter guesses, we first explore via simulation. Some simulations die out, but others lead to epidemics somewhat resembling the data.
@@ -112,7 +113,7 @@ bake(file="Q_fit_seir_local_search.rds",{
 }) -> mifs_local
 ```
 
-This consistently obtains log likelihoods around -105, similar to those found with the SIR model:
+This consistently obtains log likelihoods around -104, similar to those found with the SIR model:
 ```{r}
 sapply(mifs_local,logLik)
 ```
@@ -151,7 +152,6 @@ local_logliks$loglik
     upper=c(Beta=80,rho=0.9,eta=1,mu_EI=3),
     nseq=100
   ) -> guesses
-  fixed_params <- coef(measSEIR,c("mu_IR","k","N"))
   mf1 <- mifs_local[[1]]
 ```
   
@@ -175,17 +175,22 @@ bake(file="Q_fit_seir_global_search.rds",{
 }) -> results
 ```
 
-The maximum log likelihood discovered is `r round(max(results$loglik,1))`, which confirms that the mode being investigated earlier by the local search is also the global mode. 
+The maximum log likelihood discovered is `r round(max(results$loglik),1)`.
+This small improvement of around one log unit is not compelling evidence by itself for the need of an extra parameter.
+However, the interpretation of the fitted model has some interesting features, which can be seen from a scatter plot.
 
 ```{r scatter_plot}
-pairs(~loglik+Beta+eta+rho+mu_EI,data=filter(results,loglik>max(loglik)-20))
+pairs(~loglik+Beta+eta+rho+mu_EI,data=filter(results,loglik>max(loglik)-10))
 ```
 
-This shows quite a different pattern from the corresponding figure for the SIR model in Section 5 of Lesson 4.
-After adding a latent class, higher values of the reporting rate and lower values of the initial susceptible fraction, $\eta$, are preferred.
-This regime matches our epidemiological expectations for endemic measles in the pre-vaccine era.
+When including an latent period, the MLE has intermediate values of $\rho$ and $\eta$ that match epidemiological expectations for endemic measles in the pre-vaccine era, while remaining consistent with a mean infectious period of 0.5 wk.
+This is substantially different from the results in Section 5 of Lesson 4.  
 Thus, adding a latent period to the model can substantially change the interpretation of the fitted model without substantially changing the overall fit measured by maximized likelihood.
 Profile likelihood calculations could help to clarify this finding.
+
+The likelihood surface here is fairly flat: the y-axis range is just 2 log units.
+Data on a single epidemic cannot readily distinguish whether the disease has a high susceptible fraction and low reporting rate, or low susceptible fraction and high reporting rate.
+Longer time series could resolve this question.
 
 -----------------------------------
 
