@@ -1,7 +1,7 @@
 \input{header}
 
 \usepackage{enumitem} %% for alphabetical enumerate
-\title{Review questions}
+\title{Quiz}
 
 \usepackage{fullpage}
 

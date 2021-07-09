@@ -427,7 +427,7 @@ set.seed(1350254336)
   We obtain some diagnostic plots with the \code{plot} command applied to \code{mifs\_local}.
   Here is a way to get a prettier version:
   
-  <<local_search_plot,out.height="0.7\\textheight">>=
+  <<local_search_plot,out.width="0.8\\linewidth">>=
   mifs_local %>%
     traces() %>%
     melt() %>%

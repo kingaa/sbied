@@ -1100,7 +1100,7 @@ library(pomp)
   \ei
 
   <<profile_jobs>>=
-  profileDesign(
+  profile_design(
     rho=seq(0.01,0.025,length=polio_profile_pts),
     lower=box["min",],upper=box["max",],
     nprof=polio_profile_Nreps

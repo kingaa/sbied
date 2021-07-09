@@ -10,9 +10,6 @@
 
 \bibliographystyle{jss}
 
-\usefonttheme[onlymath]{serif}
-% use article-like math letters, from http://tex.stackexchange.com/questions/34265/how-to-get-beamer-math-to-look-like-article-math
-
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
 \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
 \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
@@ -130,11 +127,3 @@
 
 \newcommand\negBeforeCode{}
 \newcommand\negAfterCode{}
-
-\mode<beamer>{\usetheme{AnnArbor}}
-\mode<beamer>{\setbeamertemplate{footline}}
-\mode<beamer>{\setbeamertemplate{footline}[frame number]}
-\mode<beamer>{\setbeamertemplate{frametitle continuation}[from second][\insertcontinuationcountroman]}
-\mode<beamer>{\setbeamertemplate{navigation symbols}{}}
-
-\mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}

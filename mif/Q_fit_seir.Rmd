@@ -138,7 +138,7 @@ In this case, there is not much discrepancy between the perturbed and unperturbe
 local_logliks$loglik
 ```
 
-```{r cluster_setup}
+```{r cluster_setup,include=FALSE}
   if (file.exists("CLUSTER.R")) {
     source("CLUSTER.R")
   }
@@ -175,6 +175,7 @@ bake(file="Q_fit_seir_global_search.rds",{
 }) -> results
 ```
 
+
 The maximum log likelihood discovered is `r round(max(results$loglik),1)`.
 This small improvement of around one log unit is not compelling evidence by itself for the need of an extra parameter.
 However, the interpretation of the fitted model has some interesting features, which can be seen from a scatter plot.
@@ -186,6 +187,7 @@ pairs(~loglik+Beta+eta+rho+mu_EI,data=filter(results,loglik>max(loglik)-10))
 When including an latent period, the MLE has intermediate values of $\rho$ and $\eta$ that match epidemiological expectations for endemic measles in the pre-vaccine era, while remaining consistent with a mean infectious period of 0.5 wk.
 This is substantially different from the results in Section 5 of Lesson 4.  
 Thus, adding a latent period to the model can substantially change the interpretation of the fitted model without substantially changing the overall fit measured by maximized likelihood.
+
 Profile likelihood calculations could help to clarify this finding.
 
 The likelihood surface here is fairly flat: the y-axis range is just 2 log units.
