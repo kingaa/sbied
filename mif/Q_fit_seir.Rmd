@@ -137,7 +137,7 @@ In this case, there is not much discrepancy between the perturbed and unperturbe
 local_logliks$loglik
 ```
 
-```{r cluster_setup}
+```{r cluster_setup,include=FALSE}
   if (file.exists("CLUSTER.R")) {
     source("CLUSTER.R")
   }
@@ -175,7 +175,7 @@ bake(file="Q_fit_seir_global_search.rds",{
 }) -> results
 ```
 
-The maximum log likelihood discovered is `r round(max(results$loglik,1))`, which confirms that the mode being investigated earlier by the local search is also the global mode. 
+The maximum log likelihood discovered is `r round(max(results$loglik),1)`, which confirms that the mode being investigated earlier by the local search is also the global mode. 
 
 ```{r scatter_plot}
 pairs(~loglik+Beta+eta+rho+mu_EI,data=filter(results,loglik>max(loglik)-20))
@@ -185,6 +185,7 @@ This shows quite a different pattern from the corresponding figure for the SIR m
 After adding a latent class, higher values of the reporting rate and lower values of the initial susceptible fraction, $\eta$, are preferred.
 This regime matches our epidemiological expectations for endemic measles in the pre-vaccine era.
 Thus, adding a latent period to the model can substantially change the interpretation of the fitted model without substantially changing the overall fit measured by maximized likelihood.
+
 Profile likelihood calculations could help to clarify this finding.
 
 -----------------------------------
