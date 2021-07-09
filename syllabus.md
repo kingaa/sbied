@@ -106,8 +106,8 @@ Before 8:00:
 9:45-10:15: Live plenary discussion of breakout group results.  
 
 **Interlude**  
-10:15--12:15: View lecture videos for [Lesson 3](https://kingaa.github.io/sbied/pfilter/) (c.&nbsp;2hr or 80min at 1.5x).
-Questions to Slack.  
+10:15--12:15: View lecture videos for [Lesson 3](https://kingaa.github.io/sbied/pfilter/) (c.&nbsp;112min or 75min at 1.5x).  
+- Send questions to Instructors via Slack.  
 11:45--12:15: Optional office hour (for those who have finished watching the Lesson 3 videos).  
 
 **Session 2**  
@@ -130,8 +130,8 @@ Before 8:00:
 9:45--10:15: Live plenary discussion of breakout group progress.
 
 **Interlude**  
-10:15--12:15: View lecture videos for [Lesson 4, Parts V--VI](https://kingaa.github.io/sbied/mif/) (c.&nbsp;55min or 38min at 1.5x).
-Questions to Slack.  
+10:15--12:15: View lecture videos for [Lesson 4, Parts V--VI](https://kingaa.github.io/sbied/mif/) (c.&nbsp;55min or 38min at 1.5x).  
+- Send questions to Instructors via Slack.  
 11:45--12:15: Optional office hour (for those who have finished watching the Lesson 4 videos).  
 
 **Session 4**  
