@@ -1,2 +1,5 @@
 \input{../header}
 \usepackage[unicode=true,bookmarksnumbered=false,bookmarksopen=false,breaklinks=true,backref=section,colorlinks=true,urlcolor=blue,citecolor=black,linkcolor=blue,filecolor=blue]{hyperref}
+
+\newcounter{Qcounter}
+\newcommand\myquestion{{\stepcounter{Qcounter} Question \CHAPTER.\theQcounter}}

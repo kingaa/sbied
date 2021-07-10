@@ -34,7 +34,7 @@ set.seed(1350254336)
 {\large\bf Questions on Lesson \CHAPTER: Simulation of stochastic dynamic models}
 \medskip
 
-\myquestion. Scientifically, our conclusions should not depend on the units we choose, but we must get the details right. Suppose our data are two years of weekly aggregated case reports of a disease and we have a continuous time model solved numerically by an Euler timestep of size $dt$. Which of the following is a correct explanation of our options for properly implementing this in a \texttt{pomp} object called \texttt{po}?
+\myquestion. Scientifically, our conclusions should not depend on the units we choose, but we must get the details right. Suppose our data are two years of weekly aggregated case reports of a disease and we have a continuous time model solved numerically by an Euler timestep of size $dt$. Which of the following is a correct explanation of our options for properly implementing this in a pomp object called \texttt{po}?
 \begin{enumerate}[label=(\Alph*)]
 \item \label{A13a} The measurement times, \texttt{time(po)}, should be in units of weeks, such as $1,2,\dots,104$. The latent process can be modeled using arbitrary time units, say days or weeks or years. The units of $dt$ should match the time units of the {\bf latent} process.
 \item \label{A13b} The measurement times, \texttt{time(po)}, should be in units of weeks, such as $1,2,\dots,104$. The latent process can be modeled using arbitrary time units, say days or weeks or years. The units of $dt$ should be in weeks (in practice, usually a fraction of a week) to match the units of the {\bf measurement} times.
@@ -339,7 +339,7 @@ logmeanexp(cholera_loglik,se=TRUE)
 \medskip
 
 \myquestion. Effective sample size (ESS) is one of the main tools for diagnosing the success of a particle filter.
-If you plot an object of class \texttt{pfilterd\_pomp} (created by applying \texttt{pfilter} to a \texttt{pomp} object), the ESS is displayed.
+If you plot an object of class \code{pfilterd\_pomp} (created by applying \code{pfilter} to a pomp object), the ESS is displayed.
 Suppose one or more time points have low ESS (say, less than 10) even when using a fairly large number of particles (say, $10^4$).
 What is the proper interpretation?
 
@@ -465,6 +465,76 @@ This could mean that more particles are needed: $10^3$ particles is relatively l
 However, if the model fit is not great (as revealed by comparison against a benchmark) this makes the filtering harder as well as less scientifically satisfactory.
 If the model is fitting substantially below ARMA benchmarks, it is worth considering some extra time on model development. 
 Identifying time points with low effective sample size can help to identify which parts of the data are problemtic for the model to explain.
+}
+
+\myquestion.
+In the following call to \code{mif2}, which of the statements below are true?
+You may assume that \code{obj} is a pomp object with parameters \code{alpha}, \code{Beta}, \code{gamma}, and \code{delta}.
+<<eval=FALSE,purl=FALSE>>=
+obj %>%
+  mif2(
+    Nmif=100,
+    partrans=parameter_trans(log=c("Beta","alpha","delta")),
+    paramnames=c("Beta","alpha","delta"),
+    rw.sd=rw.sd(Beta=0.05,alpha=ivp(0.02),gamma=0.05),
+    cooling.fraction.50=0.1
+  ) -> obj
+@ 
+\begin{enumerate}[label=(\Alph*)]
+\item 50 IF2 iterations will be performed.
+\item \code{Beta} and \code{alpha} are estimated on the log scale.
+\item \code{gamma} is not estimated.
+\item \code{delta} is not estimated.
+\item The magnitude of the perturbation on \code{Beta} at the end of the run will be $0.05{\times}0.1^{100}=5{\times}10^{-102}$.
+\item The magnitude of the perturbation on \code{gamma} at the end of the run will be $0.05{\times}0.1^{100/50}=5{\times}10^{-4}$.
+\item \code{alpha} is an initial-value parameter; it will be perturbed only at the beginning of the time series.
+\item After the call, \code{obj} is an object of class `mif2d\_pomp'.
+\end{enumerate}
+
+\solution{
+  (A) is false; 100 iterations will be performed.
+  (B) is true.
+  (C) is false.
+  Since a random-walk sd is provided for \code{gamma}, it will be estimated.
+  It will be estimated on the natural scale, since no transformation is given.
+  (D) is true.  Although it is (unnecessarily) transformed, \code{delta} will receive no perturbations and will thus remain fixed at whatever value it has to begin with.
+  (E) is false.
+  (F) is true.
+  (G) is true.
+  (H) is true.
+}
+
+\medskip
+
+\myquestion. Assume that \code{obj} is the result of the call in the preceding question.
+Which of the statements below best describes what happens as a result of the following call?
+<<eval=FALSE,purl=FALSE>>=
+obj %>%
+  mif2(
+    rw.sd=rw.sd(Beta=0.05,alpha=ivp(0.02)),
+    cooling.fraction.50=0.2
+  )
+@ 
+\begin{enumerate}[label=(\Alph*)]
+\item 100 more IF2 iterations will be performed.
+\item The settings of the previous calculation are re-used, with the exception of \code{rw.sd} and \code{cooling.fraction.50}.
+\item The starting point of the new calculation is the end point of the old one.
+\item \code{Beta} and \code{alpha} are estimated on the log scale.
+\item \code{gamma} is not estimated.
+\item \code{delta} is not estimated.
+\item The cooling occurs more quickly than in the previous call.
+\end{enumerate}
+
+\solution{
+  (A) is true.
+  (B) is true.
+  (C) is true.
+  (D) is true.
+  The parameter transformations supplied in the earlier call are preserved.
+  (E) is true.
+  (F) is true.
+  (G) is false.
+  After 100 iterations, the perturbations are smaller than they were at the outset, by a factor of $0.2^{100/50}=0.04$.
 }
 
 %%%%%%%%%%%% 555555555555555
