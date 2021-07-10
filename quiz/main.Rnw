@@ -1,9 +1,17 @@
-\input{header}
-
-\usepackage{enumitem} %% for alphabetical enumerate
-\title{Quiz}
+\input{../header}
 
 \usepackage{fullpage}
+\usepackage[unicode=true,bookmarksnumbered=false,bookmarksopen=false,breaklinks=true,backref=section,colorlinks=true,urlcolor=blue,citecolor=black,linkcolor=blue,filecolor=blue]{hyperref}
+\usepackage[small,compact]{titlesec}
+
+\newcommand\periodafter[1]{{#1}.}
+\titleformat{\section}[hang]{\large\bfseries}{\periodafter\thesection}{2ex}{\periodafter}{}
+\titleformat{\subsection}[runin]{\normalsize\bfseries}{\periodafter\thesubsection}{1ex}{}{}
+\setcounter{section}{1}
+\renewcommand{\thesection}{Lesson \arabic{section}}
+\renewcommand{\thesubsection}{Question \arabic{section}.\arabic{subsection}}
+
+\title{Quiz}
 
 \author{Edward L. Ionides, Aaron A. King, Qianying Lin}
 
@@ -13,9 +21,10 @@
 <<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
 @
 
-
 <<prelims,echo=F,cache=F>>=
-SOLUTION <- readRDS("tmp.rds") # written by sol.Rnw or questions.Rnw
+## 'tmp.rds', written by sol.Rnw or questions.Rnw,
+## tells us whether to include the solutions or not
+SOLUTION <- readRDS("tmp.rds") 
 library(tidyverse)
 library(pomp)
 options(stringsAsFactors=FALSE)
@@ -28,14 +37,11 @@ set.seed(1350254336)
 
 %%%%%%%%% 222222222222
 
-\medskip
-\def\CHAPTER{2}
-\setcounter{Qcounter}{0}
-{\large\bf Questions on Lesson \CHAPTER: Simulation of stochastic dynamic models}
-\medskip
+\section{Simulation of stochastic dynamic models}
 
-\myquestion. Scientifically, our conclusions should not depend on the units we choose, but we must get the details right. Suppose our data are two years of weekly aggregated case reports of a disease and we have a continuous time model solved numerically by an Euler timestep of size $dt$. Which of the following is a correct explanation of our options for properly implementing this in a pomp object called \texttt{po}?
-\begin{enumerate}[label=(\Alph*)]
+\subsection{}
+Scientifically, our conclusions should not depend on the units we choose, but we must get the details right. Suppose our data are two years of weekly aggregated case reports of a disease and we have a continuous time model solved numerically by an Euler timestep of size $dt$. Which of the following is a correct explanation of our options for properly implementing this in a pomp object called \texttt{po}?
+\begin{enumerate}[(A)]
 \item \label{A13a} The measurement times, \texttt{time(po)}, should be in units of weeks, such as $1,2,\dots,104$. The latent process can be modeled using arbitrary time units, say days or weeks or years. The units of $dt$ should match the time units of the {\bf latent} process.
 \item \label{A13b} The measurement times, \texttt{time(po)}, should be in units of weeks, such as $1,2,\dots,104$. The latent process can be modeled using arbitrary time units, say days or weeks or years. The units of $dt$ should be in weeks (in practice, usually a fraction of a week) to match the units of the {\bf measurement} times.
 \item \label{A13c} The measurement times do not have to be in units of weeks. For example, we could use  \texttt{time(po)}=$1/52$, $2/52$, $\dots, 2$. The latent process and $dt$ should use the same units of time as the measurement times.
@@ -48,7 +54,8 @@ set.seed(1350254336)
 
 \medskip
 
-\myquestion. Suppose you obtain the following error message when you build your pomp model using Csnippets.
+\subsection{}
+Suppose you obtain the following error message when you build your pomp model using Csnippets.
 <<Q10-error-message,echo=FALSE>>=
 cat("
 Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error: 
@@ -81,7 +88,7 @@ CMD SHLIB -c -o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
 ")
 @
 Which of the following is a plausible cause for this error?
-\begin{enumerate}[label=(\Alph*)]
+\begin{enumerate}[(A)]
 \item \label{A10a} Using R syntax within a C function that has the same name as an R function.
 \item \label{A10b} A parameter is missing from the \texttt{paramnames} argument to \texttt{pomp}.
 \item \label{A10c} Indexing past the end of an array because C labels indices starting at 0. 
@@ -113,7 +120,8 @@ sir2 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
 
 \medskip
 
-\myquestion. Suppose you obtain the following error message when you build your pomp model using Csnippets.
+\subsection{}
+Suppose you obtain the following error message when you build your pomp model using Csnippets.
 <<Q11-error-message,echo=FALSE>>=
 cat("
 Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error: 
@@ -145,7 +153,7 @@ In system2(command = R.home(\"bin/R\"), args = c(\"CMD\", \"SHLIB\", \"-c\",  :
 ")
 @
 Which of the following is a plausible cause for this error?
-\begin{enumerate}[label=(\Alph*)]
+\begin{enumerate}[(A)]
 \item \label{A11a} Using R syntax within a C function that has the same name as an R function.
 \item \label{A11b} A parameter is missing from the \texttt{paramnames} argument to \texttt{pomp}.
 \item \label{A11c} Indexing past the end of an array because C labels indices starting at 0. 
@@ -175,7 +183,8 @@ sir3 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
 
 \medskip
 
-\myquestion. Suppose you obtain the following error message when you build your pomp model using Csnippets.
+\subsection{}
+Suppose you obtain the following error message when you build your pomp model using Csnippets.
 <<Q12-error-message,echo=FALSE>>=
 cat("
 Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error:
@@ -206,7 +215,7 @@ CMD SHLIB -c -o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
 ")
 @
 Which of the following is a plausible cause for this error?
-\begin{enumerate}[label=(\Alph*)]
+\begin{enumerate}[(A)]
 \item \label{A12a} Using R syntax within a C function that has the same name as an R function.
 \item \label{A12b} A parameter is missing from the \texttt{paramnames} argument to \texttt{pomp}.
 \item \label{A12c} Indexing past the end of an array because C labels indices starting at 0. 
@@ -238,7 +247,8 @@ sir4 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
 
 \medskip
 
-\myquestion. Let $V_n$ be a Markov process and let $W_n=h(V_n)$ for some function $h$. Which of the following statements are true?
+\subsection{}
+Let $V_n$ be a Markov process and let $W_n=h(V_n)$ for some function $h$. Which of the following statements are true?
 
 i) $W_n$ is a Markov process for all choices of $h$.
 
@@ -249,7 +259,7 @@ iii) $W_n$ is not a Markov process for any choice of $h$.
 iv) If $V_n=(X_n,Y_n)$ where $X_n$ and $Y_n$ are a POMP model, and $h(X_n,Y_n)=X_n$ then $W_n$ is a Markov process.
 
 v) If $V_n=(X_n,Y_n)$ where $X_n$ and $Y_n$ are a POMP model, and $h(X_n,Y_n)=Y_n$ then $W_n$ is a Markov process.
-\begin{enumerate}[label=(\Alph*)]
+\begin{enumerate}[(A)]
 \item i,iv,v
 \item ii,iv \label{A1b}
 \item ii,v
@@ -261,14 +271,11 @@ v) If $V_n=(X_n,Y_n)$ where $X_n$ and $Y_n$ are a POMP model, and $h(X_n,Y_n)=Y_
 
 %%%%%%%% 33333333333333333
 
-\medskip
-\def\CHAPTER{3}
-\setcounter{Qcounter}{0}
-{\large\bf Questions on Chapter \CHAPTER: Likelihood for POMPs}
-\medskip
+\section{Likelihood for POMPs}
 
-\myquestion. Suppose that 10 replications of a particle filter, each using $10^3 $ particles, runs in 15 minutes with no parallelization. To look for a more precise likelihood evaulation, you consider running 20 replicates, each with $10^4$ particles. How many minutes will this take, if you distribute the calculation across 4 cores?
-\begin{enumerate}[label=(\Alph*)]
+\subsection{}
+Suppose that 10 replications of a particle filter, each using $10^3 $ particles, runs in 15 minutes with no parallelization. To look for a more precise likelihood evaulation, you consider running 20 replicates, each with $10^4$ particles. How many minutes will this take, if you distribute the calculation across 4 cores?
+\begin{enumerate}[(A)]
 \item \label{A2a} 50
 \item \label{A2b} 60
 \item \label{A2c} 75
@@ -284,8 +291,9 @@ $$
 
 \medskip
 
-\myquestion. A particle filter is repeated 5 times to evaluate the likelihood at a proposed maximum likelihood estimate, each time with $10^4$ particles. Suppose the log likelihood estimates are $-2446.0$, $-2444.0$, $-2443.0$, $-2442.0$, $-2440.0$. Which of the following is an appropriate estimate for the log likelihood at this parameter value and its standard error.
-\begin{enumerate}[label=(\Alph*)]
+\subsection{}
+A particle filter is repeated 5 times to evaluate the likelihood at a proposed maximum likelihood estimate, each time with $10^4$ particles. Suppose the log likelihood estimates are $-2446.0$, $-2444.0$, $-2443.0$, $-2442.0$, $-2440.0$. Which of the following is an appropriate estimate for the log likelihood at this parameter value and its standard error.
+\begin{enumerate}[(A)]
 \item \label{A6a} Estimate $= -2443.0$, with standard error 1.0
 \item \label{A6b} Estimate $= -2443.0$, with standard error 2.2
 \item \label{A6c} Estimate $= -2443.0$, with standard error 5.0
@@ -306,13 +314,14 @@ logmeanexp(ll,se=TRUE)
 
 \medskip
 
-\myquestion. What is the log likelihood (to the nearest unit) of the Dacca cholera data for the POMP model constructed in pomp via
+\subsection{}
+What is the log likelihood (to the nearest unit) of the Dacca cholera data for the POMP model constructed in pomp via
 <<ebolaModel,echo=TRUE,eval=FALSE>>=
 d <- dacca(deltaI=0.08)
 @
 with cholera mortality rate 8\% and other parameters fixed at the default values.
  
-\begin{enumerate}[label=(\Alph*)]
+\begin{enumerate}[(A)]
 \item \label{A9a} -3764
 \item \label{A9b} -3765
 \item \label{A9c} -3766
@@ -338,12 +347,13 @@ logmeanexp(cholera_loglik,se=TRUE)
 
 \medskip
 
-\myquestion. Effective sample size (ESS) is one of the main tools for diagnosing the success of a particle filter.
+\subsection{}
+Effective sample size (ESS) is one of the main tools for diagnosing the success of a particle filter.
 If you plot an object of class \code{pfilterd\_pomp} (created by applying \code{pfilter} to a pomp object), the ESS is displayed.
 Suppose one or more time points have low ESS (say, less than 10) even when using a fairly large number of particles (say, $10^4$).
 What is the proper interpretation?
 
-\begin{enumerate}[label=(\Alph*)]
+\begin{enumerate}[(A)]
 \item \label{A14a} There is a problem with data, perhaps an error recording an observation.
 \item \label{A14b} There is a problem with the model which means that it cannot explain something in the data.
 \item \label{A14c} The model and data have no major problems, but the model happens to be problematic for the particle filter algorithm.
@@ -355,15 +365,12 @@ What is the proper interpretation?
 
 %%%%%%%%%%%%%% 44444444444444444
 
-\medskip
-\def\CHAPTER{4}
-\setcounter{Qcounter}{0}
-{\large\bf Questions on Chapter \CHAPTER: Inference via iterated filtering}
-\medskip
+\section{Inference via iterated filtering}
 
-\myquestion. When carrying out inference by iterated particle filtering, the likelihood increases for the first 10 iterations or so, and then steadily decreases. Testing the inference procedure on simulated data, this does not happen and the likelihood increases steadily toward convergence. Which of the following is the best explanation for this?
+\subsection{}
+When carrying out inference by iterated particle filtering, the likelihood increases for the first 10 iterations or so, and then steadily decreases. Testing the inference procedure on simulated data, this does not happen and the likelihood increases steadily toward convergence. Which of the following is the best explanation for this?
 
-\begin{enumerate}[label=(\Alph*)]
+\begin{enumerate}[(A)]
 \item \label{A4a} One or more random walk standard deviation is too large.
 \item \label{A4b} One or more random walk standard deviations is too small.
 \item \label{A4c} The model is misspecified, so it does not fit the data adequately.
@@ -379,8 +386,9 @@ When there is a reproducible and stable phenomenon of decreasing likelihood, it 
 
 \medskip
 
-\myquestion. People sometimes confuse likelihood profiles with likelihood slices. Suppose you read a figure which claims to construct a profile confidence interval for a parameter $\rho$ in a POMP model with four unknown parameters. Which of the following confirms that the plot is, or is not, a properly constructed profile confidence interval. The code producing the plot is available to you as an Rmarkdown file.
-\begin{enumerate}[label=(\Alph*)]
+\subsection{}
+People sometimes confuse likelihood profiles with likelihood slices. Suppose you read a figure which claims to construct a profile confidence interval for a parameter $\rho$ in a POMP model with four unknown parameters. Which of the following confirms that the plot is, or is not, a properly constructed profile confidence interval. The code producing the plot is available to you as an Rmarkdown file.
+\begin{enumerate}[(A)]
 \item \label{A7a} The CI is constructed by obtaining the interval of rho values whose log likelihood is within 1.92 of the maximum on a smoothed curve of likelihood values plotted against $\rho$.
 \item \label{A7b} The code involves evaluation of the likelihood but not maximization.
 \item \label{A7c} The points along the $\rho$ axis are not equally spaced.
@@ -393,9 +401,9 @@ When there is a reproducible and stable phenomenon of decreasing likelihood, it 
 If the researchers calculate a sliced likelihood through the MLE and tell you it is a profile, but you are concerned they might have constructed a slice by mistake, it is hard to know without looking at the code. \ref{A7a} is the proper construction of a profile if the points are maximizations over the remaining parameters for a range of fixed values of rho. However, if the code does not involve maximization over other parameters at each value of rho, it cannot be a proper profile. It could be a slice accidentally explained to be a profile, and with a confidence interval constructed as if it were a profile. 
 }
 
-\myquestion.
+\subsection{}
 Which of the following are true?
-\begin{enumerate}[label=(\Alph*)]
+\begin{enumerate}[(A)]
 \item A profile likelihood must lie \emph{above} every slice.
 \item Confidence intervals can be read from likelihood slices.
 \item A poor man's profile must lie above the true profile.
@@ -419,8 +427,9 @@ Which of the following are true?
 
 \vspace{-27mm}
 
-\myquestion. The iterated filtering convergence diagnostics plot shown above come from a \href{https://ionides.github.io/531w21/final_project/project06/blinded.html}{\textcolor{blue}{student project}}. What is the best interpretation?
-\begin{enumerate}[label=(\Alph*)]
+\subsection{}
+The iterated filtering convergence diagnostics plot shown above come from a \href{https://ionides.github.io/531w21/final_project/project06/blinded.html}{\textcolor{blue}{student project}}. What is the best interpretation?
+\begin{enumerate}[(A)]
 \item \label{A15a} Everything seems to be working fine. The likelihood is climbing. The replicated searches are giving consistent runs. The spread of convergence points for $\sigma_{\nu}$ and $H_0$ indicates weak identifability, which is a statistical fact worth noticing but not a weakness of the model.  
 \item \label{A15b} The consistently climbing likelihood is promising, but the failure of $\sigma_{\nu}$ and $H_0$ to converge needs attention. Additional searching is needed, experimenting with {\bf larger} values of the random walk perturbation standard deviation for these parameters to make sure the parameter space is properly searched. 
 \item \label{A15c} The consistently climbing likelihood is promising, but the failure of $\sigma_{\nu}$ and $H_0$ to converge needs attention. Additional searching is needed, experimenting with {\bf smaller} values of the random walk perturbation standard deviation for these parameters to make sure the parameter space is properly searched. 
@@ -448,8 +457,9 @@ Overall, the convergence plots here look good. The plots show that the seaches a
 \includegraphics{Q16plot.pdf}
 }
 
-\myquestion. The iterated filtering convergence diagnostics plot shown above come from a \href{https://ionides.github.io/531w21/final_project/project15/blinded.html}{\textcolor{blue}{student project}}, calculated using $10^3$ particles. What is the best interpretation?
-\begin{enumerate}[label=(\Alph*)]
+\subsection{}
+The iterated filtering convergence diagnostics plot shown above come from a \href{https://ionides.github.io/531w21/final_project/project15/blinded.html}{\textcolor{blue}{student project}}, calculated using $10^3$ particles. What is the best interpretation?
+\begin{enumerate}[(A)]
 \item \label{A16a} Everything seems to be working fine. There is a clear consensus from the different searches concerning the highest likelihood that can be found. Therefore, the search is doing a good job of maximization. Occasional searches get lost, such as the purple line with a low likelihood, but that is not a problem.
 \item \label{A16b} The seaches obtain likelihood values spread over thousands of log units. We would like to see consistent convergence within a few log units. We should use more particles and/or more iterations to achieve this.
 \item \label{A16c} The seaches obtain likelihood values spread over thousands of log units. We would like to see consistent convergence within a few log units.
@@ -467,7 +477,7 @@ If the model is fitting substantially below ARMA benchmarks, it is worth conside
 Identifying time points with low effective sample size can help to identify which parts of the data are problemtic for the model to explain.
 }
 
-\myquestion.
+\subsection{}\label{Q:mif2_call1}
 In the following call to \code{mif2}, which of the statements below are true?
 You may assume that \code{obj} is a pomp object with parameters \code{alpha}, \code{Beta}, \code{gamma}, and \code{delta}.
 <<eval=FALSE,purl=FALSE>>=
@@ -480,7 +490,7 @@ obj %>%
     cooling.fraction.50=0.1
   ) -> obj
 @ 
-\begin{enumerate}[label=(\Alph*)]
+\begin{enumerate}[(A)]
 \item 50 IF2 iterations will be performed.
 \item \code{Beta} and \code{alpha} are estimated on the log scale.
 \item \code{gamma} is not estimated.
@@ -506,7 +516,8 @@ obj %>%
 
 \medskip
 
-\myquestion. Assume that \code{obj} is the result of the call in the preceding question.
+\subsection{}\label{Q:mif2_call2}
+Assume that \code{obj} is the result of the call in \ref{Q:mif2_call1}.
 Which of the statements below best describes what happens as a result of the following call?
 <<eval=FALSE,purl=FALSE>>=
 obj %>%
@@ -515,7 +526,7 @@ obj %>%
     cooling.fraction.50=0.2
   )
 @ 
-\begin{enumerate}[label=(\Alph*)]
+\begin{enumerate}[(A)]
 \item 100 more IF2 iterations will be performed.
 \item The settings of the previous calculation are re-used, with the exception of \code{rw.sd} and \code{cooling.fraction.50}.
 \item The starting point of the new calculation is the end point of the old one.
@@ -539,15 +550,12 @@ obj %>%
 
 %%%%%%%%%%%% 555555555555555
 
-\medskip
-\def\CHAPTER{5}
-\setcounter{Qcounter}{0}
-{\large\bf Questions on Chapter \CHAPTER: Measles}
-\medskip
+\section{Measles}
 
-\myquestion. Two models are fitted to case counts on an epidemic. Model 1 is an SIR POMP model with a negative binomial measurement model, and model 2 is a linear regression model estimating a cubic trend. The log likelihoods are $\ell_1=-2037.91$ and $\ell_2=-2031.28$ respectively. Which of the following do you agree with most?
+\subsection{}
+Two models are fitted to case counts on an epidemic. Model 1 is an SIR POMP model with a negative binomial measurement model, and model 2 is a linear regression model estimating a cubic trend. The log likelihoods are $\ell_1=-2037.91$ and $\ell_2=-2031.28$ respectively. Which of the following do you agree with most?
 
-\begin{enumerate}[label=(\Alph*)]
+\begin{enumerate}[(A)]
 \item \label{A3a} We should not compare the models using these likelihoods. They correspond to different model structures, so it is an apples-to-oranges comparison.
 
 \item \label{A3b} We can compare them, but the difference is in the 4th significant figure, so the likelihoods are statistically indistinguishable. 
@@ -570,8 +578,9 @@ Quite likely, with some persistence, a mechanistic specification will beat a sim
 
 \medskip
 
-\myquestion. A compartment model is first implemented as a system of ordinary differential equations (ODEs). This leads to qualitatively reasonable trajectories, but poor likelihood values. The researchers add stochasticity in an attempt to improve the fit of the model by interpreting the ODEs as rates of a Markov chain. The likelihood, maximized by iterated particle filtering, remains poor compared to ARMA benchmarks. In addition, the effective sample size for the particle filtering is low at many time points despite even using as many as $10^4$ particles. Which of the following is the most promising next step?
-\begin{enumerate}[label=(\Alph*)]
+\subsection{}
+A compartment model is first implemented as a system of ordinary differential equations (ODEs). This leads to qualitatively reasonable trajectories, but poor likelihood values. The researchers add stochasticity in an attempt to improve the fit of the model by interpreting the ODEs as rates of a Markov chain. The likelihood, maximized by iterated particle filtering, remains poor compared to ARMA benchmarks. In addition, the effective sample size for the particle filtering is low at many time points despite even using as many as $10^4$ particles. Which of the following is the most promising next step?
+\begin{enumerate}[(A)]
 \item \label{A5a} Increase to $10^5$ particles, moving the computations to a cluster if necessary.
 \item \label{A5b}  Add noise to one or more rates to allow for overdispersion.
 \item \label{A5c} Try adding extra features to the model to capture scientific details not present in the original model.
@@ -584,9 +593,9 @@ Quite likely, with some persistence, a mechanistic specification will beat a sim
 
 \medskip
 
-\myquestion.
+\subsection{}
 You fit an SEIR model to case reports of an immunizing disease from a city. The resulting confidence interval for the mean latent period is 12--21 days, but clinical evidence points to a latent period averaging about 7 days. Which of the following is the most appropriate response to this discrepancy?
-\begin{enumerate}[label=(\Alph*)]
+\begin{enumerate}[(A)]
 \item \label{A8a} The latent period may be confounded with some unmodeled aspect of the system, such as spatial or age structure. The model estimates an effective latent period at the population level, which may not perfectly match what is happening at the scale of individuals. One should be cautious of making a causal interpretation of models fitted to observational data. 
 \item \label{A8b} The discrepancy shows that something is substantially wrong with the model. Extra biological detail must be introduced with the goal of bringing the estimated parameter back in line with the known biology of the system.
 \item \label{A8c} The discrepancy is problematic, but fortunately can readily be fixed. Since we know the clinical value of this parameter with reasonable accuracy, we should simply use this value in the model rather than estimating it.
@@ -600,24 +609,9 @@ Transferring parameter estimates between scales is hard. An example is the diffi
 
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%\medskip
-%\def\CHAPTER{6}
-%\setcounter{Qcounter}{0}
-%{\large\bf Questions on Chapter \CHAPTER: Polio}
-%\medskip
-
-%\medskip
-%\def\CHAPTER{7}
-%\setcounter{Qcounter}{0}
-%{\large\bf Questions on Chapter \CHAPTER: Ebola}
-%\medskip
-
 \end{document}
 
-\begin{enumerate}[label=(\Alph*)]
+\begin{enumerate}[(A)]
 \item \label{A2a}
 \item \label{A2b}
 \item \label{A2c}
