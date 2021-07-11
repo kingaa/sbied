@@ -70,10 +70,8 @@ For example, we can transform the parameters onto a scale on which there are no 
 
 Let's try this out on the toy SIR model we were working with, reconstructed as follows.
 
-```{r read_chunk,include=FALSE,purl=TRUE}
-knitr::read_chunk("model.R")
-```
 ```{r model-construct}
+source("https://kingaa.github.io/sbied/pfilter/model.R")
 ```
 
 Here, let's opt for deterministic optimization of a rough function.

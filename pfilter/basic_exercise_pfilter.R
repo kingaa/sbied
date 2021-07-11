@@ -9,8 +9,7 @@ library(magrittr)
 library(pomp)
 stopifnot(packageVersion("pomp")>="3.0")
 
-
-
+source("https://kingaa.github.io/sbied/pfilter/model.R")
 
 NP <- 50000
 REPLICATES <- 10

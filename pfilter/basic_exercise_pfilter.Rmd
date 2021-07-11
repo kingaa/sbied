@@ -71,10 +71,8 @@ Optionally, take advantage of multiple cores on your computer to improve your es
 
 - First, let's reconstruct the toy SIR model we were working with:
 
-```{r read_chunk,include=FALSE,purl=FALSE}
-knitr::read_chunk("model.R")
-```
 ```{r model-construct}
+source("https://kingaa.github.io/sbied/pfilter/model.R")
 ```
 
 - Now, borrow code from the notes:
