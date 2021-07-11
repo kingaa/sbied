@@ -2,7 +2,7 @@
 
 \def\CHAPTER{4}
 \title{Lesson \CHAPTER.\\Iterated filtering: principles and practice}
-\author{Edward Ionides, Aaron A. King, and Kidus Asfaw}
+\author{Aaron A. King, Edward L. Ionides and Qianying Lin}
 
 \begin{document}
 

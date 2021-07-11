@@ -2,7 +2,7 @@
 
 \def\CHAPTER{7}
 \title{Lesson \CHAPTER:\\Case study: forecasting Ebola}
-\author{Aaron A. King, Edward L. Ionides, Kidus Asfaw}
+\author{Aaron A. King and Edward L. Ionides}
 
 <<setup,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
 @

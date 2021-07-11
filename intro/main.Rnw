@@ -10,7 +10,7 @@
 
 \def\CHAPTER{1}
 \title{Lesson \CHAPTER:\\Introduction to Simulation-based Inference\\for Epidemiological Dynamics}
-\author{Aaron A. King, Edward L. Ionides, Kidus Asfaw}
+\author{Aaron A. King, Edward L. Ionides and Qianying Lin}
 
 \setbeamertemplate{footline}[frame number]
 
@@ -236,7 +236,7 @@
 \end{frame}
 
 \begin{frame}{Elementary POMP algorithms}
-  These are algorithms that interrogate the model or the model\/data confrontation without attempting to estimate parameters.
+  These are algorithms that interrogate the model or the model/data confrontation without attempting to estimate parameters.
   There are currently four of these:
   \begin{itemize}
   \item \code{simulate} performs simulations of the POMP model, i.e., it samples from the joint distribution of latent states and observables.

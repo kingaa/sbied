@@ -2,7 +2,7 @@
 
 \def\CHAPTER{2}
 \title{Lesson 2:\\Simulation of stochastic dynamic models}
-\author{Aaron A. King, Edward L. Ionides, and Kidus Asfaw}
+\author{Aaron A. King, Edward L. Ionides and Qianying Lin}
 
 \begin{document}
 
@@ -68,7 +68,7 @@ registerDoRNG(2488820)
   \item To account for demography (births/deaths/migration) we allow the possibility of a source and sink compartment, which is not usually represented on the flow diagram. We write $\mu_{{\small{\bullet}}S}$ for a rate of births into $S$, and denote mortality rates by $\mu_{S{\small\bullet}}$, $\mu_{I{\small\bullet}}$, $\mu_{R{\small\bullet}}$.
   \item The rates may be either constant or varying. In particular, for a simple SIR model, the recovery rate $\mu_{IR}$ is a constant but the infection rate has the time-varying form
     $$\mu_{SI}(t)=\beta \, I(t),$$
-    with $\beta$ being the \myemph{contact rate}. For the simplest SIR model, ignoring demography, we set
+    with $\beta$ being the \myemph{transmission rate}. For the simplest SIR model, ignoring demography, we set
     $$ \mu_{{\small{\bullet}}S}=\mu_{S{\small{\bullet}}}=\mu_{I{\small{\bullet}}}=\mu_{R{\small{\bullet}}}=0.$$
   \end{itemize}
 \end{frame}
