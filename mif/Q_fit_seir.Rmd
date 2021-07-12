@@ -81,7 +81,10 @@ We simply extract these from the database:
 
 ```{r set_params,warning=TRUE}
 read_csv("measles_params.csv") %>%
-  filter(loglik==max(loglik)) %>%
+  filter(
+    loglik==max(loglik),
+    abs(mu_IR-2)<0.001
+    ) %>%
   select(-loglik,-loglik.se) -> coef(measSEIR)
 
 coef(measSEIR,"mu_EI") <- 0.8
@@ -217,7 +220,8 @@ This small improvement of around one log unit is not compelling evidence by itse
 However, the interpretation of the fitted model has some interesting features, which can be seen from a scatter plot.
 
 ```{r scatter_plot}
-pairs(~loglik+Beta+eta+rho+mu_EI,data=filter(results,loglik>max(loglik)-10))
+pairs(~loglik+Beta+eta+rho+mu_EI,
+      data=filter(results,loglik>max(loglik)-10))
 ```
 
 When including an latent period, the MLE has intermediate values of $\rho$ and $\eta$ that match epidemiological expectations for endemic measles in the pre-vaccine era, while remaining consistent with a mean infectious period of 0.5 wk.
