@@ -1,4 +1,3 @@
-rm(list=ls())
 library(tidyverse)
 library(wordcloud2)
 library(tm)
@@ -6,16 +5,17 @@ library(SnowballC)
 library(stringr)
 library(pdftools)
 
-
-setwd("~/Dropbox/SISMID/Module 7/wordcloud/")
-
-files <- dir()[grep(".pdf", dir())]
+list.files(
+  path=c("intro","stochsim","pfilter","mif","measles",
+         "od","contacts","polio","ebola","papers"),
+  pattern=r"{.*\.pdf}",recursive=TRUE
+) -> files
 
 lapply(files, function(f) {
   pdf_text(f)
 }) %>% unlist -> text
 
-text %>% 
+text %>%
   str_replace_all("[[:punct:]]", " ") -> text
 
 Corpus(VectorSource(text)) -> docs
@@ -56,7 +56,7 @@ d$freq <- as.numeric(d$freq)
 d <- d %>% arrange(-freq)
 
 ## remove words manually
-d <- d[!d$word %in% c("parameters", "the", "can", "using", "cases", "function", "use", "this", "results", "one", "−", 
+d <- d[!d$word %in% c("parameters", "the", "can", "using", "cases", "function", "use", "this", "results", "one", "−",
                       "rates", "values", "error", "set", "value", "rho", "beta", "eta", "mu", "run", "units", "may",
                       "models", "mean", "ionides", "∗", "csv", "also", "lesson", "king", "small", "var", "much", "version",
                       "will", "xn−", "used", "called", "fxn", "via", "what", "following", "monte", "carlo",
@@ -64,4 +64,4 @@ d <- d[!d$word %in% c("parameters", "the", "can", "using", "cases", "function", 
 
 
 wordcloud2(d, minRotation = 0, maxRotation = 0, minSize = 5,
-           rotateRatio = 1,color = "random-light", backgroundColor = "grey") 
+           rotateRatio = 1,color = "random-light", backgroundColor = "grey")

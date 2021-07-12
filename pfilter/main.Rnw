@@ -341,11 +341,9 @@ set.seed(1350254336)
   Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our measles-outbreak case study.
   Here, we repeat the construction of the SIR model we looked at earlier, using parameters obtained by looking at simulations.
   \Rlanguage code to build the model is available \link{http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/model.R}{for download}.
-
-  <<read_chunk,include=FALSE,purl=FALSE>>=
-  knitr::read_chunk("model.R")
-  @ 
-  <<model-construct,echo=FALSE,purl=TRUE>>=
+  We can execute this code by sourcing the relevant file:
+  <<model-construct,purl=TRUE>>=
+  source("https://kingaa.github.io/sbied/pfilter/model.R")
   @
   
   In \package{pomp}, the basic particle filter is implemented in the command \code{pfilter}.

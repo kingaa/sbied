@@ -12,8 +12,7 @@ set.seed(1350254336)
 
 
 
-
-
+source("https://kingaa.github.io/sbied/pfilter/model.R")
 
 measSIR %>%
   pfilter(Np=5000) -> pf
