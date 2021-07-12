@@ -32,12 +32,16 @@ See the schedule below for details.
 
 -----------------------------
 
-### Course Website
+### Course Website and Zoom session
 
 The course website is https://kingaa.github.io/sbied/.
 All course materials can be found there.
 These include links to Youtube lecture videos, copies of the lecture slides, lecture notes, **R** scripts containing codes used in the lectures, and supplementary material on various background topics or topics touched tangentially in the lectures.
 Exercises are given in the lectures and can be found on the slides and in the notes.
+
+The course Zoom session is: https://tinyurl.com/24rw4sru.
+The passcode is 724285.
+
 
 -----------------------------
 

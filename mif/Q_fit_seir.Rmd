@@ -74,16 +74,32 @@ measSEIR <- pomp(measSIR,
   ),
   statenames=c("S","E","I","R","H")
 )
-
-coef(measSEIR) <- c(coef(measSIR),mu_EI=0.8)
-fixed_params <- c(N=38000, mu_IR=2, k=10)
-coef(measSEIR,names(fixed_params)) <- fixed_params
 ```
 
-To debug the model and provide a sanity check on our parameter guesses, we first explore via simulation. Some simulations die out, but others lead to epidemics somewhat resembling the data.
+Now, we'll use the best parameters we've found so far.
+We simply extract these from the database:
+
+```{r set_params,warning=TRUE}
+read_csv("measles_params.csv") %>%
+  filter(loglik==max(loglik)) %>%
+  select(-loglik,-loglik.se) -> coef(measSEIR)
+
+coef(measSEIR,"mu_EI") <- 0.8
+fixed_params <- coef(measSEIR,c("N","mu_IR","k"))
+coef(measSEIR)
+```
+The warning tells us that `mu_EI` is a new parameter, which of course, we knew.
+
+To debug the model and provide a sanity check on our parameter guesses, we first explore via simulation.
+Some simulations die out, but others lead to epidemics.
 ```{r simulate}
-set.seed(1)
-plot(simulate(measSEIR))
+set.seed(1014406)
+measSEIR %>%
+  simulate(nsim=20,format="data.frame",include=TRUE) %>%
+  ggplot(aes(x=week,y=reports,group=.id,color=(.id=="data")))+
+  geom_line()+
+  guides(color="none")+
+  theme_bw()
 ```
 
 The next prerequisite is that we can successfully filter:
@@ -94,22 +110,41 @@ logLik(pf1)
 ```
 The minimum effective sample size is `r round(min(pf1@eff.sample.size),0)`, which is not a complete disaster, and we should bear in mind that this is likely to improve when we fit the parameters.
 
-We now carry out a local search, estimating only 4 parameters for simplicity. For a thorough scientific analysis, one would also want to consider the evidence in the data concerning the other parameters that are fixed here.
-```{r local_search}
-mycores <- detectCores()
-registerDoParallel(mycores)
-registerDoRNG(482947940)
-bake(file="Q_fit_seir_local_search.rds",{
-  foreach(i=1:20,.combine=c) %dopar% {
-    library(pomp)
-    library(tidyverse)
-    measSEIR %>%
-      mif2(
-        Np=2000, Nmif=50,
-        cooling.fraction.50=0.5,
-        rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02),mu_EI=0.02)
-      )
+We'll set up a parallel computing environment, as usual.
+In the following, we use `detectCores` to determine how many cores are on our machine.
+We could pass this directly to `registerDoParallel`.
+Alternatively, we can set the `cores` option so that every call to `registerDoParallel` will use this number:
+
+```{r mycores,eval=FALSE}
+ncpu <- detectCores()
+options(cores=ncpu)
+registerDoParallel()
+```
+
+```{r cluster_setup,include=FALSE,eval=TRUE}
+  if (file.exists("CLUSTER.R")) {
+    source("CLUSTER.R")
   }
+```
+  
+We now carry out a local search, estimating only 4 parameters for simplicity.
+For a thorough scientific analysis, one would also want to consider the evidence in the data concerning the other parameters that are fixed here.
+```{r local_search,eval=FALSE}
+registerDoRNG(482947940)
+foreach(i=1:20,.combine=c) %dopar% {
+  library(pomp)
+  library(tidyverse)
+  measSEIR %>%
+    mif2(
+      Np=2000, Nmif=50,
+      cooling.fraction.50=0.5,
+      rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02),mu_EI=0.02)
+    )
+} -> mifs_local
+```
+```{r local_search_eval,include=FALSE}
+bake(file="Q_fit_seir_local_search.rds",{
+  <<local_search>>
 }) -> mifs_local
 ```
 
@@ -119,17 +154,20 @@ sapply(mifs_local,logLik)
 ```
 
 As usual, we should evaluate the likelihoods using a particle filter, rather than relying on the likelihood from the last filtering iteration of the perturbed model used by `mif2`.
-```{r local_search_evaluations}
+```{r local_search_evaluations,eval=FALSE}
 registerDoRNG(900242057)
+foreach(mf=mifs_local,.combine=rbind) %dopar% {
+  library(pomp)
+  library(tidyverse)
+  evals <- replicate(10, logLik(pfilter(mf,Np=5000)))
+  ll <- logmeanexp(evals,se=TRUE)
+  mf %>% coef() %>% bind_rows() %>%
+    bind_cols(loglik=ll[1],loglik.se=ll[2])
+} -> local_logliks
+```
+```{r local_search_evaluations_eval,include=FALSE}
 bake(file="Q_fit_seir_lik_local.rds",{
-  foreach(mf=mifs_local,.combine=rbind) %dopar% {
-    library(pomp)
-    library(tidyverse)
-    evals <- replicate(10, logLik(pfilter(mf,Np=5000)))
-    ll <- logmeanexp(evals,se=TRUE)
-    mf %>% coef() %>% bind_rows() %>%
-      bind_cols(loglik=ll[1],loglik.se=ll[2])
-  }
+  <<local_search_evaluations>>
 }) -> local_logliks
 ```
 
@@ -138,40 +176,38 @@ In this case, there is not much discrepancy between the perturbed and unperturbe
 local_logliks$loglik
 ```
 
-```{r cluster_setup,include=FALSE}
-  if (file.exists("CLUSTER.R")) {
-    source("CLUSTER.R")
-  }
-```
-  
 ```{r global_search_design}
-  set.seed(2062379496)
+set.seed(2062379496)
 
-  runif_design(
-    lower=c(Beta=5,rho=0.2,eta=0,mu_EI=1/3),
-    upper=c(Beta=80,rho=0.9,eta=1,mu_EI=3),
-    nseq=100
-  ) -> guesses
-  mf1 <- mifs_local[[1]]
+runif_design(
+  lower=c(Beta=5,rho=0.2,eta=0,mu_EI=1/3),
+  upper=c(Beta=80,rho=0.9,eta=1,mu_EI=3),
+  nseq=100
+) -> guesses
+mf1 <- mifs_local[[1]]
 ```
   
-```{r global_search}
+```{r global_search,eval=FALSE}
+registerDoRNG(1270401374)
+foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+  library(pomp)
+  library(tidyverse)
+  mf1 %>%
+    mif2(params=c(unlist(guess),fixed_params),Np=1000) %>%
+    mif2(Nmif=100) -> mf
+  replicate(
+    10,
+    mf %>% pfilter(Np=2000) %>% logLik()
+  ) %>%
+    logmeanexp(se=TRUE) -> ll
+  mf %>% coef() %>% bind_rows() %>%
+    bind_cols(loglik=ll[1],loglik.se=ll[2])
+} -> results
+```
+
+```{r global_search_eval,include=FALSE}
 bake(file="Q_fit_seir_global_search.rds",{
-  registerDoRNG(1270401374)
-  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(pomp)
-    library(tidyverse)
-    mf1 %>%
-      mif2(params=c(unlist(guess),fixed_params),Np=1000) %>%
-      mif2(Nmif=100) -> mf
-    replicate(
-      10,
-      mf %>% pfilter(Np=2000) %>% logLik()
-    ) %>%
-      logmeanexp(se=TRUE) -> ll
-    mf %>% coef() %>% bind_rows() %>%
-      bind_cols(loglik=ll[1],loglik.se=ll[2])
-  }
+  <<global_search>>
 }) -> results
 ```
 
@@ -185,7 +221,7 @@ pairs(~loglik+Beta+eta+rho+mu_EI,data=filter(results,loglik>max(loglik)-10))
 ```
 
 When including an latent period, the MLE has intermediate values of $\rho$ and $\eta$ that match epidemiological expectations for endemic measles in the pre-vaccine era, while remaining consistent with a mean infectious period of 0.5 wk.
-This is substantially different from the results in Section 5 of Lesson 4.  
+This is substantially different from the results in Section 5 of Lesson 4.
 Thus, adding a latent period to the model can substantially change the interpretation of the fitted model without substantially changing the overall fit measured by maximized likelihood.
 
 Profile likelihood calculations could help to clarify this finding.
