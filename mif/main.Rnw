@@ -391,6 +391,9 @@ set.seed(1350254336)
   } -> mifs_local
   @ 
   <<local_search_eval,echo=FALSE>>=
+  ## What is this 'bake' function?
+  ## See https://kingaa.github.io/sbied/pfilter/bake.html
+  ## for an explanation.
   bake(file="local_search.rds",{
     registerDoRNG(482947940)
     <<local_search>>

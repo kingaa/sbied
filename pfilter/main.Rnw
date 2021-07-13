@@ -558,6 +558,9 @@ set.seed(1350254336)
   @
   
   <<like-slice-eval,include=FALSE,purl=TRUE>>=
+  ## What is this 'bake' function?
+  ## See https://kingaa.github.io/sbied/pfilter/bake.html
+  ## for an explanation.
   bake(file="like-slice.rds",{
     <<like-slice1>>
     <<like-slice2>>

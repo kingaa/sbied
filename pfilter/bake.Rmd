@@ -1,0 +1,253 @@
+---
+pagetitle: pomp reproducibility functions
+title: |
+  | `bake`, `stew`, and `freeze`, for caching and reproducibility
+author: "Aaron A. King and Edward L. Ionides"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+bibliography: ../sbied.bib
+csl: ../jss.csl
+params:
+  prefix: bake/
+---
+
+\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
+\newcommand\dd[1]{d{#1}}
+\newcommand\lik{\mathcal{L}}
+\newcommand\loglik{\ell}
+
+-----------------------------------
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+Produced in R version `r getRversion()`.
+
+-----------------------------------
+
+```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
+```
+
+```{r cache=FALSE,include=FALSE}
+library(tidyverse)
+library(pomp)
+stopifnot(packageVersion("pomp")>="3.4")
+set.seed(1700460124)
+unlink("result1.rds")
+unlink("result2.rda")
+unlink("result3.rda")
+knitr::opts_chunk$set(cache=FALSE)
+```
+
+-----------------
+
+## Sub-computations and their interdependencies
+
+A scientific computation can be broken down into sub-computations, each of which depends on previous calculations.
+We refer to the fact that calculation B depends on the results of a calculation A by saying that B is *downstream* of A or A is *upstream* of B.
+
+As we develop a scientific computation, we often need to try various approaches, tweak algorithmic settings, and so on.
+When we do so, we need of course to re-run the computation to see the new result.
+This can be costly to the extent that the computation requires resources (time, money, and patience for example).
+When a computation is expensive, therefore, it can be useful to store its results, so that one does not have to recompute them unnecessarily.
+For example, suppose we are modifying a sub-computation B that depends on the results of the upstream calculation A.
+Any modification we make to B will require us to re-run B, but we need not re-run A, since its result would remain unchanged.
+
+The **pomp** package provides two tools to help in the caching of intermediate results:  
+- `bake` stores a single **R** object, the result of a specified computation.  
+- `stew` can store multiple **R** objects resulting from a specified computation.  
+In addition to these, **pomp** provides `freeze`, which controls the pseudorandom number generator.
+
+These functions also play a role in supporting *reproducibility*.
+In particular, they allow one to store not only the results of a calculation, but also the code that generated the results.
+We demonstrate them here.
+
+## Caching with `bake`
+
+In the following snippet, the results of a very simple calculation are stored in the file `result1.rds`.
+In this example, `x` and `y` represent the results of an upstream calculation and `z` is the result of the calculation we which to cache.
+```{r bake1}
+x <- 3
+y <- runif(2)
+bake(file="result1.rds",{
+  x+y
+}) -> z
+x; y; z
+```
+
+When we run the above snippet for the first time, `z` is computed according to the recipe given, and is then stored, in [**R**'s binary `.rds` format](#rds-and-rda-formats), in the file `result1.rds`.
+[Note also that `bake` appears to have retained some information about the amount of time used in the computation; 
+[see below for more on this](#stored-attributes).]
+
+If we run the code again,
+```{r bake2}
+bake(file="result1.rds",{
+  x+y
+}) -> z
+z
+```
+there is no re-computation of `z`.
+Instead, `bake` notices that `result1.rds` exists and therefore opens and reads the file, returning the stored result.
+
+What happens if an upstream quantity changes?
+For example:
+```{r bake3}
+x <- 5
+y <- runif(2)
+bake(file="result1.rds",{
+  x+y
+}) -> z
+x; y; z
+```
+Note that we no longer have `x+y==z`.
+Since `z` depends on `x` and `y`, we must re-compute `z`.
+To do so, we simply delete the file `result1.rds`:
+```{r bake4}
+file.remove("result1.rds")
+bake(file="result1.rds",{
+  x+y
+}) -> z
+x; y; z
+```
+
+Thus, one has to manage the dependencies between `bake` calls oneself.
+
+```{r include=FALSE}
+unlink("result1.rds")
+rm(list=ls())
+```
+
+## Caching with `stew`
+
+The `stew` function works just like `bake`, but it can store multiple **R** objects, each of which has a name.
+To do so, it uses [**R**'s `.rda` file format](#rds-and-rda-formats).
+For example, consider the following snippet of code.
+```{r stew1}
+x <- 5
+y <- runif(2)
+stew(file="result2.rda",{
+  z <- x+y
+  w <- rexp(1)
+  z+w
+})
+x; y; z; w
+```
+The `ls` command allows us to see the names of all **R** objects that exist in our workspace:
+```{r ls1}
+ls()
+```
+
+Now, if we re-run the `stew` call:
+```{r stew2}
+stew(file="result2.rda",{
+  z <- x+y
+  w <- rexp(1)
+  z+w
+})
+x; y; z; w
+```
+This just loads the values of `z` and `w` from the file into the workspace, as we can see from the following.
+```{r stew3}
+rm(x,y,z,w)
+stew(file="result2.rda",{
+  z <- x+y
+  w <- rexp(1)
+  z+w
+})
+ls()
+```
+In the above, the `rm` call removes the four variables named.
+We see that the `stew` call has retrieved `z` and `w`, but not `x` and `y`.
+
+Notice also that the result of the last line of code inside the `stew` call, since it is not stored in any named location, is not cached.
+
+```{r include=FALSE}
+unlink("result2.rda")
+```
+
+## Controlling the random-number generator
+
+Both `stew` and `bake` allow one to control the pseudorandom number generator (RNG) by fixing its seed.
+For example, the last snippet above includes a call to `rexp`, which simulates a draw from an exponential random variable.
+Ordinarily, each time `rexp` is called, it returns a different value.
+
+Consider the following snippet.
+```{r stew4a}
+stew(file="result3.rda",seed=99,{
+  w <- rexp(1)
+})
+w
+```
+Of course, if we call `stew` again, we will simply reload the result we just computed:
+```{r stew4b}
+stew(file="result3.rda",seed=99,{
+  w <- rexp(1)
+})
+w
+```
+However, if we now delete the result file and re-run,
+```{r stew4c}
+file.remove("result3.rda")
+stew(file="result3.rda",seed=99,{
+  w <- rexp(1)
+})
+w
+```
+we get the same result.
+The positive integer we pass to the `seed` argument sets the state of **R**'s built-in RNG so that subsequent calls to `rexp` (or any other random-deviate simulator) will produce the same values.
+To prevent this from affecting calculations *outside* the `stew` call, `stew` restores the RNG to the state it was in just prior to the `stew` call.
+
+The `bake` function has exactly the same feature.
+
+Finally, if one wishes to control the RNG in this way, *without* doing any caching, one can make use of the `freeze` function provided by **pomp**.
+For example, consider the following.
+```{r freeze1}
+rexp(1)
+freeze(rexp(1),seed=34996)
+rexp(1)
+freeze(rexp(1),seed=34996)
+rexp(1)
+```
+
+### Exercise
+
+Verify the claim that `freeze` does not affect the RNG outside of its call.
+
+
+```{r include=FALSE}
+unlink("result3.rda")
+```
+
+------------------
+
+## Serialized file formats in **R** {#rds-and-rda-formats}
+
+**R** has two binary formats for storing general **R** objects.
+The `.rds` format holds a single **R** object.
+One reads and writes such files using `readRDS` and `saveRDS`, respectively.
+The `.rda` format can hold multiple **R** objects.
+The `load`, `attach`, and `save` commands allow one to work with such files.
+See the **R** help pages for these functions for more information.
+
+------------------
+
+## Attributes stored by `bake` and `stew` {#stored-attributes}
+
+`bake` stores information about the amount of time required for a computation in the file, as an attribute of the stored object.
+In addition, if the RNG has been fixed (by means of the `seed` argument), then the value of `seed` is stored as another attribute.
+
+------------------
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+[**pomp manual page**](https://kingaa.github.io/pomp/manual/bake.html)  
+[**Back to the lesson**](./index.html)  
+[**Course homepage**](../index.html)  

@@ -34,6 +34,9 @@ logmeanexp(ll,se=TRUE)
 
 
 
+## What is this 'bake' function?
+## See https://kingaa.github.io/sbied/pfilter/bake.html
+## for an explanation.
 bake(file="like-slice.rds",{
   slice_design(
     center=coef(measSIR),

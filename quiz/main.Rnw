@@ -52,7 +52,7 @@ Scientifically, our conclusions should not depend on the units we choose, but we
 \solution{\ref{A13c}. For scientific calculations, you generally have to pick an arbitrary set of units and use it consistently. In \texttt{pomp}, this means that you have to use the same units for measurement times and within the latent process. For example, if your measurement times are in days (7,14,$\dots$) then rate parameters should have units $\mathrm{day}^{-1}$. A latent transition with mean duration 1 week would have corresponding rate $1/7 \mathrm{day}^{-1}$. 
 }
 
-\medskip
+
 
 \subsection{}
 Suppose you obtain the following error message when you build your pomp model using Csnippets.
@@ -118,7 +118,7 @@ sir2 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
 )    
 @
 
-\medskip
+
 
 \subsection{}
 Suppose you obtain the following error message when you build your pomp model using Csnippets.
@@ -181,7 +181,7 @@ sir3 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
 )    
 @    
 
-\medskip
+
 
 \subsection{}
 Suppose you obtain the following error message when you build your pomp model using Csnippets.
@@ -245,7 +245,7 @@ sir4 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
 
 %%%%%%%%%%%%%%%%%%%%
 
-\medskip
+
 
 \subsection{}
 Let $V_n$ be a Markov process and let $W_n=h(V_n)$ for some function $h$. Which of the following statements are true?
@@ -289,7 +289,7 @@ $$
 $$
 }
 
-\medskip
+
 
 \subsection{}
 A particle filter is repeated 5 times to evaluate the likelihood at a proposed maximum likelihood estimate, each time with $10^4$ particles. Suppose the log likelihood estimates are $-2446.0$, $-2444.0$, $-2443.0$, $-2442.0$, $-2440.0$. Which of the following is an appropriate estimate for the log likelihood at this parameter value and its standard error.
@@ -312,7 +312,7 @@ library(pomp)
 logmeanexp(ll,se=TRUE)
 @
 
-\medskip
+
 
 \subsection{}
 What is the log likelihood (to the nearest unit) of the Dacca cholera data for the POMP model constructed in pomp via
@@ -345,7 +345,7 @@ bake(file="Q9.rds",{
 logmeanexp(cholera_loglik,se=TRUE)
 @
 
-\medskip
+
 
 \subsection{}
 Effective sample size (ESS) is one of the main tools for diagnosing the success of a particle filter.
@@ -362,6 +362,7 @@ What is the proper interpretation?
 \end{enumerate}
 
 \solution{ \ref{A14d}. An example of a situation where the model fits the data well, but filtering is hard, arises when the measurement error is small relative to the process noise. In this case, the particles are scattered by the process noise and very few of them are compatible with the data due to the precise measurement. Thus, almost all the particles must be discarded as unfeasible given the data, corresponding to a low ESS.} 
+
 
 %%%%%%%%%%%%%% 44444444444444444
 
@@ -384,7 +385,7 @@ All the other issues can cause inference problems, but likely would cause simila
 When there is a reproducible and stable phenomenon of decreasing likelihood, it generally indicates that the unperturbed model is a worse fit to the data than the perturbed model. Recall that the likelihood calculated by iterated filtering at each iteration corresponds to the model with perturbed parameters rather than the actual postulated model with fixed parameters. If the perturbed model has higher likelihood, it may mean that the data are asking to have time-varying parameters. It may also be a signature of any other weakness in the model that can be somewhat accommodated by perturbing the parameters.
 }
 
-\medskip
+
 
 \subsection{}
 People sometimes confuse likelihood profiles with likelihood slices. Suppose you read a figure which claims to construct a profile confidence interval for a parameter $\rho$ in a POMP model with four unknown parameters. Which of the following confirms that the plot is, or is not, a properly constructed profile confidence interval. The code producing the plot is available to you as an Rmarkdown file.
@@ -417,7 +418,7 @@ Which of the following are true?
   (D) is true.
 }
 
-\medskip
+
 
 \vspace{-5mm}
 
@@ -451,7 +452,7 @@ Overall, the convergence plots here look good. The plots show that the seaches a
 
 %%%%%%%%%%%
 
-\medskip
+
 
 \resizebox{15cm}{!}{
 \includegraphics{Q16plot.pdf}
@@ -514,7 +515,7 @@ obj %>%
   (H) is true.
 }
 
-\medskip
+
 
 \subsection{}\label{Q:mif2_call2}
 Assume that \code{obj} is the result of the call in \ref{Q:mif2_call1}.
@@ -576,7 +577,7 @@ Why not \ref{A3c}? If our only goal were to find a predictive model, then (C) co
 Quite likely, with some persistence, a mechanistic specification will beat a simple off-the-shelf statistical model.
 }
 
-\medskip
+
 
 \subsection{}
 A compartment model is first implemented as a system of ordinary differential equations (ODEs). This leads to qualitatively reasonable trajectories, but poor likelihood values. The researchers add stochasticity in an attempt to improve the fit of the model by interpreting the ODEs as rates of a Markov chain. The likelihood, maximized by iterated particle filtering, remains poor compared to ARMA benchmarks. In addition, the effective sample size for the particle filtering is low at many time points despite even using as many as $10^4$ particles. Which of the following is the most promising next step?
@@ -590,8 +591,6 @@ A compartment model is first implemented as a system of ordinary differential eq
 
 \solution{\ref{A5b}. All the possibilities are worth consideration. However, adding noise in rates to give flexibility in mean-variance relationships is commonly an important part of developing a stochastic model. The simple compartment model interpretation of a ODE as a Markov chain is determined by the rates and therefore does not have free parameters to describe variance. There is some variance inherent in the Markov chain (demographic stochasticity) but additional variability may be needed. It will be hard to investigate the other possibilities if the model has not been given enough stochasticity to explain the variability in the data, so including overdispersion should be an early step. Note that overdispersion can be included in both the process model and the measurement model. 
 }
-
-\medskip
 
 \subsection{}
 You fit an SEIR model to case reports of an immunizing disease from a city. The resulting confidence interval for the mean latent period is 12--21 days, but clinical evidence points to a latent period averaging about 7 days. Which of the following is the most appropriate response to this discrepancy?

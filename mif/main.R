@@ -39,6 +39,9 @@ pf[[1]] %>% coef() %>% bind_rows() %>%
   write_csv("measles_params.csv")
 
 
+## What is this 'bake' function?
+## See https://kingaa.github.io/sbied/pfilter/bake.html
+## for an explanation.
 bake(file="local_search.rds",{
   registerDoRNG(482947940)
   foreach(i=1:20,.combine=c) %dopar% {
