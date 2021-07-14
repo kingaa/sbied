@@ -153,7 +153,7 @@ all %>%
   ggplot(aes(x=eta,y=loglik))+
   geom_point()+
   labs(
-    x=expression("eta"),
+    x=expression(eta),
     title="poor man's profile likelihood"
   )
 

@@ -1,0 +1,348 @@
+---
+title: "Fitting all parameters of the SIR model"
+author: "Aaron A. King, Edward L. Ionides, Qianying Lin"
+output:
+  html_document:
+    toc: no
+bibliography: ../sbied.bib
+csl: ../jss.csl
+params:
+  prefix: Q_fitall/
+---
+
+```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
+```
+
+```{r checks,cache=FALSE,include=FALSE}
+stopifnot(getRversion() >= "4.0")
+stopifnot(packageVersion("pomp")>="3.0")
+set.seed(1350254336)
+```
+
+## Exercise
+
+In all of the foregoing, we have assumed a fixed value of the dispersion parameter $k$, of the negative binomial measurement model.
+Now relax this assumption: estimate $k$ along with the other parameters.
+How much is the fit improved?
+How do the MLE values of the other parameters change?
+
+-----------------
+
+## Solution 
+
+### Setup
+
+First, we set up the problem, loading packages, initializing a parallel environment, constructing our SIR model, and identifying the putative MLE.
+The pomp constructed by the `source` command below is named `measSIR`.
+We take for our putative MLE the point in our database with the highest measured likelihood.
+
+```{r setup}
+library(pomp)
+library(tidyverse)
+library(doParallel)
+library(doRNG)
+registerDoParallel()
+
+source("https://kingaa.github.io/sbied/pfilter/model.R")
+
+read_csv("measles_params.csv") %>%
+  filter(!is.na(loglik), loglik.se<1) %>%
+  filter(loglik==max(loglik)) %>%
+  select(-loglik,-loglik.se) -> coef(measSIR)
+```
+
+The putative MLE is 
+```{r echo=FALSE,results="asis"}
+coef(measSIR) %>% signif(3) %>% t() %>% t() %>% knitr::kable()
+```
+
+### Local search
+
+We'll begin, as in the [Lesson](./index.html), by performing a local search with only $N$ fixed.
+The purpose of this is to evaluate the performance of the search algorithm, so that we can tune the algorithm's parameters.
+
+Windows users, beware!
+The following triggers a C snippet compilation within a parallel block, which will not succeed on many Windows machines.
+See [this discussion](./windows.html) for an explanation of how to circumvent this problem.
+
+```{r local_search,eval=FALSE,purl=FALSE}
+registerDoRNG(482942941)
+foreach(i=1:8,.combine=c) %dopar% {
+  library(pomp)
+  library(tidyverse)
+  measSIR %>%
+    mif2(
+      Np=2000, Nmif=40,
+      cooling.fraction.50=0.5,
+      rw.sd=rw.sd(Beta=0.02, rho=0.02, mu_IR=0.02, k=0.02, eta=ivp(0.05)),
+      partrans=parameter_trans(log=c("Beta","k","mu_IR"),logit=c("rho","eta")),
+      paramnames=c("Beta","rho","k","eta","mu_IR")
+    )
+} -> mifs_local
+```
+
+```{r local_search_eval,include=FALSE}
+## What is this 'bake' function?
+## See https://kingaa.github.io/sbied/pfilter/bake.html
+## for an explanation.
+bake(file="fitall_local_search.rds",{
+  <<local_search>>
+  attr(mifs_local,"ncpu") <- getDoParWorkers()
+  mifs_local
+}) -> mifs_local
+t_loc <- attr(mifs_local,"system.time")
+ncpu_loc <- attr(mifs_local,"ncpu")
+```
+
+We examine the traces of the IF2 runs:
+
+```{r}
+mifs_local %>%
+  traces() %>%
+  melt() %>%
+  filter(variable != "N") %>%
+  ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
+  geom_line()+
+  guides(color="none")+
+  facet_wrap(~variable,scales="free_y")
+```
+IF2 seems to be doing a reasonable job of increasing the likelihood, though there is some way yet to go.
+We note that $k$ is immediately decreased, giving the model more measurement error, with which to explain discrepancies between the process model and the data.
+Of course, to maximize the likelihood, $k$ should be as large as possible.
+It will be interesting to see what happens to the other parameters as IF2 tries to increase $k$.
+
+We now evaluate the log likelihood at each of the resulting points.
+
+```{r lik_local,eval=FALSE,purl=FALSE}
+registerDoRNG(908222057)
+foreach(mf=mifs_local,.combine=rbind) %dopar% {
+  library(pomp)
+  library(tidyverse)
+  evals <- replicate(10, logLik(pfilter(mf,Np=2000)))
+  ll <- logmeanexp(evals,se=TRUE)
+  mf %>% coef() %>% bind_rows() %>%
+    bind_cols(loglik=ll[1],loglik.se=ll[2])
+} -> results
+```
+
+```{r lik_local_eval,include=FALSE}
+bake(file="fitall_lik_local.rds",{
+  <<lik_local>>
+  attr(results,"ncpu") <- getDoParWorkers()
+  results
+}) -> results
+t_local <- attr(results,"system.time")
+ncpu_local <- attr(results,"ncpu")
+```
+
+The above calculations took a total of `r signif(t_local+t_loc,2)[3]`&nbsp;s on `r ncpu_local`&nbsp;cpus.
+What do they show us?
+
+```{r}
+pairs(~loglik+k+Beta+eta+rho+mu_IR,data=results,pch=16)
+```
+
+As usual, we store these results in a database.
+
+```{r}
+read_csv("measles_params.csv") %>%
+  bind_rows(results) %>%
+  arrange(-loglik) %>%
+  write_csv("fitall_params.csv")
+```
+
+Now we attempt a global search of the $k$-$\beta$-$\rho$-$\eta$-$\mu_{IR}$ space.
+
+
+```{r cluster_setup,include=FALSE}
+if (file.exists("CLUSTER.R")) {
+  source("CLUSTER.R")
+}
+```
+
+We set up a design of starting points.
+The `freeze` command is described [here](../pfilter/bake.html).
+
+```{r global1_search_setup}
+freeze(
+  runif_design(
+    lower=c(Beta=5,rho=0.2,eta=0,k=1,mu_IR=0.5),
+    upper=c(Beta=80,rho=0.9,eta=1,k=30,mu_IR=2),
+    nseq=500
+  ),
+  seed=2062379496
+) -> guesses
+```
+
+We will use one of our 'mif2d_pomp' objects in the following.
+We fix $N$ and $\mu_IR$.
+
+```{r}
+mf1 <- mifs_local[[1]]
+fixed_params <- coef(measSIR,c("N"))
+```
+
+The following may look somewhat familar.
+
+```{r global1_search,eval=FALSE,purl=FALSE}
+registerDoRNG(274481374)
+foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+  library(pomp)
+  library(tidyverse)
+  mf1 %>%
+    mif2(
+      Nmif=100,Np=2000,
+      params=c(unlist(guess),fixed_params)
+    ) %>%
+    mif2(Nmif=100) %>%
+    mif2(Nmif=100) -> mf
+  replicate(
+    10,
+    mf %>% pfilter(Np=2000) %>% logLik()
+  ) %>%
+    logmeanexp(se=TRUE) -> ll
+  mf %>% coef() %>% bind_rows() %>%
+    bind_cols(loglik=ll[1],loglik.se=ll[2])
+} -> results
+```
+
+```{r global1_search_eval,include=FALSE}
+bake(file="fitall_global_search.rds",{
+  <<global1_search>>
+  attr(results,"ncpu") <- getDoParWorkers()
+  results
+}) -> results
+t_global <- attr(results,"system.time")
+ncpu_global <- attr(results,"ncpu")
+```
+
+This global search from `r nrow(guesses)` starts took `r signif(t_global[3],2)`&nbsp;s on `r ncpu_global`&nbsp;cpus.
+We append the results to our database and have a look.
+
+```{r global1_plot1}
+read_csv("fitall_params.csv") %>%
+  bind_rows(results) %>%
+  filter(is.finite(loglik)) %>%
+  arrange(-loglik) %>%
+  write_csv("fitall_params.csv")
+
+results %>%
+  filter(is.finite(loglik)) %>%
+  filter(loglik>max(loglik)-50) %>%
+  bind_rows(guesses) %>%
+  mutate(type=if_else(is.na(loglik),"guess","result")) %>%
+  arrange(type) -> all
+
+pairs(~loglik+k+Beta+eta+rho+mu_IR, data=all, pch=16, cex=0.3,
+      col=ifelse(all$type=="guess",grey(0.5),"red"))
+
+read_csv("fitall_params.csv") %>%
+  filter(loglik>max(loglik)-50) -> all
+
+all %>%
+  filter(loglik>max(loglik)-10) %>%
+  ggplot(aes(x=k,y=loglik))+
+  geom_point()+
+  labs(
+    x=expression(k),
+    title="poor man's profile likelihood"
+  )
+
+all %>%
+  filter(loglik>max(loglik)-10) %>%
+  ggplot(aes(x=eta,y=loglik,color=k))+
+  geom_point()+
+  labs(
+    x=expression(eta),
+    title="poor man's profile likelihood"
+  )
+```
+
+Perhaps unsurprisingly, these poor-man's profiles suggest there is a very flat ridge in the surface.
+We can see some of the tradeoffs involved with a scatterplot matrix.
+
+```{r global1_plot2}
+pairs(~loglik+k+Beta+eta+rho+mu_IR, pch=16, cex=0.3,
+  data=filter(all,loglik>max(loglik)-10),
+  col=ifelse(round(all$k,2)==10,"blue","red"))
+```
+
+### A profile calculation
+
+Because this ridge appears flat in the $\eta$-direction, we will profile over $\eta$ to improve our estimates.
+The following sets up a design of guesses, to be used as starting points for the profile computation.
+
+```{r eta_profile1}
+read_csv("fitall_params.csv") %>%
+  filter(loglik>max(loglik)-10,loglik.se<1) %>%
+  sapply(range) -> box
+
+freeze(
+  profile_design(
+    eta=seq(box[1,"eta"],box[2,"eta"],length=20),
+    lower=box[1,c("Beta","rho","k","mu_IR")],
+    upper=box[2,c("Beta","rho","k","mu_IR")],
+    nprof=15, type="runif"
+  ),
+  seed=1893696051
+)-> guesses
+```
+
+```{r eta_profile2,eval=FALSE,purl=FALSE}
+registerDoRNG(830007657)
+foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+  library(pomp)
+  library(tidyverse)
+  mf1 %>%
+    mif2(
+      Nmif=100,Np=2000,
+      params=c(unlist(guess),fixed_params),
+      rw.sd=rw.sd(Beta=0.02, rho=0.02, mu_IR=0.02, k=0.02),
+      partrans=parameter_trans(log=c("Beta","mu_IR","k"),logit="rho"),
+      paramnames=c("Beta","mu_IR","k","rho")
+    ) %>%
+    mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
+  replicate(
+    10,
+    mf %>% pfilter(Np=2000) %>% logLik()
+  ) %>% logmeanexp(se=TRUE) -> ll
+  mf %>% coef() %>% bind_rows() %>%
+    bind_cols(loglik=ll[1],loglik.se=ll[2])
+} -> results
+```
+
+```{r eta_profile2_eval,include=FALSE}
+bake(file="fitall_eta_profile.rds",{
+  <<eta_profile2>>
+  attr(results,"ncpu") <- getDoParWorkers()
+  results
+}) -> results
+t_eta <- attr(results,"system.time")
+ncpu_eta <- attr(results,"ncpu")
+```
+
+```{r eta_profile_plots}
+results %>%
+  filter(
+    is.finite(loglik),
+    loglik.se<1
+  ) %>%
+  group_by(eta) %>%
+  filter(rank(-loglik)<=2) %>%
+  ungroup() %>%
+  gather(variable,value,loglik,mu_IR,rho,Beta,k) %>%
+  ggplot(aes(x=eta,y=value))+
+  geom_point()+
+  labs(y=NULL)+
+  facet_wrap(~variable,scales="free_y")
+```
+
+-----------------------------------
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+[**R codes**](./Q_fitall.R)  
+[**Back to the lesson**](./index.html)  
+[**Course homepage**](../index.html)  

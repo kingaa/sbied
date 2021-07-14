@@ -628,7 +628,7 @@ set.seed(1350254336)
     ggplot(aes(x=eta,y=loglik))+
     geom_point()+
     labs(
-      x=expression("eta"),
+      x=expression(eta),
       title="poor man's profile likelihood"
     )
   @
@@ -1161,11 +1161,11 @@ set.seed(1350254336)
 
 \end{frame}
 
-\begin{frame}{\myexercise. Modify the measurement model}
+\begin{frame}{\myexercise. Fitting all parameters}
   In all of the foregoing, we have assumed a fixed value of the dispersion parameter $k$, of the negative binomial measurement model.
-  Estimate $k$ along with the other parameters.
+  We've also fixed one or the other of $\mu_{IR}$, $\eta$.
+  Attempt to estimate all the parameters simultaneously.
   How much is the fit improved?
-  How do the MLE values of the other parameters change?
 \end{frame}
 
 \begin{frame}{\myexercise. Construct a profile likelihood}
