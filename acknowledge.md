@@ -9,11 +9,15 @@ csl: jss.csl
 
 ---------------------
 
-- Previous versions of this course were presented at the Summer Institute in Statistics and Modeling in Infectious Diseases by Edward Ionides and Aaron King in 2015--2020.
+- Versions of this course were presented at the Summer Institute in Statistics and Modeling in Infectious Diseases by Edward Ionides and Aaron King in 2015--2021.
 
 - Carles Bret&oacute; assisted in 2018.
 
 - Kidus Asfaw was a co-instructor in 2020.
+  He contributed to the lecture materials and the videos.
+  
+- Qianying Lin assisted in 2021.
+  She contributed to some of the videos.
 
 - Parts of these materials have been used for other courses such as [Model-based Inference in Ecology and Epidemiology](https://kingaa.github.io/short-course/) and [Analysis of Time Series](https://ionides.github.io/531w20/).
 
