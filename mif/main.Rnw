@@ -406,9 +406,10 @@ set.seed(1350254336)
 \end{frame}
 
 \begin{frame}[fragile]{Windows issues}
-  \textbf{NB:} Some Windows users have reported trouble with the above code.
+  Some Windows users have reported trouble with the above code.
   This appears to be due to certain Windows security features that make it impossible to compile codes inside a parallel block.
   We have found a workaround.
+
   \link{./windows.html}{Have a look at this document to learn about the workaround.}
   
 \end{frame}

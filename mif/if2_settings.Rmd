@@ -36,10 +36,6 @@ hr {
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\ell}
 
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix non-commercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
-
 Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 
 ```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
@@ -95,6 +91,10 @@ See if you can choose $J$ and $M$ subject to this constraint, together with choi
 Computationally, you may not be readily able to run your full procedure, but you could run a quicker version of it.
 
 --------------------------
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix non-commercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
 
 [**Back to IF2 lesson**](./index.html)  
 [**Back to course homepage**](../index.html)  

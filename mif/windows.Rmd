@@ -10,10 +10,10 @@ params:
   prefix: windoze/
 ---
 
-```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd",eval=FALSE}
+```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 
-```{r setup,cache=FALSE,include=FALSE}
+```{r checks,cache=FALSE,include=FALSE}
 stopifnot(getRversion() >= "4.0")
 stopifnot(packageVersion("pomp")>="3.0")
 set.seed(1350254336)
@@ -32,7 +32,6 @@ Recall that the basic model components include `rmeasure`, `dmeasure`, `rprocess
 Whenever one of these arguments is furnished a `Csnippet`, the snippet is compiled.  
 2. Every call to a **pomp** function in which a parameter transformation is specified by giving the names of parameters to log-transform, logit-transform, or log-barycentric transform.
 Even though the user does not supply a `Csnippet` in such cases, each such call results in a `Csnippet` being written internally, and then compiled.
-
 
 In addition, the use of temporary directories to hold the C files and dynamically loadable libraries created from them that underlie the C snippet facility causes problems on certain Windows machines.
 We hypothesize that this is due to Windows securities features.
@@ -60,7 +59,7 @@ foreach (i=1:4,.combine=c) %dopar% {
   library(pomp)
   measSIR %>%
     mif2(
-      Np=2000, Nmif=50,
+      Np=1000, Nmif=5,
       cooling.fraction.50=0.5,
       rw.sd=rw.sd(Beta=0.2, rho=0.2, eta=ivp(0.2)),
       partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
@@ -84,7 +83,7 @@ foreach (i=1:4,.combine=c) %dopar% {
   library(pomp)
   measSIR2 %>%
     mif2(
-      Np=2000, Nmif=50,
+      Np=1000, Nmif=5,
       cooling.fraction.50=0.5,
       rw.sd=rw.sd(Beta=0.2, rho=0.2, eta=ivp(0.2))
     )
@@ -106,5 +105,6 @@ Codes corresponding to those provided for Lesson 4, adapted for use in a Windows
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 	
+[**R codes**](./main_win.R)  
 [**Back to the lesson**](./index.html)  
 [**Course homepage**](../index.html)  

@@ -10,7 +10,7 @@ params:
   prefix: Q_fit_seir/
 ---
 
-```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd",eval=F}
+```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 
 ## Exercise
