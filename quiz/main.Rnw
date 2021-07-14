@@ -22,14 +22,12 @@
 @
 
 <<prelims,echo=F,cache=F>>=
-## 'tmp.rds', written by sol.Rnw or questions.Rnw,
-## tells us whether to include the solutions or not
-SOLUTION <- readRDS("tmp.rds") 
 library(tidyverse)
 library(pomp)
 options(stringsAsFactors=FALSE)
 stopifnot(packageVersion("pomp")>="3.0")
 set.seed(1350254336)
+knitr::opts_chunk$set(highlight=FALSE)
 @
 
 \maketitle
@@ -99,25 +97,26 @@ Which of the following is a plausible cause for this error?
 
 \solution{\ref{A10e}. The error message was produced by the code below. \texttt{pomp} passes on the C compiler error message for you to inspect. Note the missing semicolon at the line end before \texttt{W=0;}.}
 
-<<Q10-error-code,eval=F,echo=SOLUTION>>=
-sir1 <- sir()
-sir2 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
-  paramnames=c(
+\begin{comment}
+  <<Q10-error-code,eval=F>>=
+  sir1 <- sir()
+  sir2 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
+    paramnames=c(
       "gamma","mu","iota",
       "beta1","beta_sd","pop","rho",
       "S_0","I_0","R_0"
-  ),
-  rinit=Csnippet("
+    ),
+    rinit=Csnippet("
     double m = pop/(S_0+I_0+R_0);
     S = nearbyint(m*S_0);
     I = nearbyint(m*I_0);
     R = nearbyint(m*R_0);
     cases = 0
     W = 0;"
-  )
-)    
+    )
+  )    
 @
-
+\end{comment}
 
 
 \subsection{}
@@ -163,7 +162,7 @@ Which of the following is a plausible cause for this error?
 
 \solution{\ref{A11b}. The code generating this error is below. Here, \texttt{pop} is intended to be passed as a parameter, but it is missing from the \texttt{paramnames} argument. It could alternatively be defined as a global variable using the \texttt{globals} argument to \texttt{pomp}.}
 
-<<Q11-error-code,eval=F,echo=SOLUTION>>=
+<<Q11-error-code,eval=F>>=
 sir3 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
   paramnames=c(
       "gamma","mu","iota",
@@ -225,7 +224,7 @@ Which of the following is a plausible cause for this error?
 
 \solution{\ref{A12a}. The code producing the error is below. Within Csnippets, the C versions of R distribution functions are available but they have slightly different syntax from their more familiar R cousins.}
 
-<<Q12-error-code,eval=F,echo=SOLUTION>>=
+<<Q12-error-code,eval=F>>=
 sir4 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
   paramnames=c(
       "gamma","mu","iota",
@@ -303,7 +302,7 @@ A particle filter is repeated 5 times to evaluate the likelihood at a proposed m
 
 \solution{\ref{A6e}. Answers \ref{A6a}, \ref{A6b} and \ref{A6c} estimate using a mean on the log scale. However, the particle filter provides an unbiased likelihood estimate on a natural scale but not on a log scale. Note that the particle filter also has some bias for most quantities on a natural scale, which reduces to zero as the number of particles tends to infinity, but it happens to be unbiased for the likelihood. The standard error for the log of the mean of the likelihoods can be computed by the delta method or a jack-knife, for example using the logmeanexp function in pomp.
 }
-<<Q6,eval=SOLUTION,echo=SOLUTION>>=
+<<Q6>>=
 ll <- c(-2446,-2444,-2443,-2442,-2440)
 mean(ll)
 sd(ll)
@@ -331,7 +330,7 @@ with cholera mortality rate 8\% and other parameters fixed at the default values
 
 \solution{\ref{A9a}, calculated as follows:}
 
-<<Q9,eval=SOLUTION,echo=SOLUTION>>=
+<<Q9>>=
 d <- dacca(deltaI=0.08)
 library(doParallel)
 my_cores <- detectCores()

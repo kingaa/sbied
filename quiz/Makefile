@@ -3,7 +3,6 @@
 REXE = Rscript --no-save --no-restore --no-init-file
 
 default: quiz.pdf sol.pdf 
-	$(RM) tmp.rds
 
 sol.pdf: sol.tex main.tex
 

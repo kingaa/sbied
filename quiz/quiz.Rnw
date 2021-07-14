@@ -1,10 +1,7 @@
 \documentclass{article}
 
 \newcommand\solution[1]{}
-
-<<sol-setup,echo=FALSE>>=
-SOLUTION <- FALSE
-saveRDS(SOLUTION,file="tmp.rds")
-@
+\usepackage{comment}
+%% \newenvironment{soln}{\begin{comment}}{\end{comment}}
 
 \input{main}
