@@ -15,6 +15,7 @@ output: html_document
 | Windows-safe **R** script for the lesson | [**R**](main_win.R)                                                                         |
 | Supplement: Tuning IF2                   | [HTML](if2_settings.html)                                                                   |
 | Worked solution to Exercise 4.1          | [HTML](Q_fit_seir.html)                                                                     |
+| Worked solution to Exercise 4.2          | [HTML](Q_fitall.html)                                                                     |
 | Worked solution to Exercise 4.4          | [HTML](Q_check_code.html)                                                                   |
 |                                          |                                                                                             |
 
