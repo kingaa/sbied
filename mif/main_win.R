@@ -44,6 +44,12 @@ pf[[1]] %>% coef() %>% bind_rows() %>%
 ## for an explanation.
 bake(file="local_search.rds",{
   registerDoRNG(482947940)
+  measSIR %>%
+    pomp(
+      partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
+      paramnames=c("Beta","rho","eta"),
+      cdir=getwd()
+    ) -> measSIR
   foreach(i=1:20,.combine=c) %dopar% {
     library(pomp)
     library(tidyverse)
@@ -51,9 +57,7 @@ bake(file="local_search.rds",{
       mif2(
         Np=2000, Nmif=50,
         cooling.fraction.50=0.5,
-        rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02)),
-        partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
-        paramnames=c("Beta","rho","eta")
+        rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02))
       )
   } -> mifs_local
   attr(mifs_local,"ncpu") <- getDoParWorkers()
@@ -145,7 +149,7 @@ read_csv("measles_params.csv") %>%
   arrange(type) -> all
 
 pairs(~loglik+Beta+eta+rho, data=all, pch=16, cex=0.3,
-      col=ifelse(all$type=="guess",grey(0.5),"red"))
+  col=ifelse(all$type=="guess",grey(0.5),"red"))
 
 all %>%
   filter(type=="result") %>%
@@ -181,7 +185,7 @@ bake(file="eta_profile.rds",{
     library(tidyverse)
     mf1 %>%
       mif2(params=c(unlist(guess),fixed_params),
-           rw.sd=rw.sd(Beta=0.02,rho=0.02)) %>%
+        rw.sd=rw.sd(Beta=0.02,rho=0.02)) %>%
       mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
     replicate(
       10,
@@ -269,7 +273,7 @@ bake(file="rho_profile.rds",{
     library(tidyverse)
     mf1 %>%
       mif2(params=guess,
-           rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02))) %>%
+        rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02))) %>%
       mif2(Nmif=100,cooling.fraction.50=0.3) %>%
       mif2() -> mf
     replicate(
@@ -329,16 +333,22 @@ runif_design(
 
 bake(file="global_search2.rds",{
   registerDoRNG(610408798)
+  measSIR %>%
+    pomp(
+      partrans=parameter_trans(
+        log=c("Beta","mu_IR"),
+        logit="eta"
+      ),
+      paramnames=c("Beta","mu_IR","eta"),
+      cdir=getwd()
+    ) -> measSIR
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
     library(pomp)
     library(tidyverse)
     measSIR %>%
       mif2(params=guess, Np=2000, Nmif=100,
-           cooling.fraction.50=0.5,
-           partrans=parameter_trans(
-             log=c("Beta","mu_IR"),
-             logit="eta"), paramnames=c("Beta","mu_IR","eta"),
-           rw.sd=rw.sd(Beta=0.02,mu_IR=0.02,eta=ivp(0.02))) -> mf
+        cooling.fraction.50=0.5,
+        rw.sd=rw.sd(Beta=0.02,mu_IR=0.02,eta=ivp(0.02))) -> mf
     mf %>%
       mif2(
         Nmif=100,rw.sd=rw.sd(Beta=0.01,mu_IR=0.01,eta=ivp(0.01))
@@ -371,7 +381,7 @@ read_csv("measles_params.csv") %>%
   filter(loglik>max(loglik)-20) -> all
 
 pairs(~loglik+rho+mu_IR+Beta+eta,data=all,pch=16,cex=0.3,
-      col=if_else(round(all$rho,3)==0.6,1,4))
+  col=if_else(round(all$rho,3)==0.6,1,4))
 
 results %>%
   filter(loglik>max(loglik)-20,loglik.se<1) %>%
@@ -407,15 +417,20 @@ profile_design(
 
 bake(file="mu_IR_profile1.rds",{
   registerDoRNG(610408798)
+  measSIR %>%
+    pomp(
+      partrans=parameter_trans(log="Beta",logit="eta"),
+      paramnames=c("Beta","eta"),
+      cdir=getwd()
+    ) -> measSIR
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
     library(pomp)
     library(tidyverse)
     measSIR %>%
       mif2(params=guess, Np=2000, Nmif=100,
-           partrans=parameter_trans(log="Beta",logit="eta"),
-           paramnames=c("Beta","eta"), cooling.fraction.50=0.5,
-           rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02))
-           ) %>% mif2(Nmif=100) %>%
+        cooling.fraction.50=0.5,
+        rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02))
+      ) %>% mif2(Nmif=100) %>%
       mif2(Nmif=100,rw.sd=rw.sd(Beta=0.01,eta=ivp(0.01))) %>%
       mif2(Nmif=100,rw.sd=rw.sd(Beta=0.005,eta=ivp(0.005))) -> mf
     replicate(10,mf %>% pfilter(Np=5000) %>% logLik()) %>%

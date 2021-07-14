@@ -1,0 +1,110 @@
+---
+title: "Parallel pomp calculations under Windows"
+author: "Aaron A. King, Edward L. Ionides, Qianying Lin"
+output:
+  html_document:
+    toc: no
+bibliography: ../sbied.bib
+csl: ../jss.csl
+params:
+  prefix: windoze/
+---
+
+```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd",eval=FALSE}
+```
+
+```{r setup,cache=FALSE,include=FALSE}
+stopifnot(getRversion() >= "4.0")
+stopifnot(packageVersion("pomp")>="3.0")
+set.seed(1350254336)
+```
+
+Some Windows users have reported trouble with the parallel codes in Lesson 4.
+Specifically, **pomp** codes that require compilation of C snippets trigger errors when executed in parallel on certain Windows machines.
+
+The workaround is to execute *serially* all codes that require compilation;
+that is, to execute them *outside* of all parallel code blocks.
+
+Calls that induce compilation include:
+
+1. Every call to a **pomp** function in which a basic model component is specified using a C snippet.
+Recall that the basic model components include `rmeasure`, `dmeasure`, `rprocess`, `dprocess`, `skeleton`, `rprior`, `dprior`, `partrans`, and `rinit`.
+Whenever one of these arguments is furnished a `Csnippet`, the snippet is compiled.  
+2. Every call to a **pomp** function in which a parameter transformation is specified by giving the names of parameters to log-transform, logit-transform, or log-barycentric transform.
+Even though the user does not supply a `Csnippet` in such cases, each such call results in a `Csnippet` being written internally, and then compiled.
+
+
+In addition, the use of temporary directories to hold the C files and dynamically loadable libraries created from them that underlie the C snippet facility causes problems on certain Windows machines.
+We hypothesize that this is due to Windows securities features.
+
+Again, there is a workaround.
+One can specify to **pomp** that all compilation should be done in the current working directory.
+
+As an illustration, we will consider two code snippets.
+First, we load some packages, set up a parallel environment, and build the SIR model we have seen in the Lessons.
+The latter is stored in an object named `measSIR`.
+
+```{r snip0,message=FALSE,results="hide"}
+library(pomp)
+library(doParallel)
+registerDoParallel()
+
+source("https://kingaa.github.io/sbied/pfilter/model.R")
+```
+
+Now compare the following two code snippets.
+The first produces an error on most Windows machines:
+	
+```{r snip1,message=FALSE,results="hide"}
+foreach (i=1:4,.combine=c) %dopar% {
+  library(pomp)
+  measSIR %>%
+    mif2(
+      Np=2000, Nmif=50,
+      cooling.fraction.50=0.5,
+      rw.sd=rw.sd(Beta=0.2, rho=0.2, eta=ivp(0.2)),
+      partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
+      paramnames=c("Beta","rho","eta")
+    )
+} -> mifs_local
+```
+
+The next one does not:
+```{r snip2,message=FALSE,results="hide"}
+## Compilation is done here (since `partrans` leads to compilation).
+measSIR %>%
+  pomp(
+    partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
+    paramnames=c("Beta","rho","eta"),
+    cdir=getwd()
+  ) -> measSIR2
+
+## No compilation is triggered inside the parallel code block.
+foreach (i=1:4,.combine=c) %dopar% {
+  library(pomp)
+  measSIR2 %>%
+    mif2(
+      Np=2000, Nmif=50,
+      cooling.fraction.50=0.5,
+      rw.sd=rw.sd(Beta=0.2, rho=0.2, eta=ivp(0.2))
+    )
+} -> mifs_local
+```
+
+The two differences between the codes are:
+
+1. In the first, compilation is needed *inside* the parallel code block;
+In the second, the compilation is done *before* the parallelization, via the call to `pomp`.
+2. In the first, the needed temporary C files and libraries are written to the **R** session's temporary directory, which is the default behavior;
+In the second, they are written to the current working directory, as specified via the `cdir` argument.
+
+Codes corresponding to those provided for Lesson 4, adapted for use in a Windows environment, are [provided here](./main_win.R).
+
+-----------------------------------
+	
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+	
+[**Back to the lesson**](./index.html)  
+[**Course homepage**](../index.html)  

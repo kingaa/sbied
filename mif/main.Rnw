@@ -407,23 +407,10 @@ set.seed(1350254336)
 
 \begin{frame}[fragile]{Windows issues}
   \textbf{NB:} Some Windows users have reported trouble with the above code.
-  This appears to be due to certain Windows security features.
-  It has been possible to circumvent this problem by adding \code{cdir="."} and \code{cfile=<filename>} as arguments in the call that created \code{measSIR}.
-  Thus, for example,
+  This appears to be due to certain Windows security features that make it impossible to compile codes inside a parallel block.
+  We have found a workaround.
+  \link{./windows.html}{Have a look at this document to learn about the workaround.}
   
-  <<eval=FALSE,purl=TRUE>>=
-  dat %>%
-    pomp(
-      times="week",t0=0,
-      rprocess=euler(sir_step,delta.t=1/7),
-      rinit=sir_init, rmeasure=rmeas, dmeasure=dmeas,
-      partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
-      accumvars="H", statenames=c("S","I","H"),
-      paramnames=c("Beta","mu_IR","eta","rho","N"),
-      cdir=".", cfile="measSIR"
-    ) -> measSIR
-  @
-
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]{Iterated filtering diagnostics}
