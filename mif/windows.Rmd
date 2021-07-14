@@ -39,8 +39,8 @@ We hypothesize that this is due to Windows securities features.
 Again, there is a workaround.
 One can specify to **pomp** that all compilation should be done in the current working directory.
 
-As an illustration, we will consider two code snippets.
-First, we load some packages, set up a parallel environment, and build the SIR model we have seen in the Lessons.
+As an illustration, we will consider two code chunks.
+Before we do so, we load some packages, set up a parallel environment, and build the SIR model we have seen in the Lessons.
 The latter is stored in an object named `measSIR`.
 
 ```{r snip0,message=FALSE,results="hide"}
@@ -51,7 +51,7 @@ registerDoParallel()
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 ```
 
-Now compare the following two code snippets.
+Now compare the following two code chunks.
 The first produces an error on most Windows machines:
 	
 ```{r snip1,message=FALSE,results="hide"}
@@ -69,6 +69,7 @@ foreach (i=1:4,.combine=c) %dopar% {
 ```
 
 The next one does not:
+
 ```{r snip2,message=FALSE,results="hide"}
 ## Compilation is done here (since `partrans` leads to compilation).
 measSIR %>%
@@ -90,7 +91,7 @@ foreach (i=1:4,.combine=c) %dopar% {
 } -> mifs_local
 ```
 
-The two differences between the codes are:
+The two differences between the code chunks are:
 
 1. In the first, compilation is needed *inside* the parallel code block;
 In the second, the compilation is done *before* the parallelization, via the call to `pomp`.
