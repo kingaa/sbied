@@ -1155,7 +1155,7 @@ set.seed(1350254336)
   You will need to tailor the intensity of your search to the computational resources at your disposal.
   In particular, choose the number of starts, number of particles employed, and the number of IF2 iterations to perform in view of the size and speed of your machine.
 
-  \vspace{1mm}
+  \vspace{1em}
 
   \link{./Q_fit_seir.html}{Worked solution to the Exercise}
 
@@ -1164,8 +1164,12 @@ set.seed(1350254336)
 \begin{frame}{\myexercise. Fitting all parameters}
   In all of the foregoing, we have assumed a fixed value of the dispersion parameter $k$, of the negative binomial measurement model.
   We've also fixed one or the other of $\mu_{IR}$, $\eta$.
-  Attempt to estimate all the parameters simultaneously.
+  Now attempt to estimate all the parameters simultaneously.
   How much is the fit improved?
+
+  \vspace{1em}
+
+  \link{./Q_fitall.html}{Worked solution to the Exercise}
 \end{frame}
 
 \begin{frame}{\myexercise. Construct a profile likelihood}

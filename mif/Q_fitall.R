@@ -56,6 +56,9 @@ mifs_local %>%
 
 
 
+## What is this 'bake' function?
+## See https://kingaa.github.io/sbied/pfilter/bake.html
+## for an explanation.
 bake(file="fitall_lik_local.rds",{
   registerDoRNG(908222057)
   foreach(mf=mifs_local,.combine=rbind) %dopar% {
@@ -97,6 +100,9 @@ fixed_params <- coef(measSIR,c("N"))
 
 
 
+## What is this 'bake' function?
+## See https://kingaa.github.io/sbied/pfilter/bake.html
+## for an explanation.
 bake(file="fitall_global_search.rds",{
   registerDoRNG(274481374)
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
@@ -148,6 +154,7 @@ all %>%
   geom_point()+
   labs(
     x=expression(k),
+    y=expression(log~L),
     title="poor man's profile likelihood"
   )
 
@@ -157,6 +164,7 @@ all %>%
   geom_point()+
   labs(
     x=expression(eta),
+    y=expression(log~L),
     title="poor man's profile likelihood"
   )
 
@@ -170,16 +178,19 @@ read_csv("fitall_params.csv") %>%
 
 freeze(
   profile_design(
-    eta=seq(box[1,"eta"],box[2,"eta"],length=20),
+    eta=seq(0.01,0.99,length=40),
     lower=box[1,c("Beta","rho","k","mu_IR")],
     upper=box[2,c("Beta","rho","k","mu_IR")],
-    nprof=15, type="runif"
+    nprof=25, type="runif"
   ),
   seed=1893696051
 )-> guesses
 
 
 
+## What is this 'bake' function?
+## See https://kingaa.github.io/sbied/pfilter/bake.html
+## for an explanation.
 bake(file="fitall_eta_profile.rds",{
   registerDoRNG(830007657)
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
@@ -215,8 +226,41 @@ results %>%
   group_by(eta) %>%
   filter(rank(-loglik)<=2) %>%
   ungroup() %>%
-  gather(variable,value,loglik,mu_IR,rho,Beta,k) %>%
+  mutate(
+    `R[0]`=Beta/mu_IR,
+    beta=Beta,
+    `log~L`=loglik,
+    `mu[IR]`=mu_IR
+  ) %>%
+  gather(variable,value,`log~L`,`mu[IR]`,rho,beta,k,`R[0]`) %>%
   ggplot(aes(x=eta,y=value))+
   geom_point()+
-  labs(y=NULL)+
-  facet_wrap(~variable,scales="free_y")
+  labs(y=NULL,x=expression(eta))+
+  facet_wrap(~variable,scales="free_y",labeller=label_parsed)
+
+read_csv("fitall_params.csv") -> all
+all %>%
+  filter(loglik==max(loglik)) %>%
+  pull(loglik) %>%
+  round(1) -> ml
+all %>%
+  filter(round(k,4)==10) %>%
+  filter(loglik==max(loglik)) %>%
+  pull(loglik) %>%
+  round(1) -> ml_constr
+all %>%
+  group_by(etacut=round(eta,2)) %>%
+  filter(loglik==max(loglik)) %>%
+  ungroup() %>%
+  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.95)) %>%
+  select(-loglik,-loglik.se,-etacut) %>%
+  mutate(R0=Beta/mu_IR) %>%
+  gather(parameter,val) %>%
+  group_by(parameter) %>%
+  summarize(min=min(val),max=max(val)) %>%
+  mutate(min=signif(min,2),max=signif(max,2)) %>%
+  gather(var,val,min,max) %>%
+  spread(parameter,val) %>%
+  arrange(eta) %>%
+  column_to_rownames("var") %>%
+  collect() -> cis

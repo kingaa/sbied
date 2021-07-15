@@ -22,9 +22,10 @@ set.seed(1350254336)
 ## Exercise
 
 In all of the foregoing, we have assumed a fixed value of the dispersion parameter $k$, of the negative binomial measurement model.
-Now relax this assumption: estimate $k$ along with the other parameters.
+We've also fixed one or the other of $\mu_{IR}$, $\eta$.
+Now attempt to estimate all the parameters simultaneously.
 How much is the fit improved?
-How do the MLE values of the other parameters change?
+
 
 -----------------
 
@@ -126,6 +127,9 @@ foreach(mf=mifs_local,.combine=rbind) %dopar% {
 ```
 
 ```{r lik_local_eval,include=FALSE}
+## What is this 'bake' function?
+## See https://kingaa.github.io/sbied/pfilter/bake.html
+## for an explanation.
 bake(file="fitall_lik_local.rds",{
   <<lik_local>>
   attr(results,"ncpu") <- getDoParWorkers()
@@ -207,6 +211,9 @@ foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
 ```
 
 ```{r global1_search_eval,include=FALSE}
+## What is this 'bake' function?
+## See https://kingaa.github.io/sbied/pfilter/bake.html
+## for an explanation.
 bake(file="fitall_global_search.rds",{
   <<global1_search>>
   attr(results,"ncpu") <- getDoParWorkers()
@@ -245,6 +252,7 @@ all %>%
   geom_point()+
   labs(
     x=expression(k),
+    y=expression(log~L),
     title="poor man's profile likelihood"
   )
 
@@ -254,12 +262,18 @@ all %>%
   geom_point()+
   labs(
     x=expression(eta),
+    y=expression(log~L),
     title="poor man's profile likelihood"
   )
 ```
 
+It does appear that our global search has improved the likelihood, at least in part by reducing $k$.
+That is, by *increasing* the measurement error.
+
 Perhaps unsurprisingly, these poor-man's profiles suggest there is a very flat ridge in the surface.
 We can see some of the tradeoffs involved with a scatterplot matrix.
+In the following, the results of our earlier fitting (where $k=10$) are in blue;
+the new results are in red.
 
 ```{r global1_plot2}
 pairs(~loglik+k+Beta+eta+rho+mu_IR, pch=16, cex=0.3,
@@ -279,10 +293,10 @@ read_csv("fitall_params.csv") %>%
 
 freeze(
   profile_design(
-    eta=seq(box[1,"eta"],box[2,"eta"],length=20),
+    eta=seq(0.01,0.99,length=40),
     lower=box[1,c("Beta","rho","k","mu_IR")],
     upper=box[2,c("Beta","rho","k","mu_IR")],
-    nprof=15, type="runif"
+    nprof=25, type="runif"
   ),
   seed=1893696051
 )-> guesses
@@ -312,6 +326,9 @@ foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
 ```
 
 ```{r eta_profile2_eval,include=FALSE}
+## What is this 'bake' function?
+## See https://kingaa.github.io/sbied/pfilter/bake.html
+## for an explanation.
 bake(file="fitall_eta_profile.rds",{
   <<eta_profile2>>
   attr(results,"ncpu") <- getDoParWorkers()
@@ -320,6 +337,11 @@ bake(file="fitall_eta_profile.rds",{
 t_eta <- attr(results,"system.time")
 ncpu_eta <- attr(results,"ncpu")
 ```
+
+This profile calculation used about $`r signif(ncpu_eta*t_eta[3]/nrow(guesses),2)`$&nbsp;cpu s per start.
+
+We now examine the profile traces.
+Note that we include a trace of the basic reproductive number, $R_0$.
 
 ```{r eta_profile_plots}
 results %>%
@@ -330,12 +352,69 @@ results %>%
   group_by(eta) %>%
   filter(rank(-loglik)<=2) %>%
   ungroup() %>%
-  gather(variable,value,loglik,mu_IR,rho,Beta,k) %>%
+  mutate(
+    `R[0]`=Beta/mu_IR,
+    beta=Beta,
+    `log~L`=loglik,
+    `mu[IR]`=mu_IR
+  ) %>%
+  gather(variable,value,`log~L`,`mu[IR]`,rho,beta,k,`R[0]`) %>%
   ggplot(aes(x=eta,y=value))+
   geom_point()+
-  labs(y=NULL)+
-  facet_wrap(~variable,scales="free_y")
+  labs(y=NULL,x=expression(eta))+
+  facet_wrap(~variable,scales="free_y",labeller=label_parsed)
 ```
+
+```{r loglik_comparison,include=FALSE}
+read_csv("fitall_params.csv") -> all
+all %>%
+  filter(loglik==max(loglik)) %>%
+  pull(loglik) %>%
+  round(1) -> ml
+all %>%
+  filter(round(k,4)==10) %>%
+  filter(loglik==max(loglik)) %>%
+  pull(loglik) %>%
+  round(1) -> ml_constr
+all %>%
+  group_by(etacut=round(eta,2)) %>%
+  filter(loglik==max(loglik)) %>%
+  ungroup() %>%
+  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.95)) %>%
+  select(-loglik,-loglik.se,-etacut) %>%
+  mutate(R0=Beta/mu_IR) %>%
+  gather(parameter,val) %>%
+  group_by(parameter) %>%
+  summarize(min=min(val),max=max(val)) %>%
+  mutate(min=signif(min,2),max=signif(max,2)) %>%
+  gather(var,val,min,max) %>%
+  spread(parameter,val) %>%
+  arrange(eta) %>%
+  column_to_rownames("var") %>%
+  collect() -> cis
+```
+
+### Conclusions
+
+Releasing all constraints on the parameters results in only a small improvement in the log likelihood.
+Indeed, by AIC, the improvement is not judged to be worthwhile.
+Nevertheless, removing the constraints allows us to evaluate whether our assumptions about known values of certain parameters play a role in the conclusions.
+In the event, they were not playing much of a role.
+
+Let us return to the central question: 
+How does the model account for the data?
+
+Clearly, the model can account for the data equally well for all but the smallest values of $\eta$.
+That is, unless the fraction of susceptibles in the population was too small to allow for an outbreak of the observed size, one can obtain an outbreak that looks like the observed one from an SIR model in a population of sufficient size.
+This interpretation is confirmed by the fact that, as one decreases $\eta$, one has to increase the reporting efficiency $\rho$ to explain the data.
+
+Now, across the confidence interval for $\eta$, say $(`r cis$eta`)$, it is clear from the profile trace plots above, that the model needs both $\beta$ and $\rho$ to be relatively low and the infectious period to be relatively short (though average infectious periods of as long as $`r signif(1/cis$mu_IR[1],2)`$&nbsp;wk are within the confidence interval).
+
+In sum, the model is accounting for the data by saying there was a large and mostly unobserved outbreak in the population, very many of whom were susceptible.
+As we discussed in the [Lesson](./index.html), the conclusion of a short infectious period is broadly compatible with household studies that suggest the duration of viral shedding is less than a week.
+On the other hand, the conclusion that $\rho<`r cis$rho[2]`$ is more difficult to reconcile with our understanding of measles reporting during this period.
+Indeed, it would have had to be the case that 1948 was a very sloppy year for the public health authorities in this part of England, since their average reporting efficiency, as we estimated in the [Lesson](./index.html) was close to 60%.
+
 
 -----------------------------------
 
