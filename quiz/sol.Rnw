@@ -1,6 +1,7 @@
 \documentclass{article}
 
-\newcommand\solution[1]{ {\color{blue}{\bf Solution}. {#1}} }
-\newenvironment{comment}{ }{ }
+\usepackage{comment}
+\specialcomment{solution}{\begingroup\color{blue}\textbf{Solution.\ }}{\endgroup}
+%% \newenvironment{solution}{\color{blue} \textbf{Solution.}}{\ignorespacesafterend}
 
 \input{main}

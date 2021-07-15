@@ -8,6 +8,6 @@ sol.pdf: sol.tex main.tex
 
 quiz.pdf : quiz.tex main.tex
 
-.INTERMEDIATE: sol.tex main.tex quiz.tex
+.INTERMEDIATE: sol.tex main.tex quiz.tex comment.cut
 
 include ../rules.mk

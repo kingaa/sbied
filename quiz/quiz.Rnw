@@ -1,7 +1,6 @@
 \documentclass{article}
 
-\newcommand\solution[1]{}
 \usepackage{comment}
-%% \newenvironment{soln}{\begin{comment}}{\end{comment}}
+\excludecomment{solution}
 
 \input{main}
