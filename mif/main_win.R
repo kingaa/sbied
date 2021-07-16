@@ -4,6 +4,9 @@ stopifnot(getRversion() >= "4.0")
 stopifnot(packageVersion("pomp")>="3.0")
 set.seed(1350254336)
 
+dir.create("tmp")
+options(pomp_cdir="./tmp")
+
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 
 
@@ -47,8 +50,7 @@ bake(file="local_search.rds",{
   measSIR %>%
     pomp(
       partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
-      paramnames=c("Beta","rho","eta"),
-      cdir=getwd()
+      paramnames=c("Beta","rho","eta")
     ) -> measSIR
   foreach(i=1:20,.combine=c) %dopar% {
     library(pomp)
@@ -76,19 +78,20 @@ mifs_local %>%
 
 
 
-bake(file="lik_local.rds",{
-  registerDoRNG(900242057)
-  foreach(mf=mifs_local,.combine=rbind) %dopar% {
-    library(pomp)
-    library(tidyverse)
-    evals <- replicate(10, logLik(pfilter(mf,Np=5000)))
-    ll <- logmeanexp(evals,se=TRUE)
-    mf %>% coef() %>% bind_rows() %>%
-      bind_cols(loglik=ll[1],loglik.se=ll[2])
-  } -> results
-  attr(results,"ncpu") <- getDoParWorkers()
-  results
-}) -> results
+bake(file="lik_local.rds",
+  dependson=mifs_local,{
+    registerDoRNG(900242057)
+    foreach(mf=mifs_local,.combine=rbind) %dopar% {
+      library(pomp)
+      library(tidyverse)
+      evals <- replicate(10, logLik(pfilter(mf,Np=5000)))
+      ll <- logmeanexp(evals,se=TRUE)
+      mf %>% coef() %>% bind_rows() %>%
+        bind_cols(loglik=ll[1],loglik.se=ll[2])
+    } -> results
+    attr(results,"ncpu") <- getDoParWorkers()
+    results
+  }) -> results
 t_local <- attr(results,"system.time")
 ncpu_local <- attr(results,"ncpu")
 
@@ -114,25 +117,26 @@ runif_design(
 mf1 <- mifs_local[[1]]
 
 
-bake(file="global_search.rds",{
-  registerDoRNG(1270401374)
-  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(pomp)
-    library(tidyverse)
-    mf1 %>%
-      mif2(params=c(unlist(guess),fixed_params)) %>%
-      mif2(Nmif=100) -> mf
-    replicate(
-      10,
-      mf %>% pfilter(Np=5000) %>% logLik()
-    ) %>%
-      logmeanexp(se=TRUE) -> ll
-    mf %>% coef() %>% bind_rows() %>%
-      bind_cols(loglik=ll[1],loglik.se=ll[2])
-  } -> results
-  attr(results,"ncpu") <- getDoParWorkers()
-  results
-}) %>%
+bake(file="global_search.rds",
+  dependson=guesses,{
+    registerDoRNG(1270401374)
+    foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+      library(pomp)
+      library(tidyverse)
+      mf1 %>%
+        mif2(params=c(unlist(guess),fixed_params)) %>%
+        mif2(Nmif=100) -> mf
+      replicate(
+        10,
+        mf %>% pfilter(Np=5000) %>% logLik()
+      ) %>%
+        logmeanexp(se=TRUE) -> ll
+      mf %>% coef() %>% bind_rows() %>%
+        bind_cols(loglik=ll[1],loglik.se=ll[2])
+    } -> results
+    attr(results,"ncpu") <- getDoParWorkers()
+    results
+  }) %>%
   filter(is.finite(loglik)) -> results
 t_global <- attr(results,"system.time")
 ncpu_global <- attr(results,"ncpu")
@@ -178,25 +182,26 @@ plot(guesses)
 
 
 mf1 <- mifs_local[[1]]
-bake(file="eta_profile.rds",{
-  registerDoRNG(830007657)
-  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(pomp)
-    library(tidyverse)
-    mf1 %>%
-      mif2(params=c(unlist(guess),fixed_params),
-        rw.sd=rw.sd(Beta=0.02,rho=0.02)) %>%
-      mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
-    replicate(
-      10,
-      mf %>% pfilter(Np=5000) %>% logLik()) %>%
-      logmeanexp(se=TRUE) -> ll
-    mf %>% coef() %>% bind_rows() %>%
-      bind_cols(loglik=ll[1],loglik.se=ll[2])
-  } -> results
-  attr(results,"ncpu") <- getDoParWorkers()
-  results
-}) -> results
+bake(file="eta_profile.rds",
+  dependson=guesses,{
+    registerDoRNG(830007657)
+    foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+      library(pomp)
+      library(tidyverse)
+      mf1 %>%
+        mif2(params=c(unlist(guess),fixed_params),
+          rw.sd=rw.sd(Beta=0.02,rho=0.02)) %>%
+        mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
+      replicate(
+        10,
+        mf %>% pfilter(Np=5000) %>% logLik()) %>%
+        logmeanexp(se=TRUE) -> ll
+      mf %>% coef() %>% bind_rows() %>%
+        bind_cols(loglik=ll[1],loglik.se=ll[2])
+    } -> results
+    attr(results,"ncpu") <- getDoParWorkers()
+    results
+  }) -> results
 t_eta <- attr(results,"system.time")
 ncpu_eta <- attr(results,"ncpu")
 
@@ -339,8 +344,7 @@ bake(file="global_search2.rds",{
         log=c("Beta","mu_IR"),
         logit="eta"
       ),
-      paramnames=c("Beta","mu_IR","eta"),
-      cdir=getwd()
+      paramnames=c("Beta","mu_IR","eta")
     ) -> measSIR
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
     library(pomp)
@@ -420,8 +424,7 @@ bake(file="mu_IR_profile1.rds",{
   measSIR %>%
     pomp(
       partrans=parameter_trans(log="Beta",logit="eta"),
-      paramnames=c("Beta","eta"),
-      cdir=getwd()
+      paramnames=c("Beta","eta")
     ) -> measSIR
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
     library(pomp)
