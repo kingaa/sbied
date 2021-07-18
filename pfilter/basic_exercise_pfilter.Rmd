@@ -77,7 +77,7 @@ source("https://kingaa.github.io/sbied/pfilter/model.R")
 
 - Now, borrow code from the notes:
 
-```{r pfilter-loglik,cache=T}
+```{r pfilter-loglik,eval=FALSE,purl=FALSE}
 NP <- 50000
 REPLICATES <- 10
 timer <- system.time(
@@ -88,6 +88,11 @@ timer <- system.time(
 )
 ll <- sapply(pf,logLik)
 logmeanexp(ll,se=TRUE)
+```
+```{r pfilter-loglik-eval,include=FALSE}
+stew(file="pfilter-loglik.rda",{
+  <<pfilter-loglik>>
+})
 ```
 
 - This took `r round(timer["elapsed"],1)` seconds.

@@ -21,14 +21,6 @@ params:
 
 -----------------------------------
 
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
-
-Produced in R version `r getRversion()`.
-
------------------------------------
-
 ```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
@@ -86,5 +78,13 @@ While the calculation is "correct" in that it will converge to the true likeliho
 -----------------------
 
 [Back to the lesson](./index.html)
+
+-----------------------------------
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+Produced in R version `r getRversion()`.
 
 --------------------------

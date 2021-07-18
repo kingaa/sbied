@@ -113,7 +113,7 @@ neg.ll <- function (par, est) {
 ```
 
 Now we call `optim` to minimize this function:
-```{r like-optim-2}
+```{r like-optim-2,eval=FALSE,purl=FALSE}
 ## use Nelder-Mead with fixed RNG seed
 estpars <- c("Beta","mu_IR","eta")
 optim(
@@ -132,6 +132,11 @@ fit$val
 
 lls <- replicate(n=5,logLik(pfilter(mle,Np=20000)))
 ll <- logmeanexp(lls,se=TRUE); ll
+```
+```{r like-optim-2-eval,include=FALSE}
+stew(file="like_optim2.rda",{
+  <<like-optim-2>>
+})
 ```
 
 We plot some simulations at these parameters.

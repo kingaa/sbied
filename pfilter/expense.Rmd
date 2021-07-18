@@ -53,7 +53,7 @@ source("https://kingaa.github.io/sbied/pfilter/model.R")
 
 Now run particle filters of several sizes, measuring the amount of time elapses for each one.
 
-```{r}
+```{r comp,eval=FALSE,purl=FALSE}
 expand_grid(
   Np=ceiling(10^seq(1,5,by=0.2))
 ) -> design
@@ -68,6 +68,12 @@ foreach (
   system.time(measSIR %>% pfilter(Np=expt$Np))[3] -> expt$time
   expt
 } -> resultA
+```
+
+```{r comp_eval,include=FALSE}
+stew(file="expense1.rda",{
+  <<comp>>
+})
 ```
 
 Plot the results and fit a line.
@@ -88,7 +94,7 @@ In this case, we require about `r signif(coef(fit)["Np"]*1e6,2)`&nbsp;&mu;s per 
 
 How does the computation scale with the length of the time series?
 
-```{r}
+```{r comp2,eval=FALSE,purl=FALSE}
 measSIR %>%
   window(end=21) -> shortMeasSIR
 
@@ -111,7 +117,14 @@ bind_rows(
       length=="long"~length(time(measSIR))
     )
   ) -> result
+```
+```{r comp2_eval,include=FALSE}
+stew(file="expense2.rda",{
+  <<comp2>>
+})
+```
 
+```{r}
 result %>%
   ggplot(aes(x=time,y=Np,group=n,color=factor(n)))+
   geom_point()+

@@ -11,16 +11,19 @@ stopifnot(packageVersion("pomp")>="3.0")
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 
-NP <- 50000
-REPLICATES <- 10
-timer <- system.time(
-  pf <- replicate(
-    REPLICATES,
-    measSIR %>% pfilter(Np=NP)
+
+stew(file="pfilter-loglik.rda",{
+  NP <- 50000
+  REPLICATES <- 10
+  timer <- system.time(
+    pf <- replicate(
+      REPLICATES,
+      measSIR %>% pfilter(Np=NP)
+    )
   )
-)
-ll <- sapply(pf,logLik)
-logmeanexp(ll,se=TRUE)
+  ll <- sapply(pf,logLik)
+  logmeanexp(ll,se=TRUE)
+})
 
 logmeanexp
 

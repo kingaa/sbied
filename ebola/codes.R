@@ -179,7 +179,7 @@ gin %>%
   ) %>%
   ggplot(aes(x=date,y=cases,group=.id,color=is.data,alpha=is.data))+
   geom_line()+
-  guides(color=FALSE,alpha=FALSE)+
+  guides(color="none",alpha="none")+
   scale_color_manual(values=c(no=gray(0.6),yes="red"))+
   scale_alpha_manual(values=c(no=0.5,yes=1))
 
