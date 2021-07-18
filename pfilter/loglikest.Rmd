@@ -62,7 +62,7 @@ if (file.exists("CLUSTER.R")) {
 }
 ```
 
-```{r comps,eval=FALSE}
+```{r comps,eval=FALSE,purl=FALSE}
 expand_grid(
   rep=1:1000,
   Np=c(1000,10000,100000)

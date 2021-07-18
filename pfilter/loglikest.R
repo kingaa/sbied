@@ -17,18 +17,7 @@ if (file.exists("CLUSTER.R")) {
   source("CLUSTER.R")
 }
 
-## expand_grid(
-##   rep=1:1000,
-##   Np=c(1000,10000,100000)
-## ) -> design
-## 
-## foreach (p=iter(design,"row"),
-##          .inorder=FALSE, .combine=rbind) %dopar%
-##   {
-##     library(pomp)
-##     measSIR %>% pfilter(Np=p$Np) -> pf
-##     cbind(p,loglik=logLik(pf))
-##   } -> lls
+
 bake(file="loglikest-pfilter.rds",{
   library(doRNG)
   registerDoRNG(594717807L)
