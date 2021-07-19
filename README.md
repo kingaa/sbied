@@ -59,7 +59,7 @@ The following is a log of compilations.
 | Partial | 2021-07-19      |         11min |             36 |         59MB |
 
 &ast;Some of the folders within the `polio` lesson cannot be reproduced using `make`.
-These include `initial-values-exercise` and `starting-values-exercise`.
+These include `initial-values-exercise` and `starting-values-exercise`, which use old versions of **pomp**.
 
 ----------------------------
 
