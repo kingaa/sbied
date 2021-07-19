@@ -32,9 +32,9 @@ Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutori
 
 ## Lessons
 
-[**0. Instructions for preparing your laptop for the course exercises**](./prep/)
+[**0. Instructions for preparing your laptop for the course exercises.**](./prep/)
 
-[**1. Introduction: What is "Simulation-based Inference for Epidemiological Dynamics"?**](./intro/)
+[**1. Introduction: What is "Simulation-based Inference for Epidemiological Dynamics"?  POMPs and pomp.**](./intro/)
 
 [**2. Simulation of stochastic dynamic models.**](./stochsim/)
 
@@ -42,13 +42,13 @@ Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutori
 
 [**4. Iterated filtering: theory and practice.**](./mif/)
 
-[**5. Case study: recurrent measles dynamics revealed in long time series.**](./measles/)
+[**5. Case study: measles.  Recurrent epidemics, long time series, covariates, extra-demographic stochasticity, interpretation of parameter estimates.**](./measles/)
 
-[**6. Case study: polio.**](./polio/)
+[**6. Case study: polio. Workflow for a real research problem.**](./polio/)
 
-[**7. Case study: Ebola, model diagnostics, and forecasting.**](./ebola/)
+[**7. Case study: Ebola. Model diagnostics and forecasting.**](./ebola/)
 
-[**8. Case study: sexual contacts panel data.**](./contacts/)
+[**8. Case study: HIV and fluctuating sexual contact rates. Panel data.**](./contacts/)
 
 ------------------------------------
 

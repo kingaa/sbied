@@ -1,5 +1,5 @@
-### Simulation-based Inference for Epidemiological Dynamics
-#### [Course Notes](http://kingaa.github.io/sbied/)
+## Simulation-based Inference for Epidemiological Dynamics
+### Course Materials
 
 These are notes from a short course given by Ed Ionides and Aaron King at the [Summer Institute in Statistics and Modeling in Infectious Diseases (SISMID)](http://sismid.uw.edu).
 From the [main page](http://kingaa.github.io/sbied/), links lead to pages on a number of specific topics, culminating in four case studies that exemplify the methods and raise key issues.
@@ -8,12 +8,12 @@ This script is a starting point for students to follow, explore, and modify the 
 
 ----------------------------
 
-#### Manifest
+### Manifest
 
 - index.md, index.html: Landing page
-- welcome.md, welcome.html: Course introduction slides
 - acknowledge.md, acknowledge.html: Acknowledgements
 - syllabus.md, syllabus.html: Course syllabus
+- welcome.md, welcome.html: Course introduction slides
 - EDTsyllabus.Rmd, EDTsyllabus.html: Course syllabus with timezone offset
 - LICENSE.md: Full text of license
 - TODO.md: To-do list
@@ -26,21 +26,22 @@ This script is a starting point for students to follow, explore, and modify the 
 - packages.R: code for loading needed packages
 - CLUSTER-kinglab.R: example `CLUSTER.R` file for site-specific cluster setup
 - setup.Rmd, setup.Rnw: **knitr** child documents for R-markdown and R-noweb documents, respectively
-- prep: Lesson 0, on preparing for the course
-- intro: Lesson 1
-- stochsim: Lesson 2
-- pfilter: Lesson 3
-- mif: Lesson 4
-- measles: Lesson 5
-- polio: Lesson 6
-- ebola: Lesson 7
-- contacts: Lesson 8
-- od: Lesson from an earlier version of the course
-- quiz: Quiz materials
+- subdirectories:
+  - prep: Lesson 0, on preparing for the course
+  - intro: Lesson 1
+  - stochsim: Lesson 2
+  - pfilter: Lesson 3
+  - mif: Lesson 4
+  - measles: Lesson 5
+  - polio: Lesson 6
+  - ebola: Lesson 7
+  - contacts: Lesson 8
+  - od: Lesson from an earlier version of the course
+  - quiz: Quiz materials
 
 ----------------------------
 
-#### Compilation
+### Compilation
 
 Full compilation of all the materials can be accomplished by running `make` in the root directory&ast;.
 This requires substantial resources.
@@ -63,7 +64,7 @@ These include `initial-values-exercise` and `starting-values-exercise`, which us
 
 ----------------------------
 
-#### License
+### License
 
 ![CC-BY-NC](https://i.creativecommons.org/l/by-nc/4.0/88x31.png)
 
