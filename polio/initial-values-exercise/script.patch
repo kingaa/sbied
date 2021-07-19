@@ -1,0 +1,36 @@
+*** ../main.R	2021-07-19 14:18:47.686756485 -0400
+--- main.R	2021-07-19 14:19:24.806508251 -0400
+***************
+*** 93,107 ****
+  ")
+  
+  rinit <- Csnippet("
+! SB1 = SB1_0;
+! SB2 = SB2_0;
+! SB3 = SB3_0;
+! SB4 = SB4_0;
+! SB5 = SB5_0;
+! SB6 = SB6_0;
+! IB = 0;
+! IO = IO_0 * P;
+! SO = SO_0 * P;
+  ")
+  
+  partrans <- parameter_trans(
+--- 93,108 ----
+  ")
+  
+  rinit <- Csnippet("
+!   double p=IO_0/(IO_0+SO_0);
+!   SB1 = SB1_0 * pow(1-p,1);
+!   SB2 = SB2_0 * pow(1-p,2);
+!   SB3 = SB3_0 * pow(1-p,3);
+!   SB4 = SB4_0 * pow(1-p,4);
+!   SB5 = SB5_0 * pow(1-p,5);
+!   SB6 = SB6_0 * pow(1-p,6);
+!   IB = (SB1+SB2+SB3+SB4+SB5+SB6) * p/(1-p);
+!   IO = IO_0 * P;
+!   SO = SO_0 * P;
+  ")
+  
+  partrans <- parameter_trans(

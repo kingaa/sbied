@@ -16,7 +16,7 @@ csl: ../jss.csl
 ```{r prelims,include=FALSE,cache=FALSE}
 set.seed(594709947L)
 library(pomp)
-stopifnot(packageVersion("pomp")>"2.0.9")
+stopifnot(packageVersion("pomp")>="3.4.5")
 ```
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
@@ -64,7 +64,7 @@ Nevertheless, it is a testable one.
 An alternative modeling approach is that babies might, to a first approximation, have the same prevalence as other individuals. `IO_0/SO_0` is the current infection proportion for susceptible adults. If we suppose babies are exposed to this infection rate each month of their infancy, we can replace the previous `rinit` accordingly. In practice, we use a more numerically stable alternative `IO_0/(IO_0+SO_0)` which is practically equivalent in the anticipated situation with low prevalence, but is guaranteed not to exceed unity in pathological situations that might arise during maximization.
 
 ```{r}
-init <- Csnippet("
+polio_rinit <- Csnippet("
   SB1 = SB1_0;
   SB2 = SB2_0;
   SB3 = SB3_0;
@@ -80,7 +80,7 @@ init <- Csnippet("
 by
 
 ```{r}
-init <- Csnippet("
+polio_rinit <- Csnippet("
   double p=IO_0/(IO_0+SO_0);
   SB1 = SB1_0 * pow(1-p,1);
   SB2 = SB2_0 * pow(1-p,2);
@@ -94,8 +94,11 @@ init <- Csnippet("
 ")
 ```
  
-Here, there are no new parameters. We can just put the new `rinit` into the Rmarkdown document and re-run it. The results are shown at [initial-values-exercise/polio.html](initial-values-exercise/polio.html).
-The key outcome is the maximized log likelihood. The search found a maximum of -794.7 for the modified model, whereas an identical search found -794.5 for the original model. The modification is certainly not a substantial improvement, and even has a small cost measured by Monte Carlo estimated likelihood of the data.
+Here, there are no new parameters. We can just put the new `rinit` into the [**R** script](./main.R) and re-run it.
+The results are shown at [initial-values-exercise/main.Rout.save](initial-values-exercise/main.Rout.save).
+The key outcome is the maximized log likelihood.
+The search found a maximum of -794.7 for the modified model, whereas an identical search found -794.5 for the original model.
+The modification is certainly not a substantial improvement, and even has a small cost measured by Monte Carlo estimated likelihood of the data.
 
 
 -----------------------------------

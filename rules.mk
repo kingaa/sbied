@@ -1,6 +1,7 @@
 # REXE = Rscript --vanilla
 # For some reason, --vanilla fails on my Mac 
 REXE = Rscript --no-save --no-restore --no-init-file
+RBATCH = R CMD BATCH --no-save --no-restore
 ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 slides.pdf handout.pdf notes.pdf: main.tex
@@ -14,6 +15,9 @@ slides.pdf handout.pdf notes.pdf: main.tex
 %.html: %.md
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
 	$(REXE) -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
+
+%.Rout.save: %.R
+	$(RBATCH) $*.R $*.Rout.save
 
 %.R: %.Rnw
 	$(REXE) -e "knitr::purl(\"$*.Rnw\",output=\"$*.R\",documentation=0)"

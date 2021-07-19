@@ -1,0 +1,33 @@
+*** ../main.R	2021-07-19 18:20:57.711794685 +0000
+--- ./main.R	2021-07-19 18:26:11.730983118 +0000
+***************
+*** 279,291 ****
+  profile_Nreps <- switch(run_level, 2,  3,  10)
+  
+  idx <- which(colnames(box)!="rho")
+  profile_design(
+    rho=seq(0.01,0.025,length=profile_pts),
+!   lower=box["min",idx],upper=box["max",idx],
+    nprof=profile_Nreps
+! ) -> starts
+  
+  profile_rw_sd <- eval(substitute(rw.sd(
+    rho=0,b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
+    psi=rwr,tau=rwr,sigma_dem=rwr,sigma_env=rwr,
+    IO_0=ivp(rwi),SO_0=ivp(rwi)
+--- 279,293 ----
+  profile_Nreps <- switch(run_level, 2,  3,  10)
+  
+  idx <- which(colnames(box)!="rho")
+  profile_design(
+    rho=seq(0.01,0.025,length=profile_pts),
+!   lower=partrans(polio,box["min",],dir="toEst")[idx],
+!   upper=partrans(polio,box["max",],dir="toEst")[idx],
+    nprof=profile_Nreps
+! ) -> trans_starts
+! starts <- data.frame(t(partrans(polio,t(trans_starts),dir="fromEst")))
+  
+  profile_rw_sd <- eval(substitute(rw.sd(
+    rho=0,b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
+    psi=rwr,tau=rwr,sigma_dem=rwr,sigma_env=rwr,
+    IO_0=ivp(rwi),SO_0=ivp(rwi)
