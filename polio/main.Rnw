@@ -321,8 +321,7 @@ options(dplyr.summarise.inform=FALSE)
   \ei
 
   <<statenames>>=
-  statenames <- c("SB1","SB2","SB3","SB4","SB5","SB6",
-    "IB","SO","IO")
+  statenames <- c("SB1","SB2","SB3","SB4","SB5","SB6","IB","SO","IO")
   t0 <- 1932+4/12
   @
   \bi
@@ -438,15 +437,15 @@ options(dplyr.summarise.inform=FALSE)
     pow(sigma_env,2);
   lambda *= (var_epsilon < 1.0e-6) ? 1 : 
     rgamma(1/var_epsilon,var_epsilon);
-  double p = exp(- (delta+lambda)/12);
+  double p = exp(-(delta+lambda)/12);
   double q = (1-p)*lambda/(delta+lambda);
-  SB1 = B;
-  SB2= SB1*p;
+  SB1=B;
+  SB2=SB1*p;
   SB3=SB2*p;
   SB4=SB3*p;
   SB5=SB4*p;
   SB6=SB5*p;
-  SO= (SB6+SO)*p;
+  SO=(SB6+SO)*p;
   IB=(SB1+SB2+SB3+SB4+SB5+SB6)*q;
   IO=SO*q;
   ")
@@ -469,16 +468,14 @@ options(dplyr.summarise.inform=FALSE)
   } else{
     lik = pnorm(cases+0.5,mean_cases,sd_cases,1,0) + tol;
   }
-  if (give_log) lik = log(lik);
-  ")
+  if (give_log) lik = log(lik);")
   rmeasure <- Csnippet("
   cases = rnorm(rho*IO, sqrt( pow(tau*IO,2) + rho*IO ) );
   if (cases > 0.0) {
     cases = nearbyint(cases);
   } else {
     cases = 0.0;
-  }
-  ")
+  }")
   @
   
 \end{frame}
@@ -532,19 +529,22 @@ options(dplyr.summarise.inform=FALSE)
     ) %>%
     select(cases,time) %>%
     pomp(
-      times="time",
-      t0=t0,
+      times="time",t0=t0,
       params=params_guess,
-      rprocess = euler(step.fun = rprocess, delta.t=1/12),
-      rmeasure= rmeasure,
-      dmeasure = dmeasure,
-      covar=covar,
-      statenames = statenames,
-      paramnames = paramnames,
+      rprocess=euler(step.fun=rprocess,delta.t=1/12),
+      rmeasure=rmeasure,
+      dmeasure=dmeasure,
       rinit=rinit,
-      partrans=partrans
+      partrans=partrans,
+      covar=covar,
+      statenames=statenames,
+      paramnames=paramnames
     ) -> polio
   @
+
+  <<simtest,include=FALSE>>=
+  simulate(polio)
+  @ 
   
 \end{frame}
 
@@ -569,7 +569,7 @@ options(dplyr.summarise.inform=FALSE)
   \ei
 
   <<run_level>>=
-  run_level <- 1
+  run_level <- 2
   Np <-          switch(run_level,100, 1e3, 5e3)
   Nmif <-        switch(run_level, 10, 100, 200)
   Nreps_eval <-  switch(run_level,  2,  10,  20)
@@ -652,7 +652,7 @@ options(dplyr.summarise.inform=FALSE)
   
   \bi
 
-\item In  \Sexpr{round(.system.time["elapsed"],1)} seconds, we obtain a log likelihood estimate of \Sexpr{round(L1[1],2)} with a Monte standard error of \Sexpr{round(L1[2],2)}.
+\item In  \Sexpr{round(.system.time[3],1)} seconds, we obtain a log likelihood estimate of \Sexpr{round(L1[1],2)} with a Monte Carlo standard error of \Sexpr{round(L1[2],2)}.
 
 \item Here, we use \code{stew()} to \myemph{cache} the results of the computation.
   \ei
@@ -721,7 +721,7 @@ options(dplyr.summarise.inform=FALSE)
 
 \item  \code{bake} is similar to \code{stew}. The difference is that \code{bake} uses \code{readRDS} and \code{saveRDS}, whereas \code{stew} uses \code{load} and \code{save}. 
 
-\item  either way, the computation will not be re-run unless you manually delete \code{results/pf1.rda}.
+\item  either way, the computation will not be re-run unless you edit the code, change something on which the computation depends, or manually delete the archive file (\code{results/pf1.rda}).
 
 \item  \code{stew} and \code{bake} reset the seed appropriately whether or not the computation is recomputed. Otherwise, caching risks adverse consequences for reproducibility.
 
@@ -747,9 +747,10 @@ options(dplyr.summarise.inform=FALSE)
   @
   
 \end{frame}
+
 \begin{frame}[fragile]
   
-  <<persistence-analysis>>=
+  <<persistence-analysis,include=FALSE>>=
   sims %>%
     group_by(.id) %>%
     summarize(
@@ -771,8 +772,8 @@ options(dplyr.summarise.inform=FALSE)
   <<persistence_analysis2,include=FALSE>>=
   summ %>%
     column_to_rownames("type") -> summ
-  @ 
-  
+  @
+
   For the data, there were \Sexpr{summ["data","no_cases"]} months with no reported cases, similar to the mean of \Sexpr{signif(summ["sim","no_cases"],3)} for simulations from the fitted model.
   Months with no asymptomatic infections for the simulations were rare, on average \Sexpr{signif(summ["sim","fadeout1"],2)} months per simulation.
   Months with fewer than 100 infections averaged \Sexpr{signif(summ["sim","fadeout100"],2)} per simulation, which in the context of a reporting rate of \Sexpr{signif(coef(polio,"rho"),3)} can explain the absences of case reports.
@@ -780,6 +781,7 @@ options(dplyr.summarise.inform=FALSE)
   This does not give much opportunity for local elimination of poliovirus.
 
 \end{frame}
+
 \begin{frame}[fragile]
 
   \bi
@@ -819,15 +821,12 @@ options(dplyr.summarise.inform=FALSE)
   \ei
 
   <<rwsd>>=
-  rw_sd_rp <- 0.02
-  rw_sd_ivp <- 0.2
-  cf50 <- 0.5
   rw_sd <- eval(substitute(rw.sd(
     b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
     psi=rwr,rho=rwr,tau=rwr,sigma_dem=rwr,
     sigma_env=rwr,
-    IO_0=ivp(rwi),SO_0=ivp(rwi)
-  ),list(rwi=rw_sd_ivp,rwr=rw_sd_rp)))
+    IO_0=ivp(rwi),SO_0=ivp(rwi)),
+    list(rwi=0.2,rwr=0.02)))
   @                      
   
 \end{frame}
@@ -836,19 +835,17 @@ options(dplyr.summarise.inform=FALSE)
 
   <<mif>>=
   exl <- c("polio","Np","Nmif","rw_sd",
-    "cf50","Nreps_local","Nreps_eval")
+    "Nreps_local","Nreps_eval")
+  
   stew(file="results/mif.rda",{
     m2 <- foreach(i=1:Nreps_local,
-      .packages="pomp",.combine=c,
-      .export=exl) %dopar%
+      .packages="pomp",.combine=c,.export=exl) %dopar%
       mif2(polio, Np=Np, Nmif=Nmif, rw.sd=rw_sd,
-           cooling.fraction.50=cf50)
+           cooling.fraction.50=0.5)
     lik_m2 <- foreach(m=m2,.packages="pomp",.combine=rbind,
       .export=exl) %dopar%
-      logmeanexp(se=TRUE,
-        replicate(
-          Nreps_eval,
-          logLik(pfilter(polio,params=coef(m),Np=Np))))
+      logmeanexp(replicate(Nreps_eval,
+        logLik(pfilter(m,Np=Np))),se=TRUE)
   },dependson=run_level)
   @
   
@@ -857,14 +854,17 @@ options(dplyr.summarise.inform=FALSE)
 \begin{frame}[fragile]
 
   <<search-save>>=
-  r2 <- data.frame(logLik=lik_m2[,1],logLik_se=lik_m2[,2],t(sapply(m2,coef)))
-  write_csv(r2,"params.csv")
+  coef(m2) %>% melt() %>% spread(parameter,value) %>%
+    select(-.id) %>%
+    bind_cols(logLik=lik_m2[,1],logLik_se=lik_m2[,2]) -> r2
+  r2 %>% arrange(-logLik) %>%
+    write_csv("params.csv")
   summary(r2$logLik,digits=5)
   @
   
   \bi
 
-\item This investigation took \Sexpr{round(.system.time["elapsed"]/60,1)}~min.
+\item This investigation took \Sexpr{round(.system.time[3]/60,1)}~min.
 \item These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 
   \ei
@@ -940,8 +940,7 @@ options(dplyr.summarise.inform=FALSE)
     foreach(m=m3,.packages="pomp",
       .combine=rbind) %dopar%
       logmeanexp(replicate(Nreps_eval,
-        logLik(pfilter(polio,params=coef(m),Np=Np))), 
-        se=TRUE)
+        logLik(pfilter(m,Np=Np))),se=TRUE)
   },dependson=run_level) -> lik_m3
   @
   
@@ -950,9 +949,13 @@ options(dplyr.summarise.inform=FALSE)
 \begin{frame}[fragile]
 
   <<global-results>>=
-  r3 <- data.frame(logLik=lik_m3[,1],logLik_se=lik_m3[,2],
-    t(sapply(m3,coef)))
-  write_csv(r3,"params.csv",append=TRUE)
+  coef(m3) %>% melt() %>% spread(parameter,value) %>%
+    select(-.id) %>%
+    bind_cols(logLik=lik_m3[,1],logLik_se=lik_m3[,2]) -> r3
+  read_csv("params.csv") %>%
+    bind_rows(r3) %>%
+    arrange(-logLik) %>%
+    write_csv("params.csv")
   summary(r3$logLik,digits=5)
   @
   
@@ -980,27 +983,23 @@ options(dplyr.summarise.inform=FALSE)
 \begin{frame}[fragile]
 
   \frametitle{Benchmark likelihoods for non-mechanistic models}
-
+  
   \bi
 \item To understand these global searches, many of which may correspond to parameter values having no meaningful scientific interpretation, it is helpful to put the log likelihoods in the context of some non-mechanistic benchmarks.
-
 \item The most basic statistical model for data is independent, identically distributed (IID). Picking a negative binomial model, 
-  
   \ei
-
+  
   <<nbinom>>=
-  nb_lik <- function(theta){
-    -sum(dnbinom(as.vector(obs(polio)),
-      size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))
+  nb_lik <- function (theta) {
+    -sum(dnbinom(as.numeric(obs(polio)),
+                 size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))
   }
   nb_mle <- optim(c(0,-5),nb_lik)
   -nb_mle$value
   @
   
   \bi
-
 \item A model with likelihood below \Sexpr{round(-nb_mle$value,1)} is unreasonable. This explains a cutoff around this value in the global searches: in these cases, the model is finding essentially IID explanations for the data.
-
   \ei
 
 \end{frame}
@@ -1050,13 +1049,13 @@ options(dplyr.summarise.inform=FALSE)
 
   \ei
 
-  <<global_rho_code,eval=FALSE,echo=TRUE>>=
+  <<global_rho_code,eval=FALSE,echo=TRUE,purl=FALSE>>=
   plot(logLik~rho,data=subset(r3,logLik>max(r3$logLik)-10),log="x")
   @
   
   \vspace{-2mm}
 
-  <<global_rho_plot,eval=TRUE,echo=FALSE,out.width="0.6\\linewidth",fig.width=5,fig.height=3>>=
+  <<global_rho_plot,eval=TRUE,echo=FALSE,out.width="0.6\\linewidth",fig.width=5,fig.height=3,purl=FALSE>>=
   op <- par(mai=c(0.8,0.8,0.1,0.1))
   <<global_rho_code>>
   par(op)
@@ -1131,8 +1130,8 @@ options(dplyr.summarise.inform=FALSE)
   profile_rw_sd <- eval(substitute(rw.sd(
     rho=0,b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
     psi=rwr,tau=rwr,sigma_dem=rwr,sigma_env=rwr,
-    IO_0=ivp(rwi),SO_0=ivp(rwi)
-  ),list(rwi=rw_sd_ivp,rwr=rw_sd_rp)))
+    IO_0=ivp(rwi),SO_0=ivp(rwi)),
+    list(rwi=0.2,rwr=0.02)))
   @
   
   \bi
@@ -1147,22 +1146,21 @@ options(dplyr.summarise.inform=FALSE)
   <<profile_rho>>=
   bake(file="results/profile_rho.rds",{  
     registerDoRNG(1888257101)
-    foreach(start=iter(starts,"row"),
-      .combine=rbind) %dopar% {
-      library(pomp)
-      polio %>% mif2(params=start,Np=Np,
-        Nmif=ceiling(Nmif/2),
+    foreach(start=iter(starts,"row"),.combine=rbind,
+      .packages=c("pomp","dplyr")) %dopar% {
+      polio %>% mif2(params=start,
+        Np=Np,Nmif=ceiling(Nmif/2),
         cooling.fraction.50=0.5,
         rw.sd=profile_rw_sd
       ) %>%
-        mif2(Np=Np,
-          Nmif=ceiling(Nmif/2),
+        mif2(Np=Np,Nmif=ceiling(Nmif/2),
           cooling.fraction.50=0.1
         ) -> mf
       replicate(Nreps_eval,
         mf %>% pfilter(Np=Np) %>% logLik()
       ) %>% logmeanexp(se=TRUE) -> ll
-      data.frame(as.list(coef(mf)),logLik=ll[1],logLik.se=ll[2])
+      mf %>% coef() %>% bind_rows() %>%
+        bind_cols(logLik=ll[1],logLik.se=ll[2])
     }
   },dependson=run_level) -> m4
   @
@@ -1180,10 +1178,10 @@ options(dplyr.summarise.inform=FALSE)
   @
   
   <<save_profile_rho,echo=FALSE>>=
-  m4 %>%
-    bind_rows(params) %>%
+  read_csv("params.csv") %>%
+    bind_rows(m4) %>%
     arrange(-logLik) %>%
-    write_csv("params.csv")
+    write_csv("params.csv",append=TRUE)
   @
   
 
@@ -1250,7 +1248,7 @@ options(dplyr.summarise.inform=FALSE)
 
 \begin{frame}[fragile]
 
-  <<mif_diagnostics_code,echo=TRUE,eval=FALSE>>=
+  <<mif_diagnostics_code,echo=TRUE,eval=FALSE,purl=FALSE>>=
   plot(m3[r3$logLik>max(r3$logLik)-10])
   @
   

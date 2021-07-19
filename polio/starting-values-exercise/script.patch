@@ -1,9 +1,7 @@
-*** ../main.R	2021-07-19 18:20:57.711794685 +0000
---- ./main.R	2021-07-19 18:26:11.730983118 +0000
+*** ../main.R	2021-07-19 15:55:26.067594164 -0400
+--- main.R	2021-07-19 15:56:40.355091180 -0400
 ***************
-*** 279,291 ****
-  profile_Nreps <- switch(run_level, 2,  3,  10)
-  
+*** 279,287 ****
   idx <- which(colnames(box)!="rho")
   profile_design(
     rho=seq(0.01,0.025,length=profile_pts),
@@ -13,11 +11,7 @@
   
   profile_rw_sd <- eval(substitute(rw.sd(
     rho=0,b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
-    psi=rwr,tau=rwr,sigma_dem=rwr,sigma_env=rwr,
-    IO_0=ivp(rwi),SO_0=ivp(rwi)
---- 279,293 ----
-  profile_Nreps <- switch(run_level, 2,  3,  10)
-  
+--- 279,289 ----
   idx <- which(colnames(box)!="rho")
   profile_design(
     rho=seq(0.01,0.025,length=profile_pts),
@@ -29,5 +23,3 @@
   
   profile_rw_sd <- eval(substitute(rw.sd(
     rho=0,b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
-    psi=rwr,tau=rwr,sigma_dem=rwr,sigma_env=rwr,
-    IO_0=ivp(rwi),SO_0=ivp(rwi)

@@ -13,8 +13,7 @@ head(data,5)
 
 
 
-statenames <- c("SB1","SB2","SB3","SB4","SB5","SB6",
-  "IB","SO","IO")
+statenames <- c("SB1","SB2","SB3","SB4","SB5","SB6","IB","SO","IO")
 t0 <- 1932+4/12
 
 library(pomp)
@@ -58,15 +57,15 @@ double var_epsilon = pow(sigma_dem,2)/ lambda +
   pow(sigma_env,2);
 lambda *= (var_epsilon < 1.0e-6) ? 1 : 
   rgamma(1/var_epsilon,var_epsilon);
-double p = exp(- (delta+lambda)/12);
+double p = exp(-(delta+lambda)/12);
 double q = (1-p)*lambda/(delta+lambda);
-SB1 = B;
-SB2= SB1*p;
+SB1=B;
+SB2=SB1*p;
 SB3=SB2*p;
 SB4=SB3*p;
 SB5=SB4*p;
 SB6=SB5*p;
-SO= (SB6+SO)*p;
+SO=(SB6+SO)*p;
 IB=(SB1+SB2+SB3+SB4+SB5+SB6)*q;
 IO=SO*q;
 ")
@@ -81,16 +80,14 @@ if(cases > 0.0){
 } else{
   lik = pnorm(cases+0.5,mean_cases,sd_cases,1,0) + tol;
 }
-if (give_log) lik = log(lik);
-")
+if (give_log) lik = log(lik);")
 rmeasure <- Csnippet("
 cases = rnorm(rho*IO, sqrt( pow(tau*IO,2) + rho*IO ) );
 if (cases > 0.0) {
   cases = nearbyint(cases);
 } else {
   cases = 0.0;
-}
-")
+}")
 
 rinit <- Csnippet("
   double p=IO_0/(IO_0+SO_0);
@@ -117,20 +114,21 @@ data %>%
   ) %>%
   select(cases,time) %>%
   pomp(
-    times="time",
-    t0=t0,
+    times="time",t0=t0,
     params=params_guess,
-    rprocess = euler(step.fun = rprocess, delta.t=1/12),
-    rmeasure= rmeasure,
-    dmeasure = dmeasure,
-    covar=covar,
-    statenames = statenames,
-    paramnames = paramnames,
+    rprocess=euler(step.fun=rprocess,delta.t=1/12),
+    rmeasure=rmeasure,
+    dmeasure=dmeasure,
     rinit=rinit,
-    partrans=partrans
+    partrans=partrans,
+    covar=covar,
+    statenames=statenames,
+    paramnames=paramnames
   ) -> polio
 
-run_level <- 1
+simulate(polio)
+
+run_level <- 2
 Np <-          switch(run_level,100, 1e3, 5e3)
 Nmif <-        switch(run_level, 10, 100, 200)
 Nreps_eval <-  switch(run_level,  2,  10,  20)
@@ -175,34 +173,32 @@ summ %>%
 
 
 
-rw_sd_rp <- 0.02
-rw_sd_ivp <- 0.2
-cf50 <- 0.5
 rw_sd <- eval(substitute(rw.sd(
   b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
   psi=rwr,rho=rwr,tau=rwr,sigma_dem=rwr,
   sigma_env=rwr,
-  IO_0=ivp(rwi),SO_0=ivp(rwi)
-),list(rwi=rw_sd_ivp,rwr=rw_sd_rp)))
+  IO_0=ivp(rwi),SO_0=ivp(rwi)),
+  list(rwi=0.2,rwr=0.02)))
 
 exl <- c("polio","Np","Nmif","rw_sd",
-  "cf50","Nreps_local","Nreps_eval")
+  "Nreps_local","Nreps_eval")
+
 stew(file="results/mif.rda",{
   m2 <- foreach(i=1:Nreps_local,
-    .packages="pomp",.combine=c,
-    .export=exl) %dopar%
+    .packages="pomp",.combine=c,.export=exl) %dopar%
     mif2(polio, Np=Np, Nmif=Nmif, rw.sd=rw_sd,
-         cooling.fraction.50=cf50)
+         cooling.fraction.50=0.5)
   lik_m2 <- foreach(m=m2,.packages="pomp",.combine=rbind,
     .export=exl) %dopar%
-    logmeanexp(se=TRUE,
-      replicate(
-        Nreps_eval,
-        logLik(pfilter(polio,params=coef(m),Np=Np))))
+    logmeanexp(replicate(Nreps_eval,
+      logLik(pfilter(m,Np=Np))),se=TRUE)
 },dependson=run_level)
 
-r2 <- data.frame(logLik=lik_m2[,1],logLik_se=lik_m2[,2],t(sapply(m2,coef)))
-write_csv(r2,"params.csv")
+coef(m2) %>% melt() %>% spread(parameter,value) %>%
+  select(-.id) %>%
+  bind_cols(logLik=lik_m2[,1],logLik_se=lik_m2[,2]) -> r2
+r2 %>% arrange(-logLik) %>%
+  write_csv("params.csv")
 summary(r2$logLik,digits=5)
 
 
@@ -232,20 +228,23 @@ bake(file="results/box_eval2.rds",{
   foreach(m=m3,.packages="pomp",
     .combine=rbind) %dopar%
     logmeanexp(replicate(Nreps_eval,
-      logLik(pfilter(polio,params=coef(m),Np=Np))), 
-      se=TRUE)
+      logLik(pfilter(m,Np=Np))),se=TRUE)
 },dependson=run_level) -> lik_m3
 
-r3 <- data.frame(logLik=lik_m3[,1],logLik_se=lik_m3[,2],
-  t(sapply(m3,coef)))
-write_csv(r3,"params.csv",append=TRUE)
+coef(m3) %>% melt() %>% spread(parameter,value) %>%
+  select(-.id) %>%
+  bind_cols(logLik=lik_m3[,1],logLik_se=lik_m3[,2]) -> r3
+read_csv("params.csv") %>%
+  bind_rows(r3) %>%
+  arrange(-logLik) %>%
+  write_csv("params.csv")
 summary(r3$logLik,digits=5)
 
 
 
-nb_lik <- function(theta){
-  -sum(dnbinom(as.vector(obs(polio)),
-    size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))
+nb_lik <- function (theta) {
+  -sum(dnbinom(as.numeric(obs(polio)),
+               size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))
 }
 nb_mle <- optim(c(0,-5),nb_lik)
 -nb_mle$value
@@ -259,11 +258,9 @@ params <- read_csv("params.csv")
 pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
   data=subset(params,logLik>max(logLik)-20))
 
-## plot(logLik~rho,data=subset(r3,logLik>max(r3$logLik)-10),log="x")
 
-op <- par(mai=c(0.8,0.8,0.1,0.1))
-plot(logLik~rho,data=subset(r3,logLik>max(r3$logLik)-10),log="x")
-par(op)
+
+
 
 library(tidyverse)
 params %>% 
@@ -289,38 +286,37 @@ profile_design(
 profile_rw_sd <- eval(substitute(rw.sd(
   rho=0,b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
   psi=rwr,tau=rwr,sigma_dem=rwr,sigma_env=rwr,
-  IO_0=ivp(rwi),SO_0=ivp(rwi)
-),list(rwi=rw_sd_ivp,rwr=rw_sd_rp)))
+  IO_0=ivp(rwi),SO_0=ivp(rwi)),
+  list(rwi=0.2,rwr=0.02)))
 
 bake(file="results/profile_rho.rds",{  
   registerDoRNG(1888257101)
-  foreach(start=iter(starts,"row"),
-    .combine=rbind) %dopar% {
-    library(pomp)
-    polio %>% mif2(params=start,Np=Np,
-      Nmif=ceiling(Nmif/2),
+  foreach(start=iter(starts,"row"),.combine=rbind,
+    .packages=c("pomp","dplyr")) %dopar% {
+    polio %>% mif2(params=start,
+      Np=Np,Nmif=ceiling(Nmif/2),
       cooling.fraction.50=0.5,
       rw.sd=profile_rw_sd
     ) %>%
-      mif2(Np=Np,
-        Nmif=ceiling(Nmif/2),
+      mif2(Np=Np,Nmif=ceiling(Nmif/2),
         cooling.fraction.50=0.1
       ) -> mf
     replicate(Nreps_eval,
       mf %>% pfilter(Np=Np) %>% logLik()
     ) %>% logmeanexp(se=TRUE) -> ll
-    data.frame(as.list(coef(mf)),logLik=ll[1],logLik.se=ll[2])
+    mf %>% coef() %>% bind_rows() %>%
+      bind_cols(logLik=ll[1],logLik.se=ll[2])
   }
 },dependson=run_level) -> m4
 
 
 
-m4 %>%
-  bind_rows(params) %>%
+read_csv("params.csv") %>%
+  bind_rows(m4) %>%
   arrange(-logLik) %>%
-  write_csv("params.csv")
+  write_csv("params.csv",append=TRUE)
 
-## plot(m3[r3$logLik>max(r3$logLik)-10])
+
 
 plot(m3[r3$logLik>max(r3$logLik)-10])
 
