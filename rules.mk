@@ -16,8 +16,11 @@ slides.pdf handout.pdf notes.pdf: main.tex
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
 	$(REXE) -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
 
+%.Rout: %.R
+	$(RBATCH) $*.R $@
+
 %.Rout.save: %.R
-	$(RBATCH) $*.R $*.Rout.save
+	$(RBATCH) $*.R $@
 
 %.R: %.Rnw
 	$(REXE) -e "knitr::purl(\"$*.Rnw\",output=\"$*.R\",documentation=0)"

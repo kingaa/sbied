@@ -103,7 +103,8 @@ fixed_params <- coef(measSIR,c("N"))
 ## What is this 'bake' function?
 ## See https://kingaa.github.io/sbied/pfilter/bake.html
 ## for an explanation.
-bake(file="fitall_global_search.rds",{
+bake(file="fitall_global_search.rds",
+  dependson="guesses",{
   registerDoRNG(274481374)
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
     library(pomp)
@@ -191,7 +192,8 @@ freeze(
 ## What is this 'bake' function?
 ## See https://kingaa.github.io/sbied/pfilter/bake.html
 ## for an explanation.
-bake(file="fitall_eta_profile.rds",{
+bake(file="fitall_eta_profile.rds",
+  dependson="guesses",{
   registerDoRNG(830007657)
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
     library(pomp)

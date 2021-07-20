@@ -78,8 +78,7 @@ mifs_local %>%
 
 
 
-bake(file="lik_local.rds",
-  dependson=mifs_local,{
+bake(file="lik_local.rds",{
     registerDoRNG(900242057)
     foreach(mf=mifs_local,.combine=rbind) %dopar% {
       library(pomp)
@@ -124,7 +123,7 @@ bake(file="global_search.rds",
       library(pomp)
       library(tidyverse)
       mf1 %>%
-        mif2(params=c(unlist(guess),fixed_params)) %>%
+        mif2(params=c(guess,fixed_params)) %>%
         mif2(Nmif=100) -> mf
       replicate(
         10,
@@ -170,13 +169,13 @@ read_csv("measles_params.csv") %>%
   sapply(range) -> box
 box
 
-set.seed(1196696958)
-profile_design(
-  eta=seq(0.01,0.95,length=40),
-  lower=box[1,c("Beta","rho")],
-  upper=box[2,c("Beta","rho")],
-  nprof=15, type="runif"
-) -> guesses
+freeze(seed=1196696958,
+  profile_design(
+    eta=seq(0.01,0.95,length=40),
+    lower=box[1,c("Beta","rho")],
+    upper=box[2,c("Beta","rho")],
+    nprof=15, type="runif"
+  )) -> guesses
 plot(guesses)
 
 
@@ -189,7 +188,7 @@ bake(file="eta_profile.rds",
       library(pomp)
       library(tidyverse)
       mf1 %>%
-        mif2(params=c(unlist(guess),fixed_params),
+        mif2(params=c(guess,fixed_params),
           rw.sd=rw.sd(Beta=0.02,rho=0.02)) %>%
         mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
       replicate(
@@ -267,11 +266,13 @@ read_csv("measles_params.csv") %>%
   group_by(cut=round(rho,2)) %>%
   filter(rank(-loglik)<=10) %>%
   ungroup() %>%
+  arrange(-loglik) %>%
   select(-cut,-loglik,-loglik.se) -> guesses
 
 
 mf1 <- mifs_local[[1]]
-bake(file="rho_profile.rds",{
+bake(file="rho_profile.rds",
+  dependson=guesses,{
   registerDoRNG(2105684752)
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
     library(pomp)
@@ -320,12 +321,12 @@ results %>%
   filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.95)) %>%
   summarize(min=min(rho),max=max(rho)) -> rho_ci
 
-set.seed(55266255)
-runif_design(
-  lower=c(Beta=5,mu_IR=0.2,eta=0),
-  upper=c(Beta=80,mu_IR=5,eta=0.99),
-  nseq=1000
-) %>%
+freeze(seed=55266255,
+  runif_design(
+    lower=c(Beta=5,mu_IR=0.2,eta=0),
+    upper=c(Beta=80,mu_IR=5,eta=0.99),
+    nseq=1000
+  )) %>%
   mutate(
     rho=0.6,
     k=10,
@@ -336,7 +337,8 @@ runif_design(
 
 
 
-bake(file="global_search2.rds",{
+bake(file="global_search2.rds",
+  dependson=guesses,{
   registerDoRNG(610408798)
   measSIR %>%
     pomp(
@@ -404,13 +406,13 @@ read_csv("measles_params.csv") %>%
   ) %>%
   sapply(range) -> box
 
-set.seed(610408798)
-profile_design(
-  mu_IR=seq(0.2,2,by=0.1),
-  lower=box[1,c("Beta","eta")],
-  upper=box[2,c("Beta","eta")],
-  nprof=100, type="runif"
-) %>%
+freeze(seed=610408798,
+  profile_design(
+    mu_IR=seq(0.2,2,by=0.1),
+    lower=box[1,c("Beta","eta")],
+    upper=box[2,c("Beta","eta")],
+    nprof=100, type="runif"
+  )) %>%
   mutate(
     N=38000,
     rho=0.6,
@@ -419,7 +421,8 @@ profile_design(
 
 
 
-bake(file="mu_IR_profile1.rds",{
+bake(file="mu_IR_profile1.rds",
+  dependson=guesses,{
   registerDoRNG(610408798)
   measSIR %>%
     pomp(

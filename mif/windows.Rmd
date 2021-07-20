@@ -41,10 +41,10 @@ One can specify to **pomp** that all compilation should be done in the current w
 The easiest way to do this is to give a global option indicating to which directory the C files should be written.
 For example, the first of the following commands create a temporary directory under the current working directory (recall that you can execute `getwd()` to find out where that is).
 The second command sets a global option, with the effect that every **pomp** compilation operation will be performed in that directory.
-<<cdir,eval=FALSE>>=
+```{r cdir,eval=FALSE}
 dir.create("tmp")
 options(pomp_cdir="./tmp")
-@
+```
 
 As an illustration, we will consider two code chunks.
 Before we do so, we load some packages, set up a parallel environment, and build the SIR model we have seen in the Lessons.
