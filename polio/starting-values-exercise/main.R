@@ -127,7 +127,7 @@ data %>%
 
 simulate(polio)
 
-run_level <- 2
+run_level <- 3
 Np <-          switch(run_level,100, 1e3, 5e3)
 Nmif <-        switch(run_level, 10, 100, 200)
 Nreps_eval <-  switch(run_level,  2,  10,  20)

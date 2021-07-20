@@ -60,8 +60,21 @@ profile_design(
 starts <- data.frame(t(partrans(polio,t(trans_starts),dir="fromEst")))
 ```
  
+```{r include=FALSE}
+library(tidyverse)
+read_csv("params.csv") %>%
+  filter(logLik_se < 1) %>%
+  filter(logLik==max(logLik)) %>%
+  distinct() -> mle1
+read_csv("starting-values-exercise/params.csv") %>%
+  filter(logLik_se < 1) %>%
+  filter(logLik==max(logLik)) %>%
+  distinct() -> mle2
+```
+ 
 A comparable change was also made for the global search. The results from running the modified version are at [starting-values-exercise/main.Rout.save](starting-values-exercise/main.Rout.save).
-The maximized log likelihood of -794.6 is not a substantial improvement on the previous value of -794.5, indeed it is a little worse.
+The maximized log likelihood of $`r round(mle2$logLik,1)`$ is no substantial improvement on the previous value of $`r round(mle1$logLik,1)`$.
+`r if (mle2$logLik-mle1$logLik>1) "**The last statement is a lie!**"`.
 However, the pairs plot of estimates from the global search does reveal an advantage for the modified scale.
 The distinct mode with low $\sigma_{\mathrm{env}}$ is better explored with the modified starting value distribution.
 When making uniform draws on an untransformed scale, very few initial values explore a region where a parameter has small order of magnitude.

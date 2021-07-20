@@ -185,7 +185,7 @@ cols(
 > simulate(polio)
 <object of class ‘pomp’>
 > 
-> run_level <- 2
+> run_level <- 3
 > Np <-          switch(run_level,100, 1e3, 5e3)
 > Nmif <-        switch(run_level, 10, 100, 200)
 > Nreps_eval <-  switch(run_level,  2,  10,  20)
@@ -261,7 +261,7 @@ they will be dropped
 +   write_csv("params.csv")
 > summary(r2$logLik,digits=5)
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- -806.5  -801.0  -798.8  -799.6  -797.6  -795.2 
+ -798.3  -795.8  -795.2  -795.4  -794.9  -794.5 
 > 
 > 
 > 
@@ -309,7 +309,7 @@ cols(
 
 > summary(r3$logLik,digits=5)
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- -924.8  -814.5  -799.6  -821.6  -798.7  -797.5 
+ -888.8  -796.5  -795.6  -799.3  -795.1  -794.3 
 > 
 > 
 > 
@@ -414,4 +414,4 @@ cols(
 > 
 > proc.time()
    user  system elapsed 
-  6.683   3.358   4.785 
+  9.492   5.272   6.890 

@@ -14,25 +14,10 @@ csl: ../jss.csl
 ```{r knitr-opts,child="../setup.Rmd"}
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
-set.seed(594709947L)
 library(pomp)
 stopifnot(packageVersion("pomp")>="3.4.5")
+set.seed(594709947L)
 ```
-
-\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
-\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-\newcommand\cov[2]{\mathrm{Cov}\left[{#1},{#2}\right]}
-\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-\newcommand\dd[1]{d{#1}}
-\newcommand\lik{\mathcal{L}}
-\newcommand\loglik{\ell}
-\newcommand\R{\mathbb{R}}
-\newcommand\data[1]{#1^*}
-\newcommand\params{\, ; \,}
-\newcommand\transpose{\scriptsize{T}}
-\newcommand\eqspace{\quad\quad\quad}
-\newcommand\profileloglik[1]{\ell^\mathrm{profile}_#1}
 
 
 ### Exercise
@@ -93,12 +78,25 @@ polio_rinit <- Csnippet("
   SO = SO_0 * P;
 ")
 ```
+
+```{r include=FALSE}
+library(tidyverse)
+read_csv("params.csv") %>%
+  filter(logLik_se < 1) %>%
+  filter(logLik==max(logLik)) %>%
+  distinct() -> mle1
+read_csv("initial-values-exercise/params.csv") %>%
+  filter(logLik_se < 1) %>%
+  filter(logLik==max(logLik)) %>%
+  distinct() -> mle2
+```
  
 Here, there are no new parameters. We can just put the new `rinit` into the [**R** script](./main.R) and re-run it.
 The results are shown at [initial-values-exercise/main.Rout.save](initial-values-exercise/main.Rout.save).
 The key outcome is the maximized log likelihood.
-The search found a maximum of -794.7 for the modified model, whereas an identical search found -794.5 for the original model.
-The modification is certainly not a substantial improvement, and even has a small cost measured by Monte Carlo estimated likelihood of the data.
+The search found a maximum of $`r round(mle2$logLik,1)`$ for the modified model, whereas an identical search found $`r round(mle1$logLik,1)`$ for the original model.
+The modification is certainly not a substantial improvement.
+`r if (mle2$logLik-mle1$logLik>1) "**The last statement is a lie!**"`.
 
 
 -----------------------------------

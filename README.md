@@ -43,7 +43,7 @@ This script is a starting point for students to follow, explore, and modify the 
 
 ### Compilation
 
-Full compilation of all the materials can be accomplished by running `make` in the root directory&ast;.
+Full compilation of all the materials can be accomplished by running `make` in the root directory.
 This requires substantial resources.
 For this reason, the most expensive computations are archived using the facilities provided for the purpose in **pomp**.
 Compilation with these archives in place requires much less time than does compilation from scratch.
@@ -54,13 +54,12 @@ The following is a log of compilations.
   Full compilation generates the complete set of archives.
   - *Finishing* compilation refers to compilation with all archives in place, but with the re-Making of all documents.
   
-| Type    | Completion date | Time required | CPUs available | Archive size |
-|:--------|:----------------|--------------:|---------------:|-------------:|
-| Full    | 2021-07-19      |        587min |            250 |         59MB |
-| Partial | 2021-07-19      |         11min |             36 |         59MB |
+| Type          | Completion date | Time required | CPUs available | Archive size |
+|:--------------|:----------------|--------------:|---------------:|-------------:|
+| Full          | 2021-07-19      |        587min |            250 |         59MB |
+| polio level 3 | 2021-07-19      |        546min |            250 |         36MB |
+| Partial       | 2021-07-20      |         11min |             36 |        129MB |
 
-&ast;Some of the folders within the `polio` lesson cannot be reproduced using `make`.
-These include `initial-values-exercise` and `starting-values-exercise`, which use old versions of **pomp**.
 
 ----------------------------
 
