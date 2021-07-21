@@ -27,7 +27,7 @@ coef(contacts)
 
 
 
-stew("results/pfilter1.rda",{
+stew("pfilter1.rda",{
   tic <- Sys.time()
   eval_cores <- cores
   pf1_results <- foreach(i=1:20) %dopar% {
@@ -47,7 +47,7 @@ panel_logmeanexp(pf1_loglik_matrix,MARGIN=1,se=T)
 
 
 
-stew("results/mif1.rda",{
+stew("mif1.rda",{
   mif_cores <- cores
   tic <- Sys.time()
 mif_results <- foreach(i=1:20) %dopar% {
@@ -67,7 +67,7 @@ mif_results <- foreach(i=1:20) %dopar% {
 
 
 
-stew("results/mif1-lik-eval.rda",{
+stew("mif1-lik-eval.rda",{
 tic <- Sys.time()
 mif_logLik <-  sapply(mif_results,function(x)x$logLik)
 mif_mle <- mif_results[[which.max(mif_logLik)]]$params

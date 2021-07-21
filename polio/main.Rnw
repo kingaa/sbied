@@ -833,6 +833,12 @@ options(dplyr.summarise.inform=FALSE)
 
 \begin{frame}[fragile]
 
+  <<cluster_setup,include=FALSE,purl=TRUE,cache=FALSE>>=
+  if (file.exists("CLUSTER.R")) {
+    source("CLUSTER.R")
+  }
+  @
+  
   <<mif>>=
   exl <- c("polio","Np","Nmif","rw_sd",
     "Nreps_local","Nreps_eval")
@@ -921,12 +927,6 @@ options(dplyr.summarise.inform=FALSE)
 
   We then carry out a search identical to the local one except for the starting parameter values. This can be succinctly coded by calling \code{mif2} on the previously constructed object, \code{m2[[1]]}, with a reset starting value:
 
-  <<cluster_setup,include=FALSE,purl=TRUE,cache=FALSE>>=
-  if (file.exists("CLUSTER.R")) {
-    source("CLUSTER.R")
-  }
-  @
-  
   <<box_eval>>=
   bake(file="results/box_eval1.rds",{
     registerDoRNG(833102018)
@@ -1160,7 +1160,7 @@ options(dplyr.summarise.inform=FALSE)
         mf %>% pfilter(Np=Np) %>% logLik()
       ) %>% logmeanexp(se=TRUE) -> ll
       mf %>% coef() %>% bind_rows() %>%
-        bind_cols(logLik=ll[1],logLik.se=ll[2])
+        bind_cols(logLik=ll[1],logLik_se=ll[2])
     }
   },dependson=run_level) -> m4
   @

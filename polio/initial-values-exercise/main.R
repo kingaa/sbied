@@ -180,6 +180,10 @@ rw_sd <- eval(substitute(rw.sd(
   IO_0=ivp(rwi),SO_0=ivp(rwi)),
   list(rwi=0.2,rwr=0.02)))
 
+if (file.exists("CLUSTER.R")) {
+  source("CLUSTER.R")
+}
+
 exl <- c("polio","Np","Nmif","rw_sd",
   "Nreps_local","Nreps_eval")
 
@@ -211,10 +215,6 @@ box <- rbind(
   sigma_dem=c(0,0.5), sigma_env=c(0,1),
   SO_0=c(0,1), IO_0=c(0,0.01)
 )
-
-if (file.exists("CLUSTER.R")) {
-  source("CLUSTER.R")
-}
 
 bake(file="results/box_eval1.rds",{
   registerDoRNG(833102018)
@@ -305,7 +305,7 @@ bake(file="results/profile_rho.rds",{
       mf %>% pfilter(Np=Np) %>% logLik()
     ) %>% logmeanexp(se=TRUE) -> ll
     mf %>% coef() %>% bind_rows() %>%
-      bind_cols(logLik=ll[1],logLik.se=ll[2])
+      bind_cols(logLik=ll[1],logLik_se=ll[2])
   }
 },dependson=run_level) -> m4
 

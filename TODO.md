@@ -1,8 +1,10 @@
 ## Needed fixes
 
-- polio sublessons are broken (old version of **pomp**)
-- pfilter/loglikest needs more discussion
-
 ## Desired improvements
 
+- pfilter/loglikest needs more discussion
+
 ## For next time
+
+- make one quiz per lesson
+

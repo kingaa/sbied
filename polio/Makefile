@@ -7,3 +7,8 @@ starting-values-exercise.html
 
 include ../rules.mk
 
+.fresh:
+	for module in initial-values-exercise starting-values-exercise; do (cd $$module && $(MAKE) fresh); done
+
+fresh: .fresh
+

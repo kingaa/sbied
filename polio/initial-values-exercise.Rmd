@@ -96,7 +96,7 @@ The results are shown at [initial-values-exercise/main.Rout.save](initial-values
 The key outcome is the maximized log likelihood.
 The search found a maximum of $`r round(mle2$logLik,1)`$ for the modified model, whereas an identical search found $`r round(mle1$logLik,1)`$ for the original model.
 The modification is certainly not a substantial improvement.
-`r if (mle2$logLik-mle1$logLik>1) "**The last statement is a lie!**"`.
+`r if (mle2$logLik-mle1$logLik>1) "**The last statement is a lie!**."`
 
 
 -----------------------------------

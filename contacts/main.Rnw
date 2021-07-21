@@ -445,7 +445,7 @@ How would you find the \package{panelPomp} package methods available for working
   @
   
   <<pfilter1-eval,cache=F,echo=F>>=
-  stew("results/pfilter1.rda",{
+  stew("pfilter1.rda",{
     tic <- Sys.time()
     eval_cores <- cores
     <<pfilter1-code>>
@@ -586,7 +586,7 @@ How would you find the \package{panelPomp} package methods available for working
 @
 
 <<mif1-stew,cache=F,eval=T,echo=F>>=
-stew("results/mif1.rda",{
+stew("mif1.rda",{
   mif_cores <- cores
   tic <- Sys.time()
 <<mif1-code>>
@@ -634,7 +634,7 @@ pf3_loglik_matrix <- foreach(i=1:10,.combine=rbind) %dopar% {
 @
 
 <<mif1-lik-eval,cache=F,echo=F>>=
-stew("results/mif1-lik-eval.rda",{
+stew("mif1-lik-eval.rda",{
 tic <- Sys.time()
 <<mif1-lik-eval-code>>
 t3 <- difftime(Sys.time(),tic,units="mins")

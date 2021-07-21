@@ -48,17 +48,59 @@ This requires substantial resources.
 For this reason, the most expensive computations are archived using the facilities provided for the purpose in **pomp**.
 Compilation with these archives in place requires much less time than does compilation from scratch.
 
+<!--
+Get archive file sizes in kB:
+
+```
+library(tidyverse)
+
+gettime <- function (path) {
+  if (grepl(".rds",path)) {
+    readRDS(path) |> attr("system.time") |> getElement(3)
+  } else if (grepl(".rda",path)) {
+    e <- new.env()
+    load(path,envir=e)
+    e$.system.time[3]
+  } else {
+    NA_real_
+  }
+}
+
+list.files(pattern=r"{.+\.rd[as]$}",recursive=TRUE) |> 
+  {\(x) data.frame(
+          path=x,
+          dir=dirname(x),
+          file=basename(x),
+          size=file.size(x)/2^10,
+          time=sapply(x,gettime)/60
+        )}() |>
+  remove_rownames() -> dat
+dat		
+
+dat |>
+  dplyr::group_by(dir) |>
+  dplyr::summarize(size=sum(size),time=sum(time))
+
+dat |> 
+  dplyr::summarize(size=sum(size),time=sum(time))
+```
+-->
+
+At last count, the archives amount to about 129MB.
+About 123MB of this is six files in the polio lesson, in which large amounts of redundant information are stored.
+
+
 The following is a log of compilations.
 
   - *Full* compilation refers to compilation following the deletion of all archives.
   Full compilation generates the complete set of archives.
   - *Finishing* compilation refers to compilation with all archives in place, but with the re-Making of all documents.
   
-| Type          | Completion date | Time required | CPUs available | Archive size |
-|:--------------|:----------------|--------------:|---------------:|-------------:|
-| Full          | 2021-07-19      |        587min |            250 |         59MB |
-| polio level 3 | 2021-07-19      |        546min |            250 |         36MB |
-| Partial       | 2021-07-20      |         11min |             36 |        129MB |
+| Type          | Completion date | Time required | CPUs available |
+|:--------------|:----------------|--------------:|---------------:|
+| finishing     | 2021-07-20      |         11min |             36 |
+| full          | 2021-07-21      |        488min |            250 |
+| polio level 3 | 2021-07-21      |           min |            250 |
 
 
 ----------------------------
