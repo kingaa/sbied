@@ -179,7 +179,7 @@ freeze(
 ```
 
 We will use one of our 'mif2d_pomp' objects in the following.
-We fix $N$ and $\mu_IR$.
+We fix $N$ and $\mu_{IR}$.
 
 ```{r}
 mf1 <- mifs_local[[1]]
