@@ -1,0 +1,79 @@
+\input{../header}
+\input{../quiz_header}
+
+\title{Quiz}
+\author{Edward L. Ionides, Aaron A. King, Qianying Lin}
+
+\begin{document}
+
+% knitr set up
+<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
+@
+
+<<prelims,echo=F,cache=F>>=
+library(tidyverse)
+library(pomp)
+options(stringsAsFactors=FALSE)
+stopifnot(packageVersion("pomp")>="3.0")
+set.seed(1350254336)
+knitr::opts_chunk$set(highlight=FALSE)
+@
+
+\maketitle
+
+\section{}
+Two models are fitted to case counts on an epidemic. Model 1 is an SIR POMP model with a negative binomial measurement model, and model 2 is a linear regression model estimating a cubic trend. The log likelihoods are $\ell_1=-2037.91$ and $\ell_2=-2031.28$ respectively. Which of the following do you agree with most?
+
+\begin{enumerate}[(A)]
+\item \label{A3a} We should not compare the models using these likelihoods. They correspond to different model structures, so it is an apples-to-oranges comparison.
+
+\item \label{A3b} We can compare them, but the difference is in the 4th significant figure, so the likelihoods are statistically indistinguishable. 
+\item \label{A3c} The linear model has a noticeably higher likelihood. Our mechanistic model needs to be updated to beat this benchmark before we can responsibly interpret the fitted model. If a simple regression model has higher likelihood than a more complex mechanistic model, one should prefer the simpler model.
+\item \label{A3d} The linear model has a noticeably higher likelihood. The mechanistic model is somewhat validated by being not too far behind the simple regression model. We are justified in cautiously interpreting the mechanistic model, while continuing to look for further improvements.
+\item \label{A3e} The log likelihoods cannot properly be compared as presented, but could be if we used a Gaussian measurement model for the POMP (or a negative binomial generalized linear model instead of least squares for the regression).
+
+\end{enumerate}
+
+\begin{solution}
+  \ref{A3d}.
+
+  Why not \ref{A3a}? Likelihoods of different models for the same data can be compared. Likelihood ratio tests using Wilks's theorem specifically require nested models, but in other contexts (such as AIC and the Neyman-Pearson lemma) the models being compared by likelihood do not need to have any particular relationship.
+
+  Why not \ref{A3b}? Likelihood ratios have statistical meaning, which corresponds to differences of log likelihoods. The likelihood is a dimensional quantity, whereas the likelihood ratio is dimensionless. The units used correspond to a scientifically arbitrary additive constant to the log likelihood, which disappears after taking differences. 
+
+  Why not \ref{A3c}? If our only goal were to find a predictive model, then (C) could be a reasonable position. Usually, we want to find a model that also has interpretablestructure, leading to understanding of the system or estimating the effect of interventions. A simple regression model cannot do those things, even if it fits a bit better. If the mechanistic model fits much worse than simple alternatives, it is not providing a reasonable explanation of the data, suggesting that there may be important things missing from the model specification.
+
+  Quite likely, with some persistence, a mechanistic specification will beat a simple off-the-shelf statistical model.
+\end{solution}
+
+
+\section{}
+A compartment model is first implemented as a system of ordinary differential equations (ODEs). This leads to qualitatively reasonable trajectories, but poor likelihood values. The researchers add stochasticity in an attempt to improve the fit of the model by interpreting the ODEs as rates of a Markov chain. The likelihood, maximized by iterated particle filtering, remains poor compared to ARMA benchmarks. In addition, the effective sample size for the particle filtering is low at many time points despite even using as many as $10^4$ particles. Which of the following is the most promising next step?
+\begin{enumerate}[(A)]
+\item \label{A5a} Increase to $10^5$ particles, moving the computations to a cluster if necessary.
+\item \label{A5b}  Add noise to one or more rates to allow for overdispersion.
+\item \label{A5c} Try adding extra features to the model to capture scientific details not present in the original model.
+\item \label{A5d} Experiment with variations in the iterated filtering procedure; maybe more iterations, or a different cooling schedule.
+\item \label{A5e} To address the possibility of reporting errors, see if the model fits better when the most problematic data points are removed.
+\end{enumerate}
+
+\begin{solution}
+  \ref{A5b}. All the possibilities are worth consideration. However, adding noise in rates to give flexibility in mean-variance relationships is commonly an important part of developing a stochastic model. The simple compartment model interpretation of a ODE as a Markov chain is determined by the rates and therefore does not have free parameters to describe variance. There is some variance inherent in the Markov chain (demographic stochasticity) but additional variability may be needed. It will be hard to investigate the other possibilities if the model has not been given enough stochasticity to explain the variability in the data, so including overdispersion should be an early step. Note that overdispersion can be included in both the process model and the measurement model. 
+\end{solution}
+
+\section{}
+You fit an SEIR model to case reports of an immunizing disease from a city. The resulting confidence interval for the mean latent period is 12--21 days, but clinical evidence points to a latent period averaging about 7 days. Which of the following is the most appropriate response to this discrepancy?
+\begin{enumerate}[(A)]
+\item \label{A8a} The latent period may be confounded with some unmodeled aspect of the system, such as spatial or age structure. The model estimates an effective latent period at the population level, which may not perfectly match what is happening at the scale of individuals. One should be cautious of making a causal interpretation of models fitted to observational data. 
+\item \label{A8b} The discrepancy shows that something is substantially wrong with the model. Extra biological detail must be introduced with the goal of bringing the estimated parameter back in line with the known biology of the system.
+\item \label{A8c} The discrepancy is problematic, but fortunately can readily be fixed. Since we know the clinical value of this parameter with reasonable accuracy, we should simply use this value in the model rather than estimating it.
+\item \label{A8d} If the model fits the data statistically better than any known alternative model, then we have to take the estimated parameter at face value. It is certainly possible that the estimates in the literature correspond to some different population, or different strain, or have some other measurement bias such as corresponding to severe cases resulting in hospitalization. The discrepancy does not show that our model was wrong.
+\item \label{A8e} This discrepancy suggests that we should take advantage of both C and D above by putting a Bayesian prior on the latent period. By quantifying the degree of our skepticism about the previously established clinical value of 7 days, we can optimally combine that uncertainty with the evidence from this dataset.
+\end{enumerate}
+
+\begin{solution}
+  \ref{A8a}.
+  Transferring parameter estimates between scales is hard. An example is the difficulty of reconciling micro and macro economics. It is generally not possible to guarantee that a parameter means exactly the same thing in models at different scales. \ref{A8a} acknowledges this. The other answers, in various ways, assume that there should be a single parameter value that describes the system at all scales. We have some sympathy with \ref{A8d}, since it is reasonable to try to gain biological understanding by investigating why the fitted model is successful at explaining the data.
+\end{solution}
+
+\end{document}

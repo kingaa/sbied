@@ -4,4 +4,4 @@
 \specialcomment{solution}{\begingroup\color{blue}\textbf{Solution.\ }}{\endgroup}
 %% \newenvironment{solution}{\color{blue} \textbf{Solution.}}{\ignorespacesafterend}
 
-\input{main}
+\input{quiz_main}

@@ -1,4 +1,5 @@
-default: index.html notes.pdf slides.pdf profile.R profile.html
+default: index.html notes.pdf slides.pdf profile.R profile.html \
+quiz.pdf quiz_soln.pdf
 
 main.tex: codes.R
 

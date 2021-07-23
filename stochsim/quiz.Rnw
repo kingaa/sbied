@@ -1,0 +1,6 @@
+\documentclass{article}
+
+\usepackage{comment}
+\excludecomment{solution}
+
+\input{quiz_main}

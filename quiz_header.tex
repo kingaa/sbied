@@ -1,0 +1,7 @@
+\usepackage{fullpage}
+\usepackage[unicode=true,bookmarksnumbered=false,bookmarksopen=false,breaklinks=true,backref=section,colorlinks=true,urlcolor=blue,citecolor=black,linkcolor=blue,filecolor=blue]{hyperref}
+\usepackage[small,compact]{titlesec}
+
+\newcommand\periodafter[1]{{#1}.}
+\titleformat{\section}[runin]{\normalsize\bfseries}{\periodafter\thesection}{2ex}{}{}
+\renewcommand{\thesection}{Question \arabic{section}}

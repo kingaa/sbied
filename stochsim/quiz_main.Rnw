@@ -1,0 +1,262 @@
+\input{../header}
+\input{../quiz_header}
+
+\title{Quiz on Lesson 2}
+\author{Edward L. Ionides, Aaron A. King, Qianying Lin}
+\begin{document}
+
+% knitr set up
+<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
+@
+
+<<prelims,echo=F,cache=F>>=
+library(tidyverse)
+library(pomp)
+options(stringsAsFactors=FALSE)
+stopifnot(packageVersion("pomp")>="3.4")
+set.seed(1350254336)
+knitr::opts_chunk$set(highlight=FALSE)
+@
+
+\maketitle
+
+\section{}
+Scientifically, our conclusions should not depend on the units we choose, but we must get the details right. Suppose our data are two years of weekly aggregated case reports of a disease and we have a continuous time model solved numerically by an Euler timestep of size $dt$. Which of the following is a correct explanation of our options for properly implementing this in a pomp object called \code{po}?
+\begin{enumerate}[(A)]
+\item \label{A13a} The measurement times, \code{time(po)}, should be in units of weeks, such as $1,2,\dots,104$. The latent process can be modeled using arbitrary time units, say days or weeks or years. The units of $dt$ should match the time units of the {\bf latent} process.
+\item \label{A13b} The measurement times, \code{time(po)}, should be in units of weeks, such as $1,2,\dots,104$. The latent process can be modeled using arbitrary time units, say days or weeks or years. The units of $dt$ should be in weeks (in practice, usually a fraction of a week) to match the units of the {\bf measurement} times.
+\item \label{A13c} The measurement times do not have to be in units of weeks. For example, we could use  \code{time(po)}=$1/52$, $2/52$, $\dots, 2$. The latent process and $dt$ should use the same units of time as the measurement times.
+\item \label{A13d} The measurement times do not have to be in units of weeks. For example, we could use  \code{time(po)}=$1/52$, $2/52$, $\dots, 2$. The latent process can also use arbitrary units of time, which do not necessarily match the units of the measurement times. The units of $dt$ should match the units used for the {\bf latent} process.
+\item \label{A13e} The measurement times do not have to be in units of weeks. For example, we could use \code{time(po)}=$1/52$, $2/52$, $\dots, 2$. The latent process can also use arbitrary units of time, which do not necessarily match the units of the measurement times. The units of $dt$ should match the units used for the {\bf measurement} times.
+\end{enumerate}
+
+\begin{solution}
+  \ref{A13c}.
+  For scientific calculations, you generally have to pick an arbitrary set of units and use it consistently. In \code{pomp}, this means that you have to use the same units for measurement times and within the latent process. For example, if your measurement times are in days (7,14,$\dots$) then rate parameters should have units $\mathrm{day}^{-1}$. A latent transition with mean duration 1 week would have corresponding rate $1/7 \mathrm{day}^{-1}$. 
+\end{solution}
+
+
+\section{}
+Suppose you obtain the following error message when you build your pomp model using Csnippets.
+<<Q10-error-message,echo=FALSE>>=
+cat("
+Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error: 
+cannot compile shared-object library ‘/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_be9007eb030e47cb34264e3e779b6da9.so’: 
+status = 1
+compiler messages:
+clang -mmacosx-version-min=10.13 -I\"/Library/Frameworks/R.framework/Resources/include\" -DNDEBUG 
+-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include' 
+-I'/Users/ionides/sbied/questions'  -I/usr/local/include   -fPIC  -Wall -g -O2  
+-c /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_be9007eb030e47cb34264e3e779b6da9.c 
+-o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_be9007eb030e47cb34264e3e779b6da9.o
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_be9007eb030e47cb34264e3e779b6da9.c:39:5: 
+error: called object type 'int' is not a function or function pointer
+    W = 0; 
+    ^
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/5
+In addition: Warning message:
+In system2(command = R.home(\"bin/R\"), args = c(\"CMD\", \"SHLIB\", \"-c\",  :
+running command 'PKG_CPPFLAGS=\"-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include' 
+-I'/Users/ionides/sbied/questions'\" '/Library/Frameworks/R.framework/Resources/bin/R' 
+CMD SHLIB -c -o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_be9007eb030e47cb34264e3e779b6da9.so 
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_be9007eb030e47cb34264e3e779b6da9.c 
+2>&1' had status 1
+")
+@
+Which of the following is a plausible cause for this error?
+\begin{enumerate}[(A)]
+\item \label{A10a} Using R syntax within a C function that has the same name as an R function.
+\item \label{A10b} A parameter is missing from the \code{paramnames} argument to \code{pomp}.
+\item \label{A10c} Indexing past the end of an array because C labels indices starting at 0. 
+\item \label{A10d} Using \code{beta} as a parameter name when it is a declared C function.
+\item \label{A10e} A missing semicolon at the end of a line.
+\end{enumerate}
+
+
+\begin{solution}
+  \ref{A10e}.
+  The error message was produced by the code below.
+  \code{pomp} passes on the C compiler error message for you to inspect.
+  Note the missing semicolon at the line end before \code{W=0;}.
+
+  <<Q10-error-code,eval=F>>=
+  sir1 <- sir()
+  sir2 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
+    paramnames=c(
+      "gamma","mu","iota",
+      "beta1","beta_sd","pop","rho",
+      "S_0","I_0","R_0"
+    ),
+    rinit=Csnippet("
+    double m = pop/(S_0+I_0+R_0);
+    S = nearbyint(m*S_0);
+    I = nearbyint(m*I_0);
+    R = nearbyint(m*R_0);
+    cases = 0
+    W = 0;"
+    )
+  )    
+  @
+\end{solution}
+
+
+\section{}
+Suppose you obtain the following error message when you build your pomp model using Csnippets.
+<<Q11-error-message,echo=FALSE>>=
+cat("
+Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error: 
+cannot compile shared-object library ‘/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_b675d99e691eda865610f570058ea3be.so’: status = 1
+compiler messages:
+clang -mmacosx-version-min=10.13 -I\"/Library/Frameworks/R.framework/Resources/include\" -DNDEBUG 
+-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include' -I'/Users/ionides/sbied/questions' 
+-I/usr/local/include   -fPIC  -Wall -g -O2  
+-c /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_b675d99e691eda865610f570058ea3be.c 
+-o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_b675d99e691eda865610f570058ea3be.o
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_b675d99e691eda865610f570058ea3be.c:33:16: 
+error: use of undeclared identifier 'pop'; did you mean 'pow'?
+    double m = pop/(S_0+I_0+R_0);
+               ^~~
+               pow
+/Applications/
+In addition: Warning message:
+In system2(command = R.home(\"bin/R\"), args = c(\"CMD\", \"SHLIB\", \"-c\",  :
+  running command 'PKG_CPPFLAGS=\"-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include' 
+-I'/Users/ionides/sbied/questions'\" '/Library/Frameworks/R.framework/Resources/bin/R' CMD SHLIB 
+-c -o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_b675d99e691eda865610f570058ea3be.so 
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_b675d99e691eda865610f570058ea3be.c 2>&1' had status 1
+")
+@
+Which of the following is a plausible cause for this error?
+\begin{enumerate}[(A)]
+\item \label{A11a} Using R syntax within a C function that has the same name as an R function.
+\item \label{A11b} A parameter is missing from the \code{paramnames} argument to \code{pomp}.
+\item \label{A11c} Indexing past the end of an array because C labels indices starting at 0. 
+\item \label{A11d} Using \code{beta} as a parameter name when it is a declared C function.
+\item \label{A11e} A missing semicolon at the end of a line.
+\end{enumerate}
+
+\begin{solution}
+  \ref{A11b}. The code generating this error is below. Here, \code{pop} is intended to be passed as a parameter, but it is missing from the \code{paramnames} argument. It could alternatively be defined as a global variable using the \code{globals} argument to \code{pomp}.
+
+  <<Q11-error-code,eval=F>>=
+  sir3 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
+    paramnames=c(
+      "gamma","mu","iota",
+      "beta1","beta_sd","rho",
+      "S_0","I_0","R_0"
+    ),
+    rinit=Csnippet("
+    double m = pop/(S_0+I_0+R_0);
+    S = nearbyint(m*S_0);
+    I = nearbyint(m*I_0);
+    R = nearbyint(m*R_0);
+    cases = 0
+    W = 0;"
+    )
+  )    
+  @    
+\end{solution}
+
+
+\section{}
+Suppose you obtain the following error message when you build your pomp model using Csnippets.
+<<Q12-error-message,echo=FALSE>>=
+cat("
+Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error:
+cannot compile shared-object library ‘/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_77886fb66d95b4b9904440d86a4425b3.so’: status = 1
+compiler messages:
+clang -mmacosx-version-min=10.13 -I\"/Library/Frameworks/R.framework/Resources/include\" -DNDEBUG 
+-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include' 
+-I'/Users/ionides/sbied/questions'  -I/usr/local/include   -fPIC  -Wall -g -O2  
+-c /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_77886fb66d95b4b9904440d86a4425b3.c 
+-o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_77886fb66d95b4b9904440d86a4425b3.o
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_77886fb66d95b4b9904440d86a4425b3.c:39:36: 
+error: too many arguments to function call, expected 2, have 3
+      rep = nearbyint(rnorm(1,mean,sd));
+                      ~~~~~        ^~
+/Librar
+In addition: Warning message:
+In system2(command = R.home(\"bin/R\"), args = c(\"CMD\", \"SHLIB\", \"-c\",  :
+running command 'PKG_CPPFLAGS=\"-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include'
+-I'/Users/ionides/sbied/questions'\" '/Library/Frameworks/R.framework/Resources/bin/R' 
+CMD SHLIB -c -o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_77886fb66d95b4b9904440d86a4425b3.so 
+/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
+5324/pomp_77886fb66d95b4b9904440d86a4425b3.c 2>&1' had status 1
+")
+@
+Which of the following is a plausible cause for this error?
+\begin{enumerate}[(A)]
+\item \label{A12a} Using R syntax within a C function that has the same name as an R function.
+\item \label{A12b} A parameter is missing from the \code{paramnames} argument to \code{pomp}.
+\item \label{A12c} Indexing past the end of an array because C labels indices starting at 0. 
+\item \label{A12d} Using \code{beta} as a parameter name when it is a declared C function.
+\item \label{A12e} A missing semicolon at the end of a line.
+\end{enumerate}
+
+\begin{solution}
+  \ref{A12a}. The code producing the error is below. Within Csnippets, the C versions of R distribution functions are available but they have slightly different syntax from their more familiar R cousins.
+
+  <<Q12-error-code,eval=F>>=
+  sir4 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
+    paramnames=c(
+      "gamma","mu","iota",
+      "beta1","beta_sd","pop","rho",
+      "S_0","I_0","R_0"
+    ),
+    rmeasure=Csnippet("
+      double mean, sd;
+      double rep;
+      mean = cases*rho;
+      sd = sqrt(cases*rho*(1-rho));
+      rep = nearbyint(rnorm(1,mean,sd));
+      reports = (rep > 0) ? rep : 0;"
+    )
+  )
+  @
+\end{solution}
+
+%%%%%%%%%%%%%%%%%%%%
+
+
+\section{}
+Let $V_n$ be a Markov process and let $W_n=h(V_n)$ for some function $h$. Which of the following statements are true?
+
+i) $W_n$ is a Markov process for all choices of $h$.
+
+ii) $W_n$ is a Markov process for some choices of $h$.
+
+iii) $W_n$ is not a Markov process for any choice of $h$.
+
+iv) If $V_n=(X_n,Y_n)$ where $X_n$ and $Y_n$ are a POMP model, and $h(X_n,Y_n)=X_n$ then $W_n$ is a Markov process.
+
+v) If $V_n=(X_n,Y_n)$ where $X_n$ and $Y_n$ are a POMP model, and $h(X_n,Y_n)=Y_n$ then $W_n$ is a Markov process.
+\begin{enumerate}[(A)]
+\item i,iv,v
+\item ii,iv \label{A1b}
+\item ii,v
+\item iii
+\item None of the above
+\end{enumerate}
+
+\begin{solution}
+  \ref{A1b}.
+\end{solution}
+
+\end{document}

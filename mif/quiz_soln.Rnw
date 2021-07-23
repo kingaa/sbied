@@ -1,0 +1,6 @@
+\documentclass{article}
+
+\usepackage{comment}
+\specialcomment{solution}{\begingroup\color{blue}\textbf{Solution.\ }}{\endgroup}
+
+\input{quiz_main}

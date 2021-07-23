@@ -1,6 +1,7 @@
 default: index.html main.R slides.pdf notes.pdf \
 if2_settings.html Q_fit_seir.html windows.html \
-Q_fitall.html Q_fitall.R main_win.R
+Q_fitall.html Q_fitall.R main_win.R \
+quiz.pdf quiz_soln.pdf
 	$(RM) pomp_*.c pomp_*.so
 
 include ../rules.mk

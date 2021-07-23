@@ -11,6 +11,7 @@ output: html_document
 | Lecture                                                                                    | [Video (112 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2RRi-TRckg7Lud87ZKIJTZ8) |
 | Lecture slides                                                                             | [PDF](slides.pdf)                                                                           |
 | Lecture notes                                                                              | [PDF](notes.pdf)                                                                            |
+| Quiz                                                                                       | [PDF](quiz.pdf)                                                                             |
 | **R** script for the lesson                                                                | [**R**](main.R)                                                                             |
 | Supplement: Deterministic latent process models and their role in benchmarking POMP models | [HTML](deterministic.html)                                                                  |
 | Supplement: Monte Carlo Methods                                                            | [HTML](monteCarlo.html)                                                                     |

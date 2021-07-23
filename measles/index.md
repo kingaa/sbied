@@ -6,14 +6,14 @@ output: html_document
 
 ----------------------
 
-| &nbsp;                                     | &nbsp;                                                                                    |
-|:-------------------------------------------|:-----------------------------------------------------------------------------------------:|
+| &nbsp;                                     | &nbsp;                                                                                     |
+|:-------------------------------------------|:------------------------------------------------------------------------------------------:|
 | Lecture                                    | [Video (80 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2SJzO5pfhVBdkBP6EbREGWM) |
-|                                            |                                                                                           |
-| Lecture slides                             | [PDF](slides.pdf)                                                                         |
-| Lecture notes                              | [PDF](notes.pdf)                                                                          |
-| Model construction script                  | [**R**](codes.R)                                                                          |
-| Supplement: profile likelihood calculation | [HTML](profile.html)                                                                      |
+| Lecture slides                             | [PDF](slides.pdf)                                                                          |
+| Lecture notes                              | [PDF](notes.pdf)                                                                           |
+| Quiz                                       | [PDF](quiz.pdf)                                                                            |
+| Model construction script                  | [**R**](codes.R)                                                                           |
+| Supplement: profile likelihood calculation | [HTML](profile.html)                                                                       |
 
 ----------------------
 

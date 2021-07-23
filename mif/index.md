@@ -11,11 +11,12 @@ output: html_document
 | Lecture                                  | [Video (110 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2S9cNE-rD3CZJY6X_KydOMi) |
 | Lecture slides                           | [PDF](slides.pdf)                                                                           |
 | Lecture notes                            | [PDF](notes.pdf)                                                                            |
+| Quiz                                     | [PDF](quiz.pdf)                                                                             |
 | **R** script for the lesson              | [**R**](main.R)                                                                             |
 | Windows-safe **R** script for the lesson | [**R**](main_win.R)                                                                         |
 | Supplement: Tuning IF2                   | [HTML](if2_settings.html)                                                                   |
 | Worked solution to Exercise 4.1          | [HTML](Q_fit_seir.html)                                                                     |
-| Worked solution to Exercise 4.2          | [HTML](Q_fitall.html)                                                                     |
+| Worked solution to Exercise 4.2          | [HTML](Q_fitall.html)                                                                       |
 | Worked solution to Exercise 4.4          | [HTML](Q_check_code.html)                                                                   |
 |                                          |                                                                                             |
 

@@ -5,8 +5,10 @@ RBATCH = R CMD BATCH --no-save --no-restore
 ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 slides.pdf handout.pdf notes.pdf: main.tex
+quiz.pdf quiz_soln.pdf: quiz_main.tex
 
-.INTERMEDIATE: main.tex slides.tex handout.tex notes.tex
+.INTERMEDIATE: main.tex slides.tex handout.tex notes.tex \
+quiz.tex quiz_soln.tex quiz_main.tex	
 
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \

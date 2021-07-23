@@ -18,6 +18,7 @@ admin
 *\.aux
 *\.brf
 *\.bak
+*\.cut
 *~
 README.html
 CLUSTER.R

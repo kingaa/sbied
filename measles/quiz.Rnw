@@ -3,4 +3,4 @@
 \usepackage{comment}
 \excludecomment{solution}
 
-\input{main}
+\input{quiz_main}
