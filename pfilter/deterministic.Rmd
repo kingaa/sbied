@@ -132,7 +132,7 @@ bsflu %>%
 x <- trajectory(bbs)
 y <- cbind(as.data.frame(bbs),x=x["H",1,])
 mutate(y,xlab=sprintf("hat(y)[%d]",day),
-       ylab=sprintf("y[%d]^'*'",day)) -> y
+       ylab=sprintf("y[%d]~'*'",day)) -> y
 
 ggplot(data=y,mapping=aes(x=day,xend=day))+
   geom_point(aes(y=B),color='black',alpha=0.5)+
