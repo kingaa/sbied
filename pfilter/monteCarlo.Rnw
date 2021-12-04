@@ -7,15 +7,15 @@
 \usepackage{mathrsfs,eucal,bbm,mathtools}
 \usepackage[round,sort,elide]{natbib}
 \usepackage[unicode=true,bookmarks=true,bookmarksnumbered=false,
-bookmarksopen=false,breaklinks=false,backref=false,colorlinks=true,
-urlcolor=black,citecolor=black,linkcolor=black]{hyperref}
+  bookmarksopen=false,breaklinks=false,backref=false,colorlinks=true,
+  urlcolor=black,citecolor=black,linkcolor=black]{hyperref}
 \usepackage{tikz}
 \usepackage{pgfplots}
 \usepackage{xspace}
 \usepackage{tcolorbox}
 
 \usepackage[letterpaper,text={6in,8.75in},
-top=1in,left=1.25in,headheight=12pt,headsep=24pt]{geometry}
+  top=1in,left=1.25in,headheight=12pt,headsep=24pt]{geometry}
 
 \setlength{\parskip}{1ex}  
 \setlength{\parindent}{0em}  
@@ -59,20 +59,20 @@ top=1in,left=1.25in,headheight=12pt,headsep=24pt]{geometry}
 \newcommand{\pkg}[1]{\textsf{#1}}
 \newcommand{\scinot}[2]{#1{\times}10^{#2}}
 \newcommand{\halfopen}[1]{[{#1})}
-\newcommand{\halfclosed}[1]{({#1}]}
+  \newcommand{\halfclosed}[1]{({#1}]}
 \renewcommand\Re{\operatorname{Re}}
 \renewcommand\Im{\operatorname{Im}}
 \newcommand{\pd}[3][]{%
-\def\ord{#1} \ifx\ord\empty%
-\frac{\partial{#2}}{\partial{#3}}%
-\else \frac{\partial^{#1}{#2}}{\partial{#3}}%
-\fi
+  \def\ord{#1} \ifx\ord\empty%
+  \frac{\partial{#2}}{\partial{#3}}%
+  \else \frac{\partial^{#1}{#2}}{\partial{#3}}%
+  \fi
 }
 \newcommand{\deriv}[3][]{%
-\def\ord{#1} \ifx\ord\empty%
-\frac{\dd{#2}}{\dd{#3}}%
-\else \frac{\dd{}^{#1}{#2}}{\dd{#3}^{#1}}%
-\fi
+  \def\ord{#1} \ifx\ord\empty%
+  \frac{\dd{#2}}{\dd{#3}}%
+  \else \frac{\dd{}^{#1}{#2}}{\dd{#3}^{#1}}%
+  \fi
 }
 \newcommand\at[2]{\left.#1\right|_{#2}}
 
@@ -281,27 +281,6 @@ The transformation method is very efficient in that we are guaranteed to obtain 
 Sometimes, however, we cannot compute the inverse of the cumulative distribution function, as required by the transformation method.
 Under such circumstances, the rejection method offers a less efficient, but more flexible, alternative.
 
-We'll see how and why this method works in a simple case.
-Suppose a random variable $X$ is \emph{uniformly distributed} over a region $D\subset\mathbb{R}^{d}$.
-This means that, for any ${A}\subset{D}$, 
-\begin{equation*}
-  \prob{X\in{A}}=\frac{m(A)}{m(D)},
-\end{equation*}
-where $m$ signifies the Lebesgue measure (i.e., ordinary Euclidean volume).
-To describe this situation, we say $X\sim\dist{Uniform}{D}$.
-
-Let's suppose that we wish to simulate such an $X$.
-If $D$ has a complicated shape, we might not know how to directly simulate a random draw from it.
-However, if we know $D$ is a subset of some nicer region $U\subset\mathbb{R}^{d}$ and, in particular, if we know how to generate $Y\sim\dist{Uniform}{U}$, then we can simply do so until ${Y}\in{D}$, at which point we take $X=Y$.
-Since for any $A\subset{D}$, 
-\begin{equation*}
-  \prob{X\in A} = \prob{Y\in A\vert Y\in D} = \frac{m(A)}{m(U)}\Big{/}\frac{m(D)}{m(U)} = \frac{m(A)}{m(D)},
-\end{equation*}
-it follows that $Y\sim\dist{Uniform}{D}$.
-Fig.~\ref{fig:mcintegration} illustrates.
-
-Consider an analogy to throwing darts. If the darts are thrown in such a way as to be equally likely to land anywhere in $U$, then those that do land in $D$ are equally likely to land anywhere in $D$.
-
 \begin{figure}[t]
   <<region-diagram,echo=FALSE,purl=FALSE,fig.dim=c(3,2),out.width="50%">>=
   op <- par(mar=c(0,1,0,1),mgp=c(2,1,0),font=4,family="sans")
@@ -340,6 +319,27 @@ Consider an analogy to throwing darts. If the darts are thrown in such a way as 
     \label{fig:mcintegration}
   }
 \end{figure}
+
+We'll see how and why this method works in a simple case.
+Suppose a random variable $X$ is \emph{uniformly distributed} over a region $D\subset\mathbb{R}^{d}$.
+This means that, for any ${A}\subset{D}$, 
+\begin{equation*}
+  \prob{X\in{A}}=\frac{m(A)}{m(D)},
+\end{equation*}
+where $m$ signifies the Lebesgue measure (i.e., ordinary Euclidean volume).
+To describe this situation, we say $X\sim\dist{Uniform}{D}$.
+
+Let's suppose that we wish to simulate such an $X$.
+If $D$ has a complicated shape, we might not know how to directly simulate a random draw from it.
+However, if we know $D$ is a subset of some nicer region $U\subset\mathbb{R}^{d}$ and, in particular, if we know how to generate $Y\sim\dist{Uniform}{U}$, then we can simply do so until ${Y}\in{D}$, at which point we take $X=Y$.
+Since for any $A\subset{D}$, 
+\begin{equation*}
+  \prob{X\in A} = \prob{Y\in A\vert Y\in D} = \frac{m(A)}{m(U)}\Big{/}\frac{m(D)}{m(U)} = \frac{m(A)}{m(D)},
+\end{equation*}
+it follows that $Y\sim\dist{Uniform}{D}$.
+Fig.~\ref{fig:mcintegration} illustrates.
+
+Consider an analogy to throwing darts. If the darts are thrown in such a way as to be equally likely to land anywhere in $U$, then those that do land in $D$ are equally likely to land anywhere in $D$.
 
 A useful little fact allows us to extend the rejection method from uniform distributions to arbitrary densities. 
 \citet{Robert2004} refer to this as the \emph{fundamental theorem of simulation}.
@@ -413,6 +413,52 @@ Then the following procedure simulates $X\!\sim\!f$:
     \label{fig:sim}
   }
 \end{figure}
+
+\begin{exercise}
+  Use the rejection method to generate samples from the distribution with density
+  \begin{equation*}
+    f(x)=\frac{\sqrt{2}}{\pi}\,\frac{1}{1+x^4}.
+  \end{equation*}
+  Use Cauchy-distributed proposals, i.e., take
+  \begin{equation*}
+    g(x)=\frac{1}{\pi}\,\frac{1}{1+x^2}.
+  \end{equation*}
+  Use a histogram to verify that your samples are indeed drawn from the correct distribution.
+  <<include=FALSE,purl=FALSE,fig.dim=c(6,3)>>=
+  library(tidyverse)
+  library(cowplot)
+  set.seed(581429505)
+  f <- function (x) {sqrt(2)/pi/(1+x^4)}
+  g <- function (x) {1/pi/(1+x^2)}
+  M <- 2
+  data.frame(
+    X=rcauchy(n=10000)
+  ) |>
+    mutate(
+      U=runif(n=length(X),max=M),
+      accept=U<f(X)/g(X)
+    ) |>
+    filter(accept) -> dat
+  expand_grid(
+    x=seq(min(dat$X),max(dat$X),length=1000)
+  ) |>
+    mutate(y=f(x)) -> theory
+  dat |>
+    ggplot(aes(x=X))+
+    geom_histogram(aes(y=..density..),
+      bins=50,fill=NA,color=grey(0.3))+
+    geom_path(data=theory,mapping=aes(x=x,y=y),
+      color='red')+
+    labs(y="density") -> pl1
+  dat |>
+    ggplot(aes(x=X))+
+    geom_density(fill=NA,color=grey(0.3))+
+    geom_path(data=theory,mapping=aes(x=x,y=y),
+      color="red")+
+    labs(y="density") -> pl2
+  plot_grid(pl1,pl2,ncol=1)
+  @ 
+\end{exercise}
 
 \bibliographystyle{jss}
 \bibliography{mathecol}
