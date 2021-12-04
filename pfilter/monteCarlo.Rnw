@@ -1,0 +1,420 @@
+\documentclass[11pt,reqno,pdftex]{amsart}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{{figs/}}
+\usepackage[neverdecrease]{paralist}
+\usepackage{xcolor}
+\usepackage{mathrsfs,eucal,bbm,mathtools}
+\usepackage[round,sort,elide]{natbib}
+\usepackage[unicode=true,bookmarks=true,bookmarksnumbered=false,
+bookmarksopen=false,breaklinks=false,backref=false,colorlinks=true,
+urlcolor=black,citecolor=black,linkcolor=black]{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{xspace}
+\usepackage{tcolorbox}
+
+\usepackage[letterpaper,text={6in,8.75in},
+top=1in,left=1.25in,headheight=12pt,headsep=24pt]{geometry}
+
+\setlength{\parskip}{1ex}  
+\setlength{\parindent}{0em}  
+
+\theoremstyle{definition}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\newtheorem{thm}{Theorem}
+\newtheorem{corol}[thm]{Corollary}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{hyp}[thm]{Hypothesis}
+\newtheorem{example}[thm]{Example}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{algorithm}[thm]{Algorithm}
+\newtheorem{remark}[thm]{Remark}
+\newtheorem{exercise}{Exercise}
+\newtheorem{challenge}{Challenge}
+
+\newtcolorbox[auto counter]{textbox}[2][]{float,#1,colback=white,colframe=blue!40!black,title={\bfseries Box~\thetcbcounter. {#2}}}
+
+\def\eps{\varepsilon}
+\renewcommand\vec[1]{\mathbf{#1}}
+\newcommand\prob[1]{\mathrm{Prob}\!\left[{#1}\right]}
+\newcommand\expect[1]{\mathbb{E}\!\left[{#1}\right]}
+\newcommand\onevec{\mathbbm{1}}
+\newcommand\indicator[1]{\mathbbm{1}_{#1}}
+\newcommand\interior[1]{\mathrm{int}\:{#1}}
+\newcommand\boundary[1]{\mathrm{bd}\:{#1}}
+\newcommand\payoff[3]{{#1}{\cdot}{#2}{#3}}
+\newcommand\KL[2]{D({#1}\parallel{#2})}
+\newcommand\identity{\mathrm{Id}}
+\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
+\newcommand\dist[2]{\mathrm{#1}\!\left(#2\right)}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\transpose}{\mathrm{T}}
+\newcommand\lik{\mathcal{L}}
+\newcommand\loglik{\ell}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\file}[1]{\textsf{#1}}
+\newcommand{\pkg}[1]{\textsf{#1}}
+\newcommand{\scinot}[2]{#1{\times}10^{#2}}
+\newcommand{\halfopen}[1]{[{#1})}
+\newcommand{\halfclosed}[1]{({#1}]}
+\renewcommand\Re{\operatorname{Re}}
+\renewcommand\Im{\operatorname{Im}}
+\newcommand{\pd}[3][]{%
+\def\ord{#1} \ifx\ord\empty%
+\frac{\partial{#2}}{\partial{#3}}%
+\else \frac{\partial^{#1}{#2}}{\partial{#3}}%
+\fi
+}
+\newcommand{\deriv}[3][]{%
+\def\ord{#1} \ifx\ord\empty%
+\frac{\dd{#2}}{\dd{#3}}%
+\else \frac{\dd{}^{#1}{#2}}{\dd{#3}^{#1}}%
+\fi
+}
+\newcommand\at[2]{\left.#1\right|_{#2}}
+
+\newcommand{\etc}{etc.\xspace}
+\newcommand{\vs}{vs.\xspace}
+\newcommand{\eg}{e.g.\xspace}
+\newcommand{\ie}{i.e.\xspace}
+\newcommand{\etal}{\emph{et al.\xspace}}
+\newcommand{\cf}{c.f.\xspace}
+\newcommand{\viz}{viz.\xspace}
+
+\title[Monte Carlo methods]{Monte Carlo methods}
+\author[A.~A.~King, E.~L.~Ionides]{Aaron~A.~King, Edward~L.~Ionides}
+\address{
+  A.~A.~King,
+  Department of Ecology \& Evolutionary Biology,
+  Center for the Study of Complex Systems,
+  University of Michigan,
+  Ann Arbor, MI 48109 USA
+}
+\email{kingaa@umich.edu}
+\date{\today}
+
+\setcounter{secnumdepth}{0}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+<<prefix,include=FALSE,cache=FALSE,purl=FALSE>>=
+params <- list(prefix="mc")
+@
+<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
+@
+<<packages,include=FALSE,cache=FALSE,purl=TRUE>>=
+library(pomp)
+library(tidyverse)
+library(cowplot)
+stopifnot(getRversion()>="4.1")
+stopifnot(packageVersion("pomp")>="4.0.11")
+set.seed(97849913)
+@ 
+
+\section{Context: Monte Carlo methods for POMP models}
+
+Let's consider a general POMP model.
+As before, let ${y^*_{1:N}}$ be the data, and let the model consist of a latent process $X_{0:N}$ and an observable process $Y_{1:N}$.
+Then the likelihood function is
+\begin{equation*}
+  \begin{aligned}
+    \lik(\theta) =& f_{Y_{1:N}}({y^*_{1:N}} ; \theta) \\
+    =&\int\!
+    f_{X_{t_0}}(x_{t_0} ; \theta)\prod_{n=1}^{N}\!
+    f_{Y_n|X_{t_n}}(y^*_n\vert x_{t_n} ; \theta)\,
+    f_{X_{t_n}|X_{t_{n-1}}}(x_{t_n}|x_{t_{n-1}} ; \theta)\, \dd{x}_{t_0}\dots \dd{x}_{t_N}.
+  \end{aligned}
+\end{equation*}
+i.e., computation of the likelihood requires integrating over all possible values of the unobserved latent process at each time point.
+This is very hard to do, in general.
+
+Let's examine some \emph{Monte Carlo} approaches for evaluating this and other difficult integrals.
+An excellent technical reference on Monte Carlo techniques is \citet{Robert2004}.
+
+
+\section{The fundamental theorem of Monte Carlo integration}
+
+The basic insight of Monte Carlo methods is that we can get a numerical approximation to a challenging integral,
+\begin{equation*}
+  H = \int h(x)\,f(x)\,\dd{x},
+\end{equation*}
+if we can simulate (i.e., generate random draws) from the distribution with probability density function $f$.
+
+\begin{thm}[Fundamental theorem of Monte Carlo integration]
+  Let $f_X$ be the probability density function for a random variable $X$, and let $X_{1:J}=\{X_1,\dots,X_J\}$ be an independent and identically distributed sample of size $J$ from $f_X$. 
+  Let ${H_J}$ be the sample average of $h(X_1)\dots,h(X_J)$,
+  \begin{equation*}
+    {H_J} = \frac{1}{J}\,\sum_{j=1}^{J}\!h(X_j).
+  \end{equation*}
+  Then ${H_J}\to H$ as $J\to\infty$ with probability 1.
+  Less formally, we write
+  \begin{equation*}
+    {H_J} \approx \int\!h(x)\,f_X(x)\,\dd{x}.
+  \end{equation*}
+\end{thm}
+\begin{proof}
+  This is the strong law of large numbers, together with the identity that 
+  \begin{equation*}
+    \expect{h(X)}=\int\!h(x)\,f(x)\,\dd{x}.
+  \end{equation*}
+\end{proof}
+
+We can estimate the error in this approximation, because the empirical variance
+\begin{equation*}
+  V_J = \frac{1}{J-1}\,\sum_{j=1}^{J}\!\big[h(X_j)-H_j\big]^2
+\end{equation*}
+approximates the true variance, $\var{h(X)}=\expect{\big[\big(h(X)-\expect[h(X)]\big)^2\big]}$.
+
+The standard error on the approximation $H_{J}\approx \expect{h(X)}$ is therefore $\sqrt{{V_J}/{J}}$.
+From the central limit theorem, the error is approximately normally distributed:
+\begin{equation*}
+  H_J -\expect{h(X)}\sim\dist{Normal}{0,\sqrt{\frac{V_J}{J}}}.
+\end{equation*}
+
+\begin{exercise}
+  Use Monte Carlo integration to estimate
+  \begin{equation*}
+    \int_{-1}^1\!\frac{\dd{x}}{1+x^4}.
+  \end{equation*}
+  Take $J$ large enough so that your estimate is accurate to 3 decimal places.
+  <<include=FALSE,purl=FALSE>>=
+  h <- function (x) {1/(1+x^4)}
+  u <- runif(n=1000000,min=-1,max=1)
+  f <- dunif(x=u,min=-1,max=1)
+  c(mean(h(u)/f),sd(h(u)/f)/sqrt(length(u)))
+  (pi+log((sqrt(2)+1)/(sqrt(2)-1)))/2/sqrt(2)  
+  @ 
+  <<include=FALSE,purl=FALSE>>=
+  h <- function (x) {1/(1+x^4)}
+  u <- rcauchy(n=1000000)
+  f <- dcauchy(x=u)
+  c(mean(h(u)/f),sd(h(u)/f)/sqrt(length(u)))
+  pi/sqrt(2)
+  @ 
+\end{exercise}
+
+The fundamental theorem of Monte Carlo inspires us to give further thought to the problem of simulating from a desired density function $f$, which can itself be a challenging problem.
+However, we first consider a useful generalization of the fundamental theorem.
+
+\section{Importance sampling}
+
+Sometimes it is difficult to sample directly from the distribution of $X$.
+In this case, we can often make use of \emph{importance sampling}, in which we generate random samples from another distribution (easier to simulate) and make the appropriate correction.
+Specifically, suppose we wish to compute $\expect{h(X)}$, where $X\sim f$, but it is  difficult or impossible to draw random samples from $f$.
+Suppose $g$ is a probability distribution from which it is relatively easy to draw samples and let $Y_{1:J}\stackrel{iid}{\sim}g$.
+
+The observation that
+\begin{equation*}
+  \expect{h(X)} = \int\!h(x)\,f(x)\,\dd{x} = \int\!h(x)\,\frac{f(x)}{g(x)}\,g(x)\,\dd{x}.
+\end{equation*}
+allows us to generalize the Monte Carlo integration theorem to give the \textbf{Monte Carlo importance sampling theorem}:
+\begin{equation*}
+  \expect{h(X)} \approx \frac{1}{J}\,\sum_{j=1}^{J} h(Y_j)\,\frac{f(Y_j)}{g(Y_j)}.
+\end{equation*}
+
+If we call $w_j=f(Y_j)/g(Y_j)$ the \emph{importance weights}, we can write
+\begin{equation*}
+  \expect{h(X)} \approx \frac{1}{J}\,\sum_{j=1}^{J} w_j\,h(Y_j).
+\end{equation*}
+
+Since $\expect{w_j} = \expect{f(Y)/g(Y)}=1$, we can modify this formula to give a \emph{self-normalized importance sampling} estimate,
+\begin{equation*}
+  \expect{h(X)} \approx \frac{\sum w_j\,h(Y_j)}{\sum w_j}.
+\end{equation*}
+
+The self-normalized estimate requires computation of $w_j$ only up to a constant of proportionality.
+
+The Monte Carlo variance associated with this estimate is
+\begin{equation*}
+  \frac{\sum w_j\,(h(Y_j)-\overline{h})^2}{\sum w_j}.
+\end{equation*}
+
+Obtaining accurate estimates requires some thought to the importance distribution $g$.
+Specifically, if the tails of $g$ are lighter than those of $f$, the Monte Carlo variance will be inflated and the estimates can be unusable.
+
+\section{Simulation techniques for general distributions}
+
+Simulation refers to the generation of random variables.
+The general problem of simulation is:
+given a probability distribution $f$, find a procedure that generates random draws from $f$.
+This is a very important problem in scientific computing and much thought and effort has gone into producing reliable simulators for many basic random variables.
+
+There are two basic ways of solving this problem: 
+\begin{enumerate}[(1)]
+\item the transformation method.
+\item the rejection method.
+\end{enumerate}
+
+\subsection{The transformation method}
+
+This method works for discrete or continuous scalar random variables.
+Let $f$ be the probability distribution function we seek to draw from (known as the \emph{target distribution}) and $F$ be the corresponding cumulative distribution function, i.e., $F(x) = \int_{-\infty}^x f(v)\, dv$.
+
+Let $F^{-1}(u) = \inf\{x: F(x)\,\ge\,u\}$ be the inverse of $F$.
+
+A basic fact is that, if $X\sim f$, then $F(X)\sim\dist{Uniform}{0,1}$.
+
+\begin{proof}
+  If $f(X)>0$, then 
+  \begin{equation*}
+    \prob{F(X)\,\le\,u} = \prob{X\,<\,F^{-1}(u)} = F\big(F^{-1}(u)\big) = u.
+  \end{equation*}
+\end{proof}
+
+This suggests that, if we can compute $F^{-1}$, we use the following algorithm to generate $X\sim f$:
+\begin{enumerate}[(a)]
+\item Draw $U\sim\dist{Uniform}{0,1}$.
+\item Let $X = F^{-1}(U)$.
+\end{enumerate}
+
+
+\subsection{The rejection method}
+
+The transformation method is very efficient in that we are guaranteed to obtain a valid $X$ from the density $f$ for every $U\sim\dist{Uniform}{0,1}$ we generate.
+Sometimes, however, we cannot compute the inverse of the cumulative distribution function, as required by the transformation method.
+Under such circumstances, the rejection method offers a less efficient, but more flexible, alternative.
+
+We'll see how and why this method works in a simple case.
+Suppose a random variable $X$ is \emph{uniformly distributed} over a region $D\subset\mathbb{R}^{d}$.
+This means that, for any ${A}\subset{D}$, 
+\begin{equation*}
+  \prob{X\in{A}}=\frac{m(A)}{m(D)},
+\end{equation*}
+where $m$ signifies the Lebesgue measure (i.e., ordinary Euclidean volume).
+To describe this situation, we say $X\sim\dist{Uniform}{D}$.
+
+Let's suppose that we wish to simulate such an $X$.
+If $D$ has a complicated shape, we might not know how to directly simulate a random draw from it.
+However, if we know $D$ is a subset of some nicer region $U\subset\mathbb{R}^{d}$ and, in particular, if we know how to generate $Y\sim\dist{Uniform}{U}$, then we can simply do so until ${Y}\in{D}$, at which point we take $X=Y$.
+Since for any $A\subset{D}$, 
+\begin{equation*}
+  \prob{X\in A} = \prob{Y\in A\vert Y\in D} = \frac{m(A)}{m(U)}\Big{/}\frac{m(D)}{m(U)} = \frac{m(A)}{m(D)},
+\end{equation*}
+it follows that $Y\sim\dist{Uniform}{D}$.
+Fig.~\ref{fig:mcintegration} illustrates.
+
+Consider an analogy to throwing darts. If the darts are thrown in such a way as to be equally likely to land anywhere in $U$, then those that do land in $D$ are equally likely to land anywhere in $D$.
+
+\begin{figure}[t]
+  <<region-diagram,echo=FALSE,purl=FALSE,fig.dim=c(3,2),out.width="50%">>=
+  op <- par(mar=c(0,1,0,1),mgp=c(2,1,0),font=4,family="sans")
+  plot(c(0,1),c(0,1),type='n',ann=F,bty='o',tcl=0)
+  t <- seq(0,1,by=0.001)
+  xyc <- rbind(
+    a=c(0.89,0.64),
+    aa=c(0.63,0.81),
+    b=c(0.67,0.96),
+    c=c(0.21,0.89),
+    d=c(0.35,0.35),
+    e=c(0.03,0.4),
+    f=c(0.28,0.04),
+    g=c(0.75,0.03),
+    h=c(0.6,0.6)
+  )
+  basis <- pomp::periodic.bspline.basis(t,degree=2,nbasis=nrow(xyc),period=1)
+  xy <- basis%*%xyc
+  lines(xy[,1],xy[,2],lwd=1.5)
+  xyc <- rbind(
+    a=c(0.39,0.33),
+    b=c(0.49,0.33),
+    c=c(0.49,0.23),
+    d=c(0.39,0.23)
+  )
+  basis <- pomp::periodic.bspline.basis(t,degree=1,nbasis=nrow(xyc),period=1)
+  xy <- basis%*%xyc
+  lines(xy[,1],xy[,2])
+  text(x=c(0.05,0.5,0.9),y=c(0.95,0.75,0.1),labels=c("U","D","A"))
+  arrows(0.88,0.1,0.44,0.28,lwd=1.5,length=0.02)
+  par(op)
+  @
+  \caption{
+    \textbf{Monte Carlo integration.}
+    If it is difficult to sample a point from $D$ directly, we can propose uniform draws $X$ from a larger set $U$, and accept the proposals only if $X\in{D}$.
+    \label{fig:mcintegration}
+  }
+\end{figure}
+
+A useful little fact allows us to extend the rejection method from uniform distributions to arbitrary densities. 
+\citet{Robert2004} refer to this as the \emph{fundamental theorem of simulation}.
+
+\begin{thm}[Fundamental theorem of simulation]
+  Let $\mathbb{X}\subset\mathbb{R}^d$ and suppose $f:\mathbb{X}\to\mathbb{R}_+$ satisfies $\int\!f(x)\dd{x}=1$.
+  Define
+  \begin{equation*}
+    D=\{(x,u)\in\mathbb{X}\times\mathbb{R}_+: x\in\mathbb{R}^d, 0 \le u \le f(x)\},
+  \end{equation*}
+  i.e., $D$ is the region under the graph of $f$.
+  If $(X,U)\!\sim\!\dist{Uniform}{D}$, then $X\sim f$.
+\end{thm}
+\begin{proof}
+  The marginal distribution of $X$ is
+  \begin{equation*}
+    \int_0^{f(x)}\!\dd{u} = f(x).
+  \end{equation*}
+\end{proof}
+
+This suggests the following rejection method for simulating an arbitrary random variable, illustrated in Fig.~\ref{fig:sim}.
+Let $f$ be the target distribution and $g$ be another density from which it is easy to simulate.
+Choose $M$ so large that $M\,g(x) \ge f(x)$ for all $x$.
+Then the following procedure simulates $X\!\sim\!f$:
+\begin{enumerate}[(1)]
+\item Draw $Y\!\sim\!g$ and $U\!\sim\!\dist{Uniform}{0,M}$.
+  This is the \emph{proposal}.
+\item If $U \le \frac{f(Y)}{g(Y)}$, \emph{accept} the proposal, i.e., let $X=Y$, else repeat step 1.
+\end{enumerate}
+
+\begin{figure}[t]
+  <<rejection-method-diagram,echo=FALSE,purl=FALSE,fig.dim=c(3,2),out.width="50%">>=
+  op <- par(mar=c(0,1,0,1),mgp=c(2,1,0),font=4,family="sans")
+  x <- seq(-5,10,by=0.01)
+  F <- function (x) {
+    0.2*dnorm(x,mean=-2,sd=0.5)+0.5*dnorm(x,mean=1,sd=1)+0.3*dnorm(x,mean=6,sd=2)
+  }
+  f <- F(x)
+  G <- function (x) {
+    dnorm(x,mean=1,sd=5)
+  }
+  g <- G(x)
+  M <- 1.1*max(f)/max(g)
+  X <- rnorm(n=300,mean=1,sd=5)
+  U <- runif(n=length(X),max=M)
+  Y <- X[U<F(X)/G(X)]
+  X <- X[U>=F(X)/G(X)]
+  plot(range(x),range(c(f,M*g)),
+    type='n',xlab="x",ylab="pdf",bty="l")
+  lines(x,M*g,col='black',lwd=1)
+  lines(x,M*g,col='white',lwd=0.4,lty=2)
+  lines(x,g,col='black',lwd=1)
+  lines(x,g,col='white',lwd=0.4,lty=1)
+  lines(x,f,col='black',lwd=1)
+  text(
+    x=c(6.2,2.5,-4.2),
+    y=c(0.16,0.14,0.057),
+    labels=c("M g","f","g"),
+    font=3
+  )
+  rug(X,ticksize=0.03)
+  rug(Y,ticksize=0.06)
+  par(op)
+  @
+  \caption{
+    \textbf{The rejection method for simulating an arbitrary random variable.}
+    The target density is $f$.
+    We propose samples $X\sim g$ and accept the proposal only if $U\sim\dist{Uniform}{0,M}$ satisfies $U\le f(X)/g(X)$.
+    The short ticks at bottom show the proposals $X$.
+    The longer ticks show the accepted proposals, which are samples drawn from $f$.
+    \label{fig:sim}
+  }
+\end{figure}
+
+\bibliographystyle{jss}
+\bibliography{mathecol}
+
+\end{document}

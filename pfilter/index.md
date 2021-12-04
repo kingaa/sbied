@@ -14,7 +14,7 @@ output: html_document
 | Quiz                                                                                       | [PDF](quiz.pdf)                                                                             |
 | **R** script for the lesson                                                                | [**R**](main.R)                                                                             |
 | Supplement: Deterministic latent process models and their role in benchmarking POMP models | [HTML](deterministic.html)                                                                  |
-| Supplement: Monte Carlo Methods                                                            | [HTML](monteCarlo.html)                                                                     |
+| Supplement: Monte Carlo Methods                                                            | [PDF](monteCarlo.pdf)                                                                       |
 | Supplement: Likelihood by direct simulation: Consett measles example                       | [HTML](directSimulation.html)                                                               |
 | Supplement: Standard errors via the observed Fisher information                            | [HTML](fisherSE.html)                                                                       |
 | Supplement: Bootstrap methods                                                              | [HTML](bootstrap.html)                                                                      |
