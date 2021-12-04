@@ -6,10 +6,8 @@
 
 \begin{document}
 
-% knitr set up
 <<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
 @
-
 
 <<prelims,echo=F,cache=F>>=
 library(tidyverse)

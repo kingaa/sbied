@@ -3,3 +3,6 @@
 \date{}
 \input{../beamer}
 \input{main}
+
+<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
+@
