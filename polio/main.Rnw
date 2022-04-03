@@ -350,8 +350,9 @@ options(dplyr.summarise.inform=FALSE)
   covar <- covariate_table(
     t=data$time,
     B=data$births,
-    P=predict(smooth.spline(x=1931:1954,
-      y=data$pop[seq(12,24*12,by=12)]))$y,
+    P=predict(
+      smooth.spline(x=1931:1954,y=data$pop[seq(12,24*12,by=12)]),
+      x=data$time)$y,
     periodic.bspline.basis(t,nbasis=K,
       degree=3,period=1,names="xi%d"),
     times="t"
@@ -639,9 +640,13 @@ options(dplyr.summarise.inform=FALSE)
 
   \frametitle{Likelihood evaluation at the starting parameter estimate}
 
+<<cache-setup>>=
+results_dir <- paste0("results_",run_level,"/")
+if(!dir.exists(results_dir)) dir.create(results_dir)
+@
 
   <<pf1>>=
-  stew(file="results/pf1.rda",{
+  stew(file=paste0(results_dir,"pf1.rda"),{
     registerDoRNG(3899882)
     pf1 <- foreach(i=1:20,.packages="pomp",
       .export=c("polio","Np")) %dopar%
@@ -652,7 +657,7 @@ options(dplyr.summarise.inform=FALSE)
   
   \bi
 
-\item In  \Sexpr{round(.system.time[3],1)} seconds, we obtain a log likelihood estimate of \Sexpr{round(L1[1],2)} with a Monte Carlo standard error of \Sexpr{round(L1[2],2)}.
+\item In  \Sexpr{myround(.system.time[3],1)} seconds, we obtain a log likelihood estimate of \Sexpr{myround(L1[1],2)} with a Monte Carlo standard error of \Sexpr{myround(L1[2],2)}.
 
 \item Here, we use \code{stew()} to \myemph{cache} the results of the computation.
   \ei
@@ -843,7 +848,7 @@ options(dplyr.summarise.inform=FALSE)
   exl <- c("polio","Np","Nmif","rw_sd",
     "Nreps_local","Nreps_eval")
   
-  stew(file="results/mif.rda",{
+  stew(file=paste0(results_dir,"mif.rda"),{
     m2 <- foreach(i=1:Nreps_local,
       .packages="pomp",.combine=c,.export=exl) %dopar%
       mif2(polio, Np=Np, Nmif=Nmif, rw.sd=rw_sd,
@@ -870,7 +875,7 @@ options(dplyr.summarise.inform=FALSE)
   
   \bi
 
-\item This investigation took \Sexpr{round(.system.time[3]/60,1)}~min.
+\item This investigation took \Sexpr{myround(.system.time[3]/60,1)}~min.
 \item These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 
   \ei
@@ -928,14 +933,14 @@ options(dplyr.summarise.inform=FALSE)
   We then carry out a search identical to the local one except for the starting parameter values. This can be succinctly coded by calling \code{mif2} on the previously constructed object, \code{m2[[1]]}, with a reset starting value:
 
   <<box_eval>>=
-  bake(file="results/box_eval1.rds",{
+  bake(file=paste0(results_dir,"box_eval1.rds"),{
     registerDoRNG(833102018)
     foreach(i=1:Nreps_global,.packages="pomp",
       .combine=c) %dopar%
       mif2(m2[[1]],params=c(fixed_params,
         apply(box,1,function(x)runif(1,x[1],x[2]))))
   },dependson=run_level) -> m3
-  bake(file="results/box_eval2.rds",{
+  bake(file=paste0(results_dir,"box_eval2.rds"),{
     registerDoRNG(71449038)
     foreach(m=m3,.packages="pomp",
       .combine=rbind) %dopar%
@@ -961,7 +966,7 @@ options(dplyr.summarise.inform=FALSE)
   
   \bi
 
-\item Evaluation of the best result of this search gives a likelihood of \Sexpr{round(max(r3$logLik),1)} with a standard error of \Sexpr{round(r3$logLik_se[which.max(r3$logLik)],1)}.
+\item Evaluation of the best result of this search gives a likelihood of \Sexpr{myround(max(r3$logLik),1)} with a standard error of \Sexpr{myround(r3$logLik_se[which.max(r3$logLik)],1)}.
   We see that optimization attempts from diverse remote starting points can approach our MLE, but do not exceed it. This gives us some reasonable confidence in our MLE. 
 
 \item Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface 
@@ -999,7 +1004,7 @@ options(dplyr.summarise.inform=FALSE)
   @
   
   \bi
-\item A model with likelihood below \Sexpr{round(-nb_mle$value,1)} is unreasonable. This explains a cutoff around this value in the global searches: in these cases, the model is finding essentially IID explanations for the data.
+\item A model with likelihood below \Sexpr{myround(-nb_mle$value,1)} is unreasonable. This explains a cutoff around this value in the global searches: in these cases, the model is finding essentially IID explanations for the data.
   \ei
 
 \end{frame}
@@ -1022,7 +1027,7 @@ options(dplyr.summarise.inform=FALSE)
   
   \bi
 
-\item This 7-parameter model, which knows nothing of susceptible depletion, attains a likelihood of \Sexpr{round( arma_fit$loglik-sum(log_y),1)}.
+\item This 7-parameter model, which knows nothing of susceptible depletion, attains a likelihood of \Sexpr{myround(arma_fit$loglik-sum(log_y),1)}.
 \item The aim of mechanistic modeling here is not to beat non-mechanistic models, but it is comforting that we're competitive with them.
 
   \ei
@@ -1144,7 +1149,7 @@ options(dplyr.summarise.inform=FALSE)
 \begin{frame}[fragile]
 
   <<profile_rho>>=
-  bake(file="results/profile_rho.rds",{  
+  bake(file=paste0(results_dir,"profile_rho.rds"),{  
     registerDoRNG(1888257101)
     foreach(start=iter(starts,"row"),.combine=rbind,
       .packages=c("pomp","dplyr")) %dopar% {
