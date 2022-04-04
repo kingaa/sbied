@@ -659,10 +659,10 @@ bake(file=paste0(results_dir,"cores.rds"),{cores}) -> cores
   },info=TRUE,dependson=Np)
   L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
   @
-  
+
   \bi
 
-\item In  \Sexpr{myround(.system.time[3],1)} seconds, we obtain a log likelihood estimate of \Sexpr{myround(L1[1],2)} with a Monte Carlo standard error of \Sexpr{myround(L1[2],2)}.
+\item In  \Sexpr{myround(.system.time[3],1)} seconds (with \Sexpr{cores} cores) we obtain a log likelihood estimate of \Sexpr{myround(L1[1],2)} with a Monte Carlo standard error of \Sexpr{myround(L1[2],2)}.
 
 \item Here, we use \code{stew()} to \myemph{cache} the results of the computation.
   \ei
