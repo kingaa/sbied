@@ -21,8 +21,9 @@ K <- 6
 covar <- covariate_table(
   t=data$time,
   B=data$births,
-  P=predict(smooth.spline(x=1931:1954,
-    y=data$pop[seq(12,24*12,by=12)]))$y,
+  P=predict(
+    smooth.spline(x=1931:1954,y=data$pop[seq(12,24*12,by=12)]),
+    x=data$time)$y,
   periodic.bspline.basis(t,nbasis=K,
     degree=3,period=1,names="xi%d"),
   times="t"
@@ -136,10 +137,16 @@ Nreps_global <-switch(run_level, 10,  20, 100)
 Nsim <-        switch(run_level, 50, 100, 500) 
 
 library(doParallel)
+cores <- as.numeric(Sys.getenv('SLURM_NTASKS_PER_NODE',unset=NA))  
+if(is.na(cores)) cores <- detectCores()  
 registerDoParallel()
 library(doRNG)
 
-stew(file="results/pf1.rda",{
+results_dir <- paste0("results_",run_level,"/")
+if(!dir.exists(results_dir)) dir.create(results_dir)
+bake(file=paste0(results_dir,"cores.rds"),{cores}) -> cores
+
+stew(file=paste0(results_dir,"pf1.rda"),{
   registerDoRNG(3899882)
   pf1 <- foreach(i=1:20,.packages="pomp",
     .export=c("polio","Np")) %dopar%
@@ -185,8 +192,8 @@ if (file.exists("CLUSTER.R")) {
 
 exl <- c("polio","Np","Nmif","rw_sd",
   "Nreps_local","Nreps_eval")
-
-stew(file="results/mif.rda",{
+  
+stew(file=paste0(results_dir,"mif.rda"),{
   m2 <- foreach(i=1:Nreps_local,
     .packages="pomp",.combine=c,.export=exl) %dopar%
     mif2(polio, Np=Np, Nmif=Nmif, rw.sd=rw_sd,
@@ -196,6 +203,9 @@ stew(file="results/mif.rda",{
     logmeanexp(replicate(Nreps_eval,
       logLik(pfilter(m,Np=Np))),se=TRUE)
 },dependson=run_level)
+load(file=paste0(results_dir,"mif.rda"))
+mif_time <- .system.time
+
 
 coef(m2) %>% melt() %>% spread(parameter,value) %>%
   select(-.id) %>%
@@ -215,14 +225,14 @@ box <- rbind(
   SO_0=c(0,1), IO_0=c(0,0.01)
 )
 
-bake(file="results/box_eval1.rds",{
+bake(file=paste0(results_dir,"box_eval1.rds"),{
   registerDoRNG(833102018)
   foreach(i=1:Nreps_global,.packages="pomp",
     .combine=c) %dopar%
     mif2(m2[[1]],params=c(fixed_params,
       apply(box,1,function(x)runif(1,x[1],x[2]))))
 },dependson=run_level) -> m3
-bake(file="results/box_eval2.rds",{
+bake(file=paste0(results_dir,"box_eval2.rds"),{
   registerDoRNG(71449038)
   foreach(m=m3,.packages="pomp",
     .combine=rbind) %dopar%
@@ -243,8 +253,7 @@ summary(r3$logLik,digits=5)
 
 nb_lik <- function (theta) {
   -sum(dnbinom(as.numeric(obs(polio)),
-               size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))
-}
+     size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))}
 nb_mle <- optim(c(0,-5),nb_lik)
 -nb_mle$value
 
@@ -288,7 +297,7 @@ profile_rw_sd <- eval(substitute(rw.sd(
   IO_0=ivp(rwi),SO_0=ivp(rwi)),
   list(rwi=0.2,rwr=0.02)))
 
-bake(file="results/profile_rho.rds",{  
+bake(file=paste0(results_dir,"profile_rho.rds"),{  
   registerDoRNG(1888257101)
   foreach(start=iter(starts,"row"),.combine=rbind,
     .packages=c("pomp","dplyr")) %dopar% {
@@ -307,6 +316,26 @@ bake(file="results/profile_rho.rds",{
       bind_cols(logLik=ll[1],logLik_se=ll[2])
   }
 },dependson=run_level) -> m4
+
+## bake(file=paste0(results_dir,"profile_rho.rds"),{
+##   registerDoRNG(1888257101)
+##   foreach(start=iter(starts,"row"),.combine=rbind,
+##     .packages=c("pomp","dplyr")) %dopar% {
+##     polio %>% mif2(params=start,
+##       Np=Np,Nmif=ceiling(Nmif/2),
+##       cooling.fraction.50=0.5,
+##       rw.sd=profile_rw_sd
+##     ) %>%
+##       mif2(Np=Np,Nmif=ceiling(Nmif/2),
+##         cooling.fraction.50=0.1
+##       ) -> mf
+##     replicate(Nreps_eval,
+##       mf %>% pfilter(Np=Np) %>% logLik()
+##     ) %>% logmeanexp(se=TRUE) -> ll
+##     mf %>% coef() %>% bind_rows() %>%
+##       bind_cols(logLik=ll[1],logLik_se=ll[2])
+##   }
+## },dependson=run_level) -> m4
 
 
 

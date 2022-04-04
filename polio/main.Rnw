@@ -625,13 +625,13 @@ options(dplyr.summarise.inform=FALSE)
   Here, we set up the code to run on either a local machine or a slurm cluster  
 \ei
 
-  <<parallel-setup>>=
-  library(doParallel)
-  cores <-  as.numeric(Sys.getenv('SLURM_NTASKS_PER_NODE', unset=NA))
-  if(is.na(cores)) cores <- detectCores()  
-  registerDoParallel()
-  library(doRNG)
-  @
+<<parallel-setup>>=
+library(doParallel)
+cores <- as.numeric(Sys.getenv('SLURM_NTASKS_PER_NODE',unset=NA))  
+if(is.na(cores)) cores <- detectCores()  
+registerDoParallel()
+library(doRNG)
+@
   
   \bi
 \item Our task, like most statistical computing, is \myemph{embarrassingly parallel}.
@@ -647,6 +647,7 @@ options(dplyr.summarise.inform=FALSE)
 <<cache-setup>>=
 results_dir <- paste0("results_",run_level,"/")
 if(!dir.exists(results_dir)) dir.create(results_dir)
+bake(file=paste0(results_dir,"cores.rds"),{cores}) -> cores
 @
 
   <<pf1>>=
@@ -848,34 +849,37 @@ if(!dir.exists(results_dir)) dir.create(results_dir)
   }
   @
   
-  <<mif>>=
-  exl <- c("polio","Np","Nmif","rw_sd",
-    "Nreps_local","Nreps_eval")
+<<mif>>=
+exl <- c("polio","Np","Nmif","rw_sd",
+  "Nreps_local","Nreps_eval")
   
-  stew(file=paste0(results_dir,"mif.rda"),{
-    m2 <- foreach(i=1:Nreps_local,
-      .packages="pomp",.combine=c,.export=exl) %dopar%
-      mif2(polio, Np=Np, Nmif=Nmif, rw.sd=rw_sd,
-           cooling.fraction.50=0.5)
-    lik_m2 <- foreach(m=m2,.packages="pomp",.combine=rbind,
-      .export=exl) %dopar%
-      logmeanexp(replicate(Nreps_eval,
-        logLik(pfilter(m,Np=Np))),se=TRUE)
-  },dependson=run_level)
-  @
-  
+stew(file=paste0(results_dir,"mif.rda"),{
+  m2 <- foreach(i=1:Nreps_local,
+    .packages="pomp",.combine=c,.export=exl) %dopar%
+    mif2(polio, Np=Np, Nmif=Nmif, rw.sd=rw_sd,
+         cooling.fraction.50=0.5)
+  lik_m2 <- foreach(m=m2,.packages="pomp",.combine=rbind,
+    .export=exl) %dopar%
+    logmeanexp(replicate(Nreps_eval,
+      logLik(pfilter(m,Np=Np))),se=TRUE)
+},dependson=run_level)
+load(file=paste0(results_dir,"mif.rda"))
+mif_time <- .system.time
+
+@
+
 \end{frame}
 
 \begin{frame}[fragile]
 
-  <<search-save>>=
-  coef(m2) %>% melt() %>% spread(parameter,value) %>%
-    select(-.id) %>%
-    bind_cols(logLik=lik_m2[,1],logLik_se=lik_m2[,2]) -> r2
-  r2 %>% arrange(-logLik) %>%
-    write_csv("params.csv")
-  summary(r2$logLik,digits=5)
-  @
+<<search-save>>=
+coef(m2) %>% melt() %>% spread(parameter,value) %>%
+  select(-.id) %>%
+  bind_cols(logLik=lik_m2[,1],logLik_se=lik_m2[,2]) -> r2
+r2 %>% arrange(-logLik) %>%
+  write_csv("params.csv")
+summary(r2$logLik,digits=5)
+@
   
   \bi
 
@@ -887,10 +891,10 @@ if(!dir.exists(results_dir)) dir.create(results_dir)
 \end{frame}
 
 \begin{frame}[fragile]
-  <<pairs,purl=FALSE>>=
-  pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
-    data=subset(r2,logLik>max(logLik)-20))
-  @
+<<pairs,purl=FALSE>>=
+pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
+  data=subset(r2,logLik>max(logLik)-20))
+@
   
 \end{frame}
 
@@ -1001,8 +1005,7 @@ if(!dir.exists(results_dir)) dir.create(results_dir)
   <<nbinom>>=
   nb_lik <- function (theta) {
     -sum(dnbinom(as.numeric(obs(polio)),
-                 size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))
-  }
+       size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))}
   nb_mle <- optim(c(0,-5),nb_lik)
   -nb_mle$value
   @
@@ -1142,17 +1145,8 @@ if(!dir.exists(results_dir)) dir.create(results_dir)
     IO_0=ivp(rwi),SO_0=ivp(rwi)),
     list(rwi=0.2,rwr=0.02)))
   @
-  
-  \bi
-\item
-  Otherwise, the following code to compute the profile is identical to a global search $\dots$
-  \ei
 
-\end{frame}
-
-\begin{frame}[fragile]
-
-  <<profile_rho>>=
+  <<profile_rho,eval=T,echo=F>>=
   bake(file=paste0(results_dir,"profile_rho.rds"),{  
     registerDoRNG(1888257101)
     foreach(start=iter(starts,"row"),.combine=rbind,
@@ -1173,7 +1167,22 @@ if(!dir.exists(results_dir)) dir.create(results_dir)
     }
   },dependson=run_level) -> m4
   @
-  
+
+  \bi
+\item
+  Otherwise, the following code to compute the profile is identical to a global search $\dots$
+\item It took $\Sexpr{myround(attr(m4,"system.time")["elapsed"]/60,1)}$ minutes to run on $\Sexpr{cores}$ cores.
+  \ei
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+
+<<profile_rho_code,echo=T,eval=F>>=
+<<profile_rho>>
+@
+
 \end{frame}
 
 
