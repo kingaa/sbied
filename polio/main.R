@@ -139,12 +139,12 @@ Nsim <-        switch(run_level, 50, 100, 500)
 library(doParallel)
 cores <- as.numeric(Sys.getenv('SLURM_NTASKS_PER_NODE',unset=NA))  
 if(is.na(cores)) cores <- detectCores()  
-registerDoParallel()
+registerDoParallel(cores)
 library(doRNG)
 
 results_dir <- paste0("results_",run_level,"/")
 if(!dir.exists(results_dir)) dir.create(results_dir)
-bake(file=paste0(results_dir,"cores.rds"),{cores}) -> cores
+bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
 
 stew(file=paste0(results_dir,"pf1.rda"),{
   registerDoRNG(3899882)

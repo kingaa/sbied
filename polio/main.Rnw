@@ -619,36 +619,35 @@ options(dplyr.summarise.inform=FALSE)
   \frametitle{Parallel set-up}
 
   \bi
-\item
-  As discussed in earlier lessons, we ask {\Rlanguage} to access multiple processors and we set up a parallel random number generator.
-\item 
-  Here, we set up the code to run on either a local machine or a slurm cluster  
+\item We ask {\Rlanguage} to access multiple processors, on a local machine or a slurm cluster.  
 \ei
 
 <<parallel-setup>>=
 library(doParallel)
 cores <- as.numeric(Sys.getenv('SLURM_NTASKS_PER_NODE',unset=NA))  
 if(is.na(cores)) cores <- detectCores()  
-registerDoParallel()
+registerDoParallel(cores)
 library(doRNG)
 @
   
   \bi
-\item Our task, like most statistical computing, is \myemph{embarrassingly parallel}.
-\item Therefore, we can use a simple parallel for loop via \code{foreach()}
+\item Our task, like most statistical computing, is \myemph{embarrassingly parallel} so we can use a simple parallel for loop via \code{foreach()}
   \ei
+<<cache-cores>>=
+results_dir <- paste0("results_",run_level,"/")
+if(!dir.exists(results_dir)) dir.create(results_dir)
+bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
+@
+\bi
+\item We set up a cache directory and record the number of cores used for the cached results.
+\ei
+
 \end{frame}
 
 
 \begin{frame}[fragile]
 
   \frametitle{Likelihood evaluation at the starting parameter estimate}
-
-<<cache-setup>>=
-results_dir <- paste0("results_",run_level,"/")
-if(!dir.exists(results_dir)) dir.create(results_dir)
-bake(file=paste0(results_dir,"cores.rds"),{cores}) -> cores
-@
 
   <<pf1>>=
   stew(file=paste0(results_dir,"pf1.rda"),{
@@ -717,7 +716,7 @@ bake(file=paste0(results_dir,"cores.rds"),{cores}) -> cores
 
 \end{frame}
 
-\begin{frame}{\code{stew} and \code{bake}}
+\begin{frame}[fragile]{\code{stew} and \code{bake}}
 
 
   \bi
@@ -736,6 +735,8 @@ bake(file=paste0(results_dir,"cores.rds"),{cores}) -> cores
 \item  \code{stew} and \code{bake} reset the seed appropriately whether or not the computation is recomputed. Otherwise, caching risks adverse consequences for reproducibility.
 
   \ei
+
+
 
 \end{frame}   
 
