@@ -621,10 +621,14 @@ options(dplyr.summarise.inform=FALSE)
   \bi
 \item
   As discussed in earlier lessons, we ask {\Rlanguage} to access multiple processors and we set up a parallel random number generator.
-  \ei
+\item 
+  Here, we set up the code to run on either a local machine or a slurm cluster  
+\ei
 
   <<parallel-setup>>=
   library(doParallel)
+  cores <-  as.numeric(Sys.getenv('SLURM_NTASKS_PER_NODE', unset=NA))
+  if(is.na(cores)) cores <- detectCores()  
   registerDoParallel()
   library(doRNG)
   @
