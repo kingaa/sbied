@@ -224,7 +224,7 @@ plot.color <- "black"
     $$\mu_{SE}(t) = \tfrac{\beta(t)}{N(t)}\,(I+\iota)^{\alpha}\,\zeta(t)$$
     \begin{itemize}
     \item $\iota = \text{imported infections}$
-    \item $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ \citep{He2010,bhadra11}
+    \item $\zeta(t) = \text{Gamma white noise with intensity}\,\sigma_{SE}$ \citep{He2010,Bhadra2011}
     \item school-term transmission:
       $$\beta(t) = \begin{cases}\beta_0\,\big(1+a(1-p)/p\big) &\text{during term}\\\beta_0\,(1-a) &\text{during vacation}\end{cases}$$
       \begin{itemize}

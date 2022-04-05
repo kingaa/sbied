@@ -1,6 +1,6 @@
 
-R version 4.1.0 (2021-05-18) -- "Camp Pontanezen"
-Copyright (C) 2021 The R Foundation for Statistical Computing
+R version 4.1.3 (2022-03-10) -- "One Push-Up"
+Copyright (C) 2022 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -21,9 +21,9 @@ Type 'q()' to quit R.
 > library(tidyverse)
 ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
 ✔ ggplot2 3.3.5     ✔ purrr   0.3.4
-✔ tibble  3.1.2     ✔ dplyr   1.0.7
-✔ tidyr   1.1.3     ✔ stringr 1.4.0
-✔ readr   2.0.0     ✔ forcats 0.5.1
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::filter() masks stats::filter()
 ✖ dplyr::lag()    masks stats::lag()
@@ -56,7 +56,7 @@ dbl (4): time, cases, births, pop
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 > head(data,5)
-# A tibble: 5 x 4
+# A tibble: 5 × 4
    time cases births     pop
   <dbl> <dbl>  <dbl>   <dbl>
 1 1931.     7   4698 2990000
@@ -75,8 +75,9 @@ dbl (4): time, cases, births, pop
 > covar <- covariate_table(
 +   t=data$time,
 +   B=data$births,
-+   P=predict(smooth.spline(x=1931:1954,
-+     y=data$pop[seq(12,24*12,by=12)]))$y,
++   P=predict(
++     smooth.spline(x=1931:1954,y=data$pop[seq(12,24*12,by=12)]),
++     x=data$time)$y,
 +   periodic.bspline.basis(t,nbasis=K,
 +     degree=3,period=1,names="xi%d"),
 +   times="t"
@@ -191,10 +192,16 @@ dbl (4): time, cases, births, pop
 > Nsim <-        switch(run_level, 50, 100, 500) 
 > 
 > library(doParallel)
+> cores <- as.numeric(Sys.getenv('SLURM_NTASKS_PER_NODE',unset=NA))  
+> if(is.na(cores)) cores <- detectCores()  
 > registerDoParallel()
 > library(doRNG)
 > 
-> stew(file="results/pf1.rda",{
+> results_dir <- paste0("results_",run_level,"/")
+> if(!dir.exists(results_dir)) dir.create(results_dir)
+> bake(file=paste0(results_dir,"cores.rds"),{cores}) -> cores
+> 
+> stew(file=paste0(results_dir,"pf1.rda"),{
 +   registerDoRNG(3899882)
 +   pf1 <- foreach(i=1:20,.packages="pomp",
 +     .export=c("polio","Np")) %dopar%
@@ -244,14 +251,14 @@ Loading required package: Rmpi
 Master processor name: theorygroup01; nodename: theorygroup01
 Size of MPI universe: 1
 Spawning 250 workers using the command:
-  /export/local/apps/R/R-4.1.0/lib64/R/bin/Rscript /userdata/kingaa/R/x86_64-pc-linux-gnu-library/4.1/doMPI/RMPIworker.R WORKDIR=/userdata/kingaa/teach/sbied/polio/starting-values-exercise LOGDIR=/tmp MAXCORES=1 COMM=3 INTERCOMM=4 MTAG=10 WTAG=11 INCLUDEMASTER=TRUE BCAST=TRUE VERBOSE=TRUE
-App launch reported: 12 (out of 12) daemons - 230 (out of 250) procs
+  /export/local/apps/R/R-4.1.3/lib64/R/bin/Rscript /userdata/kingaa/R/x86_64-pc-linux-gnu-library/4.1/doMPI/RMPIworker.R WORKDIR=/home/kingaa/sbied/polio/starting-values-exercise LOGDIR=/tmp MAXCORES=1 COMM=3 INTERCOMM=4 MTAG=10 WTAG=11 INCLUDEMASTER=TRUE BCAST=TRUE VERBOSE=TRUE
+App launch reported: 12 (out of 12) daemons - 229 (out of 250) procs
 	250 slaves are spawned successfully. 0 failed.
 > 
 > exl <- c("polio","Np","Nmif","rw_sd",
 +   "Nreps_local","Nreps_eval")
-> 
-> stew(file="results/mif.rda",{
+>   
+> stew(file=paste0(results_dir,"mif.rda"),{
 +   m2 <- foreach(i=1:Nreps_local,
 +     .packages="pomp",.combine=c,.export=exl) %dopar%
 +     mif2(polio, Np=Np, Nmif=Nmif, rw.sd=rw_sd,
@@ -261,6 +268,9 @@ App launch reported: 12 (out of 12) daemons - 230 (out of 250) procs
 +     logmeanexp(replicate(Nreps_eval,
 +       logLik(pfilter(m,Np=Np))),se=TRUE)
 + },dependson=run_level)
+> load(file=paste0(results_dir,"mif.rda"))
+> mif_time <- .system.time
+> 
 > 
 > coef(m2) %>% melt() %>% spread(parameter,value) %>%
 +   select(-.id) %>%
@@ -269,7 +279,7 @@ App launch reported: 12 (out of 12) daemons - 230 (out of 250) procs
 +   write_csv("params.csv")
 > summary(r2$logLik,digits=5)
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- -797.0  -795.6  -795.3  -795.3  -795.0  -794.5 
+ -797.6  -796.2  -795.8  -795.9  -795.4  -794.8 
 > 
 > 
 > 
@@ -282,14 +292,14 @@ App launch reported: 12 (out of 12) daemons - 230 (out of 250) procs
 +   SO_0=c(0,1), IO_0=c(0,0.01)
 + )
 > 
-> bake(file="results/box_eval1.rds",{
+> bake(file=paste0(results_dir,"box_eval1.rds"),{
 +   registerDoRNG(833102018)
 +   foreach(i=1:Nreps_global,.packages="pomp",
 +     .combine=c) %dopar%
 +     mif2(m2[[1]],params=c(fixed_params,
 +       apply(box,1,function(x)runif(1,x[1],x[2]))))
 + },dependson=run_level) -> m3
-> bake(file="results/box_eval2.rds",{
+> bake(file=paste0(results_dir,"box_eval2.rds"),{
 +   registerDoRNG(71449038)
 +   foreach(m=m3,.packages="pomp",
 +     .combine=rbind) %dopar%
@@ -313,14 +323,13 @@ dbl (23): b1, b2, b3, b4, b5, b6, psi, rho, tau, sigma_dem, sigma_env, SO_0,...
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 > summary(r3$logLik,digits=5)
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- -876.5  -796.4  -795.5  -798.7  -795.1  -794.4 
+ -870.6  -796.5  -795.8  -797.6  -795.5  -794.8 
 > 
 > 
 > 
 > nb_lik <- function (theta) {
 +   -sum(dnbinom(as.numeric(obs(polio)),
-+                size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))
-+ }
++      size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))}
 > nb_mle <- optim(c(0,-5),nb_lik)
 > -nb_mle$value
 [1] -1036.227
@@ -375,7 +384,7 @@ dbl (23): b1, b2, b3, b4, b5, b6, psi, rho, tau, sigma_dem, sigma_env, SO_0,...
 +   IO_0=ivp(rwi),SO_0=ivp(rwi)),
 +   list(rwi=0.2,rwr=0.02)))
 > 
-> bake(file="results/profile_rho.rds",{  
+> bake(file=paste0(results_dir,"profile_rho.rds"),{  
 +   registerDoRNG(1888257101)
 +   foreach(start=iter(starts,"row"),.combine=rbind,
 +     .packages=c("pomp","dplyr")) %dopar% {
@@ -394,6 +403,26 @@ dbl (23): b1, b2, b3, b4, b5, b6, psi, rho, tau, sigma_dem, sigma_env, SO_0,...
 +       bind_cols(logLik=ll[1],logLik_se=ll[2])
 +   }
 + },dependson=run_level) -> m4
+> 
+> ## bake(file=paste0(results_dir,"profile_rho.rds"),{
+> ##   registerDoRNG(1888257101)
+> ##   foreach(start=iter(starts,"row"),.combine=rbind,
+> ##     .packages=c("pomp","dplyr")) %dopar% {
+> ##     polio %>% mif2(params=start,
+> ##       Np=Np,Nmif=ceiling(Nmif/2),
+> ##       cooling.fraction.50=0.5,
+> ##       rw.sd=profile_rw_sd
+> ##     ) %>%
+> ##       mif2(Np=Np,Nmif=ceiling(Nmif/2),
+> ##         cooling.fraction.50=0.1
+> ##       ) -> mf
+> ##     replicate(Nreps_eval,
+> ##       mf %>% pfilter(Np=Np) %>% logLik()
+> ##     ) %>% logmeanexp(se=TRUE) -> ll
+> ##     mf %>% coef() %>% bind_rows() %>%
+> ##       bind_cols(logLik=ll[1],logLik_se=ll[2])
+> ##   }
+> ## },dependson=run_level) -> m4
 > 
 > 
 > 
@@ -419,5 +448,5 @@ dbl (23): b1, b2, b3, b4, b5, b6, psi, rho, tau, sigma_dem, sigma_env, SO_0,...
 +   ylim=max(loglik_convergence,na.rm=T)+c(-10,0))
 > 
 > proc.time()
-   user  system elapsed 
-  9.935   2.837  11.561 
+    user   system  elapsed 
+ 403.930 2688.814 3042.945 
