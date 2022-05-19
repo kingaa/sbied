@@ -1,7 +1,7 @@
 ---
-title: Syllabus for SISMID Module 7
+title: Syllabus for SISMID Module 14
 subtitle: Simulation-based Inference for Epidemiological Dynamics
-date: "12--14 July 2021"
+date: "25--27 July 2022"
 ---
 
 <style type="text/css">

@@ -1,5 +1,5 @@
 ---
-title: "SISMID 2020 Module 7:<br>Simulation-based Inference for Epidemiological Dynamics"
+title: "SISMID 2020 Module 14:<br>Simulation-based Inference for Epidemiological Dynamics"
 subtitle: '<br><div style="font-size: 72pt;">Welcome!</div>'
 output: 
   revealjs::revealjs_presentation:
