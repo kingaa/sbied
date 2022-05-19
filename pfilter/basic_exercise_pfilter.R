@@ -3,11 +3,8 @@ list(prefix = "basic_exercise/")
 
 set.seed(594709947L)
 library(ggplot2)
-library(plyr)
-library(reshape2)
-library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="3.0")
+stopifnot(packageVersion("pomp")>="4.2")
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 

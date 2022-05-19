@@ -1,4 +1,6 @@
-library(plyr)
+params <-
+list(prefix = "seir3_exercise/")
+
 library(tidyverse)
 library(pomp)
 stopifnot(packageVersion("pomp")>="3.0")
@@ -8,7 +10,6 @@ set.seed(1221234211)
 
 
 
-library(plyr)
 library(tidyverse)
 library(pomp)
 

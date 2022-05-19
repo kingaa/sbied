@@ -26,11 +26,8 @@ Produced in R version `r getRversion()`.
 ```{r prelims,include=FALSE,cache=FALSE}
 set.seed(594709947L)
 library(ggplot2)
-library(plyr)
-library(reshape2)
-library(magrittr)
 library(pomp)
-stopifnot(packageVersion("pomp")>="3.0")
+stopifnot(packageVersion("pomp")>="4.2")
 ```
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}

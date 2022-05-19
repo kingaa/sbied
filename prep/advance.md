@@ -1,5 +1,5 @@
 ---
-pagetitle: Advance Instructions for SISMID Module 7
+pagetitle: Advance Instructions for SISMID Module 14
 ---
 
 <style>
@@ -24,7 +24,7 @@ a:hover, a:active {
 }
 </style>
 
-Dear Module 7 Participant:
+Dear Module 14 Participant:
 
 We are looking forward to seeing you online soon for our course on ***Simulation-based Inference for Epidemiological Dynamics***!
 The course is fully subscribed and we are planning to fill the 2.5 days with both theoretical and practical material to help get you started using these exciting methods.
@@ -71,5 +71,5 @@ There will be no course materials in hardcopy: all the course materials are [ava
 
 We're anticipating a stimulating and enjoyable time next week.  See you then!
 
-Aaron, Ed, and Qianying
+Aaron, Ed, and Jesse
 

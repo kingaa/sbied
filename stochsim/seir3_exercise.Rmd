@@ -25,7 +25,6 @@ Please share and remix noncommercially, mentioning its origin.
 ```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
-library(plyr)
 library(tidyverse)
 library(pomp)
 stopifnot(packageVersion("pomp")>="3.0")
@@ -68,7 +67,6 @@ popViewport()
 ```
 
 ```{r seir3_model}
-library(plyr)
 library(tidyverse)
 library(pomp)
 

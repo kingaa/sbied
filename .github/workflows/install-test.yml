@@ -1,0 +1,51 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/master/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  workflow_dispatch:
+    branches: [master]
+
+name: install-test
+
+jobs:
+  install-test:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-latest,  r: 'release'}
+          - {os: ubuntu-18.04,   r: '4.0.5'}
+          - {os: macOS-latest,   r: 'release'}
+          - {os: macOS-10.15,    r: 'release'}
+          - {os: windows-latest, r: 'release'}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_LIBS_USER: ${{ github.workspace }}/R
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@v1
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+
+      - name: Run tests
+        run: |
+          sink("test.out")
+          update.packages(lib.loc=Sys.getenv("R_LIBS_USER"))
+          source("https://kingaa.github.io/sbied/prep/packages.R")
+          source("https://kingaa.github.io/scripts/pompTest.R")
+          source("https://kingaa.github.io/scripts/hello.R",echo=TRUE)
+          sink()
+        shell: Rscript {0}
+      
+      - uses: actions/upload-artifact@v3
+        with:
+          name: install-test-${{ matrix.config.os }}-${{ matrix.config.r }}
+          path: ${{ github.workspace }}/test.out

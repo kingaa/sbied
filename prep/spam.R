@@ -4,10 +4,10 @@ library(stringi)
 batchsize <- 30
 cmd <- 'REPLYTO=%s mutt -s "%s" -b %s -e "%s" -- %s < %s\n'
 replyto <- "kingaa.sismid@gmail.com"
-subject <- "SISMID Module 7 Advance Instructions"
+subject <- "SISMID Module 14 Advance Instructions"
 tweaks <- "set content_type=text/html"
 file <- "advance.html"
-## subject <- "Welcome to SISMID Module 7"
+## subject <- "Welcome to SISMID Module 14"
 ## tweaks <- ""
 ## file <- "welcome.md"
 

@@ -1,5 +1,5 @@
 ## check to see that the version of R is sufficiently recent
-minRversion <- "4.0.4"
+minRversion <- "4.0.5"
 rv <- getRversion()
 if (rv < minRversion)
   stop("R version >= ",minRversion," is required",call.=FALSE)
@@ -15,15 +15,10 @@ deSolve
 foreach
 doParallel
 doRNG
-ggplot2
 gridExtra
 gtable
 knitr
-magrittr
 mvtnorm
-nloptr
-plyr
-reshape2
 scales
 subplex
 tidyverse

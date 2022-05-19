@@ -1,7 +1,6 @@
 params <-
 list(prefix = "direct/")
 
-library(plyr)
 library(tidyverse)
 library(pomp)
 stopifnot(packageVersion("pomp")>="3.0")

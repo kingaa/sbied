@@ -43,7 +43,7 @@ In **R**, you can run `Sys.info()` to get a printout of the operating system and
 ### Install **R** and **RStudio**
 
 **R** and **RStudio** are free and open-source.
-You’ll need at least version 4.0.4 of **R**.
+You’ll need at least version 4.0.5 of **R**.
 Source code and binaries are available on CRAN (https://cran.r-project.org/).
 Install *the latest version* of **RStudio** from [rstudio.com](https://www.rstudio.com/products/rstudio/download/).
 

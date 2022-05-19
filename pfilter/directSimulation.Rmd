@@ -24,7 +24,6 @@ params:
 ```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
-library(plyr)
 library(tidyverse)
 library(pomp)
 stopifnot(packageVersion("pomp")>="3.0")
