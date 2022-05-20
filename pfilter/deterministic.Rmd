@@ -32,10 +32,9 @@ Produced in R version `r getRversion()`.
 ```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
-library(plyr)
 library(tidyverse)
 library(pomp)
-stopifnot(packageVersion("pomp")>="3.0")
+stopifnot(packageVersion("pomp")>="4.2")
 set.seed(594709947L)
 ```
 
@@ -128,20 +127,22 @@ bsflu %>%
     ),
     accumvars="H"
   ) -> bbs
- 
-x <- trajectory(bbs)
-y <- cbind(as.data.frame(bbs),x=x["H",1,])
-mutate(y,xlab=sprintf("hat(y)[%d]",day),
-       ylab=sprintf("y[%d]~'*'",day)) -> y
+
+trajectory(bbs,format="data.frame") %>%
+  full_join(as.data.frame(bbs),by="day") %>%
+  mutate(
+    xlab=sprintf("hat(y)[%d]",day),
+    ylab=sprintf("y[%d]^'*'",day)
+  ) -> y
 
 ggplot(data=y,mapping=aes(x=day,xend=day))+
   geom_point(aes(y=B),color='black',alpha=0.5)+
-  geom_point(aes(y=x),color='red',alpha=0.5)+
+  geom_point(aes(y=H),color='red',alpha=0.5)+
   geom_line(aes(y=B),color='black',alpha=0.5)+
-  geom_line(aes(y=x),color='red',alpha=0.5)+
+  geom_line(aes(y=H),color='red',alpha=0.5)+
   geom_text(aes(y=B,label=ylab,vjust=ifelse(day>=10,2,-1)),parse=TRUE,color='black')+
-  geom_text(aes(y=x,label=xlab,vjust=ifelse(day>=10,-1,2)),parse=TRUE,color='red')+
-  geom_segment(aes(y=x,yend=B),color='blue',linetype=2,alpha=0.3,
+  geom_text(aes(y=H,label=xlab,vjust=ifelse(day>=10,-1,2)),parse=TRUE,color='red')+
+  geom_segment(aes(y=H,yend=B),color='blue',linetype=2,alpha=0.3,
                arrow=grid::arrow(length=grid::unit(0.02,"npc")))+
   expand_limits(y=c(-30,330))+
   labs(y="")

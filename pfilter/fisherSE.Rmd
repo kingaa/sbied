@@ -23,13 +23,6 @@ Produced in R version `r getRversion()`.
 
 ```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
 ```
-```{r prelims,include=FALSE,cache=FALSE}
-set.seed(594709947L)
-library(ggplot2)
-library(plyr)
-library(reshape2)
-library(magrittr)
-```
 
 \newcommand\prob{\mathbb{P}}
 \newcommand\E{\mathbb{E}}

@@ -37,7 +37,7 @@ Produced in R version `r getRversion()`.
 ```{r cache=FALSE,include=FALSE}
 library(tidyverse)
 library(pomp)
-stopifnot(packageVersion("pomp")>="3.4")
+stopifnot(packageVersion("pomp")>="4.2")
 set.seed(1700460124)
 unlink("result1.rds")
 unlink("result2.rda")

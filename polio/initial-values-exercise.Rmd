@@ -15,7 +15,7 @@ csl: ../jss.csl
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
 library(pomp)
-stopifnot(packageVersion("pomp")>="3.4.5")
+stopifnot(packageVersion("pomp")>="4.2")
 set.seed(594709947L)
 ```
 

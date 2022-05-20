@@ -1,9 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Manipulating 'panelPomp' objects</title>
+<!DOCTYPE html><html><head><title>R: Manipulating 'panelPomp' objects</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css">
+<script type="text/javascript">
+const macros = { "\\R": "\\textsf{R}", "\\code": "\\texttt"};
+function processMathHTML() {
+    var l = document.getElementsByClassName('reqn');
+    for (let e of l) { katex.render(e.textContent, e, { throwOnError: false, macros }); }
+    return;
+}</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js"
+    onload="processMathHTML();"></script>
 <link rel="stylesheet" type="text/css" href="https://cran.r-project.org/R.css" />
-</head><body>
+</head><body><div class="container">
 
-<table width="100%" summary="page for panelPomp_methods"><tr><td>panelPomp_methods</td><td style="text-align: right;">R Documentation</td></tr></table>
+<table width="100%"><tr><td>panelPomp_methods</td><td style="text-align: right;">R Documentation</td></tr></table>
 
 <h2>Manipulating <code>panelPomp</code> objects</h2>
 
@@ -15,8 +26,7 @@
 
 <h3>Usage</h3>
 
-<pre>
-## S4 method for signature 'panelPomp'
+<pre><code class='language-R'>## S4 method for signature 'panelPomp'
 coef(object)
 
 ## S4 replacement method for signature 'panelPomp'
@@ -50,12 +60,12 @@ x[i]
 
 ## S4 method for signature 'panelPomp'
 x[[i]]
-</pre>
+</code></pre>
 
 
 <h3>Arguments</h3>
 
-<table summary="R argblock">
+<table>
 <tr valign="top"><td><code>object, x</code></td>
 <td>
 <p>An object of class <code>panelPomp</code> or inheriting class 
@@ -118,4 +128,5 @@ end time.</p>
 </p>
 
 
+</div>
 </body></html>

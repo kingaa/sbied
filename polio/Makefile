@@ -5,6 +5,8 @@ starting-values-exercise.html
 	make -C initial-values-exercise
 	make -C starting-values-exercise
 
+export RUNLEVEL = 3
+
 include ../rules.mk
 
 .fresh:

@@ -26,7 +26,7 @@ This document has its origins in the [Getting Started vignette](https://kingaa.g
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
 library(pomp)
 stopifnot(getRversion()>="4.0")
-stopifnot(packageVersion("pomp")>="3.0")
+stopifnot(packageVersion("pomp")>="4.2")
 ```
 
 ----------------------------
@@ -128,7 +128,7 @@ We specify that the time step of the discrete-time process is `delta.t`, here, 1
 
 At this point, we have what we need to simulate the state process:
 ```{r ricker-first-sim}
-sim <- simulate(parus,params=c(N.0=1,e.0=0,r=12,c=1,sigma=0.5),
+sim <- simulate(parus,params=c(N_0=1,e_0=0,r=12,c=1,sigma=0.5),
                 format="data.frame")
 plot(N~year,data=sim,type='o')
 ```
@@ -154,7 +154,7 @@ pomp(parus,rmeasure=rmeas,dmeasure=dmeas,statenames=c("N"),paramnames=c("phi")) 
 Now we can simulate the whole POMP.
 First, let's add some parameters:
 ```{r ricker-add-params}
-coef(parus) <- c(N.0=1,e.0=0,r=20,c=1,sigma=0.1,phi=200)
+coef(parus) <- c(N_0=1,e_0=0,r=20,c=1,sigma=0.1,phi=200)
 ```
 ```{r ricker-second-sim,results='markup'}
 library(ggplot2)
@@ -183,7 +183,7 @@ The `map` call tells **pomp** that the skeleton is a discrete-time dynamical sys
 With just the skeleton defined, we are in a position to compute the trajectories of the deterministic skeleton at any point in parameter space.
 For example, here we compute the trajectory and superimpose it on a plot of one simulation:
 ```{r parus-first-traj,results='markup'}
-traj <- trajectory(parus,params=c(N.0=1,r=12,c=1),format="data.frame")
+traj <- trajectory(parus,params=c(N_0=1,r=12,c=1),format="data.frame")
 plot(N~year,data=sim,type='o')
 lines(N~year,data=traj,type='l',col='red')
 ```
@@ -235,10 +235,8 @@ ggplot(data=x,aes(x=year,y=pop,group=.id,color=(.id=="data")))+
 We refer to the deterministic map as the "skeleton" of the stochastic process.
 We can compute a trajectory of the the deterministic skeleton using `trajectory`:
 ```{r traj-ricker}
-y <- trajectory(parus)
-dim(y)
-dimnames(y)
-plot(time(parus),y["N",1,],type="l")
+y <- trajectory(parus,format="data.frame")
+plot(N~year,data=y,type="l")
 ```
 
 Notice that `parus` has parameters associated with it:
@@ -249,16 +247,16 @@ These are the parameters at which the simulations and deterministic trajectory c
 We can run these at different parameters:
 ```{r}
 theta <- coef(parus)
-theta[c("r","N.0")] <- c(5,3)
+theta[c("r","N_0")] <- c(5,3)
 y <- trajectory(parus,params=theta)
-plot(time(parus),y["N",1,],type="l")
+plot(N~year,data=as.data.frame(y),type='l')
 x <- simulate(parus,params=theta)
 plot(x,var="pop")
 ```
 
 We can also change the parameters stored inside of `parus`:
 ```{r}
-coef(parus,c("r","N.0","sigma")) <- c(39,0.5,1)
+coef(parus,c("r","N_0","sigma")) <- c(39,0.5,1)
 coef(parus)
 plot(simulate(parus),var="pop")
 ```

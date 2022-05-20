@@ -2,7 +2,7 @@ library(pomp)
 library(tidyverse)
 library(doParallel)
 library(doRNG)
-stopifnot(packageVersion("pomp")>="3.4.5")
+stopifnot(packageVersion("pomp")>="4.2")
 options(dplyr.summarise.inform=FALSE)
 
 library(tidyverse)
@@ -129,7 +129,9 @@ data %>%
 
 simulate(polio)
 
-run_level <- 3
+
+run_level <- as.integer(Sys.getenv("RUNLEVEL"))
+stopifnot(`bad runlevel`=isTRUE(run_level %in% c(1,2,3)))
 Np <-          switch(run_level,100, 1e3, 5e3)
 Nmif <-        switch(run_level, 10, 100, 200)
 Nreps_eval <-  switch(run_level,  2,  10,  20)

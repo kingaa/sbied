@@ -4,7 +4,7 @@ list(prefix = "llest/")
 library(tidyverse)
 library(pomp)
 stopifnot(getRversion()>="4.0")
-stopifnot(packageVersion("pomp")>="3.0")
+stopifnot(packageVersion("pomp")>="4.2")
 set.seed(1221234211)
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")

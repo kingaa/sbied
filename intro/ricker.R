@@ -1,6 +1,6 @@
 library(pomp)
 stopifnot(getRversion()>="4.0")
-stopifnot(packageVersion("pomp")>="3.0")
+stopifnot(packageVersion("pomp")>="4.2")
 
 loc <- url("https://kingaa.github.io/sbied/intro/parus.csv")
 dat <- read.csv(loc)
@@ -19,7 +19,7 @@ stochStep <- Csnippet("
 pomp(parus,rprocess=discrete_time(step.fun=stochStep,delta.t=1),
      paramnames=c("r","c","sigma"),statenames=c("N","e")) -> parus
 
-sim <- simulate(parus,params=c(N.0=1,e.0=0,r=12,c=1,sigma=0.5),
+sim <- simulate(parus,params=c(N_0=1,e.0=0,r=12,c=1,sigma=0.5),
                 format="data.frame")
 plot(N~year,data=sim,type='o')
 
@@ -29,7 +29,7 @@ dmeas <- Csnippet("lik = dpois(pop,phi*N,give_log);")
 
 pomp(parus,rmeasure=rmeas,dmeasure=dmeas,statenames=c("N"),paramnames=c("phi")) -> parus
 
-coef(parus) <- c(N.0=1,e.0=0,r=20,c=1,sigma=0.1,phi=200)
+coef(parus) <- c(N_0=1,e.0=0,r=20,c=1,sigma=0.1,phi=200)
 library(ggplot2)
 sims <- simulate(parus,nsim=3,format="d",include.data=TRUE)
 ggplot(data=sims,mapping=aes(x=year,y=pop))+geom_line()+
@@ -39,7 +39,7 @@ skel <- Csnippet("DN = r*N*exp(-c*N);")
 
 parus <- pomp(parus,skeleton=map(skel),paramnames=c("r","c"),statenames=c("N"))
 
-traj <- trajectory(parus,params=c(N.0=1,r=12,c=1),format="data.frame")
+traj <- trajectory(parus,params=c(N_0=1,r=12,c=1),format="data.frame")
 plot(N~year,data=sim,type='o')
 lines(N~year,data=traj,type='l',col='red')
 
@@ -67,20 +67,18 @@ ggplot(data=x,aes(x=year,y=pop,group=.id,color=(.id=="data")))+
   geom_line()+guides(color=FALSE)+
   facet_wrap(~.id,ncol=2)
 
-y <- trajectory(parus)
-dim(y)
-dimnames(y)
-plot(time(parus),y["N",1,],type="l")
+y <- trajectory(parus,format="data.frame")
+plot(N~year,data=y,type="l")
 
 coef(parus)
 
 theta <- coef(parus)
-theta[c("r","N.0")] <- c(5,3)
+theta[c("r","N_0")] <- c(5,3)
 y <- trajectory(parus,params=theta)
 plot(time(parus),y["N",1,],type="l")
 x <- simulate(parus,params=theta)
 plot(x,var="pop")
 
-coef(parus,c("r","N.0","sigma")) <- c(39,0.5,1)
+coef(parus,c("r","N_0","sigma")) <- c(39,0.5,1)
 coef(parus)
 plot(simulate(parus),var="pop")

@@ -26,7 +26,7 @@ Produced in R version `r getRversion()`.
 ```{r prelims,include=FALSE,cache=FALSE}
 library(tidyverse)
 library(pomp)
-stopifnot(packageVersion("pomp")>="3.0")
+stopifnot(packageVersion("pomp")>="4.2")
 set.seed(594709947L)
 ```
 

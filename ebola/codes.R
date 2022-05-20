@@ -6,7 +6,7 @@ options(
 )
 
 stopifnot(getRversion()>="4.0")
-stopifnot(packageVersion("pomp")>="3.0.3")
+stopifnot(packageVersion("pomp")>="4.2")
 
 set.seed(594709947L)
 library(tidyverse)
@@ -267,73 +267,73 @@ plot(params)
 
 ## ----forecasts2a----------------------------------------------------------
 bake(file="forecasts.rds",{
-library(foreach)
-library(doParallel)
-library(iterators)
-library(doRNG)
+  library(foreach)
+  library(doParallel)
+  library(iterators)
+  library(doRNG)
 
-registerDoParallel()
-registerDoRNG(887851050L)
+  registerDoParallel()
+  registerDoRNG(887851050L)
 
-## ----forecasts2b----------------------------------------------------------
-foreach(p=iter(params,by="row"),
-  .inorder=FALSE,
-  .combine=bind_rows
-) %dopar% {
+  ## ----forecasts2b----------------------------------------------------------
+  foreach(p=iter(params,by="row"),
+    .inorder=FALSE,
+    .combine=bind_rows
+  ) %dopar% {
 
-  library(pomp)
+    library(pomp)
 
-## ----forecasts2c----------------------------------------------------------
-  M1 <- ebolaModel("SierraLeone")
+    ## ----forecasts2c----------------------------------------------------------
+    M1 <- ebolaModel("SierraLeone")
 
-  M1 %>% pfilter(params=p,Np=2000,save.states=TRUE) -> pf
+    M1 %>% pfilter(params=p,Np=2000,save.states=TRUE) -> pf
 
-## ----forecasts2d----------------------------------------------------------
-  pf %>%
-    saved.states() %>% ## latent state for each particle
-    tail(1) %>%        ## last timepoint only
-    melt() %>%         ## reshape and rename the state variables
-    spread(variable,value) %>%
-    group_by(rep) %>%
-    summarize(S_0=S, E_0=E1+E2+E3, I_0=I, R_0=R) %>%
-    gather(variable,value,-rep) %>%
-    spread(rep,value) %>%
-    column_to_rownames("variable") %>%
-    as.matrix() -> x
+    ## ----forecasts2d----------------------------------------------------------
+    pf %>%
+      saved.states() %>% ## latent state for each particle
+      tail(1) %>%        ## last timepoint only
+      melt() %>%         ## reshape and rename the state variables
+      spread(variable,value) %>%
+      group_by(.id) %>%
+      summarize(S_0=S, E_0=E1+E2+E3, I_0=I, R_0=R) %>%
+      gather(variable,value,-.id) %>%
+      spread(.id,value) %>%
+      column_to_rownames("variable") %>%
+      as.matrix() -> x
 
-## ----forecasts2e1----------------------------------------------------------
-  pp <- parmat(unlist(p),ncol(x))
+    ## ----forecasts2e1----------------------------------------------------------
+    pp <- parmat(unlist(p),ncol(x))
 
-## ----forecasts2e2----------------------------------------------------------
-  M1 %>%
-    simulate(params=pp,format="data.frame") %>%
-    select(.id,week,cases) %>%
-    mutate(
-      period="calibration",
-      loglik=logLik(pf)
-    ) -> calib
+    ## ----forecasts2e2----------------------------------------------------------
+    M1 %>%
+      simulate(params=pp,format="data.frame") %>%
+      select(.id,week,cases) %>%
+      mutate(
+        period="calibration",
+        loglik=logLik(pf)
+      ) -> calib
 
-## ----forecasts2f----------------------------------------------------------
-  M2 <- M1
-  time(M2) <- max(time(M1))+seq_len(horizon)
-  timezero(M2) <- max(time(M1))
+    ## ----forecasts2f----------------------------------------------------------
+    M2 <- M1
+    time(M2) <- max(time(M1))+seq_len(horizon)
+    timezero(M2) <- max(time(M1))
 
-## ----forecasts2g----------------------------------------------------------
-  pp[rownames(x),] <- x
+    ## ----forecasts2g----------------------------------------------------------
+    pp[rownames(x),] <- x
 
-  M2 %>%
-    simulate(params=pp,format="data.frame") %>%
-    select(.id,week,cases) %>%
-    mutate(
-      period="projection",
-      loglik=logLik(pf)
-    ) -> proj
+    M2 %>%
+      simulate(params=pp,format="data.frame") %>%
+      select(.id,week,cases) %>%
+      mutate(
+        period="projection",
+        loglik=logLik(pf)
+      ) -> proj
 
-## ----forecasts2h----------------------------------------------------------
-  bind_rows(calib,proj) -> sims
+    ## ----forecasts2h----------------------------------------------------------
+    bind_rows(calib,proj) -> sims
 
-## ----forecasts2i----------------------------------------------------------
-}}) -> sims
+    ## ----forecasts2i----------------------------------------------------------
+  }}) -> sims
 
 ## ----forecasts2j----------------------------------------------------------
 sims %>%

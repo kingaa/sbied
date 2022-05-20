@@ -78,17 +78,17 @@ list.files(pattern=r"{.+\.rd[as]$}",recursive=TRUE) |>
 dat		
 
 dat |>
-  dplyr::group_by(dir) |>
-  dplyr::summarize(size=sum(size),time=sum(time))
+  group_by(dir) |>
+  summarize(size.kB=sum(size),time=sum(time)) |>
+  arrange(dir)
 
 dat |> 
-  dplyr::summarize(size=sum(size),time=sum(time))
+  summarize(size.kB=sum(size),time=sum(time))
 ```
 -->
 
-At last count, the archives amount to about 129MB.
-About 123MB of this is six files in the polio lesson, in which large amounts of redundant information are stored.
-
+At last count, the archives amount to about 141MB.
+About 135MB of this is associated with the polio lesson, in which large amounts of redundant information are stored.
 
 The following is a log of compilations.
 
@@ -101,7 +101,24 @@ The following is a log of compilations.
 | finishing     | 2021-07-20      |         11min |             36 |
 | full          | 2021-07-21      |        488min |            250 |
 | polio level 3 | 2021-07-21      |        150min |            250 |
+| polio level 1 | 2021-05-20      |         11min |            250 |
+| full          | 2022-05-21      |        440min |            250 |
+| polio level 1 | 2022-05-22      |         10min |            250 |
+| polio level 2 | 2022-05-26      |         22min |            250 |
+| measles full  | 2022-05-26      |        208min |            250 |
+| finishing     | 2022-05-26      |         11min |             48 |
 
+----------------------------
+
+### Required software
+
+The codes require, at a minimum, **R** version 4.0 and **pomp** version 4.2.
+Windows users must also have the appropriate version of **Rtools** installed.
+The `prep` directory contains scripts that will install other needed packages and test the user's installation.
+
+A Github Action checks that these installations and actions succeed on a variety of current and legacy platforms:
+
+[![install-test](https://github.com/kingaa/sbied/actions/workflows/install-test.yml/badge.svg)](https://github.com/kingaa/sbied/actions/workflows/install-test.yml)
 
 ----------------------------
 
