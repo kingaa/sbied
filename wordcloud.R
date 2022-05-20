@@ -7,61 +7,101 @@ library(pdftools)
 
 list.files(
   path=c("intro","stochsim","pfilter","mif","measles",
-         "od","contacts","polio","ebola","papers"),
-  pattern=r"{.*\.pdf}",recursive=TRUE
+    "od","contacts","polio","ebola"),
+  pattern=r"{.*\.pdf}",
+  full.names=TRUE,
+  recursive=TRUE
 ) -> files
 
-lapply(files, function(f) {
-  pdf_text(f)
-}) %>% unlist -> text
+files |>
+  lapply(pdf_text) %>%
+  unlist() -> text
 
 text %>%
-  str_replace_all("[[:punct:]]", " ") -> text
+  Boost_tokenizer() |>
+#  str_replace_all("[[:punct:]]", " ") |>
+  VectorSource() |>
+  Corpus() -> docs
 
-Corpus(VectorSource(text)) -> docs
+## inspect(docs)
 
-# inspect(docs)
+toSpace <- content_transformer(
+  function (x, pattern) gsub(pattern, " ", x)
+)
 
-toSpace <- content_transformer(function (x, pattern) gsub(pattern, " ", x))
-docs <- tm_map(docs, toSpace, "/")
-docs <- tm_map(docs, toSpace, "@")
-docs <- tm_map(docs, toSpace, "\\|")
+docs |>
+  tm_map(toSpace, "/") |>
+  tm_map(toSpace, "@") |>
+  tm_map(toSpace, "\\|") |>
+  ##  tm_map(content_transformer(tolower)) |>
+  tm_map(removeNumbers) |>
+  tm_map(removeWords, stopwords("english")) |>
+  tm_map(removePunctuation) |>
+  tm_map(stripWhitespace) |>
+  TermDocumentMatrix() |>
+  as.matrix() |>
+  rowSums() |>
+  sort(decreasing=TRUE) -> v
 
-# Convert the text to lower case
-# docs <- tm_map(docs, content_transformer(tolower))
-# Remove numbers
-docs <- tm_map(docs, removeNumbers)
-# Remove english common stopwords
-docs <- tm_map(docs, removeWords, stopwords("english"))
-# Remove your own stop word
-# Remove punctuations
-docs <- tm_map(docs, removePunctuation)
-# Eliminate extra white spaces
-docs <- tm_map(docs, stripWhitespace)
+library(tidyverse)
 
+blacklist <-
+  c(
+    "the", "can", "using", "cases",
+    "use", "this", "one", "−",
+    "values", "set", "value",
+    "rho", "beta", "eta", "mu",
+    "run", "may",
+    "mean", "var", "loglik",
+    "ionides", "based",
+    "∗", "csv","np","nmif",
+    "i","ii","iii","iv","v",
+    "also", "lesson", "king",
+    "small", "much", "version",
+    "will", "xn−", "used",
+    "called", "fxn", "via", "what",
+    "following", 
+    "how", "first", "n−",
+    "fyn", "two", "measir", "for",
+    "library", "librarypomp", "non", "see",
+    "setrue","full",
+    "doi"
+  )
 
-dtm <- TermDocumentMatrix(docs)
-m <- as.matrix(dtm)
-v <- sort(rowSums(m),decreasing=TRUE)
-d <- data.frame(word = names(v),freq=v)
-# head(d, 10)
+tibble(
+  word=names(v),
+  freq=v
+) |>
+  mutate(
+    word=case_when(
+      word=="parameters"~"parameter",
+      word=="filter"~"filtering",
+      word=="model"~"models",
+      word=="monte"~"monte carlo",
+      word=="carlo"~"",
+      word=="rates"~"rate",
+      TRUE~word
+    )
+  ) |>
+  filter(word!="") |>
+  group_by(word) |>
+  summarize(freq=sum(freq)) |>
+  ungroup() |>
+  arrange(-freq) |>
+  filter(
+    ! word %in% blacklist
+  ) -> dat
 
-d[d$word=="parameter",2] <- d[d$word=="parameter",2] + d[d$word=="parameters",2]
-d[d$word=="rate",2] <- d[d$word=="rate",2] + d[d$word=="rates",2]
-d[d$word=="model",2] <- d[d$word=="model",2] + d[d$word=="models",2]
-newrows <- rbind(c("monte carlo", d[d$word=="monte",2]+d[d$word=="carlo",2]))
-names(newrow) <- c("monte carlo")
-d <- rbind(d, newrow)
-d$freq <- as.numeric(d$freq)
-d <- d %>% arrange(-freq)
-
-## remove words manually
-d <- d[!d$word %in% c("parameters", "the", "can", "using", "cases", "function", "use", "this", "results", "one", "−",
-                      "rates", "values", "error", "set", "value", "rho", "beta", "eta", "mu", "run", "units", "may",
-                      "models", "mean", "ionides", "∗", "csv", "also", "lesson", "king", "small", "var", "much", "version",
-                      "will", "xn−", "used", "called", "fxn", "via", "what", "following", "monte", "carlo",
-                      "how", "first", "n−", "fyn", "two", "measir", "for", "library", "non", "see", "doi"),]
-
-
-wordcloud2(d, minRotation = 0, maxRotation = 0, minSize = 5,
-           rotateRatio = 1,color = "random-light", backgroundColor = "grey")
+dat |>
+  mutate(
+    freq=freq/max(freq),
+    freq=freq^0.8
+  ) |>
+  wordcloud2(
+    minRotation = 0,
+    maxRotation = 0,
+    minSize = 1,
+    rotateRatio = 1,
+    color = "random-light",
+    backgroundColor = "grey"
+  )
