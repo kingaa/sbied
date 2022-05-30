@@ -37,7 +37,7 @@ quiz.tex quiz_soln.tex quiz_main.tex
 
 %.pdf: %.tex
 	pdflatex $*
-	-bibtex $*
+	bibtex $* || /bin/true
 	pdflatex $*
 	pdflatex $*
 

@@ -51,7 +51,7 @@ Compilation with these archives in place requires much less time than does compi
 <!--
 Get archive file sizes in kB:
 
-```
+```r
 library(tidyverse)
 
 gettime <- function (path) {
