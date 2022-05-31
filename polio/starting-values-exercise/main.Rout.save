@@ -199,7 +199,7 @@ dbl (4): time, cases, births, pop
 > registerDoParallel(cores)
 > library(doRNG)
 > 
-> results_dir <- paste0("results_",run_level,"/")
+> results_dir <- paste0("results/")
 > if(!dir.exists(results_dir)) dir.create(results_dir)
 > bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
 > 
@@ -274,7 +274,7 @@ they will be dropped
 +   write_csv("params.csv")
 > summary(r2$logLik,digits=5)
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- -799.3  -796.3  -795.6  -795.9  -795.4  -794.7 
+ -797.1  -795.9  -795.5  -795.6  -795.3  -795.0 
 > 
 > 
 > 
@@ -444,4 +444,4 @@ dbl (23): b1, b2, b3, b4, b5, b6, psi, rho, tau, sigma_dem, sigma_env, SO_0,...
 > 
 > proc.time()
    user  system elapsed 
-  7.245   9.340   5.960 
+  7.147   7.453   5.907 

@@ -59,7 +59,7 @@ Open a session in **RStudio** and run the following:
 ```
 
 *[The `>` is the command prompt; it is not part of the command.
-Also, depending on your email client propgram, you may need to replace the quotation marks with plain keyboard double quotes.]*
+Also, the quotation marks are plain keyboard double quotes.]*
 
 The first command updates your installed packages.
 You may be prompted to specify a CRAN mirror:

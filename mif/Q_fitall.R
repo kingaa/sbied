@@ -2,7 +2,7 @@ params <-
 list(prefix = "Q_fitall/")
 
 stopifnot(getRversion() >= "4.0")
-stopifnot(packageVersion("pomp")>="3.0")
+stopifnot(packageVersion("pomp")>="4.2")
 set.seed(1350254336)
 
 library(pomp)

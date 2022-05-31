@@ -553,7 +553,7 @@ options(dplyr.summarise.inform=FALSE)
 
 \subsection*{Controlling run time}
 
-\begin{frame}[fragile]
+\begin{frame}[fragile,allowframebreaks]
 
   \frametitle{Setting run levels to control computation time}
 
@@ -565,7 +565,7 @@ options(dplyr.summarise.inform=FALSE)
 
 \item \code{run\_level=2} uses enough effort to gives reasonably stable results at a moderate computational time.
 
-\item Larger values give more refined computations, implemented here by \code{run\_level=3} which was run on a computing node.
+\item Larger values give more refined computations, implemented here by \code{run\_level=3} which was run on a computing cluster.
   
   \ei
 
@@ -637,10 +637,10 @@ library(doRNG)
 @
   
   \bi
-\item Our task, like most statistical computing, is \myemph{embarrassingly parallel} so we can use a simple parallel for loop via \code{foreach()}
+\item Our task, like much statistical computing, is \myemph{embarrassingly parallel} so we can use a simple parallel for loop via \code{foreach()}
   \ei
 <<cache-cores>>=
-results_dir <- paste0("results_",run_level,"/")
+results_dir <- paste0("results/")
 if(!dir.exists(results_dir)) dir.create(results_dir)
 bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
 @

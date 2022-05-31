@@ -81,6 +81,11 @@ When making uniform draws on an untransformed scale, very few initial values exp
 In this case, the small $\sigma_{\mathrm{env}}$ mode has likelihood around 15 log units short of the maximum so it is not a competitive explanation of the data.
 However, in some other situation, this shows how transforming the starting value distribution could be useful.
 
+```{r profile_rho_plot1,echo=FALSE,fig.width=6,fig.height=6,out.width="70%"}
+read_csv("starting-values-exercise/params.csv") %>%
+  filter(logLik>max(logLik)-10) -> ests
+pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,data=subset(ests,logLik>max(logLik)-10))
+```
 
 -----------------------------------
 

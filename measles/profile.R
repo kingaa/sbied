@@ -10,7 +10,7 @@ if (file.exists("CLUSTER.R")) {
 set.seed(594709947L)
 library(tidyverse)
 library(pomp)
-stopifnot(packageVersion("pomp")>="2.1")
+stopifnot(packageVersion("pomp")>="4.2")
 theme_set(theme_bw())
 
 

@@ -144,7 +144,7 @@ if(is.na(cores)) cores <- detectCores()
 registerDoParallel(cores)
 library(doRNG)
 
-results_dir <- paste0("results_",run_level,"/")
+results_dir <- paste0("results/")
 if(!dir.exists(results_dir)) dir.create(results_dir)
 bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
 

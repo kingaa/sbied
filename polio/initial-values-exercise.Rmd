@@ -98,6 +98,12 @@ The search found a maximum of $`r round(mle2$logLik,1)`$ for the modified model,
 The modification is certainly not a substantial improvement.
 `r if (mle2$logLik-mle1$logLik>1) "**The last statement is a lie!**."`
 
+```{r profile_rho_plot1,echo=FALSE,fig.width=6,fig.height=6,out.width="70%"}
+read_csv("initial-values-exercise/params.csv") %>%
+  filter(logLik>max(logLik)-10) -> ests
+pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,data=subset(ests,logLik>max(logLik)-10))
+```
+
 
 -----------------------------------
 
@@ -108,7 +114,3 @@ Please share and remix noncommercially, mentioning its origin.
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
 This version produced in R `r getRversion()` on `r format(Sys.Date(), "%B %d, %Y")`.
-
-
-
-
