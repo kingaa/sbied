@@ -14,7 +14,8 @@
 
 \setbeamertemplate{footline}[frame number]
 
-<<setup,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
+<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE>>=
+source("../setup.R", local = knitr::knit_global())
 @
 
 \begin{document}

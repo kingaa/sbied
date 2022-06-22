@@ -1,7 +1,5 @@
 library(tidyverse)
 library(pomp)
-stopifnot(getRversion() >= "4.0")
-stopifnot(packageVersion("pomp")>="3.0")
 set.seed(1350254336)
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")

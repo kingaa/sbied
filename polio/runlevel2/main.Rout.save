@@ -41,7 +41,6 @@ Loading required package: iterators
 Loading required package: parallel
 > library(doRNG)
 Loading required package: rngtools
-> stopifnot(packageVersion("pomp")>="4.2")
 > options(dplyr.summarise.inform=FALSE)
 > 
 > library(tidyverse)
@@ -442,4 +441,4 @@ dbl (23): b1, b2, b3, b4, b5, b6, psi, rho, tau, sigma_dem, sigma_env, SO_0,...
 > 
 > proc.time()
    user  system elapsed 
-  5.268   7.682   3.959 
+  6.920   9.340   4.026 

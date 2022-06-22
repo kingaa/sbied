@@ -1,5 +1,5 @@
 params <-
-list(prefix = "exercises/")
+list(prefix = "exercises")
 
 source("main.R")
 

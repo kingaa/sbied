@@ -1,10 +1,9 @@
 params <-
-list(prefix = "basic_exercise/")
+list(prefix = "basic_exercise")
 
 set.seed(594709947L)
 library(ggplot2)
 library(pomp)
-stopifnot(packageVersion("pomp")>="4.2")
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 

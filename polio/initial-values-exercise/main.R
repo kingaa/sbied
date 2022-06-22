@@ -2,7 +2,6 @@ library(pomp)
 library(tidyverse)
 library(doParallel)
 library(doRNG)
-stopifnot(packageVersion("pomp")>="4.2")
 options(dplyr.summarise.inform=FALSE)
 
 library(tidyverse)

@@ -4,7 +4,8 @@
 \title{Lesson \CHAPTER.\\Case study:\\Measles in large and small towns}
 \author{Aaron A. King, Edward L. Ionides and Qianying Lin}
 
-<<setup,echo=F,cache=F,purl=F,child="../setup.Rnw">>=
+<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE>>=
+source("../setup.R", local = knitr::knit_global())
 @
 
 <<read_chunks,include=FALSE,cache=FALSE,purl=FALSE>>=

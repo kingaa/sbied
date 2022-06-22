@@ -7,15 +7,13 @@ output:
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
-  prefix: windoze/
+  prefix: windoze
 ---
 
-```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
+```{r knitr-opts,include=FALSE,purl=FALSE}
+source("../setup.R", local = knitr::knit_global())
 ```
-
 ```{r checks,cache=FALSE,include=FALSE}
-stopifnot(getRversion() >= "4.0")
-stopifnot(packageVersion("pomp")>="4.2")
 set.seed(1350254336)
 ```
 

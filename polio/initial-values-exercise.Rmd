@@ -11,11 +11,11 @@ csl: ../jss.csl
 
 -----------------------------------
 
-```{r knitr-opts,child="../setup.Rmd"}
+```{r knitr-opts,include=FALSE,purl=FALSE}
+source("../setup.R", local = knitr::knit_global())
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
 library(pomp)
-stopifnot(packageVersion("pomp")>="4.2")
 set.seed(594709947L)
 ```
 

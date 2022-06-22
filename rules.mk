@@ -11,11 +11,9 @@ quiz.pdf quiz_soln.pdf: quiz_main.tex
 quiz.tex quiz_soln.tex quiz_main.tex	
 
 %.html: %.Rmd
-	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
 	$(REXE) -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
 
 %.html: %.md
-	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
 	$(REXE) -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
 
 %.Rout: %.R

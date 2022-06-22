@@ -11,7 +11,7 @@ output:
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
-  prefix: expense/
+  prefix: expense
 ---
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
@@ -32,7 +32,8 @@ Produced in R version `r getRversion()`.
 
 -----------------------------------
 
-```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
+```{r knitr-opts,include=FALSE,purl=FALSE}
+source("../setup.R", local = knitr::knit_global())
 ```
 
 Load packages:
@@ -42,7 +43,6 @@ library(pomp)
 library(foreach)
 library(doParallel)
 library(doRNG)
-stopifnot(packageVersion("pomp")>="4.2")
 ```
 
 Construct the pomp object for the Consett measles example
@@ -82,10 +82,10 @@ Plot the results and fit a line.
 resultA %>%
   ggplot(aes(x=Np,y=time))+
   geom_point()+
-  geom_smooth(method="lm")+
+  geom_smooth(method="lm",formula=y~x-1)+
   expand_limits(x=0,y=0)
 
-lm(time~Np,data=resultA) -> fit
+lm(time~Np-1,data=resultA) -> fit
 summary(fit)
 ```
 
@@ -126,13 +126,13 @@ stew(file="expense2.rda",{
 
 ```{r}
 result %>%
-  ggplot(aes(x=time,y=Np,group=n,color=factor(n)))+
+  ggplot(aes(x=Np,y=time,group=n,color=factor(n)))+
   geom_point()+
   labs(color="n")+
-  geom_smooth(method="lm")+
+  geom_smooth(method="lm",formula=y~x-1)+
   expand_limits(x=0,y=0)
 
-lm(time~n*Np,data=result) -> fit
+lm(time~n*Np-1,data=result) -> fit
 summary(fit)
 ```
 

@@ -8,7 +8,7 @@ output:
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
-  prefix: ctmc/
+  prefix: ctmc
 ---
 
 \newcommand\prob[1]{\mathbb{P}\big[{#1}\big]}

@@ -7,9 +7,9 @@ bibliography: ../sbied.bib
 csl: ../jss.csl
 ---
 
-```{r setup,child="../setup.Rmd"}
+```{r knitr-opts,include=FALSE,purl=FALSE}
+source("../setup.R", local = knitr::knit_global())
 ```
-
 
 ---------------------------
 

@@ -21,12 +21,11 @@ Please share and remix noncommercially, mentioning its origin.
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 This document has its origins in the [Getting Started vignette](https://kingaa.github.io/pomp/vignettes/getting_started.html).
 
-```{r knitr-opts,child="../setup.Rmd"}
+```{r knitr-opts,include=FALSE,purl=FALSE}
+source("../setup.R", local = knitr::knit_global())
 ```
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
 library(pomp)
-stopifnot(getRversion()>="4.0")
-stopifnot(packageVersion("pomp")>="4.2")
 ```
 
 ----------------------------

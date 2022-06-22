@@ -7,15 +7,13 @@
 \begin{document}
 
 % knitr set up
-<<setup,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
+<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE>>=
+source("../setup.R", local = knitr::knit_global())
 @
-
 
 <<prelims,echo=F,cache=F>>=
 library(tidyverse)
 library(pomp)
-stopifnot(getRversion() >= "4.0")
-stopifnot(packageVersion("pomp")>="4.2")
 set.seed(1350254336)
 @
 

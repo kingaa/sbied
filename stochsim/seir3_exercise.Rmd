@@ -8,7 +8,7 @@ output:
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
-  prefix: seir3_exercise/
+  prefix: seir3_exercise
 ---
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
@@ -22,12 +22,12 @@ params:
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
-```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
+```{r knitr-opts,include=FALSE,purl=FALSE}
+source("../setup.R", local = knitr::knit_global())
 ```
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
 library(tidyverse)
 library(pomp)
-stopifnot(packageVersion("pomp")>="4.2")
 theme_set(theme_bw())
 options(stringsAsFactors=FALSE)
 set.seed(1221234211)

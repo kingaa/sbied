@@ -7,10 +7,11 @@ output:
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
-  prefix: Q_fit_seir/
+  prefix: Q_fit_seir
 ---
 
-```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
+```{r knitr-opts,include=FALSE,purl=FALSE}
+source("../setup.R", local = knitr::knit_global())
 ```
 
 ## Exercise

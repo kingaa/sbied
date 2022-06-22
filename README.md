@@ -25,7 +25,7 @@ This script is a starting point for students to follow, explore, and modify the 
 - logo.jpg: SBIED logo
 - packages.R: code for loading needed packages
 - CLUSTER-kinglab.R: example `CLUSTER.R` file for site-specific cluster setup
-- setup.Rmd, setup.Rnw: **knitr** child documents for R-markdown and R-noweb documents, respectively
+- setup.R: script sourced by most documents containing **knitr** setup, version checking, etc.
 - subdirectories:
   - prep: Lesson 0, on preparing for the course
   - intro: Lesson 1

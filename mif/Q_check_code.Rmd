@@ -7,7 +7,7 @@ output:
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
-  prefix: qslice/
+  prefix: qslice
 ---
 
 

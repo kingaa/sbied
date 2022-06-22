@@ -12,7 +12,7 @@ output:
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
-  prefix: settings/
+  prefix: settings
 ---
 
 ```{css styles,echo=FALSE,purl=FALSE}
@@ -38,7 +38,8 @@ hr {
 
 Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 
-```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
+```{r knitr-opts,include=FALSE,purl=FALSE}
+source("../setup.R", local = knitr::knit_global())
 ```
 
 ## Choosing the algorithmic settings for IF2

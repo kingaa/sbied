@@ -1,9 +1,8 @@
 params <-
-list(prefix = "direct/")
+list(prefix = "direct")
 
 library(tidyverse)
 library(pomp)
-stopifnot(packageVersion("pomp")>="4.2")
 set.seed(594709947L)
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")

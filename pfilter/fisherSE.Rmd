@@ -8,7 +8,7 @@ output:
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
-  prefix: fisherSE/
+  prefix: fisherSE
 ---
 
 -----------------------------------
@@ -21,7 +21,8 @@ Produced in R version `r getRversion()`.
 
 -----------------------------------
 
-```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
+```{r knitr-opts,include=FALSE,purl=FALSE}
+source("../setup.R", local = knitr::knit_global())
 ```
 
 \newcommand\prob{\mathbb{P}}

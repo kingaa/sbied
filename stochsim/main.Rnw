@@ -6,7 +6,8 @@
 
 \begin{document}
 
-<<setup,child="../setup.Rnw",include=FALSE,cache=FALSE,purl=FALSE>>=
+<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE>>=
+source("../setup.R", local = knitr::knit_global())
 @
 
 <<doParallel,echo=FALSE,cache=FALSE>>=

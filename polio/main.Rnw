@@ -4,7 +4,8 @@
 \title{Lesson 6:\\Case study: Polio}
 \author{Aaron A. King and Edward L. Ionides}
 
-<<setup, child='../setup.Rnw'>>=
+<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE>>=
+source("../setup.R", local = knitr::knit_global())
 @
 
 <<libraries,cache=FALSE,echo=FALSE,eval=TRUE>>=
@@ -12,7 +13,6 @@ library(pomp)
 library(tidyverse)
 library(doParallel)
 library(doRNG)
-stopifnot(packageVersion("pomp")>="4.2")
 options(dplyr.summarise.inform=FALSE)
 @
 

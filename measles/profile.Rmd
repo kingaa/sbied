@@ -34,7 +34,8 @@ Please share and remix noncommercially, mentioning its origin.
 
 Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
-```{r knitr-opts,child="../setup.Rmd"}
+```{r knitr-opts,include=FALSE,purl=FALSE}
+source("../setup.R", local = knitr::knit_global())
 ```
 ```{r read_chunks,include=FALSE,cache=FALSE,purl=FALSE}
 read_chunk("codes.R")
@@ -62,7 +63,6 @@ We begin by loading the packages we'll need and setting the random seed, to allo
 set.seed(594709947L)
 library(tidyverse)
 library(pomp)
-stopifnot(packageVersion("pomp")>="4.2")
 theme_set(theme_bw())
 ```
 

@@ -107,14 +107,13 @@
 <<prefix,include=FALSE,cache=FALSE,purl=FALSE>>=
 params <- list(prefix="mc")
 @
-<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
+<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE>>=
+source("../setup.R", local = knitr::knit_global())
 @
 <<packages,include=FALSE,cache=FALSE,purl=TRUE>>=
 library(pomp)
 library(tidyverse)
 library(cowplot)
-stopifnot(getRversion()>="4.1")
-stopifnot(packageVersion("pomp")>="4.2")
 set.seed(97849913)
 @ 
 

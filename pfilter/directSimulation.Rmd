@@ -8,7 +8,7 @@ output:
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
-  prefix: direct/
+  prefix: direct
 ---
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
@@ -21,12 +21,12 @@ params:
 
 -----------------------------------
 
-```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
+```{r knitr-opts,include=FALSE,purl=FALSE}
+source("../setup.R", local = knitr::knit_global())
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
 library(tidyverse)
 library(pomp)
-stopifnot(packageVersion("pomp")>="4.2")
 set.seed(594709947L)
 ```
 
@@ -49,7 +49,7 @@ lines(time(measSIR),obs(measSIR,"reports"),lwd=2,col='black')
 ```
 
 We can use the function `dmeasure` to evaluate the log likelihood of the data given the states, the model, and the parameters:
-```{r bbs-mc-like-3,cache=T}
+```{r bbs-mc-like-3,cache=TRUE}
 ell <- dmeasure(measSIR,y=obs(measSIR),x=x$states,times=time(measSIR),log=TRUE,
   params=coef(measSIR))
 dim(ell)

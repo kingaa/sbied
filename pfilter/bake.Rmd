@@ -10,7 +10,7 @@ output:
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
-  prefix: bake/
+  prefix: bake
 ---
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
@@ -31,13 +31,12 @@ Produced in R version `r getRversion()`.
 
 -----------------------------------
 
-```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
+```{r knitr-opts,include=FALSE,purl=FALSE}
+source("../setup.R", local = knitr::knit_global())
 ```
-
 ```{r cache=FALSE,include=FALSE}
 library(tidyverse)
 library(pomp)
-stopifnot(packageVersion("pomp")>="4.2")
 set.seed(1700460124)
 unlink("result1.rds")
 unlink("result2.rda")

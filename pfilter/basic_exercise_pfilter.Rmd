@@ -8,7 +8,7 @@ output:
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
-  prefix: basic_exercise/
+  prefix: basic_exercise
 ---
 
 -----------------------------------
@@ -21,13 +21,13 @@ Produced in R version `r getRversion()`.
 
 -----------------------------------
 
-```{r knitr-opts,include=FALSE,purl=FALSE,child="../setup.Rmd"}
+```{r knitr-opts,include=FALSE,purl=FALSE}
+source("../setup.R", local = knitr::knit_global())
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
 set.seed(594709947L)
 library(ggplot2)
 library(pomp)
-stopifnot(packageVersion("pomp")>="4.2")
 ```
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
