@@ -49,19 +49,19 @@ options(dplyr.summarise.inform=FALSE)
 
 \begin{frame}{Reviewing covariates in time series analysis}
 
-  \bi
+  \begin{itemize}
 
-\item Suppose our time series of primary interest is $y_{1:N}$.
+  \item Suppose our time series of primary interest is $y_{1:N}$.
 
-\item A \myemph{covariate} time series is an additional time series ${z_{1:N}}$ which is used to help explain $y_{1:N}$.
+  \item A \myemph{covariate} time series is an additional time series ${z_{1:N}}$ which is used to help explain $y_{1:N}$.
 
-\item When we talk about covariates, it is often implicit that we think of ${z_{1:N}}$ as a measure of an \myemph{external forcing} to the system producing $y_{1:N}$. This means that the process generating the data ${z_{1:N}}$ affects the process generating $y_{1:N}$, but not vice versa. 
+  \item When we talk about covariates, it is often implicit that we think of ${z_{1:N}}$ as a measure of an \myemph{external forcing} to the system producing $y_{1:N}$. This means that the process generating the data ${z_{1:N}}$ affects the process generating $y_{1:N}$, but not vice versa. 
 
-\item For example, the weather might affect human health, but human health has negligible effect on weather: weather is an external forcing to human health processes.
+  \item For example, the weather might affect human health, but human health has negligible effect on weather: weather is an external forcing to human health processes.
 
-\item When the process leading to  ${z_{1:N}}$ is not external to the system generating it, we must be alert to the possibility of \myemph{reverse causation} and \myemph{confounding variables}.
+  \item When the process leading to  ${z_{1:N}}$ is not external to the system generating it, we must be alert to the possibility of \myemph{reverse causation} and \myemph{confounding variables}.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -69,28 +69,28 @@ options(dplyr.summarise.inform=FALSE)
 
   \frametitle{Including covariates in the general POMP framework}
 
-  \bi
-\item The general POMP modeling framework allows essentially arbitrary modeling of covariates.
+  \begin{itemize}
+  \item The general POMP modeling framework allows essentially arbitrary modeling of covariates.
 
-\item Recall that a POMP model is specified by defining, for $n=1:N$,
-  $$\begin{array}{l}
-  f_{X_{0}}(x_0\params\theta),
-  \\
-  f_{X_{n}|X_{n-1}}(x_{n}\given x_{n-1}\params\theta),
-  \\
-  f_{Y_{n}|X_n}(y_{n}\given x_n\params\theta).
-\end{array}$$
+  \item Recall that a POMP model is specified by defining, for $n=1:N$,
+    $$\begin{array}{l}
+    f_{X_{0}}(x_0\params\theta),
+    \\
+    f_{X_{n}|X_{n-1}}(x_{n}\given x_{n-1}\params\theta),
+    \\
+    f_{Y_{n}|X_n}(y_{n}\given x_n\params\theta).
+  \end{array}$$
 
-\item The possibility of a general dependence on $n$ includes the possibility that there is some covariate time series $z_{0:N}$ such that
-  $$\begin{array}{lcl}
-  f_{X_{0}}(x_0\params\theta)&=& f_{X_{0}}(x_0\params\theta,z_0)
-  \\
-  f_{X_{n}|X_{n-1}}(x_{n}\given x_{n-1}\params\theta) &=& f_{X_{n}|X_{n-1}}(x_{n}\given x_{n-1}\params\theta,z_n),
-  \\
-  f_{Y_{n}|X_n}(y_{n}\given x_n\params\theta) &=& f_{Y_{n}|X_n}(y_{n}\given x_n\params\theta,z_n).
-\end{array}$$
+  \item The possibility of a general dependence on $n$ includes the possibility that there is some covariate time series $z_{0:N}$ such that
+    $$\begin{array}{lcl}
+    f_{X_{0}}(x_0\params\theta)&=& f_{X_{0}}(x_0\params\theta,z_0)
+    \\
+    f_{X_{n}|X_{n-1}}(x_{n}\given x_{n-1}\params\theta) &=& f_{X_{n}|X_{n-1}}(x_{n}\given x_{n-1}\params\theta,z_n),
+    \\
+    f_{Y_{n}|X_n}(y_{n}\given x_n\params\theta) &=& f_{Y_{n}|X_n}(y_{n}\given x_n\params\theta,z_n).
+  \end{array}$$
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -98,17 +98,17 @@ options(dplyr.summarise.inform=FALSE)
 
   \frametitle{Seasonality in a POMP model}
 
-  \bi
+  \begin{itemize}
 
-\item One specific choice of covariates is to construct $z_{0:N}$ so that it fluctuates periodically, once per year. This allows \myemph{seasonality} enter the POMP model in whatever way is appropriate for the system under investigation.
+  \item One specific choice of covariates is to construct $z_{0:N}$ so that it fluctuates periodically, once per year. This allows \myemph{seasonality} enter the POMP model in whatever way is appropriate for the system under investigation.
 
-\item All that remains is to hypothesize what is a reasonable way to include covariates for your system, and to fit the resulting model.
+  \item All that remains is to hypothesize what is a reasonable way to include covariates for your system, and to fit the resulting model.
 
-\item Now we can evaluate and maximize the log likelihood, we can construct AIC or likelihood ratio tests to see if the covariate helps describe the data.
+  \item Now we can evaluate and maximize the log likelihood, we can construct AIC or likelihood ratio tests to see if the covariate helps describe the data.
 
-\item This also lets us compare alternative ways the covariates might enter the process model and/or the measurement model.
+  \item This also lets us compare alternative ways the covariates might enter the process model and/or the measurement model.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -117,15 +117,15 @@ options(dplyr.summarise.inform=FALSE)
 
   \frametitle{Covariates in the \package{pomp} package}
 
-  \bi
+  \begin{itemize}
 
-\item \package{pomp} provides facilities for including covariates in a pomp object.
+  \item \package{pomp} provides facilities for including covariates in a pomp object.
 
-\item Named covariate time series entered via the \code{covar} argument to \code{pomp} are automatically defined within Csnippets used for the \code{rprocess}, \code{dprocess}, \code{rmeasure}, \code{dmeasure} and \code{rinit} arguments.
+  \item Named covariate time series entered via the \code{covar} argument to \code{pomp} are automatically defined within Csnippets used for the \code{rprocess}, \code{dprocess}, \code{rmeasure}, \code{dmeasure} and \code{rinit} arguments.
 
-\item We see this in practice in the following epidemiological model, which has  population census, birth data and seasonality as covariates.
+  \item We see this in practice in the following epidemiological model, which has  population census, birth data and seasonality as covariates.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -135,26 +135,26 @@ options(dplyr.summarise.inform=FALSE)
 
   \frametitle{Polio in Wisconsin}
 
-  \bi
+  \begin{itemize}
 
-\item The massive global polio eradication initiative (GPEI) has brought polio from a major global disease to the brink of extinction. 
+  \item The massive global polio eradication initiative (GPEI) has brought polio from a major global disease to the brink of extinction. 
 
-\item Finishing this task is proving hard, and improved understanding polio ecology might assist.  
+  \item Finishing this task is proving hard, and improved understanding polio ecology might assist.  
 
-\item \citet{Martinez-Bakker2015} investigated this using extensive state level pre-vaccination era data in USA. 
+  \item \citet{Martinez-Bakker2015} investigated this using extensive state level pre-vaccination era data in USA. 
 
-\item We will follow the approach of \citet{Martinez-Bakker2015} for one state (Wisconsin). In the context of their model, we can quantify seasonality of transmission, the role of the birth rate in explaining the transmission dynamics, and the persistence mechanism of polio. 
+  \item We will follow the approach of \citet{Martinez-Bakker2015} for one state (Wisconsin). In the context of their model, we can quantify seasonality of transmission, the role of the birth rate in explaining the transmission dynamics, and the persistence mechanism of polio. 
 
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
 \begin{frame}[fragile]
 
-  \bi
-\item \citet{Martinez-Bakker2015} carried out this analysis for all 48 contiguous states and District of Columbia, and their data and code are publicly available. The data we study, in \code{polio\_wisconsin.csv}, consist of \code{cases}, the monthly reported polio cases; \code{births}, the  monthly recorded births; \code{pop}, the annual census; \code{time}, date in years.
-  \ei
+  \begin{itemize}
+  \item \citet{Martinez-Bakker2015} carried out this analysis for all 48 contiguous states and District of Columbia, and their data and code are publicly available. The data we study, in \code{polio\_wisconsin.csv}, consist of \code{cases}, the monthly reported polio cases; \code{births}, the  monthly recorded births; \code{pop}, the annual census; \code{time}, date in years.
+  \end{itemize}
 
   <<data>>=
   library(tidyverse)
@@ -186,22 +186,22 @@ options(dplyr.summarise.inform=FALSE)
 
 \begin{frame}[fragile]
 
-  \bi
+  \begin{itemize}
 
-\item We use the compartment model of \citet{Martinez-Bakker2015}.
+  \item We use the compartment model of \citet{Martinez-Bakker2015}.
 
-\item Compartments representing susceptible babies in each of six one-month birth cohorts ($S^B_1$,...,$S^B_6$), susceptible older individuals ($S^O$), infected babies ($I^B$), infected older individuals ($I^O$), and recovered with lifelong immunity ($R$). 
+  \item Compartments representing susceptible babies in each of six one-month birth cohorts ($S^B_1$,...,$S^B_6$), susceptible older individuals ($S^O$), infected babies ($I^B$), infected older individuals ($I^O$), and recovered with lifelong immunity ($R$). 
 
-\item The state vector of the disease transmission model consists of numbers of individuals in each compartment at each time, 
-  $$X(t)=\big(S^B_1(t),...,S^B_6(t), I^B(t),I^O(t),R(t) \big).$$
+  \item The state vector of the disease transmission model consists of numbers of individuals in each compartment at each time, 
+    $$X(t)=\big(S^B_1(t),...,S^B_6(t), I^B(t),I^O(t),R(t) \big).$$
 
-\item Babies under six months are modeled as fully protected from symptomatic poliomyelitis.
+  \item Babies under six months are modeled as fully protected from symptomatic poliomyelitis.
 
-\item Older infections lead to reported cases (usually paralysis) at a rate $\rho$. 
+  \item Older infections lead to reported cases (usually paralysis) at a rate $\rho$. 
 
-\item The flows through the compartments are graphically represented on the following slide (Figure 1A of \citet{Martinez-Bakker2015}):
+  \item The flows through the compartments are graphically represented on the following slide (Figure 1A of \citet{Martinez-Bakker2015}):
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -226,64 +226,64 @@ options(dplyr.summarise.inform=FALSE)
 
   \vspace{-2mm}
 
-  \bi
+  \begin{itemize}
 
-\item Duration of infection is comparable to the one-month reporting aggregation, so a discrete time model may be appropriate.
+  \item Duration of infection is comparable to the one-month reporting aggregation, so a discrete time model may be appropriate.
 
-\item \citet{Martinez-Bakker2015} fitted monthly reported cases, May 1932 through January 1953, so we set $t_n=1932+ (4+n)/12$ and
-  $$X_n=X(t_n)=\big(S^B_{1,n},...,S^B_{6,n}, I^B_n,I^O_n,R_n \big).$$
+  \item \citet{Martinez-Bakker2015} fitted monthly reported cases, May 1932 through January 1953, so we set $t_n=1932+ (4+n)/12$ and
+    $$X_n=X(t_n)=\big(S^B_{1,n},...,S^B_{6,n}, I^B_n,I^O_n,R_n \big).$$
 
-\item The mean force of infection, in units of $\mathrm{yr}^{-1}$, is modeled as
-  $$\bar\lambda_n=\left( \beta_n \frac{I^O_n+I^B_n}{P_n} + \psi \right)$$
-  where $P_n$ is census population interpolated to time $t_n$ and seasonality of transmission is modeled as
-  $$\beta_n=\exp\left\{ \sum_{k=1}^K b_k\xi_k(t_n) \right\},$$
-  with $\{\xi_k(t),k=1,\dots,K\}$ a periodic B-spline basis with $K=6$.
+  \item The mean force of infection, in units of $\mathrm{yr}^{-1}$, is modeled as
+    $$\bar\lambda_n=\left( \beta_n \frac{I^O_n+I^B_n}{P_n} + \psi \right)$$
+    where $P_n$ is census population interpolated to time $t_n$ and seasonality of transmission is modeled as
+    $$\beta_n=\exp\left\{ \sum_{k=1}^K b_k\xi_k(t_n) \right\},$$
+    with $\{\xi_k(t),k=1,\dots,K\}$ a periodic B-spline basis with $K=6$.
 
-\item $P_n$ and $\xi_k(t_n)$ are \myemph{covariate time series}.
+  \item $P_n$ and $\xi_k(t_n)$ are \myemph{covariate time series}.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
 \begin{frame}[fragile]
 
-  \bi
-\item The force of infection has a stochastic perturbation,
-  $$\lambda_n = \bar\lambda_n \epsilon_n,$$
-  where $\epsilon_n$ is a Gamma random variable with mean 1 and variance $\sigma^2_{\mathrm{env}} + \sigma^2_{\mathrm{dem}}\big/\bar\lambda_n$. These two terms capture variation on the environmental and demographic scales, respectively. All compartments suffer a mortality rate, set at $\delta=1/60\mathrm{yr}^{-1}$. 
+  \begin{itemize}
+  \item The force of infection has a stochastic perturbation,
+    $$\lambda_n = \bar\lambda_n \epsilon_n,$$
+    where $\epsilon_n$ is a Gamma random variable with mean 1 and variance $\sigma^2_{\mathrm{env}} + \sigma^2_{\mathrm{dem}}\big/\bar\lambda_n$. These two terms capture variation on the environmental and demographic scales, respectively. All compartments suffer a mortality rate, set at $\delta=1/60\mathrm{yr}^{-1}$. 
 
-\item Within each month, all susceptible individuals are modeled as having exposure to constant competing hazards of mortality and polio infection.  The chance of remaining in the susceptible population when exposed to these hazards for one month is therefore
-  $$p_n = \exp\big\{ -(\delta+\lambda_n)/12\big\},$$
-  with the chance of polio infection being 
-  $$q_n = (1-p_n)\lambda_n\big/(\lambda_n+\delta).$$
+  \item Within each month, all susceptible individuals are modeled as having exposure to constant competing hazards of mortality and polio infection.  The chance of remaining in the susceptible population when exposed to these hazards for one month is therefore
+    $$p_n = \exp\big\{ -(\delta+\lambda_n)/12\big\},$$
+    with the chance of polio infection being 
+    $$q_n = (1-p_n)\lambda_n\big/(\lambda_n+\delta).$$
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
 \begin{frame}
 
-  \bi
-\item We employ a continuous population model, with no demographic stochasticity. Writing $B_n$ for births in month $n$, we obtain the dynamic model of \citet{Martinez-Bakker2015}:
-  $$\begin{array}{rcl}
-  S^B_{1,n+1}&=&B_{n+1}\\
-  S^B_{k,n+1}&=&p_nS^B_{k-1,n} \quad\mbox{for $k=2,\dots,6$}\\
-  S^O_{n+1}&=& p_n(S^O_n+S^B_{6,n})\\
-  I^B_{n+1}&=& q_n \sum_{k=1}^6 S^B_{k,n}\\
-  I^O_{n+1}&=& q_n S^O_n
-\end{array}$$
-  \ei
+  \begin{itemize}
+  \item We employ a continuous population model, with no demographic stochasticity. Writing $B_n$ for births in month $n$, we obtain the dynamic model of \citet{Martinez-Bakker2015}:
+    $$\begin{array}{rcl}
+    S^B_{1,n+1}&=&B_{n+1}\\
+    S^B_{k,n+1}&=&p_nS^B_{k-1,n} \quad\mbox{for $k=2,\dots,6$}\\
+    S^O_{n+1}&=& p_n(S^O_n+S^B_{6,n})\\
+    I^B_{n+1}&=& q_n \sum_{k=1}^6 S^B_{k,n}\\
+    I^O_{n+1}&=& q_n S^O_n
+  \end{array}$$
+  \end{itemize}
 
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{The measurement model}
 
-  \bi
-\item 
-  The model for the reported observations, conditional on the state, is a discretized normal distribution truncated at zero, with both environmental and Poisson-scale contributions to the variance:
-  $$Y_n= \max\{\mathrm{round}(Z_n),0\}, \quad Z_n\sim\mathrm{normal}\left(\rho I^O_n, \big(\tau  I^O_n\big)^2 + \rho I^O_n\right).$$
-  \ei
+  \begin{itemize}
+  \item 
+    The model for the reported observations, conditional on the state, is a discretized normal distribution truncated at zero, with both environmental and Poisson-scale contributions to the variance:
+    $$Y_n= \max\{\mathrm{round}(Z_n),0\}, \quad Z_n\sim\mathrm{normal}\left(\rho I^O_n, \big(\tau  I^O_n\big)^2 + \rho I^O_n\right).$$
+  \end{itemize}
 
 \end{frame}
 
@@ -291,21 +291,21 @@ options(dplyr.summarise.inform=FALSE)
 
   \vspace{-2mm}
 
-  \bi
-\item 
-  Additional parameters are used to specify initial state values at time $t_0=1932+ 4/12$.
-\item 
-  We will suppose there are parameters $\big(\tilde S^B_{1,0},...,\tilde S^B_{6,0}, \tilde I^B_0,\tilde I^O_0,\tilde S^O_0\big)$ that specify the population in each compartment at time $t_0$ via
-  $$ \hspace{-2mm} S^B_{1,0}= {\tilde S}^B_{1,0} ,...,S^B_{6,0}= \tilde S^B_{6,0}, \quad I^B_{0}= P_0 \tilde I^B_{0},\quad S^O_{0}= P_0 \tilde S^O_{0}, \quad I^O_{0}= P_0 \tilde I^O_{0}.$$
-\item
-  Following \citet{Martinez-Bakker2015}, we make an approximation for the initial conditions of ignoring infant infections at time $t_0$. 
-  Thus, we set $\tilde I^B_{0}=0$ and use monthly births in the preceding months (ignoring infant mortality) to fix $\tilde S^B_{k,0}=B_{1-k}$ for $k=1,\dots,6$.
+  \begin{itemize}
+  \item 
+    Additional parameters are used to specify initial state values at time $t_0=1932+ 4/12$.
+  \item 
+    We will suppose there are parameters $\big(\tilde S^B_{1,0},...,\tilde S^B_{6,0}, \tilde I^B_0,\tilde I^O_0,\tilde S^O_0\big)$ that specify the population in each compartment at time $t_0$ via
+    $$ \hspace{-2mm} S^B_{1,0}= {\tilde S}^B_{1,0} ,...,S^B_{6,0}= \tilde S^B_{6,0}, \quad I^B_{0}= P_0 \tilde I^B_{0},\quad S^O_{0}= P_0 \tilde S^O_{0}, \quad I^O_{0}= P_0 \tilde I^O_{0}.$$
+  \item
+    Following \citet{Martinez-Bakker2015}, we make an approximation for the initial conditions of ignoring infant infections at time $t_0$. 
+    Thus, we set $\tilde I^B_{0}=0$ and use monthly births in the preceding months (ignoring infant mortality) to fix $\tilde S^B_{k,0}=B_{1-k}$ for $k=1,\dots,6$.
 
-\item Estimated initial conditions are specified by $\tilde I^O_{0}$ and $\tilde S^O_{0}$, since the initial recovered population, $R_0$, is obtained by subtracting all other compartments from the total initial population, $P_0$.
-\item 
-  It is convenient to parameterize the estimated initial states as fractions of the population, whereas the initial states fixed at births are parameterized directly as a count.
+  \item Estimated initial conditions are specified by $\tilde I^O_{0}$ and $\tilde S^O_{0}$, since the initial recovered population, $R_0$, is obtained by subtracting all other compartments from the total initial population, $P_0$.
+  \item 
+    It is convenient to parameterize the estimated initial states as fractions of the population, whereas the initial states fixed at births are parameterized directly as a count.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -315,34 +315,34 @@ options(dplyr.summarise.inform=FALSE)
 
   \frametitle{Building a \code{pomp} object for the polio model}
 
-  \bi
-\item
-  We code the state variables, and the choice of $t_0$, as
-  \ei
+  \begin{itemize}
+  \item
+    We code the state variables, and the choice of $t_0$, as
+  \end{itemize}
 
   <<statenames>>=
   statenames <- c("SB1","SB2","SB3","SB4","SB5","SB6","IB","SO","IO")
   t0 <- 1932+4/12
   @
-  \bi
-\item 
-  We do not explicitly code $R$, since it is defined implicitly as the total population minus the sum of the other compartments.
-  Due to lifelong immunity, individuals in $R$ play no role in the dynamics. Even occasional negative values of $R$ (due to a discrepancy between the census and the mortality model) would not be a fatal flaw.
-  \ei
+  \begin{itemize}
+  \item 
+    We do not explicitly code $R$, since it is defined implicitly as the total population minus the sum of the other compartments.
+    Due to lifelong immunity, individuals in $R$ play no role in the dynamics. Even occasional negative values of $R$ (due to a discrepancy between the census and the mortality model) would not be a fatal flaw.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
 
   \frametitle{Setting up the covariate table}
-  \bi
-\item
-  \code{time} gives the time at which the covariates are defined.
-\item
-  \code{P} is a smoothed interpolation of the annual census.
-\item
-  \code{B} is monthly births.
-\item \code{xi1,...,xi6}  is a periodic B-spline basis
-  \ei
+  \begin{itemize}
+  \item
+    \code{time} gives the time at which the covariates are defined.
+  \item
+    \code{P} is a smoothed interpolation of the annual census.
+  \item
+    \code{B} is monthly births.
+  \item \code{xi1,...,xi6}  is a periodic B-spline basis
+  \end{itemize}
 
   <<covariates>>=
   library(pomp)
@@ -364,19 +364,19 @@ options(dplyr.summarise.inform=FALSE)
 \begin{frame}[fragile]
   \frametitle{Regular parameters and initial value parameters}
 
-  \bi
-\item
-  The parameters $b_1,\dots,b_\mathrm{K},\psi,\rho,\tau,\sigma_\mathrm{dem}, \sigma_\mathrm{env}$  in the model above are {regular parameters} (RPs), coded as
-  \ei
+  \begin{itemize}
+  \item
+    The parameters $b_1,\dots,b_\mathrm{K},\psi,\rho,\tau,\sigma_\mathrm{dem}, \sigma_\mathrm{env}$  in the model above are {regular parameters} (RPs), coded as
+  \end{itemize}
   <<rp_names>>=
   rp_names <- c("b1","b2","b3","b4","b5","b6",
     "psi","rho","tau","sigma_dem","sigma_env")
   @
   
-  \bi
-\item
-  The {initial value parameters} (IVPs), $\tilde I^O_{0}$ and  $\tilde S^O_{0}$, are coded for each state named by adding \code{\_0} to the state name:
-  \ei
+  \begin{itemize}
+  \item
+    The {initial value parameters} (IVPs), $\tilde I^O_{0}$ and  $\tilde S^O_{0}$, are coded for each state named by adding \code{\_0} to the state name:
+  \end{itemize}
   <<ivp_names>>=
   ivp_names <- c("SO_0","IO_0")
   paramnames <- c(rp_names,ivp_names)
@@ -387,13 +387,13 @@ options(dplyr.summarise.inform=FALSE)
 \begin{frame}[fragile]
 
   \frametitle{Fixed parameters (FPs)}
-  \bi
-\item 
-  Two quantities in the dynamic model specification, $\delta=1/60 \mathrm{yr}^{-1}$ and $\mathrm{K}=6$, are not estimated.
-\item Six other initial value quantities, $\{\tilde S^B_{1,0},\dots,\tilde S^B_{6,0}\}$, are treated as fixed.
+  \begin{itemize}
+  \item 
+    Two quantities in the dynamic model specification, $\delta=1/60 \mathrm{yr}^{-1}$ and $\mathrm{K}=6$, are not estimated.
+  \item Six other initial value quantities, $\{\tilde S^B_{1,0},\dots,\tilde S^B_{6,0}\}$, are treated as fixed.
 
-\item Fixed quantities could be coded as constants using the \code{globals} argument of \code{pomp}, but here we pass them as fixed parameters (FPs).
-  \ei
+  \item Fixed quantities could be coded as constants using the \code{globals} argument of \code{pomp}, but here we pass them as fixed parameters (FPs).
+  \end{itemize}
 
   <<fixed_names>>=
   fp_names <- c("delta","K",
@@ -412,10 +412,10 @@ options(dplyr.summarise.inform=FALSE)
 
   \frametitle{A starting value for the parameters}
 
-  \bi
-\item We have to start somewhere for our search in parameter space.
-\item The following parameter vector is based on informal model exploration and prior research:
-  \ei
+  \begin{itemize}
+  \item We have to start somewhere for our search in parameter space.
+  \item The following parameter vector is based on informal model exploration and prior research:
+  \end{itemize}
 
   <<polio_read_mle>>=
   params_guess <- c(
@@ -504,18 +504,18 @@ options(dplyr.summarise.inform=FALSE)
 \begin{frame}[fragile]
 
   \frametitle{Parameter transformations}
-  \bi
-\item For parameter estimation, it is helpful to have transformations that map each parameter into the whole real line and which put uncertainty close to a unit scale
-  \ei
+  \begin{itemize}
+  \item For parameter estimation, it is helpful to have transformations that map each parameter into the whole real line and which put uncertainty close to a unit scale
+  \end{itemize}
   <<trans>>=
   partrans <- parameter_trans(
     log=c("psi","rho","tau","sigma_dem","sigma_env"),
     logit=c("SO_0","IO_0")
   )
   @
-  \bi
-\item Since the seasonal splines are exponentiated, the \code{beta} parameters are already defined on the real line with unit scale uncertainty.
-  \ei
+  \begin{itemize}
+  \item Since the seasonal splines are exponentiated, the \code{beta} parameters are already defined on the real line with unit scale uncertainty.
+  \end{itemize}
 
 \end{frame}
 
@@ -542,7 +542,7 @@ options(dplyr.summarise.inform=FALSE)
       paramnames=paramnames
     ) -> polio
   @
-
+  
   <<simtest,include=FALSE>>=
   simulate(polio)
   @ 
@@ -557,17 +557,17 @@ options(dplyr.summarise.inform=FALSE)
 
   \frametitle{Setting run levels to control computation time}
 
-  \bi
+  \begin{itemize}
 
-\item \code{run\_level=1} will set all the algorithmic parameters to the first column of values in the following code, for debugging.
+  \item \code{run\_level=1} will set all the algorithmic parameters to the first column of values in the following code, for debugging.
 
-\item Here, \code{Np} is the number of particles, \code{Nmif} is the number of iterations of the optimization procedure carried, other variables are defined for use later.
+  \item Here, \code{Np} is the number of particles, \code{Nmif} is the number of iterations of the optimization procedure carried, other variables are defined for use later.
 
-\item \code{run\_level=2} uses enough effort to gives reasonably stable results at a moderate computational time.
+  \item \code{run\_level=2} uses enough effort to gives reasonably stable results at a moderate computational time.
 
-\item Larger values give more refined computations, implemented here by \code{run\_level=3} which was run on a computing cluster.
-  
-  \ei
+  \item Larger values give more refined computations, implemented here by \code{run\_level=3} which was run on a computing cluster.
+    
+  \end{itemize}
 
   <<run_level_set,eval=FALSE,purl=FALSE>>=
   run_level <- 3
@@ -591,19 +591,19 @@ options(dplyr.summarise.inform=FALSE)
 
   \frametitle{Comments on setting algorithmic parameters}
 
-  \bi
+  \begin{itemize}
 
-\item Using \code{run\_level} settings is convenient for editing source code. It plays no fundamental role in the final results. If you are not editing the source code, or using the code as a template for developing your own analysis, it has no function.
+  \item Using \code{run\_level} settings is convenient for editing source code. It plays no fundamental role in the final results. If you are not editing the source code, or using the code as a template for developing your own analysis, it has no function.
 
-\item When you edit a document with different \code{run\_level} options, you can debug your code by editing \code{run\_level=1}. Then, you can get preliminary assessment of whether your results are sensible with \code{run\_level=2} and get finalized results, with reduced Monte Carlo error, by editing \code{run\_level=3}.
+  \item When you edit a document with different \code{run\_level} options, you can debug your code by editing \code{run\_level=1}. Then, you can get preliminary assessment of whether your results are sensible with \code{run\_level=2} and get finalized results, with reduced Monte Carlo error, by editing \code{run\_level=3}.
 
-\item We intend \code{run\_level=1} to run in minutes, \code{run\_level=2} to run in tens of minutes, and \code{run\_level=3} to run in hours.
+  \item We intend \code{run\_level=1} to run in minutes, \code{run\_level=2} to run in tens of minutes, and \code{run\_level=3} to run in hours.
 
-\item You can increase or decrease the numbers of particles, or the number of mif2 iterations, or the number of global searches carried out, to make sure this procedure is practical on your machine.
-  
-\item Appropriate values of the algorithmic parameters for each run-level are context dependent.
+  \item You can increase or decrease the numbers of particles, or the number of mif2 iterations, or the number of global searches carried out, to make sure this procedure is practical on your machine.
+    
+  \item Appropriate values of the algorithmic parameters for each run-level are context dependent.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -624,29 +624,36 @@ options(dplyr.summarise.inform=FALSE)
 
   \frametitle{Parallel set-up}
 
-  \bi
-\item We ask {\Rlanguage} to access multiple processors, on a local machine or a slurm cluster.  
-\ei
+  \begin{itemize}
+  \item We ask {\Rlanguage} to access multiple processors, on a local machine or a slurm cluster.  
+  \end{itemize}
 
-<<parallel-setup>>=
-library(doParallel)
-cores <- as.numeric(Sys.getenv('SLURM_NTASKS_PER_NODE',unset=NA))  
-if(is.na(cores)) cores <- detectCores()  
-registerDoParallel(cores)
-library(doRNG)
-@
+  <<parallel-setup,eval=FALSE>>=
+  library(doParallel)
+  cores <- as.numeric(Sys.getenv('SLURM_NTASKS_PER_NODE',unset=NA))  
+  if(is.na(cores)) cores <- detectCores()  
+  registerDoParallel(cores)
+  library(doRNG)
+  @
   
-  \bi
-\item Our task, like much statistical computing, is \myemph{embarrassingly parallel} so we can use a simple parallel for loop via \code{foreach()}
-  \ei
-<<cache-cores>>=
-results_dir <- paste0("results/")
-if(!dir.exists(results_dir)) dir.create(results_dir)
-bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
-@
-\bi
-\item We set up a cache directory and record the number of cores used for the cached results.
-\ei
+  <<cluster_setup,include=FALSE,purl=TRUE,cache=FALSE>>=
+  if (file.exists("CLUSTER.R")) {
+    source("CLUSTER.R")
+  }
+  @
+  
+  \begin{itemize}
+  \item Our task, like much statistical computing, is \myemph{embarrassingly parallel} so we can use a simple parallel for loop via \code{foreach()}
+  \end{itemize}
+  
+  <<cache-cores>>=
+  results_dir <- paste0("results/")
+  if(!dir.exists(results_dir)) dir.create(results_dir)
+  bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
+  @
+  \begin{itemize}
+  \item We set up a cache directory and record the number of cores used for the cached results.
+  \end{itemize}
 
 \end{frame}
 
@@ -664,13 +671,13 @@ bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
   },info=TRUE,dependson=Np)
   L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
   @
+  
+  \begin{itemize}
 
-  \bi
+  \item In  \Sexpr{myround(.system.time[3],1)} seconds (with \Sexpr{cores} cores) we obtain a log likelihood estimate of \Sexpr{myround(L1[1],2)} with a Monte Carlo standard error of \Sexpr{myround(L1[2],2)}.
 
-\item In  \Sexpr{myround(.system.time[3],1)} seconds (with \Sexpr{cores} cores) we obtain a log likelihood estimate of \Sexpr{myround(L1[1],2)} with a Monte Carlo standard error of \Sexpr{myround(L1[2],2)}.
-
-\item Here, we use \code{stew()} to \myemph{cache} the results of the computation.
-  \ei
+  \item Here, we use \code{stew()} to \myemph{cache} the results of the computation.
+  \end{itemize}
 
 \end{frame}
 
@@ -679,68 +686,68 @@ bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
 \begin{frame}[fragile]
   \frametitle{Caching computations in Rmarkdown}
 
-  \bi
+  \begin{itemize}
 
-\item  It is not unusual for computations in a POMP analysis to take hours to run on many cores.
+  \item  It is not unusual for computations in a POMP analysis to take hours to run on many cores.
 
-\item  The computations for a final version of a manuscript may take days.
+  \item  The computations for a final version of a manuscript may take days.
 
-\item  Usually, we use some mechanism like the different values of \code{run\_level} so that preliminary versions of the manuscript take less time to run.
+  \item  Usually, we use some mechanism like the different values of \code{run\_level} so that preliminary versions of the manuscript take less time to run.
 
-\item  However, when editing the text or working on a different part of the manuscript, we don't want to re-run long pieces of code.
+  \item  However, when editing the text or working on a different part of the manuscript, we don't want to re-run long pieces of code.
 
-\item  Saving results so that the code is only re-run when necessary is called \myemph{caching}.
+  \item  Saving results so that the code is only re-run when necessary is called \myemph{caching}.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
 \begin{frame}[fragile]
-  \bi
-\item  You may already be familiar the versions of caching provided in {.Rmd} and {.Rnw} files. The argument \code{cache=TRUE} can be set individually for each chunk or as a global option.
+  \begin{itemize}
+  \item  You may already be familiar the versions of caching provided in {.Rmd} and {.Rnw} files. The argument \code{cache=TRUE} can be set individually for each chunk or as a global option.
 
-\item  When \code{cache=TRUE}, Rmarkdown/knitr caches the results of the chunk, meaning that a chunk will only be re-run if code in that chunk is edited.
+  \item  When \code{cache=TRUE}, Rmarkdown/knitr caches the results of the chunk, meaning that a chunk will only be re-run if code in that chunk is edited.
 
-\item  You can force Rmarkdown/knitr to recompute all the chunks by deleting the \code{cache} subdirectory.
-  \ei
+  \item  You can force Rmarkdown/knitr to recompute all the chunks by deleting the \code{cache} subdirectory.
+  \end{itemize}
 \end{frame}
 
 
 \begin{frame}[fragile]
   \frametitle{Practical advice for caching}
-  \bi
-\item  What if changes elsewhere in the document affect the proper evaluation of your chunk, but you didn't edit any of the code in the chunk itself?
-  Rmarkdown/knitr will get this wrong. \myemph{It will not recompute the chunk}.
+  \begin{itemize}
+  \item  What if changes elsewhere in the document affect the proper evaluation of your chunk, but you didn't edit any of the code in the chunk itself?
+    Rmarkdown/knitr will get this wrong. \myemph{It will not recompute the chunk}.
 
-\item  A perfect caching system doesn't exist. \myemph{Always delete the entire cache and rebuild a fresh cache before finishing a manuscript.}
+  \item  A perfect caching system doesn't exist. \myemph{Always delete the entire cache and rebuild a fresh cache before finishing a manuscript.}
 
-\item  Rmarkdown/knitr caching is good for relatively small computations, such as producing figures or things that may take a minute or two and are annoying if you have to recompute them every time you make any edits to the text.
+  \item  Rmarkdown/knitr caching is good for relatively small computations, such as producing figures or things that may take a minute or two and are annoying if you have to recompute them every time you make any edits to the text.
 
-\item  For longer computations, it is good to have full manual control. In \package{pomp}, this is provided by two related functions, \code{stew} and \code{bake}.
+  \item  For longer computations, it is good to have full manual control. In \package{pomp}, this is provided by two related functions, \code{stew} and \code{bake}.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
 \begin{frame}[fragile]{\code{stew} and \code{bake}}
 
 
-  \bi
-\item  Notice the function \code{stew} in the replicated particle filter code above.
+  \begin{itemize}
+  \item  Notice the function \code{stew} in the replicated particle filter code above.
 
-\item  Here, \code{stew} looks for a file called \code{results/pf1.rda}. 
+  \item  Here, \code{stew} looks for a file called \code{results/pf1.rda}. 
 
-\item  If it finds this file, it simply loads the contents of this file.
+  \item  If it finds this file, it simply loads the contents of this file.
 
-\item  If the file doesn't exist, it carries out the specified computation and saves it in a file of this name.
+  \item  If the file doesn't exist, it carries out the specified computation and saves it in a file of this name.
 
-\item  \code{bake} is similar to \code{stew}. The difference is that \code{bake} uses \code{readRDS} and \code{saveRDS}, whereas \code{stew} uses \code{load} and \code{save}. 
+  \item  \code{bake} is similar to \code{stew}. The difference is that \code{bake} uses \code{readRDS} and \code{saveRDS}, whereas \code{stew} uses \code{load} and \code{save}. 
 
-\item  either way, the computation will not be re-run unless you edit the code, change something on which the computation depends, or manually delete the archive file (\code{results/pf1.rda}).
+  \item  either way, the computation will not be re-run unless you edit the code, change something on which the computation depends, or manually delete the archive file (\code{results/pf1.rda}).
 
-\item  \code{stew} and \code{bake} reset the seed appropriately whether or not the computation is recomputed. Otherwise, caching risks adverse consequences for reproducibility.
+  \item  \code{stew} and \code{bake} reset the seed appropriately whether or not the computation is recomputed. Otherwise, caching risks adverse consequences for reproducibility.
 
-  \ei
+  \end{itemize}
 
 
 
@@ -752,12 +759,12 @@ bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
 
   \frametitle{Simulation to investigate local persistence}
 
-  \bi
-\item 
-  The scientific purpose of fitting a model typically involves analyzing properties of the fitted model, often investigated using simulation.
-\item Following \citet{Martinez-Bakker2015}, we are interested in how often months with no reported cases ($Y_n=0$) correspond to months without any local asymptomatic cases, defined for our continuous state model as $I^B_n+I^O_n<1/2$.
-\item For Wisconsin, using our model at the estimated MLE, we simulate in parallel as follows:
-  \ei
+  \begin{itemize}
+  \item 
+    The scientific purpose of fitting a model typically involves analyzing properties of the fitted model, often investigated using simulation.
+  \item Following \citet{Martinez-Bakker2015}, we are interested in how often months with no reported cases ($Y_n=0$) correspond to months without any local asymptomatic cases, defined for our continuous state model as $I^B_n+I^O_n<1/2$.
+  \item For Wisconsin, using our model at the estimated MLE, we simulate in parallel as follows:
+  \end{itemize}
   <<persistence-sim>>=
   simulate(polio,nsim=Nsim,seed=1643079359,
     format="data.frame",include.data=TRUE) -> sims
@@ -790,7 +797,7 @@ bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
   summ %>%
     column_to_rownames("type") -> summ
   @
-
+  
   For the data, there were \Sexpr{summ["data","no_cases"]} months with no reported cases, similar to the mean of \Sexpr{signif(summ["sim","no_cases"],3)} for simulations from the fitted model.
   Months with no asymptomatic infections for the simulations were rare, on average \Sexpr{signif(summ["sim","fadeout1"],2)} months per simulation.
   Months with fewer than 100 infections averaged \Sexpr{signif(summ["sim","fadeout100"],2)} per simulation, which in the context of a reporting rate of \Sexpr{signif(coef(polio,"rho"),3)} can explain the absences of case reports.
@@ -801,10 +808,10 @@ bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
 
 \begin{frame}[fragile]
 
-  \bi
-\item It is also good practice to look at simulations from the fitted model:
+  \begin{itemize}
+  \item It is also good practice to look at simulations from the fitted model:
 
-  \ei
+  \end{itemize}
 
   <<plot_simulated,purl=FALSE>>=
   mle_simulation <- simulate(polio,seed=902683441)
@@ -815,13 +822,13 @@ bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
 
 \begin{frame}[fragile]
 
-  \bi
+  \begin{itemize}
 
-\item We see from this simulation that the fitted model can generate report histories that look qualitatively similar to the data. However, there are things to notice in the reconstructed latent states. Specifically, the pool of older susceptibles, $S^O(t)$, is mostly increasing. The reduced case burden in the data in the time interval 1932--1945 is explained by a large initial recovered ($R$) population, which implies much higher levels of polio before 1932. There were large epidemics of polio in the USA early in the 20th century, so this is not implausible.
+  \item We see from this simulation that the fitted model can generate report histories that look qualitatively similar to the data. However, there are things to notice in the reconstructed latent states. Specifically, the pool of older susceptibles, $S^O(t)$, is mostly increasing. The reduced case burden in the data in the time interval 1932--1945 is explained by a large initial recovered ($R$) population, which implies much higher levels of polio before 1932. There were large epidemics of polio in the USA early in the 20th century, so this is not implausible.
 
-\item A likelihood profile over the parameter $\tilde S^O_0$ could help to clarify to what extent this is a critical feature of how the model explains the data.
+  \item A likelihood profile over the parameter $\tilde S^O_0$ could help to clarify to what extent this is a critical feature of how the model explains the data.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -831,11 +838,11 @@ bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
 
   \frametitle{Local likelihood maximization}
 
-  \bi
+  \begin{itemize}
 
-\item Let's see if we can improve on the previous MLE. We use the IF2 algorithm. We set a constant random walk standard deviation for each of the regular parameters and a larger constant for each of the initial value parameters:
+  \item Let's see if we can improve on the previous MLE. We use the IF2 algorithm. We set a constant random walk standard deviation for each of the regular parameters and a larger constant for each of the initial value parameters:
 
-  \ei
+  \end{itemize}
 
   <<rwsd>>=
   rw_sd <- eval(substitute(rw.sd(
@@ -850,68 +857,62 @@ bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
 
 \begin{frame}[fragile]
 
-  <<cluster_setup,include=FALSE,purl=TRUE,cache=FALSE>>=
-  if (file.exists("CLUSTER.R")) {
-    source("CLUSTER.R")
-  }
+  <<mif>>=
+  exl <- c("polio","Np","Nmif","rw_sd",
+    "Nreps_local","Nreps_eval")
+  
+  stew(file=paste0(results_dir,"mif.rda"),{
+    m2 <- foreach(i=1:Nreps_local,
+      .packages="pomp",.combine=c,.export=exl) %dopar%
+      mif2(polio, Np=Np, Nmif=Nmif, rw.sd=rw_sd,
+        cooling.fraction.50=0.5)
+    lik_m2 <- foreach(m=m2,.packages="pomp",.combine=rbind,
+      .export=exl) %dopar%
+      logmeanexp(replicate(Nreps_eval,
+        logLik(pfilter(m,Np=Np))),se=TRUE)
+  },dependson=run_level)
+  load(file=paste0(results_dir,"mif.rda"))
+  mif_time <- .system.time
+
   @
   
-<<mif>>=
-exl <- c("polio","Np","Nmif","rw_sd",
-  "Nreps_local","Nreps_eval")
-  
-stew(file=paste0(results_dir,"mif.rda"),{
-  m2 <- foreach(i=1:Nreps_local,
-    .packages="pomp",.combine=c,.export=exl) %dopar%
-    mif2(polio, Np=Np, Nmif=Nmif, rw.sd=rw_sd,
-         cooling.fraction.50=0.5)
-  lik_m2 <- foreach(m=m2,.packages="pomp",.combine=rbind,
-    .export=exl) %dopar%
-    logmeanexp(replicate(Nreps_eval,
-      logLik(pfilter(m,Np=Np))),se=TRUE)
-},dependson=run_level)
-load(file=paste0(results_dir,"mif.rda"))
-mif_time <- .system.time
-
-@
-
 \end{frame}
 
 \begin{frame}[fragile]
 
-<<search-save>>=
-coef(m2) %>% melt() %>% spread(parameter,value) %>%
-  select(-.id) %>%
-  bind_cols(logLik=lik_m2[,1],logLik_se=lik_m2[,2]) -> r2
-r2 %>% arrange(-logLik) %>%
-  write_csv("params.csv")
-summary(r2$logLik,digits=5)
-@
+  <<search-save>>=
+  coef(m2) %>% melt() %>% spread(parameter,value) %>%
+    select(-.id) %>%
+    bind_cols(logLik=lik_m2[,1],logLik_se=lik_m2[,2]) -> r2
+  r2 %>% arrange(-logLik) %>%
+    write_csv("params.csv")
+  summary(r2$logLik,digits=5)
+  @
   
-  \bi
+  \begin{itemize}
 
-\item This investigation took \Sexpr{myround(.system.time[3]/60,1)}~min.
-\item These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
+  \item This investigation took \Sexpr{myround(.system.time[3]/60,1)}~min.
+  \item These repeated stochastic maximizations can also show us the geometry of the likelihood surface in a neighborhood of this point estimate:
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
 \begin{frame}[fragile]
-<<pairs,purl=FALSE>>=
-pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
-  data=subset(r2,logLik>max(logLik)-20))
-@
+  <<pairs,purl=FALSE>>=
+  pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
+    data=subset(r2,logLik>max(logLik)-20))
+  @
   
 \end{frame}
 
 \begin{frame}[fragile]
 
-  \bi
+  \begin{itemize}
 
-\item We see strong tradeoffs between $\psi$, $\rho$ and $\sigma_\mathrm{dem}$. By itself, in the absence of other assumptions, the pathogen immigration rate $\psi$ is fairly weakly identified. However, the reporting rate $\rho$ is essentially the fraction of poliovirus infections leading to acute flaccid paralysis, which is known to be around 1\%. This plot suggests that fixing an assumed value of $\rho$ might lead to much more precise inference on $\psi$; the rate of pathogen immigration presumably being important for understanding disease persistence. These hypotheses could be investigated more formally by construction of profile likelihood plots and likelihood ratio tests.
+  \item We see strong tradeoffs between $\psi$, $\rho$ and $\sigma_\mathrm{dem}$. By itself, in the absence of other assumptions, the pathogen immigration rate $\psi$ is fairly weakly identified. However, the reporting rate $\rho$ is essentially the fraction of poliovirus infections leading to acute flaccid paralysis, which is known to be around 1\%. This plot suggests that fixing an assumed value of $\rho$ might lead to much more precise inference on $\psi$; the rate of pathogen immigration presumably being important for understanding disease persistence. These hypotheses could be investigated more formally by construction of profile likelihood plots and likelihood ratio tests.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -919,14 +920,14 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
 
   \frametitle{Global likelihood maximization}
 
-  \bi
-\item 
-  Practical parameter estimation involves trying many starting values for the parameters. One can specify a large box in parameter space that contains all sensible parameter vectors.
+  \begin{itemize}
+  \item 
+    Practical parameter estimation involves trying many starting values for the parameters. One can specify a large box in parameter space that contains all sensible parameter vectors.
 
-\item If the estimation gives stable conclusions with starting values drawn randomly from this box, we have some confidence that our global search is reliable.
+  \item If the estimation gives stable conclusions with starting values drawn randomly from this box, we have some confidence that our global search is reliable.
 
-\item For our polio model, a reasonable box might be:
-  \ei
+  \item For our polio model, a reasonable box might be:
+  \end{itemize}
 
   <<box>>=
   box <- rbind(
@@ -979,14 +980,14 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
   summary(r3$logLik,digits=5)
   @
   
-  \bi
+  \begin{itemize}
 
-\item Evaluation of the best result of this search gives a likelihood of \Sexpr{myround(max(r3$logLik),1)} with a standard error of \Sexpr{myround(r3$logLik_se[which.max(r3$logLik)],1)}.
-  We see that optimization attempts from diverse remote starting points can approach our MLE, but do not exceed it. This gives us some reasonable confidence in our MLE. 
+  \item Evaluation of the best result of this search gives a likelihood of \Sexpr{myround(max(r3$logLik),1)} with a standard error of \Sexpr{myround(r3$logLik_se[which.max(r3$logLik)],1)}.
+    We see that optimization attempts from diverse remote starting points can approach our MLE, but do not exceed it. This gives us some reasonable confidence in our MLE. 
 
-\item Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface 
+  \item Plotting these diverse parameter estimates can help to give a feel for the global geometry of the likelihood surface 
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -1004,33 +1005,33 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
 
   \frametitle{Benchmark likelihoods for non-mechanistic models}
   
-  \bi
-\item To understand these global searches, many of which may correspond to parameter values having no meaningful scientific interpretation, it is helpful to put the log likelihoods in the context of some non-mechanistic benchmarks.
-\item The most basic statistical model for data is independent, identically distributed (IID). Picking a negative binomial model, 
-  \ei
+  \begin{itemize}
+  \item To understand these global searches, many of which may correspond to parameter values having no meaningful scientific interpretation, it is helpful to put the log likelihoods in the context of some non-mechanistic benchmarks.
+  \item The most basic statistical model for data is independent, identically distributed (IID). Picking a negative binomial model, 
+  \end{itemize}
   
   <<nbinom>>=
   nb_lik <- function (theta) {
     -sum(dnbinom(as.numeric(obs(polio)),
-       size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))}
+      size=exp(theta[1]),prob=exp(theta[2]),log=TRUE))}
   nb_mle <- optim(c(0,-5),nb_lik)
   -nb_mle$value
   @
   
-  \bi
-\item A model with likelihood below \Sexpr{myround(-nb_mle$value,1)} is unreasonable. This explains a cutoff around this value in the global searches: in these cases, the model is finding essentially IID explanations for the data.
-  \ei
+  \begin{itemize}
+  \item A model with likelihood below \Sexpr{myround(-nb_mle$value,1)} is unreasonable. This explains a cutoff around this value in the global searches: in these cases, the model is finding essentially IID explanations for the data.
+  \end{itemize}
 
 \end{frame}
 
 
 \begin{frame}[fragile]
   \frametitle{ARMA models as benchmarks}
-  \bi
-\item Linear, Gaussian auto-regressive moving-average (ARMA) models provide non-mechanistic fits to the data including flexible dependence relationships.
-\item We fit to $\log(y_n^*+1)$ and correct the likelihood back to the scale appropriate for the untransformed data:
+  \begin{itemize}
+  \item Linear, Gaussian auto-regressive moving-average (ARMA) models provide non-mechanistic fits to the data including flexible dependence relationships.
+  \item We fit to $\log(y_n^*+1)$ and correct the likelihood back to the scale appropriate for the untransformed data:
 
-  \ei
+  \end{itemize}
 
   <<arma>>=
   log_y <- log(as.vector(obs(polio))+1)
@@ -1039,12 +1040,12 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
   arma_fit$loglik-sum(log_y)
   @
   
-  \bi
+  \begin{itemize}
 
-\item This 7-parameter model, which knows nothing of susceptible depletion, attains a likelihood of \Sexpr{myround(arma_fit$loglik-sum(log_y),1)}.
-\item The aim of mechanistic modeling here is not to beat non-mechanistic models, but it is comforting that we're competitive with them.
+  \item This 7-parameter model, which knows nothing of susceptible depletion, attains a likelihood of \Sexpr{myround(arma_fit$loglik-sum(log_y),1)}.
+  \item The aim of mechanistic modeling here is not to beat non-mechanistic models, but it is comforting that we're competitive with them.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -1062,11 +1063,11 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
 
 \begin{frame}[fragile]
 
-  \bi
+  \begin{itemize}
 
-\item Here, we see that the most successful searches have always led to models with reporting rate around 1-2\%. This impression can be reinforced by looking at results from the global searches:
+  \item Here, we see that the most successful searches have always led to models with reporting rate around 1-2\%. This impression can be reinforced by looking at results from the global searches:
 
-  \ei
+  \end{itemize}
 
   <<global_rho_code,eval=FALSE,echo=TRUE,purl=FALSE>>=
   plot(logLik~rho,data=subset(r3,logLik>max(r3$logLik)-10),log="x")
@@ -1081,11 +1082,11 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
   @
   
 
-  \bi
+  \begin{itemize}
 
-\item Reporting rates close to 1\% provide a small but clear advantage (several units of log likelihood) in explaining the data. For these reporting rates, depletion of susceptibles can help to explain the dynamics.
+  \item Reporting rates close to 1\% provide a small but clear advantage (several units of log likelihood) in explaining the data. For these reporting rates, depletion of susceptibles can help to explain the dynamics.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -1093,10 +1094,10 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
 
 \begin{frame}[fragile]{Profile likelihood}
 
-  \bi
-\item First, we must decide the ranges of parameter starting values for the searches.
-\item We build a search box using the range of finishing values from previous searches.
-  \ei
+  \begin{itemize}
+  \item First, we must decide the ranges of parameter starting values for the searches.
+  \item We build a search box using the range of finishing values from previous searches.
+  \end{itemize}
 
   <<profile_ranges>>=
   library(tidyverse)
@@ -1115,18 +1116,18 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
 
 \begin{frame}[fragile]
 
-  \bi
-\item We must decide how many points to plot along the profile, and the number of Monte Carlo replicates at each point.
-  \ei
+  \begin{itemize}
+  \item We must decide how many points to plot along the profile, and the number of Monte Carlo replicates at each point.
+  \end{itemize}
 
   <<run_level_profile>>=
   profile_pts <-  switch(run_level,  3,  5,  30)
   profile_Nreps <- switch(run_level, 2,  3,  10)
   @
   
-  \bi
-\item We build a dataframe with a row setting up each profile search 
-  \ei
+  \begin{itemize}
+  \item We build a dataframe with a row setting up each profile search 
+  \end{itemize}
 
   <<profile_jobs>>=
   idx <- which(colnames(box)!="rho")
@@ -1141,9 +1142,9 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
 
 \begin{frame}[fragile]
 
-  \bi
-\item Note that $\rho$ is not perturbed in the IF iterations for the purposes of the profile calculation.
-  \ei
+  \begin{itemize}
+  \item Note that $\rho$ is not perturbed in the IF iterations for the purposes of the profile calculation.
+  \end{itemize}
 
   <<profile_rw_sd>>=
   profile_rw_sd <- eval(substitute(rw.sd(
@@ -1152,44 +1153,44 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
     IO_0=ivp(rwi),SO_0=ivp(rwi)),
     list(rwi=0.2,rwr=0.02)))
   @
-
+  
   <<profile_rho,eval=T,echo=F>>=
   bake(file=paste0(results_dir,"profile_rho.rds"),{  
     registerDoRNG(1888257101)
     foreach(start=iter(starts,"row"),.combine=rbind,
       .packages=c("pomp","dplyr")) %dopar% {
-      polio %>% mif2(params=start,
-        Np=Np,Nmif=ceiling(Nmif/2),
-        cooling.fraction.50=0.5,
-        rw.sd=profile_rw_sd
-      ) %>%
-        mif2(Np=Np,Nmif=ceiling(Nmif/2),
-          cooling.fraction.50=0.1
-        ) -> mf
-      replicate(Nreps_eval,
-        mf %>% pfilter(Np=Np) %>% logLik()
-      ) %>% logmeanexp(se=TRUE) -> ll
-      mf %>% coef() %>% bind_rows() %>%
-        bind_cols(logLik=ll[1],logLik_se=ll[2])
-    }
+        polio %>% mif2(params=start,
+          Np=Np,Nmif=ceiling(Nmif/2),
+          cooling.fraction.50=0.5,
+          rw.sd=profile_rw_sd
+        ) %>%
+          mif2(Np=Np,Nmif=ceiling(Nmif/2),
+            cooling.fraction.50=0.1
+          ) -> mf
+        replicate(Nreps_eval,
+          mf %>% pfilter(Np=Np) %>% logLik()
+        ) %>% logmeanexp(se=TRUE) -> ll
+        mf %>% coef() %>% bind_rows() %>%
+          bind_cols(logLik=ll[1],logLik_se=ll[2])
+      }
   },dependson=run_level) -> m4
   @
-
-  \bi
-\item
-  Otherwise, the following code to compute the profile is identical to a global search $\dots$
-\item It took $\Sexpr{myround(attr(m4,"system.time")["elapsed"]/60,1)}$ minutes to run on $\Sexpr{cores}$ cores.
-  \ei
+  
+  \begin{itemize}
+  \item
+    Otherwise, the following code to compute the profile is identical to a global search $\dots$
+  \item It took $\Sexpr{myround(attr(m4,"system.time")["elapsed"]/60,1)}$ minutes to run on $\Sexpr{cores}$ cores.
+  \end{itemize}
 
 \end{frame}
 
 \begin{frame}[fragile]
-
-
-<<profile_rho_code,echo=T,eval=F>>=
-<<profile_rho>>
-@
-
+  
+  
+  <<profile_rho_code,echo=T,eval=F>>=
+  <<profile_rho>>
+  @
+  
 \end{frame}
 
 
@@ -1287,15 +1288,15 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
 
 \begin{frame}[fragile]
 
-  \bi
-\item
-  The likelihood is particularly important to keep in mind. If parameter estimates are numerically unstable, that could be a consequence of a weakly identified parameter subspace.
-\item
-  The presence of some weakly identified combinations of parameters is not fundamentally a scientific flaw; rather, our scientific inquiry looks to investigate which questions can and cannot be answered in the context of a set of data and modeling assumptions.
-\item As long as the search is demonstrably approaching the maximum likelihood region we should not necessarily be worried about the stability of parameter values (at least, from the point of diagnosing successful maximization).
-\item
-  So, we zoom in on the likelihood convergence plot:
-  \ei
+  \begin{itemize}
+  \item
+    The likelihood is particularly important to keep in mind. If parameter estimates are numerically unstable, that could be a consequence of a weakly identified parameter subspace.
+  \item
+    The presence of some weakly identified combinations of parameters is not fundamentally a scientific flaw; rather, our scientific inquiry looks to investigate which questions can and cannot be answered in the context of a set of data and modeling assumptions.
+  \item As long as the search is demonstrably approaching the maximum likelihood region we should not necessarily be worried about the stability of parameter values (at least, from the point of diagnosing successful maximization).
+  \item
+    So, we zoom in on the likelihood convergence plot:
+  \end{itemize}
 
 \end{frame}
 
@@ -1314,19 +1315,19 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
 \begin{frame}[fragile]
   \frametitle{Acknowledgments and License}
 
-  \bi
-\item This lesson is prepared for the \link{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \link{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}.
+  \begin{itemize}
+  \item This lesson is prepared for the \link{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \link{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}.
 
-\item The materials build on \link{https://kingaa.github.io/sbied/acknowledge.html}{previous versions of this course and related courses}.
+  \item The materials build on \link{https://kingaa.github.io/sbied/acknowledge.html}{previous versions of this course and related courses}.
 
-\item Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+  \item Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
 
-\item
-  Licensed under the \link{http://creativecommons.org/licenses/by-nc/3.0/}{Creative Commons attribution-noncommercial license}.
-  Please share and remix noncommercially, mentioning its origin.
+  \item
+    Licensed under the \link{http://creativecommons.org/licenses/by-nc/3.0/}{Creative Commons attribution-noncommercial license}.
+    Please share and remix noncommercially, mentioning its origin.
 
-  \includegraphics[width=2cm]{../graphics/cc-by-nc.png}
-  \ei
+    \includegraphics[width=2cm]{../graphics/cc-by-nc.png}
+  \end{itemize}
 
 \end{frame}
 

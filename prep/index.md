@@ -32,7 +32,11 @@ In this message, **be certain to include all of the following information**:
 - what error messages you've received.
 
 In particular, it is often easiest to send a screenshot or transcript showing the commands you've entered and the error messages you've received.
-In **R**, you can run `Sys.info()` to get a printout of the operating system and software version numbers.
+In an **R** session, you can run 
+```
+> source("https://kingaa.github.io/scripts/diagnostics.R")
+```
+to get information on the operating system and version numbers of **R** and loaded packages.
 
 </div>
 
