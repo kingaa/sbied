@@ -1,5 +1,5 @@
 
-R version 4.2.0 (2022-04-22) -- "Vigorous Calisthenics"
+R version 4.2.1 (2022-06-23) -- "Funny-Looking Kid"
 Copyright (C) 2022 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -41,7 +41,10 @@ Loading required package: iterators
 Loading required package: parallel
 > library(doRNG)
 Loading required package: rngtools
-> options(dplyr.summarise.inform=FALSE)
+> options(
++   dplyr.summarise.inform=FALSE,
++   pomp_archive_dir="results"
++   )
 > 
 > library(tidyverse)
 > data <- read_csv(
@@ -203,11 +206,9 @@ dbl (4): time, cases, births, pop
 +   source("CLUSTER.R")
 + }
 > 
-> results_dir <- paste0("results/")
-> if(!dir.exists(results_dir)) dir.create(results_dir)
-> bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
+> bake(file="cores.rds",cores) -> cores
 > 
-> stew(file=paste0(results_dir,"pf1.rda"),{
+> stew(file="pf1.rda",{
 +   registerDoRNG(3899882)
 +   pf1 <- foreach(i=1:20,.packages="pomp",
 +     .export=c("polio","Np")) %dopar%
@@ -253,7 +254,7 @@ they will be dropped
 > exl <- c("polio","Np","Nmif","rw_sd",
 +   "Nreps_local","Nreps_eval")
 > 
-> stew(file=paste0(results_dir,"mif.rda"),{
+> stew(file="mif.rda",{
 +   m2 <- foreach(i=1:Nreps_local,
 +     .packages="pomp",.combine=c,.export=exl) %dopar%
 +     mif2(polio, Np=Np, Nmif=Nmif, rw.sd=rw_sd,
@@ -263,7 +264,7 @@ they will be dropped
 +     logmeanexp(replicate(Nreps_eval,
 +       logLik(pfilter(m,Np=Np))),se=TRUE)
 + },dependson=run_level)
-> load(file=paste0(results_dir,"mif.rda"))
+> load(file="results/mif.rda")
 > mif_time <- .system.time
 > 
 > 
@@ -287,14 +288,14 @@ they will be dropped
 +   SO_0=c(0,1), IO_0=c(0,0.01)
 + )
 > 
-> bake(file=paste0(results_dir,"box_eval1.rds"),{
+> bake(file="box_eval1.rds",{
 +   registerDoRNG(833102018)
 +   foreach(i=1:Nreps_global,.packages="pomp",
 +     .combine=c) %dopar%
 +     mif2(m2[[1]],params=c(fixed_params,
 +       apply(box,1,function(x)runif(1,x[1],x[2]))))
 + },dependson=run_level) -> m3
-> bake(file=paste0(results_dir,"box_eval2.rds"),{
+> bake(file="box_eval2.rds",{
 +   registerDoRNG(71449038)
 +   foreach(m=m3,.packages="pomp",
 +     .combine=rbind) %dopar%
@@ -377,7 +378,7 @@ dbl (23): b1, b2, b3, b4, b5, b6, psi, rho, tau, sigma_dem, sigma_env, SO_0,...
 +   IO_0=ivp(rwi),SO_0=ivp(rwi)),
 +   list(rwi=0.2,rwr=0.02)))
 > 
-> bake(file=paste0(results_dir,"profile_rho.rds"),{  
+> bake(file="profile_rho.rds",{  
 +   registerDoRNG(1888257101)
 +   foreach(start=iter(starts,"row"),.combine=rbind,
 +     .packages=c("pomp","dplyr")) %dopar% {
@@ -397,7 +398,7 @@ dbl (23): b1, b2, b3, b4, b5, b6, psi, rho, tau, sigma_dem, sigma_env, SO_0,...
 +     }
 + },dependson=run_level) -> m4
 > 
-> ## bake(file=paste0(results_dir,"profile_rho.rds"),{
+> ## bake(file="profile_rho.rds",{
 > ##   registerDoRNG(1888257101)
 > ##   foreach(start=iter(starts,"row"),.combine=rbind,
 > ##     .packages=c("pomp","dplyr")) %dopar% {
@@ -442,4 +443,4 @@ dbl (23): b1, b2, b3, b4, b5, b6, psi, rho, tau, sigma_dem, sigma_env, SO_0,...
 > 
 > proc.time()
    user  system elapsed 
-  8.894   9.634   6.305 
+  6.057   3.235   5.136 

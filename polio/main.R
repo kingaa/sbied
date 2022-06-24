@@ -2,7 +2,10 @@ library(pomp)
 library(tidyverse)
 library(doParallel)
 library(doRNG)
-options(dplyr.summarise.inform=FALSE)
+options(
+  dplyr.summarise.inform=FALSE,
+  pomp_archive_dir="results"
+  )
 
 library(tidyverse)
 data <- read_csv(
@@ -147,11 +150,9 @@ if (file.exists("CLUSTER.R")) {
   source("CLUSTER.R")
 }
 
-results_dir <- paste0("results/")
-if(!dir.exists(results_dir)) dir.create(results_dir)
-bake(file=paste0(results_dir,"cores.rds"),cores) -> cores
+bake(file="cores.rds",cores) -> cores
 
-stew(file=paste0(results_dir,"pf1.rda"),{
+stew(file="pf1.rda",{
   registerDoRNG(3899882)
   pf1 <- foreach(i=1:20,.packages="pomp",
     .export=c("polio","Np")) %dopar%
@@ -194,7 +195,7 @@ rw_sd <- eval(substitute(rw.sd(
 exl <- c("polio","Np","Nmif","rw_sd",
   "Nreps_local","Nreps_eval")
 
-stew(file=paste0(results_dir,"mif.rda"),{
+stew(file="mif.rda",{
   m2 <- foreach(i=1:Nreps_local,
     .packages="pomp",.combine=c,.export=exl) %dopar%
     mif2(polio, Np=Np, Nmif=Nmif, rw.sd=rw_sd,
@@ -204,7 +205,7 @@ stew(file=paste0(results_dir,"mif.rda"),{
     logmeanexp(replicate(Nreps_eval,
       logLik(pfilter(m,Np=Np))),se=TRUE)
 },dependson=run_level)
-load(file=paste0(results_dir,"mif.rda"))
+load(file="results/mif.rda")
 mif_time <- .system.time
 
 
@@ -226,14 +227,14 @@ box <- rbind(
   SO_0=c(0,1), IO_0=c(0,0.01)
 )
 
-bake(file=paste0(results_dir,"box_eval1.rds"),{
+bake(file="box_eval1.rds",{
   registerDoRNG(833102018)
   foreach(i=1:Nreps_global,.packages="pomp",
     .combine=c) %dopar%
     mif2(m2[[1]],params=c(fixed_params,
       apply(box,1,function(x)runif(1,x[1],x[2]))))
 },dependson=run_level) -> m3
-bake(file=paste0(results_dir,"box_eval2.rds"),{
+bake(file="box_eval2.rds",{
   registerDoRNG(71449038)
   foreach(m=m3,.packages="pomp",
     .combine=rbind) %dopar%
@@ -298,7 +299,7 @@ profile_rw_sd <- eval(substitute(rw.sd(
   IO_0=ivp(rwi),SO_0=ivp(rwi)),
   list(rwi=0.2,rwr=0.02)))
 
-bake(file=paste0(results_dir,"profile_rho.rds"),{  
+bake(file="profile_rho.rds",{  
   registerDoRNG(1888257101)
   foreach(start=iter(starts,"row"),.combine=rbind,
     .packages=c("pomp","dplyr")) %dopar% {
@@ -318,7 +319,7 @@ bake(file=paste0(results_dir,"profile_rho.rds"),{
     }
 },dependson=run_level) -> m4
 
-## bake(file=paste0(results_dir,"profile_rho.rds"),{
+## bake(file="profile_rho.rds",{
 ##   registerDoRNG(1888257101)
 ##   foreach(start=iter(starts,"row"),.combine=rbind,
 ##     .packages=c("pomp","dplyr")) %dopar% {
