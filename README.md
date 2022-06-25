@@ -101,11 +101,12 @@ The following is a log of compilations.
 | finishing     | 2021-07-20      |         11min |             36 |
 | full          | 2021-07-21      |        488min |            250 |
 | full          | 2022-05-21      |        440min |            250 |
+| full          | 2022-06-24      |        468min |            250 |
 | measles full  | 2022-05-26      |        208min |            250 |
 | polio level 1 | 2022-05-22      |         10min |            250 |
 | polio level 2 | 2022-05-26      |         22min |            250 |
 | polio   full  | 2022-06-22      |        170min |            250 |
-| finishing     | 2022-06-22      |         11min |             48 |
+| finishing     | 2022-06-25      |         11min |             64 |
 
 ----------------------------
 

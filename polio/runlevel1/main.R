@@ -15,7 +15,8 @@ head(data,5)
 
 
 
-statenames <- c("SB1","SB2","SB3","SB4","SB5","SB6","IB","SO","IO")
+statenames <- c("SB1","SB2","SB3","SB4","SB5","SB6",
+  "IB","SO","IO")
 t0 <- 1932+4/12
 
 library(pomp)

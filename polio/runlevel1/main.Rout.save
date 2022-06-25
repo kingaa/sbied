@@ -69,7 +69,8 @@ dbl (4): time, cases, births, pop
 > 
 > 
 > 
-> statenames <- c("SB1","SB2","SB3","SB4","SB5","SB6","IB","SO","IO")
+> statenames <- c("SB1","SB2","SB3","SB4","SB5","SB6",
++   "IB","SO","IO")
 > t0 <- 1932+4/12
 > 
 > library(pomp)
@@ -442,4 +443,4 @@ dbl (23): b1, b2, b3, b4, b5, b6, psi, rho, tau, sigma_dem, sigma_env, SO_0,...
 > 
 > proc.time()
    user  system elapsed 
-  3.950   3.226   3.017 
+  6.791   9.296   3.812 
