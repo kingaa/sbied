@@ -34,7 +34,7 @@ The schedule is quite full, so it is important that you take a little time befor
 **There are five important steps that you must take to prepare for the course.**
 
 1. Install or update **R**, **Rstudio**, the **pomp** package and its dependencies, and the necessary compilers, on your laptop.
-   You will need to have at least version 4.0.4 of **R** and at least version 1.4.1717 of **Rstudio** installed on your computer.
+   You will need to have at least version 4.0.5 of **R** and at least version 2022.02.3 of **Rstudio** installed on your computer.
    **There will be no time for this during the 2.5-day workshop.**
    You should be aware that the *installation instructions depend on the operating system you use*.
    Make sure you follow these instructions *carefully* and *thoroughly*!
@@ -42,30 +42,30 @@ The schedule is quite full, so it is important that you take a little time befor
 
 	[The full installation instructions are here: follow them carefully!](https://kingaa.github.io/sbied/prep/)
 
-	Once you are finished, please fill out [this online form](https://forms.gle/chqrQK1k1mVuauic7) to give us information about your computing system.
+	Once you are finished, please fill out [this online form](https://forms.gle/xhCQ2mGWZoVcm7n18) to give us information about your computing system.
 
 <div class="nb"> 
-In previous years, some students have come to the workshop, only to find that they cannot use their laptops because they have not followed the instructions carefully.
-It has been frustrating for them, and frustrating too for the rest of the class when we've wasted everyone's time troubleshooting the specific problems of one or two students.
-**Don't be one of those people!**
+Long ago, some students came to the workshop, only to find that they could not use their laptops because they had not followed these instructions carefully.
+It was frustrating for them, and frustrating too for the rest of the class when everyone's time was wasted troubleshooting the specific problems of one or two students.
+**Don’t be one of those people!**
 Prepare your laptop, and follow the instructions to get help if you run into difficulties you cannot solve.
 </div>
 
-2. If you are unfamiliar with **R**, work through the [**R** tutorial](https://kingaa.github.io/R_Tutorial/).
-
-3. Install [Zoom](https://zoom.us/download).
+2. Install [Zoom](https://zoom.us/download).
 The live activities will be held over Zoom.
 **You must register first to be able to enter the Zoom session.**
-The [link for registration is here](https://umich.zoom.us/meeting/register/tJEsceCurTwvGdz-yyCDgStyDgGW3ZuJ1V-j).
+The [link for registration is here](https://tinyurl.com/2d4z5dmr).
 After registering, you will receive a confirmation email containing information about joining the meeting.
 
-4. Install [Slack](https://slack.com/downloads).
+3. Install [Slack](https://slack.com/downloads).
 Our intention is to conduct most communication over Slack rather than email.
 If you have not already, you will soon receive a notification inviting you to join the Slack workspace for the module.
 If you do not receive this notification, please notify Aaron at `kingaa.sismid@gmail.com`.
 
-5. Please go to [the syllabus](https://kingaa.github.io/sbied/syllabus.html) to see how the course will be structured, to view the schedule, and to get the assignments to be completed before the first session.
+4. Please go to [the syllabus](https://kingaa.github.io/sbied/syllabus.html) to see how the course will be structured, to view the schedule, and to get the assignments to be completed before the first session.
 **It is important that you read through the syllabus at your first opportunity, so you will have time to prepare.  Do not put this off until the last day!**
+
+5. If you are unfamiliar with **R**, work through the [**R** tutorial](https://kingaa.github.io/R_Tutorial/).
 
 There will be no course materials in hardcopy: all the course materials are [available online](https://kingaa.github.io/sbied/).
 

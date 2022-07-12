@@ -1,7 +1,7 @@
 ---
-title: Syllabus for SISMID Module 7
+title: Syllabus for SISMID Module 14
 subtitle: Simulation-based Inference for Epidemiological Dynamics
-date: "12--14 July 2021"
+date: "25--27 July 2022"
 ---
 
 <style type="text/css">
@@ -39,9 +39,13 @@ All course materials can be found there.
 These include links to Youtube lecture videos, copies of the lecture slides, lecture notes, **R** scripts containing codes used in the lectures, and supplementary material on various background topics or topics touched tangentially in the lectures.
 Exercises are given in the lectures and can be found on the slides and in the notes.
 
-The course Zoom session is: https://tinyurl.com/24rw4sru.
-The passcode is 724285.
-
+<!---
+The [link for registration is here](https://tinyurl.com/2d4z5dmr).
+--->
+<!---
+The course Zoom session is: https://tinyurl.com/2nv3ynjh
+The passcode is 602576.
+--->
 
 -----------------------------
 
@@ -52,7 +56,7 @@ The course will have five components:
 1. ***A mandatory self-learning component***, in which students are expected to watch and take notes on the pre-recorded lectures prior to the day's activities.
    Links to the videos can be found on the [course website](https://kingaa.github.io/sbied/), along with PDF versions of the lecture notes and slides.
    For example, before our live plenary on Monday, 12 July, we expect students to have watched the Lesson 1 and Lesson 2 lecture videos.
-   If you have any questions that come up while you are watching the videos, please pose these using the `#m7_simulation-based_inference_epi_dynamics_2021` channel in the SISMID Slack workspace.
+   If you have any questions that come up while you are watching the videos, please pose these using the `#mod14_simulation-based_inference_2022` channel in the SISMID Slack workspace (`sismidworkspace.slack.com`).
    We will monitor this channel and attempt to answer all questions either via Slack, or in the live sessions.
    This use of Slack will allow you check whether your question has been asked previously, to avoid the kind of unnecessary duplication that makes it hard for everyone.
 
@@ -250,8 +254,8 @@ In the spirit of ensuring an efficient and enjoyable learning experience for eve
 
 ## Pre- and post-module surveys
 
-To help us understand your background and goals a bit better, please fill out this short [pre-module survey](https://forms.gle/G56pw5YmGZJeJ7zh7) at the beginning of the course.
+To help us understand your background and goals a bit better, please fill out this short [pre-module survey](https://forms.gle/g8h2SAdqs9tE9aAC7) at the beginning of the course.
 
-We will be grateful to you for filling out the [post-module survey](https://forms.gle/ByhK41GbXn3Y6ark7) shortly after completing the course.
+We will be grateful to you for filling out the [post-module survey](https://forms.gle/bKaPsdeZon9r4gEe7) shortly after completing the course.
 
 -----------------------------
