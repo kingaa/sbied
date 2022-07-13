@@ -100,9 +100,9 @@ Bookmark this page so that you can check it at least twice per day.
 Be careful to translate to your local timezone!
 </div>
 
-#### Monday, 12 July
+#### Monday, 25 July
 
-Before 8:00:  
+**Before 8:00:**  
 - View lecture videos for Lessons [1](https://kingaa.github.io/sbied/intro/) and [2](https://kingaa.github.io/sbied/stochsim/) (c.&nbsp;2.5hr or 100min at 1.5x).  
 - Send questions to Instructors via Slack.  
 - Optionally, begin work on Exercises 2.3 & 2.4.  
@@ -124,9 +124,11 @@ Before 8:00:
 14:00: Breakout group progress reports due on Slack.  
 14:00--14:30: Live plenary discussion of breakout group progress.  
 
-#### Tuesday, 13 July
+<div class="wtb-ew-v1" style="width: 410px; display:inline-block"><script src="https://www.worldtimebuddy.com/event_widget.js?h=5809844&md=7/25/2022&mt=8.00&ml=6.50&sts=0&sln=0&wt=ew-lt"></script><i><a target="_blank" href="https://www.worldtimebuddy.com/">Time converter</a> at worldtimebuddy.com</i><noscript><a href="https://www.worldtimebuddy.com/">Time converter</a> at worldtimebuddy.com</noscript><script>window[wtb_event_widgets.pop()].init()</script></div><br>
 
-Before 8:00:  
+#### Tuesday, 26 July
+
+**Before 8:00:**  
 - View lecture videos for [Lesson 4, Parts I--IV](https://kingaa.github.io/sbied/mif/) (c.&nbsp;55min or 38min at 1.5x).  
 - Send questions to Instructors via Slack.  
 - Optionally, begin work on Exercises 4.1.  
@@ -148,9 +150,11 @@ Before 8:00:
 14:00: Breakout group progress reports due on Slack.  
 14:00--14:30: Live plenary discussion of breakout group progress.  
 
-#### Wednesday, 14 July
+<div class="wtb-ew-v1" style="width: 410px; display:inline-block"><script src="https://www.worldtimebuddy.com/event_widget.js?h=5809844&md=7/26/2022&mt=8.00&ml=6.50&sts=0&sln=0&wt=ew-lt"></script><i><a target="_blank" href="https://www.worldtimebuddy.com/">Time converter</a> at worldtimebuddy.com</i><noscript><a href="https://www.worldtimebuddy.com/">Time converter</a> at worldtimebuddy.com</noscript><script>window[wtb_event_widgets.pop()].init()</script></div><br>
 
-Before 8:00:  
+#### Wednesday, 27 July
+
+**Before 8:00:**  
 - View lecture video for [Lesson 5](https://kingaa.github.io/sbied/measles/) (c.&nbsp;80min or 55min at 1.5x).  
 - Work on the [Quiz](https://kingaa.github.io/sbied/quiz/quiz.pdf).  
 - Formulate questions for the instructors on the topic: How do simulation-based methods fit into your research agenda?  
@@ -162,6 +166,8 @@ Before 8:00:
 9:30--10:30: Plenary discussion.  
 10:30--11:00: Concluding remarks.  
 11:00--12:00: Optional drop-in session: all topics welcomed.  
+
+<div class="wtb-ew-v1" style="width: 410px; display:inline-block"><script src="https://www.worldtimebuddy.com/event_widget.js?h=5809844&md=7/27/2022&mt=8.00&ml=4.00&sts=0&sln=0&wt=ew-lt"></script><i><a target="_blank" href="https://www.worldtimebuddy.com/">Time converter</a> at worldtimebuddy.com</i><noscript><a href="https://www.worldtimebuddy.com/">Time converter</a> at worldtimebuddy.com</noscript><script>window[wtb_event_widgets.pop()].init()</script></div><br>
 
 -----------------------------
 
