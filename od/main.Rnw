@@ -791,7 +791,7 @@ consett2_step <- Csnippet("
 
   \begin{itemize}
   \item
-    This lesson is prepared for the \link{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \link{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}.
+    This lesson is prepared for the \link{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the Summer Institute in Statistics and Modeling in Infectious Diseases, \link{https://www.biostat.washington.edu/suminst/sismid}{SISMID}.
 
   \item
     The materials build on \link{../acknowledge.html}{previous versions of this course and related courses}.
@@ -811,7 +811,7 @@ consett2_step <- Csnippet("
 
   \link{../index.html}{Back to course homepage}
   
-  \link{https://raw.githubusercontent.com/kingaa/sbied/master/pfilter/main.R}{\Rlanguage codes for this lesson}
+  \link{./main.R}{\Rlanguage codes for this lesson}
 \end{frame}
 
 \end{document}

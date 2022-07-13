@@ -33,8 +33,8 @@ hr {
 This module introduces statistical inference techniques and computational methods for dynamic models of epidemiological systems.
 The course will explore deterministic and stochastic formulations of epidemiological dynamics and develop inference methods appropriate for a range of models.
 Special emphasis will be on exact and approximate likelihood as the key elements in parameter estimation, hypothesis testing, and model selection. Specifically, the course will cover sequential Monte Carlo and synthetic likelihood techniques.
-Students will learn to implement these in R to carry out maximum likelihood and Bayesian inference. Knowledge of the material in Module 1 is assumed.
-Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutorial/) before the module.
+Students will learn to implement these in **R** to carry out maximum likelihood and Bayesian inference. Knowledge of the material in Module 1 is assumed.
+Students new to **R** should complete a [tutorial](https://kingaa.github.io/R_Tutorial/) before the module.
 
 ----------------------
 
@@ -51,22 +51,20 @@ Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutori
 
 ## Lessons
 
-[**0. Instructions for preparing your laptop for the course exercises.**](./prep/)
+[**0. Instructions for preparing your laptop for the course exercises.**](./prep/index.html)
 
-[**1. Introduction: What is "Simulation-based Inference for Epidemiological Dynamics"?  POMPs and pomp.**](./intro/)
+[**1. Introduction: What is "Simulation-based Inference for Epidemiological Dynamics"?  POMPs and pomp.**](./intro/index.html)
 
-[**2. Simulation of stochastic dynamic models.**](./stochsim/)
+[**2. Simulation of stochastic dynamic models.**](./stochsim/index.html)
 
-[**3. Likelihood for POMPs: theory and practice.**](./pfilter/)
+[**3. Likelihood for POMPs: theory and practice.**](./pfilter/index.html)
 
-[**4. Iterated filtering: theory and practice.**](./mif/)
+[**4. Iterated filtering: theory and practice.**](./mif/index.html)
 
-[**5. Case study: measles.  Recurrent epidemics, long time series, covariates, extra-demographic stochasticity, interpretation of parameter estimates.**](./measles/)
+[**5. Case study: measles.  Recurrent epidemics, long time series, covariates, extra-demographic stochasticity, interpretation of parameter estimates.**](./measles/index.html)
 
-[**6. Case study: polio. Workflow for a real research problem.**](./polio/)
+[**6. Case study: polio. Workflow for a real research problem.**](./polio/index.html)
 
-[**7. Case study: Ebola. Model diagnostics and forecasting.**](./ebola/)
+[**7. Case study: Ebola. Model diagnostics and forecasting.**](./ebola/index.html)
 
-[**8. Case study: HIV and fluctuating sexual contact rates. Panel data.**](./contacts/)
-
-----------------------
+[**8. Case study: HIV and fluctuating sexual contact rates. Panel data.**](./contacts/index.html)

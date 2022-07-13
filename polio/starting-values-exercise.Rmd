@@ -26,10 +26,6 @@ library(pomp)
 
 Think about possible improvements on the assignment of randomized starting values for the parameter estimation searches. Propose and try out a modification of the procedure. Does it make a difference?
 
-<br>
-
---------
-	
 ---------
 	
 ### Solution
@@ -90,8 +86,6 @@ read_csv("starting-values-exercise/params.csv") %>%
   filter(logLik>max(logLik)-10) -> ests
 pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,data=subset(ests,logLik>max(logLik)-10))
 ```
-
------------------------------------
 
 ----------------------------------
 

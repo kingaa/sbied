@@ -30,10 +30,6 @@ Discuss issues in specifying and inferring initial conditions, with particular r
 
 Suggest a possible improvement in the treatment of initial conditions here, code it up and make some preliminary assessment of its effectiveness. How will you decide if it is a substantial improvement? 
 
-<br>
-
---------
-
 ---------
 
 ### Solution
@@ -51,6 +47,7 @@ Since the initial level of infection is low, and individuals do not stay long in
 Nevertheless, it is a testable one.
 
 An alternative modeling approach is that babies might, to a first approximation, have the same prevalence as other individuals. `IO_0/SO_0` is the current infection proportion for susceptible adults. If we suppose babies are exposed to this infection rate each month of their infancy, we can replace the previous `rinit` accordingly. In practice, we use a more numerically stable alternative `IO_0/(IO_0+SO_0)` which is practically equivalent in the anticipated situation with low prevalence, but is guaranteed not to exceed unity in pathological situations that might arise during maximization.
+Specifically, we replace
 
 ```{r}
 polio_rinit <- Csnippet("
@@ -107,9 +104,6 @@ read_csv("initial-values-exercise/params.csv") %>%
   filter(logLik>max(logLik)-10) -> ests
 pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,data=subset(ests,logLik>max(logLik)-10))
 ```
-
-
------------------------------------
 
 ----------------------------------
 

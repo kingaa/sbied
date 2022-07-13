@@ -44,7 +44,3 @@ What is the difference between a likelihood slice and a profile? What is the con
 * A slice can be useful as a relatively quick, informal investigation of the likelihood. Profiles may be calculated in a later stage of the analysis, when we are ready to apply all the computational resources at our disposal.
 
 * If only one parameter is being estimated, a slice and a profile are the same thing!
-
-
------------------------------------
-

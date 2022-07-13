@@ -987,7 +987,7 @@ set.seed(1350254336)
 
   We wrap the above in a \code{foreach} loop as before and take care to evaluate the likelihood at each end-point using \code{pfilter}.
 
-  See the \link{https://raw.githubusercontent.com/kingaa/sbied/master/mif/main.R}{\Rlanguage code for this lesson} to see exactly how this is done.
+  See the \link{./main.R}{\Rlanguage code for this lesson} to see exactly how this is done.
 
   <<exp_global_search_eval,include=FALSE>>=
   bake(file="global_search2.rds",
@@ -1242,7 +1242,7 @@ set.seed(1350254336)
 
   \begin{itemize}
   \item
-    This lesson is prepared for the \link{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \link{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}.
+    This lesson is prepared for the \link{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the Summer Institute in Statistics and Modeling in Infectious Diseases, \link{https://www.biostat.washington.edu/suminst/sismid}{SISMID}.
 
   \item
     The materials build on \link{../acknowledge.html}{previous versions of this course and related courses}.
@@ -1262,7 +1262,7 @@ set.seed(1350254336)
 
   \link{../index.html}{Back to course homepage}
   
-  \link{https://raw.githubusercontent.com/kingaa/sbied/master/mif/main.R}{\Rlanguage code for this lesson}
+  \link{./main.R}{\Rlanguage code for this lesson}
 
 \end{frame}
 

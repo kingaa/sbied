@@ -240,5 +240,3 @@ The likelihood surface here is fairly flat: the y-axis range is just 2 log units
 Data on a single epidemic cannot readily distinguish whether the disease has a high susceptible fraction and low reporting rate, or low susceptible fraction and high reporting rate.
 Longer time series could resolve this question.
 
------------------------------------
-

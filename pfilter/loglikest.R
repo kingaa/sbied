@@ -11,12 +11,17 @@ measSIR %>% pfilter(Np=1000) -> pf
 logLik(pf)
 
 
-if (file.exists("CLUSTER.R")) {
-  source("CLUSTER.R")
-}
+## if (file.exists("CLUSTER.R")) {
+##   source("CLUSTER.R")
+## }
+## library(doRNG)
+## registerDoRNG(594717807L)
 
 
 bake(file="loglikest-pfilter.rds",{
+  if (file.exists("CLUSTER.R")) {
+    source("CLUSTER.R")
+  }
   library(doRNG)
   registerDoRNG(594717807L)
   expand_grid(

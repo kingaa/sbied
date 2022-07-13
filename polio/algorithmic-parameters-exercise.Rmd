@@ -22,10 +22,6 @@ source("../setup.R", local = knitr::knit_global())
 
 Suppose you have selected a number of particles, `Np`, and number of iterated filtering iterations, `Nmif`, and number of Monte Carlo replications, `Reps`, that give a 10 minute maximization search using `mif2()`. Propose how you would adjust these to plan a more intensive search lasting about 2 hours.
 
-<br>
-
---------
-
 ---------
 
 ### Solution
@@ -44,9 +40,6 @@ Suppose you have selected a number of particles, `Np`, and number of iterated fi
 * If you can increase the number of processors, for example by running your code on a computing node with 40 cores, you can set `Reps` to match the number of cores (or multiples of the number of cores) and then you can increase `Nmif` and `Np` by a corresponding factor while keeping the run time constant.
 
 * You can experiment with what values of the algorithmic parameters let you consistently get multiple searches ending close to the maximum you have identified. How to do this depends on your model and data, so there is not much substitute for experimentation.
-
-
------------------------------------
 
 ----------------------------------
 

@@ -151,8 +151,6 @@ sims %>%
   geom_line()
 ```
 
-<br>
-
 --------------------------
 
 #### Exercise: Global maximization
@@ -162,8 +160,6 @@ It is possible that we found a local maximum, but that other maxima exist with h
 Conduct a more thorough search by initializing the Nelder-Mead starting points across a wider region of parameter space.
 Do you find any other local maxima?
 
-<br>
-
 --------
 
 #### Exercise: Fit more parameters.
@@ -171,5 +167,3 @@ Do you find any other local maxima?
 Try to estimate $\beta$, $\mu_{IR}$, $\rho$, and $\eta$ simultaneously.
 Does your estimate of $\Rzero$ differ from the value we computed from the raw data?
 How do you interpret the agreement or lack thereof?
-
-------------------

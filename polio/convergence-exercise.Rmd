@@ -39,11 +39,6 @@ source("../setup.R", local = knitr::knit_global())
 Are there outliers in the data (i.e., observations that do not fit well with our model)? Are we using unnecessarily large amounts of computer time to get our results? Are there indications that we would should run our computations for longer? Or maybe with different choices of algorithmic settings?
 Interpret the diagnostic plots below, and suggest things to try that might lead to a more effective search.
 
-
-<br>
-
---------
-
 ---------
 
 ### Solution
@@ -55,9 +50,6 @@ The log likelihood is trending upwards, suggesting that continuing the search lo
 The convergence plots do not show stabilization to the point where each search has become localized. Increasing the number of iterations, allowing for further decrease in the temperature, may allow the trajectories to level out. 
 
 Although the searches are investigating differing regions of parameter space, their likelihood are fairly comparable, up to Monte Carlo uncertainty, so that is not a major concern. There may be some weakly identified combination of parameters, or just considerable Monte Carlo error. In such situations, the search results should be considered a collection of points with likelihood near the MLE rather than precise estimates of the exact MLE.
-
-
---------------------------
 
 -----------------------------------
 

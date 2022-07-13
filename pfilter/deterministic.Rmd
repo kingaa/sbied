@@ -150,5 +150,3 @@ ggplot(data=y,mapping=aes(x=day,xend=day))+
 
 In this diagram, $\hat y_n$ refers to the model prediction, 
 $\hat y_n = \expect{Y_n \vert X_n=x_n(\theta)}$, and $y_n^*$ is data.
-
---------------------------

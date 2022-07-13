@@ -81,5 +81,3 @@ While the calculation is "correct" in that it will converge to the true likeliho
 -----------------------------------
 
 Produced in R version `r getRversion()`.
-
---------------------------

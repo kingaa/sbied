@@ -17,13 +17,6 @@ params:
   prefix: llest
 ---
 
-\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
-\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-\newcommand\lik{\mathcal{L}}
-\newcommand\loglik{\ell}
-
 --------------------
 
 [**R** codes for this document](./loglikest.R)  
@@ -57,12 +50,16 @@ We first set up a parallel computation environment.
 ```{r parallel_setup,eval=FALSE,purl=FALSE}
 library(foreach)
 library(doParallel)
+library(doRNG)
 registerDoParallel()
+registerDoRNG(594717807L)
 ```
-```{r cluster,purl=TRUE,include=FALSE}
+```{r cluster,purl=TRUE,eval=FALSE,include=FALSE}
 if (file.exists("CLUSTER.R")) {
   source("CLUSTER.R")
 }
+library(doRNG)
+registerDoRNG(594717807L)
 ```
 
 ```{r comps,eval=FALSE,purl=FALSE}
@@ -81,15 +78,14 @@ foreach (p=iter(design,"row"),
 ```
 ```{r comps-eval,include=FALSE}
 bake(file="loglikest-pfilter.rds",{
-  library(doRNG)
-  registerDoRNG(594717807L)
+  <<cluster>>
   <<comps>> 
   registerDoSEQ()
   lls
 }) -> lls
 ```
 
-Violin plots are cute.
+Violin plots display the distributions.
 
 ```{r plots}
 expand_grid(
@@ -103,5 +99,3 @@ expand_grid(
   scale_x_log10(breaks=unique(lls$Np))+
   labs(fill="nfilt")
 ```
-
-------------------

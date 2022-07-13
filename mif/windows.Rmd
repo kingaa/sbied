@@ -107,5 +107,3 @@ The only difference between the code chunks is that, in the first, compilation i
 In the second, the compilation is done *before* the parallelization, via the call to `pomp`.
 
 Codes corresponding to those provided for Lesson 4, adapted for use in a Windows environment, are [provided here](./main_win.R).
-
------------------------------------

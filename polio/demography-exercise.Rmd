@@ -25,11 +25,7 @@ It can be surprisingly hard to include birth, death, immigration, emigration and
 
 In an imperfect world, it is nice to check the extent to which the conclusions are insensitive to alternative modeling decisions. These are testable hypotheses, which can be addressed within a plug-and-play inference framework. Identify what would have to be done to investigate the changes you have proposed. Optionally, you could have a go at coding something up to see if it makes a difference.
 
-<br>
-
 --------
-
----------
 
 ### Solution
 
@@ -42,8 +38,6 @@ In an imperfect world, it is nice to check the extent to which the conclusions a
 * **Continuous time**. Polio infections do not last exactly one month, and moving to a continuous-time model is the natural way to accommodate this. Since duration of infection is also not exponentially distributed, one may need a more flexible family such as a gamma distribution made up of a continuous time Markov chain with multiple exponentially distributed transitions.
 
 Re-running the code after revising the model would tell us whether a modified model was a substantial improvement, measured by maximized log likelihood. Also, we would find whether the conclusions about local persistence are robust to the change.
-
---------------------------
 
 -----------------------------------
 

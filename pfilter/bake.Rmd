@@ -240,5 +240,3 @@ See the **R** help pages for these functions for more information.
 
 `bake` stores information about the amount of time required for a computation in the file, as an attribute of the stored object.
 In addition, if the RNG has been fixed (by means of the `seed` argument), then the value of `seed` is stored as another attribute.
-
-------------------

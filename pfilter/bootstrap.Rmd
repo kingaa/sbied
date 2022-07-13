@@ -65,5 +65,3 @@ $$ \big[\theta^{[j]}_{1,\mathrm lo},\theta^{[j]}_{1,\mathrm hi}\big] = \big[\hat
     (A) For large $J$, the coverage of the proposed confidence interval estimator is well approximated, for models in a neighborhood of $\data{\theta}$, by the proportion of the intervals $\big[\theta^{[j]}_{1,\mathrm lo},\theta^{[j]}_{1,\mathrm hi}\big]$ that include $\data{\theta_1}$.<br><br>
     (B) The sample standard deviation of $\{ \theta^{[j]}_1, j\in 1:J\}$ is a natural standard error to associate with $\data{\theta_1}.<br><br>
     (C) For large $J$, one can empirically calibrate a 95% confidence interval for $\theta_1$ with exactly the claimed coverage in a neighborhood of $\data{\theta}$. For example, using profile methods, one could replace the cutoff 1.92 by a constant $\alpha$ chosen such that 95% of the profile confidence intervals computed for the simulations cover $\data{\theta_1}$.
-
---------------------------

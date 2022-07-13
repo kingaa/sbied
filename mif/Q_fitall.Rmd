@@ -422,6 +422,3 @@ In sum, the model is accounting for the data by saying there was a large and mos
 As we discussed in the [Lesson](./index.html), the conclusion of a short infectious period is broadly compatible with household studies that suggest the duration of viral shedding is less than a week.
 On the other hand, the conclusion that $\rho<`r cis$rho[2]`$ is more difficult to reconcile with our understanding of measles reporting during this period.
 Indeed, it would have had to be the case that 1948 was a very sloppy year for the public health authorities in this part of England, since their average reporting efficiency, as we estimated in the [Lesson](./index.html) was close to 60%.
-
-
------------------------------------

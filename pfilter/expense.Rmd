@@ -137,5 +137,3 @@ summary(fit)
 ```
 
 The marginal cost is about `r predict(fit,newdata=data.frame(n=c(41,42),Np=1000000)) %>% diff() %>% signif(2)`&nbsp;&mu;s per 1000 particles per data-point.
-
-------------------

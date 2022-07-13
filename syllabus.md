@@ -266,5 +266,3 @@ In the spirit of ensuring an efficient and enjoyable learning experience for eve
 To help us understand your background and goals a bit better, please fill out this short [pre-module survey](https://forms.gle/g8h2SAdqs9tE9aAC7) at the beginning of the course.
 
 We will be grateful to you for filling out the [post-module survey](https://forms.gle/bKaPsdeZon9r4gEe7) shortly after completing the course.
-
------------------------------

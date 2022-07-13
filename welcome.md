@@ -30,7 +30,7 @@ The course will have five components:
 
 - Videos linked from the [course website](https://kingaa.github.io/sbied/)
 - PDF versions of the lecture notes and slides
-- Questions to `#mod07simulationinference` Slack channel
+- Questions to the `#mod14_simulation-based_inference_2022` Slack channel
 - Questions answered either via Slack, or in the live sessions
 - On Slack: avoid unnecessary duplication!
 

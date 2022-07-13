@@ -204,7 +204,7 @@ knitr::opts_chunk$set(purl=FALSE)
   \item 
     Full details are given \link{http://dx.doi.org/10.5061/dryad.r5f30}{on the datadryad.org site}.
   \item 
-    Codes for this document are \link{https://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R}{available here}.
+    Codes for this document are \link{./codes.R}{available here}.
     The results of these calculations are loaded and displayed in the following.
 
     <<load-profile,echo=FALSE>>=
@@ -454,7 +454,7 @@ knitr::opts_chunk$set(purl=FALSE)
   @
   
   We repeat this procedure for each parameter vector, binding the results into a single data frame.
-  See \link{https://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R}{this lesson's \Rlanguage script} for details.
+  See \link{./codes.R}{this lesson's \Rlanguage script} for details.
 
   \framebreak
   
@@ -507,7 +507,7 @@ knitr::opts_chunk$set(purl=FALSE)
 
   \begin{itemize}
   \item
-    This lesson is prepared for the \link{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the 2020 Summer Institute in Statistics and Modeling in Infectious Diseases, \link{https://www.biostat.washington.edu/suminst/sismid}{SISMID 2020}.
+    This lesson is prepared for the \link{https://kingaa.github.io/sbied/}{Simulation-based Inference for Epidemiological Dynamics} module at the Summer Institute in Statistics and Modeling in Infectious Diseases, \link{https://www.biostat.washington.edu/suminst/sismid}{SISMID}.
 
   \item
     The materials build on \link{../acknowledge.html}{previous versions of this course and related courses}.
@@ -529,7 +529,7 @@ knitr::opts_chunk$set(purl=FALSE)
   
   \link{model.html}{Model construction supplement}
 
-  \link{https://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R}{\Rlanguage codes for this lesson}
+  \link{./codes.R}{\Rlanguage codes for this lesson}
 \end{frame}
 
 \end{document}

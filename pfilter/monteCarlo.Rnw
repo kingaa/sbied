@@ -1,88 +1,5 @@
 \documentclass[11pt,reqno,pdftex]{amsart}
-\usepackage[utf8]{inputenc}
-\usepackage{graphicx}
-\graphicspath{{figs/}}
-\usepackage[neverdecrease]{paralist}
-\usepackage{xcolor}
-\usepackage{mathrsfs,eucal,bbm,mathtools}
-\usepackage[round,sort,elide]{natbib}
-\usepackage[unicode=true,bookmarks=true,bookmarksnumbered=false,
-  bookmarksopen=false,breaklinks=false,backref=false,colorlinks=true,
-  urlcolor=black,citecolor=black,linkcolor=black]{hyperref}
-\usepackage{tikz}
-\usepackage{pgfplots}
-\usepackage{xspace}
-\usepackage{tcolorbox}
-
-\usepackage[letterpaper,text={6in,8.75in},
-  top=1in,left=1.25in,headheight=12pt,headsep=24pt]{geometry}
-
-\setlength{\parskip}{1ex}  
-\setlength{\parindent}{0em}  
-
-\theoremstyle{definition}
-\usepackage{amsmath,amsthm,amssymb,amsfonts}
-\newtheorem{thm}{Theorem}
-\newtheorem{corol}[thm]{Corollary}
-\newtheorem{prop}[thm]{Proposition}
-\newtheorem{lemma}[thm]{Lemma}
-\newtheorem{defn}[thm]{Definition}
-\newtheorem{hyp}[thm]{Hypothesis}
-\newtheorem{example}[thm]{Example}
-\newtheorem{conj}[thm]{Conjecture}
-\newtheorem{algorithm}[thm]{Algorithm}
-\newtheorem{remark}[thm]{Remark}
-\newtheorem{exercise}{Exercise}
-\newtheorem{challenge}{Challenge}
-
-\newtcolorbox[auto counter]{textbox}[2][]{float,#1,colback=white,colframe=blue!40!black,title={\bfseries Box~\thetcbcounter. {#2}}}
-
-\def\eps{\varepsilon}
-\renewcommand\vec[1]{\mathbf{#1}}
-\newcommand\prob[1]{\mathrm{Prob}\!\left[{#1}\right]}
-\newcommand\expect[1]{\mathbb{E}\!\left[{#1}\right]}
-\newcommand\onevec{\mathbbm{1}}
-\newcommand\indicator[1]{\mathbbm{1}_{#1}}
-\newcommand\interior[1]{\mathrm{int}\:{#1}}
-\newcommand\boundary[1]{\mathrm{bd}\:{#1}}
-\newcommand\payoff[3]{{#1}{\cdot}{#2}{#3}}
-\newcommand\KL[2]{D({#1}\parallel{#2})}
-\newcommand\identity{\mathrm{Id}}
-\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-\newcommand\dist[2]{\mathrm{#1}\!\left(#2\right)}
-\newcommand{\dd}{\mathrm{d}}
-\newcommand{\transpose}{\mathrm{T}}
-\newcommand\lik{\mathcal{L}}
-\newcommand\loglik{\ell}
-\newcommand{\code}[1]{\texttt{#1}}
-\newcommand{\file}[1]{\textsf{#1}}
-\newcommand{\pkg}[1]{\textsf{#1}}
-\newcommand{\scinot}[2]{#1{\times}10^{#2}}
-\newcommand{\halfopen}[1]{[{#1})}
-  \newcommand{\halfclosed}[1]{({#1}]}
-\renewcommand\Re{\operatorname{Re}}
-\renewcommand\Im{\operatorname{Im}}
-\newcommand{\pd}[3][]{%
-  \def\ord{#1} \ifx\ord\empty%
-  \frac{\partial{#2}}{\partial{#3}}%
-  \else \frac{\partial^{#1}{#2}}{\partial{#3}}%
-  \fi
-}
-\newcommand{\deriv}[3][]{%
-  \def\ord{#1} \ifx\ord\empty%
-  \frac{\dd{#2}}{\dd{#3}}%
-  \else \frac{\dd{}^{#1}{#2}}{\dd{#3}^{#1}}%
-  \fi
-}
-\newcommand\at[2]{\left.#1\right|_{#2}}
-
-\newcommand{\etc}{etc.\xspace}
-\newcommand{\vs}{vs.\xspace}
-\newcommand{\eg}{e.g.\xspace}
-\newcommand{\ie}{i.e.\xspace}
-\newcommand{\etal}{\emph{et al.\xspace}}
-\newcommand{\cf}{c.f.\xspace}
-\newcommand{\viz}{viz.\xspace}
+\input{../_includes/header.tex}
 
 \title[Monte Carlo methods]{Monte Carlo methods}
 \author[A.~A.~King, E.~L.~Ionides]{Aaron~A.~King, Edward~L.~Ionides}
@@ -97,6 +14,12 @@
 \date{\today}
 
 \setcounter{secnumdepth}{0}
+
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{thm}{Theorem}
+\newtheorem{exercise}{Exercise}
+\newtheorem{challenge}{Challenge}
 
 \begin{document}
 
