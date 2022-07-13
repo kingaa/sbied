@@ -1,5 +1,3 @@
-# SISMID 2021 Module 7
-
 Please complete this questionnaire to help us prepare for the short course.
 * Required
 
