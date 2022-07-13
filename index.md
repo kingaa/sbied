@@ -10,6 +10,20 @@ csl: jss.csl
 
 ---
 
+<style type="text/css">
+div .nb {
+	background-color: #ffeca3;
+	border-style: solid;
+	border-width: 2;
+	border-color: #00274c;
+	padding: 1em;
+}
+hr {
+	border-width: 3;
+	border-color: #00274c;
+}
+</style>
+
 ----------------------
 
 ## Module description
