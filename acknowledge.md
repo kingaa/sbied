@@ -27,9 +27,8 @@ Please share and remix non-commercially, mentioning their origin.
 
 ---------------------
 
-- [Link to course homepage](https://kingaa.github.io/sbied/)
-
-- <a href="#" onclick="goBack()">Back to the previous page</a>
+- [Course homepage](https://kingaa.github.io/sbied/)
+- <a href="#" onclick="goBack()">Previous page</a>
 
 ---------------------
 
