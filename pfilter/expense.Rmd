@@ -8,6 +8,8 @@ output:
   html_document:
     toc: yes
     toc_depth: 4
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -144,5 +146,3 @@ The marginal cost is about `r predict(fit,newdata=data.frame(n=c(41,42),Np=10000
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
-[**Back to the lesson**](./index.html)  
-[**Course homepage**](../index.html)  

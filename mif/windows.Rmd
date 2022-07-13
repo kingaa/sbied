@@ -4,6 +4,8 @@ author: "Aaron A. King, Edward L. Ionides, Qianying Lin"
 output:
   html_document:
     toc: no
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -107,5 +109,3 @@ Please share and remix noncommercially, mentioning its origin.
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 	
 [**R codes**](./main_win.R)  
-[**Back to the lesson**](./index.html)  
-[**Course homepage**](../index.html)  

@@ -7,6 +7,8 @@ output:
   html_document:
     toc: no
     toc_depth: 4
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -106,8 +108,6 @@ expand_grid(
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
-[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/loglikest.R)  
-[**Back to the lesson**](./index.html)  
-[**Course homepage**](../index.html)  
-
 -----------
+
+[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/loglikest.R)  

@@ -5,6 +5,8 @@ output:
   html_document:
     toc: yes
     toc_depth: 4
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -63,9 +65,5 @@ This asserts that the MLE is asymptotically unbiased, with variance asymptotical
 $$ \data{\theta_d} \pm 1.96 \big[{\data{I}}^{-1}\big]_{dd}^{1/2}.$$
 
 * We usually only have one time series, with some fixed $N$, and so we cannot in practice take $N\to\infty$. When our time series model is non-stationary it may not even be clear what it would mean to take $N\to\infty$. These asymptotic results should be viewed as nice mathematical reasons to consider computing an MLE, but not a substitute for checking how the MLE behaves for our model and data. 
-
------------------------
-
-[Back to the lesson](./index.html)
 
 --------------------------

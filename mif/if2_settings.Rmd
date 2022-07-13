@@ -9,6 +9,8 @@ output:
     highlight: haddock
     number_sections: FALSE
     df_print: kable
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -96,11 +98,6 @@ Computationally, you may not be readily able to run your full procedure, but you
 [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
 Please share and remix non-commercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
-
-[**Back to IF2 lesson**](./index.html)  
-[**Back to course homepage**](../index.html)  
-[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/mif/mif.R)  
-[**Files for this lesson on github**](https://github.com/kingaa/sbied/tree/master/mif/)
 
 ----------------------
 

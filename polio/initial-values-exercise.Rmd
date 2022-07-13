@@ -4,6 +4,8 @@ author: "Edward L. Ionides and Aaron A. King"
 output:
   html_document:
     toc: no
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 ---

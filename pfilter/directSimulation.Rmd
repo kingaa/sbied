@@ -5,6 +5,8 @@ output:
   html_document:
     toc: yes
     toc_depth: 4
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -73,10 +75,6 @@ While the calculation is "correct" in that it will converge to the true likeliho
 	- This is a consequence of the fact that we are proposing trajectories in a way that is completely unconditional on the data.
 
 - The problem will get much worse with longer data sets.
-
------------------------
-
-[Back to the lesson](./index.html)
 
 -----------------------------------
 

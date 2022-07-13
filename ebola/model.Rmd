@@ -12,6 +12,8 @@ output:
     highlight: haddock
     number_sections: FALSE
     df_print: paged
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 ---
@@ -118,7 +120,6 @@ Please share and remix noncommercially, mentioning its origin.
 
 Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
-[Back to the lesson](./index.html)  
 [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R)  
 
 ----------------------

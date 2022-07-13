@@ -4,6 +4,8 @@ author: "Edward L. Ionides, Aaron A. King and Kidus Asfaw"
 output:
   html_document:
     toc: no
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 ---
@@ -51,7 +53,3 @@ Please share and remix noncommercially, mentioning its origin.
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
 This version produced in R `r getRversion()` on `r format(Sys.Date(), "%B %d, %Y")`.
-
-
-
-

@@ -5,6 +5,8 @@ output:
   html_document:
     toc: yes
     toc_depth: 4
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -170,8 +172,6 @@ measSEIR %>%
 
 ----------------------------
 
-[**Back to the course home page**](../index.html)  
-[**Back to Stochastic Simulation lesson**](./index.html)  
 [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/exercises.R)  
 
 ----------------------------

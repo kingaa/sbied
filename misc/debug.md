@@ -5,6 +5,8 @@ output:
   html_document:
     toc: yes
     toc_depth: 2
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 ---
@@ -20,3 +22,4 @@ We review universal debugging considerations, and make suggestions specific to t
 
 4. **Cache errors**. bake and stew save results to avoid unnecessary recomputation while editing. This can cause problems for debugging. Remove the resulting rda or rds files to ensure proper recomputation.
 
+----------------------

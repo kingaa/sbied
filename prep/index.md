@@ -1,5 +1,9 @@
 ---
 title: Software installation instructions
+output:
+  html_document:
+    includes:
+      after_body: ../lesson_bottom.html
 ---
 
 <style type="text/css">
@@ -172,8 +176,5 @@ Revisit the [instructions above](#windows-users).
 
 ------------------------------
 
-[**Back to course homepage**](../)  
 [**Pre-course instructions for Windows users (Video)**](https://www.youtube.com/playlist?list=PLluGwj6FGt2R3iM5CAEfIIof5dQfHVRgz)  
 [**Pre-course instructions for MacOS users (Video)**](https://www.youtube.com/playlist?list=PLluGwj6FGt2S8GmrOF3s68LlsWoTRmuMQ)  
-
-------------------------------

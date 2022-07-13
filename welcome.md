@@ -227,6 +227,6 @@ See the [Syllabus](https://kingaa.github.io/sbied/syllabus.html).
 
 ----------------------------
 
-[Link to pre-module survey](https://forms.gle/g8h2SAdqs9tE9aAC7)
+[Link to pre-course survey](https://forms.gle/g8h2SAdqs9tE9aAC7)
 
 [**Course homepage**](./index.html)  

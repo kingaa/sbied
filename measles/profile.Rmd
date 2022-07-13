@@ -9,6 +9,8 @@ output:
     highlight: haddock
     number_sections: FALSE
     df_print: paged
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 
@@ -335,8 +337,6 @@ pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma),
 
 --------------------------
 
-[**Back to the lesson**](./index.html)  
-[**Back to course homepage**](../index.html)  
 [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/measles/profile.R)  
 
 ----------------------

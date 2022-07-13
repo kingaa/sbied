@@ -5,6 +5,8 @@ output:
   html_document:
     toc: yes
     toc_depth: 4
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -150,9 +152,5 @@ ggplot(data=y,mapping=aes(x=day,xend=day))+
 
 In this diagram, $\hat y_n$ refers to the model prediction, 
 $\hat y_n = \expect{Y_n \vert X_n=x_n(\theta)}$, and $y_n^*$ is data.
-
------------------------
-
-[Back to the lesson](./index.html)
 
 --------------------------

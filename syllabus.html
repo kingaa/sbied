@@ -417,7 +417,7 @@ Be careful to translate to your local timezone! The following world clock may he
 <script>/* Written in JS with JQUERY first */
 
 /* Declare eval separately so the rest can be mimified and obfuscated */
-var wtb_widget_1657714425 = {
+var wtb_widget_1657716202 = {
 	ev: function(expr) { return eval(expr); }
 };
 
@@ -638,7 +638,7 @@ var wtb_widget_1657714425 = {
 	function findDstTransitionsWrapper() {
 
 		// Start looking around the day of the event (+/-2 years)
-		var ct       = new Date(1657714425000);
+		var ct       = new Date(1657716202000);
 		var tsUtc    = Date.UTC(ct.getFullYear(), ct.getMonth(), ct.getDate(), 0, 0, 0);
 		var startTs  = tsUtc - deltaYear * 2;
 		var endTs    = tsUtc + deltaYear * 2;
@@ -717,7 +717,7 @@ var wtb_widget_1657714425 = {
 		
 			var callback = 'wtbNonexistendCallback';
 			if (window[callback] != undefined) {
-				var data_obj = wtb_widget_1657714425.ev('('+e.data+')'); 
+				var data_obj = wtb_widget_1657716202.ev('('+e.data+')'); 
 				window[callback](data_obj);
 			}
 		
@@ -928,6 +928,12 @@ var wtb_widget_1657714425 = {
 <hr />
 </div>
 
+<a href="#top">Top of this document</a><br />
+<a href="./acknowledge.html">Acknowledgments</a><br />
+<a href="./">Course homepage</a><br />
+<a href="https://github.com/kingaa/sbied/">Source code for these notes</a><br />
+<a href="https://www.biostat.washington.edu/suminst/sismid/">SISMID homepage</a><br />
+<a href="https://kingaa.github.io/pomp/"><strong>pomp</strong> homepage</a><br />
 
 
 

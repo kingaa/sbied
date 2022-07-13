@@ -4,6 +4,8 @@ author: "Aaron A. King, Edward L. Ionides, Qianying Lin"
 output:
   html_document:
     toc: no
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -57,5 +59,3 @@ Suppose that there is an error in the coding of `rprocess` and suppose that plug
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
-[**Back to the lesson**](./index.html)  
-[**Course homepage**](../index.html)  

@@ -5,6 +5,8 @@ output:
   html_document:
     toc: no
     toc_depth: 4
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -135,8 +137,6 @@ In what ways do they still leave something to be desired?
 ----------------------------
 
 ### [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/seir3_exercise.R)
-### [Back to Stochastic Simulation lesson](./slides.pdf)
-### [Back to the course home page](../index.html)
 
 ----------------------------
 

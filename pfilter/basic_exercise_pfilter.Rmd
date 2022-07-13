@@ -5,6 +5,8 @@ output:
   html_document:
     toc: yes
     toc_depth: 2
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -153,10 +155,6 @@ abline(v=c(-2,2),col="red")
 - In particular, the left tail is long for the noisy likelihood estimates: when, by chance, you don't observe a high likelihood value, you become over-confident that such values won't happen.
 
 - These results suggest that 'logmeanexp' standard errors are reasonably reliable when the standard deviation of the individual log likelihood estimates is around one, but should be interpreted cautiously as that standard deviation increases.
-
------------------------
-
-## [Back to the lesson](./index.html)
 
 --------------------------
 

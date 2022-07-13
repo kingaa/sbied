@@ -5,6 +5,8 @@ output:
   html_document:
     toc: yes
     toc_depth: 4
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -177,8 +179,5 @@ How do you interpret the agreement or lack thereof?
 [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
-
-[**Back to the lesson**](./index.html)  
-[**Course homepage**](../index.html)  
 
 --------------------------

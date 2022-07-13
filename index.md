@@ -1,7 +1,10 @@
 ---
 title: "Simulation-based Inference for Epidemiological Dynamics"
 author: "Aaron A. King, Edward L. Ionides, Qianying Lin"
-output: html_document
+output:
+  html_document:
+    includes:
+      after_body: main_bottom.html
 bibliography: sbied.bib
 csl: jss.csl
 
@@ -49,12 +52,5 @@ Students new to R should complete a [tutorial](https://kingaa.github.io/R_Tutori
 [**7. Case study: Ebola. Model diagnostics and forecasting.**](./ebola/)
 
 [**8. Case study: HIV and fluctuating sexual contact rates. Panel data.**](./contacts/)
-
-------------------------------------
-
-[Acknowledgements](./acknowledge.html)  
-[Source code for these notes](https://github.com/kingaa/sbied/)  
-[**pomp** homepage](https://kingaa.github.io/pomp/)  
-[SISMID homepage](https://www.biostat.washington.edu/suminst/sismid/)  
 
 ----------------------

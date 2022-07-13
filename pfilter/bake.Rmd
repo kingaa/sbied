@@ -7,6 +7,8 @@ output:
   html_document:
     toc: yes
     toc_depth: 4
+    includes:
+      after_body: ../supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -246,7 +248,3 @@ In addition, if the RNG has been fixed (by means of the `seed` argument), then t
 [Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
-
-[**pomp manual page**](https://kingaa.github.io/pomp/manual/bake.html)  
-[**Back to the lesson**](./index.html)  
-[**Course homepage**](../index.html)  
