@@ -17,6 +17,8 @@ params:
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
+[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/exercises.R)  
+
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 source("../setup.R", local = knitr::knit_global())
 ```
@@ -168,11 +170,6 @@ measSEIR %>%
   geom_line()+
   guides(color="none")
 ```
-
-
-----------------------------
-
-[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/exercises.R)  
 
 ----------------------------
 

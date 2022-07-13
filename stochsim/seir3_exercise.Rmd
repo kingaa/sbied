@@ -24,6 +24,8 @@ params:
 Please share and remix noncommercially, mentioning its origin.  
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 
+### [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/seir3_exercise.R)
+
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 source("../setup.R", local = knitr::knit_global())
 ```
@@ -133,10 +135,6 @@ How do these simulations compare to the ones from earlier models?
 How are they improved?
 
 In what ways do they still leave something to be desired?
-
-----------------------------
-
-### [**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/stochsim/seir3_exercise.R)
 
 ----------------------------
 

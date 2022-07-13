@@ -36,6 +36,8 @@ Please share and remix noncommercially, mentioning its origin.
 
 Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
+[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/measles/profile.R)  
+
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 source("../setup.R", local = knitr::knit_global())
 ```
@@ -334,10 +336,6 @@ In this case, these display clear relationships between intensity of extra-demog
 pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma),
   data=sigmaSE_prof)
 ```
-
---------------------------
-
-[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/measles/profile.R)  
 
 ----------------------
 

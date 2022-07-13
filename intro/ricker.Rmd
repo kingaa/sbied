@@ -23,6 +23,8 @@ Please share and remix noncommercially, mentioning its origin.
 ![CC-BY_NC](../graphics/cc-by-nc.png)
 This document has its origins in the [Getting Started vignette](https://kingaa.github.io/pomp/vignettes/getting_started.html).
 
+[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/intro/ricker.R)  
+
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 source("../setup.R", local = knitr::knit_global())
 ```
@@ -302,10 +304,6 @@ $$N_{t+1} = \frac{a\,N_t}{1+b\,N_t}\,\varepsilon_t,$$
 where $a$ and $b$ are parameters and
 $$\varepsilon_t \sim \dist{Lognormal}{-\tfrac{1}{2}\sigma^2,\sigma}.$$
 Assume the same measurement model as before.
-
-----------------------------
-
-[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/intro/ricker.R)  
 
 ----------------------------
 

@@ -24,6 +24,18 @@ csl: ../jss.csl
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
 \newcommand\scinot[2]{$#1 \times 10^{#2}$\xspace}
 
+## Acknowledgements and license
+
+[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
+Please share and remix noncommercially, mentioning its origin.  
+![CC-BY_NC](../graphics/cc-by-nc.png)
+
+Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
+
+[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R)  
+
+This document is derived from @King2015 and the [data supplement archived datadryad.org](http://dx.doi.org/10.5061/dryad.r5f30).
+
 ------------------------------------
 
 
@@ -109,19 +121,5 @@ It demonstrates one level of abstraction above the basic `pomp` constructor.
 ```
 
 --------------------------
-
-## Acknowledgements and license
-
-This document is derived from @King2015 and the [data supplement archived datadryad.org](http://dx.doi.org/10.5061/dryad.r5f30).
-
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
-
-Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
-
-[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R)  
-
-----------------------
 
 ## References
