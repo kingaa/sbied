@@ -9,7 +9,9 @@ output:
     toc: yes
     toc_depth: 4
     includes:
-      after_body: ../_includes/supp_bottom.html
+      after_body:
+      - ../_includes/supp_bottom.html
+      - ../_includes/license.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -25,10 +27,6 @@ params:
 \newcommand\loglik{\ell}
 
 -----------------------------------
-
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
 
 Produced in R version `r getRversion()`.
 
@@ -141,8 +139,3 @@ summary(fit)
 The marginal cost is about `r predict(fit,newdata=data.frame(n=c(41,42),Np=1000000)) %>% diff() %>% signif(2)`&nbsp;&mu;s per 1000 particles per data-point.
 
 ------------------
-
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
-

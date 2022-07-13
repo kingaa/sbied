@@ -5,12 +5,18 @@ output:
   html_document:
     toc: no
     includes:
-      after_body: ../_includes/supp_bottom.html
+      after_body:
+      - ../_includes/supp_bottom.html
+      - ../_includes/license.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
   prefix: Q_fitall
 ---
+
+-----------------------------------
+
+[**R codes for this document**](./Q_fitall.R)  
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 source("../setup.R", local = knitr::knit_global())
@@ -419,9 +425,3 @@ Indeed, it would have had to be the case that 1948 was a very sloppy year for th
 
 
 -----------------------------------
-
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
-
-[**R codes**](./Q_fitall.R)  

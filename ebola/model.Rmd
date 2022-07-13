@@ -13,28 +13,24 @@ output:
     number_sections: FALSE
     df_print: paged
     includes:
-      after_body: ../_includes/supp_bottom.html
+      after_body:
+      - ../_includes/supp_bottom.html
+      - ../_includes/license.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 ---
 
-\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
 \newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
 \newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
 \newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-\newcommand\scinot[2]{$#1 \times 10^{#2}$\xspace}
 
-## Acknowledgements and license
+------------------------------------
 
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
+[**R** codes for this document](./codes.R)  
+
+This document is derived from @King2015 and the [data supplement archived on datadryad.org](http://dx.doi.org/10.5061/dryad.r5f30).
 
 Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
-
-[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/ebola/codes.R)  
-
-This document is derived from @King2015 and the [data supplement archived datadryad.org](http://dx.doi.org/10.5061/dryad.r5f30).
 
 ------------------------------------
 

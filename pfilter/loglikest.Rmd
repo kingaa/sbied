@@ -8,7 +8,9 @@ output:
     toc: no
     toc_depth: 4
     includes:
-      after_body: ../_includes/supp_bottom.html
+      after_body:
+      - ../_includes/supp_bottom.html
+      - ../_includes/license.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -22,11 +24,9 @@ params:
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\ell}
 
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
+--------------------
 
-[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/pfilter/loglikest.R)  
+[**R** codes for this document](./loglikest.R)  
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 source("../setup.R", local = knitr::knit_global())

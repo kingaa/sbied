@@ -6,7 +6,9 @@ output:
     toc: yes
     toc_depth: 2
     includes:
-      after_body: ../_includes/supp_bottom.html
+      after_body:
+      - ../_includes/supp_bottom.html
+      - ../_includes/license.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 ---
@@ -18,12 +20,11 @@ csl: ../jss.csl
 \newcommand\lik{\mathcal{L}}
 \newcommand\loglik{\ell}
 
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
-This document has its origins in the [Getting Started vignette](https://kingaa.github.io/pomp/vignettes/getting_started.html).
+------------------------
 
-[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/intro/ricker.R)  
+[**R** codes for this document](./ricker.R)  
+
+This document has its origins in the [Getting Started vignette](https://kingaa.github.io/pomp/vignettes/getting_started.html).
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 source("../setup.R", local = knitr::knit_global())

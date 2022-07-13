@@ -8,7 +8,9 @@ output:
     toc: yes
     toc_depth: 4
     includes:
-      after_body: ../_includes/supp_bottom.html
+      after_body:
+      - ../_includes/supp_bottom.html
+      - ../_includes/license.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -24,10 +26,6 @@ params:
 \newcommand\loglik{\ell}
 
 -----------------------------------
-
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
 
 Produced in R version `r getRversion()`.
 
@@ -244,7 +242,3 @@ See the **R** help pages for these functions for more information.
 In addition, if the RNG has been fixed (by means of the `seed` argument), then the value of `seed` is stored as another attribute.
 
 ------------------
-
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)

@@ -10,7 +10,9 @@ output:
     number_sections: FALSE
     df_print: kable
     includes:
-      after_body: ../_includes/supp_bottom.html
+      after_body:
+      - ../_includes/supp_bottom.html
+      - ../_includes/license.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -94,11 +96,5 @@ See if you can choose $J$ and $M$ subject to this constraint, together with choi
 Computationally, you may not be readily able to run your full procedure, but you could run a quicker version of it.
 
 --------------------------
-
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix non-commercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
-
-----------------------
 
 ## References

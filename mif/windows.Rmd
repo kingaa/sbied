@@ -5,12 +5,18 @@ output:
   html_document:
     toc: no
     includes:
-      after_body: ../_includes/supp_bottom.html
+      after_body:
+      - ../_includes/supp_bottom.html
+      - ../_includes/license.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
   prefix: windoze
 ---
+
+-----------------------------------
+	
+[**R codes for this document**](./main_win.R)  
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 source("../setup.R", local = knitr::knit_global())
@@ -103,9 +109,3 @@ In the second, the compilation is done *before* the parallelization, via the cal
 Codes corresponding to those provided for Lesson 4, adapted for use in a Windows environment, are [provided here](./main_win.R).
 
 -----------------------------------
-	
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
-	
-[**R codes**](./main_win.R)  

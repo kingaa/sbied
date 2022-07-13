@@ -4,7 +4,9 @@ author: "Aaron A. King, Edward L. Ionides, Qianying Lin"
 output:
   html_document:
     includes:
-      after_body: _includes/main_bottom.html
+      after_body:
+      - _includes/main_bottom.html
+      - _includes/license.html
 bibliography: sbied.bib
 csl: jss.csl
 

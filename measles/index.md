@@ -4,7 +4,9 @@ author: "Aaron A. King, Edward L. Ionides, Kidus Asfaw"
 output:
   html_document:
     includes:
-      after_body: ../_includes/lesson_bottom.html
+      after_body:
+      - ../_includes/lesson_bottom.html
+      - ../_includes/license.html
 ---
 
 ----------------------

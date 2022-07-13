@@ -10,7 +10,9 @@ output:
     number_sections: FALSE
     df_print: paged
     includes:
-      after_body: ../_includes/supp_bottom.html
+      after_body:
+      - ../_includes/supp_bottom.html
+      - ../_includes/license.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 
@@ -30,13 +32,11 @@ csl: ../jss.csl
 \newcommand{\R}{\textsf{R}}
 \newcommand{\Rzero}{{R_0}}
 
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
+--------------------
 
 Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
-[**R** codes for this document](http://raw.githubusercontent.com/kingaa/sbied/master/measles/profile.R)  
+[**R** codes for this document](./profile.R)  
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 source("../setup.R", local = knitr::knit_global())

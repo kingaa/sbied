@@ -5,7 +5,9 @@ output:
   html_document:
     toc: no
     includes:
-      after_body: ../_includes/supp_bottom.html
+      after_body:
+      - ../_includes/supp_bottom.html
+      - ../_includes/license.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 ---
@@ -92,9 +94,5 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,data=subset(ests,logLik>max(logLik
 -----------------------------------
 
 ----------------------------------
-
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
 
 This version produced in R `r getRversion()` on `r format(Sys.Date(), "%B %d, %Y")`.

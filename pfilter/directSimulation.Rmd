@@ -6,7 +6,9 @@ output:
     toc: yes
     toc_depth: 4
     includes:
-      after_body: ../_includes/supp_bottom.html
+      after_body:
+      - ../_includes/supp_bottom.html
+      - ../_includes/license.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
@@ -77,10 +79,6 @@ While the calculation is "correct" in that it will converge to the true likeliho
 - The problem will get much worse with longer data sets.
 
 -----------------------------------
-
-[Licensed under the Creative Commons Attribution-NonCommercial license](http://creativecommons.org/licenses/by-nc/4.0/).
-Please share and remix noncommercially, mentioning its origin.  
-![CC-BY_NC](../graphics/cc-by-nc.png)
 
 Produced in R version `r getRversion()`.
 
