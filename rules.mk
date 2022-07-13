@@ -2,6 +2,7 @@
 # For some reason, --vanilla fails on my Mac 
 REXE = Rscript --no-save --no-restore --no-init-file
 RBATCH = R CMD BATCH --no-save --no-restore
+PANDOC = pandoc -s -t html5+smart --mathjax
 ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 slides.pdf handout.pdf notes.pdf: main.tex

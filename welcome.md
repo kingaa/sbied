@@ -1,5 +1,5 @@
 ---
-title: "SISMID 2020 Module 7:<br>Simulation-based Inference for Epidemiological Dynamics"
+title: "SISMID 2022 Module 14:<br>Simulation-based Inference for Epidemiological Dynamics"
 subtitle: '<br><div style="font-size: 72pt;">Welcome!</div>'
 output: 
   revealjs::revealjs_presentation:
@@ -177,72 +177,56 @@ Groups that have only three members:
 - combine Seeker, Keeper, and Taker roles in one.
 
 
-## Tentative Schedule
+----------------------------
 
-***All times are EDT (UTC-04:00)***
+## Schedule for today
 
-### Wednesday, 15 July
+All times are PDT (UTC-07:00).
 
-<div class="sched">
-**Before 14:30:** View lecture videos for Lessons 1 and 2 (c.&nbsp;2.5hr). Begin work on the Exercises 2.3 and 2.4.  
-**14:30--15:30:** Welcome. Live plenary discussion on Lessons 1 and 2 lectures  
-**15:30--15:45:** Set up Zoom breakout rooms  
-**15:45--16:45:** Breakout groups work on Lesson 2 exercises  
-**16:45--17:30:** Live plenary discussion of breakout group results  
-**17:30--18:30:** Optional Office hour  
-</div>
+### Monday, 25 July
+
+**Before 8:00:**  
+- View lecture videos for Lessons [1](https://kingaa.github.io/sbied/intro/) and [2](https://kingaa.github.io/sbied/stochsim/) (c.&nbsp;2.5hr or 100min at 1.5x).  
+- Send questions to Instructors via Slack.  
+- Optionally, begin work on Exercises 2.3 & 2.4.  
 
 ----------------------------
 
-### Thursday, 16 July
+### Monday, 25 July
 
-<div class="sched">
-**Before 11:00:** View lecture videos for Lessons 3 and 4 (c.&nbsp;4hr). Begin work on the Exercises.  
-**11:00--12:00:** Live plenary discussion on Lesson 3 lecture  
-**12:00--13:00:** Breakout groups work on Lesson 3 exercises  
-**13:00--13:45:** Live plenary discussion of breakout group progress  
-**13:45--14:30:** Break  
-</div>
-
------------------------------
-
-### Thursday, 16 July
-
-<div class="sched">
-**14:30--15:30:** Live plenary discussion on Lesson 4 lecture  
-**15:30--16:30:** Breakout groups work on Lesson 4 exercises  
-**16:30--16:45:** Break  
-**16:45--17:30:** Live plenary discussion of breakout group progress  
-**17:30--18:30:** Optional Office hour  
-</div>
-
------------------------------
-
-### Friday, 17 July
-
-<div class="sched">
-**Before 11:00:** View lecture video for Lesson 5 and (optionally) one or more of Lessons 6, 7, 8 (c.&nbsp;1.5--3hr)  
-**11:00--12:00:** Live plenary discussion on Lesson 5 lecture  
-**12:00--13:00:** Breakout groups work on exercises from Lessons 2--4  
-**13:00--13:45:** Live plenary discussion of breakout group progress  
-**13:45--14:30:** Break  
-</div>
-
------------------------------
-
-### Friday, 17 July
-
-<div class="sched">
-**14:30--15:10:** Live, optional, plenary discussion on Lesson 6  
-**15:10--15:50:** Live, optional, plenary discussion on Lesson 7  
-**15:50--16:30:** Live, optional, plenary discussion on Lesson 8  
-**14:30--16:30:** Those not attending a plenary discussion can use the time to work individually or in groups on the Exercises.  
-**16:30--17:30:** Live plenary discussion. Questions and answers. Concluding remarks.  
-**17:30--18:30:** Optional drop-in session: all topics welcomed.  
-</div>
+**Session 1**  
+8:00--8:30: Introductions. Organization. Lessons 1 and 2 Q&A.  
+8:30--9:45: Breakout groups work on Exercises 2.3 & 2.4.  
+9:45: Breakout group progress reports due on Slack.  
+9:45-10:15: Live plenary discussion of breakout group results.  
 
 ----------------------------
 
-[Link to pre-module survey](https://catalyst.uw.edu/webq/survey/nelsod6/393410)
+### Monday, 25 July
+
+**Interlude**  
+10:15--12:15: View lecture videos for [Lesson 3](https://kingaa.github.io/sbied/pfilter/) (c.&nbsp;112min or 75min at 1.5x).  
+- Send questions to Instructors via Slack.  
+11:45--12:15: Optional office hour (for those who have finished watching the Lesson 3 videos).  
+
+----------------------------
+
+### Monday, 25 July
+
+**Session 2**  
+12:15--12:45: Lesson 3 Q&A.  
+12:45--14:00: Breakout groups work on Exercises 3.1--3.4.  
+14:00: Breakout group progress reports due on Slack.  
+14:00--14:30: Live plenary discussion of breakout group progress.  
+
+----------------------------
+
+### Tuesday & Wednesday
+
+See the [Syllabus](https://kingaa.github.io/sbied/syllabus.html).
+
+----------------------------
+
+[Link to pre-module survey](https://forms.gle/g8h2SAdqs9tE9aAC7)
 
 [**Course homepage**](./index.html)  

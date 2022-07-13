@@ -96,8 +96,11 @@ The following schedule will be updated frequently.
 Bookmark this page so that you can check it at least twice per day.
 
 <div class="nb">
-***All listed times are Pacific Daylight (Seattle) Time (UTC-07:00)***  
+***All listed times are for Seattle (Pacific Daylight Time, UTC-07:00)***  
 Be careful to translate to your local timezone!
+The following world clock may help.
+
+<div class="wtb-ew-v1" style="width: 369px; align: center; display:inline-block"><script src="https://www.worldtimebuddy.com/clock_widget.js?h=5809844&bc=00274C&cn=Seattle+(PDT)&wt=c2"></script><i><a href="https://www.worldtimebuddy.com/">World Clock</a></i><noscript><a href="https://www.worldtimebuddy.com/">World Clock</a></noscript><script>window[wtb_event_widgets.pop()].init()</script></div>
 </div>
 
 #### Monday, 25 July
@@ -124,8 +127,6 @@ Be careful to translate to your local timezone!
 14:00: Breakout group progress reports due on Slack.  
 14:00--14:30: Live plenary discussion of breakout group progress.  
 
-<div class="wtb-ew-v1" style="width: 410px; display:inline-block"><script src="https://www.worldtimebuddy.com/event_widget.js?h=5809844&md=7/25/2022&mt=8.00&ml=6.50&sts=0&sln=0&wt=ew-lt"></script><i><a target="_blank" href="https://www.worldtimebuddy.com/">Time converter</a> at worldtimebuddy.com</i><noscript><a href="https://www.worldtimebuddy.com/">Time converter</a> at worldtimebuddy.com</noscript><script>window[wtb_event_widgets.pop()].init()</script></div><br>
-
 #### Tuesday, 26 July
 
 **Before 8:00:**  
@@ -150,8 +151,6 @@ Be careful to translate to your local timezone!
 14:00: Breakout group progress reports due on Slack.  
 14:00--14:30: Live plenary discussion of breakout group progress.  
 
-<div class="wtb-ew-v1" style="width: 410px; display:inline-block"><script src="https://www.worldtimebuddy.com/event_widget.js?h=5809844&md=7/26/2022&mt=8.00&ml=6.50&sts=0&sln=0&wt=ew-lt"></script><i><a target="_blank" href="https://www.worldtimebuddy.com/">Time converter</a> at worldtimebuddy.com</i><noscript><a href="https://www.worldtimebuddy.com/">Time converter</a> at worldtimebuddy.com</noscript><script>window[wtb_event_widgets.pop()].init()</script></div><br>
-
 #### Wednesday, 27 July
 
 **Before 8:00:**  
@@ -166,8 +165,6 @@ Be careful to translate to your local timezone!
 9:30--10:30: Plenary discussion.  
 10:30--11:00: Concluding remarks.  
 11:00--12:00: Optional drop-in session: all topics welcomed.  
-
-<div class="wtb-ew-v1" style="width: 410px; display:inline-block"><script src="https://www.worldtimebuddy.com/event_widget.js?h=5809844&md=7/27/2022&mt=8.00&ml=4.00&sts=0&sln=0&wt=ew-lt"></script><i><a target="_blank" href="https://www.worldtimebuddy.com/">Time converter</a> at worldtimebuddy.com</i><noscript><a href="https://www.worldtimebuddy.com/">Time converter</a> at worldtimebuddy.com</noscript><script>window[wtb_event_widgets.pop()].init()</script></div><br>
 
 -----------------------------
 
