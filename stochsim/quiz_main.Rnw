@@ -1,5 +1,5 @@
-\input{../header}
-\input{../quiz_header}
+\input{../_includes/header}
+\input{../_includes/quiz_header}
 
 \title{Quiz on Lesson 2}
 \author{Edward L. Ionides, Aaron A. King, Qianying Lin}

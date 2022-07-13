@@ -3,7 +3,7 @@ title: Software installation instructions
 output:
   html_document:
     includes:
-      after_body: ../lesson_bottom.html
+      after_body: ../_includes/lesson_bottom.html
 ---
 
 <style type="text/css">

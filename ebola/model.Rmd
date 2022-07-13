@@ -13,7 +13,7 @@ output:
     number_sections: FALSE
     df_print: paged
     includes:
-      after_body: ../supp_bottom.html
+      after_body: ../_includes/supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 ---

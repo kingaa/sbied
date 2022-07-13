@@ -5,7 +5,7 @@ output:
   html_document:
     toc: no
     includes:
-      after_body: ../supp_bottom.html
+      after_body: ../_includes/supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 ---

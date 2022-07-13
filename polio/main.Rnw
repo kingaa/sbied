@@ -1,4 +1,4 @@
-\input{../header}
+\input{../_includes/header}
 
 \newcommand\CHAPTER{6}
 \title{Lesson 6:\\Case study: Polio}

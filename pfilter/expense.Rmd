@@ -9,7 +9,7 @@ output:
     toc: yes
     toc_depth: 4
     includes:
-      after_body: ../supp_bottom.html
+      after_body: ../_includes/supp_bottom.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:

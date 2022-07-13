@@ -1,4 +1,4 @@
-\input{../header}
+\input{../_includes/header}
 
 \newcommand\CHAPTER{5}
 \title{Lesson \CHAPTER.\\Case study:\\Measles in large and small towns}

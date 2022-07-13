@@ -1,4 +1,4 @@
-\input{../header}
+\input{../_includes/header}
 
 \def\CHAPTER{7}
 \title{Lesson \CHAPTER:\\Case study: forecasting Ebola}

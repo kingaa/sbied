@@ -1,4 +1,4 @@
-\input{../header}
+\input{../_includes/header}
 
 \def\CHAPTER{4}
 \title{Lesson \CHAPTER.\\Iterated filtering: principles and practice}

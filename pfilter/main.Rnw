@@ -1,4 +1,4 @@
-\input{../header}
+\input{../_includes/header}
 
 \def\CHAPTER{3}
 \title{Lesson \CHAPTER:\\Likelihood-based inference for POMP models}

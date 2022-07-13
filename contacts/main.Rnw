@@ -1,4 +1,4 @@
-\input{../header}
+\input{../_includes/header}
 
 \newcommand\CHAPTER{8}
 \title{Lesson {\CHAPTER}:\\Case study: Panel data on dynamic variation\\ in sexual contact rates}

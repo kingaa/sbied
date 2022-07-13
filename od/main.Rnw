@@ -1,4 +1,4 @@
-\input{../header}
+\input{../_includes/header}
 
 \def\CHAPTER{9}
 \title{Lesson \CHAPTER:\\Modeling stochasticity: Overdispersion in the Consett measles data.\\IN DEVELOPMENT}

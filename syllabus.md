@@ -5,7 +5,7 @@ date: "25--27 July 2022"
 output:
   html_document:
     includes:
-      after_body: main_bottom.html
+      after_body: _includes/main_bottom.html
 ---
 
 <style type="text/css">
