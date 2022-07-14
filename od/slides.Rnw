@@ -1,4 +1,9 @@
 \documentclass[t]{beamer}
 \hypersetup{unicode=true,bookmarksnumbered=false,bookmarksopen=false,breaklinks=true,colorlinks=true,urlcolor=blue,citecolor=black,linkcolor=black,filecolor=blue}
 \date{}
+\input{../_includes/beamer}
 \input{main}
+
+<<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE>>=
+source("../setup.R", local = knitr::knit_global())
+@

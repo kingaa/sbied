@@ -82,7 +82,7 @@ Which of the following are true?
 \vspace{-27mm}
 
 \section{}
-The iterated filtering convergence diagnostics plot shown above come from a \href{https://ionides.github.io/531w21/final_project/project06/blinded.html}{\textcolor{blue}{student project}}. What is the best interpretation?
+The iterated filtering convergence diagnostics plot shown above come from a \link{https://ionides.github.io/531w21/final_project/project06/blinded.html}{\textcolor{blue}{student project}}. What is the best interpretation?
 \begin{enumerate}[(A)]
 \item \label{A15a} Everything seems to be working fine. The likelihood is climbing. The replicated searches are giving consistent runs. The spread of convergence points for $\sigma_{\nu}$ and $H_0$ indicates weak identifability, which is a statistical fact worth noticing but not a weakness of the model.  
 \item \label{A15b} The consistently climbing likelihood is promising, but the failure of $\sigma_{\nu}$ and $H_0$ to converge needs attention. Additional searching is needed, experimenting with {\bf larger} values of the random walk perturbation standard deviation for these parameters to make sure the parameter space is properly searched. 
@@ -112,7 +112,7 @@ The iterated filtering convergence diagnostics plot shown above come from a \hre
 }
 
 \section{}
-The iterated filtering convergence diagnostics plot shown above come from a \href{https://ionides.github.io/531w21/final_project/project15/blinded.html}{\textcolor{blue}{student project}}, calculated using $10^3$ particles. What is the best interpretation?
+The iterated filtering convergence diagnostics plot shown above come from a \link{https://ionides.github.io/531w21/final_project/project15/blinded.html}{\textcolor{blue}{student project}}, calculated using $10^3$ particles. What is the best interpretation?
 \begin{enumerate}[(A)]
 \item \label{A16a} Everything seems to be working fine. There is a clear consensus from the different searches concerning the highest likelihood that can be found. Therefore, the search is doing a good job of maximization. Occasional searches get lost, such as the purple line with a low likelihood, but that is not a problem.
 \item \label{A16b} The seaches obtain likelihood values spread over thousands of log units. We would like to see consistent convergence within a few log units. We should use more particles and/or more iterations to achieve this.
