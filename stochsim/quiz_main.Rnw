@@ -40,33 +40,29 @@ Scientifically, our conclusions should not depend on the units we choose, but we
 Suppose you obtain the following error message when you build your pomp model using Csnippets.
 <<Q10-error-message,echo=FALSE>>=
 cat("
-Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error: 
-cannot compile shared-object library ‘/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
-5324/pomp_be9007eb030e47cb34264e3e779b6da9.so’: 
-status = 1
+Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error:
+ cannot compile shared-object library
+ ‘/tmp/RtmpFkkeCQ/24104/pomp_068eedfcaf62b1e391363bbdd99fbe8c.so’: status = 1
 compiler messages:
-clang -mmacosx-version-min=10.13 -I\"/Library/Frameworks/R.framework/Resources/include\" -DNDEBUG 
--I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include' 
--I'/Users/ionides/sbied/questions'  -I/usr/local/include   -fPIC  -Wall -g -O2  
--c /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
-5324/pomp_be9007eb030e47cb34264e3e779b6da9.c 
--o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
-5324/pomp_be9007eb030e47cb34264e3e779b6da9.o
-/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
-5324/pomp_be9007eb030e47cb34264e3e779b6da9.c:39:5: 
-error: called object type 'int' is not a function or function pointer
-    W = 0; 
-    ^
-/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/5
+gcc -I\"/usr/local/apps/R/ubuntu_20.04/4.2.1/lib64/R/include\" -DNDEBUG 
+-I'/home/kingaa/R/x86_64-pc-linux-gnu-library/4.2/pomp/include' -I'/home/kingaa/teach/sbied'
+  -I/usr/local/include   -fpic  -g -O2 -Wall -pedantic 
+-c /tmp/RtmpFkkeCQ/24104/pomp_068eedfcaf62b1e391363bbdd99fbe8c.c 
+-o /tmp/RtmpFkkeCQ/24104/pomp_068eedfcaf62b1e391363bbdd99fbe8c.o
+/tmp/RtmpFkkeCQ/24104/pomp_068eedfcaf62b1e391363bbdd99fbe8c.c: 
+In function ‘__pomp_rinit’:
+/tmp/RtmpFkkeCQ/24104/pomp_068eedfcaf62b1e391363bbdd99fbe8c.c:38:13:
+ error: called object is not a function or function pointer
+   38 |     cases = 0
+      |             ^
+make: *** [/usr/local/apps/R/ubuntu_20.04/4.2.1/lib64/R/etc/Makeconf:168:
+ /tmp/RtmpFkkeCQ/24104/pomp_068eedfcaf62b1e391363bbdd99fbe8c.o] Error 1
 In addition: Warning message:
 In system2(command = R.home(\"bin/R\"), args = c(\"CMD\", \"SHLIB\", \"-c\",  :
-running command 'PKG_CPPFLAGS=\"-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include' 
--I'/Users/ionides/sbied/questions'\" '/Library/Frameworks/R.framework/Resources/bin/R' 
-CMD SHLIB -c -o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
-5324/pomp_be9007eb030e47cb34264e3e779b6da9.so 
-/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
-5324/pomp_be9007eb030e47cb34264e3e779b6da9.c 
-2>&1' had status 1
+  running command 'PKG_CPPFLAGS=\"-I'/home/kingaa/R/x86_64-pc-linux-gnu-library/4.2/pomp/include'
+ -I'/home/kingaa/teach/sbied'\" '/usr/local/apps/R/ubuntu_20.04/4.2.1/lib64/R/bin/R' CMD SHLIB -c
+ -o /tmp/RtmpFkkeCQ/24104/pomp_068eedfcaf62b1e391363bbdd99fbe8c.so
+ /tmp/RtmpFkkeCQ/24104/pomp_068eedfcaf62b1e391363bbdd99fbe8c.c 2>&1' had status 1
 ")
 @
 Which of the following is a plausible cause for this error?
@@ -83,11 +79,13 @@ Which of the following is a plausible cause for this error?
   \ref{A10e}.
   The error message was produced by the code below.
   \code{pomp} passes on the C compiler error message for you to inspect.
-  Note the missing semicolon at the line end before \code{W=0;}.
+  Note the missing semicolon in the next-to-last line.
 
   <<Q10-error-code,eval=F>>=
   sir1 <- sir()
-  sir2 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
+  sir2 <- pomp(
+    sir1,
+    statenames=c("S","I","R","cases","W"),
     paramnames=c(
       "gamma","mu","iota",
       "beta1","beta_sd","pop","rho",
@@ -151,7 +149,9 @@ Which of the following is a plausible cause for this error?
   \ref{A11b}. The code generating this error is below. Here, \code{pop} is intended to be passed as a parameter, but it is missing from the \code{paramnames} argument. It could alternatively be defined as a global variable using the \code{globals} argument to \code{pomp}.
 
   <<Q11-error-code,eval=F>>=
-  sir3 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
+  sir3 <- pomp(
+    sir1,
+    statenames=c("S","I","R","cases","W"),
     paramnames=c(
       "gamma","mu","iota",
       "beta1","beta_sd","rho",
@@ -174,31 +174,26 @@ Which of the following is a plausible cause for this error?
 Suppose you obtain the following error message when you build your pomp model using Csnippets.
 <<Q12-error-message,echo=FALSE>>=
 cat("
-Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error:
-cannot compile shared-object library ‘/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
-5324/pomp_77886fb66d95b4b9904440d86a4425b3.so’: status = 1
+Error: in ‘simulate’: error in building shared-object library from C snippets: in ‘Cbuilder’:
+ compilation error: cannot compile shared-object library
+ ‘/tmp/RtmpFkkeCQ/24104/pomp_4fc43714a7a9ebddf896bbc51635d211.so’: status = 1
 compiler messages:
-clang -mmacosx-version-min=10.13 -I\"/Library/Frameworks/R.framework/Resources/include\" -DNDEBUG 
--I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include' 
--I'/Users/ionides/sbied/questions'  -I/usr/local/include   -fPIC  -Wall -g -O2  
--c /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
-5324/pomp_77886fb66d95b4b9904440d86a4425b3.c 
--o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
-5324/pomp_77886fb66d95b4b9904440d86a4425b3.o
-/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
-5324/pomp_77886fb66d95b4b9904440d86a4425b3.c:39:36: 
-error: too many arguments to function call, expected 2, have 3
-      rep = nearbyint(rnorm(1,mean,sd));
-                      ~~~~~        ^~
-/Librar
+gcc -I\"/usr/local/apps/R/ubuntu_20.04/4.2.1/lib64/R/include\" -DNDEBUG
+ -I'/home/kingaa/R/x86_64-pc-linux-gnu-library/4.2/pomp/include' -I'/home/kingaa/teach/sbied'
+  -I/usr/local/include   -fpic  -g -O2 -Wall -pedantic -c 
+/tmp/RtmpFkkeCQ/24104/pomp_4fc43714a7a9ebddf896bbc51635d211.c 
+-o /tmp/RtmpFkkeCQ/24104/pomp_4fc43714a7a9ebddf896bbc51635d211.o
+In file included from /home/kingaa/R/x86_64-pc-linux-gnu-library/4.2/pomp/include/pomp.h:9,
+                 from /tmp/RtmpFkkeCQ/24104/pomp_4fc43714a7a9ebddf896bbc51635d211.c:5:
+/tmp/RtmpFkkeCQ/24104/pomp_4fc43714a7a9ebddf896bbc51635d211.c: In function ‘__pomp_rmeasure’:
+/usr/local/apps/R/ubuntu_20.04/4.2.1/lib64/R/include/Rmath.h:333:16: error:
+ too many arguments to function ‘Rf_rnorm
 In addition: Warning message:
 In system2(command = R.home(\"bin/R\"), args = c(\"CMD\", \"SHLIB\", \"-c\",  :
-running command 'PKG_CPPFLAGS=\"-I'/Users/ionides/Library/R/x86_64/4.1/library/pomp/include'
--I'/Users/ionides/sbied/questions'\" '/Library/Frameworks/R.framework/Resources/bin/R' 
-CMD SHLIB -c -o /var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
-5324/pomp_77886fb66d95b4b9904440d86a4425b3.so 
-/var/folders/fv/pt62sh2d6_gf9fp3t7b466vr0000gr/T//RtmpD16GmG/
-5324/pomp_77886fb66d95b4b9904440d86a4425b3.c 2>&1' had status 1
+  running command 'PKG_CPPFLAGS=\"-I'/home/kingaa/R/x86_64-pc-linux-gnu-library/4.2/pomp/include'
+ -I'/home/kingaa/teach/sbied'\" '/usr/local/apps/R/ubuntu_20.04/4.2.1/lib64/R/bin/R' CMD SHLIB -c
+ -o /tmp/RtmpFkkeCQ/24104/pomp_4fc43714a7a9ebddf896bbc51635d211.so
+ /tmp/RtmpFkkeCQ/24104/pomp_4fc43714a7a9ebddf896bbc51635d211.c 2>&1' had status 1
 ")
 @
 Which of the following is a plausible cause for this error?
@@ -211,10 +206,16 @@ Which of the following is a plausible cause for this error?
 \end{enumerate}
 
 \begin{solution}
-  \ref{A12a}. The code producing the error is below. Within Csnippets, the C versions of R distribution functions are available but they have slightly different syntax from their more familiar R cousins.
+  \ref{A12a}.
+  The code producing the error is below.
+  Within Csnippets, the C versions of R distribution functions are available but they have slightly different syntax from their more familiar R children.
+  A complete reference guide to R's C interface \underline{\link{https://cran.r-project.org/doc/manuals/r-release/R-exts.html\#The-R-API}{can be found here}}.
+  In particular, the C form of R's distribution functions is \underline{\link{https://cran.r-project.org/doc/manuals/r-release/R-exts.html\#Distribution-functions}{fully described here}}.
 
   <<Q12-error-code,eval=F>>=
-  sir4 <- pomp(sir1,statenames=c("S","I","R","cases","W"),
+  sir4 <- simulate(
+    sir1,
+    statenames=c("S","I","R","cases","W"),
     paramnames=c(
       "gamma","mu","iota",
       "beta1","beta_sd","pop","rho",
@@ -236,23 +237,22 @@ Which of the following is a plausible cause for this error?
 
 
 \section{}
-Let $V_n$ be a Markov process and let $W_n=h(V_n)$ for some function $h$. Which of the following statements are true?
+Let $V_n$ be a Markov process and let $W_n=h(V_n)$ for some function $h$.
+Which of the following statements are true?
+\begin{enumerate}[(i)]
+\item $W_n$ is a Markov process for all choices of $h$.
+\item $W_n$ is a Markov process for some choices of $h$.
+\item $W_n$ is not a Markov process for any choice of $h$.
+\item If $V_n=(X_n,Y_n)$ where $X_n$ and $Y_n$ are a POMP, and $h(X_n,Y_n)=X_n$ then $W_n$ is a Markov process.
+\item If $V_n=(X_n,Y_n)$ where $X_n$ and $Y_n$ are a POMP, and $h(X_n,Y_n)=Y_n$ then $W_n$ is a Markov process.
+\end{enumerate}
 
-i) $W_n$ is a Markov process for all choices of $h$.
-
-ii) $W_n$ is a Markov process for some choices of $h$.
-
-iii) $W_n$ is not a Markov process for any choice of $h$.
-
-iv) If $V_n=(X_n,Y_n)$ where $X_n$ and $Y_n$ are a POMP model, and $h(X_n,Y_n)=X_n$ then $W_n$ is a Markov process.
-
-v) If $V_n=(X_n,Y_n)$ where $X_n$ and $Y_n$ are a POMP model, and $h(X_n,Y_n)=Y_n$ then $W_n$ is a Markov process.
 \begin{enumerate}[(A)]
 \item i,iv,v
 \item ii,iv \label{A1b}
 \item ii,v
 \item iii
-\item None of the above
+\item None of them
 \end{enumerate}
 
 \begin{solution}
