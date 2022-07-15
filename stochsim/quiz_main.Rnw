@@ -21,23 +21,44 @@ knitr::opts_chunk$set(highlight=FALSE)
 \maketitle
 
 \section{}
-Scientifically, our conclusions should not depend on the units we choose, but we must get the details right. Suppose our data are two years of weekly aggregated case reports of a disease and we have a continuous time model solved numerically by an Euler timestep of size $dt$. Which of the following is a correct explanation of our options for properly implementing this in a pomp object called \code{po}?
+Scientifically, our conclusions should not depend on the units of measurement we use, but we can make errors if we don't get the details right.
+Suppose our data are two years of weekly aggregated case reports of a disease and we have a continuous-time model solved numerically by an Euler timestep of size $dt$.
+Which of the following is a correct explanation of our options for properly implementing this in a pomp object called \code{po}?
 \begin{enumerate}[(A)]
-\item \label{A13a} The measurement times, \code{time(po)}, should be in units of weeks, such as $1,2,\dots,104$. The latent process can be modeled using arbitrary time units, say days or weeks or years. The units of $dt$ should match the time units of the {\bf latent} process.
-\item \label{A13b} The measurement times, \code{time(po)}, should be in units of weeks, such as $1,2,\dots,104$. The latent process can be modeled using arbitrary time units, say days or weeks or years. The units of $dt$ should be in weeks (in practice, usually a fraction of a week) to match the units of the {\bf measurement} times.
-\item \label{A13c} The measurement times do not have to be in units of weeks. For example, we could use  \code{time(po)}=$1/52$, $2/52$, $\dots, 2$. The latent process and $dt$ should use the same units of time as the measurement times.
-\item \label{A13d} The measurement times do not have to be in units of weeks. For example, we could use  \code{time(po)}=$1/52$, $2/52$, $\dots, 2$. The latent process can also use arbitrary units of time, which do not necessarily match the units of the measurement times. The units of $dt$ should match the units used for the {\bf latent} process.
-\item \label{A13e} The measurement times do not have to be in units of weeks. For example, we could use \code{time(po)}=$1/52$, $2/52$, $\dots, 2$. The latent process can also use arbitrary units of time, which do not necessarily match the units of the measurement times. The units of $dt$ should match the units used for the {\bf measurement} times.
+\item \label{A13a}
+  The measurement times, \code{time(po)}, should be in units of weeks, such as $1,2,\dots,104$.
+  The latent process can be modeled using arbitrary time units, say days or weeks or years.
+  The units of $dt$ should match the time units of the {\bf latent} process.
+\item \label{A13b}
+  The measurement times, \code{time(po)}, should be in units of weeks, such as $1,2,\dots,104$.
+  The latent process can be modeled using arbitrary time units, say days or weeks or years.
+  The units of $dt$ should be in weeks (in practice, usually a fraction of a week) to match the units of the {\bf measurement} times.
+\item \label{A13c} The measurement times do not have to be in units of weeks.
+  For example, we could use \code{time(po)}=$1/52$, $2/52$, $\dots, 2$.
+  The latent process and $dt$ should use the same units of time as the measurement times.
+\item \label{A13d}
+  The measurement times do not have to be in units of weeks.
+  For example, we could use \code{time(po)}=$1/52$, $2/52$, $\dots, 2$.
+  The latent process can also use arbitrary units of time, which do not necessarily match the units of the measurement times.
+  The units of $dt$ should match the units used for the {\bf latent} process.
+\item \label{A13e}
+  The measurement times do not have to be in units of weeks.
+  For example, we could use \code{time(po)}=$1/52$, $2/52$, $\dots, 2$.
+  The latent process can also use arbitrary units of time, which do not necessarily match the units of the measurement times.
+  The units of $dt$ should match the units used for the {\bf measurement} times.
 \end{enumerate}
 
 \begin{solution}
   \ref{A13c}.
-  For scientific calculations, you generally have to pick an arbitrary set of units and use it consistently. In \code{pomp}, this means that you have to use the same units for measurement times and within the latent process. For example, if your measurement times are in days (7,14,$\dots$) then rate parameters should have units $\mathrm{day}^{-1}$. A latent transition with mean duration 1 week would have corresponding rate $1/7 \mathrm{day}^{-1}$. 
+  For scientific calculations, you generally have to pick an arbitrary set of units and use it consistently.
+  In \code{pomp}, this means that you have to use the same units for measurement times and within the latent process.
+  For example, if your measurement times are in days (7,14,$\dots$) then rate parameters should have units $\mathrm{day}^{-1}$.
+  A latent transition with mean duration 1 week would have corresponding rate $1/7 \mathrm{day}^{-1}$. 
 \end{solution}
 
 
 \section{}
-Suppose you obtain the following error message when you build your pomp model using Csnippets.
+Suppose you obtain the following error message when you build your pomp model using C snippets.
 <<Q10-error-message,echo=FALSE>>=
 cat("
 Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error:
@@ -105,7 +126,7 @@ Which of the following is a plausible cause for this error?
 
 
 \section{}
-Suppose you obtain the following error message when you build your pomp model using Csnippets.
+Suppose you obtain the following error message when you build your pomp model using C snippets.
 <<Q11-error-message,echo=FALSE>>=
 cat("
 Error: error in building shared-object library from C snippets: in ‘Cbuilder’: compilation error: 
@@ -171,7 +192,7 @@ Which of the following is a plausible cause for this error?
 
 
 \section{}
-Suppose you obtain the following error message when you build your pomp model using Csnippets.
+Suppose you obtain the following error message when you build your pomp model using C snippets.
 <<Q12-error-message,echo=FALSE>>=
 cat("
 Error: in ‘simulate’: error in building shared-object library from C snippets: in ‘Cbuilder’:
@@ -208,7 +229,7 @@ Which of the following is a plausible cause for this error?
 \begin{solution}
   \ref{A12a}.
   The code producing the error is below.
-  Within Csnippets, the C versions of R distribution functions are available but they have slightly different syntax from their more familiar R children.
+  Within C snippets, the C versions of R distribution functions are available but they have slightly different syntax from their more familiar R children.
   A complete reference guide to R's C interface \underline{\link{https://cran.r-project.org/doc/manuals/r-release/R-exts.html\#The-R-API}{can be found here}}.
   In particular, the C form of R's distribution functions is \underline{\link{https://cran.r-project.org/doc/manuals/r-release/R-exts.html\#Distribution-functions}{fully described here}}.
 

@@ -1,6 +1,6 @@
 ---
-title: "Materials for Introduction to Simulation-based Inference for Epidemiological Dynamics"
-author: "Aaron A. King, Edward L. Ionides"
+title: Materials for Introduction to Simulation-based Inference for Epidemiological Dynamics
+author: Aaron A. King, Edward L. Ionides
 output:
   html_document:
     includes:
@@ -11,6 +11,8 @@ output:
 
 ----------------------
 
-| &nbsp;               | &nbsp;             |
-|:---------------------|:------------------:|
-| Debugging strategies | [HTML](debug.html) |
+| &nbsp;               | &nbsp;               |
+|:---------------------|:--------------------:|
+| Debugging strategies | [HTML](debug.html)   |
+| Pro tips             | [HTML](protips.html) |
+

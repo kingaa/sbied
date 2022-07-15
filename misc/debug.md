@@ -1,6 +1,6 @@
 ---
-title: " Strategies for debugging **pomp** code"
-author: "Aaron A. King and Edward L. Ionides"
+title: Strategies for debugging **pomp** code
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: yes

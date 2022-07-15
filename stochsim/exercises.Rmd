@@ -28,18 +28,22 @@ source("main.R")
 
 ## Exercise: Little o notation
 
-We combine $f(x+\delta)=f(x)+ \delta\,g(x) + o(\delta)$, the definition that $h(\delta)=o(\delta)$ means $\lim_{\delta\to 0} \frac{h(\delta)}{\delta} = 0$.
-Thus, we get
+We combine the equation 
+$$f(x+\delta)=f(x)+\delta\,g(x)+o(\delta),$$
+with the definition that $h(\delta)=o(\delta)$ means $\lim_{\delta\to 0} \frac{h(\delta)}{\delta} = 0$.
+Rearranging, we see that
 $$\lim_{\delta\to 0} \frac{f(x+\delta)-f(x)}{\delta} = g(x)$$
-which matches the definition that $df(x)/dx = g(x)$.
+which, by definition, implies that $df(x)/dx = g(x)$.
 
-Little o notation is compact, and so is useful for simplifying complex expressions. The downside is that we have to put in the work to convert it to limit statements if we want to check that the math is formally correct.
+Little-o notation is compact, and so is useful for simplifying complex expressions.
 
 --------------
 
 ## Exercise: Euler versus Gillespie
 
-For reasons explained in the lesson, we may not be critically worried about whether a numerical simulation method gives an exact solution to the systems defining a continuous time equation. The Gillespie algorithm gives an exact solution (if rates are constant) at the expense of additional computation time. We may on occastion want an exact simulator, and in that case Gillespie can be used.
+For reasons explained in the lesson, scientific conclusions may not hinge on the extent to which numerical approximations agree with exact solutions of the equations defining a continuous-time model.
+For constant-rate compartmental models, the Gillespie algorithm gives an exact solution at the expense of additional computation time.
+We may on occastion want an exact simulator, and in that case Gillespie can be used.
 
 -------------
 
@@ -81,7 +85,7 @@ measSIR %>%
 ```
 
 Additionally, we might have a look at the effects of changing the initial susceptible fraction, $\eta$.
-It's possible to get something not too awful to contemplate by just manipulating $\eta$, in fact:
+Indeed, it seems that it is possible to get something not too awful to contemplate by just manipulating $\eta$:
 
 ```{r}
 measSIR %>%

@@ -99,3 +99,10 @@ expand_grid(
   scale_x_log10(breaks=unique(lls$Np))+
   labs(fill="nfilt")
 ```
+
+These plots reveal that one gets both more *precise* and more *accurate* estimates of the log likelihood by increasing the number of particles, `Np`.
+That is, the variability in the estimates decreases with increasing `Np` (*precision*) and the bias decreases as well (*accuracy*).
+
+On the other hand, increasing the number of independent filtering operations, `nfilt`, does not improve the picture much.
+At best, we get a more accurate estimate of the variance.
+In practice, however, a rough estimate of the precision is usually good enough.
