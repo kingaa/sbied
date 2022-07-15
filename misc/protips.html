@@ -358,6 +358,7 @@ pre code {
 <ul>
 <li><a href="#when-using-rstudio-turn-off-automatic-save-and-restore-of-global-workspace.">When using <strong>Rstudio</strong>, turn off automatic save and restore of global workspace.</a></li>
 <li><a href="#never-use-whitespace-in-file-or-directory-names">Never use whitespace in file or directory names</a></li>
+<li><a href="#keeping-a-database-of-parameter-space-explorations">Keeping a database of parameter-space explorations</a></li>
 </ul>
 </div>
 
@@ -370,6 +371,12 @@ pre code {
 <div id="never-use-whitespace-in-file-or-directory-names" class="section level2">
 <h2>Never use whitespace in file or directory names</h2>
 <p>A perpetual source of annoying and easily avoidable errors! See, e.g., <a href="https://github.com/kingaa/pomp/issues/115"><strong>pomp</strong> issue 115</a>.</p>
+</div>
+<div id="keeping-a-database-of-parameter-space-explorations" class="section level2">
+<h2>Keeping a database of parameter-space explorations</h2>
+<p>Likelihood surfaces for dynamic models can be very complex and the computations needed to explore them can be expensive. By keeping a record of all parameter points visited, along with the computed likelihood at each point, is a good way to ensure that you continually improve your picture of the likelihood surface.</p>
+<p>Doing this can be as simple as maintaining a CSV file with one column for each parameter, plus the likelihood (and s.e.). It can be useful to supplement this with an indication of the name of the model and any other qualifying information.</p>
+<p>The <a href="../mif/index.html">Lesson on Iterated Filtering</a> shows one way of setting up, maintaining, and using such a database.</p>
 </div>
 
 <div style="padding-top: 1em; padding-bottom: 2em;">

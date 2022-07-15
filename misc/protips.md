@@ -36,3 +36,13 @@ When you do this, the file you create will be visible, as of course it should be
 
 A perpetual source of annoying and easily avoidable errors!
 See, e.g., [**pomp** issue 115](https://github.com/kingaa/pomp/issues/115).
+
+## Keeping a database of parameter-space explorations
+
+Likelihood surfaces for dynamic models can be very complex and the computations needed to explore them can be expensive.
+By keeping a record of all parameter points visited, along with the computed likelihood at each point, is a good way to ensure that you continually improve your picture of the likelihood surface.
+
+Doing this can be as simple as maintaining a CSV file with one column for each parameter, plus the likelihood (and s.e.).
+It can be useful to supplement this with an indication of the name of the model and any other qualifying information.
+
+The [Lesson on Iterated Filtering](../mif/index.html) shows one way of setting up, maintaining, and using such a database.
