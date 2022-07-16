@@ -1,5 +1,7 @@
 ---
-title: Syllabus for SISMID Module 14
+title: |
+  <img style="floatleft;" src="graphics/sismid.png">
+  Syllabus for SISMID 2022 Module 14
 subtitle: Simulation-based Inference for Epidemiological Dynamics
 date: "25--27 July 2022"
 output:
@@ -45,9 +47,8 @@ All course materials can be found there.
 These include links to Youtube lecture videos, copies of the lecture slides, lecture notes, **R** scripts containing codes used in the lectures, and supplementary material on various background topics or topics touched tangentially in the lectures.
 Exercises are given in the lectures and can be found on the slides and in the notes.
 
-<!---
-The [link for registration is here](https://tinyurl.com/2d4z5dmr).
---->
+Register for the course Zoom session [at this link](https://tinyurl.com/2d4z5dmr).
+
 <!---
 The course Zoom session is: https://tinyurl.com/2nv3ynjh
 The passcode is 602576.
@@ -57,7 +58,7 @@ The passcode is 602576.
 
 ### Course Organization
 
-The course will have five components:
+The course will have six components:
 
 1. ***A mandatory self-learning component***, in which students are expected to watch and take notes on the pre-recorded lectures prior to the day's activities.
    Links to the videos can be found on the [course website](https://kingaa.github.io/sbied/), along with PDF versions of the lecture notes and slides.
@@ -70,7 +71,11 @@ The course will have five components:
    Each lesson includes exercises intended to consolidate and challenge your understanding of key concepts and methods.
    To get the most out of the course, you will have to grapple with these Exercises on your own as well as in a group.
    
-1. ***Live plenary discussions***, during which instructors will elaborate important points raised in the lectures and address common questions posed over Slack.
+1. ***Quizzes.***
+   After watching the videos, take the corresponding Quiz to test your understanding.
+   We can discuss the Quiz questions in the subsequent Live Plenary discussion.
+
+1. ***Live Plenary discussions***, during which instructors will elaborate important points raised in the lectures and address common questions posed over Slack.
    During these sessions, feel free to raise any additional questions that come up.
    We ask that you mute your audio and video at the start of each live plenary and keep them muted until you have a question.
    When you do have a question, by unmuting your audio and video, you will become visible and will be given the floor to ask your question.
@@ -101,7 +106,7 @@ The course will have five components:
 The following schedule will be updated frequently.
 Bookmark this page so that you can check it at least twice per day.
 
-<div class="nb">
+<div class="nb" style="width: 35em;">
 ***All listed times are for Seattle (Pacific Daylight Time, UTC-07:00)***  
 Be careful to translate to your local timezone!
 The following world clock may help.
@@ -114,6 +119,7 @@ The following world clock may help.
 **Before 8:00:**  
 - View lecture videos for Lessons [1](https://kingaa.github.io/sbied/intro/) and [2](https://kingaa.github.io/sbied/stochsim/) (c.&nbsp;2.5hr or 100min at 1.5x).  
 - Send questions to Instructors via Slack.  
+- Take the [Quiz](https://kingaa.github.io/sbied/stochsim/quiz.pdf).  
 - Optionally, begin work on Exercises 2.3 & 2.4.  
 
 **Session 1**  
@@ -125,7 +131,8 @@ The following world clock may help.
 **Interlude**  
 10:15--12:15: View lecture videos for [Lesson 3](https://kingaa.github.io/sbied/pfilter/) (c.&nbsp;112min or 75min at 1.5x).  
 - Send questions to Instructors via Slack.  
-11:45--12:15: Optional office hour (for those who have finished watching the Lesson 3 videos).  
+- Take the [Quiz](https://kingaa.github.io/sbied/pfilter/quiz.pdf).  
+11:45--12:15: Optional office hour (for those who have finished watching the Lesson 3 videos and taken the Quiz).  
 
 **Session 2**  
 12:15--12:45: Lesson 3 Q&A.  
@@ -149,7 +156,8 @@ The following world clock may help.
 **Interlude**  
 10:15--12:15: View lecture videos for [Lesson 4, Parts V--VI](https://kingaa.github.io/sbied/mif/) (c.&nbsp;55min or 38min at 1.5x).  
 - Send questions to Instructors via Slack.  
-11:45--12:15: Optional office hour (for those who have finished watching the Lesson 4 videos).  
+- Take the [Quiz](https://kingaa.github.io/sbied/mif/quiz.pdf).  
+11:45--12:15: Optional office hour (for those who have finished watching the Lesson 4 videos and taken the Quiz).  
 
 **Session 4**  
 12:15--12:45: Lesson 4, Parts V-VI Q&A.  
@@ -161,7 +169,7 @@ The following world clock may help.
 
 **Before 8:00:**  
 - View lecture video for [Lesson 5](https://kingaa.github.io/sbied/measles/) (c.&nbsp;80min or 55min at 1.5x).  
-- Work on the [Quiz](https://kingaa.github.io/sbied/quiz/quiz.pdf).  
+- Take the [Quiz](https://kingaa.github.io/sbied/measles/quiz.pdf).  
 - Formulate questions for the instructors on the topic: How do simulation-based methods fit into your research agenda?  
 
 **Session 5**  
@@ -177,14 +185,14 @@ The following world clock may help.
 ### Breakout Room Roles
 
 Breakout groups will be assigned anew at each session.
+At the beginning of each session, quickly introduce yourselves and divide the labor among yourselves.
 The following roles are designed to help the group function smoothly, and to make sure everyone in a group contributes to the group effort, and that every important task has someone to look after it.
-At the beginning of each breakout-group meeting, decide among yourselves who will perform each role.
 None of these roles is a full-time job: 
-everyone is expected to contribute thought and effort toward the group's work, 
-and everyone is expected to listen to, and engage with, the contributions of the other group members.
+everyone can perform a role and also contribute thought and effort toward the group's work.
+Importantly, everyone is expected to listen to, and engage with, the contributions of the other group members.
 
 1. **Keeper.** 
-   The Keeper is responsible for keeping time, keeping track of the group's goals, and keeping the group focused and running smoothly and happily.
+   The Keeper keeps time, keeps track of the group's goals, and keeps the group focused and running smoothly and happily.
    It's only a happy group that does good work.
    As Keeper, pay attention to making sure everyone is getting their needs met, everyone is able to contribute, and that the group is not losing sight of its goals.
 1. **Taker.** 
@@ -199,24 +207,18 @@ and everyone is expected to listen to, and engage with, the contributions of the
    The Taker might choose to create a shared online document (using Google docs, for example) for this purpose.
    The group may decide to allow all group members to edit such a document, but the Taker shall be responsible for making the first draft of the notes for each session.
 1. **Seeker.** 
-   The Seeker is tasked with looking for information to help answer group questions.
+   The Seeker seeks information to help answer group questions.
    A good Seeker has all the course materials at his or her fingertips and can rapidly share search results with the group.
 1. **Hacker.** 
    All group members are expected to do hands-on work with the methods we are teaching.
-   In any given group session, however, the Hacker will have prime responsibility for producing the definitive version of the group's codes and full responsibility for making sure that all group members have access to the definitive version at the end of each breakout-group session.
+   A Hacker, however, takes prime responsibility for producing the definitive version of the group's codes and full responsibility for making sure that all group members have access to the definitive version at the end of each breakout-group session.
    Again, the group may decide to use a shared online document for this purpose.
    Since learning to write correct and efficient code is central to the course's goals, the Hacker should make sure that the group is fully involved in all the coding.
 1. **Slacker.**
-   The Slacker takes responsibility for monitoring the group's interface with the course Slack channel.
-   In addition, the Slacker is responsible for preparing a pr&eacute;cis of the group's efforts and progress, to be passed, via the course Slack channel, to the instructors and the rest of the group at the end of the session.
+   A Slacker monitors the group's interface with the course Slack channel.
+   In addition, the Slacker prepares a pr&eacute;cis of the group's efforts and progress, to be passed to the course Slack channel at the end of the session.
    This should be at most a paragraph, focused on communicating the essentials only: 
    what exercises were tackled, what approaches taken, what progress made, what difficulties encountered.
-
-In groups with more than five members there can be multiple Hackers and Seekers.
-
-For groups that have only four members, the Slacker and Taker roles may be combined, as may the Seeker and Keeper.
-
-For groups that have only three members, the Slacker, Taker, and Keeper roles may be combined into one.
 
 -----------------------------
 
