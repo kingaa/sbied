@@ -4,7 +4,8 @@ output:
   html_document:
     includes:
       after_body:
-      - ../_includes/lesson_bottom.html
+        - ../_includes/lesson_bottom.html
+        - ../_includes/license.html        
 ---
 
 <style type="text/css">

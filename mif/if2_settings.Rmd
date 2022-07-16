@@ -1,6 +1,6 @@
 ---
-title: "Tuning IF2"
-author: "Edward Ionides and Aaron A. King"
+title: Tuning IF2
+author: Edward Ionides and Aaron A. King
 output:
   html_document:
     toc: yes
@@ -46,12 +46,15 @@ Produced with **R** version `r getRversion()` and **pomp** version `r packageVer
 source("../setup.R", local = knitr::knit_global())
 ```
 
-## Choosing the algorithmic settings for IF2
+## Number of particles
 
 + The initial parameter swarm, $\{ \Theta^0_j, j=1,\dots,J\}$, usually consists of $J$ identical replications of some starting parameter vector.
 + $J$ is set to be sufficient for particle filtering.
   Because the addition of random perturbations acts to combat particle depletion, it is typically possible to take $J$ substantially smaller than the value needed to obtain precise likelihood estimates via `pfilter`.
   By the time of the last iteration ($m=M$) one should not have effective sample size close to 1. 
+  
+## Perturbations
+
 + Perturbations are usually chosen to be multivariate normal, with $\sigma_m$ being a scale factor for iteration $m$:
 $$h_n(\theta|\varphi;\sigma) \sim N[\varphi, \sigma^2_m V_n].$$
 + $V_n$ is usually taken to be diagonal,
@@ -64,25 +67,44 @@ v_{1,n}^2 & 0 & 0 & \cdots & 0 \\
 + If $\theta_i$ is a parameter that affects the dynamics or observations throughout the time series, it is called a __regular parameter__, and it is often appropriate to specify $$v_{i,n} = v_i.$$
 + If $\theta_j$ is a parameter that affects only the initial conditions of the dynamic model, it is called an __initial value parameter__ (IVP) and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=0$} \\0 & \mbox{if $n>0$} \end{array}\right.$$
 + If $\theta_k$ is a break-point parameter that models how the system changes at time $t_q$, then $\theta_k$ is like an IVP at time $t_q$ and it is appropriate to specify $$v_{j,n} = \left\{\begin{array}{ll} v_j & \mbox{if $n=q$} \\	0 & \mbox{if $n\neq q$} \end{array}\right.$$
+
+## Cooling schedule
+
 + $\sigma_{1:M}$ is called a __cooling schedule__, following a thermodynamic analogy popularized by [simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing).
   As $\sigma_m$ becomes small, the system cools toward a "freezing point".
   If the algorithm is working successfully, the freezing point should be close to the lowest-energy state of the system, i.e., the MLE.
   Typical choices of the cooling schedule are geometric, $\sigma_m = \alpha^m$, and hyperbolic, $\sigma_m \propto 1/(1+\alpha\,m)$.
   In `mif2`, the cooling schedule is parameterized by $\sigma_{50}$, the cooling fraction after 50 IF2 iterations.
+  
+## Parameter transformations
+
 + It is generally helpful to transform the parameters so that (on the estimation scale) they are real-valued, unconstrained, and have uncertainty on the order of 1 unit.
   For example, one typically takes a logarithmic transformation of positive parameters and a logistic transformation of $[0,1]$ valued parameters.
 + On such a scale, it is surprisingly often effective to take $$v_i \sim 0.02$$ for regular parameters (RPs) and $$v_j \sim 0.1$$ for initial value parameters (IVPs).
-+ We suppose that $\sigma_1=1$, since the scale of the parameters is addressed by the matrix $V_n$.
-  Early on in an investigation, one might take $M=100$ and $\sigma_M=0.1$.
-  As the investigation proceeds, consideration of diagnostic plots may suggest refinements. 
+
+## Maximizing the likelihood in stages
+
++ Early on in an investigation, one might take $M=100$ and $\sigma_M=0.1$.
+  This allows for a relatively broad search of the parameter space.
++ As the investigation proceeds, and one finds oneself in the heights of the likelihood surface, one can refine the search.
+  In doing so, it helps to examine diagnostic plots.
++ In particular, one typically needs to reduce the magnitude of the perturbations (`rw.sd`) and perhaps adjust the cooling schedule (`cooling.fraction.50`) to eke out the last few units of log likelihood.
++ Profile likelihood computations are not only valuable as a way of obtaining confidence intervals.
+  It is often the case that by profiling, one simplifies the task of finding the MLE.
+  Of course, the price that is paid is that a profile calculation requires multiple parallel IF2 computations.
+
+## General remarks
+
 + It is remarkable that useful general advice exists for the choice of algorithmic parameters that should in principle be model- and data-specific.
   Here is one possible explanation:
-  the precision of interest is often the second significant figure and there are often order 100 observations (10 monthly observations would be too few to fit a mechanistic model;
+  the precision of interest is often the second significant figure and there are often on the order of 100 observations (10 monthly observations would be too few to fit a mechanistic model;
   1000 would be unusual for an epidemiological system). 
 
 --------------------------
 
-#### Exercise: Assessing and improving algorithmic parameters
+## Exercises
+
+### Assessing and improving algorithmic parameters
 
 Develop your own heuristics to try to improve the performance of `mif2` in the [Consett measles example](./notes.pdf).
 Specifically, for a global optimization procedure carried out using random starting values in the specified box, let
