@@ -1325,7 +1325,7 @@ options(
   \item Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
 
   \item
-    Licensed under the \link{http://creativecommons.org/licenses/by-nc/3.0/}{Creative Commons attribution-noncommercial license}.
+    Licensed under the \link{https://creativecommons.org/licenses/by-nc/3.0/}{Creative Commons attribution-noncommercial license}.
     Please share and remix noncommercially, mentioning its origin.
 
     \includegraphics[width=2cm]{../graphics/cc-by-nc.png}
@@ -1352,7 +1352,7 @@ options(
     The materials build on \link{../acknowledge.html}{previous versions of this course and related courses}.
 
   \item
-    Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
+    Licensed under the \link{https://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
     Please share and remix non-commercially, mentioning its origin.
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 

@@ -1248,7 +1248,7 @@ set.seed(1350254336)
     The materials build on \link{../acknowledge.html}{previous versions of this course and related courses}.
 
   \item
-    Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
+    Licensed under the \link{https://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
     Please share and remix non-commercially, mentioning its origin.
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 

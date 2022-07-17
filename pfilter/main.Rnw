@@ -801,7 +801,7 @@ set.seed(1350254336)
     \end{equation*}
     So, we have constructed a profile likelihood confidence interval, consisting of the set of points on the profile likelihood within $1.92$ log units of the maximum.
   \item
-    This is an example of \link{http://www.stat.nus.edu.sg/~wloh/lecture17.pdf}{a general duality between confidence intervals and hypothesis tests}.
+    This is an example of \link{https://www.stat.nus.edu.sg/~wloh/lecture17.pdf}{a general duality between confidence intervals and hypothesis tests}.
   \end{itemize}
 \end{frame}
 
@@ -855,7 +855,7 @@ set.seed(1350254336)
     The materials build on \link{../acknowledge.html}{previous versions of this course and related courses}.
 
   \item
-    Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
+    Licensed under the \link{https://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
     Please share and remix non-commercially, mentioning its origin.
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 

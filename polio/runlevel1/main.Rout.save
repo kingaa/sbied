@@ -203,13 +203,6 @@ dbl (4): time, cases, births, pop
 > if (file.exists("CLUSTER.R")) {
 +   source("CLUSTER.R")
 + }
-Loading required package: Rmpi
-Master processor name: theorygroup01; nodename: theorygroup01
-Size of MPI universe: 1
-Spawning 250 workers using the command:
-  /export/local/apps/R/ubuntu_18.04/4.2.1/lib64/R/bin/Rscript /userdata/kingaa/R_Ubuntu_18.04/x86_64-pc-linux-gnu-library/4.2/doMPI/RMPIworker.R WORKDIR=/home/kingaa/sbied/polio/runlevel1 LOGDIR=/tmp MAXCORES=1 COMM=3 INTERCOMM=4 MTAG=10 WTAG=11 INCLUDEMASTER=TRUE BCAST=TRUE VERBOSE=TRUE
-App launch reported: 12 (out of 12) daemons - 229 (out of 250) procs
-	250 slaves are spawned successfully. 0 failed.
 > 
 > bake(file="cores.rds",cores) -> cores
 > 
@@ -448,4 +441,4 @@ dbl (23): b1, b2, b3, b4, b5, b6, psi, rho, tau, sigma_dem, sigma_env, SO_0,...
 > 
 > proc.time()
    user  system elapsed 
-  7.754   3.078   8.292 
+  3.837   3.027   3.194 

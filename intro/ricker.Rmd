@@ -295,7 +295,7 @@ Modify the `pomp` object we created above to reflect this reparameterization.
 Modify the measurement model so that
 $$\mathrm{pop}_t \sim \dist{Negbin}{\phi\,N_t,k},$$
 i.e., $\mathrm{pop}_t$ is negative-binomially distributed with mean $\phi\,N_t$ and clumping parameter $k$.
-See `?NegBinomial` for documentation on the negative binomial distribution and [the **R** Extensions Manual section on distribution functions](http://cran.r-project.org/doc/manuals/r-release/R-exts.html#Distribution-functions) for information on how to access these in C.
+See `?NegBinomial` for documentation on the negative binomial distribution and [the **R** Extensions Manual section on distribution functions](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Distribution-functions) for information on how to access these in C.
 
 --------------------------
 

@@ -9,6 +9,7 @@ output:
       collapsed: TRUE
       smooth_scroll: TRUE
     highlight: haddock
+    code_folding: show
     number_sections: FALSE
     df_print: paged
     includes:

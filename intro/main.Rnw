@@ -94,15 +94,15 @@ source("../setup.R", local = knitr::knit_global())
 \begin{frame}[allowframebreaks=0.8]{Questions and answers}
   \begin{enumerate}
   \item \link{https://doi.org/10.1126/scitranslmed.aaj1748}{How to explain the resurgence of pertussis in countries with sustained high vaccine coverage?}
-  \item \link{http://dx.doi.org/10.1038/nature07084}{What roles are played by asymptomatic infection and waning immunity in cholera epidemics?}
-  \item \link{http://dx.doi.org/10.1098/rsif.2009.0151}{What explains the seasonality of measles?}
-  \item \link{http://dx.doi.org/10.1126/science.aat6777}{Can serotype-specific immunity explain the strain dynamics of human enteroviruses?}
-  \item \link{http://dx.doi.org/10.1371/journal.pone.0072086}{Do subclinical infections of pertussis play an important epidemiological role?}
-  \item \link{http://dx.doi.org/10.1093/aje/kwv044}{What is the contribution to the HIV epidemic of dynamic variation in sexual behavior of an individual over time? How does this compare to the role of heterogeneity between individuals?}
-  \item \link{http://dx.doi.org/10.1371/journal.pcbi.1000898}{What explains the interannual variability of malaria?}
-  \item \link{http://dx.doi.org/10.1098/rspb.2015.0347}{What will happen next in an Ebola outbreak?}
-  \item \link{http://doi.org/10.1016/j.advwatres.2016.11.012}{Can hydrology explain the seasonality of cholera?}
-  \item \link{http://doi.org/10.1073/pnas.1323688111}{What is the contribution of adults to polio transmission?}
+  \item \link{https://dx.doi.org/10.1038/nature07084}{What roles are played by asymptomatic infection and waning immunity in cholera epidemics?}
+  \item \link{https://dx.doi.org/10.1098/rsif.2009.0151}{What explains the seasonality of measles?}
+  \item \link{https://dx.doi.org/10.1126/science.aat6777}{Can serotype-specific immunity explain the strain dynamics of human enteroviruses?}
+  \item \link{https://dx.doi.org/10.1371/journal.pone.0072086}{Do subclinical infections of pertussis play an important epidemiological role?}
+  \item \link{https://dx.doi.org/10.1093/aje/kwv044}{What is the contribution to the HIV epidemic of dynamic variation in sexual behavior of an individual over time? How does this compare to the role of heterogeneity between individuals?}
+  \item \link{https://dx.doi.org/10.1371/journal.pcbi.1000898}{What explains the interannual variability of malaria?}
+  \item \link{https://dx.doi.org/10.1098/rspb.2015.0347}{What will happen next in an Ebola outbreak?}
+  \item \link{https://doi.org/10.1016/j.advwatres.2016.11.012}{Can hydrology explain the seasonality of cholera?}
+  \item \link{https://doi.org/10.1073/pnas.1323688111}{What is the contribution of adults to polio transmission?}
   \end{enumerate}
 \end{frame}
 
@@ -283,7 +283,7 @@ source("../setup.R", local = knitr::knit_global())
     The materials build on \link{../acknowledge.html}{previous versions of this course and related courses}.
 
   \item
-    Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
+    Licensed under the \link{https://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
     Please share and remix non-commercially, mentioning its origin.
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 

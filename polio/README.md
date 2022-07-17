@@ -44,7 +44,7 @@ The results of running the codes in `main.R` at run-levels 1 and 2 are contained
 
 ![CC-BY-NC](https://i.creativecommons.org/l/by-nc/4.0/88x31.png)
 
-This work is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)](http://creativecommons.org/licenses/by-nc/4.0/).
+This work is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/).
 Under its terms, you are free to:
 
 - Share — copy and redistribute the material in any medium or format

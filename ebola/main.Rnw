@@ -46,7 +46,7 @@ options(dplyr.summarise.inform=FALSE)
   \end{enumerate}
   \vspace{2ex}
   
-  This lesson follows \citet{King2015}, all codes for which are available on \link{http://dx.doi.org/10.5061/dryad.r5f30}{datadryad.org}.
+  This lesson follows \citet{King2015}, all codes for which are available on \link{https://dx.doi.org/10.5061/dryad.r5f30}{datadryad.org}.
 
 \end{frame}
 
@@ -203,7 +203,7 @@ options(dplyr.summarise.inform=FALSE)
   \item 
     Profile likelihoods were computed for each country against the parameters $k$ (the measurement model overdispersion) and $R_0$ (the basic reproductive ratio).
   \item 
-    Full details are given \link{http://dx.doi.org/10.5061/dryad.r5f30}{on the datadryad.org site}.
+    Full details are given \link{https://dx.doi.org/10.5061/dryad.r5f30}{on the datadryad.org site}.
   \item 
     Codes for this document are \link{./codes.R}{available here}.
     The results of these calculations are loaded and displayed in the following.
@@ -514,7 +514,7 @@ options(dplyr.summarise.inform=FALSE)
     The materials build on \link{../acknowledge.html}{previous versions of this course and related courses}.
 
   \item
-    Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
+    Licensed under the \link{https://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
     Please share and remix non-commercially, mentioning its origin.
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
