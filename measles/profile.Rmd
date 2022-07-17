@@ -1,12 +1,15 @@
 ---
-title: "Measles profile computation"
-author: "Aaron A. King"
+title: Measles profile computation
+author: Aaron A. King
 output:
   html_document:
     toc: yes
     toc_depth: 4
-    code_folding: show
+    toc_float:
+      collapsed: TRUE
+      smooth_scroll: TRUE
     highlight: haddock
+    code_folding: show
     number_sections: FALSE
     df_print: paged
     includes:
@@ -257,7 +260,6 @@ Let's examine the results.
 ```{r round1-plot,purl=F}
 pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma)+psi+log(cohort),
   data=sigmaSE_prof,subset=loglik>max(loglik)-100)
-summary(sigmaSE_prof)
 ```
 
 ### Refining the estimates

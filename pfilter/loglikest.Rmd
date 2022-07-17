@@ -27,7 +27,7 @@ params:
 
 ## Problem statement
 
-Here are some desiderata for a Monte Carlo log likelihood approximation:
+Desiderata for Monte Carlo log likelihood approximation include:
 
 - Low Monte Carlo bias and variance
 - Estimates of the bias and variance so that we know the extent of Monte Carlo uncertainty in our results
