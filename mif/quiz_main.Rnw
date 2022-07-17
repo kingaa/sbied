@@ -72,20 +72,22 @@ Which of the following are true?
   D is true.
 \end{solution}
 
+\newpage
 
-\vspace{-5mm}
-
-\resizebox{15cm}{!}{
-\includegraphics{Q15plot.pdf}
-}
-
-\vspace{-27mm}
+\begin{center}
+  \resizebox{12cm}{!}{\includegraphics{Q15plot}}
+\end{center}
 
 \section{}
-The iterated filtering convergence diagnostics plot shown above come from a \link{https://ionides.github.io/531w21/final_project/project06/blinded.html}{\textcolor{blue}{student project}}. What is the best interpretation?
+The iterated filtering convergence diagnostics plot shown above come from a \link{https://ionides.github.io/531w21/final_project/project06/blinded.html}{\textcolor{blue}{student project}}.
+What is the best interpretation?
 \begin{enumerate}[(A)]
-\item \label{A15a} Everything seems to be working fine. The likelihood is climbing. The replicated searches are giving consistent runs. The spread of convergence points for $\sigma_{\nu}$ and $H_0$ indicates weak identifability, which is a statistical fact worth noticing but not a weakness of the model.  
-\item \label{A15b} The consistently climbing likelihood is promising, but the failure of $\sigma_{\nu}$ and $H_0$ to converge needs attention. Additional searching is needed, experimenting with {\bf larger} values of the random walk perturbation standard deviation for these parameters to make sure the parameter space is properly searched. 
+\item \label{A15a}
+  Everything seems to be working fine.
+  The likelihood is climbing. The replicated searches are giving consistent runs.
+  The spread of convergence points for $\sigma_{\nu}$ and $H_0$ indicates weak identifability, which is a statistical fact worth noticing but not a weakness of the model.  
+\item \label{A15b} The consistently climbing likelihood is promising, but the failure of $\sigma_{\nu}$ and $H_0$ to converge needs attention.
+  Additional searching is needed, experimenting with {\bf larger} values of the random walk perturbation standard deviation for these parameters to make sure the parameter space is properly searched. 
 \item \label{A15c} The consistently climbing likelihood is promising, but the failure of $\sigma_{\nu}$ and $H_0$ to converge needs attention. Additional searching is needed, experimenting with {\bf smaller} values of the random walk perturbation standard deviation for these parameters to make sure the parameter space is properly searched. 
 \item \label{A15d} The consistently climbing likelihood is promising, but the failure of $\sigma_{\nu}$ and $H_0$ to converge needs attention. This indicates weak identifiability which cannot be solved by improving the searching algorithm. Instead, we should change the model, or fix one or more parameters at scientifically plausible values, to resolve the identifiability issue before proceeding.
 \item \label{A15e} Although the log likelihood seems to be climbing during the search, until the convergence problems with $\sigma_{\nu}$ and $H_0$ have been addressed we should not be confident about the successful optimization of the likelihood function or the other parameter estimates. 
@@ -106,10 +108,11 @@ The iterated filtering convergence diagnostics plot shown above come from a \lin
 %%%%%%%%%%%
 
 
+\newpage
 
-\resizebox{15cm}{!}{
-\includegraphics{Q16plot.pdf}
-}
+\begin{center}
+  \resizebox{15cm}{!}{\includegraphics{Q16plot}}
+\end{center}
 
 \section{}
 The iterated filtering convergence diagnostics plot shown above come from a \link{https://ionides.github.io/531w21/final_project/project15/blinded.html}{\textcolor{blue}{student project}}, calculated using $10^3$ particles. What is the best interpretation?
@@ -120,7 +123,7 @@ The iterated filtering convergence diagnostics plot shown above come from a \lin
 We should compare the best likelihoods obtained with simple statistical models, such as an auto-regressive moving average model, to look for evidence of model misspecification.
 \item \label{A16d} The seaches obtain likelihood values spread over thousands of log units. We would like to see consistent convergence within a few log units.
 We should look at the effective sample size plot for the best fit we have found yet, to see whether there are problems with the particle filtering.
-\item \label{A16e} All of \ref{A16b}, \ref{A16d} and \ref{A16d}.
+\item \label{A16e} All of \ref{A16b}, \ref{A16c}, and \ref{A16d}.
 \end{enumerate}
 
 \begin{solution}
@@ -132,6 +135,7 @@ We should look at the effective sample size plot for the best fit we have found 
   Identifying time points with low effective sample size can help to identify which parts of the data are problemtic for the model to explain.
 \end{solution}
 
+\newpage
 \section{}\label{Q:mif2_call1}
 In the following call to \code{mif2}, which of the statements below are true?
 You may assume that \code{obj} is a pomp object with parameters \code{alpha}, \code{Beta}, \code{gamma}, and \code{delta}.

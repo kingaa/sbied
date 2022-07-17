@@ -56,7 +56,7 @@ Which of the following is a correct explanation of our options for properly impl
   A latent transition with mean duration 1 week would have corresponding rate $1/7 \mathrm{day}^{-1}$. 
 \end{solution}
 
-
+\newpage
 \section{}
 Suppose you obtain the following error message when you build your pomp model using C snippets.
 <<Q10-error-message,echo=FALSE>>=
@@ -125,6 +125,7 @@ Which of the following is a plausible cause for this error?
 \end{solution}
 
 
+\newpage
 \section{}
 Suppose you obtain the following error message when you build your pomp model using C snippets.
 <<Q11-error-message,echo=FALSE>>=
@@ -191,6 +192,7 @@ Which of the following is a plausible cause for this error?
 \end{solution}
 
 
+\newpage
 \section{}
 Suppose you obtain the following error message when you build your pomp model using C snippets.
 <<Q12-error-message,echo=FALSE>>=
@@ -257,6 +259,7 @@ Which of the following is a plausible cause for this error?
 %%%%%%%%%%%%%%%%%%%%
 
 
+\newpage
 \section{}
 Let $V_n$ be a Markov process and let $W_n=h(V_n)$ for some function $h$.
 Which of the following statements are true?
