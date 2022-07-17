@@ -8,7 +8,6 @@ output:
     toc_float:
       collapsed: TRUE
       smooth_scroll: TRUE
-    code_folding: hide
     highlight: haddock
     number_sections: FALSE
     df_print: paged
@@ -28,7 +27,7 @@ csl: ../jss.csl
 
 [**R** codes for this document](./codes.R)  
 
-This document is derived from @King2015 and the [data supplement archived on datadryad.org](http://dx.doi.org/10.5061/dryad.r5f30).
+This document is derived from @King2015 and the [data supplement archived on datadryad.org](https://dx.doi.org/10.5061/dryad.r5f30).
 
 Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
@@ -51,7 +50,7 @@ read_chunk("codes.R")
 1. To present the **pomp** codes used in the Ebola case study.
 1. To enable reproducibility of the case study and re-application of these codes in other situations.
 
-All codes needed to reproduce the results of the original @King2015 paper are available on [datadryad.org](http://dx.doi.org/10.5061/dryad.r5f30).
+All codes needed to reproduce the results of the original @King2015 paper are available on [datadryad.org](https://dx.doi.org/10.5061/dryad.r5f30).
 
 
 ## Data and model

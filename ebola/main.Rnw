@@ -11,6 +11,7 @@ source("../setup.R", local = knitr::knit_global())
 <<read_chunks,include=FALSE,cache=FALSE>>=
 read_chunk("codes.R")
 knitr::opts_chunk$set(purl=FALSE)
+options(dplyr.summarise.inform=FALSE)
 @
 
 <<prelims,include=FALSE,cache=FALSE>>=

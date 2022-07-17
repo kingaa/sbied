@@ -275,7 +275,7 @@ bake(file="forecasts.rds",{
   registerDoParallel()
   registerDoRNG(887851050L)
 
-  ## ----forecasts2b----------------------------------------------------------
+## ----forecasts2b----------------------------------------------------------
   foreach(p=iter(params,by="row"),
     .inorder=FALSE,
     .combine=bind_rows
@@ -283,12 +283,12 @@ bake(file="forecasts.rds",{
 
     library(pomp)
 
-    ## ----forecasts2c----------------------------------------------------------
+## ----forecasts2c----------------------------------------------------------
     M1 <- ebolaModel("SierraLeone")
 
     M1 %>% pfilter(params=p,Np=2000,save.states=TRUE) -> pf
 
-    ## ----forecasts2d----------------------------------------------------------
+## ----forecasts2d----------------------------------------------------------
     pf %>%
       saved.states() %>% ## latent state for each particle
       tail(1) %>%        ## last timepoint only
@@ -301,10 +301,10 @@ bake(file="forecasts.rds",{
       column_to_rownames("variable") %>%
       as.matrix() -> x
 
-    ## ----forecasts2e1----------------------------------------------------------
+## ----forecasts2e1----------------------------------------------------------
     pp <- parmat(unlist(p),ncol(x))
 
-    ## ----forecasts2e2----------------------------------------------------------
+## ----forecasts2e2----------------------------------------------------------
     M1 %>%
       simulate(params=pp,format="data.frame") %>%
       select(.id,week,cases) %>%
@@ -313,12 +313,12 @@ bake(file="forecasts.rds",{
         loglik=logLik(pf)
       ) -> calib
 
-    ## ----forecasts2f----------------------------------------------------------
+## ----forecasts2f----------------------------------------------------------
     M2 <- M1
     time(M2) <- max(time(M1))+seq_len(horizon)
     timezero(M2) <- max(time(M1))
 
-    ## ----forecasts2g----------------------------------------------------------
+## ----forecasts2g----------------------------------------------------------
     pp[rownames(x),] <- x
 
     M2 %>%
@@ -329,10 +329,10 @@ bake(file="forecasts.rds",{
         loglik=logLik(pf)
       ) -> proj
 
-    ## ----forecasts2h----------------------------------------------------------
+## ----forecasts2h----------------------------------------------------------
     bind_rows(calib,proj) -> sims
 
-    ## ----forecasts2i----------------------------------------------------------
+## ----forecasts2i----------------------------------------------------------
   }}) -> sims
 
 ## ----forecasts2j----------------------------------------------------------
