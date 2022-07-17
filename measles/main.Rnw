@@ -2,7 +2,7 @@
 
 \newcommand\CHAPTER{5}
 \title{Lesson \CHAPTER.\\Case study:\\Measles in large and small towns}
-\author{Aaron A. King, Edward L. Ionides and Qianying Lin}
+\author{A. A. King, E. L. Ionides, Q.-Y. Lin, K. Asfaw}
 
 <<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE>>=
 source("../setup.R", local = knitr::knit_global())
@@ -451,7 +451,7 @@ cat(rproc@text)
 \section{Findings}
 
 \begin{frame}[fragile]{Results from \citet{He2010}}
-  \link{./profile.html}{The linked document shows how a likelihood profile can be constructed using IF2}
+  The \link{./profile.html}{linked document} shows how a likelihood profile can be constructed using IF2.
   The fitting procedure used is as follows:
   \begin{itemize}
   \item A large number of searches were started at points across the parameter space.
@@ -1071,7 +1071,7 @@ $r=\mathrm{cor}_{S}({\cdot},{N_{1950}})$ (Spearman rank correlation)
 
   \end{itemize}
 
-  \link{../index.html}{Back to course homepage}
+  \link{index.html}{Back to Lesson}
   
   \link{./codes.R}{\Rlanguage codes for this lesson}
 

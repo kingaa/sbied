@@ -161,7 +161,7 @@ registerDoRNG(2488820)
 
   \vspace{3mm}
 
-  \link{./exercises.html\#little-o-notation}{Worked solution to the Exercise}
+  \link{./exercises.html\#exercise-little-o-notation}{Worked solution to the Exercise}
 
 
 \end{frame}
@@ -315,7 +315,7 @@ registerDoRNG(2488820)
 
   \vspace{3mm}
 
-  \link{./exercises.html\#euler-versus-gillespie}{Worked solution to the Exercise}
+  \link{./exercises.html\#exercise-euler-versus-gillespie}{Worked solution to the Exercise}
 
   \vspace{3mm}
 
@@ -630,7 +630,7 @@ registerDoRNG(2488820)
 
   \vspace{3mm}
 
-  \link{./exercises.html\#basic-exercise-explore-the-sir-model}{Worked solution to the Exercise}
+  \link{./exercises.html\#exercise-explore-the-sir-model}{Worked solution to the Exercise}
 
 \end{frame}
 
@@ -648,7 +648,7 @@ registerDoRNG(2488820)
 
   \vspace{3mm}
 
-  \link{./exercises.html\#basic-exercise-the-seir-model}{Worked solution to the Exercise}
+  \link{./exercises.html\#exercise-the-seir-model}{Worked solution to the Exercise}
 
 \end{frame} 
 
@@ -684,7 +684,7 @@ registerDoRNG(2488820)
 
   \end{itemize}
 
-  \link{../index.html}{Back to course homepage}
+  \link{index.html}{Back to Lesson}
   
   \link{main.R}{\Rlanguage codes for this lesson}
 \end{frame}

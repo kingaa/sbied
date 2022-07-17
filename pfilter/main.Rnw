@@ -867,7 +867,7 @@ set.seed(1350254336)
 
   \end{itemize}
 
-  \link{../index.html}{Back to course homepage}
+  \link{index.html}{Back to Lesson}
   
   \link{./main.R}{\Rlanguage codes for this lesson}
 \end{frame}

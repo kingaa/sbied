@@ -681,14 +681,14 @@ panel_logmeanexp(pf3_loglik_matrix,MARGIN=2,se=T)
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
-    Produced with **R** version `r getRversion()`, **pomp** version `r packageVersion("pomp")`, and **panelPomp** version `r packageVersion("panelPomp")`.
+    Produced with \package{R} version \Sexpr{getRversion()}, \package{pomp} version \Sexpr{packageVersion("pomp")}, and \package{panelPomp} version \Sexpr{packageVersion("panelPomp")}.
 
   \item
     Compiled on \today.
 
   \end{itemize}
 
-  \link{../index.html}{Back to course homepage}
+  \link{index.html}{Back to Lesson}
   
   \link{./main.R}{\Rlanguage codes for this lesson}
 \end{frame}

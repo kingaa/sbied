@@ -526,7 +526,7 @@ options(dplyr.summarise.inform=FALSE)
 
   \end{itemize}
 
-  \link{../index.html}{Back to course homepage}
+  \link{index.html}{Back to Lesson}
   
   \link{model.html}{Model construction supplement}
 
