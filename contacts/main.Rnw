@@ -2,12 +2,13 @@
 
 \newcommand\CHAPTER{8}
 \title{Lesson {\CHAPTER}:\\Case study: Panel data on dynamic variation\\ in sexual contact rates}
-\author{Aaron A. King and Edward L. Ionides}
+\author{Edward L. Ionides and Aaron A. King}
 
 \begin{document}
 
 <<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE>>=
 source("../setup.R", local = knitr::knit_global())
+stopifnot(packageVersion("panelPomp")>="0.15.0")
 @
 
 <<parallel,echo=FALSE,cache=FALSE,purl=TRUE>>=
@@ -105,7 +106,7 @@ registerDoRNG(2050320976)
 
   \bi
 
-\item Plotted is a sample of 15 time series from \link{https://kingaa.github.io/sbied/contacts/contacts.csv}{contacts.csv}.
+\item Plotted is a sample of 15 time series from \link{./contacts.csv}{contacts.csv}.
 
   \ei
 
@@ -311,18 +312,18 @@ registerDoRNG(2050320976)
 
 \item PanelPOMP models also motivate methodological developments to deal with large datasets and the high dimensional parameter vectors that can result from unit-specific parameters.
 
-\item A \code{panelPomp} object for the above contact data and model is provided by \code{pancon} in \package{panelPomp}.
+\item A \code{panelPomp} object for the above contact data and model is provided by \code{contacts} in \package{panelPomp}.
 
   \ei
 
   <<load-pancon,cache=F>>=
   library(panelPomp)
-  contacts <- panelPompExample(pancon)
+  contacts <- contacts()
   @
   
   \bi
 
-\item The implementation of the above model equations in \code{contacts} can be found in the \link{https://github.com/cbreto/panelPomp/blob/master/inst/examples/pancon.R}{\code{panelPomp source code on github}}.
+\item The implementation of the above model equations in \code{contacts} can be found in the \link{https://github.com/cbreto/panelPomp/blob/master/R/contacts.R}{\code{panelPomp source code on github}}.
 
 
   \ei
@@ -365,7 +366,7 @@ Suppose a PanelPOMP model has all its parameters unit-specific. Is there anythin
 
   \vspace{3mm}
 
-  \link{https://kingaa.github.io/sbied/contacts/Q-unit-specific.html}{Worked solution}
+  \link{./exercises.html\#exercise-8.1}{Worked solution}
 
 
 \end{frame}
@@ -377,7 +378,7 @@ How would you find the \package{panelPomp} package methods available for working
 
   \vspace{3mm}
 
-  \link{https://kingaa.github.io/sbied/contacts/Q-panelPomp-methods.html}{Worked solution}
+  \link{./exercises.html\#exercise-8.2}{Worked solution}
 
 
 \end{frame}
@@ -420,7 +421,7 @@ How would you find the \package{panelPomp} package methods available for working
 
   \ei
 
-  \link{https://kingaa.github.io/sbied/contacts/Q-pfilter-for-panelPomp.html}{Worked solution}
+  \link{./exercises.html\#exercise-8.3}{Worked solution}
 
 
 \end{frame}
@@ -524,7 +525,7 @@ How would you find the \package{panelPomp} package methods available for working
 
   \vspace{3mm}
 
-  \link{https://kingaa.github.io/sbied/contacts/Q-panel-logmeanexp.html}{Worked solution}
+  \link{./exercises.html\#exercise-8.4}{Worked solution}
 
 
 \end{frame}
@@ -680,7 +681,7 @@ panel_logmeanexp(pf3_loglik_matrix,MARGIN=2,se=T)
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
-    Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+    Produced with **R** version `r getRversion()`, **pomp** version `r packageVersion("pomp")`, and **panelPomp** version `r packageVersion("panelPomp")`.
 
   \item
     Compiled on \today.

@@ -17,7 +17,7 @@ matplot(t(contact_data[1:15,1:4]),
 
 
 library(panelPomp)
-contacts <- panelPompExample(pancon)
+contacts <- contacts()
 
 class(contacts)
 slotNames(contacts)

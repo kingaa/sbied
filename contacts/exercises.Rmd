@@ -13,6 +13,7 @@ csl: ../jss.csl
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 source("../setup.R", local = knitr::knit_global())
+stopifnot(packageVersion("panelPomp")>="0.15.0")
 ```
 
 ---------------------------
@@ -85,7 +86,7 @@ library(panelPomp)
 * The `pfilter` method for class `panelPomp` does exactly this, after extracting the parameter vector for each unit from the shared and unit-specific parameters belonging to the `panelPomp` object.
 
 ```{r}
-contacts <- panelPompExample(pancon)
+contacts <- contacts()
 pf <- pfilter(contacts,Np=100)
 class(pf)
 class(unitobjects(pf)[[1]])
@@ -150,6 +151,10 @@ However, they are inconsistent, since $\hat\lambda^{(k)}_u$ is a biased estimate
 * @breto19 showed that $\hat L^{[4]}$ is smaller than  $\hat L^{[2]}$.
 
 * In a limit where $U$ and $K$ both grow together, $\hat L^{[4]}$ can be stable while $\hat L^{[2]}$ increases to infinity.
+
+-----------
+
+Produced with **R** version `r getRversion()`, **pomp** version `r packageVersion("pomp")`, and **panelPomp** version `r packageVersion("panelPomp")`.
 
 -----------
 
