@@ -460,7 +460,7 @@ options(dplyr.summarise.inform=FALSE)
   \framebreak
   
   <<get_forecasts,include=FALSE,cache=FALSE>>=
-  readRDS("forecasts.rds") -> sims
+  readRDS("results/forecasts.rds") -> sims
   @ 
   
   We give these prediction distributions weights proportional to the estimated likelihoods of the parameter vectors.

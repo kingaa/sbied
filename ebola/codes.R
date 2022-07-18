@@ -2,7 +2,8 @@
 options(
   keep.source=TRUE,
   stringsAsFactors=FALSE,
-  encoding="UTF-8"
+  encoding="UTF-8",
+  pomp_archive_dir="results"
 )
 
 stopifnot(getRversion()>="4.0")

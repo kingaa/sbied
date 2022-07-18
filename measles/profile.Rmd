@@ -21,23 +21,7 @@ csl: ../jss.csl
 
 ---
 
-\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
-\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-\newcommand\scinot[2]{$#1 \times 10^{#2}$\xspace}
-\newcommand{\mortality}{m}
-\newcommand{\birth}{b}
-\newcommand{\loglik}{\ell}
-\newcommand{\immigration}{\iota}
-\newcommand{\amplitude}{a}
-\newcommand{\cohort}{c}
-\newcommand{\R}{\textsf{R}}
-\newcommand{\Rzero}{{R_0}}
-
 --------------------
-
-Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
 [**R** codes for this document](./profile.R)  
 
@@ -46,9 +30,6 @@ source("../setup.R", local = knitr::knit_global())
 ```
 ```{r read_chunks,include=FALSE,cache=FALSE,purl=FALSE}
 read_chunk("codes.R")
-```
-```{r source_model_code,include=FALSE,eval=FALSE,purl=TRUE}
-source("codes.R")
 ```
 
 ## Build the `pomp` object
@@ -338,6 +319,10 @@ In this case, these display clear relationships between intensity of extra-demog
 pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma),
   data=sigmaSE_prof)
 ```
+
+----------------------
+
+Produced in **R** version `r getRversion()` using **pomp** version `r packageVersion("pomp")`.
 
 ----------------------
 

@@ -108,6 +108,7 @@ The following is a log of compilations.
 | polio   full  | 2022-06-22      |        170min |            250 |
 | finishing     | 2022-06-25      |         11min |             64 |
 | contacts full | 2022-07-18      |         15min |             24 |
+| finishing     | 2022-07-18      |          9min |             64 |
 
 
 

@@ -1,5 +1,3 @@
-## source("codes.R")
-
 if (file.exists("CLUSTER.R")) {
   source("CLUSTER.R")
 } else {

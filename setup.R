@@ -35,7 +35,8 @@ opts_chunk$set(
 options(
   width=60, # number of characters in R output before wrapping
   keep.source=TRUE,
-  encoding="UTF-8"
+  encoding="UTF-8",
+  pomp_archive_dir="results"
 )
 
 library(ggplot2)
