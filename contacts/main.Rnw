@@ -409,7 +409,7 @@ How would you find the \package{panelPomp} package methods available for working
 
 \end{frame}
 
-\begin{frame}[fragile]{\myexercise. What happens when we \code{pfilter} a \code{panelPomp}}
+\begin{frame}{\myexercise. What happens when we \code{pfilter} a \code{panelPomp}?}
 
   \bi
 

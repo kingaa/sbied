@@ -107,6 +107,9 @@ The following is a log of compilations.
 | polio level 2 | 2022-05-26      |         22min |            250 |
 | polio   full  | 2022-06-22      |        170min |            250 |
 | finishing     | 2022-06-25      |         11min |             64 |
+| contacts full | 2022-07-18      |         15min |             24 |
+
+
 
 ----------------------------
 
