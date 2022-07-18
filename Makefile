@@ -13,5 +13,4 @@ include rules.mk
 fresh: .fresh
 
 welcome.html: welcome.md
-	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
 	$(REXE) -e "rmarkdown::render(\"$^\",output_format=\"revealjs::revealjs_presentation\")"

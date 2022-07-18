@@ -24,49 +24,53 @@ p {
 }
 </style>
 
-The course will have five components:
+The course will have six components:
 
 1\.&nbsp;&nbsp;&nbsp;***A mandatory self-learning component***
 
-- Videos linked from the [course website](https://kingaa.github.io/sbied/)
-- PDF versions of the lecture notes and slides
-- Questions to the `#mod14_simulation-based_inference_2022` Slack channel
-- Questions answered either via Slack, or in the live sessions
-- On Slack: avoid unnecessary duplication!
+- Videos are linked from the [course website](https://kingaa.github.io/sbied/)
+- Lecture notes and slides in PDF
+- Send questions to `#mod14_simulation-based_inference_2022`
 
 --------------------
 
 2\.&nbsp;&nbsp;&nbsp;***Exercises***
 
-- Intended to consolidate and challenge your understanding of key concepts and methods
-- Grapple with these Exercises on your own first
-- The progress you make is less important than making a start at thinking about and working on the Exercise before the live session.
-- Questions: send to the course Slack channel prior to the day's session!
+- Consolidate and challenge your understanding of key concepts and methods
+- Make a start on the exercises on your own
+- Send questions to `#mod14_simulation-based_inference_2022`
 
 ----------------------
 
-3\.&nbsp;&nbsp;&nbsp;***Live plenary discussions***
+3\.&nbsp;&nbsp;&nbsp;***Quizzes***
+
+- Test your understanding
+- We will discuss the quizzes in the Live Plenaries
+
+----------------------
+
+4\.&nbsp;&nbsp;&nbsp;***Live plenary discussions***
 
 - Raise additional questions!
 - Mute your audio and video at the start and keep muted until you have a question.
 
 ----------------------
 
-4\.&nbsp;&nbsp;&nbsp;***Breakout-group sessions***
+5\.&nbsp;&nbsp;&nbsp;***Breakout-group sessions***
 
 - Small groups work on the Exercises
 - Breakout groups persist for the duration of the course.
-- Within each breakout group, five roles
+- Within each breakout group, assign roles
 - ***Asking for help from a group***:
 	a. post a question via Slack
 	b. send a member out of the breakout room to ask
 	c. leave the breakout room as a group
 	d. use the 'Ask for Help' feature
-- Do not hesitate to ask for help when needed!
+- Don't hesitate: ask for help when needed!
 
 ------------------------------
 
-5\.&nbsp;&nbsp;&nbsp;***Optional office hours***
+6\.&nbsp;&nbsp;&nbsp;***Optional office hours***
 
 - Drop in with questions or when you need help
 
@@ -108,7 +112,7 @@ In the spirit of ensuring an efficient and enjoyable learning experience for eve
     - Decide who will perform each role to begin with
 - Change the roles periodically, but not during a single session!
 - None of these is a full-time job: 
-everyone contributes toward the group's work, everyone listens to, everyone engages with, the contributions of the others
+  everyone contributes toward the group's work, everyone listens to, everyone engages with, the contributions of the others
 
 -------------------------------
 
@@ -167,30 +171,9 @@ everyone contributes toward the group's work, everyone listens to, everyone enga
 
 ------------------------------- 
 
-Groups that have only four members:
-
-- combine Seeker and Taker, *or*
-- combine Seeker and Keeper.
-
-Groups that have only three members:
-
-- combine Seeker, Keeper, and Taker roles in one.
-
-
-----------------------------
-
 ## Schedule for today
 
 All times are PDT (UTC-07:00).
-
-### Monday, 25 July
-
-**Before 8:00:**  
-- View lecture videos for Lessons [1](https://kingaa.github.io/sbied/intro/) and [2](https://kingaa.github.io/sbied/stochsim/) (c.&nbsp;2.5hr or 100min at 1.5x).  
-- Send questions to Instructors via Slack.  
-- Optionally, begin work on Exercises 2.3 & 2.4.  
-
-----------------------------
 
 ### Monday, 25 July
 
