@@ -42,6 +42,7 @@ jobs:
           source("https://kingaa.github.io/sbied/prep/packages.R")
           source("https://kingaa.github.io/scripts/pompTest.R")
           source("https://kingaa.github.io/scripts/hello.R",echo=TRUE)
+          source("https://kingaa.github.io/sbied/contacts/install.R",echo=TRUE)
           sink()
         shell: Rscript {0}
       

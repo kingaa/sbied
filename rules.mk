@@ -14,6 +14,9 @@ quiz.tex quiz_soln.tex quiz_main.tex
 %.html: %.Rmd
 	$(REXE) -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
 
+%.md: %.Rmd
+	$(REXE) -e "rmarkdown::render(\"$*.Rmd\",output_format=\"md_document\")"
+
 %.html: %.md
 	$(REXE) -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
 
