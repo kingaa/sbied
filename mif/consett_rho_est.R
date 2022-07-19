@@ -1,7 +1,11 @@
 library(tidyverse)
 library(lubridate)
 
-load("/userdata/kingaa/projects/Rpkg/pomp/www/vignettes/twentycities.rda")
+download.file(
+  url="https://kingaa.github.io/pomp/vignettes/twentycities.rda",
+  destfile=file.path(tempdir(),"twentycities.rda")
+)
+load(file=file.path(tempdir(),"twentycities.rda"))
 
 measles %>%
   filter(town=="Consett") -> x

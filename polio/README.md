@@ -23,14 +23,18 @@ The results of running the codes in `main.R` at run-levels 1 and 2 are contained
 
 ### Manifest
 
-- main.Rnw, main.R: main lesson
-- algorithmic-parameters-exercise.html
-- convergence-exercise.html
-- demography-exercise.html
-- initial-values-exercise.html
-- starting-values-exercise.html
-- params.csv: parameter estimates
+- index.md: main lesson page
+- main.Rnw, main.R: content for notes and slides
+- notes.Rnw, slides.Rnw: shells for notes and slides
+- CLUSTER.R: local cluster setup
 - polio_wisconsin.csv: data
+- params.csv: database of parameter estimates
+- polio_fig1A.png: model diagram
+- results/: archive files
+- run3.sbat: Slurm script
+- algorithmic-parameters-exercise.Rmd: worked solution
+- convergence-exercise.Rmd: worked solution
+- demography-exercise.Rmd: worked solution
 - subdirectories:
   - results: archive files for `main.Rnw` (RUNLEVEL=3)
   - runlevel1: results of running `main.R` with RUNLEVEL=1
