@@ -33,7 +33,18 @@ The schedule is quite full, so it is important that you take a little time befor
 
 **There are five important steps that you must take to prepare for the course.**
 
-1. Install or update **R**, **Rstudio**, the **pomp** package and its dependencies, and the necessary compilers, on your laptop.
+1. Install [Slack](https://slack.com/downloads).
+Our intention is to conduct most communication over Slack rather than email.
+If you have not already, you will soon receive a notification inviting you to join the Slack workspace for the module.
+If you do not receive this notification, please notify Aaron at `kingaa.sismid@gmail.com`.
+
+2. Install [Zoom](https://zoom.us/download).
+The live activities will be held over Zoom.
+**You must register first to be able to enter the Zoom session.**
+The [link for registration is here](https://tinyurl.com/2d4z5dmr).
+After registering, you will receive a confirmation email containing information about joining the meeting.
+
+3. Install or update **R**, **Rstudio**, the **pomp** package and its dependencies, and the necessary compilers, on your laptop.
    You will need to have at least version 4.0.5 of **R** and at least version 2022.02.3 of **Rstudio** installed on your computer.
    **There will be no time for this during the 2.5-day workshop.**
    You should be aware that the *installation instructions depend on the operating system you use*.
@@ -51,18 +62,7 @@ It was frustrating for them, and frustrating too for the rest of the class when 
 Prepare your laptop, and follow the instructions to get help if you run into difficulties you cannot solve.
 </div>
 
-2. Install [Zoom](https://zoom.us/download).
-The live activities will be held over Zoom.
-**You must register first to be able to enter the Zoom session.**
-The [link for registration is here](https://tinyurl.com/2d4z5dmr).
-After registering, you will receive a confirmation email containing information about joining the meeting.
-
-3. Install [Slack](https://slack.com/downloads).
-Our intention is to conduct most communication over Slack rather than email.
-If you have not already, you will soon receive a notification inviting you to join the Slack workspace for the module.
-If you do not receive this notification, please notify Aaron at `kingaa.sismid@gmail.com`.
-
-4. Please go to [the syllabus](https://kingaa.github.io/sbied/syllabus.html) to see how the course will be structured, to view the schedule, and to get the assignments to be completed before the first session.
+4. Go to [the syllabus](https://kingaa.github.io/sbied/syllabus.html) to see how the course will be structured, to view the schedule, and to get the assignments to be completed before the first session.
 **It is important that you read through the syllabus at your first opportunity, so you will have time to prepare.  Do not put this off until the last day!**
 
 5. If you are unfamiliar with **R**, work through the [**R** tutorial](https://kingaa.github.io/R_Tutorial/).
