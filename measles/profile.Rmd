@@ -26,7 +26,7 @@ csl: ../jss.csl
 [**R** codes for this document](./profile.R)  
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
-source("../setup.R", local = knitr::knit_global())
+source("../_includes/setup.R", local = knitr::knit_global())
 ```
 ```{r read_chunks,include=FALSE,cache=FALSE,purl=FALSE}
 read_chunk("codes.R")

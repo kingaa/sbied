@@ -5,7 +5,7 @@
 \author{Aaron A. King and Edward L. Ionides}
 
 <<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE>>=
-source("../setup.R", local = knitr::knit_global())
+source("../_includes/setup.R", local = knitr::knit_global())
 @
 
 <<read_chunks,include=FALSE,cache=FALSE>>=

@@ -7,7 +7,7 @@
 \begin{document}
 
 <<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE>>=
-source("../setup.R", local = knitr::knit_global())
+source("../_includes/setup.R", local = knitr::knit_global())
 stopifnot(packageVersion("panelPomp")>="0.15.0")
 @
 

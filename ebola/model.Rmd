@@ -36,7 +36,7 @@ Produced in **R** version `r getRversion()` using **pomp** version `r packageVer
 
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
-source("../setup.R", local = knitr::knit_global())
+source("../_includes/setup.R", local = knitr::knit_global())
 ```
 
 ```{r load_chunks,include=FALSE}

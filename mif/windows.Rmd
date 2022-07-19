@@ -19,7 +19,7 @@ params:
 [**R codes for this document**](./main_win.R)  
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
-source("../setup.R", local = knitr::knit_global())
+source("../_includes/setup.R", local = knitr::knit_global())
 ```
 ```{r checks,cache=FALSE,include=FALSE}
 set.seed(1350254336)

@@ -14,18 +14,12 @@ This script is a starting point for students to follow, explore, and modify the 
 - acknowledge.md, acknowledge.html: Acknowledgements
 - syllabus.md, syllabus.html: Course syllabus
 - welcome.md, welcome.html: Course introduction slides
-- EDTsyllabus.Rmd, EDTsyllabus.html: Course syllabus with timezone offset
 - LICENSE.md: Full text of license
 - TODO.md: To-do list
 - Makefile, rules.mk: GNU Make files
 - sbied.bib: Bibliography database
 - jss.bst, jss.csl: Bibliography style files
-- header.tex: General latex preamble commands
-- beamer.tex: Latex beamer preamble commands
-- logo.jpg: SBIED logo
-- packages.R: code for loading needed packages
-- CLUSTER-kinglab.R: example `CLUSTER.R` file for site-specific cluster setup
-- setup.R: script sourced by most documents containing **knitr** setup, version checking, etc.
+- CLUSTER.R: example `CLUSTER.R` file for site-specific cluster setup
 - subdirectories:
   - prep: Lesson 0, on preparing for the course
   - intro: Lesson 1
@@ -37,7 +31,9 @@ This script is a starting point for students to follow, explore, and modify the 
   - ebola: Lesson 7
   - contacts: Lesson 8
   - od: Lesson from an earlier version of the course
-  - quiz: Quiz materials
+  - misc: Miscellaneous lessons
+  - _includes: latex, HTML, **R** files included in other files
+  - graphics: figures in various formats
 
 ----------------------------
 
@@ -80,7 +76,7 @@ dat
 dat |>
   group_by(dir) |>
   summarize(size.kB=sum(size),time=sum(time)) |>
-  arrange(dir)
+  arrange(-time)
 
 dat |> 
   summarize(size.kB=sum(size),time=sum(time))
@@ -100,13 +96,11 @@ The following is a log of compilations.
 |:--------------|:----------------|--------------:|---------------:|
 | finishing     | 2021-07-20      |         11min |             36 |
 | full          | 2021-07-21      |        488min |            250 |
-| full          | 2022-05-21      |        440min |            250 |
 | full          | 2022-06-24      |        468min |            250 |
 | measles full  | 2022-05-26      |        208min |            250 |
 | polio level 1 | 2022-05-22      |         10min |            250 |
 | polio level 2 | 2022-05-26      |         22min |            250 |
 | polio   full  | 2022-06-22      |        170min |            250 |
-| finishing     | 2022-06-25      |         11min |             64 |
 | contacts full | 2022-07-18      |         15min |             24 |
 | finishing     | 2022-07-18      |          9min |             64 |
 

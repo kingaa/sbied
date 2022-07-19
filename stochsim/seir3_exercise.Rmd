@@ -27,7 +27,7 @@ params:
 ### [**R** codes for this document](./seir3_exercise.R)
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
-source("../setup.R", local = knitr::knit_global())
+source("../_includes/setup.R", local = knitr::knit_global())
 ```
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
 library(tidyverse)

@@ -43,7 +43,7 @@ hr {
 Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
-source("../setup.R", local = knitr::knit_global())
+source("../_includes/setup.R", local = knitr::knit_global())
 ```
 
 ## Number of particles

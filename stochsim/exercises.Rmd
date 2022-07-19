@@ -20,7 +20,7 @@ params:
 [**R** codes for this document](./exercises.R)  
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
-source("../setup.R", local = knitr::knit_global())
+source("../_includes/setup.R", local = knitr::knit_global())
 ```
 ```{r include=FALSE}
 source("main.R")

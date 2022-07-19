@@ -15,7 +15,7 @@ csl: ../jss.csl
 -----------------------------------
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
-source("../setup.R", local = knitr::knit_global())
+source("../_includes/setup.R", local = knitr::knit_global())
 ```
 
 \newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}

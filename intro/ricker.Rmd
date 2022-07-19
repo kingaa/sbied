@@ -27,7 +27,7 @@ csl: ../jss.csl
 This document has its origins in the [Getting Started vignette](https://kingaa.github.io/pomp/vignettes/getting_started.html).
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
-source("../setup.R", local = knitr::knit_global())
+source("../_includes/setup.R", local = knitr::knit_global())
 ```
 ```{r prelims,include=FALSE,purl=TRUE,cache=FALSE}
 library(pomp)

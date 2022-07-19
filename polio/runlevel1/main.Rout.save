@@ -7,8 +7,6 @@ R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
 
-  Natural language support but running in an English locale
-
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
 'citation()' on how to cite R or R packages in publications.
@@ -19,7 +17,7 @@ Type 'q()' to quit R.
 
 > library(pomp)
 > library(tidyverse)
-── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
 ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
 ✔ tibble  3.1.7     ✔ dplyr   1.0.9
 ✔ tidyr   1.2.0     ✔ stringr 1.4.0
@@ -205,6 +203,13 @@ dbl (4): time, cases, births, pop
 > if (file.exists("CLUSTER.R")) {
 +   source("CLUSTER.R")
 + }
+Loading required package: Rmpi
+Master processor name: theorygroup01; nodename: theorygroup01
+Size of MPI universe: 1
+Spawning 250 workers using the command:
+  /export/local/apps/R/ubuntu_18.04/4.2.1/lib64/R/bin/Rscript /userdata/kingaa/R_Ubuntu_18.04/x86_64-pc-linux-gnu-library/4.2/doMPI/RMPIworker.R WORKDIR=/home/kingaa/sbied/polio/runlevel1 LOGDIR=/tmp MAXCORES=1 COMM=3 INTERCOMM=4 MTAG=10 WTAG=11 INCLUDEMASTER=TRUE BCAST=TRUE VERBOSE=TRUE
+App launch reported: 12 (out of 12) daemons - 230 (out of 250) procs
+	250 slaves are spawned successfully. 0 failed.
 > 
 > bake(file="cores.rds",cores) -> cores
 > 
@@ -443,4 +448,4 @@ dbl (23): b1, b2, b3, b4, b5, b6, psi, rho, tau, sigma_dem, sigma_env, SO_0,...
 > 
 > proc.time()
    user  system elapsed 
-  6.053   9.835   3.619 
+218.101  10.085 226.343 

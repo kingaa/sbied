@@ -40,7 +40,7 @@ Optionally, take advantage of multiple cores on your computer to improve your es
 ## Solution
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
-source("../setup.R", local = knitr::knit_global())
+source("../_includes/setup.R", local = knitr::knit_global())
 ```
 ```{r prelims,purl=TRUE,cache=FALSE,include=FALSE}
 library(tidyverse)

@@ -22,7 +22,7 @@ Produced in R version `r getRversion()`.
 -----------------------------------
 
 ```{r knitr-opts,include=FALSE,purl=FALSE}
-source("../setup.R", local = knitr::knit_global())
+source("../_includes/setup.R", local = knitr::knit_global())
 ```
 ```{r prelims,include=FALSE,cache=FALSE}
 library(tidyverse)
