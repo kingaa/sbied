@@ -1,9 +1,11 @@
 Simulation-based Inference for Epidemiological Dynamics<br>Course Materials
 ---------------------------------------------------------------------------
 
-These are notes from a short course given by Ed Ionides and Aaron King
-at the [Summer Institute in Statistics and Modeling in Infectious
-Diseases (SISMID)](https://sismid.uw.edu). From the [main
+These are notes from a short course given by [Ed
+Ionides](https://ionides.github.io/) and [Aaron
+King](https://kinglab.eeb.lsa.umich.edu/king/) at the [Summer Institute
+in Statistics and Modeling in Infectious Diseases
+(SISMID)](https://sismid.uw.edu). From the [main
 page](https://kingaa.github.io/sbied/), links lead to pages on a number
 of specific topics, culminating in four case studies that exemplify the
 methods and raise key issues. For each such page, there is a
@@ -16,17 +18,20 @@ own curiosity and interest.
 
 ### Required software
 
-The codes require, at a minimum, **R** version 4.0 and **pomp** version
-4.2. Windows users must also have the appropriate version of **Rtools**
-installed. The `prep` directory contains scripts that will install other
-needed packages and test the user’s installation.
+The codes require, at a minimum, [**R**](https://cran.r-project.org/)
+version 4.0 and [**pomp**](https://kingaa.github.io/pomp/) version 4.2.
+Windows users must also have the appropriate version of
+[**Rtools**](https://cran.r-project.org/bin/windows/Rtools/) installed.
+The `prep` directory contains scripts that will install other needed
+packages and test the user’s installation.
 
 The `contacts` lesson requires
 [**panelPomp**](https://github.com/cbreto/panelPomp). An installation
-script is provided.
+script is provided there.
 
-A Github Action checks that these installations and actions succeed on a
-variety of current and legacy platforms:
+A [Github Action](https://github.com/kingaa/sbied/actions) checks that
+these installations and actions succeed on a variety of current and
+legacy platforms:
 
 [![install-test](https://github.com/kingaa/sbied/actions/workflows/install-test.yml/badge.svg)](https://github.com/kingaa/sbied/actions/workflows/install-test.yml)
 
@@ -69,7 +74,8 @@ this reason, the most expensive computations are archived using the
 facilities provided for the purpose in **pomp**. Compilation with these
 archives in place requires much less time than does compilation from
 scratch. The following gives an indication of the size of the archives
-and the time required for their computation.
+and the time required for their computation on a linux cluster with
+250 cpus.
 
 <table>
 <thead>
