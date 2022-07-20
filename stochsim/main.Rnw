@@ -593,7 +593,7 @@ registerDoRNG(2488820)
 
   \item In the data, it looks like there were a total of $\Sexpr{sum(meas$reports)}$ infections.
     Assuming 50\% reporting, we have that $S_0\approx\Sexpr{sum(meas$reports)/0.5}$, so that
-    $\eta=\frac{S_0}{N}\approx\Sexpr{signif(2*sum(meas$reports)/38000,2)}$.
+    $\eta=\frac{S_0}{N}\approx\Sexpr{mysignif(2*sum(meas$reports)/38000,2)}$.
 
   \item If the infectious period is roughly 2 weeks, then $1/\mu_{IR} \approx 2~\text{wk}$ and $\beta = \mu_{IR}\,\Rzero \approx 7.5~\text{wk}^{-1}$.
 

@@ -16,7 +16,7 @@ read_csv("measles_params.csv") %>%
   filter(loglik==max(loglik)) %>%
   select(-loglik,-loglik.se) -> coef(measSIR)
 
-coef(measSIR) %>% signif(3) %>% t() %>% t() %>% knitr::kable()
+coef(measSIR) %>% mysignif(3) %>% t() %>% t() %>% knitr::kable()
 
 
 

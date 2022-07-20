@@ -72,7 +72,7 @@ logmeanexp(ll,se=TRUE)
 This took `r round(timer["elapsed"],1)` seconds.
 
 Since the time taken is approximately linear in `NP` and `NREPS`, we get a formula (for this machine) of
-$$\mbox{Runtime}\approx \frac{ \mathrm{NP}}{`r NP`} \times \frac{\mathrm{NREPS}}{ `r NREPS`} \times `r signif(timer["elapsed"],2)`\mbox{sec}.$$
+$$\mbox{Runtime}\approx \frac{ \mathrm{NP}}{`r NP`} \times \frac{\mathrm{NREPS}}{ `r NREPS`} \times `r mysignif(timer["elapsed"],2)`\mbox{sec}.$$
 
 We can use this formula to select  `NP` and `NREPS` to give an appropriate runtime.
 
@@ -196,7 +196,7 @@ hist(t5,breaks=50,xlim=x_range,main="Error in SE units, with sd=5")
 abline(v=c(-2,2),col="red")
 ```
 
-The coverage of a simple $\pm 2$ standard error confidence interval for the log likelihood (represented by the vertical red lines in the figure at $\pm 2$ SE units) is `r signif(sum(abs(t1)<2)/length(t1)*100,3)` percent for the sd=1 case, but only `r signif(sum(abs(t5)<2)/length(t5)*100,3)` percent for the sd=5 case.
+The coverage of a simple $\pm 2$ standard error confidence interval for the log likelihood (represented by the vertical red lines in the figure at $\pm 2$ SE units) is `r mysignif(sum(abs(t1)<2)/length(t1)*100,3)` percent for the sd=1 case, but only `r mysignif(sum(abs(t5)<2)/length(t5)*100,3)` percent for the sd=5 case.
 
 In particular, the left tail is long for the noisy likelihood estimates:
 when, by chance, you don't observe a high likelihood value, you become over-confident that such values won't happen.

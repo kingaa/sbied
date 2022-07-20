@@ -65,7 +65,9 @@ For this reason, the most expensive computations are archived using the faciliti
 Compilation with these archives in place requires much less time than does compilation from scratch.
 The following gives an indication of the size of the archives and the time required for their computation on a linux cluster with 250&nbsp;cpus.
 
-```{r echo=FALSE,message=FALSE}
+```{r}
+#| echo: false
+#| message: false
 library(tidyverse)
 options(digits=3,knitr.kable.NA="")
 

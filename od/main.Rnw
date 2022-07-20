@@ -389,7 +389,7 @@ registerDoRNG(582998)
     write_csv("measles_params.csv")
   @
 
-  In \Sexpr{round(toc-tic,2)} seconds, using \Sexpr{min(getDoParWorkers(),length(pf))} cores, we obtain an unbiased likelihood estimate of \Sexpr{round(L_pf[1],1)} with a Monte Carlo standard error of \Sexpr{signif(L_pf[2],2)}.
+  In \Sexpr{round(toc-tic,2)} seconds, using \Sexpr{min(getDoParWorkers(),length(pf))} cores, we obtain an unbiased likelihood estimate of \Sexpr{round(L_pf[1],1)} with a Monte Carlo standard error of \Sexpr{mysignif(L_pf[2],2)}.
 \end{frame}
 
 \subsection*{A local search of the likelihood surface}

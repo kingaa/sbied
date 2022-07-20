@@ -60,7 +60,7 @@ read_csv("measles_params.csv") %>%
 
 The putative MLE is 
 ```{r echo=FALSE,results="asis"}
-coef(measSIR) %>% signif(3) %>% t() %>% t() %>% knitr::kable()
+coef(measSIR) %>% mysignif(3) %>% t() %>% t() %>% knitr::kable()
 ```
 
 ### Local search
@@ -145,7 +145,7 @@ t_local <- attr(results,"system.time")
 ncpu_local <- attr(results,"ncpu")
 ```
 
-The above calculations took a total of `r signif(t_local+t_loc,2)[3]`&nbsp;s on `r ncpu_local`&nbsp;cpus.
+The above calculations took a total of `r mysignif(t_local+t_loc,2)[3]`&nbsp;s on `r ncpu_local`&nbsp;cpus.
 What do they show us?
 
 ```{r}
@@ -230,7 +230,7 @@ t_global <- attr(results,"system.time")
 ncpu_global <- attr(results,"ncpu")
 ```
 
-This global search from `r nrow(guesses)` starts took `r signif(t_global[3],2)`&nbsp;s on `r ncpu_global`&nbsp;cpus.
+This global search from `r nrow(guesses)` starts took `r mysignif(t_global[3],2)`&nbsp;s on `r ncpu_global`&nbsp;cpus.
 We append the results to our database and have a look.
 
 ```{r global1_plot1}
@@ -346,7 +346,7 @@ t_eta <- attr(results,"system.time")
 ncpu_eta <- attr(results,"ncpu")
 ```
 
-This profile calculation used about $`r signif(ncpu_eta*t_eta[3]/nrow(guesses),2)`$&nbsp;cpu s per start.
+This profile calculation used about $`r mysignif(ncpu_eta*t_eta[3]/nrow(guesses),2)`$&nbsp;cpu s per start.
 
 We now examine the profile traces.
 Note that we include a trace of the basic reproductive number, $R_0$.
@@ -416,7 +416,7 @@ Clearly, the model can account for the data equally well for all but the smalles
 That is, unless the fraction of susceptibles in the population was too small to allow for an outbreak of the observed size, one can obtain an outbreak that looks like the observed one from an SIR model in a population of sufficient size.
 This interpretation is confirmed by the fact that, as one decreases $\eta$, one has to increase the reporting efficiency $\rho$ to explain the data.
 
-Now, across the confidence interval for $\eta$, say $(`r cis$eta`)$, it is clear from the profile trace plots above, that the model needs both $\beta$ and $\rho$ to be relatively low and the infectious period to be relatively short (though average infectious periods of as long as $`r signif(1/cis$mu_IR[1],2)`$&nbsp;wk are within the confidence interval).
+Now, across the confidence interval for $\eta$, say $(`r cis$eta`)$, it is clear from the profile trace plots above, that the model needs both $\beta$ and $\rho$ to be relatively low and the infectious period to be relatively short (though average infectious periods of as long as $`r mysignif(1/cis$mu_IR[1],2)`$&nbsp;wk are within the confidence interval).
 
 In sum, the model is accounting for the data by saying there was a large and mostly unobserved outbreak in the population, very many of whom were susceptible.
 As we discussed in the [Lesson](./index.html), the conclusion of a short infectious period is broadly compatible with household studies that suggest the duration of viral shedding is less than a week.

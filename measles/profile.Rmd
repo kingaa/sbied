@@ -18,17 +18,21 @@ output:
       - ../_includes/license.html
 bibliography: ../sbied.bib
 csl: ../jss.csl
-
 ---
 
 --------------------
 
 [**R** codes for this document](./profile.R)  
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
+```{r knitr-opts}
+#| purl: false
+#| include: false
 source("../_includes/setup.R", local = knitr::knit_global())
 ```
-```{r read_chunks,include=FALSE,cache=FALSE,purl=FALSE}
+```{r read_chunks}
+#| purl: false
+#| include: false
+#| cache: false
 read_chunk("codes.R")
 ```
 
@@ -36,7 +40,9 @@ read_chunk("codes.R")
 
 ### Preliminaries
 
-```{r mpi-setup,include=FALSE,purl=TRUE,cache=FALSE}
+```{r mpi-setup}
+#| include: false
+#| cache: false
 if (file.exists("CLUSTER.R")) {
   source("CLUSTER.R")
 } else {
@@ -47,7 +53,8 @@ if (file.exists("CLUSTER.R")) {
 
 We begin by loading the packages we'll need and setting the random seed, to allow reproducibility.
 
-```{r prelims,cache=FALSE}
+```{r prelims}
+#| cache: false
 set.seed(594709947L)
 library(tidyverse)
 library(pomp)
@@ -61,18 +68,18 @@ The data are measles reports from 20 cities in England and Wales.
 We also have information on the population sizes and birth-rates in these cities;
 we'll treat these variables as covariates.
 
-```{r load-data,include=TRUE}
+```{r load-data}
 ```
-```{r london-data,include=TRUE}
+```{r london-data}
 ```
-```{r prep-covariates,include=TRUE}
+```{r prep-covariates}
 ```
 
 ### The (unobserved) process model
 
 The following implements a simulator.
 
-```{r rproc,include=TRUE}
+```{r rproc}
 ```
 
 We complete the process model definition by specifying the distribution of initial unobserved states.
@@ -116,7 +123,8 @@ The following Csnippets implement such a transformation and its inverse.
 @He2010 estimated the parameters of this model.
 The full set is included in the *R* code accompanying this document, where they are read into a data frame called `mles`.
 
-```{r mles,include=FALSE}
+```{r mles}
+#| include: false
 ```
 ```{r mle}
 ```
@@ -141,7 +149,8 @@ dat %>%
       "S_0","E_0","I_0","R_0")
   ) -> m1
 ```
-```{r plotsim,purl=F}
+```{r plotsim}
+#| purl: false
 plot(simulate(m1))
 ```
 
@@ -187,7 +196,8 @@ pairs(~sigmaSE+R0+mu+sigma+gamma+S_0+E_0,data=pd)
 We'll run the profile computations in parallel.
 Note that again, care must be taken with the parallel random number generator.
 
-```{r sigmaSE-prof-round1,eval=TRUE,cache=FALSE}
+```{r sigmaSE-prof-round1}
+#| cache: false
 bake("sigmaSE-profile1.rds",{
 
   library(doRNG)
@@ -235,10 +245,11 @@ bake("sigmaSE-profile1.rds",{
   filter(is.finite(loglik)) -> sigmaSE_prof
 ```
 
-The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r signif(mean(sigmaSE_prof$etime)*3600/120,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.
+The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r mysignif(mean(sigmaSE_prof$etime)*3600/120,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.
 Let's examine the results.
 
-```{r round1-plot,purl=F}
+```{r round1-plot}
+#| purl: false
 pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma)+psi+log(cohort),
   data=sigmaSE_prof,subset=loglik>max(loglik)-100)
 ```
@@ -248,7 +259,8 @@ pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma)+psi+log(cohort),
 Next, we'll skim off the top 20 likelihoods for each value of the $\sigma_{SE}$ parameter.
 We'll put these through another round of miffing.
 
-```{r sigmaSE-prof-round2,cache=FALSE}
+```{r sigmaSE-prof-round2}
+#| cache: false
 sigmaSE_prof %>%
   mutate(sigmaSE=exp(signif(log(sigmaSE),5))) %>%
   group_by(sigmaSE) %>%
@@ -297,9 +309,10 @@ bake("sigmaSE-profile2.rds",{
 }) -> sigmaSE_prof
 ```
 
-The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r signif(mean(sigmaSE_prof$etime)/550*3600,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.
+The preceding calculations took `r round(sum(sigmaSE_prof$etime),1)`&nbsp;cpu&nbsp;hr, or about `r mysignif(mean(sigmaSE_prof$etime)/550*3600,2)`&nbsp;cpu&nbsp;sec per iteration per 1000 particles.
 
-```{r plot-sigmaSE-profile,purl=F}
+```{r plot-sigmaSE-profile}
+#| purl: false
 sigmaSE_prof %>%
   mutate(sigmaSE=exp(signif(log(sigmaSE),5))) %>%
   group_by(sigmaSE) %>%
@@ -315,7 +328,8 @@ sigmaSE_prof %>%
 It is useful to plot profile traces, which show how the other parameters vary along the profile.
 In this case, these display clear relationships between intensity of extra-demographic stochasticity, $R_0$, and durations of the infectious and latent periods.
 
-```{r profile-traces,purl=F}
+```{r profile-traces}
+#| purl: false
 pairs(~loglik+sigmaSE+R0+I(1/gamma)+I(1/sigma),
   data=sigmaSE_prof)
 ```

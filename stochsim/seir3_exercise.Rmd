@@ -48,7 +48,7 @@ Since boys were potentially confined for more than one day, the data count each 
 On the other hand, we have information about the total number of boys at risk and the total number who were infected.
 In fact, we know that $N=763$ boys were at risk and 512 boys in total spent between 3 and 7 days away from class (either in bed or convalescent).
 Moreover, we have data on the number of boys, $C_t$, convalescent at day $t$.
-Since $1540~\text{boy-da}/512~\text{boy} \approx 3~\text{da}$, we know that the average duration spent in bed was 3&nbsp;da and, since $\sum_t\!C_t=`r sum(bsflu$C)`$, we can infer that the average time spent convalescing was $`r sum(bsflu$C)`~\text{boy-da}/512~\text{boy} \approx `r signif(sum(bsflu$C)/512,2)`~\text{da}$.
+Since $1540~\text{boy-da}/512~\text{boy} \approx 3~\text{da}$, we know that the average duration spent in bed was 3&nbsp;da and, since $\sum_t\!C_t=`r sum(bsflu$C)`$, we can infer that the average time spent convalescing was $`r sum(bsflu$C)`~\text{boy-da}/512~\text{boy} \approx `r mysignif(sum(bsflu$C)/512,2)`~\text{da}$.
 Finally, we are told that the index case was a boy who arrived back at school from holiday six days before the next case.
 
 Formulate a model with a latent class and both confinement and convalescent stages.

@@ -791,7 +791,7 @@ set.seed(1350254336)
       \end{aligned}
     \end{equation*}
   \item
-    We can compute the 95\%-ile for a chi-squared distribution with one degree of freedom: \code{qchisq(0.95,df=1)}$=\Sexpr{signif(qchisq(0.95,df=1),4)}$.
+    We can compute the 95\%-ile for a chi-squared distribution with one degree of freedom: \code{qchisq(0.95,df=1)}$=\Sexpr{mysignif(qchisq(0.95,df=1),4)}$.
   \item
     Wilks' theorem then gives us a hypothesis test with approximate size $5\%$ that rejects $H^{\langle 0\rangle}$ if $\profileloglik{{}}(\hat\phi)-\profileloglik{{}}(\phi_0)<3.84/2$.
   \item

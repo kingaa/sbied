@@ -181,7 +181,7 @@ paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
   "rho","sigmaSE","psi","cohort","amplitude",
   "S_0","E_0","I_0","R_0")
 mle[paramnames] %>% unlist() -> theta
-mle %>% select(-S_0,-E_0,-I_0,-R_0)
+mle %>% select(-S_0,-E_0,-I_0,-R_0) %>% as.data.frame()
 
 ## ----pfilter1a-----------------------------------------------
 library(doParallel); library(doRNG)

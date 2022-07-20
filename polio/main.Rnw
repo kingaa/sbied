@@ -800,10 +800,10 @@ options(
     column_to_rownames("type") -> summ
   @
   
-  For the data, there were \Sexpr{summ["data","no_cases"]} months with no reported cases, similar to the mean of \Sexpr{signif(summ["sim","no_cases"],3)} for simulations from the fitted model.
-  Months with no asymptomatic infections for the simulations were rare, on average \Sexpr{signif(summ["sim","fadeout1"],2)} months per simulation.
-  Months with fewer than 100 infections averaged \Sexpr{signif(summ["sim","fadeout100"],2)} per simulation, which in the context of a reporting rate of \Sexpr{signif(coef(polio,"rho"),3)} can explain the absences of case reports.
-  The mean monthly infections due to importations, modeled by $\psi$, is \Sexpr{signif(summ["sim","imports"],2)}.
+  For the data, there were \Sexpr{summ["data","no_cases"]} months with no reported cases, similar to the mean of \Sexpr{mysignif(summ["sim","no_cases"],3)} for simulations from the fitted model.
+  Months with no asymptomatic infections for the simulations were rare, on average \Sexpr{mysignif(summ["sim","fadeout1"],2)} months per simulation.
+  Months with fewer than 100 infections averaged \Sexpr{mysignif(summ["sim","fadeout100"],2)} per simulation, which in the context of a reporting rate of \Sexpr{mysignif(coef(polio,"rho"),3)} can explain the absences of case reports.
+  The mean monthly infections due to importations, modeled by $\psi$, is \Sexpr{mysignif(summ["sim","imports"],2)}.
   This does not give much opportunity for local elimination of poliovirus.
 
 \end{frame}

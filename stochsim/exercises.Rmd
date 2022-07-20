@@ -19,10 +19,13 @@ params:
 
 [**R** codes for this document](./exercises.R)  
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
+```{r knitr-opts}
+#| include: false
+#| purl: false
 source("../_includes/setup.R", local = knitr::knit_global())
 ```
-```{r include=FALSE}
+```{r}
+#| include: false
 source("main.R")
 ```
 
