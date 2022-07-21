@@ -93,16 +93,21 @@ source("../_includes/setup.R", local = knitr::knit_global())
 
 \begin{frame}[allowframebreaks=0.8]{Questions and answers}
   \begin{enumerate}
-  \item \link{https://doi.org/10.1126/scitranslmed.aaj1748}{How to explain the resurgence of pertussis in countries with sustained high vaccine coverage?}
-  \item \link{https://dx.doi.org/10.1038/nature07084}{What roles are played by asymptomatic infection and waning immunity in cholera epidemics?}
-  \item \link{https://dx.doi.org/10.1098/rsif.2009.0151}{What explains the seasonality of measles?}
-  \item \link{https://dx.doi.org/10.1126/science.aat6777}{Can serotype-specific immunity explain the strain dynamics of human enteroviruses?}
-  \item \link{https://dx.doi.org/10.1371/journal.pone.0072086}{Do subclinical infections of pertussis play an important epidemiological role?}
-  \item \link{https://dx.doi.org/10.1093/aje/kwv044}{What is the contribution to the HIV epidemic of dynamic variation in sexual behavior of an individual over time? How does this compare to the role of heterogeneity between individuals?}
-  \item \link{https://dx.doi.org/10.1371/journal.pcbi.1000898}{What explains the interannual variability of malaria?}
-  \item \link{https://dx.doi.org/10.1098/rspb.2015.0347}{What will happen next in an Ebola outbreak?}
-  \item \link{https://doi.org/10.1016/j.advwatres.2016.11.012}{Can hydrology explain the seasonality of cholera?}
-  \item \link{https://doi.org/10.1073/pnas.1323688111}{What is the contribution of adults to polio transmission?}
+  \item \link{https://doi.org/10.1073/pnas.2111870119}{How does one build a system for real-time surveillance of COVID-19 using epidemiological and mobility data?} \citep{Fox2022}
+  \item \link{https://doi.org/10.1073/pnas.2019716118}{How does one combine various data types to quantify asymptomatic COVID-19 infections?} \citep{Subramanian2021}
+  \item \link{https://doi.org/10.3201/eid2807.212339}{How effective have various non-pharmaceutical interventions been at controlling SARS-CoV-2 spread in hospitals?} \citep{Shirreff2022}
+  \item \link{https://doi.org/10.1371/journal.pcbi.1010206}{How does one use incidence and mobility data to infer key epidemiological parameters?} \citep{Andrade2022}
+  \item \link{https://doi.org/10.1098/rsos.210948}{What strategies are effective at containing mumps spread on college campuses?} \citep{Shah2022}
+  \item \link{https://doi.org/10.1126/scitranslmed.aaj1748}{What explains the resurgence of pertussis in countries with sustained high vaccine coverage?} \citep{DomenechdeCelles2018}
+  \item \link{https://dx.doi.org/10.1371/journal.pone.0072086}{Do subclinical infections of pertussis play an important epidemiological role?} \citep{Lavine2013}
+  \item \link{https://dx.doi.org/10.1098/rsif.2009.0151}{What explains the seasonality of measles?} \citep{He2010}
+  \item \link{https://dx.doi.org/10.1126/science.aat6777}{Can serotype-specific immunity explain the strain dynamics of human enteroviruses?} \citep{PonsSalort2018}
+  \item \link{https://dx.doi.org/10.1093/aje/kwv044}{How does dynamic variation in individual sexual behavior contribute to the HIV epidemic? How does this compare to the role of heterogeneity between individuals?} \citep{Romero-Severson2015}
+  \item \link{https://dx.doi.org/10.1098/rspb.2015.0347}{How does one make forecasts for an outbreak of an emerging infectious disease?} \citep{King2015}
+  \item \link{https://doi.org/10.1073/pnas.1323688111}{What is the contribution of adults to polio transmission?} \citep{Blake2014}
+  \item \link{https://dx.doi.org/10.1371/journal.pcbi.1000898}{What explains the interannual variability of malaria?} \citep{Laneri2010}
+  \item \link{https://doi.org/10.1016/j.advwatres.2016.11.012}{Can hydrology explain the seasonality of cholera?} \citep{Baracchini2017}
+  \item \link{https://dx.doi.org/10.1038/nature07084}{What roles are played by asymptomatic infection and waning immunity in cholera epidemics?} \citep{King2008}
   \end{enumerate}
 \end{frame}
 
@@ -129,7 +134,7 @@ source("../_includes/setup.R", local = knitr::knit_global())
   \item That is: the data are viewed as one realization of the model's stochastic process.
   \end{itemize}
   \begin{center}
-    \includegraphics[height=5cm]{../graphics/pomp_schematic1.png}
+    \includegraphics[height=4cm]{../graphics/pomp_schematic1.png}
   \end{center}
 \end{frame}
 

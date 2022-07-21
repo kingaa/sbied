@@ -97,7 +97,7 @@ set.seed(1350254336)
     \begin{itemize}
     \item Good low-dimensional summary statistics can be hard to find. 
     \item When using statistically inefficient methods, it can be hard to know how much information you are losing. 
-    \item Intuition and scientific reasoning can be inadequate tools to derive informative low-dimensional summary statistics \citep{shrestha11,ionides11-statSci}.
+    \item Intuition and scientific reasoning can be inadequate tools to derive informative low-dimensional summary statistics \citep{Shrestha2011,Ionides2011a}.
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -152,14 +152,14 @@ set.seed(1350254336)
 
 \begin{frame}{Full-information, plug-and-play, frequentist methods}
   \begin{itemize}
-  \item Iterated filtering methods \citep{ionides06,ionides15} are the only currently available, full-information, plug-and-play, frequentist methods for POMP models.
-  \item Iterated filtering methods have been shown to solve likelihood-based inference problems for epidemiological situations which are computationally intractable for available Bayesian methodology \citep{ionides15}.
+  \item Iterated filtering methods \citep{Ionides2006,Ionides2015} are the only currently available, full-information, plug-and-play, frequentist methods for POMP models.
+  \item Iterated filtering methods have been shown to solve likelihood-based inference problems for epidemiological situations which are computationally intractable for available Bayesian methodology \citep{Ionides2015}.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{An iterated filtering algorithm (IF2)}
 
-  We focus on the IF2 algorithm of \citet{ionides15}.
+  We focus on the IF2 algorithm of \citet{Ionides2015}.
   In this algorithm:
 
   \begin{itemize}

@@ -148,7 +148,7 @@ However, they are inconsistent, since $\hat\lambda^{(k)}_u$ is a biased estimate
 \end{eqnarray}
 
 
-* @breto19 showed that $\hat L^{[4]}$ is smaller than  $\hat L^{[2]}$.
+* @Breto2019 showed that $\hat L^{[4]}$ is smaller than  $\hat L^{[2]}$.
 
 * In a limit where $U$ and $K$ both grow together, $\hat L^{[4]}$ can be stable while $\hat L^{[2]}$ increases to infinity.
 

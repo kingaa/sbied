@@ -416,7 +416,7 @@ Be careful to translate to your local timezone! The following world clock may he
 <script>/* Written in JS with JQUERY first */
 
 /* Declare eval separately so the rest can be mimified and obfuscated */
-var wtb_widget_1658332413 = {
+var wtb_widget_1658406785 = {
 	ev: function(expr) { return eval(expr); }
 };
 
@@ -637,7 +637,7 @@ var wtb_widget_1658332413 = {
 	function findDstTransitionsWrapper() {
 
 		// Start looking around the day of the event (+/-2 years)
-		var ct       = new Date(1658332413000);
+		var ct       = new Date(1658406785000);
 		var tsUtc    = Date.UTC(ct.getFullYear(), ct.getMonth(), ct.getDate(), 0, 0, 0);
 		var startTs  = tsUtc - deltaYear * 2;
 		var endTs    = tsUtc + deltaYear * 2;
@@ -716,7 +716,7 @@ var wtb_widget_1658332413 = {
 		
 			var callback = 'wtbNonexistendCallback';
 			if (window[callback] != undefined) {
-				var data_obj = wtb_widget_1658332413.ev('('+e.data+')'); 
+				var data_obj = wtb_widget_1658406785.ev('('+e.data+')'); 
 				window[callback](data_obj);
 			}
 		

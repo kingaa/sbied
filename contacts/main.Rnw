@@ -91,12 +91,12 @@ registerDoRNG(2050320976)
 
   \bi
 
-\item \citet{romero-severson15} investigated whether dynamic variation in sexual contact rates are a real and measurable phenomenon.
-\item They analyzed a large cohort study of HIV-negative gay men in 3 cities \citep{vittinghoff99}. 
+\item \citet{Romero-Severson2015} investigated whether dynamic variation in sexual contact rates are a real and measurable phenomenon.
+\item They analyzed a large cohort study of HIV-negative gay men in 3 cities \citep{Vittinghoff1999}. 
 
-\item In a simple model for HIV, with a fully mixing population of susceptible and infected individuals, the fitted variation found by \citet{romero-severson15} can explain the observed prevalence history in the US despite the low per-contact infectivity of HIV.
+\item In a simple model for HIV, with a fully mixing population of susceptible and infected individuals, the fitted variation found by \citet{Romero-Severson2015} can explain the observed prevalence history in the US despite the low per-contact infectivity of HIV.
 
-\item Here, we consider the longitudinal data from \citet{vittinghoff99} on total sexual contacts over four consecutive 6-month periods, for the 882 men having no missing observations. 
+\item Here, we consider the longitudinal data from \citet{Vittinghoff1999} on total sexual contacts over four consecutive 6-month periods, for the 882 men having no missing observations. 
 
   \ei
 
@@ -152,7 +152,7 @@ registerDoRNG(2050320976)
 
   \bi
 
-\item We use the model of \citet{romero-severson15}, with each individual making contacts at a latent rate $X_i(t)$.
+\item We use the model of \citet{Romero-Severson2015}, with each individual making contacts at a latent rate $X_i(t)$.
 
 \item Each data point, $y_{ij}$, is the number of reported contacts for individual $i$ between time $t_{j-1}$ and $t_j$, where $i=1,\dots,882$ and $j=1,\dots,4$.
 
@@ -174,7 +174,7 @@ registerDoRNG(2050320976)
 \item A basic stochastic model for homogeneous count data models $y_{ij}$ as a Poisson random variable with mean and variance equal to $C_{ij}$
   \citep{Keeling2009}.
 
-\item However, the variance in the data are much higher than the mean of the data \citep{romero-severson12-scid}.
+\item However, the variance in the data are much higher than the mean of the data \citep{Romero-Severson2012}.
 
 \item Therefore, we model the data as negative binomial, a generalization of a Poisson distribution that permits variance larger than the mean:
   $$y_{ij}\sim \mathrm{NegBin}\, \left(C_{ij},D_{i}\right),$$
@@ -257,7 +257,7 @@ registerDoRNG(2050320976)
   }
   \hspace{8mm}
   \parbox{4.5cm}{
-    Fig 4 of  \citet{romero-severson15}. The median of 500 simulations are shown as lines and the $75^{th}$ and $25^{th}$ percentiles are shown as gray envelopes.
+    Fig 4 of  \citet{Romero-Severson2015}. The median of 500 simulations are shown as lines and the $75^{th}$ and $25^{th}$ percentiles are shown as gray envelopes.
 
   }
 \end{frame}
@@ -296,7 +296,7 @@ registerDoRNG(2050320976)
 
 \item Here, we only have shared parameters. The heterogeneities between individuals are modeled as \myemph{random effects} with distribution determined by these shared parameters.
 
-\item Iterated filtering for POMP models was extended to PanelPOMPs by \citet{breto19}. 
+\item Iterated filtering for POMP models was extended to PanelPOMPs by \citet{Breto2019}. 
 
   \ei
 
@@ -393,7 +393,7 @@ How would you find the \package{panelPomp} package methods available for working
 
 \item PanelPOMP models are closely related to POMPs, and particle filter methods remain applicable.
 
-\item \code{contacts} contains a parameter vector corresponding to the MLE for total contacts reported by \citet{romero-severson15}:
+\item \code{contacts} contains a parameter vector corresponding to the MLE for total contacts reported by \citet{Romero-Severson2015}:
 
   \ei
 
@@ -485,7 +485,7 @@ How would you find the \package{panelPomp} package methods available for working
   
   \bi
 
-\item Can we do better, using the independence of units? It turns out we can \citep{breto19}.
+\item Can we do better, using the independence of units? It turns out we can \citep{Breto2019}.
 
   \ei
 
@@ -557,7 +557,7 @@ How would you find the \package{panelPomp} package methods available for working
 
   \bi
 
-\item The panel iterated filtering (PIF) algorithm of \citet{breto19} applies the IF2 algorithm to a POMP model constructed by concanenating the collection of panels.
+\item The panel iterated filtering (PIF) algorithm of \citet{Breto2019} applies the IF2 algorithm to a POMP model constructed by concanenating the collection of panels.
 
 \item PIF is implemented in \package{panelPomp} as the \code{mif2} method for class \code{panelPomp}. 
 
@@ -565,7 +565,7 @@ How would you find the \package{panelPomp} package methods available for working
 
 \item As an example of an iterated filtering investigation, let's carry out a local search, starting at the current estimate of the MLE.
 
-\item Following \citet{romero-severson15} we fix $\sigma_R=0$.
+\item Following \citet{Romero-Severson2015} we fix $\sigma_R=0$.
   \ei
 
 \end{frame}

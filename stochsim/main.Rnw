@@ -58,7 +58,7 @@ registerDoRNG(2488820)
   \item
     We develop deterministic and stochastic representations of a susceptible-infected-recovered (SIR) system, a fundamental class of models for disease transmission dynamics.
   \item
-    We set up  notation applicable to general compartment models \citep{breto09}.
+    We set up  notation applicable to general compartment models \citep{Breto2009}.
     \input{../graphics/sir_diagram}
     \vspace{5mm}
     \begin{tabular}{c @{\ :\ } l c @{\ :\ } l}

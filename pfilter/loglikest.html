@@ -395,8 +395,8 @@ ll &lt;- sapply(pf,logLik)
 logmeanexp(ll,se=TRUE)</code></pre>
 <pre><code>                     se 
 -130.096408    2.731696 </code></pre>
-<p>This took 5.6 seconds.</p>
-<p>Since the time taken is approximately linear in <code>NP</code> and <code>NREPS</code>, we get a formula (for this machine) of <span class="math display">\[\mbox{Runtime}\approx \frac{ \mathrm{NP}}{10^{4}} \times \frac{\mathrm{NREPS}}{ 10} \times 5.6\mbox{sec}.\]</span></p>
+<p>This took 5.5 seconds.</p>
+<p>Since the time taken is approximately linear in <code>NP</code> and <code>NREPS</code>, we get a formula (for this machine) of <span class="math display">\[\mbox{Runtime}\approx \frac{ \mathrm{NP}}{10^{4}} \times \frac{\mathrm{NREPS}}{ 10} \times 5.5\mbox{sec}.\]</span></p>
 <p>We can use this formula to select <code>NP</code> and <code>NREPS</code> to give an appropriate runtime.</p>
 </div>
 <div id="effects-of-np-and-nreps-on-estimates" class="section level2">
@@ -458,11 +458,11 @@ foreach (p=iter(design,&quot;row&quot;),
         mean
     }
 }
-&lt;bytecode: 0x559e9d83b988&gt;
+&lt;bytecode: 0x558cf2fd6988&gt;
 &lt;environment: namespace:pomp&gt;</code></pre>
 <p>We see that <code>logmeanexp</code> constructs its standard errors via a <a href="https://en.wikipedia.org/wiki/Jackknife_resampling">jack-knife</a> calculation.</p>
 <p>The standard errors from this approach are reasonable when the distribution of the likelihoods is not too skewed. However, a largest likelihood many log units higher than the others corresponds to a highly skewed distribution on the untransformed scale. It is on this untransformed scale that combining likelihood estimates by averaging is justified by the unbiased property of the particle filter. This could therefore lead to unstable standard errors.</p>
-<p>Let’s consider an example for which we suppose that the Monte Carlo estimate of the log likelihood is normally distributed. This assumption has asymptotic justification <span class="citation">(Bérard, Del Moral, and Doucet 2014)</span>. We’ll consider the two cases when the standard deviation on the log scale is given by <code>sd=1</code> and <code>sd=5</code>.</p>
+<p>Let’s consider an example for which we suppose that the Monte Carlo estimate of the log likelihood is normally distributed. This assumption has asymptotic justification <span class="citation">(<span class="citeproc-not-found" data-reference-id="berard14"><strong>???</strong></span>)</span>. We’ll consider the two cases when the standard deviation on the log scale is given by <code>sd=1</code> and <code>sd=5</code>.</p>
 <pre class="r"><code>sd1 &lt;- replicate(10000,logmeanexp(rnorm(10,mean=0,sd=1),se=TRUE))
 sd5 &lt;- replicate(10000,logmeanexp(rnorm(10,mean=0,sd=5),se=TRUE))
 m1 &lt;- mean(sd1[1,])
@@ -484,13 +484,8 @@ abline(v=c(-2,2),col=&quot;red&quot;)</code></pre>
 <p>Produced in R version 4.2.1.</p>
 <hr />
 </div>
-<div id="references" class="section level2 unnumbered">
+<div id="references" class="section level2">
 <h2>References</h2>
-<div id="refs" class="references">
-<div id="ref-berard14">
-<p>Bérard J, Del Moral P, Doucet A (2014). “A Lognormal Central Limit Theorem for Particle Approximations of Normalizing Constants.” <em>Electronic Journal of Probability</em>, <strong>19</strong>(94), 1–28.</p>
-</div>
-</div>
 </div>
 
 <div style="padding-top: 1em; padding-bottom: 2em;">

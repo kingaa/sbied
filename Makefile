@@ -7,10 +7,15 @@ modules:
 
 include rules.mk
 
+welcome.html: welcome.md
+	$(REXE) -e "rmarkdown::render(\"$^\",output_format=\"revealjs::revealjs_presentation\")"
+
+.clean:
+	for module in $(MODULES); do (cd $$module && $(MAKE) clean); done
+
 .fresh:
 	for module in $(MODULES); do (cd $$module && $(MAKE) fresh); done
 
-fresh: .fresh
+clean: .clean
 
-welcome.html: welcome.md
-	$(REXE) -e "rmarkdown::render(\"$^\",output_format=\"revealjs::revealjs_presentation\")"
+fresh: .fresh

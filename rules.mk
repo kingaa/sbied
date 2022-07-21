@@ -44,7 +44,7 @@ quiz.tex quiz_soln.tex quiz_main.tex
 	pdflatex $*
 
 clean:
-	$(RM) *.bak
+	$(RM) *.bak *.tmp
 	$(RM) *.o *.so
 	$(RM) *.log *.aux *.out *.blg *.toc *.nav *.snm *.vrb *.brf *.cut
 	$(RM) Rplots.*
