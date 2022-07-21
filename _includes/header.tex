@@ -6,7 +6,6 @@
 \usepackage{amssymb}
 \usepackage{xspace}        
 \usepackage{graphicx}
-\usepackage{listings}
 
 \bibliographystyle{jss}
 
@@ -84,42 +83,7 @@
 \newcommand\param{\,;}
 \newcommand\params{\param}
 \newcommand\equals{{ \, = \, }}
-\newcommand\transpose{{\raisebox{0.5mm}{\mbox{\scriptsize \textsc{t}}}}}
-%\newcommand\transpose{\scriptsize{T}}
-\newcommand\mycolon{{\hspace{0.5mm}:\hspace{0.5mm}}}
-%\newcommand\mycolon{\,{:}\,}
 \newcommand\myemph[1]{{\textbf{#1}}}
-\newcommand\mymathenv[1]{\textcolor{blue}{#1}}
-
-
-%% following a style where all math is in blue
-%% not currently used by SISMID slides
-\newcommand\mymath[1]{\begin{math}\textcolor{blue}{#1}\end{math}}
-\newcommand\m[1]{\mymath{#1}}
-\newcommand\mydisplaymath[1]{\begin{displaymath}\textcolor{blue}{#1}\end{displaymath}}
-\newcommand\myeqnarray[1]{\textcolor{blue}{\begin{eqnarray*}#1 \end{eqnarray*}}}
-\newcommand\myspace{\quad}
-\newcommand\altdisplaymath[1]{\vspace{1mm}\textcolor{blue}{\begin{math}\displaystyle #1 \end{math}}\vspace{1mm}}
-
-
-%% not currently used in SISMID slides.
-%% a plain and space-efficient list useful for dense slides
-%% the compactenum and compactitem environments from paralist are probably prefer%% able
-%% \newcommand\enumerateSpace{\hspace{2mm}}
-%% \newenvironment {myitemize} {
-%%                  \begin{list}{\textcolor{black}{$\bullet$} \hfill}
-%%                  {\setlength{\labelwidth}{0.3 cm}
-%%                   \setlength{\leftmargin}{0.15cm}
-%%                   \setlength{\itemindent}{0.15cm}
-%%                   \setlength{\labelsep}{0cm}
-%%                   \setlength{\parsep}{0.2 ex}
-%%                   \setlength{\itemsep}{1 mm}
-%%       \setlength{\topsep}{0.0cm}}} %space between title and 1st item
-%%    {\end{list}}
 
 \setlength{\parskip}{0mm}
 \setlength{\parindent}{0mm}
-\lstset{language=C}
-
-\newcommand\negBeforeCode{}
-\newcommand\negAfterCode{}

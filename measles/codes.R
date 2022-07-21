@@ -41,7 +41,7 @@ rproc <- Csnippet("
   
   // white noise (extrademographic stochasticity)
   dw = rgammawn(sigmaSE,dt);
-  
+
   rate[0] = foi*dw/dt;  // stochastic force of infection
   rate[1] = mu;         // natural S death
   rate[2] = sigma;      // rate of ending of latent stage
@@ -53,9 +53,9 @@ rproc <- Csnippet("
   births = rpois(br*dt);
   
   // transitions between classes
-  reulermultinom(2,S,&rate[0],dt,&trans[0]);
-  reulermultinom(2,E,&rate[2],dt,&trans[2]);
-  reulermultinom(2,I,&rate[4],dt,&trans[4]);
+  reulermultinom(2, S, &rate[0], dt, &trans[0]);
+  reulermultinom(2, E, &rate[2], dt, &trans[2]);
+  reulermultinom(2, I, &rate[4], dt, &trans[4]);
 
   S += births   - trans[0] - trans[1];
   E += trans[0] - trans[2] - trans[3];

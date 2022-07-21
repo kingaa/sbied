@@ -3004,7 +3004,7 @@ div.tocify {
 <a class="sourceLine" id="cb5-26" title="26"><span class="st">  </span></a>
 <a class="sourceLine" id="cb5-27" title="27"><span class="st">  // white noise (extrademographic stochasticity)</span></a>
 <a class="sourceLine" id="cb5-28" title="28"><span class="st">  dw = rgammawn(sigmaSE,dt);</span></a>
-<a class="sourceLine" id="cb5-29" title="29"><span class="st">  </span></a>
+<a class="sourceLine" id="cb5-29" title="29"></a>
 <a class="sourceLine" id="cb5-30" title="30"><span class="st">  rate[0] = foi*dw/dt;  // stochastic force of infection</span></a>
 <a class="sourceLine" id="cb5-31" title="31"><span class="st">  rate[1] = mu;         // natural S death</span></a>
 <a class="sourceLine" id="cb5-32" title="32"><span class="st">  rate[2] = sigma;      // rate of ending of latent stage</span></a>
@@ -3016,9 +3016,9 @@ div.tocify {
 <a class="sourceLine" id="cb5-38" title="38"><span class="st">  births = rpois(br*dt);</span></a>
 <a class="sourceLine" id="cb5-39" title="39"><span class="st">  </span></a>
 <a class="sourceLine" id="cb5-40" title="40"><span class="st">  // transitions between classes</span></a>
-<a class="sourceLine" id="cb5-41" title="41"><span class="st">  reulermultinom(2,S,&amp;rate[0],dt,&amp;trans[0]);</span></a>
-<a class="sourceLine" id="cb5-42" title="42"><span class="st">  reulermultinom(2,E,&amp;rate[2],dt,&amp;trans[2]);</span></a>
-<a class="sourceLine" id="cb5-43" title="43"><span class="st">  reulermultinom(2,I,&amp;rate[4],dt,&amp;trans[4]);</span></a>
+<a class="sourceLine" id="cb5-41" title="41"><span class="st">  reulermultinom(2, S, &amp;rate[0], dt, &amp;trans[0]);</span></a>
+<a class="sourceLine" id="cb5-42" title="42"><span class="st">  reulermultinom(2, E, &amp;rate[2], dt, &amp;trans[2]);</span></a>
+<a class="sourceLine" id="cb5-43" title="43"><span class="st">  reulermultinom(2, I, &amp;rate[4], dt, &amp;trans[4]);</span></a>
 <a class="sourceLine" id="cb5-44" title="44"></a>
 <a class="sourceLine" id="cb5-45" title="45"><span class="st">  S += births   - trans[0] - trans[1];</span></a>
 <a class="sourceLine" id="cb5-46" title="46"><span class="st">  E += trans[0] - trans[2] - trans[3];</span></a>

@@ -20,7 +20,7 @@ plot.color <- "black"
 
 \begin{document}
 
-<<prelims,echo=F,cache=F>>=
+<<prelims,echo=FALSE,cache=FALSE>>=
 @
 
 \maketitle
@@ -77,7 +77,7 @@ plot.color <- "black"
   \end{itemize}
   <<load-data,echo=FALSE>>=
   @
-  <<some-data-plot,echo=F,eval=F>>=
+  <<some-data-plot,echo=FALSE,eval=FALSE>>=
   measles %>%
     subset(town %in% c("London","Liverpool","Hastings")) %>%
     ggplot(aes(x=date,y=cases))+
@@ -137,7 +137,7 @@ plot.color <- "black"
 \end{frame}
 
 \begin{frame}{Map of cities in the analysis}
-  <<map,echo=F>>=
+  <<map,echo=FALSE>>=
   read_csv("data/GB_Coast.csv") %>%
     rename(long=Long,lat=Lat) -> coast
 
@@ -151,7 +151,7 @@ plot.color <- "black"
 \end{frame}
 
 \begin{frame}{City case counts I: smallest 8 cities}
-  <<dataplot,echo=F,fig.height=4>>=
+  <<dataplot,echo=FALSE,fig.height=4>>=
   demog %>%
     group_by(town) %>%
     summarize(mean.pop=mean(pop)) %>%
@@ -169,7 +169,7 @@ plot.color <- "black"
 \end{frame}
 
 \begin{frame}{City case counts II: largest 8 cities}
-  <<dataplot2,echo=F,fig.height=4>>=
+  <<dataplot2,echo=FALSE,fig.height=4>>=
   measles %>%
     mutate(town=ordered(town,levels=meanpop$town)) %>%
     filter(town %in% meanpop$town[13:20]) %>%
@@ -202,7 +202,7 @@ plot.color <- "black"
    }",type="grViz",engine="dot",height=300,width=800)
   @
   \begin{center}
-    \includegraphics{./model_diagram.png}
+    \includegraphics[width=0.5\linewidth]{./model_diagram.png}
   \end{center}
 \end{frame}
 
@@ -242,36 +242,37 @@ plot.color <- "black"
 
 \begin{frame}[fragile]{Implementation in \package{pomp}}
   \begin{itemize}
-  \item We'll load the packages we'll need, and set the random seed, to allow reproducibility.
-  \item Note that we'll be making heavy use of the \package{tidyverse} methods.
-  \item Also, we'll be using \package{ggplot2} for plotting: see \link{https://kingaa.github.io/R_Tutorial/viz.html\#a-more-systematic-approach-the-grammar-of-graphics}{this brief tutorial}.
-  \item Finally, we'll use the convenient \package{magrittr} syntax, which is explained \link{https://kingaa.github.io/R_Tutorial/munging.html\#the-magrittr-syntax}{here}.
+  \item Codes that implement the model in \package{pomp} are to be found on \link{./codes.R}{the course website}.
+  \item In those codes, we first load the needed packages and set the random seed, to allow reproducibility.
+  \item Note that the codes make heavy use of the \package{ggplot2} plotting package and \package{tidyverse} methods.
+  \item In particular, we use the convenient \package{magrittr} pipe syntax, which is explained \link{https://kingaa.github.io/R_Tutorial/munging.html\#the-magrittr-syntax}{elsewhere}.
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Data and covariates}
+\begin{frame}[fragile,allowframebreaks]{Data and covariates}
   \begin{itemize}
-  \item We load the data and covariates.
-    The data are measles reports from 20 cities in England and Wales.
+  \item The data are measles reports from 20 cities in England and Wales.
   \item We also have information on the population sizes and birth-rates in these cities;
     we'll treat these variables as covariates.
-  \item We will illustrate the pre-processing of the measles and demography data using London as an example.
+  \item The codes illustrate the pre-processing of the measles and demography data using London as an example.
   \end{itemize}
 
-  <<london-data,echo=FALSE>>=
-  @
-\end{frame}
+  \framebreak
 
-\begin{frame}[allowframebreaks]{Data and covariate plots}
-  <<data-plot,fig.height=3,echo=FALSE>>=
+  Measles case reports from London:
+  
+  <<london-data,include=FALSE>>=
+  @
+  <<data-plot,fig.height=3,out.width="0.8\\textwidth",echo=FALSE>>=
   dat %>% ggplot(aes(x=time,y=cases))+geom_line()
   @
 
-  Now, we smooth the covariates. Note that we delay the entry of newborns into the susceptible pool.
-  <<prep-covariates,echo=FALSE>>=
-  @
+  \framebreak
 
-  <<covarplot,out.width="1\\textwidth",echo=FALSE>>=
+  We smooth the covariates and delay the entry of newborns into the susceptible pool.
+  <<prep-covariates,include=FALSE>>=
+  @
+  <<covarplot,out.width="0.8\\textwidth",echo=FALSE>>=
   library(cowplot)
   demogLondon %>%
     select(year,pop) %>%
@@ -314,15 +315,48 @@ plot.color <- "black"
   \end{enumerate}
 \end{frame}
 
-<<rproc,include=F>>=
+<<rproc,include=FALSE>>=
 @
 
 \begin{frame}[fragile,allowframebreaks]{Implementation of the process model}
-\begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
-<<rproc_listing,echo=FALSE,results="asis">>=
-cat(rproc@text)
+
+  Let's walk through the rprocess C snippet.
+  
+<<rproc_listing1,echo=FALSE>>=
+library(stringi)
+txt <- stri_split_lines1(rproc@text)
+cat(txt[2:9],sep="\n")
+@
+
+\framebreak
+
+<<rproc_listing1a,echo=FALSE>>=
+cat(txt[11:19],sep="\n")
+@
+
+\framebreak
+
+<<rproc_listing2,echo=FALSE>>=
+cat(txt[21:28],sep="\n")
 @ 
-\end{lstlisting}
+
+\framebreak
+
+<<rproc_listing3,echo=FALSE>>=
+cat(txt[30:35],sep="\n")
+@ 
+
+\framebreak
+
+<<rproc_listing4,echo=FALSE>>=
+cat(txt[37:43],sep="\n")
+@ 
+
+\framebreak
+
+<<rproc_listing5,echo=FALSE>>=
+cat(txt[45:50],sep="\n")
+@ 
 \end{frame}
 
 \begin{frame}[fragile]{Process model observations}
@@ -337,52 +371,45 @@ cat(rproc@text)
   The following codes assume that the fraction of the population in each of the four compartments is known.
   <<rinit,include=FALSE>>=
   @
-  \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
-    <<rinit_listing,echo=FALSE,results="asis">>=
-    cat(rinit@text)
-    @ 
-  \end{lstlisting}
+  <<rinit_listing,echo=FALSE>>=
+  cat(rinit@text)
+  @ 
 \end{frame}
 
-\begin{frame}[fragile]{The measurement model I}
+\begin{frame}[fragile,allowframebreaks]{Measurement model}
   \begin{itemize}
   \item We'll model both under-reporting and measurement error.
-  \item We want $\mathbb{E}[\text{cases}|C] = \rho\,C$, where $C$ is the true incidence and $0<\rho<1$ is the reporting efficiency.
-  \item We'll also assume that $\mathrm{Var}[\text{cases}|C] = \rho\,(1-\rho)\,C + (\psi\,\rho\,C)^2$, where $\psi$ quantifies overdispersion.
+  \item We want $\mathbb{E}[\mathrm{cases}|C] = \rho\,C$, where $C$ is the true incidence and $0<\rho<1$ is the reporting efficiency.
+  \item We'll also assume that $\mathrm{Var}[\mathrm{cases}|C] = \rho\,(1-\rho)\,C + (\psi\,\rho\,C)^2$, where $\psi$ quantifies overdispersion.
   \item Note that when $\psi=0$, the variance-mean relation is that of the binomial distribution.
     To be specific, we'll choose
-    $\text{cases|C} \sim f(\cdot|\rho,\psi,C)$, where
-    \begin{align*}
-      f(c|\rho,\psi,C) \\
-      =&\Phi(c+\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2)-\\
-      &\Phi(c-\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2)
-    \end{align*}
-
-    %$$f(c|\rho,\psi,C) = \Phi(c+\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2)-\Phi(c-\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2),$$
-    where $\Phi(x,\mu,\sigma^2)$ is the c.d.f. of the normal distribution with mean $\mu$ and variance $\sigma^2$.
+    $\mathrm{cases}\;\vert\;C \sim f(\cdot\;\vert\;\rho,\psi,C)$, where
+    \begin{equation*}
+      \begin{split}
+        f(c\;\vert\;\rho,\psi,C) = &\Phi(c+\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2)\\
+        &-\Phi(c-\tfrac{1}{2},\rho\,C,\rho\,(1-\rho)\,C+(\psi\,\rho\,C)^2).
+      \end{split}
+    \end{equation*}
+    Here, $\Phi(x,\mu,\sigma^2)$ is the c.d.f. of the normal distribution with mean $\mu$ and variance $\sigma^2$.
   \end{itemize}
-\end{frame}
 
-\begin{frame}[fragile]{The measurement model II}
-  The following computes $\mathbb{P}[\text{cases}|C]$.
+  \framebreak
+
+  The following computes $\mathbb{P}[\mathrm{cases}|C]$.
   <<dmeasure,include=FALSE>>=
   @
-  \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
-    <<dmeas_listing,echo=FALSE,results="asis">>=
-    cat(dmeas@text)
-    @ 
-  \end{lstlisting}
-\end{frame}
+  <<dmeas_listing,echo=FALSE>>=
+  cat(dmeas@text)
+  @ 
 
-\begin{frame}[fragile]{Case simulations}
-  The following codes simulate $\text{cases} | C$.
+  \framebreak
+  
+  The following codes simulate $\mathrm{cases} | C$.
   <<rmeasure,include=FALSE>>=
   @
-  \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
-    <<rmeas_listing,echo=FALSE,results="asis">>=
-    cat(rmeas@text)
-    @ 
-  \end{lstlisting}
+  <<rmeas_listing,echo=FALSE>>=
+  cat(rmeas@text)
+  @ 
 \end{frame}
 
 \begin{frame}[fragile]{Constructing the pomp object}
@@ -396,7 +423,7 @@ cat(rproc@text)
 
 \begin{frame}[fragile]{Estimates from \citet{He2010}}
   \citet{He2010} estimated the parameters of this model.
-  The full set is included in the \Rlanguage code accompanying this document, where they are read into a data frame called \code{mles}.
+  The full set of estimates is included in the \Rlanguage code accompanying this document, where they are read into a data frame called \code{mles}.
   <<mles,include=FALSE>>=
   @
   
@@ -405,25 +432,25 @@ cat(rproc@text)
   
   We verify that we get the same likelihood as \citet{He2010}.
 
-  <<pfilter1a,eval=F>>=
+  <<pfilter1a,eval=FALSE>>=
   @
-  <<pfilter1_eval,eval=T,include=F,cache=F>>=
+  <<pfilter1_eval,eval=TRUE,include=FALSE,cache=FALSE>>=
   bake("pfilter1.rds",{
     <<pfilter1a>>
   }) -> pfs
   @ 
-  <<pfilter1b,eval=T,size="small">>=
+  <<pfilter1b,eval=TRUE,size="small">>=
   @
 \end{frame}
 
 \subsection{Simulations}
 
 \begin{frame}[fragile]{Simulations at the MLE}
-  <<sims1,fig.height=2,echo=T>>=
+  <<sims1,fig.height=2,echo=TRUE>>=
   m1 %>%
     simulate(params=theta,nsim=3,format="d",include.data=TRUE) %>%
     ggplot(aes(x=time,y=cases,group=.id,color=(.id=="data")))+
-    guides(color=FALSE)+
+    guides(color="none")+
     geom_line()+facet_wrap(~.id,ncol=2)
   @
 \end{frame}
@@ -443,7 +470,7 @@ cat(rproc@text)
 
   <<transforms>>=
   @
-  <<fold-transforms,include=F,purl=T>>=
+  <<fold-transforms,include=FALSE,purl=TRUE>>=
   @ 
 
 \end{frame}
@@ -490,7 +517,7 @@ cat(rproc@text)
     data=x,
     font=2,
     bty='l',
-    ann=F,
+    ann=FALSE,
     xaxt='n',
     log='x',
     xlim=c(0.001,100),
@@ -514,7 +541,7 @@ cat(rproc@text)
     data=x,
     font=2,
     bty='l',
-    ann=F,
+    ann=FALSE,
     xaxt='n',
     log='x',
     xlim=c(0.001,100),
@@ -559,7 +586,7 @@ cat(rproc@text)
     data=x,
     font=2,
     bty='l',
-    ann=F,
+    ann=FALSE,
     xaxt='n',
     xlim=c(0,1),
     ylim=max(x$loglik)+c(-10,1)
@@ -582,7 +609,7 @@ cat(rproc@text)
     data=x,
     font=2,
     bty='l',
-    ann=F,
+    ann=FALSE,
     xaxt='n',
     xlim=c(0,1),
     ylim=max(x$loglik)+c(-10,1)
@@ -622,7 +649,7 @@ cat(rproc@text)
     data=x,
     font=2,
     bty='l',
-    ann=F,
+    ann=FALSE,
     xaxt='n',
     xlim=c(0,1),
     ylim=max(x$loglik)+c(-10,1)
@@ -645,7 +672,7 @@ cat(rproc@text)
     data=x,
     font=2,
     bty='l',
-    ann=F,
+    ann=FALSE,
     xaxt='n',
     xlim=c(0,1),
     ylim=max(x$loglik)+c(-10,1)
@@ -662,7 +689,6 @@ cat(rproc@text)
 \begin{frame}[fragile]{Birth delay}
   <<delay,eval=TRUE,echo=FALSE,results="hide",fig.height=5,out.width="0.7\\textwidth">>=
   x <- read.csv('data/delay.csv',row.names=1)
-#  par(mai=c(1,0.6,0.2,0.2))
   plot(
     x$delay,
     x$loglik,
@@ -734,7 +760,7 @@ cat(rproc@text)
     data=ccsdata,
     bty='l',
     log='x',
-    ann=F,
+    ann=FALSE,
     pch=20,
     xlim=range(ccssim$pop),
     ylim=c(0,1)
@@ -778,7 +804,7 @@ cat(rproc@text)
     data=x,
     font=2,
     bty='l',
-    ann=F,
+    ann=FALSE,
     xaxt='n',
     xlim=c(10,100),
     ylim=max(x$loglik)+c(-10,1)
@@ -801,7 +827,7 @@ cat(rproc@text)
     data=x,
     font=2,
     bty='l',
-    ann=F,
+    ann=FALSE,
     xaxt='n',
     xlim=c(10,100),
     ylim=max(x$loglik)+c(-10,1)
@@ -901,7 +927,7 @@ $r=\mathrm{cor}_{S}({\cdot},{N_{1950}})$ (Spearman rank correlation)
     loglik~sigSE,
     data=x,
     bty='u',
-    ann=F,
+    ann=FALSE,
     xaxt='n',
     yaxt='n',
     log='x',
@@ -946,7 +972,7 @@ $r=\mathrm{cor}_{S}({\cdot},{N_{1950}})$ (Spearman rank correlation)
     loglik~sigSE,
     data=x,
     bty='l',
-    ann=F,
+    ann=FALSE,
     xaxt='n',
     yaxt='n',
     log='x',
@@ -981,7 +1007,7 @@ $r=\mathrm{cor}_{S}({\cdot},{N_{1950}})$ (Spearman rank correlation)
 \end{frame}
 
 \begin{frame}[fragile]{Simulations at the MLE}
-  <<sims2,echo=F,fig.height=4>>=
+  <<sims2,echo=FALSE,fig.height=4>>=
   m1 %>%
     simulate(params=theta,nsim=100,format="d",include.data=TRUE) %>%
     select(time,.id,cases) -> simdat
@@ -1002,7 +1028,7 @@ $r=\mathrm{cor}_{S}({\cdot},{N_{1950}})$ (Spearman rank correlation)
     scale_fill_manual(values=c(data="blue",simulation="red"))+
     geom_ribbon(alpha=0.2,color=NA)+
     geom_line()+
-    guides(fill=FALSE)+
+    guides(fill="none")+
     labs(y="cases",x="",title="London") -> pl1
 
   simdat %>%
@@ -1014,7 +1040,7 @@ $r=\mathrm{cor}_{S}({\cdot},{N_{1950}})$ (Spearman rank correlation)
     geom_line()+
     scale_color_manual(values=c(data="blue",simulation="red"))+
     scale_alpha_manual(values=c(data=1,simulation=0.3))+
-    guides(color=FALSE,alpha=FALSE) -> pl2
+    guides(color="none",alpha="none") -> pl2
 
   library(cowplot)
   plot_grid(pl1,pl2,ncol=1,align="hv",axis="tblr")
