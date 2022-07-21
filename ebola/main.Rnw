@@ -109,7 +109,7 @@ options(dplyr.summarise.inform=FALSE)
 
 \begin{frame}[fragile,allowframebreaks]{Situation-report data}
 
-  The data and \package{pomp} codes used to represent the transmission models are presented in \link{./model.html}{a supplement}.
+  The data and \pkg{pomp} codes used to represent the transmission models are presented in \link{./model.html}{a supplement}.
 
   The data we focus on here are from the WHO Situation Report of 1 October 2014.
   Supplementing these data are population estimates for the three countries.
@@ -244,7 +244,7 @@ options(dplyr.summarise.inform=FALSE)
   \item
     Shortcomings of the model should manifest themselves as discrepancies between the model-predicted distribution of such statistics and their value on the data.
   \item
-    \package{pomp} provides tools to facilitate this process.
+    \pkg{pomp} provides tools to facilitate this process.
   \item
     Specifically, the \code{probe} function applies a set of user-specified summary statistics or \emph{probes}, to the model and the data, and quantifies the degree of disagreement in several ways.
     
@@ -338,7 +338,7 @@ options(dplyr.summarise.inform=FALSE)
 \begin{frame}{\myexercise. The Sierra Leone outbreak}
 
   Apply probes to investigate the extent to which the SEIR model above is an adequate description of the data from the Sierra Leone outbreak.
-  Have a look at the probes provided with \package{pomp}: \code{?basic.probes}.
+  Have a look at the probes provided with \pkg{pomp}: \code{?basic.probes}.
   Try also to come up with some informative probes of your own. Discuss the implications of your findings.
 \end{frame}
 
@@ -519,7 +519,7 @@ options(dplyr.summarise.inform=FALSE)
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
-    Produced with \Rlanguage version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+    Produced with \Rlanguage version \Sexpr{getRversion()} and \pkg{pomp} version \Sexpr{packageVersion("pomp")}.
 
   \item
     Compiled on \today.

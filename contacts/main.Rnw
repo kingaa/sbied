@@ -39,7 +39,7 @@ registerDoRNG(2050320976)
 
   \item See how POMP methods can be used to understand the outcomes of a longitudinal behavioral survey on sexual contact rates.
 
-  \item Introduce the \Rlanguage package \package{panelPomp} that extends \package{pomp} to panel data.
+  \item Introduce the \Rlanguage package \pkg{panelPomp} that extends \pkg{pomp} to panel data.
 
   \end{enumerate}
 \end{frame}
@@ -278,7 +278,7 @@ registerDoRNG(2050320976)
 
 \end{frame}
 
-\section{PanelPOMP models and the \package{panelPomp} package}
+\section{PanelPOMP models and the \pkg{panelPomp} package}
 
 \begin{frame}[fragile] 
 
@@ -304,15 +304,15 @@ registerDoRNG(2050320976)
 
 \begin{frame}[fragile] 
 
-  \frametitle{Using the \package{panelPomp} R package}
+  \frametitle{Using the \pkg{panelPomp} R package}
 
   \bi
 
-\item The main task of \package{panelPomp} beyond \package{pomp} is to handle the additional book-keeping necessitated by the unit structure.
+\item The main task of \pkg{panelPomp} beyond \pkg{pomp} is to handle the additional book-keeping necessitated by the unit structure.
 
 \item PanelPOMP models also motivate methodological developments to deal with large datasets and the high dimensional parameter vectors that can result from unit-specific parameters.
 
-\item A \code{panelPomp} object for the above contact data and model is provided by \code{contacts} in \package{panelPomp}.
+\item A \code{panelPomp} object for the above contact data and model is provided by \code{contacts} in \pkg{panelPomp}.
 
   \ei
 
@@ -373,7 +373,7 @@ Suppose a PanelPOMP model has all its parameters unit-specific. Is there anythin
 
 \begin{frame}[fragile]{\myexercise. Methods for panelPomps}
 
-How would you find the \package{panelPomp} package methods available for working with a \code{panelPomp} object?  
+How would you find the \pkg{panelPomp} package methods available for working with a \code{panelPomp} object?  
 
 
   \vspace{3mm}
@@ -559,7 +559,7 @@ How would you find the \package{panelPomp} package methods available for working
 
 \item The panel iterated filtering (PIF) algorithm of \citet{Breto2019} applies the IF2 algorithm to a POMP model constructed by concanenating the collection of panels.
 
-\item PIF is implemented in \package{panelPomp} as the \code{mif2} method for class \code{panelPomp}. 
+\item PIF is implemented in \pkg{panelPomp} as the \code{mif2} method for class \code{panelPomp}. 
 
 \item Comparing \code{?panelPomp::mif2} with \code{?pomp::mif2} reveals that the only difference in the arguments is that the \code{params} argument for \code{pomp::mif2} becomes \code{shared.start} and \code{specific.start} for \code{panelPomp::mif2}.
 
@@ -609,7 +609,7 @@ stew("mif1.rda",{
 \begin{frame}[fragile]
 \frametitle{Some considerations for likelihood evaluations}
 
-Similar likelihood evaluation issues arise for \package{panelPomp} as for {pomp}.
+Similar likelihood evaluation issues arise for \pkg{panelPomp} as for {pomp}.
 \bi
 
 \item The preliminary likelihood estimated as a consequence of running \code{mif2} and extracted here by \code{sapply(m2,logLik)} does not correspond to the actual, fixed parameter, model. It is the sequential Monte Carlo estimate of the likelihood from the last filtering iteration, and therefore will have some perturbation of the parameters.
@@ -681,7 +681,7 @@ panel_logmeanexp(pf3_loglik_matrix,MARGIN=2,se=T)
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
-    Produced with \package{R} version \Sexpr{getRversion()}, \package{pomp} version \Sexpr{packageVersion("pomp")}, and \package{panelPomp} version \Sexpr{packageVersion("panelPomp")}.
+    Produced with \pkg{R} version \Sexpr{getRversion()}, \pkg{pomp} version \Sexpr{packageVersion("pomp")}, and \pkg{panelPomp} version \Sexpr{packageVersion("panelPomp")}.
 
   \item
     Compiled on \today.

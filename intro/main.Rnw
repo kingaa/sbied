@@ -36,7 +36,7 @@ source("../_includes/setup.R", local = knitr::knit_global())
   \begin{itemize}
   \item To understand the motivations for simulation-based inference in the study of epidemiological and ecological systems.
   \item To introduce the class of partially observed Markov process (POMP) models.
-  \item To introduce the \package{pomp} \Rlanguage package.
+  \item To introduce the \pkg{pomp} \Rlanguage package.
   \end{itemize}
 \end{frame}
 
@@ -86,7 +86,7 @@ source("../_includes/setup.R", local = knitr::knit_global())
   \item To teach statistically and computationally efficient approaches for performing scientific inference using POMP models.
   \item To give students the ability to formulate models of their own.
   \item To give students opportunities to work with such inference methods.
-  \item To familiarize students with the \package{pomp} package.
+  \item To familiarize students with the \pkg{pomp} package.
   \item To provide documented examples for adaptation and re-use.
   \end{enumerate}
 \end{frame}
@@ -192,22 +192,22 @@ source("../_includes/setup.R", local = knitr::knit_global())
   \end{itemize}
 \end{frame}
 
-\section{The \package{pomp} package}
+\section{The \pkg{pomp} package}
 
-\begin{frame}{The \package{pomp} package for POMP models}
+\begin{frame}{The \pkg{pomp} package for POMP models}
   \begin{itemize}
-  \item \package{pomp} is an  \Rlanguage package for data analysis using partially observed Markov process (POMP) models \citep{King2016}.
+  \item \pkg{pomp} is an  \Rlanguage package for data analysis using partially observed Markov process (POMP) models \citep{King2016}.
   \item Note the distinction:
-    lower case \package{pomp} is a software package;
+    lower case \pkg{pomp} is a software package;
     upper case POMP is a class of models.
-  \item \package{pomp} builds methodology for POMP models in terms of arbitrary user-specified POMP models.
-  \item \package{pomp} provides tools, documentation, and examples to help users specify POMP models.
-  \item \package{pomp} provides a platform for modification and sharing of models, data-analysis workflows, and methodological development.
+  \item \pkg{pomp} builds methodology for POMP models in terms of arbitrary user-specified POMP models.
+  \item \pkg{pomp} provides tools, documentation, and examples to help users specify POMP models.
+  \item \pkg{pomp} provides a platform for modification and sharing of models, data-analysis workflows, and methodological development.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Structure of the \package{pomp} package}
-  It is useful to divide the \package{pomp} package functionality into different levels:
+\begin{frame}{Structure of the \pkg{pomp} package}
+  It is useful to divide the \pkg{pomp} package functionality into different levels:
   \begin{itemize}
   \item Basic model components
   \item Workhorses
@@ -267,7 +267,7 @@ source("../_includes/setup.R", local = knitr::knit_global())
   \item \code{nlf\_objfun}: nonlinear forecasting
   \end{itemize}
   \emph{Objective function methods}:
-  among the estimation algorithms just listed, four are methods that construct stateful objective functions that can be optimized using general-purpose numerical optimization algorithms such as \code{optim}, \code{subplex}, or the optimizers in the \package{nloptr} package.
+  among the estimation algorithms just listed, four are methods that construct stateful objective functions that can be optimized using general-purpose numerical optimization algorithms such as \code{optim}, \code{subplex}, or the optimizers in the \pkg{nloptr} package.
 \end{frame}
 
 \mode<presentation>{
@@ -293,7 +293,7 @@ source("../_includes/setup.R", local = knitr::knit_global())
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
-    Produced with \Rlanguage version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+    Produced with \Rlanguage version \Sexpr{getRversion()} and \pkg{pomp} version \Sexpr{packageVersion("pomp")}.
 
   \item
     Compiled on \today.
@@ -302,7 +302,7 @@ source("../_includes/setup.R", local = knitr::knit_global())
 
   \link{index.html}{Back to Lesson}
 
-  \link{https://kingaa.github.io/pomp/}{\package{pomp} homepage}
+  \link{https://kingaa.github.io/pomp/}{\pkg{pomp} homepage}
   
 \end{frame}
 

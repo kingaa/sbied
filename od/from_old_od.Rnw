@@ -261,7 +261,7 @@ lines(pred.mean(pf_sigma)["R1",]*mle_sigma_dot["rho"],lty="dotted",col="red")
 
 \item This is similar to the array of random starting values used for the global paramter search, but with \code{rho} varying systematically.
 
-\item The \package{pomp} function \code{profileDesign} is useful for constructing this array.
+\item The \pkg{pomp} function \code{profileDesign} is useful for constructing this array.
 
 \ei
 

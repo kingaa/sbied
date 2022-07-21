@@ -32,8 +32,8 @@ set.seed(1350254336)
 \begin{frame}{Introduction}
   \begin{itemize}
   \item This tutorial covers likelihood estimation via the method of iterated filtering.
-  \item It presupposes familiarity with building partially observed Markov process (POMP) objects in the \Rlanguage package \package{pomp} \citep{King2016}. 
-  \item This tutorial follows on from the \link{../pfilter/slides.pdf}{topic of particle filtering} (also known as sequential Monte Carlo) via \code{pfilter} in \package{pomp}. 
+  \item It presupposes familiarity with building partially observed Markov process (POMP) objects in the \Rlanguage package \pkg{pomp} \citep{King2016}. 
+  \item This tutorial follows on from the \link{../pfilter/slides.pdf}{topic of particle filtering} (also known as sequential Monte Carlo) via \code{pfilter} in \pkg{pomp}. 
   \end{itemize}
 \end{frame}
 
@@ -306,7 +306,7 @@ set.seed(1350254336)
 
 \begin{frame}[fragile,allowframebreaks=0.8]{Parallel computing}
   It will be helpful to parallelize most of the computations.
-  \link{https://kingaa.github.io/sbied/pfilter/}{Lesson 3} discusses how to accomplish this using \package{foreach}.
+  \link{https://kingaa.github.io/sbied/pfilter/}{Lesson 3} discusses how to accomplish this using \pkg{foreach}.
 
   <<parallel-setup,cache=FALSE>>=
   library(foreach)
@@ -575,7 +575,7 @@ set.seed(1350254336)
   \begin{itemize}
   \item The above codes run one search from each of \Sexpr{nrow(guesses)} starting values.
   \item Each search consists of an initial run of \Sexpr{nrow(traces(mf1))-1} IF2 iterations, followed by another 100 iterations.
-  \item These codes exhibit a general \package{pomp} behavior:
+  \item These codes exhibit a general \pkg{pomp} behavior:
     \begin{itemize}
     \item Re-running a command on an object (i.e., \code{mif2} on \code{mf1}) created by the same command preserves the algorithmic arguments.
     \item In particular, running \code{mif2} on the result of a \code{mif2} computation re-runs IF2 from the endpoint of the first run.
@@ -1253,7 +1253,7 @@ set.seed(1350254336)
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
-    Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+    Produced with R version \Sexpr{getRversion()} and \pkg{pomp} version \Sexpr{packageVersion("pomp")}.
 
   \item
     Compiled on \today.

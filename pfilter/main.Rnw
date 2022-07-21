@@ -308,7 +308,7 @@ set.seed(1350254336)
   Most machines nowadays have multiple cores and using this computational capacity is as simple as:
   \begin{enumerate}[(i)]
   \item letting \Rlanguage know you plan to use multiple processors;
-  \item using the parallel for loop provided by the \package{foreach} package; and
+  \item using the parallel for loop provided by the \pkg{foreach} package; and
   \item paying proper attention to the use of parallel random number generators (RNG).
   \end{enumerate}
   For example:
@@ -319,13 +319,13 @@ set.seed(1350254336)
   registerDoParallel()
   @ 
   
-  The first two lines above load the \package{foreach} and \package{doParallel} packages, the latter being a ``backend'' for the \package{foreach} package.
-  The next line tells \package{foreach} that we will use the \package{doParallel} backend.
+  The first two lines above load the \pkg{foreach} and \pkg{doParallel} packages, the latter being a ``backend'' for the \pkg{foreach} package.
+  The next line tells \pkg{foreach} that we will use the \pkg{doParallel} backend.
   By default, \Rlanguage will guess how many cores are available and will run about half this number of concurrent \Rlanguage processes.
 \end{frame}
 
 \begin{frame}[fragile]{Parallel random number generators (RNG)}
-  To initialize a parallel RNG, we use the \package{doRNG} package.
+  To initialize a parallel RNG, we use the \pkg{doRNG} package.
   The following ensures that the parallel computations will be both mutually independent and reproducible.
   
   <<pf1,eval=FALSE,purl=FALSE>>=
@@ -334,7 +334,7 @@ set.seed(1350254336)
   @ 
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]{Particle filtering in \package{pomp}}
+\begin{frame}[fragile,allowframebreaks]{Particle filtering in \pkg{pomp}}
 
   Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our measles-outbreak case study.
   Here, we repeat the construction of the SIR model we looked at earlier, using parameters obtained by looking at simulations.
@@ -344,7 +344,7 @@ set.seed(1350254336)
   source("https://kingaa.github.io/sbied/pfilter/model.R")
   @
   
-  In \package{pomp}, the basic particle filter is implemented in the command \code{pfilter}.
+  In \pkg{pomp}, the basic particle filter is implemented in the command \code{pfilter}.
   We must choose the number of particles to use by setting the \code{Np} argument.
 
   <<pfilter-1,cache=TRUE>>=
@@ -691,7 +691,7 @@ set.seed(1350254336)
   \item
     Comment on the bias of your estimate.
   \item
-    Use \package{doParallel} to take advantage of multiple cores on your computer to improve your estimate.
+    Use \pkg{doParallel} to take advantage of multiple cores on your computer to improve your estimate.
   \end{itemize}
 
   \link{./loglikest.html}{Worked solution to the Exercise}
@@ -860,7 +860,7 @@ set.seed(1350254336)
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
-    Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+    Produced with R version \Sexpr{getRversion()} and \pkg{pomp} version \Sexpr{packageVersion("pomp")}.
 
   \item
     Compiled on \today.

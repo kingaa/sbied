@@ -63,7 +63,7 @@ on the Consett measles outbreak dataset.
 
 \item We think about scientific interpretations of overdispersion if it is statistically evident.
 
-\item We demonstrate a way to implement overdispersion for POMP models using \package{pomp}.
+\item We demonstrate a way to implement overdispersion for POMP models using \pkg{pomp}.
 
 \end{itemize}
 
@@ -802,7 +802,7 @@ consett2_step <- Csnippet("
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
-    Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+    Produced with R version \Sexpr{getRversion()} and \pkg{pomp} version \Sexpr{packageVersion("pomp")}.
 
   \item
     Compiled on \today.

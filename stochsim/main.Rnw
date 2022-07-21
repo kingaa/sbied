@@ -36,7 +36,7 @@ registerDoRNG(2488820)
   \item We develop the concept of a \myemph{compartmental model} for which we specify \myemph{rates} for the flows between compartments.
   \item We show how deterministic and stochastic versions of a compartmental model are derived and related.
   \item We introduce Euler's method to simulate from dynamic models.
-  \item We specify deterministic and stochastic compartmental models in \package{pomp} using Euler method simulation.
+  \item We specify deterministic and stochastic compartmental models in \pkg{pomp} using Euler method simulation.
   \end{enumerate}
 
 \end{frame}
@@ -329,7 +329,7 @@ registerDoRNG(2488820)
 
 \end{frame}
 
-\section{Compartment models in \package{pomp}}
+\section{Compartment models in \pkg{pomp}}
 
 \subsection{A basic pomp model for measles}
 
@@ -391,11 +391,11 @@ registerDoRNG(2488820)
 
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks]{Implementing the SIR model in \package{pomp}}
+\begin{frame}[fragile,allowframebreaks]{Implementing the SIR model in \pkg{pomp}}
 
   \begin{itemize}
 
-  \item To implement the model in \package{pomp}, the first thing we need is a stochastic simulator for the unobserved state process.
+  \item To implement the model in \pkg{pomp}, the first thing we need is a stochastic simulator for the unobserved state process.
 
   \item  We follow method 3 above, modeling the number, $\Delta{N_{SI}}$, moving from S to I over interval $\Delta{t}$ as
     $$\Delta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\beta\,\frac{I}{N}\,\Delta{t}}},$$
@@ -460,7 +460,7 @@ registerDoRNG(2488820)
     }
     @
     
-  \item In \package{pomp} terminology, $H$ is an \myemph{accumulator variable}.
+  \item In \pkg{pomp} terminology, $H$ is an \myemph{accumulator variable}.
     Since we want $H$ to tally only the incidence over the week, we'll need to reset it to zero at the beginning of each week.
     We accomplish this using the \code{accumvars} argument to \code{pomp}:
 
@@ -516,7 +516,7 @@ registerDoRNG(2488820)
 
   \item Although we can always specify basic model components using \Rlanguage functions, as above, we'll typically want the computational speed-up that we can obtain only by using compiled native code.
 
-  \item \package{pomp} provides a facility for doing so with ease, using \myemph{C snippets}.
+  \item \pkg{pomp} provides a facility for doing so with ease, using \myemph{C snippets}.
 
   \item C snippets are small pieces of C code used to specify basic model components.
 
@@ -567,7 +567,7 @@ registerDoRNG(2488820)
            ) -> measSIR
     @
     
-  \item Note that, when using C snippets, one has to tell \package{pomp} which of the variables referenced in the C snippets are state variables and which are parameters.
+  \item Note that, when using C snippets, one has to tell \pkg{pomp} which of the variables referenced in the C snippets are state variables and which are parameters.
     This is accomplished using the \code{statenames} and \code{paramnames} arguments.
     
   \end{itemize}
@@ -677,7 +677,7 @@ registerDoRNG(2488820)
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
-    Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+    Produced with R version \Sexpr{getRversion()} and \pkg{pomp} version \Sexpr{packageVersion("pomp")}.
 
   \item
     Compiled on \today.

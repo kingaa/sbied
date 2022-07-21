@@ -36,7 +36,7 @@ options(
 
   \begin{enumerate}
 
-  \item Demonstrate the use of covariates in \package{pomp} to add demographic data (birth rates and total population) and  seasonality to an epidemiological model.
+  \item Demonstrate the use of covariates in \pkg{pomp} to add demographic data (birth rates and total population) and  seasonality to an epidemiological model.
 
   \item Show how partially observed Markov process (POMP) models and methods can be used to understand transmission dynamics of polio.
 
@@ -118,11 +118,11 @@ options(
 \begin{frame}[fragile]
 
 
-  \frametitle{Covariates in the \package{pomp} package}
+  \frametitle{Covariates in the \pkg{pomp} package}
 
   \begin{itemize}
 
-  \item \package{pomp} provides facilities for including covariates in a pomp object.
+  \item \pkg{pomp} provides facilities for including covariates in a pomp object.
 
   \item Named covariate time series entered via the \code{covar} argument to \code{pomp} are automatically defined within Csnippets used for the \code{rprocess}, \code{dprocess}, \code{rmeasure}, \code{dmeasure} and \code{rinit} arguments.
 
@@ -725,7 +725,7 @@ options(
 
   \item  Rmarkdown/knitr caching is good for relatively small computations, such as producing figures or things that may take a minute or two and are annoying if you have to recompute them every time you make any edits to the text.
 
-  \item  For longer computations, it is good to have full manual control. In \package{pomp}, this is provided by two related functions, \code{stew} and \code{bake}.
+  \item  For longer computations, it is good to have full manual control. In \pkg{pomp}, this is provided by two related functions, \code{stew} and \code{bake}.
 
   \end{itemize}
 
@@ -1322,7 +1322,7 @@ options(
 
   \item The materials build on \link{https://kingaa.github.io/sbied/acknowledge.html}{previous versions of this course and related courses}.
 
-  \item Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+  \item Produced with R version \Sexpr{getRversion()} and \pkg{pomp} version \Sexpr{packageVersion("pomp")}.
 
   \item
     Licensed under the \link{https://creativecommons.org/licenses/by-nc/3.0/}{Creative Commons attribution-noncommercial license}.
@@ -1357,7 +1357,7 @@ options(
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
-    Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+    Produced with R version \Sexpr{getRversion()} and \pkg{pomp} version \Sexpr{packageVersion("pomp")}.
 
   \item
     Compiled on \today.

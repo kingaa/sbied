@@ -39,7 +39,7 @@ plot.color <- "black"
   \begin{itemize}
   \item To display a published case study using plug-and-play methods with non-trivial model complexities.
   \item To show how extra-demographic stochasticity can be modeled.
-  \item To demonstrate the use of covariates in \package{pomp}.
+  \item To demonstrate the use of covariates in \pkg{pomp}.
   \item To demonstrate the use of profile likelihood in scientific inference.
   \item To discuss the interpretation of parameter estimates.
   \item To emphasize the potential need for extra sources of stochasticity in modeling.
@@ -238,14 +238,14 @@ plot.color <- "black"
   \end{itemize}
 \end{frame}
 
-\subsection{Model implementation in \package{pomp}}
+\subsection{Model implementation in \pkg{pomp}}
 
-\begin{frame}[fragile]{Implementation in \package{pomp}}
+\begin{frame}[fragile]{Implementation in \pkg{pomp}}
   \begin{itemize}
-  \item Codes that implement the model in \package{pomp} are to be found on \link{./codes.R}{the course website}.
+  \item Codes that implement the model in \pkg{pomp} are to be found on \link{./codes.R}{the course website}.
   \item In those codes, we first load the needed packages and set the random seed, to allow reproducibility.
-  \item Note that the codes make heavy use of the \package{ggplot2} plotting package and \package{tidyverse} methods.
-  \item In particular, we use the convenient \package{magrittr} pipe syntax, which is explained \link{https://kingaa.github.io/R_Tutorial/munging.html\#the-magrittr-syntax}{elsewhere}.
+  \item Note that the codes make heavy use of the \pkg{ggplot2} plotting package and \pkg{tidyverse} methods.
+  \item In particular, we use the convenient \pkg{magrittr} pipe syntax, which is explained \link{https://kingaa.github.io/R_Tutorial/munging.html\#the-magrittr-syntax}{elsewhere}.
   \end{itemize}
 \end{frame}
 
@@ -1090,7 +1090,7 @@ $r=\mathrm{cor}_{S}({\cdot},{N_{1950}})$ (Spearman rank correlation)
     \includegraphics[height=12pt]{../graphics/cc-by-nc}
 
   \item
-    Produced with R version \Sexpr{getRversion()} and \package{pomp} version \Sexpr{packageVersion("pomp")}.
+    Produced with R version \Sexpr{getRversion()} and \pkg{pomp} version \Sexpr{packageVersion("pomp")}.
 
   \item
     Compiled on \today.
