@@ -65,7 +65,7 @@ The course will have six components:
    For example, before our live plenary on Monday, 12 July, we expect students to have watched the Lesson 1 and Lesson 2 lecture videos.
    If you have any questions that come up while you are watching the videos, please pose these using the `#mod14_simulation-based_inference_2022` channel in the SISMID Slack workspace (`sismidworkspace.slack.com`).
    We will monitor this channel and attempt to answer all questions either via Slack, or in the live sessions.
-   This use of Slack will allow you check whether your question has been asked previously, to avoid the kind of unnecessary duplication that makes it hard for everyone.
+   This use of Slack will allow you check whether your question has been asked previously so as to avoid unnecessary duplication.
 
 1. ***Exercises.***
    Each lesson includes exercises intended to consolidate and challenge your understanding of key concepts and methods.
@@ -226,6 +226,9 @@ Importantly, everyone is expected to listen to, and engage with, the contributio
 
 In the spirit of ensuring an efficient and enjoyable learning experience for everyone, we establish the following specific rules to govern our conduct.
 
+1. ***Have a sense of humor!***
+   In online courses, many things can go wrong.
+   Let's be generous and tolerant toward one another, and always willing to laugh!
 1. ***During live plenary discussions, turn on your audio and video only for questions***.
    Live plenary discussions will be held over Zoom.
    Please mute your audio and video *unless and until you have a question.* 
@@ -257,9 +260,6 @@ In the spirit of ensuring an efficient and enjoyable learning experience for eve
    Treat others with respect and the dignity to which they are entitled, and with which you expect others to treat you.
 1. ***Dress comfortably, but professionally.***
    You will be visible to your colleagues and instructors.
-1. ***Have a sense of humor!***
-   In online courses, many things can go wrong.
-   Let's be generous and tolerant toward one another, and always willing to laugh!
 
 -----------------------------
 
