@@ -18,9 +18,8 @@ jobs:
         config:
           - {os: ubuntu-latest,  r: 'release'}
           - {os: ubuntu-18.04,   r: '4.0.5'}
-          - {os: macOS-10.15,    r: 'release'}
+          - {os: macOS-11   ,    r: 'release'}
           - {os: macOS-12,       r: 'release'}
-          - {os: macOS-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
           - {os: windows-2016  , r: '4.0.5'}
 
