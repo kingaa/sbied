@@ -35,7 +35,7 @@ We hope that you have already followed the [instructions for preparing your comp
 if you run into difficulties, you will definitely want to have those ironed out *before* the course starts.
 
 Note also that there are mandatory activities ***prior to each day's meeting***.
-For example, make sure that you have watched the video lectures for Lessons 1 and 2 (linked from the course website) before we meet on 12 July.
+For example, make sure that you have watched the video lectures for Lessons 1 and 2 (linked from the course website) before we meet on 25 July.
 See the schedule below for details.
 
 -----------------------------
@@ -62,7 +62,7 @@ The course will have six components:
 
 1. ***A mandatory self-learning component***, in which students are expected to watch and take notes on the pre-recorded lectures prior to the day's activities.
    Links to the videos can be found on the [course website](https://kingaa.github.io/sbied/), along with PDF versions of the lecture notes and slides.
-   For example, before our live plenary on Monday, 12 July, we expect students to have watched the Lesson 1 and Lesson 2 lecture videos.
+   For example, before our live plenary on Monday, 25 July, we expect students to have watched the Lesson 1 and Lesson 2 lecture videos.
    If you have any questions that come up while you are watching the videos, please pose these using the `#mod14_simulation-based_inference_2022` channel in the SISMID Slack workspace (`sismidworkspace.slack.com`).
    We will monitor this channel and attempt to answer all questions either via Slack, or in the live sessions.
    This use of Slack will allow you check whether your question has been asked previously so as to avoid unnecessary duplication.
