@@ -1,6 +1,6 @@
 ---
 title: Simulation-based Inference for Epidemiological Dynamics
-author: Aaron A. King, Edward L. Ionides, Qianying Lin
+author: Aaron A. King, Edward L. Ionides, Jesse Wheeler
 output:
   html_document:
     includes:

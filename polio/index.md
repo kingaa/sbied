@@ -1,6 +1,6 @@
 ---
 title: "Lesson 6: Case study: Polio"
-author: "Aaron A. King, Edward L. Ionides, Kidus Asfaw"
+author: Aaron A. King, Edward L. Ionides, Jesse Wheeler
 output:
   html_document:
     includes:

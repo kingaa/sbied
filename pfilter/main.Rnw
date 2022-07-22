@@ -2,7 +2,7 @@
 
 \def\CHAPTER{3}
 \title{Lesson \CHAPTER:\\Likelihood-based inference for POMP models}
-\author{Aaron A. King, Edward L. Ionides and Qianying Lin}
+\author{Aaron A. King and Edward L. Ionides}
 
 \begin{document}
 

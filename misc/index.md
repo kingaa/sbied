@@ -1,6 +1,6 @@
 ---
 title: Materials for Introduction to Simulation-based Inference for Epidemiological Dynamics
-author: Aaron A. King, Edward L. Ionides
+author: Aaron A. King, Edward L. Ionides, Jesse Wheeler
 output:
   html_document:
     includes:

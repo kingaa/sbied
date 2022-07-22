@@ -10,7 +10,7 @@
 
 \def\CHAPTER{1}
 \title{Lesson \CHAPTER:\\Introduction to Simulation-based Inference\\for Epidemiological Dynamics}
-\author{Aaron A. King, Edward L. Ionides and Qianying Lin}
+\author{Aaron A. King and Edward L. Ionides}
 
 \setbeamertemplate{footline}[frame number]
 

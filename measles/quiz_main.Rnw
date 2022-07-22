@@ -2,7 +2,6 @@
 \input{../_includes/quiz_header}
 
 \title{Quiz}
-\author{Edward L. Ionides, Aaron A. King, Qianying Lin}
 
 \begin{document}
 

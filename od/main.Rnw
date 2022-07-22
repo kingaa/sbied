@@ -2,7 +2,7 @@
 
 \def\CHAPTER{9}
 \title{Lesson \CHAPTER:\\Modeling stochasticity: Overdispersion in the Consett measles data.\\IN DEVELOPMENT}
-\author{Aaron A. King, Edward L. Ionides, Kidus Asfaw}
+\author{Aaron A. King and Edward L. Ionides}
 
 \begin{document}
 

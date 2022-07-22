@@ -66,14 +66,16 @@ The course will have six components:
    If you have any questions that come up while you are watching the videos, please pose these using the `#mod14_simulation-based_inference_2022` channel in the SISMID Slack workspace (`sismidworkspace.slack.com`).
    We will monitor this channel and attempt to answer all questions either via Slack, or in the live sessions.
    This use of Slack will allow you check whether your question has been asked previously so as to avoid unnecessary duplication.
+   After each video, have a look at the corresponding Quiz and Exercises, and make a first attempt on these.
 
 1. ***Exercises.***
    Each lesson includes exercises intended to consolidate and challenge your understanding of key concepts and methods.
    To get the most out of the course, you will have to grapple with these Exercises on your own as well as in a group.
    
 1. ***Quizzes.***
-   After watching the videos, take the corresponding Quiz to test your understanding.
-   We can discuss the Quiz questions in the subsequent Live Plenary discussion.
+   The Quizzes are designed to test and challenge your understanding.
+   After watching each video, have a look at the corresponding Quiz.
+   During the Breakout-group sessions, you'll work as a group to answer the Quiz questions.
 
 1. ***Live Plenary discussions***, during which instructors will elaborate important points raised in the lectures and address common questions posed over Slack.
    During these sessions, feel free to raise any additional questions that come up.
@@ -82,10 +84,11 @@ The course will have six components:
    You may also use the "Raise Hand" feature to ask a question.
 
 1. ***Breakout-group sessions***, in which each student will work in small groups, in breakout rooms, on the Exercises.
+   In these sesssions, you'll work on the Exercises and answer the Quiz questions.
    There will be nine groups.
    Each group member will have one or more of five roles:
    these are described below.
-   At the beginning of each group meeting, group members should introduce themselves, and groups should quickly decide who should perform each role.  
+   At the beginning of each group meeting, group members should introduce and organize themselves.
    Each group will be visited by an instructor once during each session according to the following schedule:
    
    - Groups 1--3: Minute 10--25
@@ -93,7 +96,7 @@ The course will have six components:
    - Groups 7--9: Minute 50--65
    
    That is, Groups 1--3 will be visited for 15min, 10 minutes into each session, Groups 4--6 will be visited at the 30-minute mark, etc.
-   Outside of these times, the instructors will be answering questions posed over the Slack channel and responding to Zoom "Ask for Help" requests.  
+   *If your group is having trouble getting started, feel free to use the Zoom "Ask for Help" in the first 10 minutes.*  
    At the end of each breakout group session, a progress report should be submitted to the Slack channel.
    
 1. ***Optional office hours.***
@@ -119,24 +122,23 @@ The following world clock may help.
 **Before 8:00:**  
 - View lecture videos for Lessons [1](https://kingaa.github.io/sbied/intro/) and [2](https://kingaa.github.io/sbied/stochsim/) (c.&nbsp;2.5hr or 100min at 1.5x).  
 - Send questions to Instructors via Slack.  
-- Take the [Quiz](https://kingaa.github.io/sbied/stochsim/quiz.pdf).  
-- Optionally, begin work on Exercises 2.3 & 2.4.  
+- Begin work on Exercises 2.3 & 2.4 and on the [Quiz](https://kingaa.github.io/sbied/stochsim/quiz.pdf).  
 
 **Session 1**  
 8:00--8:30: Introductions. Organization. Lessons 1 and 2 Q&A.  
-8:30--9:45: Breakout groups work on Exercises 2.3 & 2.4.  
+8:30--9:45: Breakout groups work on Exercises 2.3 & 2.4 and the [Quiz](https://kingaa.github.io/sbied/stochsim/quiz.pdf).  
 9:45: Breakout group progress reports due on Slack.  
 9:45-10:15: Live plenary discussion of breakout group results.  
 
 **Interlude**  
 10:15--12:15: View lecture videos for [Lesson 3](https://kingaa.github.io/sbied/pfilter/) (c.&nbsp;112min or 75min at 1.5x).  
 - Send questions to Instructors via Slack.  
-- Take the [Quiz](https://kingaa.github.io/sbied/pfilter/quiz.pdf).  
+- Begin work on the Exercises and the [Quiz](https://kingaa.github.io/sbied/pfilter/quiz.pdf).  
 11:45--12:15: Optional office hour (for those who have finished watching the Lesson 3 videos and taken the Quiz).  
 
 **Session 2**  
 12:15--12:45: Lesson 3 Q&A.  
-12:45--14:00: Breakout groups work on Exercises 3.1--3.4.  
+12:45--14:00: Breakout groups work on Exercises 3.1--3.4 and the [Quiz](https://kingaa.github.io/sbied/pfilter/quiz.pdf).  
 14:00: Breakout group progress reports due on Slack.  
 14:00--14:30: Live plenary discussion of breakout group progress.  
 
@@ -145,7 +147,7 @@ The following world clock may help.
 **Before 8:00:**  
 - View lecture videos for [Lesson 4, Parts I--IV](https://kingaa.github.io/sbied/mif/) (c.&nbsp;55min or 38min at 1.5x).  
 - Send questions to Instructors via Slack.  
-- Optionally, begin work on Exercises 4.1.  
+- Begin work on Exercise 4.1.  
 
 **Session 3**  
 8:00--8:30: Lesson 4, Parts I--IV Q&A.  
@@ -156,12 +158,12 @@ The following world clock may help.
 **Interlude**  
 10:15--12:15: View lecture videos for [Lesson 4, Parts V--VI](https://kingaa.github.io/sbied/mif/) (c.&nbsp;55min or 38min at 1.5x).  
 - Send questions to Instructors via Slack.  
-- Take the [Quiz](https://kingaa.github.io/sbied/mif/quiz.pdf).  
+- Begin work on the Exercises and the [Quiz](https://kingaa.github.io/sbied/mif/quiz.pdf).  
 11:45--12:15: Optional office hour (for those who have finished watching the Lesson 4 videos and taken the Quiz).  
 
 **Session 4**  
 12:15--12:45: Lesson 4, Parts V-VI Q&A.  
-12:45--14:00: Breakout groups work on Exercises 4.1--4.4.  
+12:45--14:00: Breakout groups work on Exercises 4.1--4.4 and the [Quiz](https://kingaa.github.io/sbied/mif/quiz.pdf).  
 14:00: Breakout group progress reports due on Slack.  
 14:00--14:30: Live plenary discussion of breakout group progress.  
 
@@ -169,12 +171,12 @@ The following world clock may help.
 
 **Before 8:00:**  
 - View lecture video for [Lesson 5](https://kingaa.github.io/sbied/measles/) (c.&nbsp;80min or 55min at 1.5x).  
-- Take the [Quiz](https://kingaa.github.io/sbied/measles/quiz.pdf).  
+- Begin work on the [Quiz](https://kingaa.github.io/sbied/measles/quiz.pdf).  
 - Formulate questions for the instructors on the topic: How do simulation-based methods fit into your research agenda?  
 
 **Session 5**  
 8:00--8:30: Lesson 5 Q&A.  
-8:30--9:30: Breakout groups develop consensus answers to the Quiz questions and select two research questions for the instructors from the group.  
+8:30--9:30: Breakout groups develop consensus answers to the [Quiz](https://kingaa.github.io/sbied/measles/quiz.pdf) questions and select two research questions for the instructors from the group.  
 9:30: Breakout group reports due on Slack.  
 9:30--10:30: Plenary discussion.  
 10:30--11:00: Concluding remarks.  
@@ -186,11 +188,23 @@ The following world clock may help.
 
 Breakout groups will be assigned anew at each session.
 At the beginning of each session, quickly introduce yourselves and divide the labor among yourselves.
-The following roles are designed to help the group function smoothly, and to make sure everyone in a group contributes to the group effort, and that every important task has someone to look after it.
+The following roles are suggested to help the group function smoothly, and to make sure everyone in a group contributes to the group effort, and that every important task has someone to look after it.
+Regardless of how you organize your group, we recommend that someone take on the role of Hacker (see below):
+this could be the person with the most experience as an **R** programmer and/or the person with the fastest computer.
 None of these roles is a full-time job: 
 everyone can perform a role and also contribute thought and effort toward the group's work.
 Importantly, everyone is expected to listen to, and engage with, the contributions of the other group members.
 
+1. **Hacker.** 
+   All group members are expected to do hands-on work with the methods we are teaching.
+   A Hacker, however, takes prime responsibility for producing the definitive version of the group's codes and full responsibility for making sure that all group members have access to the definitive version at the end of each breakout-group session.
+   We recommend that you use a shared online document for this purpose.
+   Since learning to write correct and efficient code is central to the course's goals, the Hacker should make sure that the group is fully involved in all the coding.
+1. **Slacker.**
+   A Slacker monitors the group's interface with the course Slack channel.
+   In addition, the Slacker prepares a pr&eacute;cis of the group's efforts and progress, to be passed to the course Slack channel at the end of the session.
+   This should be at most a paragraph, focused on communicating the essentials only: 
+   what exercises were tackled, what approaches taken, what progress made, what difficulties encountered.
 1. **Keeper.** 
    The Keeper keeps time, keeps track of the group's goals, and keeps the group focused and running smoothly and happily.
    It's only a happy group that does good work.
@@ -209,16 +223,6 @@ Importantly, everyone is expected to listen to, and engage with, the contributio
 1. **Seeker.** 
    The Seeker seeks information to help answer group questions.
    A good Seeker has all the course materials at his or her fingertips and can rapidly share search results with the group.
-1. **Hacker.** 
-   All group members are expected to do hands-on work with the methods we are teaching.
-   A Hacker, however, takes prime responsibility for producing the definitive version of the group's codes and full responsibility for making sure that all group members have access to the definitive version at the end of each breakout-group session.
-   Again, the group may decide to use a shared online document for this purpose.
-   Since learning to write correct and efficient code is central to the course's goals, the Hacker should make sure that the group is fully involved in all the coding.
-1. **Slacker.**
-   A Slacker monitors the group's interface with the course Slack channel.
-   In addition, the Slacker prepares a pr&eacute;cis of the group's efforts and progress, to be passed to the course Slack channel at the end of the session.
-   This should be at most a paragraph, focused on communicating the essentials only: 
-   what exercises were tackled, what approaches taken, what progress made, what difficulties encountered.
 
 -----------------------------
 
@@ -227,7 +231,7 @@ Importantly, everyone is expected to listen to, and engage with, the contributio
 In the spirit of ensuring an efficient and enjoyable learning experience for everyone, we establish the following specific rules to govern our conduct.
 
 1. ***Have a sense of humor!***
-   In online courses, many things can go wrong.
+   In every course, things go wrong, but it takes an online course to really push the envelope!
    Let's be generous and tolerant toward one another, and always willing to laugh!
 1. ***During live plenary discussions, turn on your audio and video only for questions***.
    Live plenary discussions will be held over Zoom.
@@ -260,6 +264,7 @@ In the spirit of ensuring an efficient and enjoyable learning experience for eve
    Treat others with respect and the dignity to which they are entitled, and with which you expect others to treat you.
 1. ***Dress comfortably, but professionally.***
    You will be visible to your colleagues and instructors.
+1. ***Have a sense of humor!***
 
 -----------------------------
 
