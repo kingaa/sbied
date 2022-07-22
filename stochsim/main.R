@@ -42,7 +42,7 @@ sir_step <- function (S, I, R, H, N, Beta, mu_IR, delta.t, ...)
   S <- S - dN_SI
   I <- I + dN_SI - dN_IR
   R <- R + dN_IR
-  H <- H + dN_IR;
+  H <- H + dN_IR
   c(S = S, I = I, R = R, H = H)
 }
 
