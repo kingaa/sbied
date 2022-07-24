@@ -189,7 +189,7 @@ The following world clock may help.
 Breakout groups will be assigned anew at each session.
 At the beginning of each session, quickly introduce yourselves and divide the labor among yourselves.
 The following roles are suggested to help the group function smoothly, and to make sure everyone in a group contributes to the group effort, and that every important task has someone to look after it.
-Regardless of how you organize your group, we recommend that someone take on the role of Hacker (see below):
+*Regardless of how you organize your group, we recommend that someone take on the role of Hacker (see below)*:
 this could be the person with the most experience as an **R** programmer and/or the person with the fastest computer.
 None of these roles is a full-time job: 
 everyone can perform a role and also contribute thought and effort toward the group's work.

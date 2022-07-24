@@ -46,7 +46,7 @@ plot.color <- "black"
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile,allowframebreaks=0.8]{Challenges in inference from disease dynamics}
+\begin{frame}[fragile,allowframebreaks]{Challenges in inference from disease dynamics}
   \begin{itemize}
   \item Understanding, forecasting, managing epidemiological systems increasingly depends on models.
   \item Dynamic models can be used to test causal hypotheses.
@@ -59,8 +59,12 @@ plot.color <- "black"
     \item have hidden variables
     \item can be measured only with (large) error
     \end{itemize}
-  \item Dynamics of infectious disease outbreaks illustrate this well.
   \item Measles is the paradigm for a nonlinear ecological system that can be well described by low-dimensional nonlinear dynamics.
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{itemize}
   \item A tradition of careful modeling studies have proposed and found evidence for a number of specific mechanisms, including
     \begin{itemize}
     \item a high value of $R_0$ (c. 15--20)

@@ -76,33 +76,39 @@ registerDoRNG(2488820)
 
 \subsection{Notation}
 
-\begin{frame}[allowframebreaks=0.8]{General notation for compartment models}
-  \bi
-\item To develop a systematic notation, it turns out to be convenient to keep track of the flows between compartments as well as the number of individuals in each compartment. Let
+\begin{frame}[allowframebreaks]{General notation for compartment models}
+
+  To develop a systematic notation, it turns out to be convenient to keep track of the flows between compartments as well as the number of individuals in each compartment. Let
   $$N_{SI}(t)$$
-  count the number of individuals who have transitioned from $S$ to $I$ by time $t$. We say that $N_{SI}(t)$ is a \myemph{counting process}. A similarly constructed process
+  count the number of individuals who have transitioned from $S$ to $I$ by time $t$. We say that $N_{SI}(t)$ is a \myemph{counting process}.
+  A similarly constructed process
   $$N_{IR}(t)$$
   counts individuals transitioning from $I$ to $R$. To include demography, we could keep track of birth and death events by the counting processes $N_{{\small{\bullet}} S}(t)$, $N_{S{\small{\bullet}}}(t)$, $N_{I{\small{\bullet}}}(t)$, $N_{R{\small{\bullet}}}(t)$.
-\item For discrete population compartment models, the flow counting processes are non-decreasing and integer valued.
-\item For continuous population compartment models, the flow counting processes are non-decreasing and real valued.
-  \ei
+  
+  \framebreak
+  
+  \begin{itemize}
+  \item For discrete population compartment models, the flow counting processes are non-decreasing and integer valued.
+  \item For continuous population compartment models, the flow counting processes are non-decreasing and real valued.
+  \end{itemize}
+
 \end{frame}
 
 \begin{frame}{Compartment processes from counting processes}
 
-  \bi
-\item The numbers of people in each compartment can be computed via these counting processes. Ignoring demography, we have:
-  \begin{equation*}
-    \begin{aligned}
-      S(t) &= S(0) - N_{SI}(t) &\\
-      I(t) &= I(0) + N_{SI}(t) &- N_{IR}(t) \\
-      R(t) &= R(0) &+ N_{IR}(t)
-    \end{aligned}
-  \end{equation*}
+  \begin{itemize}
+  \item The numbers of people in each compartment can be computed via these counting processes. Ignoring demography, we have:
+    \begin{equation*}
+      \begin{aligned}
+        S(t) &= S(0) - N_{SI}(t) &\\
+        I(t) &= I(0) + N_{SI}(t) &- N_{IR}(t) \\
+        R(t) &= R(0) &+ N_{IR}(t)
+      \end{aligned}
+    \end{equation*}
 
-\item These equations represent \emph{conservation of individuals} or \emph{what goes in must come out}. 
+  \item These equations represent \emph{conservation of individuals} or \emph{what goes in must come out}. 
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -124,30 +130,30 @@ registerDoRNG(2488820)
 
 \begin{frame}{Continuous-time Markov chain interpretation}
 
-  \bi
+  \begin{itemize}
 
-\item Continuous-time Markov chains are the basic tool for building discrete population epidemic models.
+  \item Continuous-time Markov chains are the basic tool for building discrete population epidemic models.
 
-\item The Markov property lets us specify a model by the transition probabilities on small intervals (together with the initial conditions). For the SIR model, we have
+  \item The Markov property lets us specify a model by the transition probabilities on small intervals (together with the initial conditions). For the SIR model, we have
 
-  \begin{equation*}
-    \begin{aligned}
-      \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)+1\big] &\equals& \phantom{1-}\mu_{SI}(t)\,S(t)\,\delta + o(\delta)
-      \\
-      \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)\big] &\equals& 1-\mu_{SI}(t)\,S(t)\,\delta + o(\delta)
-      \\
-      \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)+1\big] &\equals& \phantom{1-}\mu_{IR}\,I(t)\,\delta + o(\delta)
-      \\
-      \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)\big] &\equals& 1-\mu_{IR}(t)\,I(t)\,\delta + o(\delta)
-    \end{aligned}
-  \end{equation*}
+    \begin{equation*}
+      \begin{aligned}
+        \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)+1\big] &\equals& \phantom{1-}\mu_{SI}(t)\,S(t)\,\delta + o(\delta)
+        \\
+        \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)\big] &\equals& 1-\mu_{SI}(t)\,S(t)\,\delta + o(\delta)
+        \\
+        \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)+1\big] &\equals& \phantom{1-}\mu_{IR}\,I(t)\,\delta + o(\delta)
+        \\
+        \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)\big] &\equals& 1-\mu_{IR}(t)\,I(t)\,\delta + o(\delta)
+      \end{aligned}
+    \end{equation*}
 
-\item Here, we are using \myemph{little o notation}
-  We write 
-  $h(\delta)=o(\delta)$
-  to mean 
-  $\lim_{\delta\to 0} \frac{h(\delta)}{\delta} = 0$.
-  \ei
+  \item Here, we are using \myemph{little o notation}
+    We write 
+    $h(\delta)=o(\delta)$
+    to mean 
+    $\lim_{\delta\to 0} \frac{h(\delta)}{\delta} = 0$.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{\myexercise}
@@ -167,15 +173,15 @@ registerDoRNG(2488820)
 \end{frame}
 
 \begin{frame}{Simple counting processes}
-  \bi
-\item A \myemph{simple counting process} is one which cannot count more than one event at a time.
-\item Technically, the SIR Markov chain model we have written is simple.
-\item One may want to model the extra randomness resulting from multiple simultaneous events:
-  someone sneezing in a bus; large gatherings at football matches; etc.
-  This extra randomness may even be critical to match the variability in data. 
-\item Later in the course, we may see situations where this extra randomness plays an important role.
-  Setting up the model using counting processes, as we have done here, turns out to be useful for this.
-  \ei
+  \begin{itemize}
+  \item A \myemph{simple counting process} is one which cannot count more than one event at a time.
+  \item Technically, the SIR Markov chain model we have written is simple.
+  \item One may want to model the extra randomness resulting from multiple simultaneous events:
+    someone sneezing in a bus; large gatherings at football matches; etc.
+    This extra randomness may even be critical to match the variability in data. 
+  \item Later in the course, we may see situations where this extra randomness plays an important role.
+    Setting up the model using counting processes, as we have done here, turns out to be useful for this.
+  \end{itemize}
 \end{frame}
 
 \section{Euler's method}
@@ -184,41 +190,41 @@ registerDoRNG(2488820)
 
 \begin{frame}[allowframebreaks=0.8]{Euler's method for ordinary differential equations}
 
-  \bi
-\item
-  Euler (1707--1783) wanted a numeric solution of an ordinary differential equation (ODE)
-  $dx/dt = h(x)$
-  with an initial condition $x(0)$. 
+  \begin{itemize}
+  \item
+    Euler (1707--1783) wanted a numeric solution of an ordinary differential equation (ODE)
+    $dx/dt = h(x)$
+    with an initial condition $x(0)$. 
 
-\item
-  He supposed this ODE has some true solution $x(t)$ which could not be worked out analytically.
-  He wanted an approximation $\tilde{x}(t)$ of $x(t)$.
+  \item
+    He supposed this ODE has some true solution $x(t)$ which could not be worked out analytically.
+    He wanted an approximation $\tilde{x}(t)$ of $x(t)$.
 
-\item He initialized the numerical solution at the known starting value, 
-  $$\tilde x(0)=x(0).$$
+  \item He initialized the numerical solution at the known starting value, 
+    $$\tilde x(0)=x(0).$$
 
-\item For $k=1,2,\dots$, he supposed that the gradient $dx/dt$ is approximately constant over the small time interval $k\delta\le t\le (k+1)\delta$. 
-  Therefore, he defined
-  $$\tilde x\big( \,(k+1)\delta\,\big) = \tilde x( k\delta) + \delta \, h\big(\, \tilde x(k\delta)\,\big).$$
+  \item For $k=1,2,\dots$, he supposed that the gradient $dx/dt$ is approximately constant over the small time interval $k\delta\le t\le (k+1)\delta$. 
+    Therefore, he defined
+    $$\tilde x\big( \,(k+1)\delta\,\big) = \tilde x( k\delta) + \delta \, h\big(\, \tilde x(k\delta)\,\big).$$
 
-\item This only defines $\tilde x(t)$ when $t$ is a multiple of $\delta$, but suppose $\tilde x(t)$ is constant between these discrete times.
+  \item This only defines $\tilde x(t)$ when $t$ is a multiple of $\delta$, but suppose $\tilde x(t)$ is constant between these discrete times.
 
-\item We now have a numerical scheme, stepping forwards in time increments of size $\delta$, that can be readily evaluated by computer.
+  \item We now have a numerical scheme, stepping forwards in time increments of size $\delta$, that can be readily evaluated by computer.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
 \begin{frame}{Euler's method versus other numerical methods}
-  \bi
-\item Mathematical analysis of Euler's method says that, as long as the function $h(x)$ is not too exotic, then $x(t)$ is well approximated by $\tilde x(t)$  when the discretization time-step, $\delta$, is sufficiently small.
-\item Euler's method is not the only numerical scheme to solve ODEs. More advanced schemes have better convergence properties, meaning that the numerical approximation is closer to $x(t)$. However, there are 3 reasons we choose to lean heavily on Euler's method:
-  \begin{enumerate}
-  \item Euler's method is the simplest (cf.\ the KISS principle).
-  \item Euler's method extends naturally to stochastic models, both continuous-time Markov chains models and stochastic differential equation (SDE) models.
-  \item Close approximation of the numerical solutions to a continuous-time model is less important than it may at first appear, a topic to be discussed.
-  \end{enumerate}
-  \ei
+  \begin{itemize}
+  \item Mathematical analysis of Euler's method says that, as long as the function $h(x)$ is not too exotic, then $x(t)$ is well approximated by $\tilde x(t)$  when the discretization time-step, $\delta$, is sufficiently small.
+  \item Euler's method is not the only numerical scheme to solve ODEs. More advanced schemes have better convergence properties, meaning that the numerical approximation is closer to $x(t)$. However, there are 3 reasons we choose to lean heavily on Euler's method:
+    \begin{enumerate}
+    \item Euler's method is the simplest (cf.\ the KISS principle).
+    \item Euler's method extends naturally to stochastic models, both continuous-time Markov chains models and stochastic differential equation (SDE) models.
+    \item Close approximation of the numerical solutions to a continuous-time model is less important than it may at first appear, a topic to be discussed.
+    \end{enumerate}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks=0.8]{Continuous-time models and discretized approximations}
@@ -231,35 +237,35 @@ registerDoRNG(2488820)
 \end{frame}
 
 \begin{frame}{Numerical solutions as scientific models}
-  \bi
-\item It is important that a scientist fully describe the numerical model $\tilde x(t)$. 
-  Arguably, the main purpose of the original model $x(t)$ is to give a succinct description of how $\tilde x(t)$ was constructed.
-\item All numerical methods are, ultimately, discretizations. Epidemiologically, setting $\delta$ to be a day, or an hour, can be quite different from setting $\delta$ to be two weeks or a month. For continuous-time modeling, we still require that $\delta$ is small compared to the timescale of the process being modeled, so the choice of $\delta$ should not play an explicit role in the interpretation of the model.
-\item Putting more emphasis on the scientific role of the numerical solution itself reminds you that the numerical solution has to do more than approximate a target model in some asymptotic sense: the numerical solution should be a sensible model in its own right. 
-  \ei
+  \begin{itemize}
+  \item It is important that a scientist fully describe the numerical model $\tilde x(t)$. 
+    Arguably, the main purpose of the original model $x(t)$ is to give a succinct description of how $\tilde x(t)$ was constructed.
+  \item All numerical methods are, ultimately, discretizations. Epidemiologically, setting $\delta$ to be a day, or an hour, can be quite different from setting $\delta$ to be two weeks or a month. For continuous-time modeling, we still require that $\delta$ is small compared to the timescale of the process being modeled, so the choice of $\delta$ should not play an explicit role in the interpretation of the model.
+  \item Putting more emphasis on the scientific role of the numerical solution itself reminds you that the numerical solution has to do more than approximate a target model in some asymptotic sense: the numerical solution should be a sensible model in its own right. 
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks=0.8]{Euler's method for a discrete SIR model}
-  \bi
-\item Recall the simple continuous-time Markov chain interpretation of the SIR model without demography:
-  \begin{equation*}
-    \begin{aligned}
-      \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)+1\big] &\equals& \mu_{SI}(t) \, S(t) \delta + o(\delta),
-      \\
-      \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)+1\big] &\equals& \mu_{IR} \, I(t) \delta + o(\delta).
-    \end{aligned}
-  \end{equation*}
-\item We want a numerical solution with state variables $\tilde S(k\delta)$, $\tilde I(k\delta)$, $\tilde R(k\delta)$. 
-\item The counting processes for the flows between compartments are $\tilde N_{SI}(t)$ and $\tilde N_{IR}(t)$. The counting processes are related to the numbers of individuals in the compartments by the same flow equations we had before:
-  $$\begin{array}{lcl} 
-  \tilde S(k\delta)&=& S(0) - \tilde N_{SI}(k\delta)
-  \\
-  \tilde I(k\delta)&=& I(0) + \tilde N_{SI}(k\delta) - \tilde N_{IR}(k\delta)
-  \\
-  \tilde R(k\delta) &=& R(0) + \tilde N_{IR}(k\delta)
-\end{array}$$
-\item We focus on a numerical solution to $N_{SI}(t)$, since the same methods can also be applied to $N_{IR}(t)$.
-  \ei
+  \begin{itemize}
+  \item Recall the simple continuous-time Markov chain interpretation of the SIR model without demography:
+    \begin{equation*}
+      \begin{aligned}
+        \pr\big[N_{SI}(t+\delta)&\equals N_{SI}(t)+1\big] &\equals& \mu_{SI}(t) \, S(t) \delta + o(\delta),
+        \\
+        \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)+1\big] &\equals& \mu_{IR} \, I(t) \delta + o(\delta).
+      \end{aligned}
+    \end{equation*}
+  \item We want a numerical solution with state variables $\tilde S(k\delta)$, $\tilde I(k\delta)$, $\tilde R(k\delta)$. 
+  \item The counting processes for the flows between compartments are $\tilde N_{SI}(t)$ and $\tilde N_{IR}(t)$. The counting processes are related to the numbers of individuals in the compartments by the same flow equations we had before:
+    $$\begin{array}{lcl} 
+    \tilde S(k\delta)&=& S(0) - \tilde N_{SI}(k\delta)
+    \\
+    \tilde I(k\delta)&=& I(0) + \tilde N_{SI}(k\delta) - \tilde N_{IR}(k\delta)
+    \\
+    \tilde R(k\delta) &=& R(0) + \tilde N_{IR}(k\delta)
+  \end{array}$$
+  \item We focus on a numerical solution to $N_{SI}(t)$, since the same methods can also be applied to $N_{IR}(t)$.
+  \end{itemize}
 \end{frame}
 
 \subsection{Numerical solution of stochastic dynamics}
@@ -291,20 +297,20 @@ registerDoRNG(2488820)
 \end{frame}
 
 \begin{frame}[allowframebreaks=0.9]{Compartment models as stochastic differential equations}
-  \bi
-\item The Euler method extends naturally to stochastic differential equations (SDEs).
-\item A natural way to add stochastic variation to an ODE $dx/dt=h(x)$ is
-  \begin{equation*}
-    \deriv{X}{t} = h(X)+\sigma\,\deriv{B}{t}
-  \end{equation*}
-  where $\{B(t)\}$ is Brownian motion and so $dB/dt$ is Brownian noise.
-\item An Euler approximation $\tilde X(t)$ is 
-  \begin{equation*}
-    \tilde{X}\big( \,(k+1)\delta\,\big) = \tilde{X}( k\delta) + \delta\, h\big(\, \tilde{X}k\delta)\,\big) + \sigma \sqrt{\delta} \, Z_k
-  \end{equation*}
-  where $Z_1,Z_2,\dots$ is a sequence of independent standard normal random variables, i.e.,  $Z_k\sim N[0,1]$.
-\item Although SDEs are often considered an advanced topic in probability, the Euler approximation doesn't demand much more than familiarity with the normal distribution.
-  \ei
+  \begin{itemize}
+  \item The Euler method extends naturally to stochastic differential equations (SDEs).
+  \item A natural way to add stochastic variation to an ODE $dx/dt=h(x)$ is
+    \begin{equation*}
+      \deriv{X}{t} = h(X)+\sigma\,\deriv{B}{t}
+    \end{equation*}
+    where $\{B(t)\}$ is Brownian motion and so $dB/dt$ is Brownian noise.
+  \item An Euler approximation $\tilde X(t)$ is 
+    \begin{equation*}
+      \tilde{X}\big( \,(k+1)\delta\,\big) = \tilde{X}( k\delta) + \delta\, h\big(\, \tilde{X}k\delta)\,\big) + \sigma \sqrt{\delta} \, Z_k
+    \end{equation*}
+    where $Z_1,Z_2,\dots$ is a sequence of independent standard normal random variables, i.e.,  $Z_k\sim N[0,1]$.
+  \item Although SDEs are often considered an advanced topic in probability, the Euler approximation doesn't demand much more than familiarity with the normal distribution.
+  \end{itemize}
 \end{frame}
 
 
@@ -375,19 +381,19 @@ registerDoRNG(2488820)
 
 \begin{frame}[fragile]{Framing the SIR as a POMP model}
 
-  \bi
+  \begin{itemize}
 
-\item The unobserved state variables, in this case, are the numbers of individuals, $S(t)$, $I(t)$, $R(t)$ in the S, I, and R compartments, respectively.
+  \item The unobserved state variables, in this case, are the numbers of individuals, $S(t)$, $I(t)$, $R(t)$ in the S, I, and R compartments, respectively.
 
-\item It's reasonable in this case to view the population size $N=S(t)+I(t)+R(t)$, as fixed at the known population size of 38,000.
+  \item It's reasonable in this case to view the population size $N=S(t)+I(t)+R(t)$, as fixed at the known population size of 38,000.
 
-\item The numbers that actually move from one compartment to another over any particular time interval are modeled as stochastic processes.
+  \item The numbers that actually move from one compartment to another over any particular time interval are modeled as stochastic processes.
 
-\item In this case, we'll assume that the stochasticity is purely demographic, i.e., that each individual in a compartment at any given time faces the same risk of exiting the compartment.
+  \item In this case, we'll assume that the stochasticity is purely demographic, i.e., that each individual in a compartment at any given time faces the same risk of exiting the compartment.
 
-\item \myemph{Demographic stochasticity} is the unavoidable randomness that arises from chance events occurring in a discrete and finite population.
+  \item \myemph{Demographic stochasticity} is the unavoidable randomness that arises from chance events occurring in a discrete and finite population.
 
-  \ei
+  \end{itemize}
 
 \end{frame}
 
@@ -612,7 +618,7 @@ registerDoRNG(2488820)
       geom_line()+
       guides(color=FALSE)
     @
-
+    
     The data are in blue; the \Sexpr{length(levels(sims$.id))-1} simulations are shown in red.
     
     Clearly, this leaves something to be desired.
@@ -688,6 +694,5 @@ registerDoRNG(2488820)
   
   \link{main.R}{\Rlanguage codes for this lesson}
 \end{frame}
-
 
 \end{document}
