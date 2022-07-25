@@ -5,7 +5,7 @@ library(knitr)
 if (!exists("params")) params <- list()
 opts_chunk$set(
   cache=TRUE,
-  cache.path=paste("tmp","cache",as.character(params$prefix),"",sep="/"),
+  cache.path=paste("tmp",as.character(params$prefix),"cache","",sep="/"),
   comment=NA,
   echo=TRUE,
   eval=TRUE,
@@ -16,7 +16,7 @@ opts_chunk$set(
   fig.align='center',
   fig.height=4,fig.width=6.83,
   fig.lp="fig:",
-  fig.path=paste("tmp","figure",as.character(params$prefix),"",sep="/"),
+  fig.path=paste("tmp",as.character(params$prefix),"figure","",sep="/"),
   fig.pos="h!",
   fig.show='asis',
   highlight=TRUE,
