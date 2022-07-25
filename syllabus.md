@@ -126,7 +126,7 @@ The following world clock may help.
 
 **Session 1**  
 8:00--8:30: Introductions. Organization. Lessons 1 and 2 Q&A.  
-8:30--9:45: Breakout groups work on Exercises 2.3 & 2.4 and the [Quiz](https://kingaa.github.io/sbied/stochsim/quiz.pdf).  
+8:30--9:45: Breakout groups work on Exercises 2.3 & 2.4 and the [Lesson 2 Quiz](https://kingaa.github.io/sbied/stochsim/quiz.pdf).  
 9:45: Breakout group progress reports due on Slack.  
 9:45-10:15: Live plenary discussion of breakout group results.  
 
@@ -138,7 +138,7 @@ The following world clock may help.
 
 **Session 2**  
 12:15--12:45: Lesson 3 Q&A.  
-12:45--14:00: Breakout groups work on Exercises 3.1--3.4 and the [Quiz](https://kingaa.github.io/sbied/pfilter/quiz.pdf).  
+12:45--14:00: Breakout groups work on Exercises 3.1--3.4 and the [Lesson 3 Quiz](https://kingaa.github.io/sbied/pfilter/quiz.pdf).  
 14:00: Breakout group progress reports due on Slack.  
 14:00--14:30: Live plenary discussion of breakout group progress.  
 
@@ -158,12 +158,12 @@ The following world clock may help.
 **Interlude**  
 10:15--12:15: View lecture videos for [Lesson 4, Parts V--VI](https://kingaa.github.io/sbied/mif/) (c.&nbsp;55min or 38min at 1.5x).  
 - Send questions to Instructors via Slack.  
-- Begin work on the Exercises and the [Quiz](https://kingaa.github.io/sbied/mif/quiz.pdf).  
+- Begin work on the Exercises and the [Lesson 4 Quiz](https://kingaa.github.io/sbied/mif/quiz.pdf).  
 11:45--12:15: Optional office hour (for those who have finished watching the Lesson 4 videos and taken the Quiz).  
 
 **Session 4**  
 12:15--12:45: Lesson 4, Parts V-VI Q&A.  
-12:45--14:00: Breakout groups work on Exercises 4.1--4.4 and the [Quiz](https://kingaa.github.io/sbied/mif/quiz.pdf).  
+12:45--14:00: Breakout groups work on Exercises 4.1--4.4 and the [Lesson 4 Quiz](https://kingaa.github.io/sbied/mif/quiz.pdf).  
 14:00: Breakout group progress reports due on Slack.  
 14:00--14:30: Live plenary discussion of breakout group progress.  
 
@@ -171,14 +171,14 @@ The following world clock may help.
 
 **Before 8:00:**  
 - View lecture video for [Lesson 5](https://kingaa.github.io/sbied/measles/) (c.&nbsp;80min or 55min at 1.5x).  
-- Begin work on the [Quiz](https://kingaa.github.io/sbied/measles/quiz.pdf).  
+- Begin work on the [Lesson 5 Quiz](https://kingaa.github.io/sbied/measles/quiz.pdf).  
 - Formulate questions for the instructors on the topic: How do simulation-based methods fit into your research agenda?  
 
 **Session 5**  
 8:00--8:30: Lesson 5 Q&A.  
-8:30--9:30: Breakout groups develop consensus answers to the [Quiz](https://kingaa.github.io/sbied/measles/quiz.pdf) questions and select two research questions for the instructors from the group.  
-9:30: Breakout group reports due on Slack.  
-9:30--10:30: Plenary discussion.  
+8:30--9:45: Breakout groups develop consensus answers to the [Lesson 5 Quiz](https://kingaa.github.io/sbied/measles/quiz.pdf) questions and select two research questions for the instructors from the group.  
+9:45: Breakout group reports due on Slack.  
+9:45--10:30: Plenary discussion.  
 10:30--11:00: Concluding remarks.  
 11:00--12:00: Optional drop-in session: all topics welcomed.  
 
@@ -187,8 +187,9 @@ The following world clock may help.
 ### Breakout Room Roles
 
 Breakout groups will be assigned anew at each session.
-At the beginning of each session, quickly introduce yourselves and divide the labor among yourselves.
-The following roles are suggested to help the group function smoothly, and to make sure everyone in a group contributes to the group effort, and that every important task has someone to look after it.
+At the beginning of each session, quickly introduce yourselves and determine roles for each group member.
+The following roles are suggested to ensure that every important task has someone to look after it.
+You are welcome to adapt these roles in any way that is effective for your group.
 *Regardless of how you organize your group, we recommend that someone take on the role of Hacker (see below)*:
 this could be the person with the most experience as an **R** programmer and/or the person with the fastest computer.
 None of these roles is a full-time job: 
