@@ -68,3 +68,5 @@ Students new to **R** should complete a [tutorial](https://kingaa.github.io/R_Tu
 [**7. Case study: Ebola. Model diagnostics and forecasting.**](./ebola/index.html)
 
 [**8. Case study: HIV and fluctuating sexual contact rates. Panel data.**](./contacts/index.html)
+
+[**Miscellaneous materials**](./misc/index.html)
