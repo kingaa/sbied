@@ -22,6 +22,7 @@ library(doRNG)
 registerDoParallel()
 registerDoRNG(652643293)
 foreach (i=1:10, .combine=c) %dopar% {
+  library(pomp)
   measSIR %>% pfilter(Np=5000)
 } -> pf
 logLik(pf) -> ll

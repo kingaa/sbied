@@ -362,6 +362,7 @@ set.seed(1350254336)
   @
   <<pfilter-3,cache=TRUE>>=
   foreach (i=1:10, .combine=c) %dopar% {
+    library(pomp)
     measSIR %>% pfilter(Np=5000)
   } -> pf
   logLik(pf) -> ll
