@@ -96,7 +96,10 @@ bake(file="pfilter-grid1.rds",{
   p %>% arrange(Beta,mu_IR)
 })-> p
 
-p %>% 
+p %>%
+  group_by(Beta,mu_IR) %>%
+  summarize(loglik=logmeanexp(loglik)) %>%
+  ungroup() %>%
   mutate(loglik=ifelse(loglik>max(loglik)-25,loglik,NA)) %>%
   ggplot(aes(x=Beta,y=mu_IR,z=loglik,fill=loglik))+
   geom_tile(color=NA)+
