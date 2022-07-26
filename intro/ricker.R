@@ -62,7 +62,7 @@ str(x)
 library(ggplot2)
 x <- simulate(parus,nsim=9,format="data.frame",include.data=TRUE)
 ggplot(data=x,aes(x=year,y=pop,group=.id,color=(.id=="data")))+
-  geom_line()+guides(color=FALSE)+
+  geom_line()+guides(color="none")+
   facet_wrap(~.id,ncol=2)
 
 y <- trajectory(parus,format="data.frame")

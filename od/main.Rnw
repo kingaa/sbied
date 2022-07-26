@@ -312,7 +312,7 @@ consett_step <- Csnippet("
     ggplot(aes(x=week,y=reports,group=.id,color=factor(.id)))+
     geom_line()+
     scale_color_brewer(type="qual",palette=3)+
-    guides(color=FALSE)
+    guides(color="none")
   @ 
 \end{frame}
 
@@ -445,7 +445,7 @@ registerDoRNG(582998)
     melt() %>%
     ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
     geom_line()+
-    guides(color=FALSE)+
+    guides(color="none")+
     facet_wrap(~variable,scales="free_y")
   @
   

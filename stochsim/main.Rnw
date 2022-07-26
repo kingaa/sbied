@@ -616,7 +616,7 @@ registerDoRNG(2488820)
     sims %>%
       ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
       geom_line()+
-      guides(color=FALSE)
+      guides(color="none")
     @
     
     The data are in blue; the \Sexpr{length(levels(sims$.id))-1} simulations are shown in red.

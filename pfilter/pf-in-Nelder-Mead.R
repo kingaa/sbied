@@ -53,5 +53,5 @@ mle %>% simulate(nsim=10,format="data.frame",include.data=TRUE) -> sims
 
 sims %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
-  guides(color=FALSE)+
+  guides(color="none")+
   geom_line()

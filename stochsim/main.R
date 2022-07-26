@@ -116,4 +116,4 @@ measSIR %>%
 sims %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
-  guides(color=FALSE)
+  guides(color="none")

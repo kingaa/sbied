@@ -147,7 +147,7 @@ The `r max(sims$.id)` simulations are shown in red.
 ```{r sims1-plot,echo=F}
 sims %>%
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
-  guides(color=FALSE)+
+  guides(color="none")+
   geom_line()
 ```
 

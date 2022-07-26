@@ -127,7 +127,7 @@ simdat %>%
   geom_line()+
   scale_color_manual(values=c(`TRUE`="red",`FALSE`="black"))+
   scale_size_manual(values=c(`TRUE`=1,`FALSE`=0.5))+
-  guides(color=FALSE,size=FALSE)
+  guides(color="none",size="none")
 ```
 
 How do these simulations compare to the ones from earlier models?

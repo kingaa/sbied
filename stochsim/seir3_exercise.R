@@ -1,9 +1,8 @@
 params <-
-list(prefix = "seir3_exercise/")
+list(prefix = "seir3_exercise")
 
 library(tidyverse)
 library(pomp)
-stopifnot(packageVersion("pomp")>="3.0")
 theme_set(theme_bw())
 options(stringsAsFactors=FALSE)
 set.seed(1221234211)
@@ -56,4 +55,4 @@ simdat %>%
   geom_line()+
   scale_color_manual(values=c(`TRUE`="red",`FALSE`="black"))+
   scale_size_manual(values=c(`TRUE`=1,`FALSE`=0.5))+
-  guides(color=FALSE,size=FALSE)
+  guides(color="none",size="none")

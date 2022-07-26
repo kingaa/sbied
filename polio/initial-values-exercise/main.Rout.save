@@ -444,4 +444,4 @@ dbl (23): b1, b2, b3, b4, b5, b6, psi, rho, tau, sigma_dem, sigma_env, SO_0,...
 > 
 > proc.time()
    user  system elapsed 
-  8.237  10.092   6.162 
+  8.344   9.724   6.379 
