@@ -1152,17 +1152,35 @@ set.seed(1350254336)
 
 \section{Exercises}
 
-\begin{frame}{\myexercise. Fitting the SEIR model}
-  Following the template above, estimate the parameters and likelihood of the SEIR model you implemented in the earlier lessons.
-  Specifically:
+\begin{frame}[allowframebreaks=0.9]{\myexercise. Fitting the SEIR model
+    \addtocounter{Ecounter}{-1}
+    %% A hack needed to stop multiple increments of the exercise counter
+    %% when the exercise is split over multiple slides
+  }
+  In this exercise, you will estimate the parameters and likelihood of the SEIR model you implemented in the earlier lessons by following the template above.
+  To do this efficiently, we will make use of a system of \emph{run-levels}.
+  At each run-level, we will select some number of particles (\code{Np}), number of IF2 iterations (\code{Nmif}), and number of starting guesses, to achieve a particular result.
   \begin{enumerate}[(a)]
-  \item First conduct a local search and then a global search using the multi-stage, multi-start method displayed above.
-  \item How does the maximized likelihood compare with what we obtained for the SIR model?
-  \item How do the parameter estimates differ?
+  \item \label{it:zero} First, conduct a local search and compute the likelihood at the end of each \code{mif2} run, as shown above.
+    Use only as many parallel \code{mif2} computations as you have processors on your computer (or perhaps somewhat fewer).
+    Track the time used and compute the amount of time used per cpu per IF2 iteration per 1000 particles.
+    (Recall that one particle filter computation is roughly equal to a IF2 iteration in computational complexity if they both use the same number of particles.)
+  \item At run-level 1, we want a quick calculation that verifies that the codes are working as expected.
+    Using the expense estimates you generated in Step~(\ref{it:zero}), choose a number of IF2 iterations so that you can do a very crude ``global search'' that will complete in two or three minutes.
+    Do not reduce \code{Np} drastically, as we don't want to degrade the performance of the individual IF2 computations.
+    Run your global search with these settings.
+    This serves to debug your global search code.
+  \item At run-level 2, we want a computation that gives us some results we can begin to interpret, but that is still as quick as possible.
+    Choose \code{Nmif} and the number of random starts so that you can obtain the beginnings of a global search of the parameter space in one hour or less.
+    Run your global search with these settings and plot the results.
+  \item Run-level 3 is intended for final or near-final results.
+    You may want to tune your settings (\code{Nmif}, \code{Np}, \code{rw.sd}, \code{cooling.fraction.50}) at this point, based on what you found at run-level 2.
+    Decide how much time you can afford to run a computation over the next 24 hours.
+    Choose the number of starting guesses so that you can obtain as thorough a global search as possible within this period.
+    Run your global search and identify a maximum likelihood estimate.
+  \item How does the SEIR model compare with the SIR model?
+    Discuss the overall quality of the fit as well as important differences in how the two models are explaining the data.
   \end{enumerate}
-
-  You will need to tailor the intensity of your search to the computational resources at your disposal.
-  In particular, choose the number of starts, number of particles employed, and the number of IF2 iterations to perform in view of the size and speed of your machine.
 
   \vspace{1em}
 
@@ -1170,11 +1188,15 @@ set.seed(1350254336)
 
 \end{frame}
 
-\begin{frame}{\myexercise. Fitting all parameters}
-  In all of the foregoing, we have assumed a fixed value of the dispersion parameter $k$, of the negative binomial measurement model.
+\addtocounter{Ecounter}{1}
+\begin{frame}{\myexercise. Fitting all parameters of the SIR model}
+  In all of the foregoing, we have assumed a fixed value of the dispersion parameter, $k$, of the negative binomial measurement model.
   We've also fixed one or the other of $\mu_{IR}$, $\eta$.
   Now attempt to estimate all the parameters simultaneously.
+  To accomplish this, use the same system of run-levels as in the previous Exercise.
+  
   How much is the fit improved?
+  How has the model's explanation of the data changed?
 
   \vspace{1em}
 
