@@ -376,8 +376,8 @@ set.seed(1350254336)
   
   <<local_search,eval=FALSE,purl=FALSE>>=
   foreach(i=1:20,.combine=c) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     measSIR %>%
       mif2(
         Np=2000, Nmif=50,
@@ -453,8 +453,8 @@ set.seed(1350254336)
   
   <<lik_local,eval=FALSE,purl=FALSE>>=
   foreach(mf=mifs_local,.combine=rbind) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     evals <- replicate(10, logLik(pfilter(mf,Np=5000)))
     ll <- logmeanexp(evals,se=TRUE)
     mf %>% coef() %>% bind_rows() %>%
@@ -543,8 +543,8 @@ set.seed(1350254336)
   
   <<global_search2,eval=FALSE,purl=FALSE>>=
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     mf1 %>%
       mif2(params=c(guess,fixed_params)) %>%
       mif2(Nmif=100) -> mf
@@ -682,8 +682,8 @@ set.seed(1350254336)
 
   <<eta_profile2,eval=FALSE,purl=FALSE>>=
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     mf1 %>%
       mif2(params=c(guess,fixed_params),
         rw.sd=rw.sd(Beta=0.02,rho=0.02)) %>%
@@ -833,8 +833,8 @@ set.seed(1350254336)
 
   <<rho_profile2,eval=FALSE,purl=FALSE>>=
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     mf1 %>%
       mif2(params=guess,
         rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02))) %>%
@@ -960,8 +960,8 @@ set.seed(1350254336)
   For each of the starting points, we'll first perform 100 IF2 iterations:
 
   <<exp_global_search2a,eval=FALSE,purl=FALSE>>=
-  library(pomp)
   library(tidyverse)
+  library(pomp)
   measSIR %>%
     mif2(params=guess, Np=2000, Nmif=100,
       cooling.fraction.50=0.5,
@@ -1085,8 +1085,8 @@ set.seed(1350254336)
 
   <<mu_IR_profile2,eval=FALSE,purl=FALSE>>=
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     measSIR %>%
       mif2(params=guess, Np=2000, Nmif=100,
         partrans=parameter_trans(log="Beta",logit="eta"),

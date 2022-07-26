@@ -50,8 +50,8 @@ bake(file="local_search.rds",{
       paramnames=c("Beta","rho","eta")
     ) -> measSIR
   foreach(i=1:20,.combine=c) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     measSIR %>%
       mif2(
         Np=2000, Nmif=50,
@@ -78,8 +78,8 @@ mifs_local %>%
 bake(file="lik_local.rds",{
     registerDoRNG(900242057)
     foreach(mf=mifs_local,.combine=rbind) %dopar% {
-      library(pomp)
       library(tidyverse)
+      library(pomp)
       evals <- replicate(10, logLik(pfilter(mf,Np=5000)))
       ll <- logmeanexp(evals,se=TRUE)
       mf %>% coef() %>% bind_rows() %>%
@@ -117,8 +117,8 @@ bake(file="global_search.rds",
   dependson=guesses,{
     registerDoRNG(1270401374)
     foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-      library(pomp)
       library(tidyverse)
+      library(pomp)
       mf1 %>%
         mif2(params=c(guess,fixed_params)) %>%
         mif2(Nmif=100) -> mf
@@ -182,8 +182,8 @@ bake(file="eta_profile.rds",
   dependson=guesses,{
     registerDoRNG(830007657)
     foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-      library(pomp)
       library(tidyverse)
+      library(pomp)
       mf1 %>%
         mif2(params=c(guess,fixed_params),
           rw.sd=rw.sd(Beta=0.02,rho=0.02)) %>%
@@ -272,8 +272,8 @@ bake(file="rho_profile.rds",
   dependson=guesses,{
   registerDoRNG(2105684752)
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     mf1 %>%
       mif2(params=guess,
         rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02))) %>%
@@ -346,8 +346,8 @@ bake(file="global_search2.rds",
       paramnames=c("Beta","mu_IR","eta")
     ) -> measSIR
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     measSIR %>%
       mif2(params=guess, Np=2000, Nmif=100,
         cooling.fraction.50=0.5,
@@ -427,8 +427,8 @@ bake(file="mu_IR_profile1.rds",
       paramnames=c("Beta","eta")
     ) -> measSIR
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     measSIR %>%
       mif2(params=guess, Np=2000, Nmif=100,
         cooling.fraction.50=0.5,
