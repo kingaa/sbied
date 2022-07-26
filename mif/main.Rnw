@@ -186,8 +186,7 @@ set.seed(1350254336)
   \item number of iterations, {\texttt Nmif = }$M$\\
   \item number of particles, {\texttt Np = }$J$\\
   \item initial parameter swarm, {\texttt params = }$\{\Theta^0_j, j=1,\dots,J\}$\\
-  \item random walk standard deviation for parameter perturbations, a diagonal matrix,
-  {\texttt rw.sd = }$V_n$\\
+  \item random walk standard deviation for each parameter, {\texttt rw.sd}, squared to construct a diagonal variance matrix, $V_n$\\
   \item cooling fraction in 50 iterations, \texttt{cooling.fraction.50 = }$a$\\
   \end{itemize}
 
