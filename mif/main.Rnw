@@ -176,18 +176,19 @@ set.seed(1350254336)
 
   \textbf{Input:}
   \begin{itemize}
-  \item simulators for $f_{X_0}(x_0;\theta)$ and $f_{X_n|X_{n-1}}(x_n| x_{n-1}; \theta)$;\\
-  \item evaluator for $f_{Y_n|X_n}(y_n| x_n;\theta)$;\\
+  \item simulators for $f_{X_0}(x_0;\theta)$ and $f_{X_n|X_{n-1}}(x_n| x_{n-1}; \theta)$\\
+  \item evaluator for $f_{Y_n|X_n}(y_n| x_n;\theta)$\\
   \item data, $y^*_{1:N}$\\
   \end{itemize}
 
-  \textbf{Algorithmic parameters:}
+  \textbf{Algorithmic parameters and corresponding \texttt{mif2} arguments:}
   \begin{itemize}
-  \item number of iterations, $M$;\\
-  \item number of particles, $J$;\\
-  \item initial parameter swarm, $\{\Theta^0_j, j=1,\dots,J\}$;\\
-  \item perturbation density, $h_n(\theta|\varphi;\sigma)$;\\
-  \item perturbation scale, $\sigma_{1{:}M}$\\
+  \item number of iterations, {\texttt Nmif = }$M$\\
+  \item number of particles, {\texttt Np = }$J$\\
+  \item initial parameter swarm, {\texttt params = }$\{\Theta^0_j, j=1,\dots,J\}$\\
+  \item random walk standard deviation for parameter perturbations, a diagonal matrix,
+  {\texttt rw.sd = }$V_n$\\
+  \item cooling fraction in 50 iterations, \texttt{cooling.fraction.50 = }$a$\\
   \end{itemize}
 
   \textbf{Output:}
@@ -200,10 +201,10 @@ set.seed(1350254336)
   \textbf{Procedure:}
   \begin{enumerate}
   \item For $m$ in $1{:}M$
-  \item $\qquad$ $\Theta^{F,m}_{0,j}\sim h_0(\theta|\Theta^{m-1}_{j}; \sigma_m)$ for $j$ in $1{:} J$
+  \item $\qquad$ $\Theta^{F,m}_{0,j}\sim \normal\big(\Theta^{m-1}_{j},V_0 \, a^{2m/50}\big)$ for $j$ in $1{:} J$
   \item $\qquad$ $X_{0,j}^{F,m}\sim f_{X_0}(x_0 ; \Theta^{F,m}_{0,j})$ for $j$ in $1{:} J$
   \item $\qquad$ For $n$ in $1{:} N$
-  \item $\qquad\qquad$ $\Theta^{P,m}_{n,j}\sim h_n(\theta|\Theta^{F,m}_{n-1,j},\sigma_m)$ for $j$ in $1{:} J$
+  \item $\qquad\qquad$       $\Theta^{P,m}_{n,j}\sim \normal\big(\Theta^{F,m}_{n-1,j},V_n \, a^{2m/50}\big)$ for $j$ in $1{:} J$
   \item $\qquad\qquad$ $X_{n,j}^{P,m}\sim f_{X_n|X_{n-1}}(x_n | X^{F,m}_{n-1,j}; \Theta^{P,m}_{n,j})$ for $j$ in $1{:} J$
   \item $\qquad\qquad$ $w_{n,j}^m = f_{Y_n|X_n}(y^*_n| X_{n,j}^{P,m} ; \Theta^{P,m}_{n,j})$ for $j$ in $1{:} J$
   \item $\qquad\qquad$ Draw $k_{1{:}J}$ with $P[k_j=i]=  w_{n,i}^m\Big/\sum_{u=1}^J w_{n,u}^m$
