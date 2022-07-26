@@ -9,16 +9,16 @@ opts_chunk$set(
   comment=NA,
   echo=TRUE,
   eval=TRUE,
-  dev='png',
-  dev.args=list(bg='transparent'),
+  dev="png",
+  dev.args=list(bg="transparent"),
   dpi=300,
   error=FALSE,
-  fig.align='center',
+  fig.align="center",
   fig.height=4,fig.width=6.83,
   fig.lp="fig:",
   fig.path=paste("tmp",as.character(params$prefix),"figure","",sep="/"),
   fig.pos="h!",
-  fig.show='asis',
+  fig.show="asis",
   highlight=TRUE,
   include=TRUE,
   message=FALSE,
@@ -26,7 +26,7 @@ opts_chunk$set(
   prompt=FALSE,
   purl=TRUE,
   results="markup",
-  size='small',
+  size="small",
   strip.white=TRUE,
   tidy=FALSE,
   warning=FALSE
@@ -44,7 +44,7 @@ theme_set(theme_bw())
 
 knit_hooks$set(
   document = function (x) {
-    sub('\\usepackage[]{color}','\\usepackage{xcolor}',x,fixed=TRUE)
+    sub("\\usepackage[]{color}","\\usepackage{xcolor}",x,fixed=TRUE)
   }
 )
 

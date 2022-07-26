@@ -1,12 +1,12 @@
 ---
-pagetitle: pomp reproducibility functions
 title: |
   | `bake`, `stew`, and `freeze`, for caching and reproducibility
 author: Aaron A. King and Edward L. Ionides
+pagetitle: pomp reproducibility functions
 output:
   html_document:
     toc: yes
-    toc_depth: 4
+    toc_depth: 2
     includes:
       after_body:
       - ../_includes/supp_bottom.html
@@ -17,25 +17,15 @@ params:
   prefix: bake
 ---
 
-\newcommand\prob[1]{\mathbb{P}\left[{#1}\right]}
-\newcommand\expect[1]{\mathbb{E}\left[{#1}\right]}
-\newcommand\var[1]{\mathrm{Var}\left[{#1}\right]}
-\newcommand\dist[2]{\mathrm{#1}\left(#2\right)}
-\newcommand\dd[1]{d{#1}}
-\newcommand\lik{\mathcal{L}}
-\newcommand\loglik{\ell}
-
------------------------------------
-
-Produced in R version `r getRversion()`.
-
------------------------------------
-
-```{r knitr-opts,include=FALSE,purl=FALSE}
+```{r knitr-opts}
+#| include: false
+#| purl: false
 source("../_includes/setup.R", local = knitr::knit_global())
 options(pomp_archive_dir=getwd())
 ```
-```{r cache=FALSE,include=FALSE}
+```{r prelims}
+#| cache: false
+#| include: false
 library(tidyverse)
 library(pomp)
 set.seed(1700460124)
@@ -57,7 +47,7 @@ When we do so, we need of course to re-run the computation to see the new result
 This can be costly to the extent that the computation requires resources (time, money, and patience for example).
 When a computation is expensive, therefore, it can be useful to store its results, so that one does not have to recompute them unnecessarily.
 For example, suppose we are modifying a sub-computation B that depends on the results of the upstream calculation A.
-Any modification we make to B will require us to re-run B, but we need not re-run A, since its result would remain unchanged.
+Any modification we make to B will require us to re-run B, but it would be wasteful to also re-run A, since we already know the result of A.
 
 The **pomp** package provides two tools to help in the caching of intermediate results:  
 - `bake` stores a single **R** object, the result of a specified computation.  
@@ -67,6 +57,32 @@ In addition to these, **pomp** provides `freeze`, which controls the pseudorando
 These functions also play a role in supporting *reproducibility*.
 In particular, they allow one to store not only the results of a calculation, but also the code that generated the results.
 We demonstrate them here.
+
+The [manual page](https://kingaa.github.io/manuals/pomp/html/bake.html) gives a full description:
+
+```{css help_page_style}
+#| echo: false
+#help {
+	text-align: left;
+	border-width: 2px;
+	width: 90%;
+	height: 580pt;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 10px;
+	padding-bottom: 20px;
+}
+```
+```{r help_page,cache=FALSE,include=FALSE,purl=FALSE}
+pgpth <- "bake_help.html"
+tools::Rd2HTML(
+         utils:::.getHelpFile(help(bake,package="pomp")),
+         stylesheet="https://cran.r-project.org/R.css",
+         out=pgpth
+       )
+```
+
+<iframe id="help" src="`r pgpth`"></iframe>
 
 ## Caching with `bake`
 
@@ -118,7 +134,8 @@ x; y; z
 
 Thus, one has to manage the dependencies between `bake` calls oneself.
 
-```{r include=FALSE}
+```{r cleanup}
+#| include: false
 unlink("result1.rds")
 rm(list=ls())
 ```
@@ -167,7 +184,8 @@ We see that the `stew` call has retrieved `z` and `w`, but not `x` and `y`.
 
 Notice also that the result of the last line of code inside the `stew` call, since it is not stored in any named location, is not cached.
 
-```{r include=FALSE}
+```{r cleanup2}
+#| include: false
 unlink("result2.rda")
 ```
 
@@ -241,3 +259,8 @@ See the **R** help pages for these functions for more information.
 
 `bake` stores information about the amount of time required for a computation in the file, as an attribute of the stored object.
 In addition, if the RNG has been fixed (by means of the `seed` argument), then the value of `seed` is stored as another attribute.
+
+-----------------------------------
+
+Produced in **R** version `r getRversion()` with **pomp** version `r packageVersion("pomp")`.
+

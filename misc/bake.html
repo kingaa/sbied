@@ -359,28 +359,37 @@ pre code {
 <li><a href="#sub-computations-and-their-interdependencies">Sub-computations and their interdependencies</a></li>
 <li><a href="#caching-with-bake">Caching with <code>bake</code></a></li>
 <li><a href="#caching-with-stew">Caching with <code>stew</code></a></li>
-<li><a href="#controlling-the-random-number-generator">Controlling the random-number generator</a><ul>
-<li><a href="#exercise">Exercise</a></li>
-</ul></li>
+<li><a href="#controlling-the-random-number-generator">Controlling the random-number generator</a></li>
 <li><a href="#rds-and-rda-formats">Serialized file formats in <strong>R</strong></a></li>
 <li><a href="#stored-attributes">Attributes stored by <code>bake</code> and <code>stew</code></a></li>
 </ul>
 </div>
 
-
-<hr />
-<p>Produced in R version 4.2.1.</p>
-<hr />
 <hr />
 <div id="sub-computations-and-their-interdependencies" class="section level2">
 <h2>Sub-computations and their interdependencies</h2>
 <p>A scientific computation can be broken down into sub-computations, each of which depends on previous calculations. We refer to the fact that calculation B depends on the results of a calculation A by saying that B is <em>downstream</em> of A or A is <em>upstream</em> of B.</p>
-<p>As we develop a scientific computation, we often need to try various approaches, tweak algorithmic settings, and so on. When we do so, we need of course to re-run the computation to see the new result. This can be costly to the extent that the computation requires resources (time, money, and patience for example). When a computation is expensive, therefore, it can be useful to store its results, so that one does not have to recompute them unnecessarily. For example, suppose we are modifying a sub-computation B that depends on the results of the upstream calculation A. Any modification we make to B will require us to re-run B, but we need not re-run A, since its result would remain unchanged.</p>
+<p>As we develop a scientific computation, we often need to try various approaches, tweak algorithmic settings, and so on. When we do so, we need of course to re-run the computation to see the new result. This can be costly to the extent that the computation requires resources (time, money, and patience for example). When a computation is expensive, therefore, it can be useful to store its results, so that one does not have to recompute them unnecessarily. For example, suppose we are modifying a sub-computation B that depends on the results of the upstream calculation A. Any modification we make to B will require us to re-run B, but it would be wasteful to also re-run A, since we already know the result of A.</p>
 <p>The <strong>pomp</strong> package provides two tools to help in the caching of intermediate results:<br />
 - <code>bake</code> stores a single <strong>R</strong> object, the result of a specified computation.<br />
 - <code>stew</code> can store multiple <strong>R</strong> objects resulting from a specified computation.<br />
 In addition to these, <strong>pomp</strong> provides <code>freeze</code>, which controls the pseudorandom number generator.</p>
 <p>These functions also play a role in supporting <em>reproducibility</em>. In particular, they allow one to store not only the results of a calculation, but also the code that generated the results. We demonstrate them here.</p>
+<p>The <a href="https://kingaa.github.io/manuals/pomp/html/bake.html">manual page</a> gives a full description:</p>
+<style type="text/css">
+#help {
+    text-align: left;
+    border-width: 2px;
+    width: 90%;
+    height: 580pt;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+</style>
+<iframe id="help" src="bake_help.html">
+</iframe>
 </div>
 <div id="caching-with-bake" class="section level2">
 <h2>Caching with <code>bake</code></h2>
@@ -527,6 +536,8 @@ w</code></pre>
 <div id="stored-attributes" class="section level2">
 <h2>Attributes stored by <code>bake</code> and <code>stew</code></h2>
 <p><code>bake</code> stores information about the amount of time required for a computation in the file, as an attribute of the stored object. In addition, if the RNG has been fixed (by means of the <code>seed</code> argument), then the value of <code>seed</code> is stored as another attribute.</p>
+<hr />
+<p>Produced in <strong>R</strong> version 4.2.1 with <strong>pomp</strong> version 4.3.2.0.</p>
 </div>
 
 <div style="padding-top: 1em; padding-bottom: 2em;">
