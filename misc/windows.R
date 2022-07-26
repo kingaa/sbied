@@ -3,7 +3,6 @@ list(prefix = "windows")
 
 set.seed(1350254336)
 
-dir.create("tmp")
 options(pomp_cdir="./tmp")
 
 library(tidyverse)

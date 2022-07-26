@@ -2,11 +2,10 @@
 --- main_win.R	2021-07-20 11:31:07.257197194 -0400
 ***************
 *** 4,9 ****
---- 4,12 ----
+--- 4,11 ----
   stopifnot(packageVersion("pomp")>="3.0")
   set.seed(1350254336)
   
-+ dir.create("tmp")
 + options(pomp_cdir="./tmp")
 + 
   source("https://kingaa.github.io/sbied/pfilter/model.R")

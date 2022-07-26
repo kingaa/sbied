@@ -52,7 +52,6 @@ The second command sets a global option, with the effect that every **pomp** com
 
 ```{r cdir}
 #| eval: true
-dir.create("tmp")
 options(pomp_cdir="./tmp")
 ```
 

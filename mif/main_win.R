@@ -2,7 +2,6 @@ library(tidyverse)
 library(pomp)
 set.seed(1350254336)
 
-dir.create("tmp")
 options(pomp_cdir="./tmp")
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")
