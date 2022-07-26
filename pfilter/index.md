@@ -23,7 +23,7 @@ output:
 | Supplement: Likelihood by direct simulation: Consett measles example                       | [HTML](directSimulation.html)                                                               |
 | Supplement: Standard errors via the observed Fisher information                            | [HTML](fisherSE.html)                                                                       |
 | Supplement: Bootstrap methods                                                              | [HTML](bootstrap.html)                                                                      |
-| Supplement: Direct maximization of the particle filter likelihood                          | [HTML](./pf-in-Nelder-Mead.html)                                                            |
+| Supplement: Direct maximization of the particle filter likelihood                          | [HTML](pf-in-Nelder-Mead.html)                                                            |
 | Worked solution to Exercise 3.1                                                            | [HTML](Q_slice.html)                                                                        |
 | Worked solution to Exercise 3.2                                                            | [HTML](expense.html)                                                                        |
 | Worked solution to Exercise 3.3                                                            | [HTML](loglikest.html)                                                                      |

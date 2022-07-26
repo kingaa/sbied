@@ -14,5 +14,6 @@ output:
 | &nbsp;                           | &nbsp;               |
 |:---------------------------------|:--------------------:|
 | Debugging strategies             | [HTML](debug.html)   |
-| Pro tips                         | [HTML](protips.html) |
 | Parallel computing under Windows | [HTML](windows.html) |
+| Reproducibility tools            | [HTML](bake.html)    |
+| Pro tips                         | [HTML](protips.html) |

@@ -1,5 +1,7 @@
 ---
-title: Likelihood by direct simulation: Consett measles example
+title: |
+  | Likelihood by direct simulation:
+  | Consett measles example
 author: Aaron A. King and Edward L. Ionides
 output:
   html_document:

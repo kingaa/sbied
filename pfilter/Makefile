@@ -4,7 +4,7 @@ directSimulation.html directSimulation.R \
 monteCarlo.pdf fisherSE.html \
 loglikest.html loglikest.R \
 pf-in-Nelder-Mead.html pf-in-Nelder-Mead.R \
-Q_slice.html bake.html \
+Q_slice.html \
 quiz.pdf quiz_soln.pdf
 
 .INTERMEDIATE: monteCarlo.tex

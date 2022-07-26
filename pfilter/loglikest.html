@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Aaron A. King" />
+<meta name="author" content="Aaron A. King and Edward L. Ionides" />
 
 
 <title>loglikest.knit</title>
@@ -351,7 +351,7 @@ pre code {
 
 <h1 class="title toc-ignore"><div class="line-block">Worked solution to exercise 3.3:<br />
 Precision and accuracy of particle-filter likelihood estimates</div></h1>
-<h4 class="author">Aaron A. King</h4>
+<h4 class="author">Aaron A. King and Edward L. Ionides</h4>
 
 </div>
 
@@ -395,8 +395,8 @@ ll &lt;- sapply(pf,logLik)
 logmeanexp(ll,se=TRUE)</code></pre>
 <pre><code>                     se 
 -130.096408    2.731696 </code></pre>
-<p>This took 5.9 seconds.</p>
-<p>Since the time taken is approximately linear in <code>NP</code> and <code>NREPS</code>, we get a formula (for this machine) of <span class="math display">\[\mbox{Runtime}\approx \frac{ \mathrm{NP}}{10^{4}} \times \frac{\mathrm{NREPS}}{ 10} \times 5.9\mbox{sec}.\]</span></p>
+<p>This took 5.6 seconds.</p>
+<p>Since the time taken is approximately linear in <code>NP</code> and <code>NREPS</code>, we get a formula (for this machine) of <span class="math display">\[\mbox{Runtime}\approx \frac{ \mathrm{NP}}{10^{4}} \times \frac{\mathrm{NREPS}}{ 10} \times 5.6\mbox{sec}.\]</span></p>
 <p>We can use this formula to select <code>NP</code> and <code>NREPS</code> to give an appropriate runtime.</p>
 </div>
 <div id="effects-of-np-and-nreps-on-estimates" class="section level2">
@@ -458,7 +458,7 @@ foreach (p=iter(design,&quot;row&quot;),
         mean
     }
 }
-&lt;bytecode: 0x55bfddc96d28&gt;
+&lt;bytecode: 0x5578974e8da0&gt;
 &lt;environment: namespace:pomp&gt;</code></pre>
 <p>We see that <code>logmeanexp</code> constructs its standard errors via a <a href="https://en.wikipedia.org/wiki/Jackknife_resampling">jack-knife</a> calculation.</p>
 <p>The standard errors from this approach are reasonable when the distribution of the likelihoods is not too skewed. However, a largest likelihood many log units higher than the others corresponds to a highly skewed distribution on the untransformed scale. It is on this untransformed scale that combining likelihood estimates by averaging is justified by the unbiased property of the particle filter. This could therefore lead to unstable standard errors.</p>
