@@ -369,7 +369,7 @@ pre code {
 <div id="sub-computations-and-their-interdependencies" class="section level2">
 <h2>Sub-computations and their interdependencies</h2>
 <p>A scientific computation can be broken down into sub-computations, each of which depends on previous calculations. We refer to the fact that calculation B depends on the results of a calculation A by saying that B is <em>downstream</em> of A or A is <em>upstream</em> of B.</p>
-<p>As we develop a scientific computation, we often need to try various approaches, tweak algorithmic settings, and so on. When we do so, we need of course to re-run the computation to see the new result. This can be costly to the extent that the computation requires resources (time, money, and patience for example). When a computation is expensive, therefore, it can be useful to store its results, so that one does not have to recompute them unnecessarily. For example, suppose we are modifying a sub-computation B that depends on the results of the upstream calculation A. Any modification we make to B will require us to re-run B, but it will be wastful to re-run A, since its result would remain unchanged.</p>
+<p>As we develop a scientific computation, we often need to try various approaches, tweak algorithmic settings, and so on. When we do so, we need of course to re-run the computation to see the new result. This can be costly to the extent that the computation requires resources (time, money, and patience for example). When a computation is expensive, therefore, it can be useful to store its results, so that one does not have to recompute them unnecessarily. For example, suppose we are modifying a sub-computation B that depends on the results of the upstream calculation A. Any modification we make to B will require us to re-run B, but it would be wasteful to also re-run A, since we already know the result of A.</p>
 <p>The <strong>pomp</strong> package provides two tools to help in the caching of intermediate results:<br />
 - <code>bake</code> stores a single <strong>R</strong> object, the result of a specified computation.<br />
 - <code>stew</code> can store multiple <strong>R</strong> objects resulting from a specified computation.<br />
@@ -405,7 +405,7 @@ x; y; z</code></pre>
 <pre><code>[1] 3.745918 3.089063
 attr(,&quot;system.time&quot;)
    user  system elapsed 
-  0.001   0.000   0.000 </code></pre>
+      0       0       0 </code></pre>
 <p>When we run the above snippet for the first time, <code>z</code> is computed according to the recipe given, and is then stored, in <a href="#rds-and-rda-formats"><strong>R</strong>’s binary <code>.rds</code> format</a>, in the file <code>result1.rds</code>. [Note also that <code>bake</code> appears to have retained some information about the amount of time used in the computation; <a href="#stored-attributes">see below for more on this</a>.]</p>
 <p>If we run the code again,</p>
 <pre class="r"><code>bake(file=&quot;result1.rds&quot;,{
@@ -415,7 +415,7 @@ z</code></pre>
 <pre><code>[1] 3.745918 3.089063
 attr(,&quot;system.time&quot;)
    user  system elapsed 
-  0.001   0.000   0.000 </code></pre>
+      0       0       0 </code></pre>
 <p>there is no re-computation of <code>z</code>. Instead, <code>bake</code> notices that <code>result1.rds</code> exists and therefore opens and reads the file, returning the stored result.</p>
 <p>What happens if an upstream quantity changes? For example:</p>
 <pre class="r"><code>x &lt;- 5
@@ -429,7 +429,7 @@ x; y; z</code></pre>
 <pre><code>[1] 3.745918 3.089063
 attr(,&quot;system.time&quot;)
    user  system elapsed 
-  0.001   0.000   0.000 </code></pre>
+      0       0       0 </code></pre>
 <p>Note that we no longer have <code>x+y==z</code>. Since <code>z</code> depends on <code>x</code> and <code>y</code>, we must re-compute <code>z</code>. To do so, we simply delete the file <code>result1.rds</code>:</p>
 <pre class="r"><code>file.remove(&quot;result1.rds&quot;)</code></pre>
 <pre><code>[1] TRUE</code></pre>

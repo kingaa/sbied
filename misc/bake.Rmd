@@ -47,7 +47,7 @@ When we do so, we need of course to re-run the computation to see the new result
 This can be costly to the extent that the computation requires resources (time, money, and patience for example).
 When a computation is expensive, therefore, it can be useful to store its results, so that one does not have to recompute them unnecessarily.
 For example, suppose we are modifying a sub-computation B that depends on the results of the upstream calculation A.
-Any modification we make to B will require us to re-run B, but it will be wastful to re-run A, since its result would remain unchanged.
+Any modification we make to B will require us to re-run B, but it would be wasteful to also re-run A, since we already know the result of A.
 
 The **pomp** package provides two tools to help in the caching of intermediate results:  
 - `bake` stores a single **R** object, the result of a specified computation.  
