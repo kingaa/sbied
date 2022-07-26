@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Aaron A. King, Edward L. Ionides" />
+<meta name="author" content="Aaron A. King and Edward L. Ionides" />
 
 
 <title>Parallel pomp computations under Windows</title>
@@ -350,13 +350,11 @@ pre code {
 
 
 <h1 class="title toc-ignore">Parallel pomp computations under Windows</h1>
-<h4 class="author">Aaron A. King, Edward L. Ionides</h4>
+<h4 class="author">Aaron A. King and Edward L. Ionides</h4>
 
 </div>
 
 
-<hr />
-<p><a href="./windows.R"><strong>R codes for this document</strong></a></p>
 <hr />
 <p>Some Windows users have reported trouble with the parallel codes used in several of the Lessons. Specifically, <strong>pomp</strong> codes that require compilation of C snippets trigger errors when executed in parallel on certain Windows machines.</p>
 <p>Calls that induce compilation include:</p>
@@ -424,21 +422,21 @@ read_csv(&quot;https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv&q
       Np=1000, Nmif=5,
       cooling.fraction.50=0.5,
       rw.sd=rw.sd(Beta=0.2, rho=0.2, eta=ivp(0.2)),
+### Compilation is triggered here, by the call to `parameter_trans`.
       partrans=parameter_trans(log=&quot;Beta&quot;,logit=c(&quot;rho&quot;,&quot;eta&quot;)),
       paramnames=c(&quot;Beta&quot;,&quot;rho&quot;,&quot;eta&quot;)
     )
 } -&gt; mifs_local</code></pre>
 <p>The next one does not:</p>
-<pre class="r"><code>## Compilation is done here, since the call to `parameter_trans`
-## leads to compilation of a C snippet.
-measSIR %&gt;%
+<pre class="r"><code>measSIR %&gt;%
   pomp(
+### Compilation is triggered here, outside the parallel block.
     partrans=parameter_trans(log=&quot;Beta&quot;,logit=c(&quot;rho&quot;,&quot;eta&quot;)),
     paramnames=c(&quot;Beta&quot;,&quot;rho&quot;,&quot;eta&quot;)
   ) -&gt; measSIR2
 
-## No compilation is triggered inside the parallel code block.
 foreach (i=1:4,.combine=c) %dopar% {
+### No compilation is triggered inside the parallel code block.
   library(pomp)
   measSIR2 %&gt;%
     mif2(
@@ -448,6 +446,8 @@ foreach (i=1:4,.combine=c) %dopar% {
     )
 } -&gt; mifs_local</code></pre>
 <p>The only difference between the code chunks is that, in the first, compilation is needed <em>inside</em> the parallel code block; In the second, the compilation is done <em>before</em> the parallelization, via the call to <code>pomp</code>.</p>
+<hr />
+<p><a href="./windows.R"><strong>R codes for this document</strong></a></p>
 
 <div style="padding-top: 1em; padding-bottom: 2em;">
 <hr width="100%">

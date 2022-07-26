@@ -1,6 +1,6 @@
 ---
 title: "Ebola case study: model codes"
-author: "Aaron A. King, Edward L. Ionides, Kidus Asfaw"
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: yes

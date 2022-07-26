@@ -1,6 +1,6 @@
 ---
 title: "Demography and discrete time: modeling decisions for the polio case study"
-author: "Edward L. Ionides and Aaron A. King"
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: no

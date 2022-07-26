@@ -1,6 +1,6 @@
 ---
-title: "Direct maximization of the particle filter likelihood"
-author: "Aaron A. King and Edward L. Ionides"
+title: Direct maximization of the particle filter likelihood
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: yes

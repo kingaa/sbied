@@ -1,6 +1,6 @@
 ---
 title: "Exercise: initial values for the polio model"
-author: "Edward L. Ionides and Aaron A. King"
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: no

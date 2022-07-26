@@ -1,6 +1,6 @@
 ---
-title: "Implementing a POMP model from scratch"
-author: "Aaron A. King"
+title: Implementing a POMP model from scratch
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: yes

@@ -60,21 +60,21 @@ foreach (i=1:4,.combine=c) %dopar% {
       Np=1000, Nmif=5,
       cooling.fraction.50=0.5,
       rw.sd=rw.sd(Beta=0.2, rho=0.2, eta=ivp(0.2)),
+### Compilation is triggered here, by the call to `parameter_trans`.
       partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
       paramnames=c("Beta","rho","eta")
     )
 } -> mifs_local
 
-## Compilation is done here, since the call to `parameter_trans`
-## leads to compilation of a C snippet.
 measSIR %>%
   pomp(
+### Compilation is triggered here, outside the parallel block.
     partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
     paramnames=c("Beta","rho","eta")
   ) -> measSIR2
 
-## No compilation is triggered inside the parallel code block.
 foreach (i=1:4,.combine=c) %dopar% {
+### No compilation is triggered inside the parallel code block.
   library(pomp)
   measSIR2 %>%
     mif2(

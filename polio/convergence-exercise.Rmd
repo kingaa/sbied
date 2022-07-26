@@ -1,6 +1,6 @@
 ---
-title: "Diagnosing filtering and maximization convergence for the polio case study"
-author: "Edward L. Ionides and Aaron A. King"
+title: Diagnosing filtering and maximization convergence for the polio case study
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: no

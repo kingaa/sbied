@@ -2,7 +2,7 @@
 title: |
   | Worked solution to exercise 3.3:
   | Precision and accuracy of particle-filter likelihood estimates
-author: "Aaron A. King"
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: yes

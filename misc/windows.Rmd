@@ -1,6 +1,6 @@
 ---
 title: Parallel pomp computations under Windows
-author: Aaron A. King, Edward L. Ionides
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: no
@@ -13,10 +13,6 @@ csl: ../jss.csl
 params:
   prefix: windows
 ---
-
------------------------------------
-	
-[**R codes for this document**](./windows.R)  
 
 -----------------------------------
 
@@ -128,6 +124,7 @@ foreach (i=1:4,.combine=c) %dopar% {
       Np=1000, Nmif=5,
       cooling.fraction.50=0.5,
       rw.sd=rw.sd(Beta=0.2, rho=0.2, eta=ivp(0.2)),
+### Compilation is triggered here, by the call to `parameter_trans`.
       partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
       paramnames=c("Beta","rho","eta")
     )
@@ -139,16 +136,15 @@ The next one does not:
 ```{r snip2}
 #| message: false
 #| results: hide
-## Compilation is done here, since the call to `parameter_trans`
-## leads to compilation of a C snippet.
 measSIR %>%
   pomp(
+### Compilation is triggered here, outside the parallel block.
     partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
     paramnames=c("Beta","rho","eta")
   ) -> measSIR2
 
-## No compilation is triggered inside the parallel code block.
 foreach (i=1:4,.combine=c) %dopar% {
+### No compilation is triggered inside the parallel code block.
   library(pomp)
   measSIR2 %>%
     mif2(
@@ -161,3 +157,8 @@ foreach (i=1:4,.combine=c) %dopar% {
 
 The only difference between the code chunks is that, in the first, compilation is needed *inside* the parallel code block;
 In the second, the compilation is done *before* the parallelization, via the call to `pomp`.
+
+-----------------------------------
+	
+[**R codes for this document**](./windows.R)  
+

@@ -1,6 +1,6 @@
 ---
-title: "Standard errors via the observed Fisher information"
-author: "Aaron A. King and Edward L. Ionides"
+title: Standard errors via the observed Fisher information
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: yes

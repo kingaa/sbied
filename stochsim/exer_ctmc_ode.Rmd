@@ -1,6 +1,6 @@
 ---
 title: "Simulation of stochastic dynamic models: Optional exercises"
-author: "Carles Bretó"
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: no

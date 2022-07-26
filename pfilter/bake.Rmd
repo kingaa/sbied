@@ -2,7 +2,7 @@
 pagetitle: pomp reproducibility functions
 title: |
   | `bake`, `stew`, and `freeze`, for caching and reproducibility
-author: "Aaron A. King and Edward L. Ionides"
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: yes

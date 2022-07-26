@@ -1,6 +1,6 @@
 ---
 title: Measles profile computation
-author: Aaron A. King
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: yes

@@ -1,6 +1,6 @@
 ---
-title: 'Partially worked solution to the "Rethinking the boarding school flu" exercise'
-author: "Aaron A. King"
+title: Partially worked solution to the "Rethinking the boarding school flu" exercise
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: no

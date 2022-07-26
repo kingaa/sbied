@@ -1,6 +1,6 @@
 ---
 title: Tuning IF2
-author: Edward Ionides and Aaron A. King
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: yes

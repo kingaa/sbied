@@ -1,6 +1,6 @@
 ---
-title: "Deterministic latent process models and their role in benchmarking POMP models"
-author: "Aaron A. King and Edward L. Ionides"
+title: Deterministic latent process models and their role in benchmarking POMP models
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: yes

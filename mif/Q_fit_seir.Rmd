@@ -1,6 +1,6 @@
 ---
-title: "Fitting the SEIR model"
-author: "Aaron A. King, Edward L. Ionides, Qianying Lin"
+title: Fitting the SEIR model
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: no

@@ -1,6 +1,6 @@
 ---
-title: "Worked solutions to exercises on simulation of stochastic dynamic models"
-author: "Aaron King, Carles Bret&oacute; and Edward Ionides"
+title: Worked solutions to exercises on simulation of stochastic dynamic models
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: yes

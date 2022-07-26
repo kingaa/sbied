@@ -1,6 +1,6 @@
 ---
-title: "The difference between a likelihood slice and a profile"
-author: "Aaron A. King, Edward L. Ionides, Kidus Asfaw"
+title: The difference between a likelihood slice and a profile
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: no

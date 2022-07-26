@@ -1,6 +1,6 @@
 ---
-title: "Likelihood by direct simulation: Consett measles example"
-author: "Aaron A. King and Edward L. Ionides"
+title: Likelihood by direct simulation: Consett measles example
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: yes

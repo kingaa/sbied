@@ -1,6 +1,6 @@
 ---
-title: "Checking the source code"
-author: "Aaron A. King, Edward L. Ionides, Qianying Lin"
+title: Checking the source code
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: no

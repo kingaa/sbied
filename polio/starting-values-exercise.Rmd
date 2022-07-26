@@ -1,6 +1,6 @@
 ---
-title: "Parameter estimation using randomized starting values for the polio case study"
-author: "Edward L. Ionides and Aaron A. King"
+title: Parameter estimation using randomized starting values for the polio case study
+author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: no
