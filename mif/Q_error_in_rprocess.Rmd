@@ -1,0 +1,34 @@
+---
+title: Beware errors in `rprocess`
+author: Aaron A. King and Edward L. Ionides
+output:
+  html_document:
+    toc: no
+    includes:
+      after_body:
+      - ../_includes/supp_bottom.html
+      - ../_includes/license.html
+bibliography: ../sbied.bib
+csl: ../jss.csl
+params:
+  prefix: qslice
+---
+
+
+## Exercise
+
+Suppose that there is an error in the coding of `rprocess` and suppose that plug-and-play statistical methodology is used to infer parameters.
+  As a conscientious researcher, you carry out a simulation study to check the soundness of your inference methodology on this model.
+  To do this, you use `simulate` to generate realizations from the fitted model and you check that your parameter inference procedure recovers the known parameters, up to some statistical error.
+
+(a) Will this procedure help to identify the error in `rprocess`?
+
+*No. The same error will arise in the `rprocess` used by the simulator as the one used by the simulation-based inference procedure. The simulation-based inference method can therefore retrieve the parameters used to simulate the data even though the code does not represent the model that the scientist intended.*
+
+(b) If not, how might you debug `rprocess`?
+
+*Debugging `rprocess` requires care and imagination. Study simulations and look for behaviors that you do not believe are consistent with the model: either you have found a bug, or you have improved your intuition about the model. If you know theoretical properties of the model, you can check that they hold for simulations. It may be helpful to develop a skeleton, validate stochastic simulations against the skeleton (when the noise is small they should agree), and then validate the skeleton against known properties of the deterministic system. Because of the difficulties in debugging rprocess, it is particularly important to maintain good protocols for writing rprocess, such as (c) below.*
+
+(c) What research practices help minimize the risk of errors in simulation code?
+ 
+*Develop the model in a reproducible computing environment (such as Rmd, Rnw or Jupyter) where the math equations can be placed adjacent to the code. Use math notation and code variable names which are as similar as possible. This helps the math to debug the code and vice versa. There is a related type of error which is hard to debug: when the code faithfully represents the model that you intend, but the math has an error. Math errors in the formal description of the model may not affect your research (if your code is correct) but do affect the ability of others to understand your conclusions! Exactly because these math errors do not necessarily have consequences for your scientific conclusions, you cannot correct them by scientific intuition gained by experience with code that does not have these errors.*

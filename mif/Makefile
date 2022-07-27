@@ -3,6 +3,7 @@ if2_settings.html \
 Q_fit_seir.html Q_fit_seir.R \
 Q_fitall.html Q_fitall.R \
 Q_check_code.html \
+Q_error_in_rprocess.html \
 main_win.R \
 quiz.pdf quiz_soln.pdf
 	$(RM) pomp_*.c pomp_*.so

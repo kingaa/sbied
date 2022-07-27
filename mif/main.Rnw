@@ -1198,31 +1198,37 @@ set.seed(1350254336)
 
 
   Check the source code for the \code{measSIR} pomp object, using the \code{spy} command.
-  Does the code implement the model described?
-
-  \framebreak
-
-  For various reasons, it can be surprisingly hard to make sure that the written equations and the code are perfectly matched.
+   \begin{enumerate}[(a)]
+\item 
+ Does the code implement the model described?
+\end{enumerate}
+  It can be surprisingly hard to make sure that the written equations and the code are perfectly matched.
   Papers should be written to be readable, and therefore people rarely choose to clutter papers with numerical details which they hope and believe are scientifically irrelevant.
-  \begin{enumerate}[(a)]
+  \begin{enumerate}[(b)]
   \item What problems can arise due to the conflict between readability and reproducibility?
   \item What solutions are available?
-  \end{enumerate}
-
-  \framebreak
-
-  Suppose that there is an error in the coding of \code{rprocess} and suppose that plug-and-play statistical methodology is used to infer parameters.
-  As a conscientious researcher, you carry out a simulation study to check the soundness of your inference methodology on this model.
-  To do this, you use \code{simulate} to generate realizations from the fitted model and checking that your parameter inference procedure recovers the known parameters, up to some statistical error.
-  \begin{enumerate}[(a)]
-  \item Will this procedure help to identify the error in \code{rprocess}?
-  \item If not, how might you debug \code{rprocess}?
-  \item What research practices help minimize the risk of errors in simulation code?
   \end{enumerate}
 
   \vspace{1mm}
 
   \link{./Q_check_code.html}{Worked solution to the Exercise}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{\myexercise. Beware errors in \code{rprocess}}
+
+  Suppose that there is an error in the coding of \code{rprocess} and suppose that plug-and-play statistical methodology is used to infer parameters.
+  As a conscientious researcher, you carry out a simulation study to check the soundness of your inference methodology on this model.
+  To do this, you use \code{simulate} to generate realizations from the fitted model and you check that your parameter inference procedure recovers the known parameters, up to some statistical error.
+  \begin{enumerate}[(a)]
+  \item Will this procedure help to identify the error in \code{rprocess}?
+  \item If not, how might you debug \code{rprocess}?
+  \item What research practices help minimize the risk of errors in simulation code?
+  \end{enumerate}
+  \vspace{1mm}
+
+  \link{./Q_error_in_rprocess.html}{Worked solution to the Exercise}
+
 
 \end{frame}
 

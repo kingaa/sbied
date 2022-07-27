@@ -12,7 +12,7 @@
 <meta name="author" content="Aaron A. King and Edward L. Ionides" />
 
 
-<title>Checking the source code</title>
+<title>Beware errors in rprocess</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -362,7 +362,7 @@ pre code {
 
 
 
-<h1 class="title toc-ignore">Checking the source code</h1>
+<h1 class="title toc-ignore">Beware errors in <code>rprocess</code></h1>
 <h4 class="author">Aaron A. King and Edward L. Ionides</h4>
 
 </div>
@@ -370,31 +370,53 @@ pre code {
 
 <div id="exercise" class="section level2">
 <h2>Exercise</h2>
-<p>Check the source code for the <code>measSIR</code> pomp object, using
-the <code>spy</code> command. Does the code implement the model
-described?</p>
+<p>Suppose that there is an error in the coding of <code>rprocess</code>
+and suppose that plug-and-play statistical methodology is used to infer
+parameters. As a conscientious researcher, you carry out a simulation
+study to check the soundness of your inference methodology on this
+model. To do this, you use <code>simulate</code> to generate
+realizations from the fitted model and you check that your parameter
+inference procedure recovers the known parameters, up to some
+statistical error.</p>
 <ol style="list-style-type: lower-alpha">
-<li>Does the code implement the model described?</li>
+<li>Will this procedure help to identify the error in
+<code>rprocess</code>?</li>
 </ol>
-<p><em>Let us know if you find a discrepancy. Some bugs can be
-discovered by reading code, but many slip through this test. We cannot
-assume that code which looks okay is bug-free.</em></p>
-<p>Papers should be written to be readable, and therefore people rarely
-choose to clutter papers with numerical details which they hope and
-believe are scientifically irrelevant.</p>
+<p><em>No. The same error will arise in the <code>rprocess</code> used
+by the simulator as the one used by the simulation-based inference
+procedure. The simulation-based inference method can therefore retrieve
+the parameters used to simulate the data even though the code does not
+represent the model that the scientist intended.</em></p>
 <ol start="2" style="list-style-type: lower-alpha">
-<li>What problems can arise due to the conflict between readability and
-reproducibility?</li>
+<li>If not, how might you debug <code>rprocess</code>?</li>
 </ol>
-<p><em>Reproducibility requires that all details are fully described.
-For most readers, most of the time, presenting all the technical details
-may serve a negative purpose of obscuring the main points of the
-paper.</em></p>
+<p><em>Debugging <code>rprocess</code> requires care and imagination.
+Study simulations and look for behaviors that you do not believe are
+consistent with the model: either you have found a bug, or you have
+improved your intuition about the model. If you know theoretical
+properties of the model, you can check that they hold for simulations.
+It may be helpful to develop a skeleton, validate stochastic simulations
+against the skeleton (when the noise is small they should agree), and
+then validate the skeleton against known properties of the deterministic
+system. Because of the difficulties in debugging rprocess, it is
+particularly important to maintain good protocols for writing rprocess,
+such as (c) below.</em></p>
 <ol start="3" style="list-style-type: lower-alpha">
-<li>What solutions are available?</li>
+<li>What research practices help minimize the risk of errors in
+simulation code?</li>
 </ol>
-<p><em>Rnw and Rmd file formats (for R) and Jupyter notebooks (for
-python and R) are popular methods for reproducible computing.</em></p>
+<p><em>Develop the model in a reproducible computing environment (such
+as Rmd, Rnw or Jupyter) where the math equations can be placed adjacent
+to the code. Use math notation and code variable names which are as
+similar as possible. This helps the math to debug the code and vice
+versa. There is a related type of error which is hard to debug: when the
+code faithfully represents the model that you intend, but the math has
+an error. Math errors in the formal description of the model may not
+affect your research (if your code is correct) but do affect the ability
+of others to understand your conclusions! Exactly because these math
+errors do not necessarily have consequences for your scientific
+conclusions, you cannot correct them by scientific intuition gained by
+experience with code that does not have these errors.</em></p>
 </div>
 
 <div style="padding-top: 1em; padding-bottom: 2em;">
