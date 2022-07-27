@@ -42,7 +42,9 @@ hr {
 
 Produced with **R** version `r getRversion()` and **pomp** version `r packageVersion("pomp")`.
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
+```{r knitr-opts}
+#| include: false
+#| purl: false
 source("../_includes/setup.R", local = knitr::knit_global())
 ```
 

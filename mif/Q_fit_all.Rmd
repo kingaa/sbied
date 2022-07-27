@@ -1,5 +1,5 @@
 ---
-title: Fitting all parameters of the SIR model
+title: "Exercise: Fitting all parameters of the SIR model"
 author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
@@ -11,17 +11,23 @@ output:
 bibliography: ../sbied.bib
 csl: ../jss.csl
 params:
-  prefix: Q_fitall
+  prefix: Q_fit_all
 ---
 
 -----------------------------------
 
-[**R codes for this document**](./Q_fitall.R)  
+[**R codes for this document**](./Q_fit_all.R)
 
-```{r knitr-opts,include=FALSE,purl=FALSE}
+-----------------------------------
+
+```{r knitr-opts}
+#| include: false
+#| purl: false
 source("../_includes/setup.R", local = knitr::knit_global())
 ```
-```{r checks,cache=FALSE,include=FALSE}
+```{r checks}
+#| cache: false
+#| include: false
 set.seed(1350254336)
 ```
 
@@ -59,7 +65,8 @@ read_csv("measles_params.csv") %>%
 ```
 
 The putative MLE is 
-```{r echo=FALSE,results="asis"}
+```{r echo=FALSE}
+#| results: asis
 coef(measSIR) %>% mysignif(3) %>% t() %>% t() %>% knitr::kable()
 ```
 
@@ -72,7 +79,9 @@ Windows users, beware!
 The following triggers a C snippet compilation within a parallel block, which will not succeed on many Windows machines.
 See [this discussion](./windows.html) for an explanation of how to circumvent this problem.
 
-```{r local_search,eval=FALSE,purl=FALSE}
+```{r local_search}
+#| eval: false
+#| purl: false
 registerDoRNG(482942941)
 foreach(i=1:8,.combine=c) %dopar% {
   library(pomp)
@@ -88,7 +97,8 @@ foreach(i=1:8,.combine=c) %dopar% {
 } -> mifs_local
 ```
 
-```{r local_search_eval,include=FALSE}
+```{r local_search_eval}
+#| include: false
 ## What is this 'bake' function?
 ## See https://kingaa.github.io/sbied/pfilter/bake.html
 ## for an explanation.
@@ -120,7 +130,9 @@ It will be interesting to see what happens to the other parameters as IF2 tries 
 
 We now evaluate the log likelihood at each of the resulting points.
 
-```{r lik_local,eval=FALSE,purl=FALSE}
+```{r lik_local}
+#| eval: false
+#| purl: false
 registerDoRNG(908222057)
 foreach(mf=mifs_local,.combine=rbind) %dopar% {
   library(pomp)
@@ -132,7 +144,8 @@ foreach(mf=mifs_local,.combine=rbind) %dopar% {
 } -> results
 ```
 
-```{r lik_local_eval,include=FALSE}
+```{r lik_local_eval}
+#| include: false
 ## What is this 'bake' function?
 ## See https://kingaa.github.io/sbied/pfilter/bake.html
 ## for an explanation.
@@ -164,7 +177,8 @@ read_csv("measles_params.csv") %>%
 Now we attempt a global search of the $k$-$\beta$-$\rho$-$\eta$-$\mu_{IR}$ space.
 
 
-```{r cluster_setup,include=FALSE}
+```{r cluster_setup}
+#| include: false
 if (file.exists("CLUSTER.R")) {
   source("CLUSTER.R")
 }
@@ -194,7 +208,9 @@ fixed_params <- coef(measSIR,c("N"))
 
 The following may look somewhat familar.
 
-```{r global1_search,eval=FALSE,purl=FALSE}
+```{r global1_search}
+#| eval: false
+#| purl: false
 registerDoRNG(274481374)
 foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
   library(pomp)
@@ -216,7 +232,8 @@ foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
 } -> results
 ```
 
-```{r global1_search_eval,include=FALSE}
+```{r global1_search_eval}
+#| include: false
 ## What is this 'bake' function?
 ## See https://kingaa.github.io/sbied/pfilter/bake.html
 ## for an explanation.
@@ -309,7 +326,9 @@ freeze(
 )-> guesses
 ```
 
-```{r eta_profile2,eval=FALSE,purl=FALSE}
+```{r eta_profile2}
+#| eval: false
+#| purl: false
 registerDoRNG(830007657)
 foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
   library(pomp)
@@ -332,7 +351,8 @@ foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
 } -> results
 ```
 
-```{r eta_profile2_eval,include=FALSE}
+```{r eta_profile2_eval}
+#| include: false
 ## What is this 'bake' function?
 ## See https://kingaa.github.io/sbied/pfilter/bake.html
 ## for an explanation.
@@ -373,7 +393,8 @@ results %>%
   facet_wrap(~variable,scales="free_y",labeller=label_parsed)
 ```
 
-```{r loglik_comparison,include=FALSE}
+```{r loglik_comparison}
+#| include: false
 read_csv("fitall_params.csv") -> all
 all %>%
   filter(loglik==max(loglik)) %>%

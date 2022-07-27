@@ -1,5 +1,5 @@
 params <-
-list(prefix = "Q_fitall")
+list(prefix = "Q_fit_all")
 
 set.seed(1350254336)
 

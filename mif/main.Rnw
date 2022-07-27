@@ -1158,9 +1158,10 @@ set.seed(1350254336)
     %% when the exercise is split over multiple slides
   }
   In this exercise, you will estimate the parameters and likelihood of the SEIR model you implemented in the earlier lessons by following the template above.
+  Purely for the sake of simplicity, you may assume that the values of $\mu_{IR}$ and $k$ are known.
   To do this efficiently, we will make use of a system of \emph{run-levels}.
   At each run-level, we will select some number of particles (\code{Np}), number of IF2 iterations (\code{Nmif}), and number of starting guesses, to achieve a particular result.
-  \begin{enumerate}[(a)]
+  \begin{enumerate}[(A)]
   \item \label{it:zero} First, conduct a local search and compute the likelihood at the end of each \code{mif2} run, as shown above.
     Use only as many parallel \code{mif2} computations as you have processors on your computer (or perhaps somewhat fewer).
     Track the time used and compute the amount of time used per cpu per IF2 iteration per 1000 particles.
@@ -1200,7 +1201,7 @@ set.seed(1350254336)
 
   \vspace{1em}
 
-  \link{./Q_fitall.html}{Worked solution to the Exercise}
+  \link{./Q_fit_all.html}{Worked solution to the Exercise}
 \end{frame}
 
 \begin{frame}{\myexercise. Construct a profile likelihood}

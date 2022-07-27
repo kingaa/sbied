@@ -1,7 +1,7 @@
 default: index.html main.R slides.pdf notes.pdf \
 if2_settings.html \
 Q_fit_seir.html Q_fit_seir.R \
-Q_fitall.html Q_fitall.R \
+Q_fit_all.html Q_fit_all.R \
 Q_check_code.html \
 Q_error_in_rprocess.html \
 main_win.R \
