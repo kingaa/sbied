@@ -1190,11 +1190,7 @@ set.seed(1350254336)
   Is this more or less well determined than $\beta$ for this model and data?
 \end{frame}
 
-\begin{frame}[allowframebreaks]{\myexercise. Checking the source code
-    \addtocounter{Ecounter}{-1}
-    %% A hack needed to stop multiple increments of the exercise counter
-    %% when the exercise is split over multiple slides
-  }
+\begin{frame}[allowframebreaks]{\myexercise. Checking the source code}
 
 
   Check the source code for the \code{measSIR} pomp object, using the \code{spy} command.
@@ -1232,12 +1228,9 @@ set.seed(1350254336)
 
 \end{frame}
 
-\addtocounter{Ecounter}{1}
-%% A hack needed to stop multiple increments of the exercise counter
-%% when the exercise is split over multiple slides
-
 \begin{frame}{\myexercise: Choosing the algorithmic settings for IF2}
   Have a look at \link{./if2_settings.html}{our advice on tuning IF2}.
+  An exercise at the end of the linked document invites you to test this advice on the Consett measles example.
 \end{frame}
 
 \mode<presentation>{
