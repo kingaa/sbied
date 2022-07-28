@@ -4,7 +4,7 @@ author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
     toc: yes
-    toc_depth: 3
+    toc_depth: 2
     includes:
       after_body:
       - ../_includes/supp_bottom.html
@@ -60,14 +60,13 @@ At each run-level, we will select some number of particles (`Np`), number of IF2
 
 -----------------
 
-## Solution
-
-### Part A
+## Setup and check
 
 We start by building a pomp object holding the Consett measles data and the SEIR process model from [Exercise 2.4](../stochsim/exercises.html\#basic-exercise-the-seir-model).
 
 ```{r seir_pomp_libs}
 #| echo: true
+#| cache: false
 #| results: hide
 #| message: false
 #| warning: false
@@ -142,12 +141,12 @@ coef(measSEIR,"mu_EI") <- 0.8
 fixed_params <- coef(measSEIR,c("N","mu_IR","k"))
 coef(measSEIR)
 ```
-The warning tells us that `mu_EI` is a new parameter, which of course, we knew.
+The warning tells us that `mu_EI` is a new parameter, which, of course, we knew.
 
 Because this is just an exercise, we are only estimating four parameters.
 For a thorough scientific analysis, we would probably also want to consider the evidence in the data concerning the parameters that are fixed here.
 
-#### Sanity check
+### Sanity check
 
 To debug the model and provide a sanity check on our parameter guesses, we first explore via simulation.
 Some simulations die out, but others lead to epidemics.
@@ -170,11 +169,12 @@ plot(pf1)
 ```
 The minimum effective sample size is `r round(min(pf1@eff.sample.size),0)`, which is not a complete disaster, and we should bear in mind that this is likely to improve when we fit the parameters.
 
-#### Setup of parallel computing environment
+### Setup of parallel computing environment
 
 In the following, we use `detectCores` to determine how many cores are on our machine.
 We could pass this directly to `registerDoParallel`.
-Alternatively, we can set the `cores` option so that every call to `registerDoParallel` will use this number:
+Alternatively, we can set the global `cores` option so that every call to `registerDoParallel` will use this number.
+We have some large machines, but we'll limit the total number of cores used to 15.
 
 ```{r mycores}
 #| eval: true
@@ -184,67 +184,53 @@ options(cores=ncpu)
 registerDoParallel()
 ```
 
+## Local search
+
 We now carry out the local search.
 Here, we're cooling quite slowly:
 the perturbation magnitude at the fiftieth iteration is half of what it was at the first.
 
 ```{r local_search}
-#| eval: false
-#| purl: false
-registerDoRNG(482947940)
-foreach(i=seq_len(ncpu),.combine=c) %dopar% {
-  library(tidyverse)
-  library(pomp)
-  measSEIR %>%
-    mif2(
-      Np=1000, Nmif=50,
-      cooling.fraction.50=0.5,
-      rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02), mu_EI=0.02)
-    )
-} -> mifs_local
-```
-```{r local_search_eval}
-#| include: false
-#| purl: true
-bake(file="Q_fit_seir_local_search.rds",{
-  <<local_search>>
-  attr(mifs_local,"ncpu") <- getDoParWorkers()
-  mifs_local
-}) -> mifs_local
+bake(file="Q_fit_seir_local_mifs.rds",{
+  registerDoRNG(482947940)
+  foreach(i=seq_len(ncpu),.combine=c) %dopar% {
+    library(tidyverse)
+    library(pomp)
+    measSEIR %>%
+      mif2(
+        Np=1000, Nmif=50,
+        cooling.fraction.50=0.5,
+        rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02), mu_EI=0.02)
+      )
+  }
+}) -> local_mifs
 ```
 
 We examine the trace plots
 
-```{r mifs_local_traces}
-  mifs_local %>%
-    traces(pars=c("loglik","Beta","mu_EI","rho","eta")) %>%
-    melt() %>%
-    ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
-    geom_line()+
-    guides(color="none")+
-    facet_wrap(~variable,scales="free_y")
+```{r local_mifs_traces}
+local_mifs %>%
+  traces(pars=c("loglik","Beta","mu_EI","rho","eta")) %>%
+  melt() %>%
+  ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
+  geom_line()+
+  guides(color="none")+
+  facet_wrap(~variable,scales="free_y")
 ```
 
 As usual, we should evaluate the likelihoods using a particle filter, rather than relying on the likelihood from the last filtering iteration of the perturbed model used by `mif2`.
+
 ```{r local_search_evaluations}
-#| eval: false
-#| purl: false
-registerDoRNG(901242057)
-foreach(mf=mifs_local,.combine=rbind) %dopar% {
-  library(tidyverse)
-  library(pomp)
-  evals <- replicate(10, logLik(pfilter(mf,Np=2000)))
-  ll <- logmeanexp(evals,se=TRUE)
-  mf %>% coef() %>% bind_rows() %>%
-    bind_cols(loglik=ll[1],loglik.se=ll[2],Np=2000,nfilt=10)
-} -> local_logliks
-```
-```{r local_search_evaluations_eval}
-#| include: false
-bake(file="Q_fit_seir_lik_local.rds",{
-  <<local_search_evaluations>>
-  attr(local_logliks,"ncpu") <- getDoParWorkers()
-  local_logliks
+bake(file="Q_fit_seir_local_logliks.rds",{
+  registerDoRNG(901242057)
+  foreach(mf=local_mifs,.combine=rbind) %dopar% {
+    library(tidyverse)
+    library(pomp)
+    evals <- replicate(10, logLik(pfilter(mf,Np=2000)))
+    ll <- logmeanexp(evals,se=TRUE)
+    mf %>% coef() %>% bind_rows() %>%
+      bind_cols(loglik=ll[1],loglik.se=ll[2],Np=2000,nfilt=10)
+  }
 }) -> local_logliks
 ```
 
@@ -253,27 +239,27 @@ local_logliks$loglik
 local_logliks$loglik.se
 ```
 
-After `r mifs_local[[1]]@Nmif` IF2 iterations, the log likelihoods appear to have already reached the vicinity of what we found for the SIR model, with small s.e. ([if `logmeanexp` is to be trusted](https://kingaa.github.io/sbied/pfilter/loglikest.html)).
+After `r local_mifs[[1]]@Nmif` IF2 iterations, the log likelihoods appear to have already reached the vicinity of what we found for the SIR model, with small s.e. ([if `logmeanexp` is to be trusted](https://kingaa.github.io/sbied/pfilter/loglikest.html)).
 Moreover, the trace-plots suggest that further improvement is possible.
 
 Now, we quantify the amount of time required for the above.
-Not shown here, but to be found in [the **R** code for this document](./Q_fit_seir.R), we used `bake` to archive the results of the above two computations.
-Those archives store not only the results, but also information about the time elapsed and the number of CPUs used.
+Note that we used `bake` to archive the results of the above two computations.
+[[More about `bake` here.](https://kingaa.github.io/sbied/misc/bake.html)].
+The archives store not only the results, but also information about the time elapsed and the number of CPUs used.
 Accordingly, the first line in the following adds up the total time needed for these two computations and the second line retrieves the number of CPUs used.
 The third and fourth lines adds up the total amount of work, which we have seen is jointly proportional to number of `mif2` or `pfilter` iterations and to the number of particles used.
 Recall that the complexity of one `mif2` iteration is roughly equal to that of one `pfilter` operation with the same number of particles.
 In line 5, `efactor` is computed as the average number of CPU-sec needed for a 1000-particle `pfilter` operation.
 
 ```{r local_search_timing}
-etime <- attr(mifs_local,"system.time")+attr(local_logliks,"system.time")
-ncpu <- min(attr(mifs_local,"ncpu"),attr(local_logliks,"ncpu"))
-mif_work <- sum(sapply(mifs_local,slot,"Nmif")*apply(sapply(mifs_local,slot,"Np"),2,mean))
+etime <- attr(local_mifs,"system.time")+attr(local_logliks,"system.time")
+mif_work <- sum(sapply(local_mifs,slot,"Nmif")*apply(sapply(local_mifs,slot,"Np"),2,mean))
 pfilter_work <- with(local_logliks,sum(Np*nfilt))
 efactor <- unname(etime[3]*ncpu/(mif_work+pfilter_work)*1000)
 efactor
 ```
 
-### Run-level 1
+## Run-level 1
 
 We proceed to design a global search.
 At run-level 1, we just want something that will run very quickly but that we can scale up easily.
@@ -300,35 +286,27 @@ freeze(
 )-> guesses
 ```
   
-```{r global_search_1b}
-#| eval: false
-#| purl: false
-registerDoRNG(1270401374)
-foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-  library(tidyverse)
-  library(pomp)
-  measSEIR %>%
-    mif2(
-      Nmif=100, Np=1000,
-      cooling.fraction.50=0.5,
-      rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02), mu_EI=0.02),
-      params=c(unlist(guess),fixed_params)
-    ) -> mf
-  replicate(
-    10,
-    mf %>% pfilter(Np=2000) %>% logLik()
-  ) %>%
-    logmeanexp(se=TRUE) -> ll
-  mf %>% coef() %>% bind_rows() %>%
-    bind_cols(loglik=ll[1],loglik.se=ll[2])
-} -> global1
-```
-
 ```{r global_search_1_eval}
-#| include: false
-#| purl: true
 bake(file="Q_fit_seir_global1.rds",{
-  <<global_search_1b>>
+  registerDoRNG(1270401374)
+  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+    library(tidyverse)
+    library(pomp)
+    measSEIR %>%
+      mif2(
+        Nmif=100, Np=1000,
+        cooling.fraction.50=0.5,
+        rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02), mu_EI=0.02),
+        params=c(unlist(guess),fixed_params)
+      ) -> mf
+    replicate(
+      10,
+      mf %>% pfilter(Np=2000) %>% logLik()
+    ) %>%
+      logmeanexp(se=TRUE) -> ll
+    mf %>% coef() %>% bind_rows() %>%
+      bind_cols(loglik=ll[1],loglik.se=ll[2])
+  } -> global1
   attr(global1,"ncpu") <- getDoParWorkers()
   global1
 }) -> global1
@@ -340,7 +318,7 @@ Let us examine the results.
 ```{r scatter_plot1}
 pairs(
   ~loglik+Beta+eta+rho+mu_EI,
-  data=filter(global1,loglik>max(loglik)-10),
+  data=global1,
   pch=16
 )
 ```
@@ -348,7 +326,7 @@ pairs(
 Even with just this small amount of effort, we're beginning to see some structure emerge.
 This is encouraging, so we'll continue on to the next stage of the Exercise.
 
-### Run-level 2
+## Run-level 2
 
 Now let's scale this up to something that we can begin to take seriously.
 While we're at it, we'll throw some more computational power at the problem, and subject all our estimates to a second round of IF2, for a total of 200 IF2 iterations altogether.
@@ -376,42 +354,36 @@ freeze(
 )-> guesses
 ```
   
-```{r global_search_2b}
-#| eval: false
-#| purl: false
-registerDoRNG(1270401374)
-foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-  library(tidyverse)
-  library(pomp)
-  measSEIR %>%
-    mif2(
-      Nmif=100, Np=1000,
-      cooling.fraction.50=0.5,
-      rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02), mu_EI=0.02),
-      params=c(unlist(guess),fixed_params)
-    ) %>%
-    continue(
-      cooling.fraction=0.1
-    ) -> mf
-  replicate(
-    10,
-    mf %>% pfilter(Np=2000) %>% logLik()
-  ) %>%
-    logmeanexp(se=TRUE) -> ll
-  mf %>% coef() %>% bind_rows() %>%
-    bind_cols(loglik=ll[1],loglik.se=ll[2])
-} -> global2
-```
-
 ```{r global_search_2_eval}
-#| include: false
-#| purl: true
 bake(file="Q_fit_seir_global2.rds",{
-  <<global_search_2b>>
+  registerDoRNG(1270401374)
+  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+    library(tidyverse)
+    library(pomp)
+    measSEIR %>%
+      mif2(
+        Nmif=100, Np=1000,
+        cooling.fraction.50=0.5,
+        rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02), mu_EI=0.02),
+        params=c(unlist(guess),fixed_params)
+      ) %>%
+      continue(
+        cooling.fraction=0.1
+      ) -> mf
+    replicate(
+      10,
+      mf %>% pfilter(Np=2000) %>% logLik()
+    ) %>%
+      logmeanexp(se=TRUE) -> ll
+    mf %>% coef() %>% bind_rows() %>%
+      bind_cols(loglik=ll[1],loglik.se=ll[2])
+  } -> global2
   attr(global2,"ncpu") <- getDoParWorkers()
   global2
 }) -> global2
 ```
+
+The above computation took `r mysignif(attr(global2,"system.time")[3]/60,2)`&nbsp;min using `r ncpu` cores.
 
 Again, we have a look at the results.
 The suspicion that the structure of the likelihood surface is beginning to emerge is strengthened.
@@ -419,12 +391,12 @@ The suspicion that the structure of the likelihood surface is beginning to emerg
 ```{r scatter_plot2}
 pairs(
   ~loglik+Beta+eta+rho+mu_EI,
-  data=filter(global2,loglik>max(loglik)-10),
+  data=global2,
   pch=16
 )
 ```
 
-### Run-level 3
+## Run-level 3
 
 At run-level 3, we want near-final results.
 We'll increase the thoroughness of the global search by increasing the number of starts.
@@ -526,7 +498,34 @@ pairs(
 )
 ```
 
-### Part E
+We can visualize the progress from run-levels 1 through 3 by plotting the estimates for each stage.
+The inset shows the upper 20 log likelihood units.
+
+```{r stages}
+#| echo: false
+bind_rows(
+  `1`=global1,
+  `2`=global2,
+  `3`=global3,
+  .id="run-level"
+) -> all
+
+all %>%
+  filter(loglik>max(loglik)-20) %>%
+  ggplot(aes(x=mu_EI,y=loglik,color=`run-level`))+
+  geom_point(alpha=0.3,size=1)+
+  guides(color="none")+
+  labs(x=expression(mu[EI]),y=expression(log~L)) -> pl1
+
+all %>%
+  ggplot(aes(x=mu_EI,y=loglik,color=`run-level`))+
+  geom_point(alpha=0.3,size=1)+
+  labs(x=expression(mu[EI]),y=expression(log~L)) -> pl2
+
+pl2+annotation_custom(grob=ggplotGrob(pl1),xmin=5,xmax=18,ymin=-430,ymax=-200)
+```
+
+## Discussion
 
 ```{r combine}
 #| include: false
@@ -539,7 +538,8 @@ bind_rows(
   filter(
     is.finite(loglik),
     loglik.se < 0.2
-  ) -> mle_seir
+  ) %>%
+  filter(loglik==max(loglik)) -> mle_seir
 
 read_csv("measles_params.csv") %>%
   filter(abs(mu_IR-2)<0.001) %>%
@@ -547,12 +547,72 @@ read_csv("measles_params.csv") %>%
 
 ```
 
-The maximum log likelihood discovered is `r round(max(mle_seir$loglik),1)`, an improvement of `r round(max(mle_seir$loglik),1)-round(mle_sir$loglik,1)` unit over the SIR model with the same values of $\mu_{IR}$ and $k$.
+The maximum log likelihood discovered is `r round(mle_seir$loglik,1)`, an improvement of `r round(mle_seir$loglik-mle_sir$loglik,1)` unit over the SIR model with the same values of $\mu_{IR}$ and $k$.
 This small improvement is not by itself compelling evidence for the value of an extra parameter.
 However, the interpretation of the fitted model has some interesting features, which can be seen from the scatter plot.
 
-When including an latent period, the MLE has intermediate values of $\rho$ and $\eta$ that match epidemiological expectations for endemic measles in the pre-vaccine era, while remaining consistent with a mean infectious period of 0.5&nbsp;wk.
-This is substantially different from the results in Section 5 of Lesson 4.
-Thus, adding a latent period to the model can substantively alter the interpretation of the fitted model without significantly changing the overall fit measured by maximized likelihood.
+We note that the trade-offs among $\beta$, $\eta$, and $\rho$ remain much the same as for the SIR model, suggesting that the model faces the same need to balance these parameters to explain the size and shape of the observed outbreak.
+However, it does appear that the data are more informative about the initial susceptible fraction $\eta$ as it appears in the SEIR model than they were about it in the SIR model.
+Moreover, the ML estimate of the reporting rate $\rho$ (`r mysignif(mle_seir$rho,2)`) for the SEIR is noticeably larger than it was in the SIR (`r mysignif(mle_sir$rho,2)`).
+Interestingly, the intermediate values of the ML estimates of $\rho$ and $\eta$ are a closer match to epidemiological expectations for endemic measles in the pre-vaccine era, while remaining consistent with a mean infectious period of 0.5&nbsp;wk, in contrast with the results in Section 5 of Lesson 4.
+Thus, it appears that adding a latent period to the model can substantively alter the interpretation of the fitted model without significantly changing the overall fit measured by maximized likelihood.
 
-Profile likelihood calculations could help to clarify this finding.
+Profile likelihood calculations would help to clarify this finding.
+To get an initial indication of what such a profile might show, we can examine a "poor man's profile" using the computations we've already performed.
+For example, the following shows the poor man's profile over $\mu_{EI}$.
+Consult [the **R** script for this document](./Q_fit_seir.R) to see how it is computed.
+
+```{r poor_mans_profile_eta}
+#| echo: false
+#| fig.height: 6
+all %>%
+  mutate(
+    bin=cut(eta,breaks=50,include.lowest=TRUE)
+  ) %>%
+  group_by(bin) %>%
+  filter(rank(-loglik)<=1) %>%
+  ungroup() %>%
+  filter(loglik>max(loglik)-10) -> pmprof
+
+pmprof %>%
+  select(mu_EI,loglik,rho,eta,Beta) %>%
+  pivot_longer(c(loglik,rho,mu_EI,Beta)) %>%
+  mutate(
+    name=factor(name,levels=c("loglik","rho","mu_EI","Beta"))
+  ) %>%
+  ggplot(aes(x=eta,y=value))+
+  geom_point()+
+  labs(x=expression(eta),y="")+
+  facet_wrap(~name,scales="free_y",ncol=1,switch=TRUE)+
+  theme(
+    strip.placement="outside",
+    strip.background=element_rect(fill=NA,color=NA)
+  )
+```
+
+```{r poor_mans_profile_muEI}
+#| include: false
+#| fig.height: 6
+all %>%
+  mutate(
+    bin=cut(mu_EI,breaks=50,include.lowest=TRUE)
+  ) %>%
+  group_by(bin) %>%
+  filter(rank(-loglik)<=1) %>%
+  ungroup() %>%
+  filter(loglik>max(loglik)-10) -> pmprof
+
+pmprof %>%
+  select(mu_EI,loglik,rho,eta,Beta) %>%
+  pivot_longer(c(loglik,rho,eta,Beta)) %>%
+  mutate(name=factor(name,levels=c("loglik","rho","eta","Beta"))) %>%
+  ggplot(aes(x=mu_EI,y=value))+
+  geom_point()+
+  labs(x=expression(mu[EI]),y="")+
+  facet_wrap(~name,scales="free_y",ncol=1,switch=TRUE)+
+  theme(
+    strip.placement="outside",
+    strip.background=element_rect(fill=NA,color=NA)
+  )
+```
+

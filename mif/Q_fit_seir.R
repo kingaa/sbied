@@ -67,8 +67,7 @@ ncpu <- min(detectCores()-1,15)
 options(cores=ncpu)
 registerDoParallel()
 
-
-bake(file="Q_fit_seir_local_search.rds",{
+bake(file="Q_fit_seir_local_mifs.rds",{
   registerDoRNG(482947940)
   foreach(i=seq_len(ncpu),.combine=c) %dopar% {
     library(tidyverse)
@@ -79,40 +78,34 @@ bake(file="Q_fit_seir_local_search.rds",{
         cooling.fraction.50=0.5,
         rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02), mu_EI=0.02)
       )
-  } -> mifs_local
-  attr(mifs_local,"ncpu") <- getDoParWorkers()
-  mifs_local
-}) -> mifs_local
+  }
+}) -> local_mifs
 
-  mifs_local %>%
-    traces(pars=c("loglik","Beta","mu_EI","rho","eta")) %>%
-    melt() %>%
-    ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
-    geom_line()+
-    guides(color="none")+
-    facet_wrap(~variable,scales="free_y")
+local_mifs %>%
+  traces(pars=c("loglik","Beta","mu_EI","rho","eta")) %>%
+  melt() %>%
+  ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
+  geom_line()+
+  guides(color="none")+
+  facet_wrap(~variable,scales="free_y")
 
-
-bake(file="Q_fit_seir_lik_local.rds",{
+bake(file="Q_fit_seir_local_logliks.rds",{
   registerDoRNG(901242057)
-  foreach(mf=mifs_local,.combine=rbind) %dopar% {
+  foreach(mf=local_mifs,.combine=rbind) %dopar% {
     library(tidyverse)
     library(pomp)
     evals <- replicate(10, logLik(pfilter(mf,Np=2000)))
     ll <- logmeanexp(evals,se=TRUE)
     mf %>% coef() %>% bind_rows() %>%
       bind_cols(loglik=ll[1],loglik.se=ll[2],Np=2000,nfilt=10)
-  } -> local_logliks
-  attr(local_logliks,"ncpu") <- getDoParWorkers()
-  local_logliks
+  }
 }) -> local_logliks
 
 local_logliks$loglik
 local_logliks$loglik.se
 
-etime <- attr(mifs_local,"system.time")+attr(local_logliks,"system.time")
-ncpu <- min(attr(mifs_local,"ncpu"),attr(local_logliks,"ncpu"))
-mif_work <- sum(sapply(mifs_local,slot,"Nmif")*apply(sapply(mifs_local,slot,"Np"),2,mean))
+etime <- attr(local_mifs,"system.time")+attr(local_logliks,"system.time")
+mif_work <- sum(sapply(local_mifs,slot,"Nmif")*apply(sapply(local_mifs,slot,"Np"),2,mean))
 pfilter_work <- with(local_logliks,sum(Np*nfilt))
 efactor <- unname(etime[3]*ncpu/(mif_work+pfilter_work)*1000)
 efactor
@@ -129,8 +122,6 @@ freeze(
   ),
   seed=2062379496
 )-> guesses
-
-
 
 bake(file="Q_fit_seir_global1.rds",{
   registerDoRNG(1270401374)
@@ -158,7 +149,7 @@ bake(file="Q_fit_seir_global1.rds",{
 
 pairs(
   ~loglik+Beta+eta+rho+mu_EI,
-  data=filter(global1,loglik>max(loglik)-10),
+  data=global1,
   pch=16
 )
 
@@ -174,8 +165,6 @@ freeze(
   ),
   seed=2062379496
 )-> guesses
-
-
 
 bake(file="Q_fit_seir_global2.rds",{
   registerDoRNG(1270401374)
@@ -206,7 +195,7 @@ bake(file="Q_fit_seir_global2.rds",{
 
 pairs(
   ~loglik+Beta+eta+rho+mu_EI,
-  data=filter(global2,loglik>max(loglik)-10),
+  data=global2,
   pch=16
 )
 
@@ -271,6 +260,27 @@ pairs(
 )
 
 bind_rows(
+  `1`=global1,
+  `2`=global2,
+  `3`=global3,
+  .id="run-level"
+) -> all
+
+all %>%
+  filter(loglik>max(loglik)-20) %>%
+  ggplot(aes(x=mu_EI,y=loglik,color=`run-level`))+
+  geom_point(alpha=0.3,size=1)+
+  guides(color="none")+
+  labs(x=expression(mu[EI]),y=expression(log~L)) -> pl1
+
+all %>%
+  ggplot(aes(x=mu_EI,y=loglik,color=`run-level`))+
+  geom_point(alpha=0.3,size=1)+
+  labs(x=expression(mu[EI]),y=expression(log~L)) -> pl2
+
+pl2+annotation_custom(grob=ggplotGrob(pl1),xmin=5,xmax=18,ymin=-430,ymax=-200)
+
+bind_rows(
   global1,
   global2,
   global3
@@ -278,9 +288,56 @@ bind_rows(
   filter(
     is.finite(loglik),
     loglik.se < 0.2
-  ) -> mle_seir
+  ) %>%
+  filter(loglik==max(loglik)) -> mle_seir
 
 read_csv("measles_params.csv") %>%
   filter(abs(mu_IR-2)<0.001) %>%
   filter(loglik==max(loglik)) -> mle_sir
 
+
+all %>%
+  mutate(
+    bin=cut(eta,breaks=50,include.lowest=TRUE)
+  ) %>%
+  group_by(bin) %>%
+  filter(rank(-loglik)<=1) %>%
+  ungroup() %>%
+  filter(loglik>max(loglik)-10) -> pmprof
+
+pmprof %>%
+  select(mu_EI,loglik,rho,eta,Beta) %>%
+  pivot_longer(c(loglik,rho,mu_EI,Beta)) %>%
+  mutate(
+    name=factor(name,levels=c("loglik","rho","mu_EI","Beta"))
+  ) %>%
+  ggplot(aes(x=eta,y=value))+
+  geom_point()+
+  labs(x=expression(eta),y="")+
+  facet_wrap(~name,scales="free_y",ncol=1,switch=TRUE)+
+  theme(
+    strip.placement="outside",
+    strip.background=element_rect(fill=NA,color=NA)
+  )
+
+all %>%
+  mutate(
+    bin=cut(mu_EI,breaks=50,include.lowest=TRUE)
+  ) %>%
+  group_by(bin) %>%
+  filter(rank(-loglik)<=1) %>%
+  ungroup() %>%
+  filter(loglik>max(loglik)-10) -> pmprof
+
+pmprof %>%
+  select(mu_EI,loglik,rho,eta,Beta) %>%
+  pivot_longer(c(loglik,rho,eta,Beta)) %>%
+  mutate(name=factor(name,levels=c("loglik","rho","eta","Beta"))) %>%
+  ggplot(aes(x=mu_EI,y=value))+
+  geom_point()+
+  labs(x=expression(mu[EI]),y="")+
+  facet_wrap(~name,scales="free_y",ncol=1,switch=TRUE)+
+  theme(
+    strip.placement="outside",
+    strip.background=element_rect(fill=NA,color=NA)
+  )
