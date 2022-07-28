@@ -108,8 +108,8 @@ and the time required for their computation on a linux cluster with
 </tr>
 <tr class="odd">
 <td style="text-align: left;">mif/results</td>
-<td style="text-align: right;">2697</td>
-<td style="text-align: right;">41.3</td>
+<td style="text-align: right;">2156</td>
+<td style="text-align: right;">44.3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">pfilter/results</td>
@@ -139,12 +139,12 @@ and the time required for their computation on a linux cluster with
 </tbody>
 </table>
 
-The archives amount to about 133 MB. About 127 MB of this is associated
+The archives amount to about 132 MB. About 127 MB of this is associated
 with the polio lesson, in which large amounts of redundant information
 are stored.
 
 Full compilation, i.e., rebuilding the complete set of materials
-following deletion of all archives, requires about 465 min on a
+following deletion of all archives, requires about 468 min on a
 250-processor cluster. Full compilation regenerates the complete set of
 archives. A finishing compilation, i.e., rebuilding with all archives in
 place, but with the re-Making of all documents, requires about 12 min on
