@@ -23,6 +23,8 @@ csl: jss.csl
 - Qianying Lin assisted in 2021.
   She contributed to some of the videos.
 
+- Jesse Wheeler assisted in 2022.
+
 - Parts of these materials have been used for other courses such as [Model-based Inference in Ecology and Epidemiology](https://kingaa.github.io/short-course/), [Likelihood-based inference for dynamic systems](https://ionides.github.io/talks/upenn/), and [Analysis of Time Series](https://ionides.github.io/531w22/).
 
 ---------------------
