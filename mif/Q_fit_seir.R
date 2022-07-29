@@ -214,6 +214,7 @@ freeze(
   seed=2062379496
 )-> guesses
 
+## ## Uncomment this code chunk to perform the run-level 3 calculation!
 ## registerDoRNG(1270401374)
 ## foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
 ##   library(tidyverse)
@@ -298,45 +299,67 @@ read_csv("measles_params.csv") %>%
 
 all %>%
   mutate(
-    bin=cut(eta,breaks=50,include.lowest=TRUE)
+    bin=cut(rho,breaks=50,include.lowest=TRUE)
   ) %>%
   group_by(bin) %>%
   filter(rank(-loglik)<=1) %>%
   ungroup() %>%
-  filter(loglik>max(loglik)-10) -> pmprof
+  filter(loglik>max(loglik)-10) -> poorman_prof
 
-pmprof %>%
+poorman_prof %>%
   select(mu_EI,loglik,rho,eta,Beta) %>%
-  pivot_longer(c(loglik,rho,mu_EI,Beta)) %>%
+  pivot_longer(c(loglik,eta,mu_EI,Beta)) %>%
   mutate(
-    name=factor(name,levels=c("loglik","rho","mu_EI","Beta"))
+    name=factor(name,levels=c("loglik","eta","mu_EI","Beta"))
   ) %>%
-  ggplot(aes(x=eta,y=value))+
+  ggplot(aes(x=rho,y=value))+
   geom_point()+
-  labs(x=expression(eta),y="")+
-  facet_wrap(~name,scales="free_y",ncol=1,switch=TRUE)+
+  labs(x=expression(rho),y="")+
+  facet_wrap(~name,scales="free_y",ncol=1,strip.position="left")+
   theme(
     strip.placement="outside",
     strip.background=element_rect(fill=NA,color=NA)
   )
 
-all %>%
-  mutate(
-    bin=cut(mu_EI,breaks=50,include.lowest=TRUE)
-  ) %>%
-  group_by(bin) %>%
-  filter(rank(-loglik)<=1) %>%
-  ungroup() %>%
-  filter(loglik>max(loglik)-10) -> pmprof
+poorman_prof %>%
+  select(-loglik,-loglik.se) -> guesses
 
-pmprof %>%
+unit_cost <- (100*2000+10*2000)/1000*efactor
+nrow(guesses)*unit_cost/ncpu/60
+
+## ## Uncomment this code chunk to perform a profile computation
+## registerDoRNG(1270401374)
+## foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+##   library(tidyverse)
+##   library(pomp)
+##   measSEIR %>%
+##     mif2(
+##       Nmif=100, Np=2000,
+##       cooling.fraction.50=0.1,
+##       rw.sd=rw.sd(Beta=0.02, eta=ivp(0.02), mu_EI=0.05),
+##       params=c(unlist(guess),fixed_params)
+##     ) -> mf
+##   replicate(
+##     10,
+##     mf %>% pfilter(Np=2000) %>% logLik()
+##   ) %>%
+##     logmeanexp(se=TRUE) -> ll
+##   mf %>% coef() %>% bind_rows() %>%
+##     bind_cols(loglik=ll[1],loglik.se=ll[2])
+## } -> profile_rho
+
+
+
+profile_rho %>%
   select(mu_EI,loglik,rho,eta,Beta) %>%
-  pivot_longer(c(loglik,rho,eta,Beta)) %>%
-  mutate(name=factor(name,levels=c("loglik","rho","eta","Beta"))) %>%
-  ggplot(aes(x=mu_EI,y=value))+
+  pivot_longer(c(loglik,eta,mu_EI,Beta)) %>%
+  mutate(
+    name=factor(name,levels=c("loglik","eta","mu_EI","Beta"))
+  ) %>%
+  ggplot(aes(x=rho,y=value))+
   geom_point()+
-  labs(x=expression(mu[EI]),y="")+
-  facet_wrap(~name,scales="free_y",ncol=1,switch=TRUE)+
+  labs(x=expression(rho),y="")+
+  facet_wrap(~name,scales="free_y",ncol=1,strip.position="left")+
   theme(
     strip.placement="outside",
     strip.background=element_rect(fill=NA,color=NA)
