@@ -245,11 +245,11 @@ Moreover, the trace-plots suggest that further improvement is possible.
 Now, we quantify the amount of time required for the above.
 Note that we used `bake` to archive the results of the above two computations.
 [[More about `bake` here.](https://kingaa.github.io/sbied/misc/bake.html)].
-The archives store not only the results, but also information about the time elapsed and the number of CPUs used.
-Accordingly, the first line in the following adds up the total time needed for these two computations and the second line retrieves the number of CPUs used.
-The third and fourth lines adds up the total amount of work, which we have seen is jointly proportional to number of `mif2` or `pfilter` iterations and to the number of particles used.
+The archives store not only the results, but also information about the time elapsed.
+Accordingly, the first line in the following adds up the total time needed for these two computations.
+The second and third lines add up the total amount of work, which we have seen is jointly proportional to number of `mif2` or `pfilter` iterations and to the number of particles used.
 Recall that the complexity of one `mif2` iteration is roughly equal to that of one `pfilter` operation with the same number of particles.
-In line 5, `efactor` is computed as the average number of CPU-sec needed for a 1000-particle `pfilter` operation.
+In line four, `efactor` is computed as the average number of CPU-sec needed for a 1000-particle `pfilter` operation.
 
 ```{r local_search_timing}
 etime <- attr(local_mifs,"system.time")+attr(local_logliks,"system.time")

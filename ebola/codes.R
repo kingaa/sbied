@@ -224,8 +224,8 @@ gin %>%
   plot()
 
 ## ----forecasts1a----------------------------------------------------------
-library(pomp)
 library(tidyverse)
+library(pomp)
 
 set.seed(988077383L)
 
