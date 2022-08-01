@@ -235,14 +235,35 @@ horizon <- 13
 ## ----forecasts1b----------------------------------------------------------
 
 ## Weighted quantile function
-wquant <- function (x, weights, probs = c(0.025,0.5,0.975))
-{
+wquant <- function (
+  x, weights,
+  probs = c(`0%`=0, `25%`=0.25, `50%`=0.5, `75%`=0.75, `100%`=1)
+) {
+  x <- as.numeric(x)
+  weights <- as.numeric(weights)
+  if (length(x)!=length(weights))
+    pStop("wquant",sQuote("x")," and ",sQuote("weights"),
+      " must be of equal length.")
+  if (!is.numeric(probs) || all(is.na(probs)) ||
+        isTRUE(any(probs < 0 | probs > 1))) {
+    pStop("wquant",sQuote("probs"),
+      " must be a numeric vector with values in [0,1].")
+  }
   idx <- order(x)
   x <- x[idx]
   weights <- weights[idx]
-  w <- cumsum(weights)/sum(weights)
-  rval <- approx(w,x,probs,rule=1)
-  rval$y
+  n <- sum(weights)
+  k <- length(probs)
+  ord <- 1+(n-1)*probs
+  low <- pmax(floor(ord),1)
+  high <- pmin(low+1,n)
+  ord <- ord%%1
+  allq <- approx(
+    x=cumsum(weights),y=x,xout=c(low,high),
+    method="constant",f=1,rule=2
+  )$y
+  qs <- (1-ord)*allq[seq_len(k)]+ord*allq[-seq_len(k)]
+  setNames(qs,names(probs))
 }
 
 ## ----forecasts1c----------------------------------------------------------
