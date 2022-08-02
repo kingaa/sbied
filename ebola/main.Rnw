@@ -387,9 +387,6 @@ options(dplyr.summarise.inform=FALSE)
   <<forecasts1a,include=FALSE>>=
   @ 
   
-  <<forecasts1b,include=FALSE>>=
-  @ 
-  
   <<forecasts1c>>=
   @ 
   
