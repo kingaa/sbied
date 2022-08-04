@@ -1176,7 +1176,7 @@ set.seed(1350254336)
     Run your global search with these settings and plot the results.
   \item Run-level 3 is intended for final or near-final results.
     You may want to tune your settings (\code{Nmif}, \code{Np}, \code{rw.sd}, \code{cooling.fraction.50}) at this point, based on what you found at run-level 2.
-    Decide how much time you can afford to run a computation over the next 24 hours.
+    Decide how much time in the next 18 hours is available to you for a computation.
     Choose the number of starting guesses so that you can obtain as thorough a global search as possible within this period.
     Run your global search and identify a maximum likelihood estimate.
   \item How does the SEIR model compare with the SIR model?

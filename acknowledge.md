@@ -13,7 +13,7 @@ csl: jss.csl
 
 ---------------------
 
-- Versions of this course have been presented at the [Summer Institute in Statistics and Modeling in Infectious Diseases](https://www.biostat.washington.edu/suminst/sismid/) by Edward Ionides and Aaron King each year from 2015 to 2021.
+- Versions of this course have been presented at the [Summer Institute in Statistics and Modeling in Infectious Diseases](https://www.biostat.washington.edu/suminst/sismid/) by Edward Ionides and Aaron King each year from 2015 to 2022.
 
 - Carles Bret&oacute; assisted in 2018.
 

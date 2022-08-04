@@ -51,7 +51,7 @@ At each run-level, we will select some number of particles (`Np`), number of IF2
 
 (D) Run-level 3 is intended for final or near-final results.
     You may want to tune your settings (`Nmif`, `Np`, `rw.sd`, `cooling.fraction.50`) at this point, based on what you found at run-level 2.
-    Decide how much time you can afford to run a computation over the next 24 hours.
+    Decide how much time in the next 18 hours is available to you for a computation.
     Choose the number of starting guesses so that you can obtain as thorough a global search as possible within this period.
     Run your global search and identify a maximum likelihood estimate.
 
