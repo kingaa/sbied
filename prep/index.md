@@ -53,7 +53,7 @@ to get information on the operating system and version numbers of **R** and load
 ### Install **R** and **RStudio**
 
 **R** and **RStudio** are free and open-source.
-You’ll need at least version 4.0.5 of **R**.
+You’ll need at least version 4.1.1 of **R**.
 Source code and binaries are available on CRAN (https://cran.r-project.org/).
 Install *the latest version* of **RStudio** from [rstudio.com](https://www.rstudio.com/products/rstudio/download/).
 
