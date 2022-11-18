@@ -17,7 +17,7 @@ params:
 
 --------------------
 
-[**R** codes for this document](./exercises.R)  
+The **R** codes for this document are `r xfun::embed_file("exercises.R",text="provided as a script")`.
 
 ```{r knitr-opts}
 #| include: false

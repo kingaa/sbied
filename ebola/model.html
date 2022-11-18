@@ -2712,13 +2712,20 @@ code span.wa { color: #008000; font-weight: bold; } /* Warning */
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -2776,8 +2783,8 @@ pre code {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -2785,16 +2792,9 @@ pre code {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -2933,7 +2933,7 @@ div.tocify {
 <hr />
 <p><a href="./codes.R"><strong>R</strong> codes for this document</a></p>
 <p>This document is derived from <span class="citation">King, Domenech de Cellès, Magpantay, and Rohani (2015)</span> and the <a href="https://dx.doi.org/10.5061/dryad.r5f30">data supplement archived on datadryad.org</a>.</p>
-<p>Produced in <strong>R</strong> version 4.2.1 using <strong>pomp</strong> version 4.3.4.0.</p>
+<p>Produced in <strong>R</strong> version 4.2.2 using <strong>pomp</strong> version 4.3.4.0.</p>
 <hr />
 <div id="objectives" class="section level2">
 <h2>Objectives</h2>
@@ -2964,8 +2964,7 @@ div.tocify {
  8     8 2014-02-23 Guinea  5.76 
  9     9 2014-03-02 Guinea  7.62 
 10    10 2014-03-09 Guinea  7.62 
-# … with 64 more rows
-# ℹ Use `print(n = ...)` to see more rows</code></pre>
+# … with 64 more rows</code></pre>
 <p>Supplementing these data are population estimates for the three countries. These are census figures from 2014.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">populations &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">Guinea=</span><span class="dv">10628972</span>,<span class="dt">Liberia=</span><span class="dv">4092310</span>,<span class="dt">SierraLeone=</span><span class="dv">6190280</span>)</a></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">dat <span class="op">%&gt;%</span></a>

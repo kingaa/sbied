@@ -22,7 +22,7 @@ csl: ../jss.csl
 
 ------------------------
 
-[**R** codes for this document](./ricker.R)  
+The **R** codes for this document are `r xfun::embed_file("ricker.R",text="provided as a script")`.
 
 This document has its origins in the [Getting Started vignette](https://kingaa.github.io/pomp/vignettes/getting_started.html).
 
