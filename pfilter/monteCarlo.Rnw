@@ -92,9 +92,9 @@ We can estimate the error in this approximation, because the empirical variance
 \begin{equation*}
   V_J = \frac{1}{J-1}\,\sum_{j=1}^{J}\!\big[h(X_j)-H_j\big]^2
 \end{equation*}
-approximates the true variance, $\var{h(X)}=\expect{\big[\big(h(X)-\expect[h(X)]\big)^2\big]}$.
+approximates the true variance, $\var{h(X)}=\expect{\Big(h(X)-\expect{h(X)}\Big)^2}$.
 
-The standard error on the approximation $H_{J}\approx \expect{h(X)}$ is therefore $\sqrt{{V_J}/{J}}$.
+The standard error on the approximation $H_{J}\approx\expect{h(X)}$ is therefore $\sqrt{{V_J}/{J}}$.
 From the central limit theorem, the error is approximately normally distributed:
 \begin{equation*}
   H_J -\expect{h(X)}\sim\dist{Normal}{0,\sqrt{\frac{V_J}{J}}}.
@@ -236,9 +236,9 @@ Under such circumstances, the rejection method offers a less efficient, but more
   par(op)
   @
   \caption{
-    \textbf{Monte Carlo integration.}
+    \textbf{Rejection method.}
     If it is difficult to sample a point from $D$ directly, we can propose uniform draws $X$ from a larger set $U$, and accept the proposals only if $X\in{D}$.
-    \label{fig:mcintegration}
+    \label{fig:rejection}
   }
 \end{figure}
 
@@ -259,7 +259,7 @@ Since for any $A\subset{D}$,
   \prob{X\in A} = \prob{Y\in A\vert Y\in D} = \frac{m(A)}{m(U)}\Big{/}\frac{m(D)}{m(U)} = \frac{m(A)}{m(D)},
 \end{equation*}
 it follows that $Y\sim\dist{Uniform}{D}$.
-Fig.~\ref{fig:mcintegration} illustrates.
+Fig.~\ref{fig:rejection} illustrates.
 
 Consider an analogy to throwing darts. If the darts are thrown in such a way as to be equally likely to land anywhere in $U$, then those that do land in $D$ are equally likely to land anywhere in $D$.
 
