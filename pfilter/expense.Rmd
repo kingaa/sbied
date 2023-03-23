@@ -1,8 +1,8 @@
 ---
 pagetitle: Solution to Exercise 3.2
 title: |
-  | Worked solution to exercise 3.2:
-  | Computational complexity of the particle filter
+  Worked solution to exercise 3.2:
+  Computational complexity of the particle filter
 author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
@@ -40,8 +40,8 @@ Load packages:
 ```{r cache=FALSE}
 library(tidyverse)
 library(pomp)
-library(foreach)
-library(doParallel)
+library(iterators)
+library(doFuture)
 library(doRNG)
 ```
 
@@ -58,14 +58,15 @@ expand_grid(
   Np=ceiling(10^seq(1,5,by=0.2))
 ) -> design
 
-registerDoParallel()
+registerDoFuture()
 registerDoRNG()
+plan(multicore)
 
 foreach (
   expt=iter(design,"row"),
   .combine=bind_rows
 ) %dopar% {
-  system.time(measSIR %>% pfilter(Np=expt$Np))[3] -> expt$time
+  system.time(measSIR |> pfilter(Np=expt$Np))[3] -> expt$time
   expt
 } -> resultA
 ```
@@ -79,13 +80,13 @@ stew(file="expense1.rda",{
 Plot the results and fit a line.
 
 ```{r}
-resultA %>%
+resultA |>
   ggplot(aes(x=Np,y=time))+
   geom_point()+
-  geom_smooth(method="lm",formula=y~x-1)+
+  geom_smooth(method="lm",formula=y~x)+
   expand_limits(x=0,y=0)
 
-lm(time~Np-1,data=resultA) -> fit
+lm(time~Np,data=resultA) -> fit
 summary(fit)
 ```
 
@@ -95,14 +96,14 @@ In this case, we require about `r mysignif(coef(fit)["Np"]*1e6,2)`&nbsp;&mu;s pe
 How does the computation scale with the length of the time series?
 
 ```{r comp2,eval=FALSE,purl=FALSE}
-measSIR %>%
+measSIR |>
   window(end=21) -> shortMeasSIR
 
 foreach (
   expt=iter(design,"row"),
   .combine=bind_rows
 ) %dopar% {
-  system.time(shortMeasSIR %>% pfilter(Np=expt$Np))[3] -> expt$time
+  system.time(shortMeasSIR |> pfilter(Np=expt$Np))[3] -> expt$time
   expt
 } -> resultB
 
@@ -110,7 +111,7 @@ bind_rows(
   long=resultA,
   short=resultB,
   .id="length"
-) %>%
+) |>
   mutate(
     n=case_when(
       length=="short"~length(time(shortMeasSIR)),
@@ -125,15 +126,15 @@ stew(file="expense2.rda",{
 ```
 
 ```{r}
-result %>%
+result |>
   ggplot(aes(x=Np,y=time,group=n,color=factor(n)))+
   geom_point()+
   labs(color="n")+
-  geom_smooth(method="lm",formula=y~x-1)+
+  geom_smooth(method="lm",formula=y~x)+
   expand_limits(x=0,y=0)
 
-lm(time~n*Np-1,data=result) -> fit
+lm(time~n*Np,data=result) -> fit
 summary(fit)
 ```
 
-The marginal cost is about `r predict(fit,newdata=data.frame(n=c(41,42),Np=1000000)) %>% diff() %>% mysignif(2)`&nbsp;&mu;s per 1000 particles per data-point.
+The marginal cost is about `r predict(fit,newdata=data.frame(n=c(41,42),Np=1000000)) |> diff() |> mysignif(2)`&nbsp;&mu;s per 1000 particles per data-point.

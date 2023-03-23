@@ -5,8 +5,8 @@ options(
 )
 
 ## ----prelims,include=FALSE,cache=FALSE-----------------------------------
-stopifnot(getRversion()>="4.0")
-stopifnot(packageVersion("pomp")>="3.0.3")
+stopifnot(getRversion()>="4.1")
+stopifnot(packageVersion("pomp")>="4.6")
 
 set.seed(594709947L)
 library(tidyverse)
@@ -110,21 +110,21 @@ download.file(daturl,destfile=datfile,mode="wb")
 load(datfile)
 
 ## ----london-data-------------------------------------------------
-measles %>%
-  mutate(year=as.integer(format(date,"%Y"))) %>%
-  filter(town=="London" & year>=1950 & year<1964) %>%
+measles |>
+  mutate(year=as.integer(format(date,"%Y"))) |>
+  filter(town=="London" & year>=1950 & year<1964) |>
   mutate(
     time=(julian(date,origin=as.Date("1950-01-01")))/365.25+1950
-  ) %>%
-  filter(time>1950 & time<1964) %>%
+  ) |>
+  filter(time>1950 & time<1964) |>
   select(time,cases) -> dat
 
-demog %>%
-  filter(town=="London") %>%
+demog |>
+  filter(town=="London") |>
   select(-town) -> demogLondon
 
 ## ----prep-covariates-------------------------------------------------
-demogLondon %>%
+demogLondon |>
   summarize(
     time=seq(from=min(year),to=max(year),by=1/12),
     pop=predict(smooth.spline(x=year,y=pop),x=time)$y,
@@ -132,11 +132,11 @@ demogLondon %>%
     birthrate1=predict(smooth.spline(x=year+0.5,y=births),x=time)$y
   ) -> covar1
 
-covar1 %>%
+covar1 |>
   select(-birthrate1) -> covar
 
 ## ----pomp-construction-----------------------------------------------
-dat %>%
+dat |>
   pomp(t0=with(dat,2*time[1]-time[2]),
     time="time",
     rprocess=euler(rproc,delta.t=1/365.25),
@@ -176,16 +176,18 @@ read_csv("
   Sheffield,-2810.7,0.21,0.02,4,54.3,62.2,0.649,33.1,0.313,1.02,0.853,0.225,0.175,0.0291,6.04e-05,8.86e-05,0.971,0.0428") -> mles
 
 ## ----mle-----------------------------------------------
-mles %>% filter(town=="London") -> mle
+mles |> filter(town=="London") -> mle
 paramnames <- c("R0","mu","sigma","gamma","alpha","iota",
   "rho","sigmaSE","psi","cohort","amplitude",
   "S_0","E_0","I_0","R_0")
-mle[paramnames] %>% unlist() -> theta
-mle %>% select(-S_0,-E_0,-I_0,-R_0) %>% as.data.frame()
+mle[paramnames] |> unlist() -> theta
+mle |> select(-S_0,-E_0,-I_0,-R_0) |> as.data.frame()
 
 ## ----pfilter1a-----------------------------------------------
-library(doParallel); library(doRNG)
-registerDoParallel()
+library(doFuture)
+library(doFuture); library(doRNG)
+registerDoFuture()
+plan(multicore)
 registerDoRNG(998468235L)
 foreach(i=1:4, .combine=c) %dopar% {
   library(pomp)
@@ -202,7 +204,7 @@ pt <- parameter_trans(
 )
 
 ## ----fold-transforms-----------------------------------------------
-m1 %>%
+m1 |>
   pomp(partrans=pt,
     statenames=c("S","E","I","R","C","W"),
     paramnames=c("R0","mu","sigma","gamma","alpha","iota",

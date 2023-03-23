@@ -315,13 +315,16 @@ set.seed(1350254336)
   
   <<parallel-setup,eval=FALSE,purl=FALSE>>=
   library(foreach)
-  library(doParallel)
-  registerDoParallel()
+  library(iterators)
+  library(doFuture)
+  registerDoFuture()
+  plan(multicore)
   @ 
   
-  The first two lines above load the \pkg{foreach} and \pkg{doParallel} packages, the latter being a ``backend'' for the \pkg{foreach} package.
-  The next line tells \pkg{foreach} that we will use the \pkg{doParallel} backend.
-  By default, \Rlanguage will guess how many cores are available and will run about half this number of concurrent \Rlanguage processes.
+  The first three lines above load the \pkg{foreach}, \pkg{iterators}, and \pkg{doFuture} packages, the latter being a ``backend'' for the \pkg{foreach} package.
+  The next line tells \pkg{foreach} that we will use the \pkg{doFuture} backend.
+  The last line says that we plan to parallelize using the multiple cores on our single machine.
+  By default, \Rlanguage will attempt to determine how many cores are available and will run an appropriate number of concurrent \Rlanguage processes.
 \end{frame}
 
 \begin{frame}[fragile]{Parallel random number generators (RNG)}
@@ -348,22 +351,23 @@ set.seed(1350254336)
   We must choose the number of particles to use by setting the \code{Np} argument.
 
   <<pfilter-1,cache=TRUE>>=
-  measSIR %>%
+  measSIR |>
     pfilter(Np=5000) -> pf
   logLik(pf)
   @
   
   We can run a few particle filters to get an estimate of the Monte Carlo variability:
   <<pfilter-2,echo=FALSE,cache=TRUE>>=
-  library(doParallel)
+  library(doFuture)
   library(doRNG)
-  registerDoParallel()
+  registerDoFuture()
   registerDoRNG(652643293)
+  plan(multicore)
   @
   <<pfilter-3,cache=TRUE>>=
   foreach (i=1:10, .combine=c) %dopar% {
     library(pomp)
-    measSIR %>% pfilter(Np=5000)
+    measSIR |> pfilter(Np=5000)
   } -> pf
   logLik(pf) -> ll
   logmeanexp(ll,se=TRUE)
@@ -538,11 +542,12 @@ set.seed(1350254336)
   @
   
   <<like-slice2,eval=FALSE,purl=FALSE>>=
-  library(doParallel)
+  library(iterators)
+  library(doFuture)
   library(doRNG)
-
-  registerDoParallel()
+  registerDoFuture()
   registerDoRNG(108028909)
+  plan(multicore)
   @
   
   <<like-slice3,eval=FALSE,purl=FALSE>>=
@@ -550,7 +555,7 @@ set.seed(1350254336)
            .inorder=FALSE) %dopar%
     {
       library(pomp)
-      measSIR %>% pfilter(params=theta,Np=5000) -> pf
+      measSIR |> pfilter(params=theta,Np=5000) -> pf
       theta$loglik <- logLik(pf)
       theta
     } -> p
@@ -570,12 +575,12 @@ set.seed(1350254336)
   <<like-slice-plot,echo=FALSE>>=
   library(tidyverse)
 
-  p %>% 
-    gather(variable,value,Beta,mu_IR) %>%
-    filter(variable==slice) %>%
-    ggplot(aes(x=value,y=loglik,color=variable))+
+  p |> 
+    pivot_longer(c(Beta,mu_IR)) |>
+    filter(name==slice) |>
+    ggplot(aes(x=value,y=loglik,color=name))+
     geom_point()+
-    facet_grid(~variable,scales="free_x")+
+    facet_grid(~name,scales="free_x")+
     guides(color="none")+
     labs(x="parameter value",color="")
   @
@@ -599,11 +604,12 @@ set.seed(1350254336)
   @
   
   <<pfilter-grid1b,eval=FALSE,purl=FALSE>>=
-  library(doParallel)
+  library(iterators)
+  library(doFuture)
   library(doRNG)
-  
-  registerDoParallel()
+  registerDoFuture()
   registerDoRNG(421776444)
+  plan(multicore)
   @
   
   <<pfilter-grid1c,eval=FALSE,purl=FALSE>>=
@@ -611,7 +617,7 @@ set.seed(1350254336)
            .inorder=FALSE) %dopar%
     {
       library(pomp)
-      measSIR %>% pfilter(params=theta,Np=5000) -> pf
+      measSIR |> pfilter(params=theta,Np=5000) -> pf
       theta$loglik <- logLik(pf)
       theta
     } -> p
@@ -622,16 +628,16 @@ set.seed(1350254336)
     <<pfilter-grid1a>>
     <<pfilter-grid1b>>
     <<pfilter-grid1c>>
-    p %>% arrange(Beta,mu_IR)
+    p |> arrange(Beta,mu_IR)
   })-> p
   @
   
   <<pfilter-grid1-plot,echo=FALSE,purl=TRUE>>=
-  p %>%
-    group_by(Beta,mu_IR) %>%
-    summarize(loglik=logmeanexp(loglik)) %>%
-    ungroup() %>%
-    mutate(loglik=ifelse(loglik>max(loglik)-25,loglik,NA)) %>%
+  p |>
+    group_by(Beta,mu_IR) |>
+    summarize(loglik=logmeanexp(loglik)) |>
+    ungroup() |>
+    mutate(loglik=ifelse(loglik>max(loglik)-25,loglik,NA)) |>
     ggplot(aes(x=Beta,y=mu_IR,z=loglik,fill=loglik))+
     geom_tile(color=NA)+
     scale_fill_gradient()+
@@ -695,7 +701,7 @@ set.seed(1350254336)
   \item
     Comment on the bias of your estimate.
   \item
-    Use \pkg{doParallel} to take advantage of multiple cores on your computer to improve your estimate.
+    Use \pkg{doFuture} to take advantage of multiple cores on your computer to improve your estimate.
   \end{itemize}
 
   \link{./loglikest.html}{Worked solution to the Exercise}

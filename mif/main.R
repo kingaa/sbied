@@ -6,7 +6,7 @@ source("https://kingaa.github.io/sbied/pfilter/model.R")
 
 
 
-measSIR %>%
+measSIR |>
   pfilter(Np=1000) -> pf
 
 
@@ -14,8 +14,9 @@ fixed_params <- c(N=38000, mu_IR=2, k=10)
 coef(measSIR,names(fixed_params)) <- fixed_params
 
 library(foreach)
-library(doParallel)
-registerDoParallel()
+library(doFuture)
+registerDoFuture()
+plan(multicore)
 
 
 
@@ -25,15 +26,15 @@ registerDoRNG(625904618)
 tic <- Sys.time()
 foreach(i=1:10,.combine=c) %dopar% {
   library(pomp)
-  measSIR %>% pfilter(Np=5000)
+  measSIR |> pfilter(Np=5000)
 } -> pf
 
-pf %>% logLik() %>% logmeanexp(se=TRUE) -> L_pf
+pf |> logLik() |> logmeanexp(se=TRUE) -> L_pf
 L_pf
 toc <- Sys.time()
 
-pf[[1]] %>% coef() %>% bind_rows() %>%
-  bind_cols(loglik=L_pf[1],loglik.se=L_pf[2]) %>%
+pf[[1]] |> coef() |> bind_rows() |>
+  bind_cols(loglik=L_pf[1],loglik.se=L_pf[2]) |>
   write_csv("measles_params.csv")
 
 
@@ -45,11 +46,11 @@ bake(file="local_search.rds",{
   foreach(i=1:20,.combine=c) %dopar% {
     library(tidyverse)
     library(pomp)
-    measSIR %>%
+    measSIR |>
       mif2(
         Np=2000, Nmif=50,
         cooling.fraction.50=0.5,
-        rw.sd=rw.sd(Beta=0.02, rho=0.02, eta=ivp(0.02)),
+        rw.sd=rw_sd(Beta=0.02, rho=0.02, eta=ivp(0.02)),
         partrans=parameter_trans(log="Beta",logit=c("rho","eta")),
         paramnames=c("Beta","rho","eta")
       )
@@ -60,13 +61,13 @@ bake(file="local_search.rds",{
 t_loc <- attr(mifs_local,"system.time")
 ncpu_loc <- attr(mifs_local,"ncpu")
 
-mifs_local %>%
-  traces() %>%
-  melt() %>%
-  ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
+mifs_local |>
+  traces() |>
+  melt() |>
+  ggplot(aes(x=iteration,y=value,group=.L1,color=factor(.L1)))+
   geom_line()+
   guides(color="none")+
-  facet_wrap(~variable,scales="free_y")
+  facet_wrap(~name,scales="free_y")
 
 
 
@@ -77,7 +78,7 @@ bake(file="lik_local.rds",{
     library(pomp)
     evals <- replicate(10, logLik(pfilter(mf,Np=5000)))
     ll <- logmeanexp(evals,se=TRUE)
-    mf %>% coef() %>% bind_rows() %>%
+    mf |> coef() |> bind_rows() |>
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> results
   attr(results,"ncpu") <- getDoParWorkers()
@@ -88,9 +89,9 @@ ncpu_local <- attr(results,"ncpu")
 
 pairs(~loglik+Beta+eta+rho,data=results,pch=16)
 
-read_csv("measles_params.csv") %>%
-  bind_rows(results) %>%
-  arrange(-loglik) %>%
+read_csv("measles_params.csv") |>
+  bind_rows(results) |>
+  arrange(-loglik) |>
   write_csv("measles_params.csv")
 
 if (file.exists("CLUSTER.R")) {
@@ -114,41 +115,41 @@ bake(file="global_search.rds",
     foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
       library(tidyverse)
       library(pomp)
-      mf1 %>%
-        mif2(params=c(guess,fixed_params)) %>%
+      mf1 |>
+        mif2(params=c(guess,fixed_params)) |>
         mif2(Nmif=100) -> mf
       replicate(
         10,
-        mf %>% pfilter(Np=5000) %>% logLik()
-      ) %>%
+        mf |> pfilter(Np=5000) |> logLik()
+      ) |>
         logmeanexp(se=TRUE) -> ll
-      mf %>% coef() %>% bind_rows() %>%
+      mf |> coef() |> bind_rows() |>
         bind_cols(loglik=ll[1],loglik.se=ll[2])
     } -> results
     attr(results,"ncpu") <- getDoParWorkers()
     results
-  }) %>%
+  }) |>
   filter(is.finite(loglik)) -> results
 t_global <- attr(results,"system.time")
 ncpu_global <- attr(results,"ncpu")
-read_csv("measles_params.csv") %>%
-  bind_rows(results) %>%
-  filter(is.finite(loglik)) %>%
-  arrange(-loglik) %>%
+read_csv("measles_params.csv") |>
+  bind_rows(results) |>
+  filter(is.finite(loglik)) |>
+  arrange(-loglik) |>
   write_csv("measles_params.csv")
 
-read_csv("measles_params.csv") %>%
-  filter(loglik>max(loglik)-50) %>%
-  bind_rows(guesses) %>%
-  mutate(type=if_else(is.na(loglik),"guess","result")) %>%
+read_csv("measles_params.csv") |>
+  filter(loglik>max(loglik)-50) |>
+  bind_rows(guesses) |>
+  mutate(type=if_else(is.na(loglik),"guess","result")) |>
   arrange(type) -> all
 
 pairs(~loglik+Beta+eta+rho, data=all, pch=16, cex=0.3,
   col=ifelse(all$type=="guess",grey(0.5),"red"))
 
-all %>%
-  filter(type=="result") %>%
-  filter(loglik>max(loglik)-10) %>%
+all |>
+  filter(type=="result") |>
+  filter(loglik>max(loglik)-10) |>
   ggplot(aes(x=eta,y=loglik))+
   geom_point()+
   labs(
@@ -156,8 +157,8 @@ all %>%
     title="poor man's profile likelihood"
   )
 
-read_csv("measles_params.csv") %>%
-  filter(loglik>max(loglik)-20,loglik.se<2) %>%
+read_csv("measles_params.csv") |>
+  filter(loglik>max(loglik)-20,loglik.se<2) |>
   sapply(range) -> box
 box
 
@@ -179,15 +180,15 @@ bake(file="eta_profile.rds",
     foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
       library(tidyverse)
       library(pomp)
-      mf1 %>%
+      mf1 |>
         mif2(params=c(guess,fixed_params),
-          rw.sd=rw.sd(Beta=0.02,rho=0.02)) %>%
+          rw.sd=rw_sd(Beta=0.02,rho=0.02)) |>
         mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
       replicate(
         10,
-        mf %>% pfilter(Np=5000) %>% logLik()) %>%
+        mf |> pfilter(Np=5000) |> logLik()) |>
         logmeanexp(se=TRUE) -> ll
-      mf %>% coef() %>% bind_rows() %>%
+      mf |> coef() |> bind_rows() |>
         bind_cols(loglik=ll[1],loglik.se=ll[2])
     } -> results
     attr(results,"ncpu") <- getDoParWorkers()
@@ -196,50 +197,50 @@ bake(file="eta_profile.rds",
 t_eta <- attr(results,"system.time")
 ncpu_eta <- attr(results,"ncpu")
 
-read_csv("measles_params.csv") %>%
-  bind_rows(results) %>%
-  filter(is.finite(loglik)) %>%
-  arrange(-loglik) %>%
+read_csv("measles_params.csv") |>
+  bind_rows(results) |>
+  filter(is.finite(loglik)) |>
+  arrange(-loglik) |>
   write_csv("measles_params.csv")
 
-read_csv("measles_params.csv") %>%
+read_csv("measles_params.csv") |>
   filter(loglik>max(loglik)-10) -> all
 
 pairs(~loglik+Beta+eta+rho,data=all,pch=16)
 
-results %>%
+results |>
   ggplot(aes(x=eta,y=loglik))+
   geom_point()
 
-results %>%
-  filter(is.finite(loglik)) %>%
-  group_by(round(eta,5)) %>%
-  filter(rank(-loglik)<3) %>%
-  ungroup() %>%
-  filter(loglik>max(loglik)-20) %>%
+results |>
+  filter(is.finite(loglik)) |>
+  group_by(round(eta,5)) |>
+  filter(rank(-loglik)<3) |>
+  ungroup() |>
+  filter(loglik>max(loglik)-20) |>
   ggplot(aes(x=eta,y=loglik))+
   geom_point()
 
 maxloglik <- max(results$loglik,na.rm=TRUE)
 ci.cutoff <- maxloglik-0.5*qchisq(df=1,p=0.95)
 
-results %>%
-  filter(is.finite(loglik)) %>%
-  group_by(round(eta,5)) %>%
-  filter(rank(-loglik)<3) %>%
-  ungroup() %>%
+results |>
+  filter(is.finite(loglik)) |>
+  group_by(round(eta,5)) |>
+  filter(rank(-loglik)<3) |>
+  ungroup() |>
   ggplot(aes(x=eta,y=loglik))+
   geom_point()+
   geom_smooth(method="loess",span=0.25)+
   geom_hline(color="red",yintercept=ci.cutoff)+
   lims(y=maxloglik-c(5,0))
 
-results %>%
-  filter(is.finite(loglik)) %>%
-  group_by(round(eta,5)) %>%
-  filter(rank(-loglik)<3) %>%
-  ungroup() %>%
-  mutate(in_ci=loglik>max(loglik)-1.92) %>%
+results |>
+  filter(is.finite(loglik)) |>
+  group_by(round(eta,5)) |>
+  filter(rank(-loglik)<3) |>
+  ungroup() |>
+  mutate(in_ci=loglik>max(loglik)-1.92) |>
   ggplot(aes(x=eta,y=rho,color=in_ci))+
   geom_point()+
   labs(
@@ -249,16 +250,16 @@ results %>%
     title="profile trace"
   )
 
-results %>%
-  filter(is.finite(loglik)) %>%
-  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.95)) %>%
+results |>
+  filter(is.finite(loglik)) |>
+  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.95)) |>
   summarize(min=min(rho),max=max(rho)) -> rho_ci
 
-read_csv("measles_params.csv") %>%
-  group_by(cut=round(rho,2)) %>%
-  filter(rank(-loglik)<=10) %>%
-  ungroup() %>%
-  arrange(-loglik) %>%
+read_csv("measles_params.csv") |>
+  group_by(cut=round(rho,2)) |>
+  filter(rank(-loglik)<=10) |>
+  ungroup() |>
+  arrange(-loglik) |>
   select(-cut,-loglik,-loglik.se) -> guesses
 
 
@@ -269,16 +270,16 @@ bake(file="rho_profile.rds",
     foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
       library(tidyverse)
       library(pomp)
-      mf1 %>%
+      mf1 |>
         mif2(params=guess,
-          rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02))) %>%
-        mif2(Nmif=100,cooling.fraction.50=0.3) %>%
+          rw.sd=rw_sd(Beta=0.02,eta=ivp(0.02))) |>
+        mif2(Nmif=100,cooling.fraction.50=0.3) |>
         mif2() -> mf
       replicate(
         10,
-        mf %>% pfilter(Np=5000) %>% logLik()) %>%
+        mf |> pfilter(Np=5000) |> logLik()) |>
         logmeanexp(se=TRUE) -> ll
-      mf %>% coef() %>% bind_rows() %>%
+      mf |> coef() |> bind_rows() |>
         bind_cols(loglik=ll[1],loglik.se=ll[2])
     } -> results
     attr(results,"ncpu") <- getDoParWorkers()
@@ -286,22 +287,22 @@ bake(file="rho_profile.rds",
   }) -> results
 t_rho <- attr(results,"system.time")
 ncpu_rho <- attr(results,"ncpu")
-read_csv("measles_params.csv") %>%
-  bind_rows(results) %>%
-  filter(is.finite(loglik)) %>%
-  arrange(-loglik) %>%
+read_csv("measles_params.csv") |>
+  bind_rows(results) |>
+  filter(is.finite(loglik)) |>
+  arrange(-loglik) |>
   write_csv("measles_params.csv")
 
-results %>%
+results |>
   filter(is.finite(loglik)) -> results
 
 pairs(~loglik+Beta+eta+rho,data=results,pch=16)
 
-results %>%
-  filter(loglik>max(loglik)-10,loglik.se<1) %>%
-  group_by(round(rho,2)) %>%
-  filter(rank(-loglik)<3) %>%
-  ungroup() %>%
+results |>
+  filter(loglik>max(loglik)-10,loglik.se<1) |>
+  group_by(round(rho,2)) |>
+  filter(rank(-loglik)<3) |>
+  ungroup() |>
   ggplot(aes(x=rho,y=loglik))+
   geom_point()+
   geom_hline(
@@ -309,8 +310,8 @@ results %>%
     yintercept=max(results$loglik)-0.5*qchisq(df=1,p=0.95)
   )
 
-results %>%
-  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.95)) %>%
+results |>
+  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.95)) |>
   summarize(min=min(rho),max=max(rho)) -> rho_ci
 
 freeze(seed=55266255,
@@ -318,7 +319,7 @@ freeze(seed=55266255,
     lower=c(Beta=5,mu_IR=0.2,eta=0),
     upper=c(Beta=80,mu_IR=5,eta=0.99),
     nseq=1000
-  )) %>%
+  )) |>
   mutate(
     rho=0.6,
     k=10,
@@ -335,49 +336,49 @@ bake(file="global_search2.rds",
     foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
       library(tidyverse)
       library(pomp)
-      measSIR %>%
+      measSIR |>
         mif2(params=guess, Np=2000, Nmif=100,
           cooling.fraction.50=0.5,
           partrans=parameter_trans(
             log=c("Beta","mu_IR"),
             logit="eta"), paramnames=c("Beta","mu_IR","eta"),
-          rw.sd=rw.sd(Beta=0.02,mu_IR=0.02,eta=ivp(0.02))) -> mf
-      mf %>%
+          rw.sd=rw_sd(Beta=0.02,mu_IR=0.02,eta=ivp(0.02))) -> mf
+      mf |>
         mif2(
-          Nmif=100,rw.sd=rw.sd(Beta=0.01,mu_IR=0.01,eta=ivp(0.01))
-        ) %>%
+          Nmif=100,rw.sd=rw_sd(Beta=0.01,mu_IR=0.01,eta=ivp(0.01))
+        ) |>
         mif2(
           Nmif=100,
-          rw.sd=rw.sd(Beta=0.005,mu_IR=0.005,eta=ivp(0.005))
+          rw.sd=rw_sd(Beta=0.005,mu_IR=0.005,eta=ivp(0.005))
         ) -> mf
       replicate(
         10,
-        mf %>% pfilter(Np=5000) %>% logLik()
-      ) %>% logmeanexp(se=TRUE) -> ll
-      mf %>% coef() %>% bind_rows() %>%
+        mf |> pfilter(Np=5000) |> logLik()
+      ) |> logmeanexp(se=TRUE) -> ll
+      mf |> coef() |> bind_rows() |>
         bind_cols(loglik=ll[1],loglik.se=ll[2])
     } -> results
     attr(results,"ncpu") <- getDoParWorkers()
     results
-  }) %>%
+  }) |>
   filter(is.finite(loglik)) -> results
 t_expglob <- attr(results,"system.time")
 ncpu_expglob <- attr(results,"ncpu")
 
-read_csv("measles_params.csv") %>%
-  bind_rows(results) %>%
-  filter(is.finite(loglik)) %>%
-  arrange(-loglik) %>%
+read_csv("measles_params.csv") |>
+  bind_rows(results) |>
+  filter(is.finite(loglik)) |>
+  arrange(-loglik) |>
   write_csv("measles_params.csv")
 
-read_csv("measles_params.csv") %>%
+read_csv("measles_params.csv") |>
   filter(loglik>max(loglik)-20) -> all
 
 pairs(~loglik+rho+mu_IR+Beta+eta,data=all,pch=16,cex=0.3,
   col=if_else(round(all$rho,3)==0.6,1,4))
 
-results %>%
-  filter(loglik>max(loglik)-20,loglik.se<1) %>%
+results |>
+  filter(loglik>max(loglik)-20,loglik.se<1) |>
   ggplot(aes(x=mu_IR,y=loglik))+
   geom_point()+
   geom_hline(
@@ -385,12 +386,12 @@ results %>%
     yintercept=max(results$loglik)-0.5*qchisq(df=1,p=0.95)
   )
 
-read_csv("measles_params.csv") %>%
+read_csv("measles_params.csv") |>
   filter(
     loglik>max(loglik)-20,
     loglik.se<2,
     abs(rho-0.6)<0.01
-  ) %>%
+  ) |>
   sapply(range) -> box
 
 freeze(seed=610408798,
@@ -399,7 +400,7 @@ freeze(seed=610408798,
     lower=box[1,c("Beta","eta")],
     upper=box[2,c("Beta","eta")],
     nprof=100, type="runif"
-  )) %>%
+  )) |>
   mutate(
     N=38000,
     rho=0.6,
@@ -414,36 +415,36 @@ bake(file="mu_IR_profile1.rds",
     foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
       library(tidyverse)
       library(pomp)
-      measSIR %>%
+      measSIR |>
         mif2(params=guess, Np=2000, Nmif=100,
           partrans=parameter_trans(log="Beta",logit="eta"),
           paramnames=c("Beta","eta"), cooling.fraction.50=0.5,
-          rw.sd=rw.sd(Beta=0.02,eta=ivp(0.02))
-        ) %>% mif2(Nmif=100) %>%
-        mif2(Nmif=100,rw.sd=rw.sd(Beta=0.01,eta=ivp(0.01))) %>%
-        mif2(Nmif=100,rw.sd=rw.sd(Beta=0.005,eta=ivp(0.005))) -> mf
-      replicate(10,mf %>% pfilter(Np=5000) %>% logLik()) %>%
+          rw.sd=rw_sd(Beta=0.02,eta=ivp(0.02))
+        ) |> mif2(Nmif=100) |>
+        mif2(Nmif=100,rw.sd=rw_sd(Beta=0.01,eta=ivp(0.01))) |>
+        mif2(Nmif=100,rw.sd=rw_sd(Beta=0.005,eta=ivp(0.005))) -> mf
+      replicate(10,mf |> pfilter(Np=5000) |> logLik()) |>
         logmeanexp(se=TRUE) -> ll
-      mf %>% coef() %>% bind_rows() %>%
+      mf |> coef() |> bind_rows() |>
         bind_cols(loglik=ll[1],loglik.se=ll[2])
     } -> results
     attr(results,"ncpu") <- getDoParWorkers()
     results
-  }) %>%
+  }) |>
   filter(is.finite(loglik)) -> results
 t_muIR <- attr(results,"system.time")
 ncpu_muIR <- attr(results,"ncpu")
 
-read_csv("measles_params.csv") %>%
-  bind_rows(results) %>%
-  filter(is.finite(loglik)) %>%
-  arrange(-loglik) %>%
+read_csv("measles_params.csv") |>
+  bind_rows(results) |>
+  filter(is.finite(loglik)) |>
+  arrange(-loglik) |>
   write_csv("measles_params.csv")
 
-results %>%
-  group_by(round(mu_IR,2)) %>%
-  filter(rank(-loglik)<=1) %>%
-  ungroup() %>%
+results |>
+  group_by(round(mu_IR,2)) |>
+  filter(rank(-loglik)<=1) |>
+  ungroup() |>
   ggplot(aes(x=mu_IR,y=loglik))+
   geom_point()+
   geom_hline(

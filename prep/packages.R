@@ -1,5 +1,5 @@
 ## check to see that the version of R is sufficiently recent
-minRversion <- "4.1.1"
+minRversion <- "4.2.0"
 rv <- getRversion()
 if (rv < minRversion)
   stop("R version >= ",minRversion," is required",call.=FALSE)
@@ -38,7 +38,16 @@ inst_pkg <- function (pkglist, lib = Sys.getenv("R_LIBS_USER")) {
   if (length(pkglist)>0) {
     cat("trying to install packages in user directory...\n")
     dir.create(lib,recursive=TRUE,showWarnings=FALSE)
-    res <- try(install.packages(pkglist,lib=lib))
+    res <- try(
+      install.packages(
+        pkglist,
+        lib=lib,
+        repos=c(
+          CRAN="https://cloud.r-project.org",
+          kingaa="https://kingaa.github.io"
+        )
+      )
+    )
     if (inherits(res,"try-error")) {
       stop("cannot install to ",lib,call.=FALSE)
     }

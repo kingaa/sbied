@@ -5,18 +5,19 @@ set.seed(1350254336)
 
 library(pomp)
 library(tidyverse)
-library(doParallel)
+library(iterators)
+library(doFuture)
 library(doRNG)
-registerDoParallel()
+registerDoFuture(); plan(multicore)
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 
-read_csv("measles_params.csv") %>%
-  filter(!is.na(loglik), loglik.se<1) %>%
-  filter(loglik==max(loglik)) %>%
+read_csv("measles_params.csv") |>
+  filter(!is.na(loglik), loglik.se<1) |>
+  filter(loglik==max(loglik)) |>
   select(-loglik,-loglik.se) -> coef(measSIR)
 
-coef(measSIR) %>% mysignif(3) %>% t() %>% t() %>% knitr::kable()
+coef(measSIR) |> mysignif(3) |> t() |> t() |> knitr::kable()
 
 
 
@@ -28,11 +29,11 @@ bake(file="fitall_local_search.rds",{
   foreach(i=1:8,.combine=c) %dopar% {
     library(pomp)
     library(tidyverse)
-    measSIR %>%
+    measSIR |>
       mif2(
         Np=2000, Nmif=40,
         cooling.fraction.50=0.5,
-        rw.sd=rw.sd(Beta=0.02, rho=0.02, mu_IR=0.02, k=0.02, eta=ivp(0.05)),
+        rw.sd=rw_sd(Beta=0.02, rho=0.02, mu_IR=0.02, k=0.02, eta=ivp(0.05)),
         partrans=parameter_trans(log=c("Beta","k","mu_IR"),logit=c("rho","eta")),
         paramnames=c("Beta","rho","k","eta","mu_IR")
       )
@@ -43,14 +44,14 @@ bake(file="fitall_local_search.rds",{
 t_loc <- attr(mifs_local,"system.time")
 ncpu_loc <- attr(mifs_local,"ncpu")
 
-mifs_local %>%
-  traces() %>%
-  melt() %>%
-  filter(variable != "N") %>%
-  ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
+mifs_local |>
+  traces() |>
+  melt() |>
+  filter(name != "N") |>
+  ggplot(aes(x=iteration,y=value,group=.L1,color=factor(.L1)))+
   geom_line()+
   guides(color="none")+
-  facet_wrap(~variable,scales="free_y")
+  facet_wrap(~name,scales="free_y")
 
 
 
@@ -64,7 +65,7 @@ bake(file="fitall_lik_local.rds",{
     library(tidyverse)
     evals <- replicate(10, logLik(pfilter(mf,Np=2000)))
     ll <- logmeanexp(evals,se=TRUE)
-    mf %>% coef() %>% bind_rows() %>%
+    mf |> coef() |> bind_rows() |>
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> results
   attr(results,"ncpu") <- getDoParWorkers()
@@ -75,9 +76,9 @@ ncpu_local <- attr(results,"ncpu")
 
 pairs(~loglik+k+Beta+eta+rho+mu_IR,data=results,pch=16)
 
-read_csv("measles_params.csv") %>%
-  bind_rows(results) %>%
-  arrange(-loglik) %>%
+read_csv("measles_params.csv") |>
+  bind_rows(results) |>
+  arrange(-loglik) |>
   write_csv("fitall_params.csv")
 
 if (file.exists("CLUSTER.R")) {
@@ -107,19 +108,19 @@ bake(file="fitall_global_search.rds",
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
     library(pomp)
     library(tidyverse)
-    mf1 %>%
+    mf1 |>
       mif2(
         Nmif=100,Np=2000,
         params=c(unlist(guess),fixed_params)
-      ) %>%
-      mif2(Nmif=100) %>%
+      ) |>
+      mif2(Nmif=100) |>
       mif2(Nmif=100) -> mf
     replicate(
       10,
-      mf %>% pfilter(Np=2000) %>% logLik()
-    ) %>%
+      mf |> pfilter(Np=2000) |> logLik()
+    ) |>
       logmeanexp(se=TRUE) -> ll
-    mf %>% coef() %>% bind_rows() %>%
+    mf |> coef() |> bind_rows() |>
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> results
   attr(results,"ncpu") <- getDoParWorkers()
@@ -128,27 +129,27 @@ bake(file="fitall_global_search.rds",
 t_global <- attr(results,"system.time")
 ncpu_global <- attr(results,"ncpu")
 
-read_csv("fitall_params.csv") %>%
-  bind_rows(results) %>%
-  filter(is.finite(loglik)) %>%
-  arrange(-loglik) %>%
+read_csv("fitall_params.csv") |>
+  bind_rows(results) |>
+  filter(is.finite(loglik)) |>
+  arrange(-loglik) |>
   write_csv("fitall_params.csv")
 
-results %>%
-  filter(is.finite(loglik)) %>%
-  filter(loglik>max(loglik)-50) %>%
-  bind_rows(guesses) %>%
-  mutate(type=if_else(is.na(loglik),"guess","result")) %>%
+results |>
+  filter(is.finite(loglik)) |>
+  filter(loglik>max(loglik)-50) |>
+  bind_rows(guesses) |>
+  mutate(type=if_else(is.na(loglik),"guess","result")) |>
   arrange(type) -> all
 
 pairs(~loglik+k+Beta+eta+rho+mu_IR, data=all, pch=16, cex=0.3,
       col=ifelse(all$type=="guess",grey(0.5),"red"))
 
-read_csv("fitall_params.csv") %>%
+read_csv("fitall_params.csv") |>
   filter(loglik>max(loglik)-50) -> all
 
-all %>%
-  filter(loglik>max(loglik)-10) %>%
+all |>
+  filter(loglik>max(loglik)-10) |>
   ggplot(aes(x=k,y=loglik))+
   geom_point()+
   labs(
@@ -157,8 +158,8 @@ all %>%
     title="poor man's profile likelihood"
   )
 
-all %>%
-  filter(loglik>max(loglik)-10) %>%
+all |>
+  filter(loglik>max(loglik)-10) |>
   ggplot(aes(x=eta,y=loglik,color=k))+
   geom_point()+
   labs(
@@ -171,8 +172,8 @@ pairs(~loglik+k+Beta+eta+rho+mu_IR, pch=16, cex=0.3,
   data=filter(all,loglik>max(loglik)-10),
   col=ifelse(round(all$k,2)==10,"blue","red"))
 
-read_csv("fitall_params.csv") %>%
-  filter(loglik>max(loglik)-10,loglik.se<1) %>%
+read_csv("fitall_params.csv") |>
+  filter(loglik>max(loglik)-10,loglik.se<1) |>
   sapply(range) -> box
 
 freeze(
@@ -196,20 +197,20 @@ bake(file="fitall_eta_profile.rds",
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
     library(pomp)
     library(tidyverse)
-    mf1 %>%
+    mf1 |>
       mif2(
         Nmif=100,Np=2000,
         params=c(unlist(guess),fixed_params),
-        rw.sd=rw.sd(Beta=0.02, rho=0.02, mu_IR=0.02, k=0.02),
+        rw.sd=rw_sd(Beta=0.02, rho=0.02, mu_IR=0.02, k=0.02),
         partrans=parameter_trans(log=c("Beta","mu_IR","k"),logit="rho"),
         paramnames=c("Beta","mu_IR","k","rho")
-      ) %>%
+      ) |>
       mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
     replicate(
       10,
-      mf %>% pfilter(Np=2000) %>% logLik()
-    ) %>% logmeanexp(se=TRUE) -> ll
-    mf %>% coef() %>% bind_rows() %>%
+      mf |> pfilter(Np=2000) |> logLik()
+    ) |> logmeanexp(se=TRUE) -> ll
+    mf |> coef() |> bind_rows() |>
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> results
   attr(results,"ncpu") <- getDoParWorkers()
@@ -218,49 +219,52 @@ bake(file="fitall_eta_profile.rds",
 t_eta <- attr(results,"system.time")
 ncpu_eta <- attr(results,"ncpu")
 
-results %>%
+results |>
   filter(
     is.finite(loglik),
     loglik.se<1
-  ) %>%
-  group_by(eta) %>%
-  filter(rank(-loglik)<=2) %>%
-  ungroup() %>%
-  mutate(
+  ) |>
+  group_by(eta) |>
+  filter(rank(-loglik)<=2) |>
+  ungroup() |>
+  reframe(
+    eta=eta,
+    `log~L`=loglik,
     `R[0]`=Beta/mu_IR,
     beta=Beta,
-    `log~L`=loglik,
-    `mu[IR]`=mu_IR
-  ) %>%
-  gather(variable,value,`log~L`,`mu[IR]`,rho,beta,k,`R[0]`) %>%
-  ggplot(aes(x=eta,y=value))+
+    `mu[IR]`=mu_IR,
+    k=k,
+    rho=rho
+  ) |>
+  pivot_longer(-`eta`) |>
+  ggplot(aes(x=`eta`,y=value))+
   geom_point()+
   labs(y=NULL,x=expression(eta))+
-  facet_wrap(~variable,scales="free_y",labeller=label_parsed)
+  facet_wrap(~name,scales="free_y",labeller=label_parsed)
 
 read_csv("fitall_params.csv") -> all
-all %>%
-  filter(loglik==max(loglik)) %>%
-  pull(loglik) %>%
+all |>
+  filter(loglik==max(loglik)) |>
+  pull(loglik) |>
   round(1) -> ml
-all %>%
-  filter(round(k,4)==10) %>%
-  filter(loglik==max(loglik)) %>%
-  pull(loglik) %>%
+all |>
+  filter(round(k,4)==10) |>
+  filter(loglik==max(loglik)) |>
+  pull(loglik) |>
   round(1) -> ml_constr
-all %>%
-  group_by(etacut=round(eta,2)) %>%
-  filter(loglik==max(loglik)) %>%
-  ungroup() %>%
-  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.95)) %>%
-  select(-loglik,-loglik.se,-etacut) %>%
-  mutate(R0=Beta/mu_IR) %>%
-  gather(parameter,val) %>%
-  group_by(parameter) %>%
-  summarize(min=min(val),max=max(val)) %>%
-  mutate(min=signif(min,2),max=signif(max,2)) %>%
-  gather(var,val,min,max) %>%
-  spread(parameter,val) %>%
-  arrange(eta) %>%
-  column_to_rownames("var") %>%
+all |>
+  group_by(etacut=round(eta,2)) |>
+  filter(loglik==max(loglik)) |>
+  ungroup() |>
+  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.95)) |>
+  select(-loglik,-loglik.se,-etacut) |>
+  mutate(R0=Beta/mu_IR) |>
+  gather(parameter,val) |>
+  group_by(parameter) |>
+  summarize(min=min(val),max=max(val)) |>
+  mutate(min=signif(min,2),max=signif(max,2)) |>
+  gather(var,val,min,max) |>
+  spread(parameter,val) |>
+  arrange(eta) |>
+  column_to_rownames("var") |>
   collect() -> cis

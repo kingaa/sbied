@@ -7,22 +7,22 @@ download.file(
 )
 load(file=file.path(tempdir(),"twentycities.rda"))
 
-measles %>%
+measles |>
   filter(town=="Consett") -> x
-demog %>%
+demog |>
   filter(town=="Consett") -> y
 
-x %>%
-  mutate(year=year(date)) %>%
-  group_by(year) %>%
-  summarize(cases=sum(cases)) %>%
-  left_join(y,by="year") %>%
+x |>
+  mutate(year=year(date)) |>
+  group_by(year) |>
+  summarize(cases=sum(cases)) |>
+  left_join(y,by="year") |>
   mutate(
     cumcase=cumsum(cases),
     cumbirth=cumsum(births)
   ) -> z
 
-z %>%
+z |>
   ggplot(aes(x=cumbirth,y=cumcase))+
   geom_point()+
   expand_limits(x=0,y=0)+

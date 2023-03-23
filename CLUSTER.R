@@ -1,14 +1,16 @@
 switch(
   system("hostname",intern=TRUE),
   theorygroup01={
-    library(doMPI)
-    cl <- startMPIcluster(250,verbose=TRUE,logdir="/tmp")
-    registerDoMPI(cl)
+    library(iterators)
+    library(doFuture)
+    cl <- makeClusterMPI(250,verbose=TRUE,logdir="/tmp")
+    registerDoFuture()
+    plan(cluster,workers=cl)
   },
   {
-    library(doParallel)
-    cores <- as.integer(Sys.getenv("SLURM_NTASKS_PER_NODE"))
-    if (is.na(cores)) cores <- detectCores()  
-    registerDoParallel(cores)
+    library(iterators)
+    library(doFuture)
+    registerDoFuture()
+    plan(multisession)
   }
-)
+  )

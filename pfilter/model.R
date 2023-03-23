@@ -30,9 +30,9 @@ emeas <- Csnippet("
   E_reports = rho*H;"
 )
 
-read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
-  select(week,reports=cases) %>%
-  filter(week<=42) %>%
+read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") |>
+  select(week,reports=cases) |>
+  filter(week<=42) |>
   pomp(
     times="week",t0=0,
     rprocess=euler(sir_step,delta.t=1/7),

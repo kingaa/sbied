@@ -17,8 +17,5 @@ initial-values:
 	make -C initial-values-exercise
 	make initial-values-exercise.html
 
-.fresh:
-	for module in initial-values-exercise starting-values-exercise runlevel1 runlevel2; do (cd $$module && $(MAKE) fresh); done
-
 fresh: .fresh
-
+	for module in initial-values-exercise starting-values-exercise runlevel1 runlevel2; do (cd $$module && $(MAKE) fresh); done

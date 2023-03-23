@@ -6,8 +6,8 @@ options(
   pomp_archive_dir="results"
 )
 
-stopifnot(getRversion()>="4.0")
-stopifnot(packageVersion("pomp")>="4.3.4")
+stopifnot(getRversion()>="4.2")
+stopifnot(packageVersion("pomp")>="4.7")
 
 set.seed(594709947L)
 library(tidyverse)
@@ -22,7 +22,7 @@ dat
 populations <- c(Guinea=10628972,Liberia=4092310,SierraLeone=6190280)
 
 ## ----plot-data,echo=FALSE------------------------------------------------
-dat %>%
+dat |>
   ggplot(aes(x=date,y=cases,group=country,color=country))+
   geom_line()
 
@@ -116,11 +116,11 @@ ebolaModel <- function (country=c("Guinea", "SierraLeone", "Liberia"),
 
   globs <- paste0("static int nstageE = ",nstageE,";")
 
-  dat %>% filter(country==ctry) %>% select(-country) -> dat
+  dat |> filter(country==ctry) |> select(-country) -> dat
 
   ## Create the pomp object
-  dat %>%
-    select(week,cases) %>%
+  dat |>
+    select(week,cases) |>
     pomp(
       times="week",
       t0=min(dat$week)-1,
@@ -151,14 +151,14 @@ read_csv("https://kingaa.github.io/sbied/ebola/ebola_profiles.csv") -> profs
 library(tidyverse)
 theme_set(theme_bw())
 
-profs %>%
-  gather(variable,value,-profile,-country,-loglik) %>%
-  filter(variable==profile) %>%
-  group_by(country) %>%
-  mutate(dll=loglik-max(loglik)) %>%
-  group_by(country,profile,value) %>%
-  filter(loglik==max(loglik)) %>%
-  ungroup() %>%
+profs |>
+  gather(variable,value,-profile,-country,-loglik) |>
+  filter(variable==profile) |>
+  group_by(country) |>
+  mutate(dll=loglik-max(loglik)) |>
+  group_by(country,profile,value) |>
+  filter(loglik==max(loglik)) |>
+  ungroup() |>
   ggplot(aes(x=value,y=dll))+
   geom_point(color="red")+
   geom_hline(yintercept=-0.5*qchisq(p=0.99,df=1))+
@@ -166,18 +166,18 @@ profs %>%
   labs(y=expression(l))
 
 ## ----diagnostics1a,echo=FALSE---------------------------------------------
-profs %>%
-  filter(country=="Guinea") %>%
-  filter(loglik==max(loglik)) %>%
+profs |>
+  filter(country=="Guinea") |>
+  filter(loglik==max(loglik)) |>
   select(-loglik,-loglik.se,-country,-profile) -> coef(gin)
 
 ## ----diagnostics1b,echo=FALSE---------------------------------------------
-gin %>%
-  simulate(nsim=20,format="data.frame",include.data=TRUE) %>%
+gin |>
+  simulate(nsim=20,format="data.frame",include.data=TRUE) |>
   mutate(
     date=min(dat$date)+7*(week-1),
     is.data=ifelse(.id=="data","yes","no")
-  ) %>%
+  ) |>
   ggplot(aes(x=date,y=cases,group=.id,color=is.data,alpha=is.data))+
   geom_line()+
   guides(color="none",alpha="none")+
@@ -191,8 +191,8 @@ growth.rate <- function (y) {
   unname(coef(fit)[2])
 }
 
-gin %>%
-  probe(probes=list(r=growth.rate),nsim=500) %>%
+gin |>
+  probe(probes=list(r=growth.rate),nsim=500) |>
   plot()
 
 ## ----diagnostics-growth-rate-and-sd--------------------------------------
@@ -202,8 +202,8 @@ growth.rate.plus <- function (y) {
   c(r=unname(coef(fit)[2]),sd=sd(residuals(fit)))
 }
 
-gin %>%
-  probe(probes=list(growth.rate.plus),nsim=500) %>%
+gin |>
+  probe(probes=list(growth.rate.plus),nsim=500) |>
   plot()
 
 ## ----diagnostics2,fig.height=6-------------------------------------------
@@ -214,13 +214,13 @@ log1p.detrend <- function (y) {
   y
 }
 
-gin %>%
+gin |>
   probe(nsim=500,
     probes=list(
       growth.rate.plus,
-      probe.quantile(var="cases",prob=c(0.25,0.75)),
-      probe.acf(var="cases",lags=c(1,2),type="correlation",
-        transform=log1p.detrend))) %>%
+      probe_quantile(var="cases",prob=c(0.25,0.75)),
+      probe_acf(var="cases",lags=c(1,2),type="correlation",
+        transform=log1p.detrend))) |>
   plot()
 
 ## ----forecasts1a----------------------------------------------------------
@@ -233,16 +233,16 @@ set.seed(988077383L)
 horizon <- 13
 
 ## ----forecasts1c----------------------------------------------------------
-profs %>%
-  filter(country=="SierraLeone") %>%
-  select(-country,-profile,-loglik.se) %>%
-  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.99)) %>%
-  gather(parameter,value) %>%
-  group_by(parameter) %>%
-  summarize(min=min(value),max=max(value)) %>%
-  ungroup() %>%
-  filter(parameter!="loglik") %>%
-  column_to_rownames("parameter") %>%
+profs |>
+  filter(country=="SierraLeone") |>
+  select(-country,-profile,-loglik.se) |>
+  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.99)) |>
+  gather(parameter,value) |>
+  group_by(parameter) |>
+  summarize(min=min(value),max=max(value)) |>
+  ungroup() |>
+  filter(parameter!="loglik") |>
+  column_to_rownames("parameter") |>
   as.matrix() -> ranges
 
 ## ----forecasts1d----------------------------------------------------------
@@ -274,28 +274,28 @@ bake(file="forecasts.rds",{
 ## ----forecasts2c----------------------------------------------------------
     M1 <- ebolaModel("SierraLeone")
 
-    M1 %>% pfilter(params=p,Np=2000,save.states=TRUE) -> pf
+    M1 |> pfilter(params=p,Np=2000,save.states=TRUE) -> pf
 
 ## ----forecasts2d----------------------------------------------------------
-    pf %>%
-      saved.states() %>% ## latent state for each particle
-      tail(1) %>%        ## last timepoint only
-      melt() %>%         ## reshape and rename the state variables
-      spread(variable,value) %>%
-      group_by(.id) %>%
-      summarize(S_0=S, E_0=E1+E2+E3, I_0=I, R_0=R) %>%
-      gather(variable,value,-.id) %>%
-      spread(.id,value) %>%
-      column_to_rownames("variable") %>%
+    pf |>
+      saved_states() |> ## latent state for each particle
+      tail(1) |>        ## last timepoint only
+      melt() |>         ## reshape and rename the state variables
+      pivot_wider() |>
+      group_by(.id) |>
+      summarize(S_0=S, E_0=E1+E2+E3, I_0=I, R_0=R) |>
+      pivot_longer(-.id) |>
+      spread(.id,value) |>
+      column_to_rownames("name") |>
       as.matrix() -> x
 
 ## ----forecasts2e1----------------------------------------------------------
     pp <- parmat(unlist(p),ncol(x))
 
 ## ----forecasts2e2----------------------------------------------------------
-    M1 %>%
-      simulate(params=pp,format="data.frame") %>%
-      select(.id,week,cases) %>%
+    M1 |>
+      simulate(params=pp,format="data.frame") |>
+      select(.id,week,cases) |>
       mutate(
         period="calibration",
         loglik=logLik(pf)
@@ -309,9 +309,9 @@ bake(file="forecasts.rds",{
 ## ----forecasts2g----------------------------------------------------------
     pp[rownames(x),] <- x
 
-    M2 %>%
-      simulate(params=pp,format="data.frame") %>%
-      select(.id,week,cases) %>%
+    M2 |>
+      simulate(params=pp,format="data.frame") |>
+      select(.id,week,cases) |>
       mutate(
         period="projection",
         loglik=logLik(pf)
@@ -324,30 +324,30 @@ bake(file="forecasts.rds",{
   }}) -> sims
 
 ## ----forecasts2j----------------------------------------------------------
-sims %>%
-  mutate(weight=exp(loglik-mean(loglik))) %>%
+sims |>
+  mutate(weight=exp(loglik-mean(loglik))) |>
   arrange(week,.id) -> sims
 
 ## ----forecasts2k----------------------------------------------------------
-sims %>%
-  filter(week==max(week)) %>%
+sims |>
+  filter(week==max(week)) |>
   summarize(ess=sum(weight)^2/sum(weight^2))
 
 ## ----forecasts2l----------------------------------------------------------
-sims %>%
-  group_by(week,period) %>%
-  summarize(
+sims |>
+  group_by(week,period) |>
+  reframe(
     p=c(0.025,0.5,0.975),
-    q=wquant(cases,weights=weight,probs=p),
-    label=c("lower","median","upper")
-  ) %>%
-  select(-p) %>%
-  spread(label,q) %>%
-  ungroup() %>%
+    value=wquant(cases,weights=weight,probs=p),
+    name=c("lower","median","upper")
+  ) |>
+  select(-p) |>
+  pivot_wider() |>
+  ungroup() |>
   mutate(date=min(dat$date)+7*(week-1)) -> simq
 
 ## ----forecast-plots,echo=FALSE-------------------------------------------
-simq %>%
+simq |>
   ggplot(aes(x=date))+
   geom_ribbon(aes(ymin=lower,ymax=upper,fill=period),alpha=0.3,color=NA)+
   geom_line(aes(y=median,color=period))+

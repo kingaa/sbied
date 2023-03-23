@@ -139,12 +139,12 @@ We should look at the effective sample size plot for the best fit we have found 
 In the following call to \code{mif2}, which of the statements below are true?
 You may assume that \code{obj} is a pomp object with parameters \code{alpha}, \code{Beta}, \code{gamma}, and \code{delta}.
 <<eval=FALSE,purl=FALSE>>=
-obj %>%
+obj |>
   mif2(
     Nmif=100,
     partrans=parameter_trans(log=c("Beta","alpha","delta")),
     paramnames=c("Beta","alpha","delta"),
-    rw.sd=rw.sd(Beta=0.05,alpha=ivp(0.02),gamma=0.05),
+    rw.sd=rw_sd(Beta=0.05,alpha=ivp(0.02),gamma=0.05),
     cooling.fraction.50=0.1
   ) -> obj
 @ 
@@ -176,9 +176,9 @@ obj %>%
 Assume that \code{obj} is the result of the call in \ref{Q:mif2_call1}.
 Which of the statements below best describes what happens as a result of the following call?
 <<eval=FALSE,purl=FALSE>>=
-obj %>%
+obj |>
   mif2(
-    rw.sd=rw.sd(Beta=0.05,alpha=ivp(0.02)),
+    rw.sd=rw_sd(Beta=0.05,alpha=ivp(0.02)),
     cooling.fraction.50=0.2
   )
 @ 

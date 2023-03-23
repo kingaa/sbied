@@ -19,6 +19,7 @@ admin
 *\.brf
 *\.bak
 *\.cut
+*\.out
 *~
 README.html
 CLUSTER.R

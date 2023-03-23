@@ -1,10 +1,10 @@
 DEBUG <- FALSE
 # DEBUG <- TRUE
-library(doParallel)
+library(doFuture)
 library(doRNG)
-cores <- detectCores()
-registerDoParallel(cores)
+registerDoFuture(); plan(multicore)
 registerDoRNG(2050320976)
+cores <- getDoParWorkers()
 
 
 
@@ -57,7 +57,7 @@ mif_results <- foreach(i=1:20) %dopar% {
     Np = if(DEBUG) 5 else 1000,
     cooling.type="geometric", # needed for panelPomp 0.10
     cooling.fraction.50=0.5,
-    rw.sd=rw.sd(mu_X=0.02, sigma_X=0.02,mu_D = 0.02,
+    rw.sd=rw_sd(mu_X=0.02, sigma_X=0.02,mu_D = 0.02,
       sigma_D=0.02,mu_R=0.02, alpha=0.02)
   )
   list(logLik=logLik(mf),params=coef(mf))

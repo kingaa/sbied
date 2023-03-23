@@ -79,9 +79,9 @@ with cholera mortality rate 8\% and other parameters fixed at the default values
 
   <<Q9>>=
   d <- dacca(deltaI=0.08)
-  library(doParallel)
-  my_cores <- detectCores()
-  registerDoParallel(my_cores)
+  library(doFuture)
+  registerDoFuture()
+  plan(multicore)
   bake(file="Q9.rds",{
     foreach(i=1:32,.combine=c) %dopar% {
       library(pomp)

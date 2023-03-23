@@ -74,8 +74,8 @@ popViewport()
 library(tidyverse)
 library(pomp)
 
-bsflu %>%
-  select(day,B) %>%
+bsflu |>
+  select(day,B) |>
   pomp(times="day",t0=-6,
     rprocess=euler(Csnippet("
       double N = 763;
@@ -118,11 +118,11 @@ with(bsflu,c(mu_R1=1/(sum(B)/512),mu_R2=1/(sum(C)/512)))
 ```{r simulations}
 coef(flu) <- c(Beta=5,mu_E=0.5,mu_I=1,mu_R1=0.33,mu_R2=0.55,rho=0.95)
 
-flu %>%
+flu |>
   simulate(nsim=20,format="data.frame",include.data=TRUE) -> simdat
 
-simdat %>%
-  select(day,B,.id) %>%
+simdat |>
+  select(day,B,.id) |>
   ggplot(aes(x=day,y=B,color=(.id=="data"),size=(.id=="data"),group=.id))+
   geom_line()+
   scale_color_manual(values=c(`TRUE`="red",`FALSE`="black"))+

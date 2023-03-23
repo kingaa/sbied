@@ -82,13 +82,13 @@ polio_rinit <- Csnippet("
 
 ```{r include=FALSE}
 library(tidyverse)
-read_csv("params.csv") %>%
-  filter(logLik_se < 1) %>%
-  filter(logLik==max(logLik)) %>%
+read_csv("params.csv") |>
+  filter(logLik_se < 1) |>
+  filter(logLik==max(logLik)) |>
   distinct() -> mle1
-read_csv("initial-values-exercise/params.csv") %>%
-  filter(logLik_se < 1) %>%
-  filter(logLik==max(logLik)) %>%
+read_csv("initial-values-exercise/params.csv") |>
+  filter(logLik_se < 1) |>
+  filter(logLik==max(logLik)) |>
   distinct() -> mle2
 ```
  
@@ -100,7 +100,7 @@ The modification is certainly not a substantial improvement.
 `r if (mle2$logLik-mle1$logLik>1) "**The last statement is a lie!**."`
 
 ```{r profile_rho_plot1,echo=FALSE,fig.width=6,fig.height=6,out.width="70%"}
-read_csv("initial-values-exercise/params.csv") %>%
+read_csv("initial-values-exercise/params.csv") |>
   filter(logLik>max(logLik)-10) -> ests
 pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,data=subset(ests,logLik>max(logLik)-10))
 ```

@@ -7,7 +7,7 @@ set.seed(594709947L)
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 
-measSIR %>%
+measSIR |>
   pomp(partrans=parameter_trans(log=c("Beta","mu_IR"),logit=c("rho","eta")),
     paramnames=c("Beta","mu_IR","eta","rho")) -> measSIR
 
@@ -49,9 +49,9 @@ stew(file="like_optim2.rda",{
   ll <- logmeanexp(lls,se=TRUE); ll
 })
 
-mle %>% simulate(nsim=10,format="data.frame",include.data=TRUE) -> sims
+mle |> simulate(nsim=10,format="data.frame",include.data=TRUE) -> sims
 
-sims %>%
+sims |>
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   guides(color="none")+
   geom_line()

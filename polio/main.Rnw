@@ -11,7 +11,7 @@ source("../_includes/setup.R", local = knitr::knit_global())
 <<libraries,cache=FALSE,echo=FALSE,eval=TRUE>>=
 library(pomp)
 library(tidyverse)
-library(doParallel)
+library(doFuture)
 library(doRNG)
 options(
   dplyr.summarise.inform=FALSE,
@@ -172,8 +172,8 @@ options(
 \begin{frame}[fragile]
 
   <<data_plot,echo=FALSE,out.width="0.8\\linewidth",purl=FALSE>>=
-  data %>%
-    gather(variable,value,-time) %>%
+  data |>
+    gather(variable,value,-time) |>
     ggplot(aes(x=time,y=value))+
     geom_line()+
     facet_wrap(~variable,ncol=1,scales='free_y',strip.position = "left")+
@@ -357,7 +357,7 @@ options(
     P=predict(
       smooth.spline(x=1931:1954,y=data$pop[seq(12,24*12,by=12)]),
       x=data$time)$y,
-    periodic.bspline.basis(t,nbasis=K,
+    periodic_bspline_basis(t,nbasis=K,
       degree=3,period=1,names="xi%d"),
     times="t"
   )
@@ -527,12 +527,12 @@ options(
 
   We now put these pieces together into a pomp object. 
   <<pomp>>=
-  data %>%
+  data |>
     filter(
       time > t0 + 0.01,
       time < 1953+1/12+0.01
-    ) %>%
-    select(cases,time) %>%
+    ) |>
+    select(cases,time) |>
     pomp(
       times="time",t0=t0,
       params=params_guess,
@@ -633,10 +633,9 @@ options(
   \end{itemize}
 
   <<parallel-setup,eval=FALSE>>=
-  library(doParallel)
-  cores <- as.numeric(Sys.getenv('SLURM_NTASKS_PER_NODE',unset=NA))  
-  if(is.na(cores)) cores <- detectCores()  
-  registerDoParallel(cores)
+  library(doFuture)
+  registerDoFuture()
+  plan(multicore)
   library(doRNG)
   @
   
@@ -651,6 +650,7 @@ options(
   \end{itemize}
   
   <<cache-cores>>=
+  cores <- getDoParWorkers()
   bake(file="cores.rds",cores) -> cores
   @
   \begin{itemize}
@@ -777,26 +777,26 @@ options(
 \begin{frame}[fragile]
   
   <<persistence-analysis,include=FALSE>>=
-  sims %>%
-    group_by(.id) %>%
+  sims |>
+    group_by(.id) |>
     summarize(
       no_cases=sum(cases==0),
       fadeout1=sum(IO+IB<1,na.rm=TRUE),
       fadeout100=sum(IO+IB<100,na.rm=TRUE),
       imports=coef(polio,"psi")*mean(SO+SB1+SB2+SB3+SB4+SB5+SB6,na.rm=TRUE)/12
-    ) %>%
-    ungroup() %>%
-    gather(var,val,-.id) %>%
+    ) |>
+    ungroup() |>
+    gather(var,val,-.id) |>
     group_by(
       type=if_else(.id=="data","data","sim"),
       var
-    ) %>%
-    summarize(val=mean(val)) %>%
-    ungroup() %>%
+    ) |>
+    summarize(val=mean(val)) |>
+    ungroup() |>
     spread(var,val) -> summ
   @
   <<persistence_analysis2,include=FALSE>>=
-  summ %>%
+  summ |>
     column_to_rownames("type") -> summ
   @
   
@@ -847,7 +847,7 @@ options(
   \end{itemize}
 
   <<rwsd>>=
-  rw_sd <- eval(substitute(rw.sd(
+  rw_sd <- eval(substitute(rw_sd(
     b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
     psi=rwr,rho=rwr,tau=rwr,sigma_dem=rwr,
     sigma_env=rwr,
@@ -883,10 +883,10 @@ options(
 \begin{frame}[fragile]
 
   <<search-save>>=
-  coef(m2) %>% melt() %>% spread(parameter,value) %>%
-    select(-.id) %>%
+  coef(m2) |> melt() |> spread(name,value) |>
+    select(-.id) |>
     bind_cols(logLik=lik_m2[,1],logLik_se=lik_m2[,2]) -> r2
-  r2 %>% arrange(-logLik) %>%
+  r2 |> arrange(-logLik) |>
     write_csv("params.csv")
   summary(r2$logLik,digits=5)
   @
@@ -972,12 +972,12 @@ options(
 \begin{frame}[fragile]
 
   <<global-results>>=
-  coef(m3) %>% melt() %>% spread(parameter,value) %>%
-    select(-.id) %>%
+  coef(m3) |> melt() |> spread(name,value) |>
+    select(-.id) |>
     bind_cols(logLik=lik_m3[,1],logLik_se=lik_m3[,2]) -> r3
-  read_csv("params.csv") %>%
-    bind_rows(r3) %>%
-    arrange(-logLik) %>%
+  read_csv("params.csv") |>
+    bind_rows(r3) |>
+    arrange(-logLik) |>
     write_csv("params.csv")
   summary(r3$logLik,digits=5)
   @
@@ -1103,14 +1103,14 @@ options(
 
   <<profile_ranges>>=
   library(tidyverse)
-  params %>% 
-    filter(logLik>max(logLik)-20) %>%
-    select(-logLik,-logLik_se) %>%
-    gather(variable,value) %>%
-    group_by(variable) %>%
-    summarize(min=min(value),max=max(value)) %>%
-    ungroup() %>%
-    column_to_rownames(var="variable") %>%
+  params |> 
+    filter(logLik>max(logLik)-20) |>
+    select(-logLik,-logLik_se) |>
+    gather(variable,value) |>
+    group_by(variable) |>
+    summarize(min=min(value),max=max(value)) |>
+    ungroup() |>
+    column_to_rownames(var="variable") |>
     t() -> box
   @
   
@@ -1149,7 +1149,7 @@ options(
   \end{itemize}
 
   <<profile_rw_sd>>=
-  profile_rw_sd <- eval(substitute(rw.sd(
+  profile_rw_sd <- eval(substitute(rw_sd(
     rho=0,b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
     psi=rwr,tau=rwr,sigma_dem=rwr,sigma_env=rwr,
     IO_0=ivp(rwi),SO_0=ivp(rwi)),
@@ -1161,18 +1161,18 @@ options(
     registerDoRNG(1888257101)
     foreach(start=iter(starts,"row"),.combine=rbind,
       .packages=c("pomp","dplyr")) %dopar% {
-        polio %>% mif2(params=start,
+        polio |> mif2(params=start,
           Np=Np,Nmif=ceiling(Nmif/2),
           cooling.fraction.50=0.5,
           rw.sd=profile_rw_sd
-        ) %>%
+        ) |>
           mif2(Np=Np,Nmif=ceiling(Nmif/2),
             cooling.fraction.50=0.1
           ) -> mf
         replicate(Nreps_eval,
-          mf %>% pfilter(Np=Np) %>% logLik()
-        ) %>% logmeanexp(se=TRUE) -> ll
-        mf %>% coef() %>% bind_rows() %>%
+          mf |> pfilter(Np=Np) |> logLik()
+        ) |> logmeanexp(se=TRUE) -> ll
+        mf |> coef() |> bind_rows() |>
           bind_cols(logLik=ll[1],logLik_se=ll[2])
       }
   },dependson=run_level) -> m4
@@ -1206,9 +1206,9 @@ options(
   @
   
   <<save_profile_rho,echo=FALSE>>=
-  read_csv("params.csv") %>%
-    bind_rows(m4) %>%
-    arrange(-logLik) %>%
+  read_csv("params.csv") |>
+    bind_rows(m4) |>
+    arrange(-logLik) |>
     write_csv("params.csv",append=TRUE)
   @
   

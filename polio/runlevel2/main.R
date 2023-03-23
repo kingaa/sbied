@@ -27,7 +27,7 @@ covar <- covariate_table(
   P=predict(
     smooth.spline(x=1931:1954,y=data$pop[seq(12,24*12,by=12)]),
     x=data$time)$y,
-  periodic.bspline.basis(t,nbasis=K,
+  periodic_bspline_basis(t,nbasis=K,
     degree=3,period=1,names="xi%d"),
   times="t"
 )
@@ -110,12 +110,12 @@ partrans <- parameter_trans(
   logit=c("SO_0","IO_0")
 )
 
-data %>%
+data |>
   filter(
     time > t0 + 0.01,
     time < 1953+1/12+0.01
-  ) %>%
-  select(cases,time) %>%
+  ) |>
+  select(cases,time) |>
   pomp(
     times="time",t0=t0,
     params=params_guess,
@@ -164,29 +164,29 @@ L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
 simulate(polio,nsim=Nsim,seed=1643079359,
   format="data.frame",include.data=TRUE) -> sims
 
-sims %>%
-  group_by(.id) %>%
+sims |>
+  group_by(.id) |>
   summarize(
     no_cases=sum(cases==0),
     fadeout1=sum(IO+IB<1,na.rm=TRUE),
     fadeout100=sum(IO+IB<100,na.rm=TRUE),
     imports=coef(polio,"psi")*mean(SO+SB1+SB2+SB3+SB4+SB5+SB6,na.rm=TRUE)/12
-  ) %>%
-  ungroup() %>%
-  gather(var,val,-.id) %>%
+  ) |>
+  ungroup() |>
+  gather(var,val,-.id) |>
   group_by(
     type=if_else(.id=="data","data","sim"),
     var
-  ) %>%
-  summarize(val=mean(val)) %>%
-  ungroup() %>%
+  ) |>
+  summarize(val=mean(val)) |>
+  ungroup() |>
   spread(var,val) -> summ
-summ %>%
+summ |>
   column_to_rownames("type") -> summ
 
 
 
-rw_sd <- eval(substitute(rw.sd(
+rw_sd <- eval(substitute(rw_sd(
   b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
   psi=rwr,rho=rwr,tau=rwr,sigma_dem=rwr,
   sigma_env=rwr,
@@ -210,10 +210,10 @@ load(file="results/mif.rda")
 mif_time <- .system.time
 
 
-coef(m2) %>% melt() %>% spread(parameter,value) %>%
-  select(-.id) %>%
+coef(m2) |> melt() |> spread(parameter,value) |>
+  select(-.id) |>
   bind_cols(logLik=lik_m2[,1],logLik_se=lik_m2[,2]) -> r2
-r2 %>% arrange(-logLik) %>%
+r2 |> arrange(-logLik) |>
   write_csv("params.csv")
 summary(r2$logLik,digits=5)
 
@@ -243,12 +243,12 @@ bake(file="box_eval2.rds",{
       logLik(pfilter(m,Np=Np))),se=TRUE)
 },dependson=run_level) -> lik_m3
 
-coef(m3) %>% melt() %>% spread(parameter,value) %>%
-  select(-.id) %>%
+coef(m3) |> melt() |> spread(parameter,value) |>
+  select(-.id) |>
   bind_cols(logLik=lik_m3[,1],logLik_se=lik_m3[,2]) -> r3
-read_csv("params.csv") %>%
-  bind_rows(r3) %>%
-  arrange(-logLik) %>%
+read_csv("params.csv") |>
+  bind_rows(r3) |>
+  arrange(-logLik) |>
   write_csv("params.csv")
 summary(r3$logLik,digits=5)
 
@@ -274,14 +274,14 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
 
 
 library(tidyverse)
-params %>% 
-  filter(logLik>max(logLik)-20) %>%
-  select(-logLik,-logLik_se) %>%
-  gather(variable,value) %>%
-  group_by(variable) %>%
-  summarize(min=min(value),max=max(value)) %>%
-  ungroup() %>%
-  column_to_rownames(var="variable") %>%
+params |> 
+  filter(logLik>max(logLik)-20) |>
+  select(-logLik,-logLik_se) |>
+  gather(variable,value) |>
+  group_by(variable) |>
+  summarize(min=min(value),max=max(value)) |>
+  ungroup() |>
+  column_to_rownames(var="variable") |>
   t() -> box
 
 profile_pts <-  switch(run_level,  3,  5,  30)
@@ -294,7 +294,7 @@ profile_design(
   nprof=profile_Nreps
 ) -> starts
 
-profile_rw_sd <- eval(substitute(rw.sd(
+profile_rw_sd <- eval(substitute(rw_sd(
   rho=0,b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
   psi=rwr,tau=rwr,sigma_dem=rwr,sigma_env=rwr,
   IO_0=ivp(rwi),SO_0=ivp(rwi)),
@@ -304,18 +304,18 @@ bake(file="profile_rho.rds",{
   registerDoRNG(1888257101)
   foreach(start=iter(starts,"row"),.combine=rbind,
     .packages=c("pomp","dplyr")) %dopar% {
-      polio %>% mif2(params=start,
+      polio |> mif2(params=start,
         Np=Np,Nmif=ceiling(Nmif/2),
         cooling.fraction.50=0.5,
         rw.sd=profile_rw_sd
-      ) %>%
+      ) |>
         mif2(Np=Np,Nmif=ceiling(Nmif/2),
           cooling.fraction.50=0.1
         ) -> mf
       replicate(Nreps_eval,
-        mf %>% pfilter(Np=Np) %>% logLik()
-      ) %>% logmeanexp(se=TRUE) -> ll
-      mf %>% coef() %>% bind_rows() %>%
+        mf |> pfilter(Np=Np) |> logLik()
+      ) |> logmeanexp(se=TRUE) -> ll
+      mf |> coef() |> bind_rows() |>
         bind_cols(logLik=ll[1],logLik_se=ll[2])
     }
 },dependson=run_level) -> m4
@@ -324,27 +324,27 @@ bake(file="profile_rho.rds",{
 ##   registerDoRNG(1888257101)
 ##   foreach(start=iter(starts,"row"),.combine=rbind,
 ##     .packages=c("pomp","dplyr")) %dopar% {
-##       polio %>% mif2(params=start,
+##       polio |> mif2(params=start,
 ##         Np=Np,Nmif=ceiling(Nmif/2),
 ##         cooling.fraction.50=0.5,
 ##         rw.sd=profile_rw_sd
-##       ) %>%
+##       ) |>
 ##         mif2(Np=Np,Nmif=ceiling(Nmif/2),
 ##           cooling.fraction.50=0.1
 ##         ) -> mf
 ##       replicate(Nreps_eval,
-##         mf %>% pfilter(Np=Np) %>% logLik()
-##       ) %>% logmeanexp(se=TRUE) -> ll
-##       mf %>% coef() %>% bind_rows() %>%
+##         mf |> pfilter(Np=Np) |> logLik()
+##       ) |> logmeanexp(se=TRUE) -> ll
+##       mf |> coef() |> bind_rows() |>
 ##         bind_cols(logLik=ll[1],logLik_se=ll[2])
 ##     }
 ## },dependson=run_level) -> m4
 
 
 
-read_csv("params.csv") %>%
-  bind_rows(m4) %>%
-  arrange(-logLik) %>%
+read_csv("params.csv") |>
+  bind_rows(m4) |>
+  arrange(-logLik) |>
   write_csv("params.csv",append=TRUE)
 
 

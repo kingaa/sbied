@@ -12,7 +12,7 @@ NREPS <- 10
 timer <- system.time(
   pf <- replicate(
     NREPS,
-    measSIR %>% pfilter(Np=NP)
+    measSIR |> pfilter(Np=NP)
   )
 )
 ll <- sapply(pf,logLik)
@@ -26,8 +26,9 @@ bake(file="loglikest-pfilter.rds",{
   if (file.exists("CLUSTER.R")) {
     source("CLUSTER.R")
   } else {
-    library(doParallel)
-    registerDoParallel()
+    library(doFuture)
+    registerDoFuture()
+    plan(multicore)
   }
   library(doRNG)
   registerDoRNG(594717807L)
@@ -40,7 +41,7 @@ bake(file="loglikest-pfilter.rds",{
            .inorder=FALSE, .combine=rbind) %dopar%
     {
       library(pomp)
-      measSIR %>% pfilter(Np=p$NP) -> pf
+      measSIR |> pfilter(Np=p$NP) -> pf
       cbind(p,loglik=logLik(pf))
     } -> lls
   registerDoSEQ()
@@ -50,10 +51,10 @@ bake(file="loglikest-pfilter.rds",{
 expand_grid(
   NREPS=c(10,100,1000),
   lls
-) %>%
-  filter(rep<=NREPS) %>%
+) |>
+  filter(rep<=NREPS) |>
   ggplot(aes(x=NP,y=loglik,fill=ordered(NREPS),
-             group=interaction(NREPS,NP)))+
+    group=interaction(NREPS,NP)))+
   geom_violin(draw_quantiles=c(0.1,0.5,0.9),alpha=0.7)+
   scale_x_log10(breaks=unique(lls$NP))+
   labs(fill="NREPS",x="NP")

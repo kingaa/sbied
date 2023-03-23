@@ -285,8 +285,8 @@ pre code {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -294,16 +294,9 @@ pre code {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -415,7 +408,7 @@ Be careful to translate to your local timezone! The following world clock may he
 <script>/* Written in JS with JQUERY first */
 
 /* Declare eval separately so the rest can be mimified and obfuscated */
-var wtb_widget_1658845934 = {
+var wtb_widget_1680119540 = {
 	ev: function(expr) { return eval(expr); }
 };
 
@@ -636,7 +629,7 @@ var wtb_widget_1658845934 = {
 	function findDstTransitionsWrapper() {
 
 		// Start looking around the day of the event (+/-2 years)
-		var ct       = new Date(1658845934000);
+		var ct       = new Date(1680119540000);
 		var tsUtc    = Date.UTC(ct.getFullYear(), ct.getMonth(), ct.getDate(), 0, 0, 0);
 		var startTs  = tsUtc - deltaYear * 2;
 		var endTs    = tsUtc + deltaYear * 2;
@@ -715,7 +708,7 @@ var wtb_widget_1658845934 = {
 		
 			var callback = 'wtbNonexistendCallback';
 			if (window[callback] != undefined) {
-				var data_obj = wtb_widget_1658845934.ev('('+e.data+')'); 
+				var data_obj = wtb_widget_1680119540.ev('('+e.data+')'); 
 				window[callback](data_obj);
 			}
 		
@@ -733,11 +726,11 @@ var wtb_widget_1658845934 = {
 				
 	// Write the CSS (if has not been written yet)
 	if ( ! window[ widgetObjCss ]) {
-		// document.write('<link rel="stylesheet" type="text/css" href="https://www.worldtimebuddy.com/media/css/widget_outside.css?132" />');
+		// document.write('<link rel="stylesheet" type="text/css" href="https://www.worldtimebuddy.com/media/css/widget_outside.css?144" />');
 		// Embedd CSS straight into the script to avoid an extra download
 		document.write('<style>#wtb-ew-v1,.wtb-ew-v1{display:inline-block;font-size:9px;font-family:Verdana;border-radius:3px;}#wtb-ew-v1 *,.wtb-ew-v1 *{font-size:9px;font-family:Verdana;line-height:1.4;text-shadow:none;}.wtb-ew-v1 a.wtb-event-link,#wtb-ew-v1 a.wtb-event-link{float:right;width:10px;height:10px;margin-top:1px;margin-right:1px;background:transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAAARklEQVQoU63QwQoAIAgDUP//p80WSwPXSaHLeCzU3N3EizhHoZpD76AbwmsIu2YiGAUrQkkHnyYuempjPptn4zwUJ2KMrxfqE0TKF+8WMwAAAABJRU5ErkJggg==) no-repeat;}.wtb-ew-v1 .wtb-ew-outside,#wtb-ew-v1 .wtb-ew-outside{display:inline-block;background:#8BA1BB url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAAAOElEQVQoU2Oor683+v//PwM6BomDMAOMgUsRXAEuk8BGw0zBpghuNy5FKI7Dpgin62HWYShAdxMAxC6f8UpkYsAAAAAASUVORK5CYII=) repeat;padding:5px;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;}.wtb-ew-v1 .wtb-ew-locations,#wtb-ew-v1 .wtb-ew-locations{-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;background:#fff;}.wtb-ew-v1 .wtb-ew-bottom,#wtb-ew-v1 .wtb-ew-bottom{color:#fff;font-size:9px;margin-top:5px;display:block;}.wtb-ew-v1 .wtb-ew-powered,#wtb-ew-v1 .wtb-ew-powered{color:#eee;float:left;}.wtb-ew-v1 .wtb-ew-logo,#wtb-ew-v1 .wtb-ew-logo{float:left;margin-left:4px;font-weight:bold;text-decoration:none;color:#fff;text-transform:uppercase;}.wtb-ew-v1 .wtb-ew-logo span,#wtb-ew-v1 .wtb-ew-logo span{margin-left:-1px;}.wtb-ew-v1 .wtb-tf,#wtb-ew-v1 .wtb-tf{float:right;text-transform:uppercase;padding:0 3px;-webkit-border-radius:3px 0 0 3px;-moz-border-radius:3px 0 0 3px;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;cursor:pointer;}.wtb-ew-v1 .wtb-tf-24,#wtb-ew-v1 .wtb-tf-24{margin-right:2px;margin-left:1px;}.wtb-ew-v1 .wtb-ew-bottom .wtb-ew-selected,#wtb-ew-v1 .wtb-ew-bottom .wtb-ew-selected{background:#fff;color:#8BA1BB;}</style>');
 		document.write('<!--[if lt IE 8]>');
-		document.write('<style>#wtb-ew-v1 a.wtb-event-link,.wtb-ew-v1 a.wtb-event-link { background: transparent url(https://www.worldtimebuddy.com/media/img/open-event.png?132) no-repeat }</style>');
+		document.write('<style>#wtb-ew-v1 a.wtb-event-link,.wtb-ew-v1 a.wtb-event-link { background: transparent url(https://www.worldtimebuddy.com/media/img/open-event.png?144) no-repeat }</style>');
 		document.write('<![endif]-->');
 		window[ widgetObjCss ] = true;
 	}

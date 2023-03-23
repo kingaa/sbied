@@ -9,7 +9,7 @@
     nprof=profile_Nreps
 ! ) -> starts
   
-  profile_rw_sd <- eval(substitute(rw.sd(
+  profile_rw_sd <- eval(substitute(rw_sd(
     rho=0,b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
 --- 279,289 ----
   idx <- which(colnames(box)!="rho")
@@ -21,5 +21,5 @@
 ! ) -> trans_starts
 ! starts <- data.frame(t(partrans(polio,t(trans_starts),dir="fromEst")))
   
-  profile_rw_sd <- eval(substitute(rw.sd(
+  profile_rw_sd <- eval(substitute(rw_sd(
     rho=0,b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,

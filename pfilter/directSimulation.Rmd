@@ -1,7 +1,7 @@
 ---
 title: |
-  | Likelihood by direct simulation:
-  | Consett measles example
+  Likelihood by direct simulation:
+  Consett measles example
 author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
@@ -36,7 +36,7 @@ library(pomp)
 set.seed(594709947L)
 ```
 
-We're going to demonstrate what happens when we attempt to compute the likelihood for the Consett measles outbreak data by direct simulation from.
+We're going to demonstrate what happens when we attempt to compute the likelihood for the Consett measles outbreak data by direct simulation from the full latent state distribution.
 
 First, let's reconstruct the toy SIR model we were working with.
 
@@ -46,10 +46,11 @@ source("https://kingaa.github.io/sbied/pfilter/model.R")
 
 Let's generate a large number of simulated trajectories at some particular point in parameter space.
 ```{r bbs-mc-like-2}
-measSIR %>%
+measSIR |>
   simulate(nsim=5000,format="arrays") -> x
-sims <- coef(measSIR,"rho")*x$states["H",,]
-matplot(time(measSIR),t(sims[1:50,]),type='l',lty=1,
+measSIR |>
+  emeasure(x=x$states) -> sims
+matplot(time(measSIR),t(sims[1,1:50,]),type='l',lty=1,
   xlab="time",ylab=expression(rho*H),bty='l',col='blue')
 lines(time(measSIR),obs(measSIR,"reports"),lwd=2,col='black')
 ```

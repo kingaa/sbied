@@ -1,5 +1,6 @@
 ---
-title: Bootstrap methods for constructing standard errors and confidence intervals
+title: |
+  Bootstrap methods for constructing standard errors and confidence intervals
 author: Aaron A. King and Edward L. Ionides
 output:
   html_document:

@@ -219,7 +219,7 @@ Under such circumstances, the rejection method offers a less efficient, but more
     g=c(0.75,0.03),
     h=c(0.6,0.6)
   )
-  basis <- pomp::periodic.bspline.basis(t,degree=2,nbasis=nrow(xyc),period=1)
+  basis <- pomp::periodic_bspline_basis(t,degree=2,nbasis=nrow(xyc),period=1)
   xy <- basis%*%xyc
   lines(xy[,1],xy[,2],lwd=1.5)
   xyc <- rbind(
@@ -228,7 +228,7 @@ Under such circumstances, the rejection method offers a less efficient, but more
     c=c(0.49,0.23),
     d=c(0.39,0.23)
   )
-  basis <- pomp::periodic.bspline.basis(t,degree=1,nbasis=nrow(xyc),period=1)
+  basis <- pomp::periodic_bspline_basis(t,degree=1,nbasis=nrow(xyc),period=1)
   xy <- basis%*%xyc
   lines(xy[,1],xy[,2])
   text(x=c(0.05,0.5,0.9),y=c(0.95,0.75,0.1),labels=c("U","D","A"))

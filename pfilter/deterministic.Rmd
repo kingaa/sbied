@@ -1,5 +1,6 @@
 ---
-title: Deterministic latent process models and their role in benchmarking POMP models
+title: |
+  Deterministic latent process models and their role in benchmarking POMP models
 author: Aaron A. King and Edward L. Ionides
 output:
   html_document:
@@ -84,8 +85,8 @@ The following diagram illustrates this.
 ```{r det-example,echo=FALSE,results="hide",purl=FALSE}
 library(pomp)
 
-bsflu %>%
-  select(day,B) %>%
+bsflu |>
+  select(day,B) |>
   pomp(times="day",t0=0,
     params=c(
       mu_IR=1/3,
@@ -128,8 +129,8 @@ bsflu %>%
     accumvars="H"
   ) -> bbs
 
-trajectory(bbs,format="data.frame") %>%
-  full_join(as.data.frame(bbs),by="day") %>%
+trajectory(bbs,format="data.frame") |>
+  full_join(as.data.frame(bbs),by="day") |>
   mutate(
     xlab=sprintf("hat(y)[%d]",day),
     ylab=sprintf("y[%d]^'*'",day)

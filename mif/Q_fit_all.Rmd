@@ -52,22 +52,23 @@ We take for our putative MLE the point in our database with the highest measured
 ```{r setup}
 library(pomp)
 library(tidyverse)
-library(doParallel)
+library(iterators)
+library(doFuture)
 library(doRNG)
-registerDoParallel()
+registerDoFuture(); plan(multicore)
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 
-read_csv("measles_params.csv") %>%
-  filter(!is.na(loglik), loglik.se<1) %>%
-  filter(loglik==max(loglik)) %>%
+read_csv("measles_params.csv") |>
+  filter(!is.na(loglik), loglik.se<1) |>
+  filter(loglik==max(loglik)) |>
   select(-loglik,-loglik.se) -> coef(measSIR)
 ```
 
 The putative MLE is 
 ```{r echo=FALSE}
 #| results: asis
-coef(measSIR) %>% mysignif(3) %>% t() %>% t() %>% knitr::kable()
+coef(measSIR) |> mysignif(3) |> t() |> t() |> knitr::kable()
 ```
 
 ### Local search
@@ -86,11 +87,11 @@ registerDoRNG(482942941)
 foreach(i=1:8,.combine=c) %dopar% {
   library(pomp)
   library(tidyverse)
-  measSIR %>%
+  measSIR |>
     mif2(
       Np=2000, Nmif=40,
       cooling.fraction.50=0.5,
-      rw.sd=rw.sd(Beta=0.02, rho=0.02, mu_IR=0.02, k=0.02, eta=ivp(0.05)),
+      rw.sd=rw_sd(Beta=0.02, rho=0.02, mu_IR=0.02, k=0.02, eta=ivp(0.05)),
       partrans=parameter_trans(log=c("Beta","k","mu_IR"),logit=c("rho","eta")),
       paramnames=c("Beta","rho","k","eta","mu_IR")
     )
@@ -114,14 +115,14 @@ ncpu_loc <- attr(mifs_local,"ncpu")
 We examine the traces of the IF2 runs:
 
 ```{r}
-mifs_local %>%
-  traces() %>%
-  melt() %>%
-  filter(variable != "N") %>%
-  ggplot(aes(x=iteration,y=value,group=L1,color=factor(L1)))+
+mifs_local |>
+  traces() |>
+  melt() |>
+  filter(name != "N") |>
+  ggplot(aes(x=iteration,y=value,group=.L1,color=factor(.L1)))+
   geom_line()+
   guides(color="none")+
-  facet_wrap(~variable,scales="free_y")
+  facet_wrap(~name,scales="free_y")
 ```
 IF2 seems to be doing a reasonable job of increasing the likelihood, though there is some way yet to go.
 We note that $k$ is immediately decreased, giving the model more measurement error, with which to explain discrepancies between the process model and the data.
@@ -139,7 +140,7 @@ foreach(mf=mifs_local,.combine=rbind) %dopar% {
   library(tidyverse)
   evals <- replicate(10, logLik(pfilter(mf,Np=2000)))
   ll <- logmeanexp(evals,se=TRUE)
-  mf %>% coef() %>% bind_rows() %>%
+  mf |> coef() |> bind_rows() |>
     bind_cols(loglik=ll[1],loglik.se=ll[2])
 } -> results
 ```
@@ -168,9 +169,9 @@ pairs(~loglik+k+Beta+eta+rho+mu_IR,data=results,pch=16)
 As usual, we store these results in a database.
 
 ```{r}
-read_csv("measles_params.csv") %>%
-  bind_rows(results) %>%
-  arrange(-loglik) %>%
+read_csv("measles_params.csv") |>
+  bind_rows(results) |>
+  arrange(-loglik) |>
   write_csv("fitall_params.csv")
 ```
 
@@ -215,19 +216,19 @@ registerDoRNG(274481374)
 foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
   library(pomp)
   library(tidyverse)
-  mf1 %>%
+  mf1 |>
     mif2(
       Nmif=100,Np=2000,
       params=c(unlist(guess),fixed_params)
-    ) %>%
-    mif2(Nmif=100) %>%
+    ) |>
+    mif2(Nmif=100) |>
     mif2(Nmif=100) -> mf
   replicate(
     10,
-    mf %>% pfilter(Np=2000) %>% logLik()
-  ) %>%
+    mf |> pfilter(Np=2000) |> logLik()
+  ) |>
     logmeanexp(se=TRUE) -> ll
-  mf %>% coef() %>% bind_rows() %>%
+  mf |> coef() |> bind_rows() |>
     bind_cols(loglik=ll[1],loglik.se=ll[2])
 } -> results
 ```
@@ -251,27 +252,27 @@ This global search from `r nrow(guesses)` starts took `r mysignif(t_global[3],2)
 We append the results to our database and have a look.
 
 ```{r global1_plot1}
-read_csv("fitall_params.csv") %>%
-  bind_rows(results) %>%
-  filter(is.finite(loglik)) %>%
-  arrange(-loglik) %>%
+read_csv("fitall_params.csv") |>
+  bind_rows(results) |>
+  filter(is.finite(loglik)) |>
+  arrange(-loglik) |>
   write_csv("fitall_params.csv")
 
-results %>%
-  filter(is.finite(loglik)) %>%
-  filter(loglik>max(loglik)-50) %>%
-  bind_rows(guesses) %>%
-  mutate(type=if_else(is.na(loglik),"guess","result")) %>%
+results |>
+  filter(is.finite(loglik)) |>
+  filter(loglik>max(loglik)-50) |>
+  bind_rows(guesses) |>
+  mutate(type=if_else(is.na(loglik),"guess","result")) |>
   arrange(type) -> all
 
 pairs(~loglik+k+Beta+eta+rho+mu_IR, data=all, pch=16, cex=0.3,
       col=ifelse(all$type=="guess",grey(0.5),"red"))
 
-read_csv("fitall_params.csv") %>%
+read_csv("fitall_params.csv") |>
   filter(loglik>max(loglik)-50) -> all
 
-all %>%
-  filter(loglik>max(loglik)-10) %>%
+all |>
+  filter(loglik>max(loglik)-10) |>
   ggplot(aes(x=k,y=loglik))+
   geom_point()+
   labs(
@@ -280,8 +281,8 @@ all %>%
     title="poor man's profile likelihood"
   )
 
-all %>%
-  filter(loglik>max(loglik)-10) %>%
+all |>
+  filter(loglik>max(loglik)-10) |>
   ggplot(aes(x=eta,y=loglik,color=k))+
   geom_point()+
   labs(
@@ -311,8 +312,8 @@ Because this ridge appears flat in the $\eta$-direction, we will profile over $\
 The following sets up a design of guesses, to be used as starting points for the profile computation.
 
 ```{r eta_profile1}
-read_csv("fitall_params.csv") %>%
-  filter(loglik>max(loglik)-10,loglik.se<1) %>%
+read_csv("fitall_params.csv") |>
+  filter(loglik>max(loglik)-10,loglik.se<1) |>
   sapply(range) -> box
 
 freeze(
@@ -333,20 +334,20 @@ registerDoRNG(830007657)
 foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
   library(pomp)
   library(tidyverse)
-  mf1 %>%
+  mf1 |>
     mif2(
       Nmif=100,Np=2000,
       params=c(unlist(guess),fixed_params),
-      rw.sd=rw.sd(Beta=0.02, rho=0.02, mu_IR=0.02, k=0.02),
+      rw.sd=rw_sd(Beta=0.02, rho=0.02, mu_IR=0.02, k=0.02),
       partrans=parameter_trans(log=c("Beta","mu_IR","k"),logit="rho"),
       paramnames=c("Beta","mu_IR","k","rho")
-    ) %>%
+    ) |>
     mif2(Nmif=100,cooling.fraction.50=0.3) -> mf
   replicate(
     10,
-    mf %>% pfilter(Np=2000) %>% logLik()
-  ) %>% logmeanexp(se=TRUE) -> ll
-  mf %>% coef() %>% bind_rows() %>%
+    mf |> pfilter(Np=2000) |> logLik()
+  ) |> logmeanexp(se=TRUE) -> ll
+  mf |> coef() |> bind_rows() |>
     bind_cols(loglik=ll[1],loglik.se=ll[2])
 } -> results
 ```
@@ -372,54 +373,57 @@ We now examine the profile traces.
 Note that we include a trace of the basic reproductive number, $R_0$.
 
 ```{r eta_profile_plots}
-results %>%
+results |>
   filter(
     is.finite(loglik),
     loglik.se<1
-  ) %>%
-  group_by(eta) %>%
-  filter(rank(-loglik)<=2) %>%
-  ungroup() %>%
-  mutate(
+  ) |>
+  group_by(eta) |>
+  filter(rank(-loglik)<=2) |>
+  ungroup() |>
+  reframe(
+    eta=eta,
+    `log~L`=loglik,
     `R[0]`=Beta/mu_IR,
     beta=Beta,
-    `log~L`=loglik,
-    `mu[IR]`=mu_IR
-  ) %>%
-  gather(variable,value,`log~L`,`mu[IR]`,rho,beta,k,`R[0]`) %>%
-  ggplot(aes(x=eta,y=value))+
+    `mu[IR]`=mu_IR,
+    k=k,
+    rho=rho
+  ) |>
+  pivot_longer(-`eta`) |>
+  ggplot(aes(x=`eta`,y=value))+
   geom_point()+
   labs(y=NULL,x=expression(eta))+
-  facet_wrap(~variable,scales="free_y",labeller=label_parsed)
+  facet_wrap(~name,scales="free_y",labeller=label_parsed)
 ```
 
 ```{r loglik_comparison}
 #| include: false
 read_csv("fitall_params.csv") -> all
-all %>%
-  filter(loglik==max(loglik)) %>%
-  pull(loglik) %>%
+all |>
+  filter(loglik==max(loglik)) |>
+  pull(loglik) |>
   round(1) -> ml
-all %>%
-  filter(round(k,4)==10) %>%
-  filter(loglik==max(loglik)) %>%
-  pull(loglik) %>%
+all |>
+  filter(round(k,4)==10) |>
+  filter(loglik==max(loglik)) |>
+  pull(loglik) |>
   round(1) -> ml_constr
-all %>%
-  group_by(etacut=round(eta,2)) %>%
-  filter(loglik==max(loglik)) %>%
-  ungroup() %>%
-  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.95)) %>%
-  select(-loglik,-loglik.se,-etacut) %>%
-  mutate(R0=Beta/mu_IR) %>%
-  gather(parameter,val) %>%
-  group_by(parameter) %>%
-  summarize(min=min(val),max=max(val)) %>%
-  mutate(min=signif(min,2),max=signif(max,2)) %>%
-  gather(var,val,min,max) %>%
-  spread(parameter,val) %>%
-  arrange(eta) %>%
-  column_to_rownames("var") %>%
+all |>
+  group_by(etacut=round(eta,2)) |>
+  filter(loglik==max(loglik)) |>
+  ungroup() |>
+  filter(loglik>max(loglik)-0.5*qchisq(df=1,p=0.95)) |>
+  select(-loglik,-loglik.se,-etacut) |>
+  mutate(R0=Beta/mu_IR) |>
+  gather(parameter,val) |>
+  group_by(parameter) |>
+  summarize(min=min(val),max=max(val)) |>
+  mutate(min=signif(min,2),max=signif(max,2)) |>
+  gather(var,val,min,max) |>
+  spread(parameter,val) |>
+  arrange(eta) |>
+  column_to_rownames("var") |>
   collect() -> cis
 ```
 

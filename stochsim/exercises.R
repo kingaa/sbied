@@ -3,30 +3,30 @@ list(prefix = "exercises")
 
 source("main.R")
 
-measSIR %>%
+measSIR |>
   simulate(params=c(Beta=25,mu_IR=0.5,rho=0.5,k=10,eta=0.03,N=38000),
-    nsim=20,format="data.frame",include.data=TRUE) %>%
+    nsim=20,format="data.frame",include.data=TRUE) |>
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
   guides(color="none")
 
-measSIR %>%
+measSIR |>
   simulate(params=c(Beta=40,mu_IR=0.5,rho=0.5,k=10,eta=0.03,N=38000),
-    nsim=20,format="data.frame",include.data=TRUE) %>%
+    nsim=20,format="data.frame",include.data=TRUE) |>
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
   guides(color="none")
 
-measSIR %>%
+measSIR |>
   simulate(params=c(Beta=40,mu_IR=0.2,rho=0.5,k=10,eta=0.03,N=38000),
-    nsim=20,format="data.frame",include.data=TRUE) %>%
+    nsim=20,format="data.frame",include.data=TRUE) |>
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
   guides(color="none")
 
-measSIR %>%
+measSIR |>
   simulate(params=c(Beta=15,mu_IR=0.5,rho=0.5,k=10,eta=0.06,N=38000),
-    nsim=20,format="data.frame",include.data=TRUE) %>%
+    nsim=20,format="data.frame",include.data=TRUE) |>
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
   guides(color="none")
@@ -51,7 +51,7 @@ seir_init <- Csnippet("
   H = 0;
 ")
 
-measSIR %>%
+measSIR |>
   pomp(
     rprocess=euler(seir_step,delta.t=1/7),
     rinit=seir_init,
@@ -59,16 +59,16 @@ measSIR %>%
     statenames=c("S","E","I","R","H")
   ) -> measSEIR
 
-measSEIR %>%
+measSEIR |>
   simulate(params=c(Beta=30,mu_EI=0.8,mu_IR=1.3,rho=0.5,k=10,eta=0.06,N=38000),
-    nsim=20,format="data.frame",include.data=TRUE) %>%
+    nsim=20,format="data.frame",include.data=TRUE) |>
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
   guides(color="none")
 
-measSEIR %>% 
+measSEIR |> 
   simulate(params=c(Beta=40,mu_EI=0.8,mu_IR=1.3,rho=0.5,k=10,eta=0.06,N=38000),
-  nsim=20,format="data.frame",include.data=TRUE) %>%
+  nsim=20,format="data.frame",include.data=TRUE) |>
   ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
   geom_line()+
   guides(color="none")

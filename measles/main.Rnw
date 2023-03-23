@@ -82,8 +82,8 @@ plot.color <- "black"
   <<load-data,echo=FALSE>>=
   @
   <<some-data-plot,echo=FALSE,eval=FALSE>>=
-  measles %>%
-    subset(town %in% c("London","Liverpool","Hastings")) %>%
+  measles |>
+    subset(town %in% c("London","Liverpool","Hastings")) |>
     ggplot(aes(x=date,y=cases))+
     geom_line()+
     facet_grid(town~.,scales='free_y')+
@@ -142,7 +142,7 @@ plot.color <- "black"
 
 \begin{frame}{Map of cities in the analysis}
   <<map,echo=FALSE>>=
-  read_csv("data/GB_Coast.csv") %>%
+  read_csv("data/GB_Coast.csv") |>
     rename(long=Long,lat=Lat) -> coast
 
   ggplot(mapping=aes(x=long,y=lat))+
@@ -156,15 +156,15 @@ plot.color <- "black"
 
 \begin{frame}{City case counts I: smallest 8 cities}
   <<dataplot,echo=FALSE,fig.height=4>>=
-  demog %>%
-    group_by(town) %>%
-    summarize(mean.pop=mean(pop)) %>%
-    ungroup() %>%
+  demog |>
+    group_by(town) |>
+    summarize(mean.pop=mean(pop)) |>
+    ungroup() |>
     arrange(mean.pop) -> meanpop
 
-  measles %>%
-    mutate(town=ordered(town,levels=meanpop$town)) %>%
-    filter(town %in% meanpop$town[1:8]) %>%
+  measles |>
+    mutate(town=ordered(town,levels=meanpop$town)) |>
+    filter(town %in% meanpop$town[1:8]) |>
     ggplot(aes(x=date,y=cases))+
     geom_line()+
     scale_y_continuous(breaks=c(0,4,40,400,4000),trans=scales::log1p_trans())+
@@ -174,9 +174,9 @@ plot.color <- "black"
 
 \begin{frame}{City case counts II: largest 8 cities}
   <<dataplot2,echo=FALSE,fig.height=4>>=
-  measles %>%
-    mutate(town=ordered(town,levels=meanpop$town)) %>%
-    filter(town %in% meanpop$town[13:20]) %>%
+  measles |>
+    mutate(town=ordered(town,levels=meanpop$town)) |>
+    filter(town %in% meanpop$town[13:20]) |>
     ggplot(aes(x=date,y=cases))+
     geom_line()+
     scale_y_continuous(breaks=c(0,4,40,400,4000),trans=scales::log1p_trans())+
@@ -268,7 +268,7 @@ plot.color <- "black"
   <<london-data,include=FALSE>>=
   @
   <<data-plot,fig.height=3,out.width="0.8\\textwidth",echo=FALSE>>=
-  dat %>% ggplot(aes(x=time,y=cases))+geom_line()
+  dat |> ggplot(aes(x=time,y=cases))+geom_line()
   @
 
   \framebreak
@@ -278,25 +278,25 @@ plot.color <- "black"
   @
   <<covarplot,out.width="0.8\\textwidth",echo=FALSE>>=
   library(cowplot)
-  demogLondon %>%
-    select(year,pop) %>%
+  demogLondon |>
+    select(year,pop) |>
     ggplot(aes(x=year,y=pop))+
     geom_point()+
     geom_line(
-      data=covar %>% select(year=time,pop),
+      data=covar |> select(year=time,pop),
       color='black'
     )-> pl1
 
-  demogLondon %>%
+  demogLondon |>
     ggplot(aes(x=year,y=births))+
     geom_point()+
     geom_line(
-      data=covar1 %>% select(time,births=birthrate1),
+      data=covar1 |> select(time,births=birthrate1),
       mapping=aes(x=time-0.5,y=births),
       color='black'
     )+
     geom_line(
-      data=covar1 %>% select(time,births=birthrate),
+      data=covar1 |> select(time,births=birthrate),
       mapping=aes(x=time-0.5,y=births),
       color='red'
     )-> pl2
@@ -451,8 +451,8 @@ cat(txt[45:50],sep="\n")
 
 \begin{frame}[fragile]{Simulations at the MLE}
   <<sims1,fig.height=2,echo=TRUE>>=
-  m1 %>%
-    simulate(params=theta,nsim=3,format="d",include.data=TRUE) %>%
+  m1 |>
+    simulate(params=theta,nsim=3,format="d",include.data=TRUE) |>
     ggplot(aes(x=time,y=cases,group=.id,color=(.id=="data")))+
     guides(color="none")+
     geom_line()+facet_wrap(~.id,ncol=2)
@@ -710,35 +710,35 @@ cat(txt[45:50],sep="\n")
 
 \begin{frame}[fragile]{Reporting rate}
   <<report-rate,echo=FALSE,results="hide">>=
-  mles %>% select(town,rho) -> est.rho
+  mles |> select(town,rho) -> est.rho
 
-  demog %>%
-    subset(year==1950) %>%
+  demog |>
+    subset(year==1950) |>
     select(town,pop) -> pop
 
-  measles %>%
-    mutate(year=as.integer(format(date,"%Y"))) %>%
-    group_by(town,year) %>%
-    summarize(cases=sum(cases)) %>%
-    ungroup() %>%
-    left_join(demog,by=c("town","year")) %>%
-    group_by(town) %>%
+  measles |>
+    mutate(year=as.integer(format(date,"%Y"))) |>
+    group_by(town,year) |>
+    summarize(cases=sum(cases)) |>
+    ungroup() |>
+    left_join(demog,by=c("town","year")) |>
+    group_by(town) |>
     transmute(
       cases=cumsum(cases),
       births=cumsum(births)
-    ) %>%
+    ) |>
     ungroup() -> m
 
-  m %>%
-    group_by(town) %>%
+  m |>
+    group_by(town) |>
     do({
       fit <- lm(cases~births,data=.)
       data.frame(slope=fit$coefficients[2])
-    }) %>%
-    left_join(pop,by='town') %>%
-    left_join(est.rho,by='town') %>%
-    rename(regression=slope,model=rho) %>%
-    gather(variable,value,-town,-pop) %>%
+    }) |>
+    left_join(pop,by='town') |>
+    left_join(est.rho,by='town') |>
+    rename(regression=slope,model=rho) |>
+    gather(variable,value,-town,-pop) |>
     ggplot(aes(x=town,y=value,shape=variable,group=town))+
     geom_point(size=3)+
     geom_line(alpha=0.5)+
@@ -849,44 +849,44 @@ cat(txt[45:50],sep="\n")
   <<est-table,echo=FALSE,size="tiny">>=
   mean.euler <- function(rate,dt=1/365) dt/(1-exp(-rate*dt))
 
-  demog %>%
-    filter(year==1950) %>%
+  demog |>
+    filter(year==1950) |>
     select(town,pop) -> pop
 
-  mles %>%
-    left_join(pop,by='town') %>%
+  mles |>
+    left_join(pop,by='town') |>
     mutate(
       IP=365*mean.euler(gamma),
       LP=365*mean.euler(sigma)
-    ) %>%
-    arrange(pop) %>%
+    ) |>
+    arrange(pop) |>
     select(town,pop,R0,amplitude,LP,IP,alpha,iota,rho,psi,sigmaSE) -> est
 
-  est %>%
-    gather(variable,value,-town,-pop) %>%
-    group_by(variable) %>%
+  est |>
+    gather(variable,value,-town,-pop) |>
+    group_by(variable) |>
     summarize(
       cor=cor(value,pop,use="all.obs",method="spearman")
-    ) %>%
+    ) |>
     spread(variable,cor) -> cors
 
-  est %>%
-    bind_rows(c(cors,town="$\\qquad r$")) %>%
-    gather(var,val,-town) %>%
-    mutate(val=signif(val,2)) %>%
-    spread(var,val) %>%
-    arrange(pop) %>%
+  est |>
+    bind_rows(c(cors,town="$\\qquad r$")) |>
+    gather(var,val,-town) |>
+    mutate(val=signif(val,2)) |>
+    spread(var,val) |>
+    arrange(pop) |>
     mutate(
       pop=coalesce(pop,1),
       town=stringi::stri_replace_all_fixed(town,"."," ")
-    ) %>%
+    ) |>
     select(
       town,
       `$N_{1950}$`=pop,`$R_0$`=R0,IP,LP,`$\\alpha$`=alpha,
       `$a$`=amplitude,`$\\iota$`=iota,`$\\psi$`=psi,`$\\rho$`=rho,
       `$\\sigma_{SE}$`=sigmaSE
-    ) %>%
-    column_to_rownames("town") %>%
+    ) |>
+    column_to_rownames("town") |>
     knitr::kable("latex",row.names=TRUE,escape=FALSE)
 @
 
@@ -1012,21 +1012,21 @@ $r=\mathrm{cor}_{S}({\cdot},{N_{1950}})$ (Spearman rank correlation)
 
 \begin{frame}[fragile]{Simulations at the MLE}
   <<sims2,echo=FALSE,fig.height=4>>=
-  m1 %>%
-    simulate(params=theta,nsim=100,format="d",include.data=TRUE) %>%
+  m1 |>
+    simulate(params=theta,nsim=100,format="d",include.data=TRUE) |>
     select(time,.id,cases) -> simdat
 
-  simdat %>%
+  simdat |>
     mutate(
       data=if_else(.id=="data","data","simulation")
-    ) %>%
-    group_by(time,data) %>%
+    ) |>
+    group_by(time,data) |>
     summarize(
       p=c("lo","med","hi"),
       q=quantile(cases,prob=c(0.05,0.5,0.95),names=FALSE)
-    ) %>%
-    ungroup() %>%
-    spread(p,q) %>%
+    ) |>
+    ungroup() |>
+    spread(p,q) |>
     ggplot(aes(x=time,y=med,color=data,fill=data,ymin=lo,ymax=hi))+
     scale_color_manual(values=c(data="blue",simulation="red"))+
     scale_fill_manual(values=c(data="blue",simulation="red"))+
@@ -1035,11 +1035,11 @@ $r=\mathrm{cor}_{S}({\cdot},{N_{1950}})$ (Spearman rank correlation)
     guides(fill="none")+
     labs(y="cases",x="",title="London") -> pl1
 
-  simdat %>%
-    filter(.id=="data" | .id <= "5") %>%
+  simdat |>
+    filter(.id=="data" | .id <= "5") |>
     mutate(
       data=if_else(.id=="data","data","simulation")
-    ) %>%
+    ) |>
     ggplot(aes(x=time,y=cases,group=.id,color=data,alpha=data))+
     geom_line()+
     scale_color_manual(values=c(data="blue",simulation="red"))+

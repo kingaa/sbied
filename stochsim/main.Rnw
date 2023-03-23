@@ -10,10 +10,11 @@
 source("../_includes/setup.R", local = knitr::knit_global())
 @
 
-<<doParallel,echo=FALSE,cache=FALSE>>=
-library(doParallel)
+<<doFuture,echo=FALSE,cache=FALSE>>=
+library(doFuture)
 library(doRNG)
-registerDoParallel()
+registerDoFuture()
+plan(multicore)
 registerDoRNG(2488820)
 @
 
@@ -352,16 +353,16 @@ registerDoRNG(2488820)
   <<meas-data1>>=
   library(tidyverse)
   read_csv(paste0("https://kingaa.github.io/sbied/stochsim/",
-                  "Measles_Consett_1948.csv")) %>%
+                  "Measles_Consett_1948.csv")) |>
     select(week,reports=cases) -> meas
-  meas %>% as.data.frame() %>% head()
+  meas |> as.data.frame() |> head()
   @
   
   \framebreak
   
   <<meas-data2,echo=FALSE>>=
   library(tidyverse)
-  meas %>%
+  meas |>
     ggplot(aes(x=week,y=reports))+
     geom_line()+
     geom_point()
@@ -434,7 +435,7 @@ registerDoRNG(2488820)
 
     <<pomp1R>>=
     library(pomp)
-    meas %>%
+    meas |>
       pomp(times="week",t0=0,
            rprocess=euler(sir_step,delta.t=1/7),
            rinit=sir_rinit
@@ -471,7 +472,7 @@ registerDoRNG(2488820)
     We accomplish this using the \code{accumvars} argument to \code{pomp}:
 
     <<zero1R>>=
-    measSIR %>% 
+    measSIR |> 
       pomp(
         rprocess=euler(sir_step,delta.t=1/7),
         rinit=sir_rinit, accumvars="H"
@@ -499,7 +500,7 @@ registerDoRNG(2488820)
   \item We then put these into our \code{pomp} object:
 
     <<add-meas-modelR>>=
-    measSIR %>%
+    measSIR |>
       pomp(
         rmeasure=sir_rmeas,
         dmeasure=sir_dmeas
@@ -507,7 +508,7 @@ registerDoRNG(2488820)
     @
     
     <<test_R_pomp,include=FALSE,purl=FALSE>>=
-    measSIR %>% 
+    measSIR |> 
       simulate(params=c(Beta=8,mu_IR=0.5,rho=0.5,k=10,N=38000,eta=1/10))
     @
     
@@ -562,7 +563,7 @@ registerDoRNG(2488820)
   \item A call to \code{pomp} replaces the basic model components with these, much faster, implementations:
 
     <<sir_pomp>>=
-    measSIR %>%
+    measSIR |>
       pomp(rprocess=euler(sir_step,delta.t=1/7),
            rinit=sir_rinit,
            rmeasure=sir_rmeas,
@@ -606,14 +607,14 @@ registerDoRNG(2488820)
   \item Let's simulate the model at these parameters.
 
     <<sir_sim1_plot,out.width="8cm">>=
-    measSIR %>%
+    measSIR |>
       simulate(
         params=c(Beta=7.5,mu_IR=0.5,rho=0.5,k=10,
           eta=0.03,N=38000),
         nsim=20,format="data.frame",include.data=TRUE
       ) -> sims
     
-    sims %>%
+    sims |>
       ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
       geom_line()+
       guides(color="none")

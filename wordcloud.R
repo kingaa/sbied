@@ -14,10 +14,10 @@ list.files(
 ) -> files
 
 files |>
-  lapply(pdf_text) %>%
+  lapply(pdf_text) |>
   unlist() -> text
 
-text %>%
+text |>
   Boost_tokenizer() |>
 #  str_replace_all("[[:punct:]]", " ") |>
   VectorSource() |>
