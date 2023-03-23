@@ -13,7 +13,8 @@ colorspace
 cowplot
 deSolve
 foreach
-doParallel
+iterators
+doFuture
 doRNG
 gridExtra
 gtable
@@ -23,6 +24,7 @@ scales
 subplex
 tidyverse
 pomp
+circumstance
 "
 )
 
