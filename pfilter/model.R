@@ -8,23 +8,27 @@ sir_step <- Csnippet("
   S -= dN_SI;
   I += dN_SI - dN_IR;
   R += dN_IR;
-  H += dN_IR;
-")
+  H += dN_IR;"
+)
 
 sir_init <- Csnippet("
   S = nearbyint(eta*N);
   I = 1;
   R = nearbyint((1-eta)*N);
-  H = 0;
-")
+  H = 0;"
+)
 
 dmeas <- Csnippet("
-  lik = dnbinom_mu(reports,k,rho*H,give_log);
-  ")
+  lik = dnbinom_mu(reports,k,rho*H,give_log);"
+)
 
 rmeas <- Csnippet("
-  reports = rnbinom_mu(k,rho*H);
-  ")
+  reports = rnbinom_mu(k,rho*H);"
+)
+
+emeas <- Csnippet("
+  E_reports = rho*H;"
+)
 
 read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
   select(week,reports=cases) %>%
@@ -35,6 +39,7 @@ read_csv("https://kingaa.github.io/sbied/pfilter/Measles_Consett_1948.csv") %>%
     rinit=sir_init,
     rmeasure=rmeas,
     dmeasure=dmeas,
+    emeasure=emeas,
     accumvars="H",
     statenames=c("S","I","R","H"),
     paramnames=c("Beta","mu_IR","eta","rho","k","N"),
