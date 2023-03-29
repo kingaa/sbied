@@ -2,7 +2,6 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   workflow_dispatch:
-    branches: [master]
 
 name: install-test
 
@@ -17,21 +16,20 @@ jobs:
       matrix:
         config:
           - {os: ubuntu-22.04, r: 'release'}
-          - {os: ubuntu-20.04, r: 'release'}
-          - {os: ubuntu-18.04, r: '4.0.5'}
+          - {os: ubuntu-20.04, r: '4.2.0'}
           - {os: macOS-11,     r: 'release'}
           - {os: macOS-12,     r: 'release'}
-          - {os: windows-2022, r: 'release'}
-          - {os: windows-2019, r: '4.0.5'}
+          - {os: windows-latest, r: 'release'}
+          - {os: windows-latest, r: '4.2.0'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_LIBS_USER: ${{ github.workspace }}/R
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
 
-      - uses: r-lib/actions/setup-r@v1
+      - uses: r-lib/actions/setup-r@v2.3.1
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
@@ -45,10 +43,11 @@ jobs:
           source("https://kingaa.github.io/scripts/pompTest.R")
           source("https://kingaa.github.io/scripts/hello.R",echo=TRUE)
           source("https://kingaa.github.io/sbied/contacts/install.R",echo=TRUE)
+          source("https://kingaa.github.io/scripts/diagnostics.R",echo=TRUE)
           sink()
         shell: Rscript {0}
       
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v3.1.1
         with:
-          name: install-test-${{ matrix.config.os }}-${{ matrix.config.r }}
+          name: ${{ matrix.config.os }}-${{ matrix.config.r }}-results
           path: ${{ github.workspace }}/test.out
