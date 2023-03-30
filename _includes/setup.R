@@ -1,5 +1,5 @@
 stopifnot(getRversion()>="4.2")
-stopifnot(packageVersion("pomp")>="4.7")
+stopifnot(packageVersion("pomp")>="5.0")
 
 library(knitr)
 if (!exists("params")) params <- list()
@@ -56,7 +56,7 @@ registerS3method(
   }
 )
 
-myround<- function (x, digits = 1) {
+myround <- function (x, digits = 1) {
   # adapted from the broman package
   # solves the bug that round() kills significant trailing zeros
   if (length(digits) > 1) {

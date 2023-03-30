@@ -68,7 +68,7 @@ x[[i]]
 <table>
 <tr style="vertical-align: top;"><td><code>object, x</code></td>
 <td>
-<p>An object of class <code>panelPomp</code> or inheriting class 
+<p>An object of class <code>panelPomp</code> or inheriting class
 <code>panelPomp</code>.</p>
 </td></tr>
 <tr style="vertical-align: top;"><td><code>...</code></td>
@@ -90,6 +90,28 @@ x[[i]]
 </table>
 
 
+<h3>Value</h3>
+
+<p><code>coef()</code> returns a <code>numeric</code> vector.
+</p>
+<p><code>length()</code> returns an <code>integer</code>.
+</p>
+<p><code>names()</code> returns a <code>character</code> vector.
+</p>
+<p>When given objects of class <code>panelPomp</code>, <code>pparams()</code> returns a named list with two elements: <code>shared</code>, which is a named <code>numeric</code> vector, and <code>specific</code>, which is a <code>matrix</code> with parameter names in its row names and panel unit names in its column names.
+</p>
+<p><code>pParams()</code> returns a <code>list</code> with the model parameters in list form.
+</p>
+<p>When given objects of class <code>panelPomp</code>, <code>unitobjects()</code> returns a <code>list</code> of <code>pomp</code> objects.
+</p>
+<p><code>window()</code> returns a <code>panelPomp</code> object with adjusted times.
+</p>
+<p><code>`[`</code> returns a <code>panelPomp</code> object.
+</p>
+<p><code>`[[`</code> returns a <code>pomp</code> object.
+</p>
+
+
 <h3>Methods</h3>
 
 
@@ -102,14 +124,16 @@ x[[i]]
 </dd>
 <dt>names</dt><dd><p>Get the unit names of <code>panelPomp</code> objects.</p>
 </dd>
-<dt>pparams</dt><dd><p>Extracts coefficients from <code>panelPomp</code> objects.</p>
+<dt>pparams</dt><dd><p>Extracts coefficients from <code>panelPomp</code> objects in list form.</p>
 </dd>
-<dt>[]</dt><dd><p>Take a subset of units.</p>
-</dd>
-<dt>[[]]</dt><dd><p>Select the pomp object for a single unit.</p>
+<dt>pParams</dt><dd><p>Converts panel coefficients from vector form to list form.</p>
 </dd>
 <dt>window</dt><dd><p>Subset <code>panelPomp</code> objects by changing start time and
 end time.</p>
+</dd>
+<dt><code>[]</code></dt><dd><p>Take a subset of units.</p>
+</dd>
+<dt><code>[[]]</code></dt><dd><p>Select the pomp object for a single unit.</p>
 </dd>
 </dl>
 
@@ -117,7 +141,7 @@ end time.</p>
 
 <h3>Author(s)</h3>
 
-<p>Carles Breto, Aaron A. King.
+<p>Carles Bret&oacute;, Aaron A. King.
 </p>
 
 
@@ -126,6 +150,33 @@ end time.</p>
 <p>Other panelPomp methods: 
 <code>as()</code>
 </p>
+
+
+<h3>Examples</h3>
+
+<pre><code class='language-R'>## access and manipulate model parameters and other features
+prw &lt;- panelRandomWalk()
+coef(prw)
+# replace coefficients
+coef(prw) &lt;- c(sigmaX=2,coef(prw)[-1])
+coef(prw)
+length(prw)
+names(prw)
+# extract parameters in list form
+pparams(prw)
+# convert vector-form parameters to list-form parameters
+pParams(coef(prw))
+## summaries of objects
+print(prw)
+show(prw)
+## access underlying pomp objects
+unitobjects(prw)
+## select windows of time
+window(prw,start=2,end=4)
+## subsetting panelPomp objects
+prw[1] # panelPomp of 1 unit (first unit of prw)
+prw[[2]] # pomp object corresponding to unit 2 of prw
+</code></pre>
 
 
 </div>

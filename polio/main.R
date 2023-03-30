@@ -1,6 +1,7 @@
-library(pomp)
 library(tidyverse)
+library(pomp)
 library(doFuture)
+registerDoFuture(); plan(multicore)
 library(doRNG)
 options(
   dplyr.summarise.inform=FALSE,
@@ -186,20 +187,20 @@ summ |>
 
 
 
-rw_sd <- eval(substitute(rw_sd(
+mif.rw.sd <- eval(substitute(rw_sd(
   b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
   psi=rwr,rho=rwr,tau=rwr,sigma_dem=rwr,
   sigma_env=rwr,
   IO_0=ivp(rwi),SO_0=ivp(rwi)),
   list(rwi=0.2,rwr=0.02)))
 
-exl <- c("polio","Np","Nmif","rw_sd",
+exl <- c("polio","Np","Nmif","mif.rw.sd",
   "Nreps_local","Nreps_eval")
 
 stew(file="mif.rda",{
   m2 <- foreach(i=1:Nreps_local,
     .packages="pomp",.combine=c,.export=exl) %dopar%
-    mif2(polio, Np=Np, Nmif=Nmif, rw.sd=rw_sd,
+  mif2(polio, Np=Np, Nmif=Nmif, rw.sd=mif.rw.sd,
       cooling.fraction.50=0.5)
   lik_m2 <- foreach(m=m2,.packages="pomp",.combine=rbind,
     .export=exl) %dopar%
@@ -210,7 +211,7 @@ load(file="results/mif.rda")
 mif_time <- .system.time
 
 
-coef(m2) |> melt() |> spread(parameter,value) |>
+coef(m2) |> melt() |> spread(name,value) |>
   select(-.id) |>
   bind_cols(logLik=lik_m2[,1],logLik_se=lik_m2[,2]) -> r2
 r2 |> arrange(-logLik) |>
@@ -243,7 +244,7 @@ bake(file="box_eval2.rds",{
       logLik(pfilter(m,Np=Np))),se=TRUE)
 },dependson=run_level) -> lik_m3
 
-coef(m3) |> melt() |> spread(parameter,value) |>
+coef(m3) |> melt() |> spread(name,value) |>
   select(-.id) |>
   bind_cols(logLik=lik_m3[,1],logLik_se=lik_m3[,2]) -> r3
 read_csv("params.csv") |>
@@ -294,7 +295,7 @@ profile_design(
   nprof=profile_Nreps
 ) -> starts
 
-profile_rw_sd <- eval(substitute(rw_sd(
+profile.rw.sd <- eval(substitute(rw_sd(
   rho=0,b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
   psi=rwr,tau=rwr,sigma_dem=rwr,sigma_env=rwr,
   IO_0=ivp(rwi),SO_0=ivp(rwi)),
@@ -307,7 +308,7 @@ bake(file="profile_rho.rds",{
       polio |> mif2(params=start,
         Np=Np,Nmif=ceiling(Nmif/2),
         cooling.fraction.50=0.5,
-        rw.sd=profile_rw_sd
+        rw.sd=profile.rw.sd
       ) |>
         mif2(Np=Np,Nmif=ceiling(Nmif/2),
           cooling.fraction.50=0.1
@@ -327,7 +328,7 @@ bake(file="profile_rho.rds",{
 ##       polio |> mif2(params=start,
 ##         Np=Np,Nmif=ceiling(Nmif/2),
 ##         cooling.fraction.50=0.5,
-##         rw.sd=profile_rw_sd
+##         rw.sd=profile.rw.sd
 ##       ) |>
 ##         mif2(Np=Np,Nmif=ceiling(Nmif/2),
 ##           cooling.fraction.50=0.1

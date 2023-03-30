@@ -3,8 +3,8 @@ list(prefix = "Q_fit_all")
 
 set.seed(1350254336)
 
-library(pomp)
 library(tidyverse)
+library(pomp)
 library(iterators)
 library(doFuture)
 library(doRNG)
@@ -27,8 +27,8 @@ coef(measSIR) |> mysignif(3) |> t() |> t() |> knitr::kable()
 bake(file="fitall_local_search.rds",{
   registerDoRNG(482942941)
   foreach(i=1:8,.combine=c) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     measSIR |>
       mif2(
         Np=2000, Nmif=40,
@@ -61,8 +61,8 @@ mifs_local |>
 bake(file="fitall_lik_local.rds",{
   registerDoRNG(908222057)
   foreach(mf=mifs_local,.combine=rbind) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     evals <- replicate(10, logLik(pfilter(mf,Np=2000)))
     ll <- logmeanexp(evals,se=TRUE)
     mf |> coef() |> bind_rows() |>
@@ -106,8 +106,8 @@ bake(file="fitall_global_search.rds",
   dependson="guesses",{
   registerDoRNG(274481374)
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     mf1 |>
       mif2(
         Nmif=100,Np=2000,
@@ -195,8 +195,8 @@ bake(file="fitall_eta_profile.rds",
   dependson="guesses",{
   registerDoRNG(830007657)
   foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(pomp)
     library(tidyverse)
+    library(pomp)
     mf1 |>
       mif2(
         Nmif=100,Np=2000,

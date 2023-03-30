@@ -19,7 +19,7 @@ own curiosity and interest.
 ### Required software
 
 The codes require, at a minimum, [**R**](https://cran.r-project.org/)
-version 4.2 and [**pomp**](https://kingaa.github.io/pomp/) version 4.7.
+version 4.2 and [**pomp**](https://kingaa.github.io/pomp/) version 5.0.
 Windows users must also have the appropriate version of
 [**Rtools**](https://cran.r-project.org/bin/windows/Rtools/) installed.
 The `prep` directory contains scripts that will install other needed
@@ -96,27 +96,62 @@ and the time required for their computation on a linux cluster with
 <tr class="odd">
 <td style="text-align: left;">measles/results</td>
 <td style="text-align: right;">263</td>
-<td style="text-align: right;">243</td>
+<td style="text-align: right;">228.8</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mif/results</td>
-<td style="text-align: right;">1702</td>
-<td style="text-align: right;">60</td>
+<td style="text-align: right;">2421</td>
+<td style="text-align: right;">70.8</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">polio/results</td>
+<td style="text-align: right;">41954</td>
+<td style="text-align: right;">64.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">polio/starting-values-exercise/results</td>
+<td style="text-align: right;">41955</td>
+<td style="text-align: right;">64.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">polio/initial-values-exercise/results</td>
+<td style="text-align: right;">41917</td>
+<td style="text-align: right;">64.1</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">pfilter/results</td>
 <td style="text-align: right;">590</td>
-<td style="text-align: right;">29</td>
+<td style="text-align: right;">15.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">contacts/results</td>
+<td style="text-align: right;">208</td>
+<td style="text-align: right;">13.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">polio/runlevel2/results</td>
+<td style="text-align: right;">3215</td>
+<td style="text-align: right;">6.3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">polio/runlevel1/results</td>
+<td style="text-align: right;">613</td>
+<td style="text-align: right;">1.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ebola/results</td>
+<td style="text-align: right;">2260</td>
+<td style="text-align: right;">0.1</td>
 </tr>
 </tbody>
 </table>
 
-The archives amount to about 2 MB. About 0 MB of this is associated with
-the polio lesson, in which large amounts of redundant information are
-stored.
+The archives amount to about 132 MB. About 127 MB of this is associated
+with the polio lesson, in which large amounts of redundant information
+are stored.
 
 Full compilation, i.e., rebuilding the complete set of materials
-following deletion of all archives, requires about 347 min on a
+following deletion of all archives, requires about 544 min on a
 250-processor cluster. Full compilation regenerates the complete set of
 archives. A finishing compilation, i.e., rebuilding with all archives in
 place, but with the re-Making of all documents, requires about 12 min on

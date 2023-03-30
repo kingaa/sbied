@@ -3,7 +3,7 @@ switch(
   theorygroup01={
     library(iterators)
     library(doFuture)
-    cl <- makeClusterMPI(228,verbose=TRUE,logdir="/tmp")
+    cl <- makeClusterMPI(250,verbose=TRUE,logdir="/tmp")
     registerDoFuture()
     plan(cluster,workers=cl)
   },

@@ -50,8 +50,8 @@ The pomp constructed by the `source` command below is named `measSIR`.
 We take for our putative MLE the point in our database with the highest measured likelihood.
 
 ```{r setup}
-library(pomp)
 library(tidyverse)
+library(pomp)
 library(iterators)
 library(doFuture)
 library(doRNG)
@@ -85,8 +85,8 @@ See [this discussion](./windows.html) for an explanation of how to circumvent th
 #| purl: false
 registerDoRNG(482942941)
 foreach(i=1:8,.combine=c) %dopar% {
-  library(pomp)
   library(tidyverse)
+  library(pomp)
   measSIR |>
     mif2(
       Np=2000, Nmif=40,
@@ -136,8 +136,8 @@ We now evaluate the log likelihood at each of the resulting points.
 #| purl: false
 registerDoRNG(908222057)
 foreach(mf=mifs_local,.combine=rbind) %dopar% {
-  library(pomp)
   library(tidyverse)
+  library(pomp)
   evals <- replicate(10, logLik(pfilter(mf,Np=2000)))
   ll <- logmeanexp(evals,se=TRUE)
   mf |> coef() |> bind_rows() |>
@@ -214,8 +214,8 @@ The following may look somewhat familar.
 #| purl: false
 registerDoRNG(274481374)
 foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-  library(pomp)
   library(tidyverse)
+  library(pomp)
   mf1 |>
     mif2(
       Nmif=100,Np=2000,
@@ -332,8 +332,8 @@ freeze(
 #| purl: false
 registerDoRNG(830007657)
 foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-  library(pomp)
   library(tidyverse)
+  library(pomp)
   mf1 |>
     mif2(
       Nmif=100,Np=2000,

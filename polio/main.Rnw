@@ -9,9 +9,10 @@ source("../_includes/setup.R", local = knitr::knit_global())
 @
 
 <<libraries,cache=FALSE,echo=FALSE,eval=TRUE>>=
-library(pomp)
 library(tidyverse)
+library(pomp)
 library(doFuture)
+registerDoFuture(); plan(multicore)
 library(doRNG)
 options(
   dplyr.summarise.inform=FALSE,
@@ -847,7 +848,7 @@ options(
   \end{itemize}
 
   <<rwsd>>=
-  rw_sd <- eval(substitute(rw_sd(
+  mif.rw.sd <- eval(substitute(rw_sd(
     b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
     psi=rwr,rho=rwr,tau=rwr,sigma_dem=rwr,
     sigma_env=rwr,
@@ -860,13 +861,13 @@ options(
 \begin{frame}[fragile]
 
   <<mif>>=
-  exl <- c("polio","Np","Nmif","rw_sd",
+  exl <- c("polio","Np","Nmif","mif.rw.sd",
     "Nreps_local","Nreps_eval")
   
   stew(file="mif.rda",{
     m2 <- foreach(i=1:Nreps_local,
       .packages="pomp",.combine=c,.export=exl) %dopar%
-      mif2(polio, Np=Np, Nmif=Nmif, rw.sd=rw_sd,
+    mif2(polio, Np=Np, Nmif=Nmif, rw.sd=mif.rw.sd,
         cooling.fraction.50=0.5)
     lik_m2 <- foreach(m=m2,.packages="pomp",.combine=rbind,
       .export=exl) %dopar%
@@ -1149,7 +1150,7 @@ options(
   \end{itemize}
 
   <<profile_rw_sd>>=
-  profile_rw_sd <- eval(substitute(rw_sd(
+  profile.rw.sd <- eval(substitute(rw_sd(
     rho=0,b1=rwr,b2=rwr,b3=rwr,b4=rwr,b5=rwr,b6=rwr,
     psi=rwr,tau=rwr,sigma_dem=rwr,sigma_env=rwr,
     IO_0=ivp(rwi),SO_0=ivp(rwi)),
@@ -1164,7 +1165,7 @@ options(
         polio |> mif2(params=start,
           Np=Np,Nmif=ceiling(Nmif/2),
           cooling.fraction.50=0.5,
-          rw.sd=profile_rw_sd
+          rw.sd=profile.rw.sd
         ) |>
           mif2(Np=Np,Nmif=ceiling(Nmif/2),
             cooling.fraction.50=0.1

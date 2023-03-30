@@ -34,9 +34,9 @@ params <- list(prefix="mc")
 source("../_includes/setup.R", local = knitr::knit_global())
 @
 <<packages,include=FALSE,cache=FALSE,purl=TRUE>>=
-library(pomp)
 library(tidyverse)
 library(cowplot)
+library(pomp)
 set.seed(97849913)
 @ 
 

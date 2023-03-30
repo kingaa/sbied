@@ -184,10 +184,8 @@ mle[paramnames] |> unlist() -> theta
 mle |> select(-S_0,-E_0,-I_0,-R_0) |> as.data.frame()
 
 ## ----pfilter1a-----------------------------------------------
-library(doFuture)
 library(doFuture); library(doRNG)
-registerDoFuture()
-plan(multicore)
+registerDoFuture(); plan(multicore)
 registerDoRNG(998468235L)
 foreach(i=1:4, .combine=c) %dopar% {
   library(pomp)

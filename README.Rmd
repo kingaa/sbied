@@ -15,7 +15,7 @@ This script is a starting point for students to follow, explore, and modify the 
 
 ### Required software
 
-The codes require, at a minimum, [**R**](https://cran.r-project.org/) version 4.2 and [**pomp**](https://kingaa.github.io/pomp/) version 4.7.
+The codes require, at a minimum, [**R**](https://cran.r-project.org/) version 4.2 and [**pomp**](https://kingaa.github.io/pomp/) version 5.0.
 Windows users must also have the appropriate version of [**Rtools**](https://cran.r-project.org/bin/windows/Rtools/) installed.
 The `prep` directory contains scripts that will install other needed packages and test the user's installation.
 
