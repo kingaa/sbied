@@ -20,6 +20,7 @@ gridExtra
 gtable
 knitr
 mvtnorm
+nloptr
 scales
 subplex
 tidyverse
