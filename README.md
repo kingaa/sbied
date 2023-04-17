@@ -96,42 +96,42 @@ and the time required for their computation on a linux cluster with
 <tr class="odd">
 <td style="text-align: left;">measles/results</td>
 <td style="text-align: right;">263</td>
-<td style="text-align: right;">228.8</td>
+<td style="text-align: right;">229.8</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mif/results</td>
 <td style="text-align: right;">2421</td>
-<td style="text-align: right;">70.8</td>
+<td style="text-align: right;">71.8</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">polio/results</td>
-<td style="text-align: right;">41954</td>
-<td style="text-align: right;">64.5</td>
+<td style="text-align: left;">polio/initial-values-exercise/results</td>
+<td style="text-align: right;">41916</td>
+<td style="text-align: right;">64.2</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">polio/starting-values-exercise/results</td>
 <td style="text-align: right;">41955</td>
-<td style="text-align: right;">64.2</td>
+<td style="text-align: right;">63.9</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">polio/initial-values-exercise/results</td>
-<td style="text-align: right;">41917</td>
-<td style="text-align: right;">64.1</td>
+<td style="text-align: left;">polio/results</td>
+<td style="text-align: right;">41955</td>
+<td style="text-align: right;">63.8</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">pfilter/results</td>
 <td style="text-align: right;">590</td>
-<td style="text-align: right;">15.0</td>
+<td style="text-align: right;">15.2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">contacts/results</td>
 <td style="text-align: right;">208</td>
-<td style="text-align: right;">13.7</td>
+<td style="text-align: right;">13.3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">polio/runlevel2/results</td>
 <td style="text-align: right;">3215</td>
-<td style="text-align: right;">6.3</td>
+<td style="text-align: right;">6.2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">polio/runlevel1/results</td>

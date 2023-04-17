@@ -19,7 +19,7 @@ Type 'q()' to quit R.
 ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.1     ✔ readr     2.1.4
 ✔ forcats   1.0.0     ✔ stringr   1.5.0
-✔ ggplot2   3.4.1     ✔ tibble    3.2.1
+✔ ggplot2   3.4.2     ✔ tibble    3.2.1
 ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
 ✔ purrr     1.0.1     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
@@ -975,6 +975,7 @@ Updating node 250 of 250 ... DONE
 > 
 > cores <- getDoParWorkers()
 > bake(file="cores.rds",cores) -> cores
+NOTE: creating archive directory ‘results’.
 > 
 > stew(file="pf1.rda",{
 +   registerDoRNG(3899882)
@@ -1210,4 +1211,4 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 > 
 > proc.time()
    user  system elapsed 
-155.639  35.056 407.663 
+155.671  35.711 406.218 

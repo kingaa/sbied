@@ -340,7 +340,7 @@ set.seed(1350254336)
 \begin{frame}[fragile,allowframebreaks]{Particle filtering in \pkg{pomp}}
 
   Here, we'll get some practical experience with the particle filter, and the likelihood function, in the context of our measles-outbreak case study.
-  Here, we repeat the construction of the SIR model we looked at earlier, using parameters obtained by looking at simulations.
+  Here, we repeat the construction of the SIR model \link{https://kingaa.github.io/sbied/stochsim/}{we looked at earlier}, using the parameters chosen by looking at simulations.
   \Rlanguage code to build the model is available \link{./model.R}{for download}.
   We can execute this code by sourcing the relevant file:
   <<model-construct,purl=TRUE>>=
