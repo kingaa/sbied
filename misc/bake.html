@@ -411,7 +411,7 @@ x; y; z</code></pre>
 <pre><code>[1] 3.745918 3.089063
 attr(,&quot;system.time&quot;)
    user  system elapsed 
-  0.001   0.000   0.001 </code></pre>
+      0       0       0 </code></pre>
 <p>When we run the above snippet for the first time, <code>z</code> is computed according to the recipe given, and is then stored, in <a href="#rds-and-rda-formats"><strong>R</strong>’s binary <code>.rds</code> format</a>, in the file <code>result1.rds</code>. [Note also that <code>bake</code> appears to have retained some information about the amount of time used in the computation; <a href="#stored-attributes">see below for more on this</a>.]</p>
 <p>If we run the code again,</p>
 <pre class="r"><code>bake(file=&quot;result1.rds&quot;,{
@@ -421,7 +421,7 @@ z</code></pre>
 <pre><code>[1] 3.745918 3.089063
 attr(,&quot;system.time&quot;)
    user  system elapsed 
-  0.001   0.000   0.001 </code></pre>
+      0       0       0 </code></pre>
 <p>there is no re-computation of <code>z</code>. Instead, <code>bake</code> notices that <code>result1.rds</code> exists and therefore opens and reads the file, returning the stored result.</p>
 <p>What happens if an upstream quantity changes? For example:</p>
 <pre class="r"><code>x &lt;- 5
@@ -435,7 +435,7 @@ x; y; z</code></pre>
 <pre><code>[1] 3.745918 3.089063
 attr(,&quot;system.time&quot;)
    user  system elapsed 
-  0.001   0.000   0.001 </code></pre>
+      0       0       0 </code></pre>
 <p>Note that we no longer have <code>x+y==z</code>. Since <code>z</code> depends on <code>x</code> and <code>y</code>, we must re-compute <code>z</code>. To do so, we simply delete the file <code>result1.rds</code>:</p>
 <pre class="r"><code>file.remove(&quot;result1.rds&quot;)</code></pre>
 <pre><code>[1] TRUE</code></pre>
@@ -543,7 +543,7 @@ w</code></pre>
 <h2>Attributes stored by <code>bake</code> and <code>stew</code></h2>
 <p><code>bake</code> stores information about the amount of time required for a computation in the file, as an attribute of the stored object. In addition, if the RNG has been fixed (by means of the <code>seed</code> argument), then the value of <code>seed</code> is stored as another attribute.</p>
 <hr />
-<p>Produced in <strong>R</strong> version 4.3.0 with <strong>pomp</strong> version 5.1.1.3.</p>
+<p>Produced in <strong>R</strong> version 4.3.0 with <strong>pomp</strong> version 5.2.1.0.</p>
 </div>
 
 <div style="padding-top: 1em; padding-bottom: 2em;">

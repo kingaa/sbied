@@ -478,7 +478,7 @@ foreach (p=iter(design,&quot;row&quot;),
         est
     }
 }
-&lt;bytecode: 0x55db909905c0&gt;
+&lt;bytecode: 0x559a9d1d6e90&gt;
 &lt;environment: namespace:pomp&gt;</code></pre>
 <p>We see that <code>logmeanexp</code> constructs its standard errors via a <a href="https://en.wikipedia.org/wiki/Jackknife_resampling">jack-knife</a> calculation.</p>
 <p>The standard errors from this approach are reasonable when the distribution of the likelihoods is not too skewed. However, a largest likelihood many log units higher than the others corresponds to a highly skewed distribution on the untransformed scale. It is on this untransformed scale that combining likelihood estimates by averaging is justified by the unbiased property of the particle filter. This could therefore lead to unstable standard errors.</p>

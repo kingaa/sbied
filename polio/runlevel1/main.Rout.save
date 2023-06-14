@@ -1211,4 +1211,4 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 > 
 > proc.time()
    user  system elapsed 
- 77.871  11.469  91.747 
+ 94.769  11.788 109.776 

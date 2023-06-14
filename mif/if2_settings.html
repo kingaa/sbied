@@ -241,7 +241,7 @@ window.initializeCodeFolding = function(show) {
     $(this).detach().appendTo(div);
 
     // add a show code button right above
-    var showCodeText = $('<span>' + (showThis ? 'Hide' : 'Code') + '</span>');
+    var showCodeText = $('<span>' + (showThis ? 'Hide' : 'Show') + '</span>');
     var showCodeButton = $('<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm code-folding-btn pull-right float-right"></button>');
     showCodeButton.append(showCodeText);
     showCodeButton
@@ -267,7 +267,7 @@ window.initializeCodeFolding = function(show) {
     //   * Change text
     //   * add a class for intermediate states styling
     div.on('hide.bs.collapse', function () {
-      showCodeText.text('Code');
+      showCodeText.text('Show');
       showCodeButton.addClass('btn-collapsing');
     });
     div.on('hidden.bs.collapse', function () {
@@ -464,7 +464,7 @@ hr {
     border-color: #00274c;
 }
 </style>
-<p>Produced with <strong>R</strong> version 4.3.0 and <strong>pomp</strong> version 5.1.1.3.</p>
+<p>Produced with <strong>R</strong> version 4.3.0 and <strong>pomp</strong> version 5.2.1.0.</p>
 <div id="number-of-particles" class="section level2">
 <h2>Number of particles</h2>
 <ul>
