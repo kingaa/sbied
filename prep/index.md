@@ -124,9 +124,9 @@ This will check whether you can work with **pomp**.
 
 If it fails, try the following:
 ```
-> source("https://kingaa.github.io/scripts/hello.R",echo=TRUE)
+> source("https://kingaa.github.io/scripts/helloC.R",echo=TRUE)
 ```
-If this fails to give the two "Hello!" messages, you will need to follow the instructions below that correspond to your OS before re-trying the `pompTest.R` script.
+If this fails to give the "Hello!" message, you will need to follow the instructions below corresponding to your OS before re-trying the `pompTest.R` script.
 
 ---------------------------
 
@@ -140,7 +140,12 @@ Linux distributions typically include this by default but it is not impossible t
 ### MacOS users
 
 If the `pompTest.R` script fails because you cannot load **pomp**, try installing it from source.
-The easiest way to do this is to use the **devtools** package.
+The easiest way to do this is to execute
+```
+install.packages("pomp",repos="https://kingaa.github.io/")
+```
+in an **R** session.
+You can also use the **devtools** package.
 Do
 ```
 install.packages("devtools")

@@ -428,8 +428,8 @@ hr {
 <pre><code>&gt; source(&quot;https://kingaa.github.io/scripts/pompTest.R&quot;)</code></pre>
 <p>This will check whether you can work with <strong>pomp</strong>.</p>
 <p>If it fails, try the following:</p>
-<pre><code>&gt; source(&quot;https://kingaa.github.io/scripts/hello.R&quot;,echo=TRUE)</code></pre>
-<p>If this fails to give the two “Hello!” messages, you will need to follow the instructions below that correspond to your OS before re-trying the <code>pompTest.R</code> script.</p>
+<pre><code>&gt; source(&quot;https://kingaa.github.io/scripts/helloC.R&quot;,echo=TRUE)</code></pre>
+<p>If this fails to give the “Hello!” message, you will need to follow the instructions below corresponding to your OS before re-trying the <code>pompTest.R</code> script.</p>
 <hr />
 </div>
 </div>
@@ -441,7 +441,9 @@ hr {
 </div>
 <div id="macos-users-1" class="section level3">
 <h3>MacOS users</h3>
-<p>If the <code>pompTest.R</code> script fails because you cannot load <strong>pomp</strong>, try installing it from source. The easiest way to do this is to use the <strong>devtools</strong> package. Do</p>
+<p>If the <code>pompTest.R</code> script fails because you cannot load <strong>pomp</strong>, try installing it from source. The easiest way to do this is to execute</p>
+<pre><code>install.packages(&quot;pomp&quot;,repos=&quot;https://kingaa.github.io/&quot;)</code></pre>
+<p>in an <strong>R</strong> session. You can also use the <strong>devtools</strong> package. Do</p>
 <pre><code>install.packages(&quot;devtools&quot;)
 library(devtools)
 install_github(&quot;kingaa/pomp&quot;)</code></pre>
