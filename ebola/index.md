@@ -13,9 +13,9 @@ output:
 
 | &nbsp;                                    | &nbsp;                                                                                    |
 |:------------------------------------------|:-----------------------------------------------------------------------------------------:|
-| Lecture                                   | [Video (40 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2QuMxA6ZM4MGAMqE3r022Dd) |
-| Lecture slides                            | [PDF](slides.pdf)                                                                         |
 | Lecture notes                             | [PDF](notes.pdf)                                                                          |
+| Lecture slides                            | [PDF](slides.pdf)                                                                         |
+| Recording (2020)                          | [Video (40 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2QuMxA6ZM4MGAMqE3r022Dd) |
 | Supplement: constructing the Ebola models | [HTML](model.html)                                                                        |
 | Model construction and analysis script    | [**R**](codes.R)                                                                          |
 

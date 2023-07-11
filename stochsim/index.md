@@ -13,13 +13,12 @@ output:
 
 | &nbsp;                            | &nbsp;                                                                                     |
 |:----------------------------------|:------------------------------------------------------------------------------------------:|
-| Lecture                           | [Video (98 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2RBA4OQ_OdJj5CEJSjRGxut) |
-| Lecture slides                    | [PDF](slides.pdf)                                                                          |
 | Lecture notes                     | [PDF](notes.pdf)                                                                           |
+| Lecture slides                    | [PDF](slides.pdf)                                                                          |
+| Recording  (2020)                 | [Video (98 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2RBA4OQ_OdJj5CEJSjRGxut) |
 | Quiz                              | [PDF](quiz.pdf)                                                                            |
 | **R** script for the lesson       | [**R**](main.R)                                                                            |
 | Worked solutions to the Exercises | [HTML](exercises.html)                                                                     |
-
 ----------------------
 
 <iframe width="0" height="0"></iframe>

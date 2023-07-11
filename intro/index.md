@@ -13,11 +13,10 @@ output:
 
 | &nbsp;          | &nbsp;                                                                            |
 |:----------------|:---------------------------------------------------------------------------------:|
-| Lecture         | [Video (50 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2Sns4ChQCJy6T7Nz00r5zXV) |
-| Lecture slides  | [PDF](slides.pdf)                                                                 |
 | Lecture notes   | [PDF](notes.pdf)                                                                  |
+| Lecture slides  | [PDF](slides.pdf)                                                                 |
+| Recording (2020,2021,2022) | [Video (50 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2Sns4ChQCJy6T7Nz00r5zXV) |
 | Another example | [HTML](ricker.html)                                                               |
-
 ----------------------
 
 <iframe width="0" height="0"></iframe>

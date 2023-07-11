@@ -13,9 +13,9 @@ output:
 
 | &nbsp;                            | &nbsp;                                                                                     |
 |:----------------------------------|:------------------------------------------------------------------------------------------:|
-| Lecture                           | [Video (30 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2QvMjw6R4Fo7tYsNgcpRIwt) |
-| Lecture slides                    | [PDF](slides.pdf)                                                                          |
 | Lecture notes                     | [PDF](notes.pdf)                                                                           |
+| Lecture slides                    | [PDF](slides.pdf)                                                                          |
+| Recording (2020)                  | [Video (30 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2QvMjw6R4Fo7tYsNgcpRIwt) |
 | **R** script for the lesson       | [**R**](main.R)                                                                            |
 | Worked solutions to the Exercises | [HTML](exercises.html)                                                                     |
 | **panelPomp** installation script | [**R**](install.R)                                                                         |

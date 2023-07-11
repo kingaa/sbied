@@ -13,9 +13,9 @@ output:
 
 | &nbsp;                                     | &nbsp;                                                                                     |
 |:-------------------------------------------|:------------------------------------------------------------------------------------------:|
-| Lecture                                    | [Video (80 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2SJzO5pfhVBdkBP6EbREGWM) |
-| Lecture slides                             | [PDF](slides.pdf)                                                                          |
 | Lecture notes                              | [PDF](notes.pdf)                                                                           |
+| Lecture slides                             | [PDF](slides.pdf)                                                                          |
+| Recording (2020,2022)                      | [Video (80 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2SJzO5pfhVBdkBP6EbREGWM) |
 | Quiz                                       | [PDF](quiz.pdf)                                                                            |
 | Model construction script                  | [**R**](codes.R)                                                                           |
 | Supplement: profile likelihood calculation | [HTML](profile.html)                                                                       |

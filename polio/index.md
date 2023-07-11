@@ -13,9 +13,9 @@ output:
 
 | &nbsp;                          | &nbsp;                                                                            |
 |:--------------------------------|:---------------------------------------------------------------------------------:|
-| Lecture                         | [Video (65 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2QCHiHqWASOu0VdyPRGwKrV) |
-| Lecture slides                  | [PDF](slides.pdf)                                                                 |
 | Lecture notes                   | [PDF](notes.pdf)                                                                  |
+| Lecture slides                  | [PDF](slides.pdf)                                                                 |
+| Recording (2020)                | [Video (65 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2QCHiHqWASOu0VdyPRGwKrV) |
 | **R** script for the lesson     | [**R**](main.R)                                                                   |
 | Worked solution to Exercise 6.1 | [HTML](algorithmic-parameters-exercise.html)                                      |
 | Worked solution to Exercise 6.2 | [HTML](initial-values-exercise.html)                                              |

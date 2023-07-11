@@ -13,9 +13,9 @@ output:
 
 | &nbsp;                                   | &nbsp;                                                                                      |
 |:-----------------------------------------|:-------------------------------------------------------------------------------------------:|
-| Lecture                                  | [Video (110 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2S9cNE-rD3CZJY6X_KydOMi) |
-| Lecture slides                           | [PDF](slides.pdf)                                                                           |
 | Lecture notes                            | [PDF](notes.pdf)                                                                            |
+| Lecture slides                           | [PDF](slides.pdf)                                                                           |
+| Recording (2020,2021)                    | [Video (110 min)](https://www.youtube.com/playlist?list=PLluGwj6FGt2S9cNE-rD3CZJY6X_KydOMi) |
 | Quiz                                     | [PDF](quiz.pdf)                                                                             |
 | **R** script for the lesson              | [**R**](main.R)                                                                             |
 | Windows-safe **R** script for the lesson | [**R**](main_win.R)                                                                         |
