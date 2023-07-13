@@ -176,7 +176,7 @@ The minimum effective sample size is `r round(min(pf1@eff.sample.size),0)`, whic
 #| eval: true
 #| purl: true
 registerDoFuture()
-plan(multicore)
+plan(multisession)
 ```
 
 ## Local search

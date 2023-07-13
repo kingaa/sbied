@@ -1,11 +1,13 @@
 
-R version 4.3.0 (2023-04-21) -- "Already Tomorrow"
+R version 4.3.1 (2023-06-16) -- "Beagle Scouts"
 Copyright (C) 2023 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
 
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
@@ -52,7 +54,7 @@ The following objects are masked from ‘package:purrr’:
     accumulate, when
 
 Loading required package: future
-> registerDoFuture(); plan(multicore)
+> registerDoFuture(); plan(multisession)
 > library(doRNG)
 Loading required package: rngtools
 > options(
@@ -213,7 +215,7 @@ dbl (4): time, cases, births, pop
 > 
 > ## library(doFuture)
 > ## registerDoFuture()
-> ## plan(multicore)
+> ## plan(multisession)
 > ## library(doRNG)
 > 
 > if (file.exists("CLUSTER.R")) {
@@ -327,7 +329,7 @@ attributes are not identical across measure variables; they will be dropped
 Rows: 40 Columns: 23
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
-dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
+dbl (23): b1, b2, b3, b4, b5, b6, delta, IO_0, K, psi, rho, SB1_0, SB2_0, SB...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -354,7 +356,7 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 Rows: 140 Columns: 23
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
-dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
+dbl (23): b1, b2, b3, b4, b5, b6, delta, IO_0, K, psi, rho, SB1_0, SB2_0, SB...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -441,7 +443,7 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 Rows: 140 Columns: 23
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
-dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
+dbl (23): b1, b2, b3, b4, b5, b6, delta, IO_0, K, psi, rho, SB1_0, SB2_0, SB...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -457,4 +459,4 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 > 
 > proc.time()
    user  system elapsed 
-  6.478   5.016   6.363 
+  9.776  15.890   9.763 

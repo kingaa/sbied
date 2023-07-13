@@ -2,7 +2,7 @@ DEBUG <- FALSE
 # DEBUG <- TRUE
 library(doFuture)
 library(doRNG)
-registerDoFuture(); plan(multicore)
+registerDoFuture(); plan(multisession)
 registerDoRNG(2050320976)
 cores <- getDoParWorkers()
 

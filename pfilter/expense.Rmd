@@ -60,7 +60,7 @@ expand_grid(
 
 registerDoFuture()
 registerDoRNG()
-plan(multicore)
+plan(multisession)
 
 foreach (
   expt=iter(design,"row"),

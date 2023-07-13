@@ -14,7 +14,7 @@ source("../_includes/setup.R", local = knitr::knit_global())
 library(doFuture)
 library(doRNG)
 registerDoFuture()
-plan(multicore)
+plan(multisession)
 registerDoRNG(2488820)
 @
 

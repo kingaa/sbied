@@ -1,7 +1,7 @@
 library(tidyverse)
 library(pomp)
 library(doFuture)
-registerDoFuture(); plan(multicore)
+registerDoFuture(); plan(multisession)
 library(doRNG)
 options(
   dplyr.summarise.inform=FALSE,
@@ -144,7 +144,7 @@ Nsim <-        switch(run_level, 50, 100, 500)
 
 ## library(doFuture)
 ## registerDoFuture()
-## plan(multicore)
+## plan(multisession)
 ## library(doRNG)
 
 if (file.exists("CLUSTER.R")) {

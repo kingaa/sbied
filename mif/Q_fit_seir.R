@@ -65,7 +65,7 @@ logLik(pf1)
 plot(pf1)
 
 registerDoFuture()
-plan(multicore)
+plan(multisession)
 
 ncpu <- getDoParWorkers()
 bake(file="Q_fit_seir_local_mifs.rds",{

@@ -81,7 +81,7 @@ with cholera mortality rate 8\% and other parameters fixed at the default values
   d <- dacca(deltaI=0.08)
   library(doFuture)
   registerDoFuture()
-  plan(multicore)
+  plan(multisession)
   bake(file="Q9.rds",{
     foreach(i=1:32,.combine=c) %dopar% {
       library(pomp)

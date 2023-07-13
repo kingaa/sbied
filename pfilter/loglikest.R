@@ -28,7 +28,7 @@ bake(file="loglikest-pfilter.rds",{
   } else {
     library(doFuture)
     registerDoFuture()
-    plan(multicore)
+    plan(multisession)
   }
   library(doRNG)
   registerDoRNG(594717807L)

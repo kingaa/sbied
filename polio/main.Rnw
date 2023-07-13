@@ -12,7 +12,7 @@ source("../_includes/setup.R", local = knitr::knit_global())
 library(tidyverse)
 library(pomp)
 library(doFuture)
-registerDoFuture(); plan(multicore)
+registerDoFuture(); plan(multisession)
 library(doRNG)
 options(
   dplyr.summarise.inform=FALSE,
@@ -636,7 +636,7 @@ options(
   <<parallel-setup,eval=FALSE>>=
   library(doFuture)
   registerDoFuture()
-  plan(multicore)
+  plan(multisession)
   library(doRNG)
   @
   

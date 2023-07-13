@@ -8,7 +8,7 @@ library(pomp)
 library(iterators)
 library(doFuture)
 library(doRNG)
-registerDoFuture(); plan(multicore)
+registerDoFuture(); plan(multisession)
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 

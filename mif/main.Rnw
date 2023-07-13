@@ -312,7 +312,7 @@ set.seed(1350254336)
   library(foreach)
   library(doFuture)
   registerDoFuture()
-  plan(multicore)
+  plan(multisession)
   @ 
   <<pf1,eval=FALSE,purl=FALSE>>=
   library(doRNG)

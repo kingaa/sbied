@@ -21,7 +21,7 @@ library(doFuture)
 library(doRNG)
 registerDoFuture()
 registerDoRNG(652643293)
-plan(multicore)
+plan(multisession)
 foreach (i=1:10, .combine=c) %dopar% {
   library(pomp)
   measSIR |> pfilter(Np=5000)
@@ -49,7 +49,7 @@ bake(file="like-slice.rds",{
   library(doRNG)
   registerDoFuture()
   registerDoRNG(108028909)
-  plan(multicore)
+  plan(multisession)
   foreach (theta=iter(p,"row"), .combine=rbind,
            .inorder=FALSE) %dopar%
     {
@@ -88,7 +88,7 @@ bake(file="pfilter-grid1.rds",{
   library(doRNG)
   registerDoFuture()
   registerDoRNG(421776444)
-  plan(multicore)
+  plan(multisession)
   foreach (theta=iter(p,"row"), .combine=rbind,
            .inorder=FALSE) %dopar%
     {

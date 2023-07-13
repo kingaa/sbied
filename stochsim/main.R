@@ -1,7 +1,7 @@
 library(doFuture)
 library(doRNG)
 registerDoFuture()
-plan(multicore)
+plan(multisession)
 registerDoRNG(2488820)
 
 library(tidyverse)

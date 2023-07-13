@@ -318,7 +318,7 @@ set.seed(1350254336)
   library(iterators)
   library(doFuture)
   registerDoFuture()
-  plan(multicore)
+  plan(multisession)
   @ 
   
   The first three lines above load the \pkg{foreach}, \pkg{iterators}, and \pkg{doFuture} packages, the latter being a ``backend'' for the \pkg{foreach} package.
@@ -362,7 +362,7 @@ set.seed(1350254336)
   library(doRNG)
   registerDoFuture()
   registerDoRNG(652643293)
-  plan(multicore)
+  plan(multisession)
   @
   <<pfilter-3,cache=TRUE>>=
   foreach (i=1:10, .combine=c) %dopar% {
@@ -547,7 +547,7 @@ set.seed(1350254336)
   library(doRNG)
   registerDoFuture()
   registerDoRNG(108028909)
-  plan(multicore)
+  plan(multisession)
   @
   
   <<like-slice3,eval=FALSE,purl=FALSE>>=
@@ -609,7 +609,7 @@ set.seed(1350254336)
   library(doRNG)
   registerDoFuture()
   registerDoRNG(421776444)
-  plan(multicore)
+  plan(multisession)
   @
   
   <<pfilter-grid1c,eval=FALSE,purl=FALSE>>=

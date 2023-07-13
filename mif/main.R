@@ -16,7 +16,7 @@ coef(measSIR,names(fixed_params)) <- fixed_params
 library(foreach)
 library(doFuture)
 registerDoFuture()
-plan(multicore)
+plan(multisession)
 
 
 
