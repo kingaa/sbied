@@ -7,7 +7,7 @@ options(
 )
 
 stopifnot(getRversion()>="4.2")
-stopifnot(packageVersion("pomp")>="4.7")
+stopifnot(packageVersion("pomp")>="5.2")
 
 set.seed(594709947L)
 library(tidyverse)
@@ -149,6 +149,7 @@ read_csv("https://kingaa.github.io/sbied/ebola/ebola_profiles.csv") -> profs
 
 ## ----profiles-plots,results='hide',echo=FALSE----------------------------
 library(tidyverse)
+library(pomp)
 theme_set(theme_bw())
 
 profs |>
@@ -255,21 +256,15 @@ plot(params)
 
 ## ----forecasts2a----------------------------------------------------------
 bake(file="forecasts.rds",{
-  library(foreach)
-  library(doParallel)
+  library(doFuture)
   library(iterators)
-  library(doRNG)
-
-  registerDoParallel()
-  registerDoRNG(887851050L)
+  plan(multisession)
 
 ## ----forecasts2b----------------------------------------------------------
   foreach(p=iter(params,by="row"),
-    .inorder=FALSE,
-    .combine=bind_rows
+    .combine=bind_rows,
+    .options.future=list(seed=887851050L)
   ) %dopar% {
-
-    library(pomp)
 
 ## ----forecasts2c----------------------------------------------------------
     M1 <- ebolaModel("SierraLeone")
