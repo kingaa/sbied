@@ -15,17 +15,14 @@ coef(measSIR,names(fixed_params)) <- fixed_params
 
 library(foreach)
 library(doFuture)
-registerDoFuture()
 plan(multisession)
 
 
 
-
-library(doRNG)
-registerDoRNG(625904618)
 tic <- Sys.time()
-foreach(i=1:10,.combine=c) %dopar% {
-  library(pomp)
+foreach(i=1:10,.combine=c,
+  .options.future=list(seed=TRUE)
+) %dofuture% {
   measSIR |> pfilter(Np=5000)
 } -> pf
 
@@ -42,10 +39,9 @@ pf[[1]] |> coef() |> bind_rows() |>
 ## See https://kingaa.github.io/sbied/pfilter/bake.html
 ## for an explanation.
 bake(file="local_search.rds",{
-  registerDoRNG(482947940)
-  foreach(i=1:20,.combine=c) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(i=1:20,.combine=c,
+    .options.future=list(seed=482947940)
+  ) %dofuture% {
     measSIR |>
       mif2(
         Np=2000, Nmif=50,
@@ -55,7 +51,7 @@ bake(file="local_search.rds",{
         paramnames=c("Beta","rho","eta")
       )
   } -> mifs_local
-  attr(mifs_local,"ncpu") <- getDoParWorkers()
+  attr(mifs_local,"ncpu") <- nbrOfWorkers()
   mifs_local
 }) -> mifs_local
 t_loc <- attr(mifs_local,"system.time")
@@ -72,16 +68,15 @@ mifs_local |>
 
 
 bake(file="lik_local.rds",{
-  registerDoRNG(900242057)
-  foreach(mf=mifs_local,.combine=rbind) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(mf=mifs_local,.combine=rbind,
+    .options.future=list(seed=900242057)
+  ) %dofuture% {
     evals <- replicate(10, logLik(pfilter(mf,Np=5000)))
     ll <- logmeanexp(evals,se=TRUE)
     mf |> coef() |> bind_rows() |>
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> results
-  attr(results,"ncpu") <- getDoParWorkers()
+  attr(results,"ncpu") <- nbrOfWorkers()
   results
 }) -> results
 t_local <- attr(results,"system.time")
@@ -111,10 +106,9 @@ mf1 <- mifs_local[[1]]
 
 bake(file="global_search.rds",
   dependson=guesses,{
-    registerDoRNG(1270401374)
-    foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-      library(tidyverse)
-      library(pomp)
+    foreach(guess=iter(guesses,"row"), .combine=rbind,
+      .options.future=list(seed=1270401374)
+    ) %dofuture% {
       mf1 |>
         mif2(params=c(guess,fixed_params)) |>
         mif2(Nmif=100) -> mf
@@ -126,7 +120,7 @@ bake(file="global_search.rds",
       mf |> coef() |> bind_rows() |>
         bind_cols(loglik=ll[1],loglik.se=ll[2])
     } -> results
-    attr(results,"ncpu") <- getDoParWorkers()
+    attr(results,"ncpu") <- nbrOfWorkers()
     results
   }) |>
   filter(is.finite(loglik)) -> results
@@ -176,10 +170,9 @@ plot(guesses)
 mf1 <- mifs_local[[1]]
 bake(file="eta_profile.rds",
   dependson=guesses,{
-    registerDoRNG(830007657)
-    foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-      library(tidyverse)
-      library(pomp)
+    foreach(guess=iter(guesses,"row"), .combine=rbind,
+      .options.future=list(seed=830007657)
+    ) %dofuture% {
       mf1 |>
         mif2(params=c(guess,fixed_params),
           rw.sd=rw_sd(Beta=0.02,rho=0.02)) |>
@@ -191,7 +184,7 @@ bake(file="eta_profile.rds",
       mf |> coef() |> bind_rows() |>
         bind_cols(loglik=ll[1],loglik.se=ll[2])
     } -> results
-    attr(results,"ncpu") <- getDoParWorkers()
+    attr(results,"ncpu") <- nbrOfWorkers()
     results
   }) -> results
 t_eta <- attr(results,"system.time")
@@ -266,10 +259,9 @@ read_csv("measles_params.csv") |>
 mf1 <- mifs_local[[1]]
 bake(file="rho_profile.rds",
   dependson=guesses,{
-    registerDoRNG(2105684752)
-    foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-      library(tidyverse)
-      library(pomp)
+    foreach(guess=iter(guesses,"row"), .combine=rbind,
+      .options.future=list(seed=2105684752)
+    ) %dofuture% {
       mf1 |>
         mif2(params=guess,
           rw.sd=rw_sd(Beta=0.02,eta=ivp(0.02))) |>
@@ -282,7 +274,7 @@ bake(file="rho_profile.rds",
       mf |> coef() |> bind_rows() |>
         bind_cols(loglik=ll[1],loglik.se=ll[2])
     } -> results
-    attr(results,"ncpu") <- getDoParWorkers()
+    attr(results,"ncpu") <- nbrOfWorkers()
     results
   }) -> results
 t_rho <- attr(results,"system.time")
@@ -332,10 +324,10 @@ freeze(seed=55266255,
 
 bake(file="global_search2.rds",
   dependson=guesses,{
-    registerDoRNG(610408798)
-    foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-      library(tidyverse)
-      library(pomp)
+    foreach(
+      guess=iter(guesses,"row"), .combine=rbind,
+      .options.future=list(seed=610408798)
+    ) %dofuture% {
       measSIR |>
         mif2(params=guess, Np=2000, Nmif=100,
           cooling.fraction.50=0.5,
@@ -358,7 +350,7 @@ bake(file="global_search2.rds",
       mf |> coef() |> bind_rows() |>
         bind_cols(loglik=ll[1],loglik.se=ll[2])
     } -> results
-    attr(results,"ncpu") <- getDoParWorkers()
+    attr(results,"ncpu") <- nbrOfWorkers()
     results
   }) |>
   filter(is.finite(loglik)) -> results
@@ -411,16 +403,16 @@ freeze(seed=610408798,
 
 bake(file="mu_IR_profile1.rds",
   dependson=guesses,{
-    registerDoRNG(610408798)
-    foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-      library(tidyverse)
-      library(pomp)
+    foreach(guess=iter(guesses,"row"), .combine=rbind,
+      .options.future=list(seed=610408798)
+    ) %dofuture% {
       measSIR |>
         mif2(params=guess, Np=2000, Nmif=100,
           partrans=parameter_trans(log="Beta",logit="eta"),
           paramnames=c("Beta","eta"), cooling.fraction.50=0.5,
           rw.sd=rw_sd(Beta=0.02,eta=ivp(0.02))
-        ) |> mif2(Nmif=100) |>
+        ) |>
+        mif2(Nmif=100) |>
         mif2(Nmif=100,rw.sd=rw_sd(Beta=0.01,eta=ivp(0.01))) |>
         mif2(Nmif=100,rw.sd=rw_sd(Beta=0.005,eta=ivp(0.005))) -> mf
       replicate(10,mf |> pfilter(Np=5000) |> logLik()) |>
@@ -428,7 +420,7 @@ bake(file="mu_IR_profile1.rds",
       mf |> coef() |> bind_rows() |>
         bind_cols(loglik=ll[1],loglik.se=ll[2])
     } -> results
-    attr(results,"ncpu") <- getDoParWorkers()
+    attr(results,"ncpu") <- nbrOfWorkers()
     results
   }) |>
   filter(is.finite(loglik)) -> results

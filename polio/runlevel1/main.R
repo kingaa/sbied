@@ -151,7 +151,7 @@ if (file.exists("CLUSTER.R")) {
   source("CLUSTER.R")
 }
 
-cores <- getDoParWorkers()
+cores <- nbrOfWorkers()
 bake(file="cores.rds",cores) -> cores
 
 stew(file="pf1.rda",{

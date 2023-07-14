@@ -10,9 +10,12 @@
 source("../_includes/setup.R", local = knitr::knit_global())
 @
 
-<<prelims,echo=F,cache=F>>=
+<<prelims,echo=FALSE,cache=FALSE>>=
 library(tidyverse)
 library(pomp)
+library(foreach)
+library(iterators)
+library(doFuture)
 options(stringsAsFactors=FALSE)
 set.seed(1350254336)
 @
@@ -40,18 +43,18 @@ set.seed(1350254336)
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Overview}
-  
-  The following schematic diagram represents conceptual links between different components of the methodological approach we're developing for statistical inference on epidemiological dynamics. 
+
+  The following schematic diagram represents conceptual links between different components of the methodological approach we're developing for statistical inference on epidemiological dynamics.
   <<flow-diagram,child="../graphics/flow_diagram.Rnw",dpi=200,fig.width=4.5,fig.align="center",echo=FALSE,results="hide",purl=FALSE,out.width="0.5\\textwidth">>=
   @
 
   \framebreak
-  
+
   \begin{itemize}
   \item In this lesson, we're going to discuss the orange compartments.
   \item The Monte Carlo technique called the ``particle filter'' is central for connecting the higher-level ideas of POMP models and likelihood-based inference to the lower-level tasks involved in carrying out data analysis.
   \item We employ a standard toolkit for likelihood based inference:
-    Maximum likelihood estimation, profile likelihood confidence intervals, likelihood ratio tests for model selection, and other likelihood-based model comparison tools such as AIC. 
+    Maximum likelihood estimation, profile likelihood confidence intervals, likelihood ratio tests for model selection, and other likelihood-based model comparison tools such as AIC.
   \item We seek to better understand these tools, and to figure out how to implement and interpret them in the specific context of POMP models.
   \end{itemize}
 \end{frame}
@@ -81,7 +84,7 @@ set.seed(1350254336)
   \item Data are a sequence of $N$ observations, denoted $y_{1:N}^*$.
   \item A statistical model is a density function $f_{Y_{1:N}}(y_{1:N};\theta)$ which defines a probability distribution for each value of a parameter vector $\theta$.
   \item To perform statistical inference, we must decide, among other things, for which (if any) values of $\theta$ it is reasonable to model $y^*_{1:N}$ as a random draw from $f_{Y_{1:N}}(y_{1:N};\theta)$.
-  \item The likelihood function is 
+  \item The likelihood function is
     $$\lik(\theta) = f_{Y_{1:N}}(y^*_{1:N};\theta),$$
     the density function evaluated at the data.
   \item It is often convenient to work with the log likelihood function,
@@ -92,21 +95,21 @@ set.seed(1350254336)
 \begin{frame}{Modeling using discrete and continuous distributions}
   \begin{itemize}
   \item Recall that the probability distribution $f_{Y_{1:N}}(y_{1:N};\theta)$ defines a random variable $Y_{1:N}$ for which probabilities can be computed as integrals of $f_{Y_{1:N}}(y_{1:N};\theta)$.
-  \item Specifically, for any event $E$ describing a set of possible outcomes of $Y_{1:N}$, 
-    $$\prob{Y_{1:N} \in E} = \int_E f_{Y_{1:N}}(y_{1:N};\theta)\, dy_{1:N}.$$ 
+  \item Specifically, for any event $E$ describing a set of possible outcomes of $Y_{1:N}$,
+    $$\prob{Y_{1:N} \in E} = \int_E f_{Y_{1:N}}(y_{1:N};\theta)\, dy_{1:N}.$$
   \item If the model corresponds to a discrete distribution, then the integral is replaced by a sum and the probability density function is called a \emph{probability mass function}.
   \item The definition of the likelihood function remains unchanged.
-    We will use the notation of continuous random variables, but all the methods apply also to discrete models. 
+    We will use the notation of continuous random variables, but all the methods apply also to discrete models.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{A simulator is implicitly a statistical model}
   \begin{itemize}
-  \item For simple statistical models, we may describe the model by explicitly writing the density function $f_{Y_{1:N}}(y_{1:N};\theta)$. 
+  \item For simple statistical models, we may describe the model by explicitly writing the density function $f_{Y_{1:N}}(y_{1:N};\theta)$.
     One may then ask how to simulate a random variable $Y_{1:N}\sim f_{Y_{1:N}}(y_{1:N};\theta)$.
-  \item For many dynamic models it is much more convenient to define the model via a procedure to simulate the random variable $Y_{1:N}$. 
-    This \emph{implicitly} defines the corresponding density $f_{Y_{1:N}}(y_{1:N};\theta)$. 
-  \item For a complicated simulation procedure, it may be difficult or impossible to write down or even compute $f_{Y_{1:N}}(y_{1:N};\theta)$ exactly. 
+  \item For many dynamic models it is much more convenient to define the model via a procedure to simulate the random variable $Y_{1:N}$.
+    This \emph{implicitly} defines the corresponding density $f_{Y_{1:N}}(y_{1:N};\theta)$.
+  \item For a complicated simulation procedure, it may be difficult or impossible to write down or even compute $f_{Y_{1:N}}(y_{1:N};\theta)$ exactly.
   \item It is important to bear in mind that the likelihood function exists even when we don't know what it is!
     We can still talk about the likelihood function, and develop numerical methods that take advantage of its statistical properties.
   \end{itemize}
@@ -118,20 +121,20 @@ set.seed(1350254336)
 
   \begin{itemize}
   \item Recall the following schematic diagram, showing dependence among variables in a POMP model.
-    \item Measurements, $Y_n$, at time $t_n$ depend on the latent process, $X_n$, at that time.
-    \item The Markov property asserts that latent process variables depend on their value at the previous timestep.
-    \item To be more precise, the distribution of the state $X_{n+1}$, conditional on $X_{n}$, is independent of the values of $X_{k}$, $k<n$ and $Y_{k}$, $k\le n$.
-    \item Moreover, the distribution of the measurement $Y_{n}$, conditional on $X_{n}$, is independent of all other variables.
+  \item Measurements, $Y_n$, at time $t_n$ depend on the latent process, $X_n$, at that time.
+  \item The Markov property asserts that latent process variables depend on their value at the previous timestep.
+  \item To be more precise, the distribution of the state $X_{n+1}$, conditional on $X_{n}$, is independent of the values of $X_{k}$, $k<n$ and $Y_{k}$, $k\le n$.
+  \item Moreover, the distribution of the measurement $Y_{n}$, conditional on $X_{n}$, is independent of all other variables.
   \end{itemize}
 
   <<ssdiag2,child="../graphics/state_space_diagram2.Rnw",echo=FALSE,purl=FALSE,fig.height=3,fig.width=6>>=
   @
 
   \framebreak
-  
+
   \begin{itemize}
-  \item The latent process $X(t)$ may be defined at all times, but we are particularly interested in its value at observation times. Therefore, we write 
-    $$X_n=X(t_n).$$ 
+  \item The latent process $X(t)$ may be defined at all times, but we are particularly interested in its value at observation times. Therefore, we write
+    $$X_n=X(t_n).$$
   \item We write collections of random variables using the notation $X_{0:N}=(X_0,\dots,X_N)$.
   \item The one-step transition density, $f_{X_n|X_{n-1}}(x_n|x_{n-1};\theta)$, together with the measurement density, $f_{Y_n|X_n}(y_n|x_n;\theta)$ and the initial density, $f_{X_0}(x_0;\theta)$, specify the entire joint density via
     \begin{equation*}
@@ -179,12 +182,12 @@ set.seed(1350254336)
 \begin{frame}[allowframebreaks]{Monte Carlo likelihood by direct simulation}
 
   \begin{itemize}
-  \item We work toward introducing the particle filter by first proposing a simpler method that usually doesn't work on anything but very short time series. 
+  \item We work toward introducing the particle filter by first proposing a simpler method that usually doesn't work on anything but very short time series.
   \item Although \textbf{this section is a demonstration of what not to do}, it serves as an introduction to the general approach of \link{monteCarlo.html\#the-fundamental-theorem-of-monte-carlo-integration}{Monte Carlo integration}.
   \item First, let's rewrite the likelihood integral using an equivalent factorization.
     As an exercise, you could check how the equivalence of Eqns.~\ref{eq:L1} and \ref{eq:L2} follows algebraically from the Markov property and the definition of conditional density.
   \end{itemize}
-  
+
   \begin{equation}\label{eq:L2}
     \begin{aligned}
       \lik(\theta) &= f_{Y_{1:N}}({y^*_{1:N}};\theta)\\
@@ -207,12 +210,12 @@ set.seed(1350254336)
   \item We get the \textbf{plug-and-play} property that our algorithm depends on \code{rprocess} but does not require \code{dprocess}.
   \item However, this naive approach scales poorly with dimension.
     It requires a Monte Carlo effort that scales exponentially with the length of the time series, and so is infeasible on anything but a short data set.
-  \item One way to see this is to notice that, once a simulated trajectory diverges from the data, it will seldom come back. 
+  \item One way to see this is to notice that, once a simulated trajectory diverges from the data, it will seldom come back.
     Simulations that lose track of the data will make a negligible contribution to the likelihood estimate.
     When simulating a long time series, almost all the simulated trajectories will eventually lose track of the data.
   \item We can see this happening in practice for the measles outbreak data: \link{directSimulation.html}{supplementary material}.
   \end{itemize}
-  
+
 \end{frame}
 
 \subsection{Sequential Monte Carlo}
@@ -220,7 +223,7 @@ set.seed(1350254336)
 \begin{frame}[allowframebreaks]{Sequential Monte Carlo: The particle filter}
 
   \begin{itemize}
-  \item Fortunately, we can compute the likelihood for a POMP model by a much more efficient algorithm than direct Monte Carlo integration. 
+  \item Fortunately, we can compute the likelihood for a POMP model by a much more efficient algorithm than direct Monte Carlo integration.
   \item  We proceed by factorizing the likelihood in a different way:
     \begin{equation*}
       \begin{aligned}
@@ -229,7 +232,7 @@ set.seed(1350254336)
         &=\prod_{n=1}^N\,\int f_{Y_n|X_n}(y^*_n|x_n;\theta)\,f_{X_n|Y_{1:n-1}}(x_n|y^*_{1:n-1};\theta)\, dx_{n},
       \end{aligned}
     \end{equation*}
-    with the understanding that $f_{X_1|Y_{1:0}}=f_{X_1}$. 
+    with the understanding that $f_{X_1|Y_{1:0}}=f_{X_1}$.
   \item The Markov property leads to the \textbf{prediction formula:}
     \begin{equation*}
       \begin{aligned}
@@ -250,13 +253,13 @@ set.seed(1350254336)
 
   \framebreak
 
-  \begin{itemize}  
+  \begin{itemize}
   \item This suggests that we keep track of two key distributions at each time $t_n$,
   \item The \textbf{prediction distribution} is $f_{X_n | Y_{1:n-1}}(x_n| y^*_{1:n-1})$.
   \item The \textbf{filtering distribution} is $f_{X_{n} | Y_{1:n}}(x_n| y^*_{1:n})$.
   \item The prediction and filtering formulas give us a two-step recursion:
     \begin{itemize}
-    \item The prediction formula gives the prediction distribution at time $t_n$ using the filtering distribution at time $t_{n-1}$. 
+    \item The prediction formula gives the prediction distribution at time $t_n$ using the filtering distribution at time $t_{n-1}$.
     \item The filtering formula gives the filtering distribution at time $t_n$ using the prediction distribution at time $t_n$.
     \end{itemize}
   \item The \textbf{particle filter} use Monte Carlo techniques to sequentially estimate the integrals in the prediction and filtering recursions. Hence, the alternative name of \textbf{sequential Monte Carlo (SMC)}.
@@ -272,7 +275,7 @@ set.seed(1350254336)
     \begin{equation*}
       X_{n,j}^{P} \sim \mathrm{process}(X_{n-1,j}^{F},\theta), \qquad j=1,\dots,J.
     \end{equation*}
-  \item Having obtained $x_{n,j}^{P}$, we obtain a sample of points from the filtering distribution at time $t_n$ by \emph{resampling} from $\big\{X_{n,j}^{P},j\in 1:J\big\}$ with weights 
+  \item Having obtained $x_{n,j}^{P}$, we obtain a sample of points from the filtering distribution at time $t_n$ by \emph{resampling} from $\big\{X_{n,j}^{P},j\in 1:J\big\}$ with weights
     \begin{equation*}
       w_{n,j}=f_{Y_n|X_n}(y^*_{n}|X^P_{n,j};\theta).
     \end{equation*}
@@ -293,7 +296,7 @@ set.seed(1350254336)
     \end{equation*}
   \end{enumerate}
   \framebreak
-  
+
   \begin{itemize}
   \item Key references on the particle filter include \citet{Kitagawa1987}, \citet{Arulampalam2002}, and the book by \citet{Doucet2001}.
     Pseudocode for the above is provided by \citet{King2016}.
@@ -312,29 +315,19 @@ set.seed(1350254336)
   \item paying proper attention to the use of parallel random number generators (RNG).
   \end{enumerate}
   For example:
-  
+
   <<parallel-setup,eval=FALSE,purl=FALSE>>=
   library(foreach)
   library(iterators)
   library(doFuture)
-  registerDoFuture()
   plan(multisession)
-  @ 
-  
+  @
+
   The first three lines above load the \pkg{foreach}, \pkg{iterators}, and \pkg{doFuture} packages, the latter being a ``backend'' for the \pkg{foreach} package.
   The next line tells \pkg{foreach} that we will use the \pkg{doFuture} backend.
-  The last line says that we plan to parallelize using the multiple cores on our single machine.
+  The last line says that we plan to parallelize using multiple \Rlanguage sessions on our single machine.
   By default, \Rlanguage will attempt to determine how many cores are available and will run an appropriate number of concurrent \Rlanguage processes.
-\end{frame}
 
-\begin{frame}[fragile]{Parallel random number generators (RNG)}
-  To initialize a parallel RNG, we use the \pkg{doRNG} package.
-  The following ensures that the parallel computations will be both mutually independent and reproducible.
-  
-  <<pf1,eval=FALSE,purl=FALSE>>=
-  library(doRNG)
-  registerDoRNG(625904618)
-  @ 
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks]{Particle filtering in \pkg{pomp}}
@@ -346,33 +339,33 @@ set.seed(1350254336)
   <<model-construct,purl=TRUE>>=
   source("https://kingaa.github.io/sbied/pfilter/model.R")
   @
-  
+
   In \pkg{pomp}, the basic particle filter is implemented in the command \code{pfilter}.
   We must choose the number of particles to use by setting the \code{Np} argument.
 
   <<pfilter-1,cache=TRUE>>=
+  library(pomp)
   measSIR |>
     pfilter(Np=5000) -> pf
   logLik(pf)
   @
-  
+
   We can run a few particle filters to get an estimate of the Monte Carlo variability:
-  <<pfilter-2,echo=FALSE,cache=TRUE>>=
-  library(doFuture)
-  library(doRNG)
-  registerDoFuture()
-  registerDoRNG(652643293)
-  plan(multisession)
-  @
   <<pfilter-3,cache=TRUE>>=
-  foreach (i=1:10, .combine=c) %dopar% {
-    library(pomp)
+  plan(multisession)
+  foreach (
+    i=1:10,
+    .combine=c,
+    .options.future=list(seed=652643293)
+  ) %dofuture% {
     measSIR |> pfilter(Np=5000)
   } -> pf
   logLik(pf) -> ll
   logmeanexp(ll,se=TRUE)
   @
-  
+
+  Note that we set the parallel RNG seed in the \code{foreach} call.
+
 \end{frame}
 
 \section{Likelihood-based inference}
@@ -464,7 +457,7 @@ set.seed(1350254336)
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Confidence intervals via the profile likelihood}
-  
+
   \begin{itemize}
   \item
     Let's consider the problem of obtaining a confidence interval for the first component of $\theta$. We'll write $$\theta=(\phi,\psi).$$
@@ -510,23 +503,23 @@ set.seed(1350254336)
 \begin{frame}{Exploring the likelihood surface: slices}
   \begin{itemize}
   \item To get an idea of what the likelihood surface looks like in the neighborhood of a point in parameter space, we can construct some likelihood \myemph{slices}.
-    \item A likelihood slice is a cross-section through the likelihood surface.
-    
-    \item We'll make slices for our Consett measles POMP model, in the $\beta$ and $\mu_{IR}$ directions.
+  \item A likelihood slice is a cross-section through the likelihood surface.
 
-\item Both slices will pass through our current candidate parameter vector, stored in the \code{pomp} model object.
+  \item We'll make slices for our Consett measles POMP model, in the $\beta$ and $\mu_{IR}$ directions.
+
+  \item Both slices will pass through our current candidate parameter vector, stored in the \code{pomp} model object.
   \end{itemize}
 
 \end{frame}
 
 \begin{frame}{\myexercise. Slices and profiles}
-  
+
   What is the difference between a likelihood slice and a profile?
   What is the consequence of this difference for the statistical interpretation of these plots?
   How should you decide whether to compute a profile or a slice?
-  
+
   \vspace{3mm}
-  
+
   \link{./Q_slice.html}{Worked solution to the Exercise}
 
 \end{frame}
@@ -540,27 +533,20 @@ set.seed(1350254336)
     mu_IR=rep(seq(from=0.2,to=2,length=40),each=3)
   ) -> p
   @
-  
+
   <<like-slice2,eval=FALSE,purl=FALSE>>=
-  library(iterators)
-  library(doFuture)
-  library(doRNG)
-  registerDoFuture()
-  registerDoRNG(108028909)
   plan(multisession)
+  foreach (
+    theta=iter(p,"row"),
+    .combine=rbind,
+    .options.future=list(seed=108028909)
+  ) %dofuture% {
+    measSIR |> pfilter(params=theta,Np=5000) -> pf
+    theta$loglik <- logLik(pf)
+    theta
+  } -> p
   @
-  
-  <<like-slice3,eval=FALSE,purl=FALSE>>=
-  foreach (theta=iter(p,"row"), .combine=rbind,
-           .inorder=FALSE) %dopar%
-    {
-      library(pomp)
-      measSIR |> pfilter(params=theta,Np=5000) -> pf
-      theta$loglik <- logLik(pf)
-      theta
-    } -> p
-  @
-  
+
   <<like-slice-eval,include=FALSE,purl=TRUE>>=
   ## What is this 'bake' function?
   ## See https://kingaa.github.io/sbied/misc/bake.html
@@ -568,14 +554,11 @@ set.seed(1350254336)
   bake(file="like-slice.rds",{
     <<like-slice1>>
     <<like-slice2>>
-    <<like-slice3>>
   }) -> p
-  @ 
-  
-  <<like-slice-plot,echo=FALSE>>=
-  library(tidyverse)
+  @
 
-  p |> 
+  <<like-slice-plot,echo=FALSE>>=
+  p |>
     pivot_longer(c(Beta,mu_IR)) |>
     filter(name==slice) |>
     ggplot(aes(x=value,y=loglik,color=name))+
@@ -584,7 +567,7 @@ set.seed(1350254336)
     guides(color="none")+
     labs(x="parameter value",color="")
   @
-  
+
   \begin{itemize}
   \item
     Slices offer a very limited perspective on the geometry of the likelihood surface.
@@ -602,36 +585,28 @@ set.seed(1350254336)
     rho=0.5,k=10,eta=0.06,N=38000
   ) -> p
   @
-  
+
   <<pfilter-grid1b,eval=FALSE,purl=FALSE>>=
-  library(iterators)
-  library(doFuture)
-  library(doRNG)
-  registerDoFuture()
-  registerDoRNG(421776444)
   plan(multisession)
+  foreach (
+    theta=iter(p,"row"),
+    .combine=rbind,
+    .options.future=list(seed=421776444)
+  ) %dofuture% {
+    measSIR |> pfilter(params=theta,Np=5000) -> pf
+    theta$loglik <- logLik(pf)
+    theta
+  } -> p
   @
-  
-  <<pfilter-grid1c,eval=FALSE,purl=FALSE>>=
-  foreach (theta=iter(p,"row"), .combine=rbind,
-           .inorder=FALSE) %dopar%
-    {
-      library(pomp)
-      measSIR |> pfilter(params=theta,Np=5000) -> pf
-      theta$loglik <- logLik(pf)
-      theta
-    } -> p
-  @ 
 
   <<pfilter-grid1-eval,include=FALSE>>=
   bake(file="pfilter-grid1.rds",{
     <<pfilter-grid1a>>
     <<pfilter-grid1b>>
-    <<pfilter-grid1c>>
     p |> arrange(Beta,mu_IR)
   })-> p
   @
-  
+
   <<pfilter-grid1-plot,echo=FALSE,purl=TRUE>>=
   p |>
     group_by(Beta,mu_IR) |>
@@ -643,9 +618,9 @@ set.seed(1350254336)
     scale_fill_gradient()+
     labs(x=expression(beta),y=expression(mu[IR]))
   @
-  
+
   In the above, all points with log likelihoods less than 25 units below the maximum are shown in grey.
-  
+
   \begin{itemize}
   \item
     Notice some features of the log likelihood surface, and its estimate from the particle filter, that can cause difficulties for numerical methods:
@@ -878,7 +853,7 @@ set.seed(1350254336)
   \end{itemize}
 
   \link{index.html}{Back to Lesson}
-  
+
   \link{./main.R}{\Rlanguage codes for this lesson}
 \end{frame}
 

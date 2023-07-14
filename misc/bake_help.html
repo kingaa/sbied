@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><title>R: Tools for reproducible computations.</title>
+<!DOCTYPE html><html><head><title>R: Tools for reproducible computations</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css">
@@ -14,13 +14,13 @@ function processMathHTML() {
 <link rel="stylesheet" type="text/css" href="https://cran.r-project.org/R.css" />
 </head><body><div class="container">
 
-<table style="width: 100%;"><tr><td>reproducibility tools</td><td style="text-align: right;">R Documentation</td></tr></table>
+<table style="width: 100%;"><tr><td>reproducibility_tools</td><td style="text-align: right;">R Documentation</td></tr></table>
 
-<h2 id='reproducibility+20tools'>Tools for reproducible computations.</h2>
+<h2 id='reproducibility_tools'>Tools for reproducible computations</h2>
 
 <h3>Description</h3>
 
-<p>Bake, stew, and freeze assist in the construction of reproducible computations.
+<p>Archiving of computations and control of the random-number generator.
 </p>
 
 
@@ -63,17 +63,17 @@ freeze(
 <h3>Arguments</h3>
 
 <table>
-<tr><td><code id="reproducibility+20tools_:_file">file</code></td>
+<tr><td><code id="reproducibility_tools_:_file">file</code></td>
 <td>
 <p>Name of the archive file in which the result will be stored or retrieved, as appropriate.
 For <code>bake</code>, this will contain a single object and hence be an RDS file (extension &lsquo;rds&rsquo;);
 for <code>stew</code>, this will contain one or more named objects and hence be an RDA file (extension &lsquo;rda&rsquo;).</p>
 </td></tr>
-<tr><td><code id="reproducibility+20tools_:_expr">expr</code></td>
+<tr><td><code id="reproducibility_tools_:_expr">expr</code></td>
 <td>
 <p>Expression to be evaluated.</p>
 </td></tr>
-<tr><td><code id="reproducibility+20tools_:_seed">seed</code>, <code id="reproducibility+20tools_:_kind">kind</code>, <code id="reproducibility+20tools_:_normal.kind">normal.kind</code></td>
+<tr><td><code id="reproducibility_tools_:_seed">seed</code>, <code id="reproducibility_tools_:_kind">kind</code>, <code id="reproducibility_tools_:_normal.kind">normal.kind</code></td>
 <td>
 <p>optional.
 To set the state and of the RNG.
@@ -81,7 +81,7 @@ The default, <code>seed = NULL</code>, will not change the RNG state.
 <code>seed</code> should be a single integer.
 See <code>set.seed</code> for more information.</p>
 </td></tr>
-<tr><td><code id="reproducibility+20tools_:_dependson">dependson</code></td>
+<tr><td><code id="reproducibility_tools_:_dependson">dependson</code></td>
 <td>
 <p>arbitrary <span class="rlang"><b>R</b></span> object (optional).
 Variables on which the computation in <code>expr</code> depends.
@@ -92,33 +92,33 @@ The dependencies should be specified as unquoted symbols:
 use a list if there are multiple dependencies.
 See the note below about avoiding using &lsquo;pomp&rsquo; objects as dependencies.</p>
 </td></tr>
-<tr><td><code id="reproducibility+20tools_:_info">info</code></td>
+<tr><td><code id="reproducibility_tools_:_info">info</code></td>
 <td>
 <p>logical.
 If <code>TRUE</code>, the &ldquo;ingredients&rdquo; of the calculation are returned as a list.
 In the case of <code>bake</code>, this list is the &ldquo;ingredients&rdquo; attribute of the returned object.
 In the case of <code>stew</code>, this list is a hidden object named &ldquo;.ingredients&rdquo;, located in the environment within which <code>stew</code> was called.</p>
 </td></tr>
-<tr><td><code id="reproducibility+20tools_:_timing">timing</code></td>
+<tr><td><code id="reproducibility_tools_:_timing">timing</code></td>
 <td>
 <p>logical.
 If <code>TRUE</code>, the time required for the computation is returned.
 This is returned as the &ldquo;system.time&rdquo; attribute of the returned object.</p>
 </td></tr>
-<tr><td><code id="reproducibility+20tools_:_dir">dir</code></td>
+<tr><td><code id="reproducibility_tools_:_dir">dir</code></td>
 <td>
 <p>Directory holding archive files;
 by default, this is the current working directory.
 This can also be set using the global option <code>pomp_archive_dir</code>.
 If it does not exist, this directory will be created (with a message).</p>
 </td></tr>
-<tr><td><code id="reproducibility+20tools_:_envir">envir</code></td>
+<tr><td><code id="reproducibility_tools_:_envir">envir</code></td>
 <td>
 <p>the <code>environment</code> in which <code>expr</code> is to
 be evaluated.  May also be <code>NULL</code>, a list, a data frame,
 a pairlist or an integer as specified to <code>sys.call</code>.</p>
 </td></tr>
-<tr><td><code id="reproducibility+20tools_:_enclos">enclos</code></td>
+<tr><td><code id="reproducibility_tools_:_enclos">enclos</code></td>
 <td>
 <p>Relevant when <code>envir</code> is a (pair)list or a data frame.
 Specifies the enclosure, i.e., where <span class="rlang"><b>R</b></span> looks for objects not found

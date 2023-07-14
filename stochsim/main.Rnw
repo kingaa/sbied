@@ -12,10 +12,8 @@ source("../_includes/setup.R", local = knitr::knit_global())
 
 <<doFuture,echo=FALSE,cache=FALSE>>=
 library(doFuture)
-library(doRNG)
-registerDoFuture()
 plan(multisession)
-registerDoRNG(2488820)
+set.seed(2488820)
 @
 
 \maketitle
@@ -66,7 +64,7 @@ registerDoRNG(2488820)
       S & susceptible & I & infected and infectious  \\
       R & recovered and/or removed  & C & reported cases
     \end{tabular}
-  \item We suppose that each arrow has an associated rate, so here there is a rate $\mu_{SI}(t)$ at which individuals in $S$ transition to $I$, and $\mu_{IR}$ at which individuals in $I$ transition to $R$. 
+  \item We suppose that each arrow has an associated rate, so here there is a rate $\mu_{SI}(t)$ at which individuals in $S$ transition to $I$, and $\mu_{IR}$ at which individuals in $I$ transition to $R$.
   \item To account for demography (births/deaths/migration) we allow the possibility of a source and sink compartment, which is not usually represented on the flow diagram. We write $\mu_{{\small{\bullet}}S}$ for a rate of births into $S$, and denote mortality rates by $\mu_{S{\small\bullet}}$, $\mu_{I{\small\bullet}}$, $\mu_{R{\small\bullet}}$.
   \item The rates may be either constant or varying. In particular, for a simple SIR model, the recovery rate $\mu_{IR}$ is a constant but the infection rate has the time-varying form
     $$\mu_{SI}(t)=\beta \, I(t),$$
@@ -85,9 +83,9 @@ registerDoRNG(2488820)
   A similarly constructed process
   $$N_{IR}(t)$$
   counts individuals transitioning from $I$ to $R$. To include demography, we could keep track of birth and death events by the counting processes $N_{{\small{\bullet}} S}(t)$, $N_{S{\small{\bullet}}}(t)$, $N_{I{\small{\bullet}}}(t)$, $N_{R{\small{\bullet}}}(t)$.
-  
+
   \framebreak
-  
+
   \begin{itemize}
   \item For discrete population compartment models, the flow counting processes are non-decreasing and integer valued.
   \item For continuous population compartment models, the flow counting processes are non-decreasing and real valued.
@@ -107,7 +105,7 @@ registerDoRNG(2488820)
       \end{aligned}
     \end{equation*}
 
-  \item These equations represent \emph{conservation of individuals} or \emph{what goes in must come out}. 
+  \item These equations represent \emph{conservation of individuals} or \emph{what goes in must come out}.
 
   \end{itemize}
 
@@ -150,9 +148,9 @@ registerDoRNG(2488820)
     \end{equation*}
 
   \item Here, we are using \myemph{little o notation}
-    We write 
+    We write
     $h(\delta)=o(\delta)$
-    to mean 
+    to mean
     $\lim_{\delta\to 0} \frac{h(\delta)}{\delta} = 0$.
   \end{itemize}
 \end{frame}
@@ -160,8 +158,8 @@ registerDoRNG(2488820)
 \begin{frame}{\myexercise}
 
   What is the link between little $o$ notation and the derivative?
-  Explain why 
-  $$f(x+\delta)=f(x)+ \delta g(x) + o(\delta)$$ 
+  Explain why
+  $$f(x+\delta)=f(x)+ \delta g(x) + o(\delta)$$
   is the same statement as
   $$ \frac{df}{dx} = g(x).$$
   What considerations might help you choose which of these notations to use?
@@ -179,7 +177,7 @@ registerDoRNG(2488820)
   \item Technically, the SIR Markov chain model we have written is simple.
   \item One may want to model the extra randomness resulting from multiple simultaneous events:
     someone sneezing in a bus; large gatherings at football matches; etc.
-    This extra randomness may even be critical to match the variability in data. 
+    This extra randomness may even be critical to match the variability in data.
   \item Later in the course, we may see situations where this extra randomness plays an important role.
     Setting up the model using counting processes, as we have done here, turns out to be useful for this.
   \end{itemize}
@@ -195,16 +193,16 @@ registerDoRNG(2488820)
   \item
     Euler (1707--1783) wanted a numeric solution of an ordinary differential equation (ODE)
     $dx/dt = h(x)$
-    with an initial condition $x(0)$. 
+    with an initial condition $x(0)$.
 
   \item
     He supposed this ODE has some true solution $x(t)$ which could not be worked out analytically.
     He wanted an approximation $\tilde{x}(t)$ of $x(t)$.
 
-  \item He initialized the numerical solution at the known starting value, 
+  \item He initialized the numerical solution at the known starting value,
     $$\tilde x(0)=x(0).$$
 
-  \item For $k=1,2,\dots$, he supposed that the gradient $dx/dt$ is approximately constant over the small time interval $k\delta\le t\le (k+1)\delta$. 
+  \item For $k=1,2,\dots$, he supposed that the gradient $dx/dt$ is approximately constant over the small time interval $k\delta\le t\le (k+1)\delta$.
     Therefore, he defined
     $$\tilde x\big( \,(k+1)\delta\,\big) = \tilde x( k\delta) + \delta \, h\big(\, \tilde x(k\delta)\,\big).$$
 
@@ -230,8 +228,8 @@ registerDoRNG(2488820)
 
 \begin{frame}[allowframebreaks=0.8]{Continuous-time models and discretized approximations}
   \begin{itemize}
-  \item In some physical and engineering situations, a system follows an ODE model closely. For example, Newton's laws provide a very good approximation to the motions of celestial bodies. 
-  \item In many biological situations, ODE models only become close mathematical approximations to reality at reasonably large scale. On small temporal scales, models cannot usually capture the full scope of biological variation and biological complexity. 
+  \item In some physical and engineering situations, a system follows an ODE model closely. For example, Newton's laws provide a very good approximation to the motions of celestial bodies.
+  \item In many biological situations, ODE models only become close mathematical approximations to reality at reasonably large scale. On small temporal scales, models cannot usually capture the full scope of biological variation and biological complexity.
   \item If we are going to expect substantial error in using $x(t)$ to model a biological system, maybe the numerical solution $\tilde x(t)$ represents the system being modeled as well as $x(t)$  does.
   \item If our model fitting, model investigation, and final conclusions are all based on our numerical solution  $\tilde x(t)$ (i.e., we are sticking entirely to simulation-based methods) then we are most immediately concerned with how well  $\tilde x(t)$ describes the system of interest.  $\tilde x(t)$ becomes more important than the original model, $x(t)$.
   \end{itemize}
@@ -239,10 +237,10 @@ registerDoRNG(2488820)
 
 \begin{frame}{Numerical solutions as scientific models}
   \begin{itemize}
-  \item It is important that a scientist fully describe the numerical model $\tilde x(t)$. 
+  \item It is important that a scientist fully describe the numerical model $\tilde x(t)$.
     Arguably, the main purpose of the original model $x(t)$ is to give a succinct description of how $\tilde x(t)$ was constructed.
   \item All numerical methods are, ultimately, discretizations. Epidemiologically, setting $\delta$ to be a day, or an hour, can be quite different from setting $\delta$ to be two weeks or a month. For continuous-time modeling, we still require that $\delta$ is small compared to the timescale of the process being modeled, so the choice of $\delta$ should not play an explicit role in the interpretation of the model.
-  \item Putting more emphasis on the scientific role of the numerical solution itself reminds you that the numerical solution has to do more than approximate a target model in some asymptotic sense: the numerical solution should be a sensible model in its own right. 
+  \item Putting more emphasis on the scientific role of the numerical solution itself reminds you that the numerical solution has to do more than approximate a target model in some asymptotic sense: the numerical solution should be a sensible model in its own right.
   \end{itemize}
 \end{frame}
 
@@ -256,9 +254,9 @@ registerDoRNG(2488820)
         \pr\big[N_{IR}(t+\delta)&\equals N_{IR}(t)+1\big] &\equals& \mu_{IR} \, I(t) \delta + o(\delta).
       \end{aligned}
     \end{equation*}
-  \item We want a numerical solution with state variables $\tilde S(k\delta)$, $\tilde I(k\delta)$, $\tilde R(k\delta)$. 
+  \item We want a numerical solution with state variables $\tilde S(k\delta)$, $\tilde I(k\delta)$, $\tilde R(k\delta)$.
   \item The counting processes for the flows between compartments are $\tilde N_{SI}(t)$ and $\tilde N_{IR}(t)$. The counting processes are related to the numbers of individuals in the compartments by the same flow equations we had before:
-    $$\begin{array}{lcl} 
+    $$\begin{array}{lcl}
     \tilde S(k\delta)&=& S(0) - \tilde N_{SI}(k\delta)
     \\
     \tilde I(k\delta)&=& I(0) + \tilde N_{SI}(k\delta) - \tilde N_{IR}(k\delta)
@@ -278,14 +276,14 @@ registerDoRNG(2488820)
   \begin{enumerate}[(1)]
   \item A Poisson approximation.
     $$\tilde N_{SI}(t+\delta)= \tilde N_{SI}(t) + \mathrm{Poisson}\big[\mu_{SI}\big(\tilde I(t)\big) \, \tilde S(t) \,\delta\big],$$
-    where $\mathrm{Poisson}(\mu)$ is a Poisson random variable with mean $\mu$ and 
+    where $\mathrm{Poisson}(\mu)$ is a Poisson random variable with mean $\mu$ and
     $$\mu_{SI}\big(\tilde I(t)\big) = \beta\, \tilde I(t).$$
 
   \item A binomial approximation,
     $$\tilde N_{SI}(t+\delta) = \tilde N_{SI}(t) + \mathrm{Binomial}\big[\tilde S(t),\mu_{SI}\big(\tilde I(t)\big) \, \delta\big],$$
     where $\mathrm{Binomial}(n,p)$ is a binomial random variable with mean $np$ and variance $np(1-p)$. Here, $p=\mu_{SI}\big(\tilde I(t)\big) \, \delta$.
 
-  \item A binomial approximation with exponential transition probabilities. 
+  \item A binomial approximation with exponential transition probabilities.
     $$ \tilde N_{SI}(t+\delta)= \tilde N_{SI}(t) + \mathrm{Binomial}\big[\tilde S(t),1-\exp\big\{-\mu_{SI}\big(\tilde I(t)\big) \delta\big\}\big].$$
 
   \end{enumerate}
@@ -293,7 +291,7 @@ registerDoRNG(2488820)
   \hrulefill
 
   Analytically, it is usually easiest to reason using (1) or (2).\\
-  Practically, it is usually preferable to work with (3). 
+  Practically, it is usually preferable to work with (3).
 
 \end{frame}
 
@@ -305,7 +303,7 @@ registerDoRNG(2488820)
       \deriv{X}{t} = h(X)+\sigma\,\deriv{B}{t}
     \end{equation*}
     where $\{B(t)\}$ is Brownian motion and so $dB/dt$ is Brownian noise.
-  \item An Euler approximation $\tilde X(t)$ is 
+  \item An Euler approximation $\tilde X(t)$ is
     \begin{equation*}
       \tilde{X}\big( \,(k+1)\delta\,\big) = \tilde{X}( k\delta) + \delta\, h\big(\, \tilde{X}k\delta)\,\big) + \sigma \sqrt{\delta} \, Z_k
     \end{equation*}
@@ -353,13 +351,13 @@ registerDoRNG(2488820)
   <<meas-data1>>=
   library(tidyverse)
   read_csv(paste0("https://kingaa.github.io/sbied/stochsim/",
-                  "Measles_Consett_1948.csv")) |>
+    "Measles_Consett_1948.csv")) |>
     select(week,reports=cases) -> meas
   meas |> as.data.frame() |> head()
   @
-  
+
   \framebreak
-  
+
   <<meas-data2,echo=FALSE>>=
   library(tidyverse)
   meas |>
@@ -367,7 +365,7 @@ registerDoRNG(2488820)
     geom_line()+
     geom_point()
   @
-  
+
 \end{frame}
 
 
@@ -408,11 +406,12 @@ registerDoRNG(2488820)
     $$\Delta{N_{SI}} \sim \dist{Binomial}{S,1-e^{-\beta\,\frac{I}{N}\,\Delta{t}}},$$
     and the number moving from I to R as
     $$\Delta{N_{IR}} \sim \dist{Binomial}{I,1-e^{-\mu_{IR}\,\Delta{t}}}.$$
-    
+
     \framebreak
 
     <<rproc1R>>=
-    sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t, ...) {
+    sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t, ...)
+    {
       dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
       dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
       S <- S - dN_SI
@@ -421,8 +420,7 @@ registerDoRNG(2488820)
       c(S = S, I = I, R = R)
     }
     @
-    
-    
+
   \item At day zero, we'll assume that $I=1$ but we don't know how many people are susceptible, so we'll treat this fraction, $\eta$, as a parameter to be estimated.
 
     <<init1R>>=
@@ -430,18 +428,18 @@ registerDoRNG(2488820)
       c(S = round(N*eta), I = 1, R = round(N*(1-eta)))
     }
     @
-    
+
   \item We fold these basic model components, with the data, into a \code{pomp} object thus:
 
     <<pomp1R>>=
     library(pomp)
     meas |>
       pomp(times="week",t0=0,
-           rprocess=euler(sir_step,delta.t=1/7),
-           rinit=sir_rinit
-           ) -> measSIR
+        rprocess=euler(sir_step,delta.t=1/7),
+        rinit=sir_rinit
+      ) -> measSIR
     @
-    
+
   \item Now assume the case reports result from a process by which new infections are diagnosed and reported with probability $\rho$, which we can think of as the probability that a child's parents take the child to the doctor, who recognizes measles and reports it to the authorities.
 
   \item Measles symptoms tend to be quite recognizable, and children with measles tend to be confined to bed. Therefore diagnosed cases have, presumably, a much lower transmission rate.
@@ -451,8 +449,8 @@ registerDoRNG(2488820)
     We modify our rprocess function above, adding a variable $H$ to tally the true incidence.
 
     <<rproc2R>>=
-    sir_step <- function (S, I, R, H, N, Beta, mu_IR, delta.t, ...)
-    {
+    sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t,
+      H, ...) {
       dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
       dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
       S <- S - dN_SI
@@ -466,19 +464,19 @@ registerDoRNG(2488820)
       c(S = round(N*eta), I = 1, R = round(N*(1-eta)), H = 0)
     }
     @
-    
+
   \item In \pkg{pomp} terminology, $H$ is an \myemph{accumulator variable}.
     Since we want $H$ to tally only the incidence over the week, we'll need to reset it to zero at the beginning of each week.
     We accomplish this using the \code{accumvars} argument to \code{pomp}:
 
     <<zero1R>>=
-    measSIR |> 
+    measSIR |>
       pomp(
         rprocess=euler(sir_step,delta.t=1/7),
         rinit=sir_rinit, accumvars="H"
       ) -> measSIR
     @
-    
+
   \item Now, we'll model the data by a negative binomial variable,
     \begin{equation*}
       \mathrm{reports}_t \sim \dist{NegBin}{\rho\,H(t),k}.
@@ -496,7 +494,7 @@ registerDoRNG(2488820)
       c(reports=rnbinom(n=1, size=k, mu=rho*H))
     }
     @
-    
+
   \item We then put these into our \code{pomp} object:
 
     <<add-meas-modelR>>=
@@ -506,12 +504,12 @@ registerDoRNG(2488820)
         dmeasure=sir_dmeas
       ) -> measSIR
     @
-    
+
     <<test_R_pomp,include=FALSE,purl=FALSE>>=
-    measSIR |> 
+    measSIR |>
       simulate(params=c(Beta=8,mu_IR=0.5,rho=0.5,k=10,N=38000,eta=1/10))
     @
-    
+
   \end{itemize}
 \end{frame}
 
@@ -528,55 +526,54 @@ registerDoRNG(2488820)
   \item C snippets are small pieces of C code used to specify basic model components.
 
   \item For example, a C snippet encoding the rprocess for an \code{sir} model is as follows.
-    
+
     <<csnips>>=
     sir_step <- Csnippet("
-  double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
-  double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
-  S -= dN_SI;
-  I += dN_SI - dN_IR;
-  R += dN_IR;
-  H += dN_IR;
-  ")
+      double dN_SI = rbinom(S,1-exp(-Beta*I/N*dt));
+      double dN_IR = rbinom(I,1-exp(-mu_IR*dt));
+      S -= dN_SI;
+      I += dN_SI - dN_IR;
+      R += dN_IR;
+      H += dN_IR;
+    ")
     @
-    
-  \item
-    C snippets for the initializer and measurement model are:
+
+  \item C snippets for the initializer and measurement model are:
 
     <<more-csnips>>=
     sir_rinit <- Csnippet("
-  S = nearbyint(eta*N);
-  I = 1;
-  R = nearbyint((1-eta)*N);
-  H = 0;
-  ")
+      S = nearbyint(eta*N);
+      I = 1;
+      R = nearbyint((1-eta)*N);
+      H = 0;
+    ")
 
     sir_dmeas <- Csnippet("
-  lik = dnbinom_mu(reports,k,rho*H,give_log);
-  ")
+      lik = dnbinom_mu(reports,k,rho*H,give_log);
+    ")
 
     sir_rmeas <- Csnippet("
-  reports = rnbinom_mu(k,rho*H);
-  ")
+      reports = rnbinom_mu(k,rho*H);
+    ")
     @
-    
+
   \item A call to \code{pomp} replaces the basic model components with these, much faster, implementations:
 
     <<sir_pomp>>=
     measSIR |>
       pomp(rprocess=euler(sir_step,delta.t=1/7),
-           rinit=sir_rinit,
-           rmeasure=sir_rmeas,
-           dmeasure=sir_dmeas,
-           accumvars="H",
-           statenames=c("S","I","R","H"),
-           paramnames=c("Beta","mu_IR","N","eta","rho","k")
-           ) -> measSIR
+        rinit=sir_rinit,
+        rmeasure=sir_rmeas,
+        dmeasure=sir_dmeas,
+        accumvars="H",
+        statenames=c("S","I","R","H"),
+        paramnames=c("Beta","mu_IR","N","eta","rho","k")
+      ) -> measSIR
     @
-    
+
   \item Note that, when using C snippets, one has to tell \pkg{pomp} which of the variables referenced in the C snippets are state variables and which are parameters.
     This is accomplished using the \code{statenames} and \code{paramnames} arguments.
-    
+
   \end{itemize}
 \end{frame}
 
@@ -613,15 +610,15 @@ registerDoRNG(2488820)
           eta=0.03,N=38000),
         nsim=20,format="data.frame",include.data=TRUE
       ) -> sims
-    
+
     sims |>
       ggplot(aes(x=week,y=reports,group=.id,color=.id=="data"))+
       geom_line()+
       guides(color="none")
     @
-    
+
     The data are in blue; the \Sexpr{length(levels(sims$.id))-1} simulations are shown in red.
-    
+
     Clearly, this leaves something to be desired.
     In the exercises, you'll see if this model can do better.
 
@@ -649,7 +646,7 @@ registerDoRNG(2488820)
 
   <<seir-diagram,child="../graphics/seir_diagram.Rnw",echo=FALSE,purl=FALSE,fig.height=3/4,fig.width=15/2>>=
   @
-  
+
   Modify the codes above to construct a \code{pomp} object containing the Consett measles data and an SEIR model.
   Perform simulations as above and adjust parameters to get a sense of whether improvement is possible by including a latent period.
 
@@ -657,7 +654,7 @@ registerDoRNG(2488820)
 
   \link{./exercises.html\#exercise-the-seir-model}{Worked solution to the Exercise}
 
-\end{frame} 
+\end{frame}
 
 
 \mode<presentation>{
@@ -692,7 +689,7 @@ registerDoRNG(2488820)
   \end{itemize}
 
   \link{index.html}{Back to Lesson}
-  
+
   \link{main.R}{\Rlanguage codes for this lesson}
 \end{frame}
 

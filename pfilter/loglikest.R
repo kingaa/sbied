@@ -4,7 +4,6 @@ list(prefix = "loglikest")
 library(tidyverse)
 library(pomp)
 set.seed(1221234211)
-
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 
 NP <- 10000
@@ -22,29 +21,29 @@ logmeanexp(ll,se=TRUE)
 
 
 
+
 bake(file="loglikest-pfilter.rds",{
   if (file.exists("CLUSTER.R")) {
     source("CLUSTER.R")
   } else {
     library(doFuture)
-    registerDoFuture()
-    plan(multisession)
   }
-  library(doRNG)
-  registerDoRNG(594717807L)
   expand_grid(
     rep=1:1000,
     NP=c(1000,10000,100000)
   ) -> design
   
   foreach (p=iter(design,"row"),
-           .inorder=FALSE, .combine=rbind) %dopar%
+    .combine=rbind,
+    .options.future=list(seed=TRUE)
+  ) %dofuture%
     {
       library(pomp)
       measSIR |> pfilter(Np=p$NP) -> pf
       cbind(p,loglik=logLik(pf))
     } -> lls
-  registerDoSEQ()
+  attr(lls,"ncpu") <- nbrOfWorkers()
+  plan(sequential)
   lls
 }) -> lls
 

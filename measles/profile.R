@@ -2,7 +2,6 @@ if (file.exists("CLUSTER.R")) {
   source("CLUSTER.R")
 } else {
   library(doFuture)
-  registerDoFuture()
   plan(multisession)
 }
 
@@ -71,17 +70,13 @@ pairs(~sigmaSE+R0+mu+sigma+gamma+S_0+E_0,data=pd)
 
 bake("sigmaSE-profile1.rds",{
 
-  library(doRNG)
-  registerDoRNG(1598260027L)
-  
   foreach (
     p=iter(pd,"row"),
-    .combine=bind_rows, .errorhandling="remove", .inorder=FALSE
-  ) %dopar% {
+    .combine=bind_rows, .errorhandling="remove",
+    .options.future=list(seed=1598260027L)
+  ) %dofuture% {
     
     tic <- Sys.time()
-    
-    library(pomp)
     
     m1 |> 
       mif2(
@@ -125,16 +120,12 @@ sigmaSE_prof |>
 
 bake("sigmaSE-profile2.rds",{
   
-  library(doRNG)
-  registerDoRNG(915963734L)
-  
   foreach (p=iter(pd,"row"),
-    .combine=rbind, .errorhandling="remove", .inorder=FALSE
-  ) %dopar% {
+    .combine=rbind, .errorhandling="remove",
+    .options.future=list(seed=915963734L)
+  ) %dofuture% {
     
     tic <- Sys.time()
-    
-    library(pomp)
     
     m1 |> 
       mif2(

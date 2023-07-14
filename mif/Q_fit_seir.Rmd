@@ -74,7 +74,6 @@ library(tidyverse)
 library(pomp)
 library(iterators)
 library(doFuture)
-library(doRNG)
 if (.Platform$OS.type=="windows") 
   options(pomp_cdir="./tmp")
 ```
@@ -175,7 +174,7 @@ The minimum effective sample size is `r round(min(pf1@eff.sample.size),0)`, whic
 ```{r mycores}
 #| eval: true
 #| purl: true
-registerDoFuture()
+
 plan(multisession)
 ```
 
@@ -186,12 +185,11 @@ Here, we're cooling quite slowly:
 the perturbation magnitude at the fiftieth iteration is half of what it was at the first.
 
 ```{r local_search}
-ncpu <- getDoParWorkers()
+ncpu <- nbrOfWorkers()
 bake(file="Q_fit_seir_local_mifs.rds",{
-  registerDoRNG(482947940)
-  foreach(i=seq_len(ncpu),.combine=c) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(i=seq_len(ncpu),.combine=c,
+    .options.future=list(seed=482947940)
+  ) %dofuture% {
     measSEIR |>
       mif2(
         Np=1000, Nmif=50,
@@ -218,10 +216,9 @@ As usual, we should evaluate the likelihoods using a particle filter, rather tha
 
 ```{r local_search_evaluations}
 bake(file="Q_fit_seir_local_logliks.rds",{
-  registerDoRNG(901242057)
-  foreach(mf=local_mifs,.combine=rbind) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(mf=local_mifs,.combine=rbind,
+    .options.future=list(seed=901242057)
+  ) %dofuture% {
     evals <- replicate(10, logLik(pfilter(mf,Np=2000)))
     ll <- logmeanexp(evals,se=TRUE)
     mf |> coef() |> bind_rows() |>
@@ -284,10 +281,9 @@ freeze(
   
 ```{r global_search_1_eval}
 bake(file="Q_fit_seir_global1.rds",{
-  registerDoRNG(1270401374)
-  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(guess=iter(guesses,"row"), .combine=rbind,
+    .options.future=list(seed=1270401374)
+  ) %dofuture% {
     measSEIR |>
       mif2(
         Nmif=100, Np=1000,
@@ -303,7 +299,7 @@ bake(file="Q_fit_seir_global1.rds",{
     mf |> coef() |> bind_rows() |>
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> global1
-  attr(global1,"ncpu") <- getDoParWorkers()
+  attr(global1,"ncpu") <- nbrOfWorkers()
   global1
 }) -> global1
 ```
@@ -352,10 +348,9 @@ freeze(
   
 ```{r global_search_2_eval}
 bake(file="Q_fit_seir_global2.rds",{
-  registerDoRNG(1270401374)
-  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(guess=iter(guesses,"row"), .combine=rbind,
+    .options.future=list(seed=1270401374)
+  ) %dofuture% {
     measSEIR |>
       mif2(
         Nmif=100, Np=1000,
@@ -374,7 +369,7 @@ bake(file="Q_fit_seir_global2.rds",{
     mf |> coef() |> bind_rows() |>
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> global2
-  attr(global2,"ncpu") <- getDoParWorkers()
+  attr(global2,"ncpu") <- nbrOfWorkers()
   global2
 }) -> global2
 ```
@@ -433,10 +428,9 @@ freeze(
 #| eval: false
 #| purl: true
 ## Uncomment this code chunk to perform the run-level 3 calculation!
-registerDoRNG(1270401374)
-foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-  library(tidyverse)
-  library(pomp)
+foreach(guess=iter(guesses,"row"), .combine=rbind,
+  .options.future=list(seed=1270401374)
+) %dofuture% {
   measSEIR |>
     mif2(
       Nmif=100, Np=1000,
@@ -462,7 +456,7 @@ foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
 #| purl: false
 bake(file="Q_fit_seir_global3.rds",{
   <<global_search_3b>>
-  attr(global3,"ncpu") <- getDoParWorkers()
+  attr(global3,"ncpu") <- nbrOfWorkers()
   global3
 }) -> global3
 ```
@@ -607,10 +601,9 @@ By the same method as before, we estimate that this should require `r mysignif(n
 #| eval: false
 #| purl: true
 ## Uncomment this code chunk to perform a profile computation
-registerDoRNG(1270401374)
-foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-  library(tidyverse)
-  library(pomp)
+foreach(guess=iter(guesses,"row"), .combine=rbind,
+  .options.future=list(seed=1270401374)
+) %dofuture% {
   measSEIR |>
     mif2(
       Nmif=100, Np=2000,
@@ -633,7 +626,7 @@ foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
 #| purl: false
 bake(file="Q_fit_seir_profile_rho1.rds",{
   <<profile_rho_1>>
-  attr(profile_rho,"ncpu") <- getDoParWorkers()
+  attr(profile_rho,"ncpu") <- nbrOfWorkers()
   profile_rho
 }) -> profile_rho
 ```

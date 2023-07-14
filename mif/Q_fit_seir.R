@@ -5,7 +5,6 @@ library(tidyverse)
 library(pomp)
 library(iterators)
 library(doFuture)
-library(doRNG)
 if (.Platform$OS.type=="windows") 
   options(pomp_cdir="./tmp")
 
@@ -64,15 +63,13 @@ measSEIR |>
 logLik(pf1)
 plot(pf1)
 
-registerDoFuture()
 plan(multisession)
 
-ncpu <- getDoParWorkers()
+ncpu <- nbrOfWorkers()
 bake(file="Q_fit_seir_local_mifs.rds",{
-  registerDoRNG(482947940)
-  foreach(i=seq_len(ncpu),.combine=c) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(i=seq_len(ncpu),.combine=c,
+    .options.future=list(seed=482947940)
+  ) %dofuture% {
     measSEIR |>
       mif2(
         Np=1000, Nmif=50,
@@ -91,10 +88,9 @@ local_mifs |>
   facet_wrap(~name,scales="free_y")
 
 bake(file="Q_fit_seir_local_logliks.rds",{
-  registerDoRNG(901242057)
-  foreach(mf=local_mifs,.combine=rbind) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(mf=local_mifs,.combine=rbind,
+    .options.future=list(seed=901242057)
+  ) %dofuture% {
     evals <- replicate(10, logLik(pfilter(mf,Np=2000)))
     ll <- logmeanexp(evals,se=TRUE)
     mf |> coef() |> bind_rows() |>
@@ -125,10 +121,9 @@ freeze(
 )-> guesses
 
 bake(file="Q_fit_seir_global1.rds",{
-  registerDoRNG(1270401374)
-  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(guess=iter(guesses,"row"), .combine=rbind,
+    .options.future=list(seed=1270401374)
+  ) %dofuture% {
     measSEIR |>
       mif2(
         Nmif=100, Np=1000,
@@ -144,7 +139,7 @@ bake(file="Q_fit_seir_global1.rds",{
     mf |> coef() |> bind_rows() |>
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> global1
-  attr(global1,"ncpu") <- getDoParWorkers()
+  attr(global1,"ncpu") <- nbrOfWorkers()
   global1
 }) -> global1
 
@@ -168,10 +163,9 @@ freeze(
 )-> guesses
 
 bake(file="Q_fit_seir_global2.rds",{
-  registerDoRNG(1270401374)
-  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(guess=iter(guesses,"row"), .combine=rbind,
+    .options.future=list(seed=1270401374)
+  ) %dofuture% {
     measSEIR |>
       mif2(
         Nmif=100, Np=1000,
@@ -190,7 +184,7 @@ bake(file="Q_fit_seir_global2.rds",{
     mf |> coef() |> bind_rows() |>
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> global2
-  attr(global2,"ncpu") <- getDoParWorkers()
+  attr(global2,"ncpu") <- nbrOfWorkers()
   global2
 }) -> global2
 
@@ -216,10 +210,9 @@ freeze(
 )-> guesses
 
 ## ## Uncomment this code chunk to perform the run-level 3 calculation!
-## registerDoRNG(1270401374)
-## foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-##   library(tidyverse)
-##   library(pomp)
+## foreach(guess=iter(guesses,"row"), .combine=rbind,
+##   .options.future=list(seed=1270401374)
+## ) %dofuture% {
 ##   measSEIR |>
 ##     mif2(
 ##       Nmif=100, Np=1000,
@@ -329,10 +322,9 @@ unit_cost <- (100*2000+10*2000)/1000*efactor
 nrow(guesses)*unit_cost/ncpu/60
 
 ## ## Uncomment this code chunk to perform a profile computation
-## registerDoRNG(1270401374)
-## foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-##   library(tidyverse)
-##   library(pomp)
+## foreach(guess=iter(guesses,"row"), .combine=rbind,
+##   .options.future=list(seed=1270401374)
+## ) %dofuture% {
 ##   measSEIR |>
 ##     mif2(
 ##       Nmif=100, Np=2000,

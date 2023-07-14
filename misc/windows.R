@@ -7,15 +7,16 @@ options(pomp_cdir="./tmp")
 
 library(tidyverse)
 library(pomp)
-
 library(doFuture)
-registerDoFuture()
-plan(multisession)
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 
-foreach (i=1:4,.combine=c) %dopar% {
-  library(pomp)
+plan(multisession)
+foreach (
+  i=1:4,
+  .combine=c,
+  .options.future=list(seed=TRUE)
+) %dofuture% {
   measSIR |>
     mif2(
       Np=1000, Nmif=5,
@@ -34,9 +35,13 @@ measSIR |>
     paramnames=c("Beta","rho","eta")
   ) -> measSIR2
 
-foreach (i=1:4,.combine=c) %dopar% {
+plan(multisession)
+foreach (
+  i=1:4,
+  .combine=c,
+  .options.future=list(seed=TRUE)
+) %dofuture% {
 ### No compilation is triggered inside the parallel code block.
-  library(pomp)
   measSIR2 |>
     mif2(
       Np=1000, Nmif=5,

@@ -7,8 +7,7 @@ library(tidyverse)
 library(pomp)
 library(iterators)
 library(doFuture)
-library(doRNG)
-registerDoFuture(); plan(multisession)
+plan(multisession)
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 
@@ -25,8 +24,9 @@ coef(measSIR) |> mysignif(3) |> t() |> t() |> knitr::kable()
 ## See https://kingaa.github.io/sbied/pfilter/bake.html
 ## for an explanation.
 bake(file="fitall_local_search.rds",{
-  registerDoRNG(482942941)
-  foreach(i=1:8,.combine=c) %dopar% {
+  foreach(i=1:8,.combine=c,
+    .options.future=list(seed=482942941)
+  ) %dofuture% {
     library(tidyverse)
     library(pomp)
     measSIR |>
@@ -38,7 +38,7 @@ bake(file="fitall_local_search.rds",{
         paramnames=c("Beta","rho","k","eta","mu_IR")
       )
   } -> mifs_local
-  attr(mifs_local,"ncpu") <- getDoParWorkers()
+  attr(mifs_local,"ncpu") <- nbrOfWorkers()
   mifs_local
 }) -> mifs_local
 t_loc <- attr(mifs_local,"system.time")
@@ -59,8 +59,9 @@ mifs_local |>
 ## See https://kingaa.github.io/sbied/pfilter/bake.html
 ## for an explanation.
 bake(file="fitall_lik_local.rds",{
-  registerDoRNG(908222057)
-  foreach(mf=mifs_local,.combine=rbind) %dopar% {
+  foreach(mf=mifs_local,.combine=rbind,
+    .options.future=list(seed=908222057)
+    ) %dofuture% {
     library(tidyverse)
     library(pomp)
     evals <- replicate(10, logLik(pfilter(mf,Np=2000)))
@@ -68,7 +69,7 @@ bake(file="fitall_lik_local.rds",{
     mf |> coef() |> bind_rows() |>
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> results
-  attr(results,"ncpu") <- getDoParWorkers()
+  attr(results,"ncpu") <- nbrOfWorkers()
   results
 }) -> results
 t_local <- attr(results,"system.time")
@@ -104,8 +105,9 @@ fixed_params <- coef(measSIR,c("N"))
 ## for an explanation.
 bake(file="fitall_global_search.rds",
   dependson="guesses",{
-  registerDoRNG(274481374)
-  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+  foreach(guess=iter(guesses,"row"), .combine=rbind,
+    .options.future=list(seed=274481374)
+  ) %dofuture% {
     library(tidyverse)
     library(pomp)
     mf1 |>
@@ -123,7 +125,7 @@ bake(file="fitall_global_search.rds",
     mf |> coef() |> bind_rows() |>
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> results
-  attr(results,"ncpu") <- getDoParWorkers()
+  attr(results,"ncpu") <- nbrOfWorkers()
   results
 }) -> results
 t_global <- attr(results,"system.time")
@@ -193,8 +195,9 @@ freeze(
 ## for an explanation.
 bake(file="fitall_eta_profile.rds",
   dependson="guesses",{
-  registerDoRNG(830007657)
-  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+  foreach(guess=iter(guesses,"row"), .combine=rbind,
+    .options.future=list(seed=830007657)
+  ) %dofuture% {
     library(tidyverse)
     library(pomp)
     mf1 |>
@@ -213,7 +216,7 @@ bake(file="fitall_eta_profile.rds",
     mf |> coef() |> bind_rows() |>
       bind_cols(loglik=ll[1],loglik.se=ll[2])
   } -> results
-  attr(results,"ncpu") <- getDoParWorkers()
+  attr(results,"ncpu") <- nbrOfWorkers()
   results
 }) -> results
 t_eta <- attr(results,"system.time")

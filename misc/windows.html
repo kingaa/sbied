@@ -365,7 +365,7 @@ pre code {
 <p>Some Windows users have reported trouble with the parallel codes used in several of the Lessons. Specifically, <strong>pomp</strong> codes that require compilation of C snippets trigger errors when executed in parallel on certain Windows machines.</p>
 <p>Calls that induce compilation include:</p>
 <ol style="list-style-type: decimal">
-<li>Every call to a <strong>pomp</strong> function in which a basic model component is specified using a C snippet. Recall that the basic model components include <code>rmeasure</code>, <code>dmeasure</code>, <code>rprocess</code>, <code>dprocess</code>, <code>skeleton</code>, <code>rprior</code>, <code>dprior</code>, <code>partrans</code>, and <code>rinit</code>. Whenever one of these arguments is furnished a <code>Csnippet</code>, the snippet is compiled.<br />
+<li>Every call to a <strong>pomp</strong> function in which a basic model component is specified using a C snippet. Recall that the basic model components include <code>rmeasure</code>, <code>dmeasure</code>, <code>rprocess</code>, <code>dprocess</code>, <code>skeleton</code>, <code>rprior</code>, <code>dprior</code>, <code>partrans</code>, <code>rinit</code>, and <code>dinit</code>. Whenever one of these arguments is furnished a <code>Csnippet</code>, the snippet is compiled.<br />
 </li>
 <li>Every call to a <strong>pomp</strong> function in which a parameter transformation is specified by giving the names of parameters to log-transform, logit-transform, or log-barycentric transform. Even though the user does not supply a <code>Csnippet</code> in such cases, each such call results in a <code>Csnippet</code> being written internally, and then compiled.</li>
 </ol>
@@ -376,15 +376,16 @@ pre code {
 <p>As an illustration, we will consider two code chunks. Before we do so, we load some packages, set up a parallel environment, and build the SIR model we have seen in the Lessons. The latter is stored in an object named <code>measSIR</code>.</p>
 <pre class="r"><code>library(tidyverse)
 library(pomp)
-
 library(doFuture)
-registerDoFuture()
-plan(multisession)
 
 source(&quot;https://kingaa.github.io/sbied/pfilter/model.R&quot;)</code></pre>
 <p>Now compare the following two code chunks. The first produces an error on many Windows machines:</p>
-<pre class="r"><code>foreach (i=1:4,.combine=c) %dopar% {
-  library(pomp)
+<pre class="r"><code>plan(multisession)
+foreach (
+  i=1:4,
+  .combine=c,
+  .options.future=list(seed=TRUE)
+) %dofuture% {
   measSIR |&gt;
     mif2(
       Np=1000, Nmif=5,
@@ -403,9 +404,13 @@ source(&quot;https://kingaa.github.io/sbied/pfilter/model.R&quot;)</code></pre>
     paramnames=c(&quot;Beta&quot;,&quot;rho&quot;,&quot;eta&quot;)
   ) -&gt; measSIR2
 
-foreach (i=1:4,.combine=c) %dopar% {
+plan(multisession)
+foreach (
+  i=1:4,
+  .combine=c,
+  .options.future=list(seed=TRUE)
+) %dofuture% {
 ### No compilation is triggered inside the parallel code block.
-  library(pomp)
   measSIR2 |&gt;
     mif2(
       Np=1000, Nmif=5,

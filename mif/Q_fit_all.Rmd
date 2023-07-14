@@ -54,8 +54,7 @@ library(tidyverse)
 library(pomp)
 library(iterators)
 library(doFuture)
-library(doRNG)
-registerDoFuture(); plan(multisession)
+plan(multisession)
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 
@@ -83,8 +82,9 @@ See [this discussion](./windows.html) for an explanation of how to circumvent th
 ```{r local_search}
 #| eval: false
 #| purl: false
-registerDoRNG(482942941)
-foreach(i=1:8,.combine=c) %dopar% {
+foreach(i=1:8,.combine=c,
+  .options.future=list(seed=482942941)
+) %dofuture% {
   library(tidyverse)
   library(pomp)
   measSIR |>
@@ -105,7 +105,7 @@ foreach(i=1:8,.combine=c) %dopar% {
 ## for an explanation.
 bake(file="fitall_local_search.rds",{
   <<local_search>>
-  attr(mifs_local,"ncpu") <- getDoParWorkers()
+  attr(mifs_local,"ncpu") <- nbrOfWorkers()
   mifs_local
 }) -> mifs_local
 t_loc <- attr(mifs_local,"system.time")
@@ -134,8 +134,9 @@ We now evaluate the log likelihood at each of the resulting points.
 ```{r lik_local}
 #| eval: false
 #| purl: false
-registerDoRNG(908222057)
-foreach(mf=mifs_local,.combine=rbind) %dopar% {
+foreach(mf=mifs_local,.combine=rbind,
+  .options.future=list(seed=908222057)
+  ) %dofuture% {
   library(tidyverse)
   library(pomp)
   evals <- replicate(10, logLik(pfilter(mf,Np=2000)))
@@ -152,7 +153,7 @@ foreach(mf=mifs_local,.combine=rbind) %dopar% {
 ## for an explanation.
 bake(file="fitall_lik_local.rds",{
   <<lik_local>>
-  attr(results,"ncpu") <- getDoParWorkers()
+  attr(results,"ncpu") <- nbrOfWorkers()
   results
 }) -> results
 t_local <- attr(results,"system.time")
@@ -212,8 +213,9 @@ The following may look somewhat familar.
 ```{r global1_search}
 #| eval: false
 #| purl: false
-registerDoRNG(274481374)
-foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+foreach(guess=iter(guesses,"row"), .combine=rbind,
+  .options.future=list(seed=274481374)
+) %dofuture% {
   library(tidyverse)
   library(pomp)
   mf1 |>
@@ -241,7 +243,7 @@ foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
 bake(file="fitall_global_search.rds",
   dependson="guesses",{
   <<global1_search>>
-  attr(results,"ncpu") <- getDoParWorkers()
+  attr(results,"ncpu") <- nbrOfWorkers()
   results
 }) -> results
 t_global <- attr(results,"system.time")
@@ -330,8 +332,9 @@ freeze(
 ```{r eta_profile2}
 #| eval: false
 #| purl: false
-registerDoRNG(830007657)
-foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+foreach(guess=iter(guesses,"row"), .combine=rbind,
+  .options.future=list(seed=830007657)
+) %dofuture% {
   library(tidyverse)
   library(pomp)
   mf1 |>
@@ -360,7 +363,7 @@ foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
 bake(file="fitall_eta_profile.rds",
   dependson="guesses",{
   <<eta_profile2>>
-  attr(results,"ncpu") <- getDoParWorkers()
+  attr(results,"ncpu") <- nbrOfWorkers()
   results
 }) -> results
 t_eta <- attr(results,"system.time")

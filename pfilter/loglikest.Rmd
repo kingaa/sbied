@@ -42,15 +42,13 @@ Optionally, take advantage of multiple cores on your computer to improve your es
 ```{r knitr-opts,include=FALSE,purl=FALSE}
 source("../_includes/setup.R", local = knitr::knit_global())
 ```
-```{r prelims,purl=TRUE,cache=FALSE,include=FALSE}
-library(tidyverse)
-library(pomp)
-set.seed(1221234211)
-```
 
 First, we construct the model we've been exploring in the Lesson.
 
 ```{r model-construct}
+library(tidyverse)
+library(pomp)
+set.seed(1221234211)
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 ```
 
@@ -82,22 +80,18 @@ Now, let us evaluate the dependence of log likelihood estimates on particle size
 We first set up a parallel computation environment.
 
 ```{r parallel_setup,eval=FALSE,purl=FALSE}
-library(iterators)
 library(doFuture)
-library(doRNG)
-registerDoFuture()
-registerDoRNG(594717807L)
+library(iterators)
+plan(multisession)
+set.seed(594717807L)
 ```
+
 ```{r cluster,purl=FALSE,eval=FALSE,include=FALSE}
 if (file.exists("CLUSTER.R")) {
   source("CLUSTER.R")
 } else {
   library(doFuture)
-  registerDoFuture()
-  plan(multisession)
 }
-library(doRNG)
-registerDoRNG(594717807L)
 ```
 
 ```{r comps,eval=FALSE,purl=FALSE}
@@ -107,7 +101,9 @@ expand_grid(
 ) -> design
 
 foreach (p=iter(design,"row"),
-         .inorder=FALSE, .combine=rbind) %dopar%
+  .combine=rbind,
+  .options.future=list(seed=TRUE)
+) %dofuture%
   {
     library(pomp)
     measSIR |> pfilter(Np=p$NP) -> pf
@@ -117,8 +113,9 @@ foreach (p=iter(design,"row"),
 ```{r comps-eval,include=FALSE}
 bake(file="loglikest-pfilter.rds",{
   <<cluster>>
-  <<comps>> 
-  registerDoSEQ()
+  <<comps>>
+  attr(lls,"ncpu") <- nbrOfWorkers()
+  plan(sequential)
   lls
 }) -> lls
 ```

@@ -12,7 +12,7 @@ source("../_includes/setup.R", local = knitr::knit_global())
 library(tidyverse)
 library(pomp)
 library(doFuture)
-registerDoFuture(); plan(multisession)
+ plan(multisession)
 library(doRNG)
 options(
   dplyr.summarise.inform=FALSE,
@@ -635,7 +635,7 @@ options(
 
   <<parallel-setup,eval=FALSE>>=
   library(doFuture)
-  registerDoFuture()
+  
   plan(multisession)
   library(doRNG)
   @
@@ -651,7 +651,7 @@ options(
   \end{itemize}
   
   <<cache-cores>>=
-  cores <- getDoParWorkers()
+  cores <- nbrOfWorkers()
   bake(file="cores.rds",cores) -> cores
   @
   \begin{itemize}
@@ -669,7 +669,7 @@ options(
   stew(file="pf1.rda",{
     registerDoRNG(3899882)
     pf1 <- foreach(i=1:20,.packages="pomp",
-      .export=c("polio","Np")) %dopar%
+      .export=c("polio","Np")) %dofuture%
       pfilter(polio,Np=Np)
   },info=TRUE,dependson=Np)
   L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
@@ -866,11 +866,11 @@ options(
   
   stew(file="mif.rda",{
     m2 <- foreach(i=1:Nreps_local,
-      .packages="pomp",.combine=c,.export=exl) %dopar%
+      .packages="pomp",.combine=c,.export=exl) %dofuture%
     mif2(polio, Np=Np, Nmif=Nmif, rw.sd=mif.rw.sd,
         cooling.fraction.50=0.5)
     lik_m2 <- foreach(m=m2,.packages="pomp",.combine=rbind,
-      .export=exl) %dopar%
+      .export=exl) %dofuture%
       logmeanexp(replicate(Nreps_eval,
         logLik(pfilter(m,Np=Np))),se=TRUE)
   },dependson=run_level)
@@ -955,14 +955,14 @@ options(
   bake(file="box_eval1.rds",{
     registerDoRNG(833102018)
     foreach(i=1:Nreps_global,.packages="pomp",
-      .combine=c) %dopar%
+      .combine=c) %dofuture%
       mif2(m2[[1]],params=c(fixed_params,
         apply(box,1,function(x)runif(1,x[1],x[2]))))
   },dependson=run_level) -> m3
   bake(file="box_eval2.rds",{
     registerDoRNG(71449038)
     foreach(m=m3,.packages="pomp",
-      .combine=rbind) %dopar%
+      .combine=rbind) %dofuture%
       logmeanexp(replicate(Nreps_eval,
         logLik(pfilter(m,Np=Np))),se=TRUE)
   },dependson=run_level) -> lik_m3
@@ -1161,7 +1161,7 @@ options(
   bake(file="profile_rho.rds",{  
     registerDoRNG(1888257101)
     foreach(start=iter(starts,"row"),.combine=rbind,
-      .packages=c("pomp","dplyr")) %dopar% {
+      .packages=c("pomp","dplyr")) %dofuture% {
         polio |> mif2(params=start,
           Np=Np,Nmif=ceiling(Nmif/2),
           cooling.fraction.50=0.5,

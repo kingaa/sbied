@@ -34,7 +34,7 @@ Specifically, **pomp** codes that require compilation of C snippets trigger erro
 Calls that induce compilation include:
 
 1. Every call to a **pomp** function in which a basic model component is specified using a C snippet.
-Recall that the basic model components include `rmeasure`, `dmeasure`, `rprocess`, `dprocess`, `skeleton`, `rprior`, `dprior`, `partrans`, and `rinit`.
+Recall that the basic model components include `rmeasure`, `dmeasure`, `rprocess`, `dprocess`, `skeleton`, `rprior`, `dprior`, `partrans`, `rinit`, and `dinit`.
 Whenever one of these arguments is furnished a `Csnippet`, the snippet is compiled.  
 2. Every call to a **pomp** function in which a parameter transformation is specified by giving the names of parameters to log-transform, logit-transform, or log-barycentric transform.
 Even though the user does not supply a `Csnippet` in such cases, each such call results in a `Csnippet` being written internally, and then compiled.
@@ -63,10 +63,7 @@ The latter is stored in an object named `measSIR`.
 #| results: hide
 library(tidyverse)
 library(pomp)
-
 library(doFuture)
-registerDoFuture()
-plan(multisession)
 
 source("https://kingaa.github.io/sbied/pfilter/model.R")
 ```
@@ -77,8 +74,12 @@ The first produces an error on many Windows machines:
 ```{r snip1}
 #| message: false
 #| results: hide
-foreach (i=1:4,.combine=c) %dopar% {
-  library(pomp)
+plan(multisession)
+foreach (
+  i=1:4,
+  .combine=c,
+  .options.future=list(seed=TRUE)
+) %dofuture% {
   measSIR |>
     mif2(
       Np=1000, Nmif=5,
@@ -103,9 +104,13 @@ measSIR |>
     paramnames=c("Beta","rho","eta")
   ) -> measSIR2
 
-foreach (i=1:4,.combine=c) %dopar% {
+plan(multisession)
+foreach (
+  i=1:4,
+  .combine=c,
+  .options.future=list(seed=TRUE)
+) %dofuture% {
 ### No compilation is triggered inside the parallel code block.
-  library(pomp)
   measSIR2 |>
     mif2(
       Np=1000, Nmif=5,

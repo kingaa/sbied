@@ -42,7 +42,6 @@ library(tidyverse)
 library(pomp)
 library(iterators)
 library(doFuture)
-library(doRNG)
 ```
 
 Construct the pomp object for the Consett measles example
@@ -58,14 +57,12 @@ expand_grid(
   Np=ceiling(10^seq(1,5,by=0.2))
 ) -> design
 
-registerDoFuture()
-registerDoRNG()
 plan(multisession)
-
 foreach (
   expt=iter(design,"row"),
-  .combine=bind_rows
-) %dopar% {
+  .combine=bind_rows,
+  .options.future=list(seed=TRUE)
+) %dofuture% {
   system.time(measSIR |> pfilter(Np=expt$Np))[3] -> expt$time
   expt
 } -> resultA
@@ -99,10 +96,12 @@ How does the computation scale with the length of the time series?
 measSIR |>
   window(end=21) -> shortMeasSIR
 
+plan(multisession)
 foreach (
   expt=iter(design,"row"),
-  .combine=bind_rows
-) %dopar% {
+  .combine=bind_rows,
+  .options.future=list(seed=TRUE)
+) %dofuture% {
   system.time(shortMeasSIR |> pfilter(Np=expt$Np))[3] -> expt$time
   expt
 } -> resultB

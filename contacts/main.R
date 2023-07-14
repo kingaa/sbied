@@ -2,9 +2,9 @@ DEBUG <- FALSE
 # DEBUG <- TRUE
 library(doFuture)
 library(doRNG)
-registerDoFuture(); plan(multisession)
+ plan(multisession)
 registerDoRNG(2050320976)
-cores <- getDoParWorkers()
+cores <- nbrOfWorkers()
 
 
 
@@ -30,7 +30,7 @@ coef(contacts)
 stew("pfilter1.rda",{
   tic <- Sys.time()
   eval_cores <- cores
-  pf1_results <- foreach(i=1:20) %dopar% {
+  pf1_results <- foreach(i=1:20) %dofuture% {
     library(panelPomp)
     pf <- pfilter(contacts,Np= if(DEBUG) 10 else 2000)
     list(logLik=logLik(pf),
@@ -50,7 +50,7 @@ panel_logmeanexp(pf1_loglik_matrix,MARGIN=1,se=T)
 stew("mif1.rda",{
   mif_cores <- cores
   tic <- Sys.time()
-mif_results <- foreach(i=1:20) %dopar% {
+mif_results <- foreach(i=1:20) %dofuture% {
   library(pomp); library(panelPomp)
   mf <- mif2(contacts,
     Nmif = if(DEBUG) 2 else 50,
@@ -71,7 +71,7 @@ stew("mif1-lik-eval.rda",{
 tic <- Sys.time()
 mif_logLik <-  sapply(mif_results,function(x)x$logLik)
 mif_mle <- mif_results[[which.max(mif_logLik)]]$params
-pf3_loglik_matrix <- foreach(i=1:10,.combine=rbind) %dopar% {
+pf3_loglik_matrix <- foreach(i=1:10,.combine=rbind) %dofuture% {
   library(panelPomp)
   unitlogLik(pfilter(contacts,
     shared=mif_mle,Np=if(DEBUG) 50 else 10000))

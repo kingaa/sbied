@@ -184,11 +184,11 @@ mle[paramnames] |> unlist() -> theta
 mle |> select(-S_0,-E_0,-I_0,-R_0) |> as.data.frame()
 
 ## ----pfilter1a-----------------------------------------------
-library(doFuture); library(doRNG)
-registerDoFuture(); plan(multicore)
-registerDoRNG(998468235L)
-foreach(i=1:4, .combine=c) %dopar% {
-  library(pomp)
+library(doFuture)
+plan(multicore)
+foreach(i=1:4, .combine=c,
+  .options.future=list(seed=998468235L)
+) %dopar% {
   pfilter(m1,Np=10000,params=theta)
 } -> pfs
 ## ----pfilter1b-----------------------------------------------

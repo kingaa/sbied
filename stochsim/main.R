@@ -1,12 +1,10 @@
 library(doFuture)
-library(doRNG)
-registerDoFuture()
 plan(multisession)
-registerDoRNG(2488820)
+set.seed(2488820)
 
 library(tidyverse)
 read_csv(paste0("https://kingaa.github.io/sbied/stochsim/",
-                "Measles_Consett_1948.csv")) |>
+  "Measles_Consett_1948.csv")) |>
   select(week,reports=cases) -> meas
 meas |> as.data.frame() |> head()
 
@@ -16,7 +14,8 @@ meas |>
   geom_line()+
   geom_point()
 
-sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t, ...) {
+sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t, ...)
+{
   dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
   dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
   S <- S - dN_SI
@@ -32,12 +31,12 @@ sir_rinit <- function (N, eta, ...) {
 library(pomp)
 meas |>
   pomp(times="week",t0=0,
-       rprocess=euler(sir_step,delta.t=1/7),
-       rinit=sir_rinit
-       ) -> measSIR
+    rprocess=euler(sir_step,delta.t=1/7),
+    rinit=sir_rinit
+  ) -> measSIR
 
-sir_step <- function (S, I, R, H, N, Beta, mu_IR, delta.t, ...)
-{
+sir_step <- function (S, I, R, N, Beta, mu_IR, delta.t,
+  H, ...) {
   dN_SI <- rbinom(n=1,size=S,prob=1-exp(-Beta*I/N*delta.t))
   dN_IR <- rbinom(n=1,size=I,prob=1-exp(-mu_IR*delta.t))
   S <- S - dN_SI
@@ -51,7 +50,7 @@ sir_rinit <- function (N, eta, ...) {
   c(S = round(N*eta), I = 1, R = round(N*(1-eta)), H = 0)
 }
 
-measSIR |> 
+measSIR |>
   pomp(
     rprocess=euler(sir_step,delta.t=1/7),
     rinit=sir_rinit, accumvars="H"
@@ -80,32 +79,32 @@ sir_step <- Csnippet("
   I += dN_SI - dN_IR;
   R += dN_IR;
   H += dN_IR;
-  ")
+")
 
 sir_rinit <- Csnippet("
   S = nearbyint(eta*N);
   I = 1;
   R = nearbyint((1-eta)*N);
   H = 0;
-  ")
+")
 
 sir_dmeas <- Csnippet("
   lik = dnbinom_mu(reports,k,rho*H,give_log);
-  ")
+")
 
 sir_rmeas <- Csnippet("
   reports = rnbinom_mu(k,rho*H);
-  ")
+")
 
 measSIR |>
   pomp(rprocess=euler(sir_step,delta.t=1/7),
-       rinit=sir_rinit,
-       rmeasure=sir_rmeas,
-       dmeasure=sir_dmeas,
-       accumvars="H",
-       statenames=c("S","I","R","H"),
-       paramnames=c("Beta","mu_IR","N","eta","rho","k")
-       ) -> measSIR
+    rinit=sir_rinit,
+    rmeasure=sir_rmeas,
+    dmeasure=sir_dmeas,
+    accumvars="H",
+    statenames=c("S","I","R","H"),
+    paramnames=c("Beta","mu_IR","N","eta","rho","k")
+  ) -> measSIR
 
 measSIR |>
   simulate(

@@ -247,7 +247,7 @@ set.seed(1350254336)
 
   Let us apply IF2 to our analysis of the Consett measles outbreak we began to examine in Lessons 2 and 3.
 
-  The following loads the data and the stochastic SIR model we constructed there.
+  The following loads the data, \pkg{pomp}, and the stochastic SIR model we constructed there.
 
   <<model-construct>>=
   source("https://kingaa.github.io/sbied/pfilter/model.R")
@@ -311,12 +311,7 @@ set.seed(1350254336)
   <<parallel-setup,cache=FALSE>>=
   library(foreach)
   library(doFuture)
-  registerDoFuture()
   plan(multisession)
-  @ 
-  <<pf1,eval=FALSE,purl=FALSE>>=
-  library(doRNG)
-  registerDoRNG(625904618)
   @ 
 \end{frame}
 
@@ -325,8 +320,9 @@ set.seed(1350254336)
   We proceed to carry out replicated particle filters at an initial guess of $\beta=\Sexpr{coef(measSIR,"Beta")}$, $\eta=\Sexpr{coef(measSIR,"eta")}$, and $\rho=\Sexpr{coef(measSIR,"rho")}$.
   
   <<pf2,eval=FALSE,purl=FALSE>>=
-  foreach(i=1:10,.combine=c) %dopar% {
-    library(pomp)
+  foreach(i=1:10,.combine=c,
+    .options.future=list(seed=TRUE)
+  ) %dofuture% {
     measSIR |> pfilter(Np=5000)
   } -> pf
 
@@ -341,7 +337,7 @@ set.seed(1350254336)
   toc <- Sys.time()
   @
   
-  In \Sexpr{round(toc-tic,2)} seconds, using \Sexpr{min(getDoParWorkers(),length(pf))} cores, we obtain an unbiased likelihood estimate of \Sexpr{round(L_pf[1],1)} with a Monte Carlo standard error of \Sexpr{signif(L_pf[2],2)}.
+  In \Sexpr{round(toc-tic,2)} seconds, using \Sexpr{min(nbrOfWorkers(),length(pf))} cores, we obtain an unbiased likelihood estimate of \Sexpr{round(L_pf[1],1)} with a Monte Carlo standard error of \Sexpr{signif(L_pf[2],2)}.
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks=0.7]{Building up a picture of the likelihood surface}
@@ -376,9 +372,9 @@ set.seed(1350254336)
   \end{itemize}
   
   <<local_search,eval=FALSE,purl=FALSE>>=
-  foreach(i=1:20,.combine=c) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(i=1:20,.combine=c,
+    .options.future=list(seed=482947940)
+  ) %dofuture% {
     measSIR |>
       mif2(
         Np=2000, Nmif=50,
@@ -394,9 +390,8 @@ set.seed(1350254336)
   ## See https://kingaa.github.io/sbied/pfilter/bake.html
   ## for an explanation.
   bake(file="local_search.rds",{
-    registerDoRNG(482947940)
     <<local_search>>
-    attr(mifs_local,"ncpu") <- getDoParWorkers()
+    attr(mifs_local,"ncpu") <- nbrOfWorkers()
     mifs_local
   }) -> mifs_local
   t_loc <- attr(mifs_local,"system.time")
@@ -453,9 +448,9 @@ set.seed(1350254336)
   Therefore, we evaluate the likelihood, together with a standard error, using replicated particle filters at each point estimate.
   
   <<lik_local,eval=FALSE,purl=FALSE>>=
-  foreach(mf=mifs_local,.combine=rbind) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(mf=mifs_local,.combine=rbind,
+    .options.future=list(seed=900242057)
+  ) %dofuture% {
     evals <- replicate(10, logLik(pfilter(mf,Np=5000)))
     ll <- logmeanexp(evals,se=TRUE)
     mf |> coef() |> bind_rows() |>
@@ -465,9 +460,8 @@ set.seed(1350254336)
   
   <<lik_local_eval,include=FALSE>>=
   bake(file="lik_local.rds",{
-    registerDoRNG(900242057)
     <<lik_local>>
-    attr(results,"ncpu") <- getDoParWorkers()
+    attr(results,"ncpu") <- nbrOfWorkers()
     results
   }) -> results
   t_local <- attr(results,"system.time")
@@ -543,9 +537,9 @@ set.seed(1350254336)
   @
   
   <<global_search2,eval=FALSE,purl=FALSE>>=
-  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(guess=iter(guesses,"row"), .combine=rbind,
+    .options.future=list(seed=1270401374)
+  ) %dofuture% {
     mf1 |>
       mif2(params=c(guess,fixed_params)) |>
       mif2(Nmif=100) -> mf
@@ -561,9 +555,8 @@ set.seed(1350254336)
   <<global_search_eval,include=FALSE>>=
   bake(file="global_search.rds",
     dependson=guesses,{
-      registerDoRNG(1270401374)
       <<global_search2>>
-      attr(results,"ncpu") <- getDoParWorkers()
+      attr(results,"ncpu") <- nbrOfWorkers()
       results
     }) |>
     filter(is.finite(loglik)) -> results
@@ -682,9 +675,9 @@ set.seed(1350254336)
   \framebreak
 
   <<eta_profile2,eval=FALSE,purl=FALSE>>=
-  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(guess=iter(guesses,"row"), .combine=rbind,
+    .options.future=list(seed=830007657)
+  ) %dofuture% {
     mf1 |>
       mif2(params=c(guess,fixed_params),
         rw.sd=rw_sd(Beta=0.02,rho=0.02)) |>
@@ -702,9 +695,8 @@ set.seed(1350254336)
   mf1 <- mifs_local[[1]]
   bake(file="eta_profile.rds",
     dependson=guesses,{
-      registerDoRNG(830007657)
       <<eta_profile2>>
-      attr(results,"ncpu") <- getDoParWorkers()
+      attr(results,"ncpu") <- nbrOfWorkers()
       results
     }) -> results
   t_eta <- attr(results,"system.time")
@@ -833,9 +825,9 @@ set.seed(1350254336)
   \framebreak
 
   <<rho_profile2,eval=FALSE,purl=FALSE>>=
-  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(guess=iter(guesses,"row"), .combine=rbind,
+    .options.future=list(seed=2105684752)
+  ) %dofuture% {
     mf1 |>
       mif2(params=guess,
         rw.sd=rw_sd(Beta=0.02,eta=ivp(0.02))) |>
@@ -853,9 +845,8 @@ set.seed(1350254336)
   mf1 <- mifs_local[[1]]
   bake(file="rho_profile.rds",
     dependson=guesses,{
-      registerDoRNG(2105684752)
       <<rho_profile2>>
-      attr(results,"ncpu") <- getDoParWorkers()
+      attr(results,"ncpu") <- nbrOfWorkers()
       results
     }) -> results
   t_rho <- attr(results,"system.time")
@@ -961,8 +952,6 @@ set.seed(1350254336)
   For each of the starting points, we'll first perform 100 IF2 iterations:
 
   <<exp_global_search2a,eval=FALSE,purl=FALSE>>=
-  library(tidyverse)
-  library(pomp)
   measSIR |>
     mif2(params=guess, Np=2000, Nmif=100,
       cooling.fraction.50=0.5,
@@ -998,8 +987,10 @@ set.seed(1350254336)
   <<exp_global_search_eval,include=FALSE>>=
   bake(file="global_search2.rds",
     dependson=guesses,{
-      registerDoRNG(610408798)
-      foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
+      foreach(
+        guess=iter(guesses,"row"), .combine=rbind,
+        .options.future=list(seed=610408798)
+      ) %dofuture% {
         <<exp_global_search2a>>
         <<exp_global_search2b>>
         replicate(
@@ -1009,7 +1000,7 @@ set.seed(1350254336)
         mf |> coef() |> bind_rows() |>
           bind_cols(loglik=ll[1],loglik.se=ll[2])
       } -> results
-      attr(results,"ncpu") <- getDoParWorkers()
+      attr(results,"ncpu") <- nbrOfWorkers()
       results
     }) |>
     filter(is.finite(loglik)) -> results
@@ -1085,15 +1076,16 @@ set.seed(1350254336)
   \framebreak
 
   <<mu_IR_profile2,eval=FALSE,purl=FALSE>>=
-  foreach(guess=iter(guesses,"row"), .combine=rbind) %dopar% {
-    library(tidyverse)
-    library(pomp)
+  foreach(guess=iter(guesses,"row"), .combine=rbind,
+    .options.future=list(seed=610408798)
+  ) %dofuture% {
     measSIR |>
       mif2(params=guess, Np=2000, Nmif=100,
         partrans=parameter_trans(log="Beta",logit="eta"),
         paramnames=c("Beta","eta"), cooling.fraction.50=0.5,
         rw.sd=rw_sd(Beta=0.02,eta=ivp(0.02))
-      ) |> mif2(Nmif=100) |>
+      ) |>
+      mif2(Nmif=100) |>
       mif2(Nmif=100,rw.sd=rw_sd(Beta=0.01,eta=ivp(0.01))) |>
       mif2(Nmif=100,rw.sd=rw_sd(Beta=0.005,eta=ivp(0.005))) -> mf
     replicate(10,mf |> pfilter(Np=5000) |> logLik()) |>
@@ -1106,9 +1098,8 @@ set.seed(1350254336)
   <<mu_IR_profile_eval,include=FALSE>>=
   bake(file="mu_IR_profile1.rds",
     dependson=guesses,{
-      registerDoRNG(610408798)
       <<mu_IR_profile2>>
-      attr(results,"ncpu") <- getDoParWorkers()
+      attr(results,"ncpu") <- nbrOfWorkers()
       results
     }) |>
     filter(is.finite(loglik)) -> results

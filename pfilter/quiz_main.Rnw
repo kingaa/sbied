@@ -80,10 +80,12 @@ with cholera mortality rate 8\% and other parameters fixed at the default values
   <<Q9>>=
   d <- dacca(deltaI=0.08)
   library(doFuture)
-  registerDoFuture()
   plan(multisession)
+
   bake(file="Q9.rds",{
-    foreach(i=1:32,.combine=c) %dopar% {
+    foreach(i=1:32,.combine=c,
+      .options.future=list(seed=TRUE)
+    ) %dofuture% {
       library(pomp)
       logLik(pfilter(d,Np=10000))
     }
