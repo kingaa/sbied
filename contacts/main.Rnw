@@ -8,17 +8,11 @@
 
 <<knitr_opts,include=FALSE,cache=FALSE,purl=FALSE>>=
 source("../_includes/setup.R", local = knitr::knit_global())
-stopifnot(packageVersion("panelPomp")>="0.15.0")
+stopifnot(packageVersion("panelPomp")>="1.1")
 @
 
 <<parallel,echo=FALSE,cache=FALSE,purl=TRUE>>=
-DEBUG <- FALSE
-# DEBUG <- TRUE
 library(doFuture)
-library(doRNG)
- plan(multisession)
-registerDoRNG(2050320976)
-cores <- nbrOfWorkers()
 @
 
 \maketitle
@@ -73,30 +67,30 @@ cores <- nbrOfWorkers()
 
   \bi
 
-\item Basic epidemiological models suppose equal contact rates for all individuals in a population. 
+\item Basic epidemiological models suppose equal contact rates for all individuals in a population.
 
-\item Sometimes these models are extended to permit rate heterogeneity between individuals. 
+\item Sometimes these models are extended to permit rate heterogeneity between individuals.
 
-\item Rate heterogeneity within individuals, i.e., dynamic behavioral change, has rarely been considered. 
+\item Rate heterogeneity within individuals, i.e., dynamic behavioral change, has rarely been considered.
 
-\item There have been some indications that rate heterogeneity plays a substantial role in the HIV epidemic. 
+\item There have been some indications that rate heterogeneity plays a substantial role in the HIV epidemic.
 
   \ei
 
 \end{frame}
 
-\begin{frame}[fragile]  
+\begin{frame}[fragile]
 
   \frametitle{Data from a prospective study}
 
   \bi
 
 \item \citet{Romero-Severson2015} investigated whether dynamic variation in sexual contact rates are a real and measurable phenomenon.
-\item They analyzed a large cohort study of HIV-negative gay men in 3 cities \citep{Vittinghoff1999}. 
+\item They analyzed a large cohort study of HIV-negative gay men in 3 cities \citep{Vittinghoff1999}.
 
 \item In a simple model for HIV, with a fully mixing population of susceptible and infected individuals, the fitted variation found by \citet{Romero-Severson2015} can explain the observed prevalence history in the US despite the low per-contact infectivity of HIV.
 
-\item Here, we consider the longitudinal data from \citet{Vittinghoff1999} on total sexual contacts over four consecutive 6-month periods, for the 882 men having no missing observations. 
+\item Here, we consider the longitudinal data from \citet{Vittinghoff1999} on total sexual contacts over four consecutive 6-month periods, for the 882 men having no missing observations.
 
   \ei
 
@@ -113,22 +107,22 @@ cores <- nbrOfWorkers()
   <<data_code,echo=T,eval=F,purl=F>>=
   contact_data <- read.table(file="contacts.csv",header=TRUE)
   matplot(t(contact_data[1:15,1:4]),
-          ylab="total sexual contacts",xlab="6-month intervals", 
-          type="l",xaxp=c(1,4,3))
+    ylab="total sexual contacts",xlab="6-month intervals",
+    type="l",xaxp=c(1,4,3))
   @
-  
+
   \hspace{-10mm}
 
   <<data_plot,echo=F,eval=T,fig.width=5,fig.height=3,out.width="10cm">>=
   par(mai=c(0.8,0.8,0.1,0.1))
   <<data_code>>
   @
-  
+
 \end{frame}
 
 \frametitle{Modeling sexual contact rate heterogeneity}
 
-\begin{frame}[fragile]  
+\begin{frame}[fragile]
 
   \frametitle{Types of contact rate heterogeneity}
 
@@ -146,7 +140,7 @@ cores <- nbrOfWorkers()
 
 \end{frame}
 
-\begin{frame}[fragile]  
+\begin{frame}[fragile]
 
   \frametitle{A model for dynamic variation in sexual contact rates}
 
@@ -194,7 +188,7 @@ cores <- nbrOfWorkers()
 
   \bi
 
-\item To model autocorrelation, we suppose that individual $i$ has behavioral episodes within which $X_i(t)$ is constant, but the individual enters new behavioral episodes at rate $R_i$. 
+\item To model autocorrelation, we suppose that individual $i$ has behavioral episodes within which $X_i(t)$ is constant, but the individual enters new behavioral episodes at rate $R_i$.
   At the start of each episode, $X_i(t)$ takes a new value drawn from a Gamma distribution with mean $\mu_X$ and variance $\sigma_X$,
   $$X_i(t)\sim \mbox{Gamma}(\mu_X, \sigma_X).$$
 
@@ -225,23 +219,21 @@ cores <- nbrOfWorkers()
 
 \section{Simulation-based investigation of the fitted model}
 
-\begin{frame}[fragile] 
+\begin{frame}[fragile]
 
   \frametitle{Consequences of dynamic behavior in an SI model for HIV}
 
   \bi
-\item 3 cases where contact rates are either (a) constant; (b) vary only between individuals; (c) vary both between and within individuals. 
+\item 3 cases where contact rates are either (a) constant; (b) vary only between individuals; (c) vary both between and within individuals.
 
-\item In each case, parameterize the model by fitting the behavioral model above, and supplying per-contact infection rates from the literature. 
+\item In each case, parameterize the model by fitting the behavioral model above, and supplying per-contact infection rates from the literature.
 
 \item This simple model shows a potential role for dynamic variation.
 
   \ei
 
   \parbox{6cm}{
-    <<plot_dynamics,out.width="6cm",echo=F,purl=FALSE>>=
-    knitr::include_graphics("contacts_fig4.jpg")
-    @
+    \includegraphics[width=6cm]{contacts_fig4}
   }
   \hspace{-3mm}
   \parbox{2mm}{
@@ -266,13 +258,18 @@ cores <- nbrOfWorkers()
 
   \bi
 
-\item 'Homogeneous' (dashed line): the epidemic was simulated where $\mu_X$ is estimated by the sample mean (1.53 $\mathrm{month}^{-1}$) without any sources of between-individual or within-individual heterogeneity.
+\item `Homogeneous' (dashed line):
+  the epidemic was simulated where $\mu_X$ is estimated by the sample mean (1.53 $\mathrm{month}^{-1}$) without any sources of between-individual or within-individual heterogeneity.
 
-\item 'Between Heterogeneity' (dotted line): the epidemic was simulated where $\mu_X$ is estimated by the sample mean (1.53 $\mathrm{month}^{-1}$) and $\sigma_X$ is estimated by the sample standard deviation (3.28 $\mathrm{month}^{-1}$)
+\item `Between Heterogeneity' (dotted line):
+  the epidemic was simulated where $\mu_X$ is estimated by the sample mean (1.53 $\mathrm{month}^{-1}$) and $\sigma_X$ is estimated by the sample standard deviation (3.28 $\mathrm{month}^{-1}$)
 
-\item 'Within+Between Heterogeneity' (solid line): the epidemic was simulated where each parameter is set to the estimated maximum likelihood estimate for total contacts.
+\item `Within+Between Heterogeneity' (solid line):
+  the epidemic was simulated where each parameter is set to the estimated maximum likelihood estimate for total contacts.
 
-\item For all situations, the per contact probability of transmission was set to 1/120, the average length of infection was set to 10 years, and the infection-free equilibrium population size was set to 3000. The per contact probability was selected such that the basic reproduction number in the the 'Homogeneous' case was 1.53. In the 'Homogeneous', 'Between Heterogeneity', `Within+Between Heterogeneity' cases respectively 239/500 and 172/500, 95/500 simulations died out before the 100 year mark.
+\item For all situations, the per contact probability of transmission was set to 1/120, the average length of infection was set to 10 years, and the infection-free equilibrium population size was set to 3000.
+  The per contact probability was selected such that the basic reproduction number in the the `Homogeneous' case was 1.53.
+  In the `Homogeneous', `Between Heterogeneity', `Within+Between Heterogeneity' cases respectively 239/500 and 172/500, 95/500 simulations died out before the 100 year mark.
 
   \ei
 
@@ -280,7 +277,7 @@ cores <- nbrOfWorkers()
 
 \section{PanelPOMP models and the \pkg{panelPomp} package}
 
-\begin{frame}[fragile] 
+\begin{frame}[fragile]
 
   \frametitle{PanelPOMP models as an extension of POMP models}
 
@@ -288,7 +285,7 @@ cores <- nbrOfWorkers()
 
 \item A PanelPOMP model consists of independent POMP models for a collection of \myemph{units}.
 
-\item The POMP models are tied together by shared parameters. 
+\item The POMP models are tied together by shared parameters.
 
 \item Here, the units are individuals in the longitudinal survey.
 
@@ -296,13 +293,13 @@ cores <- nbrOfWorkers()
 
 \item Here, we only have shared parameters. The heterogeneities between individuals are modeled as \myemph{random effects} with distribution determined by these shared parameters.
 
-\item Iterated filtering for POMP models was extended to PanelPOMPs by \citet{Breto2019}. 
+\item Iterated filtering for POMP models was extended to PanelPOMPs by \citet{Breto2019}.
 
   \ei
 
 \end{frame}
 
-\begin{frame}[fragile] 
+\begin{frame}[fragile]
 
   \frametitle{Using the \pkg{panelPomp} R package}
 
@@ -320,7 +317,7 @@ cores <- nbrOfWorkers()
   library(panelPomp)
   contacts <- contacts()
   @
-  
+
   \bi
 
 \item The implementation of the above model equations in \code{contacts} can be found in the \link{https://github.com/cbreto/panelPomp/blob/master/R/contacts.R}{\code{panelPomp source code on github}}.
@@ -347,7 +344,7 @@ cores <- nbrOfWorkers()
   slotNames(contacts)
   class(unitobjects(contacts)[[1]])
   @
-  
+
   \vspace{-2mm}
 
   \bi
@@ -362,7 +359,7 @@ cores <- nbrOfWorkers()
 
 \begin{frame}[fragile]{\myexercise. A PanelPOMP with all parameters unit-specific}
 
-Suppose a PanelPOMP model has all its parameters unit-specific. Is there anything useful to be gained from the PanelPOMP structure, or is it preferable to analyze the data as a collection of POMP models?
+  Suppose a PanelPOMP model has all its parameters unit-specific. Is there anything useful to be gained from the PanelPOMP structure, or is it preferable to analyze the data as a collection of POMP models?
 
   \vspace{3mm}
 
@@ -373,7 +370,7 @@ Suppose a PanelPOMP model has all its parameters unit-specific. Is there anythin
 
 \begin{frame}[fragile]{\myexercise. Methods for panelPomps}
 
-How would you find the \pkg{panelPomp} package methods available for working with a \code{panelPomp} object?  
+  How would you find the \pkg{panelPomp} package methods available for working with a \code{panelPomp} object?
 
 
   \vspace{3mm}
@@ -385,7 +382,7 @@ How would you find the \pkg{panelPomp} package methods available for working wit
 
 \section{Likelihood-based inference for PanelPOMPs}
 
-\begin{frame}[fragile] 
+\begin{frame}[fragile]
 
   \frametitle{Likelihood evaluation for PanelPOMPs}
 
@@ -400,7 +397,7 @@ How would you find the \pkg{panelPomp} package methods available for working wit
   <<coef>>=
   coef(contacts)
   @
-  
+
   \bi
 
 \item \code{pfilter(contacts,Np=1000)} carries out a particle filter computation at this parameter vector.
@@ -413,7 +410,7 @@ How would you find the \pkg{panelPomp} package methods available for working wit
 
   \bi
 
-\item Describe what you think \code{pfilter(contacts,Np=1000)} should do. 
+\item Describe what you think \code{pfilter(contacts,Np=1000)} should do.
 
 \item Hypothesize what might be the class of the resulting object? What slots might this object possess?
 
@@ -426,35 +423,40 @@ How would you find the \pkg{panelPomp} package methods available for working wit
 
 \end{frame}
 
-\begin{frame}[fragile]  
+\begin{frame}[fragile]
 
   \frametitle{Replicated likelihood evaluations}
 
   \bi
 
-\item 
-  As usuual for Monte Carlo calculations, it is useful to replicate the likelihood evaluations, both to reduce Monte Carlo uncertainty and (perhaps more importantly) to quantify it. 
+\item
+  As usuual for Monte Carlo calculations, it is useful to replicate the likelihood evaluations, both to reduce Monte Carlo uncertainty and (perhaps more importantly) to quantify it.
 
   \ei
 
   <<pfilter1-code,eval=F,echo=T,purl=F>>=
-  pf1_results <- foreach(i=1:20) %dofuture% {
-    library(panelPomp)
-    pf <- pfilter(contacts,Np= if(DEBUG) 10 else 2000)
-    list(logLik=logLik(pf),
-         unitLogLik=sapply(unitobjects(pf),logLik))
+  plan(multicore,workers=20)
+  pf1_results <- foreach(
+    i=1:20,.options.future=list(seed=TRUE)
+  ) %dofuture% {
+    pf <- pfilter(contacts,Np=2000)
+    list(
+      logLik=logLik(pf),
+      unitLogLik=sapply(unitobjects(pf),logLik)
+    )
   }
   @
-  
+
   <<pfilter1-eval,cache=F,echo=F>>=
-  stew("pfilter1.rda",{
-    tic <- Sys.time()
-    eval_cores <- cores
+  bake("pfilter1.rds",{
     <<pfilter1-code>>
-    t1 <- as.numeric(difftime(Sys.time(),tic,units="mins"))
-  }) 
+    attr(pf1_results,"ncpu") <- nbrOfWorkers()
+    pf1_results
+  }) -> pf1_results
+  t1 <- attr(pf1_results,"system.time")[3]/60
+  eval_cores <- attr(pf1_results,"ncpu")
   @
-  
+
   \bi
 
 \item This took \Sexpr{round(t1,1)} minutes using \Sexpr{eval_cores} cores.
@@ -465,13 +467,13 @@ How would you find the \pkg{panelPomp} package methods available for working wit
 
 \subsection{Combining likelihood evaluations}
 
-\begin{frame}[fragile]  
+\begin{frame}[fragile]
 
   \frametitle{Combining Monte Carlo likelihood evaluations for PanelPOMPs \rule[-2mm]{0mm}{3mm}}
 
   \bi
 
-\item We have a new consideration not found with \code{pomp} models. 
+\item We have a new consideration not found with \code{pomp} models.
   Each unit has its own log likelihood arising from an independent Monte Carlo computation.
 
 \item The basic \code{pomp} approach remains valid:
@@ -482,7 +484,7 @@ How would you find the \pkg{panelPomp} package methods available for working wit
   loglik1 <- sapply(pf1_results,function(x) x$logLik)
   logmeanexp(loglik1,se=T)
   @
-  
+
   \bi
 
 \item Can we do better, using the independence of units? It turns out we can \citep{Breto2019}.
@@ -499,7 +501,7 @@ How would you find the \pkg{panelPomp} package methods available for working wit
   pf1_loglik_matrix <- sapply(pf1_results,function(x) x$unitLogLik)
   panel_logmeanexp(pf1_loglik_matrix,MARGIN=1,se=T)
   @
-  
+
   \bi
 
 \item The improvement via \code{panel\_logmeanexp} is small in this case, since the number of observation times is small.
@@ -551,7 +553,7 @@ How would you find the \pkg{panelPomp} package methods available for working wit
 
 \subsection{Maximizing the likelihood}
 
-\begin{frame}[fragile]  
+\begin{frame}[fragile]
 
   \frametitle{Likelihood maximization using the PIF algorithm}
 
@@ -559,7 +561,7 @@ How would you find the \pkg{panelPomp} package methods available for working wit
 
 \item The panel iterated filtering (PIF) algorithm of \citet{Breto2019} applies the IF2 algorithm to a POMP model constructed by concanenating the collection of panels.
 
-\item PIF is implemented in \pkg{panelPomp} as the \code{mif2} method for class \code{panelPomp}. 
+\item PIF is implemented in \pkg{panelPomp} as the \code{mif2} method for class \code{panelPomp}.
 
 \item Comparing \code{?panelPomp::mif2} with \code{?pomp::mif2} reveals that the only difference in the arguments is that the \code{params} argument for \code{pomp::mif2} becomes \code{shared.start} and \code{specific.start} for \code{panelPomp::mif2}.
 
@@ -573,89 +575,95 @@ How would you find the \pkg{panelPomp} package methods available for working wit
 \begin{frame}[fragile]
 
   <<mif1-code,eval=F,echo=T,purl=F>>=
-  mif_results <- foreach(i=1:20) %dofuture% {
-    library(pomp); library(panelPomp)
+  plan(multicore,workers=20)
+  mif_results <- foreach(
+    i=1:20,
+    .options.future=list(seed=TRUE)
+  ) %dofuture% {
     mf <- mif2(contacts,
-      Nmif = if(DEBUG) 2 else 50,
-      Np = if(DEBUG) 5 else 1000,
-      cooling.type="geometric", # needed for panelPomp 0.10
+      Nmif=50, Np=1000,
+      cooling.type="geometric", # note difference with pomp
       cooling.fraction.50=0.5,
       rw.sd=rw_sd(mu_X=0.02, sigma_X=0.02,mu_D = 0.02,
         sigma_D=0.02,mu_R=0.02, alpha=0.02)
     )
     list(logLik=logLik(mf),params=coef(mf))
   }
-@
+  @
 
-<<mif1-stew,cache=F,eval=T,echo=F>>=
-stew("mif1.rda",{
-  mif_cores <- cores
-  tic <- Sys.time()
-<<mif1-code>>
-  t2 <- difftime(Sys.time(),tic,units="mins")
-})
-@
+  <<mif1-eval,cache=F,eval=T,echo=F>>=
+  bake("mif1.rds",{
+    <<mif1-code>>
+    attr(mif_results,"ncpu") <- nbrOfWorkers()
+    mif_results
+  }) -> mif_results
+  t2 <- attr(mif_results,"system.time")[3]/60
+  mif_cores <- attr(mif_results,"ncpu")
+  @
 
-\bi
+  \bi
 
 \item This search took \Sexpr{round(as.numeric(t2),1)} minutes on \Sexpr{mif_cores} cores.
 
-\item We see that \code{panelPomp} iterated filtering is set up similarly to its \code{pomp} cousin. 
+\item We see that \code{panelPomp} iterated filtering is set up similarly to its \code{pomp} cousin.
 
-\ei
+  \ei
 
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Some considerations for likelihood evaluations}
+  \frametitle{Some considerations for likelihood evaluations}
 
-Similar likelihood evaluation issues arise for \pkg{panelPomp} as for {pomp}.
-\bi
+  Similar likelihood evaluation issues arise for \pkg{panelPomp} as for {pomp}.
+  \bi
 
 \item The preliminary likelihood estimated as a consequence of running \code{mif2} and extracted here by \code{sapply(m2,logLik)} does not correspond to the actual, fixed parameter, model. It is the sequential Monte Carlo estimate of the likelihood from the last filtering iteration, and therefore will have some perturbation of the parameters.
 
-\item One typically requires fewer particles for each filtering iteration than necessary to obtain a good likelihood estimate---stochastic errors can cancel out through the filtering iterations, rather than within any one iteration. 
+\item One typically requires fewer particles for each filtering iteration than necessary to obtain a good likelihood estimate---stochastic errors can cancel out through the filtering iterations, rather than within any one iteration.
 
 \item For promising new parameter values, it is desirable to put computational effort into evaluating the likelihood sufficient to make the Monte Carlo error small compared to one log unit.
 
-\ei
+  \ei
 
 
 \end{frame}
 
 \begin{frame}[fragile]
 
-<<mif1-lik-eval-code,eval=F,echo=T,purl=F>>=
-mif_logLik <-  sapply(mif_results,function(x)x$logLik)
-mif_mle <- mif_results[[which.max(mif_logLik)]]$params
-pf3_loglik_matrix <- foreach(i=1:10,.combine=rbind) %dofuture% {
-  library(panelPomp)
-  unitlogLik(pfilter(contacts,
-    shared=mif_mle,Np=if(DEBUG) 50 else 10000))
-}  
-@
+  <<mif1-lik-eval-code,eval=F,echo=T,purl=F>>=
+  mif_logLik <-  sapply(mif_results,function(x)x$logLik)
+  mif_mle <- mif_results[[which.max(mif_logLik)]]$params
+  plan(multicore,workers=10)
+  pf3_loglik_matrix <- foreach(i=1:10,.combine=rbind,
+    .options.future=list(seed=TRUE)
+  ) %dofuture% {
+    unitlogLik(pfilter(contacts,shared=mif_mle,Np=10000))
+  }
+  @
 
-<<mif1-lik-eval,cache=F,echo=F>>=
-stew("mif1-lik-eval.rda",{
-tic <- Sys.time()
-<<mif1-lik-eval-code>>
-t3 <- difftime(Sys.time(),tic,units="mins")
-mif_lik_eval_cores <- cores
-})
-@
+  <<mif1-lik-eval,cache=F,echo=F>>=
+  bake("mif1-lik-eval.rds",{
+    <<mif1-lik-eval-code>>
+    attr(pf3_loglik_matrix,"ncpu") <- nbrOfWorkers()
+    pf3_loglik_matrix
+  }) -> pf3_loglik_matrix
+  t3 <- attr(pf3_loglik_matrix,"system.time")[3]/60
+  mif_lik_eval_cores <- attr(pf3_loglik_matrix,"ncpu")
+  @
 
-<<panel-logmeanexp>>=
-panel_logmeanexp(pf3_loglik_matrix,MARGIN=2,se=T)
-@
+  <<panel-logmeanexp>>=
+  panel_logmeanexp(pf3_loglik_matrix,MARGIN=2,se=T)
+  @
 
-\bi
+  \bi
 \item This took \Sexpr{round(as.numeric(t3),1)} minutes on \Sexpr{mif_lik_eval_cores} cores.
 
-\item Here, the local search found a lower likelhood that the published MLE. Longer searches with more cooling, and/or more Monte Carlo replications, may be needed to reliably obtain accurate maximization.
+\item Here, the local search found a lower likelhood than the published MLE.
+  Longer searches with more cooling, and/or more Monte Carlo replications, may be needed to reliably obtain accurate maximization.
 
-\ei
+  \ei
 
-\end{frame}  
+\end{frame}
 
 \mode<presentation>{
   \begin{frame}[allowframebreaks=0.8]{References}
@@ -689,9 +697,8 @@ panel_logmeanexp(pf3_loglik_matrix,MARGIN=2,se=T)
   \end{itemize}
 
   \link{index.html}{Back to Lesson}
-  
+
   \link{./main.R}{\Rlanguage codes for this lesson}
 \end{frame}
 
 \end{document}
-
