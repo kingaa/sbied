@@ -1,12 +1,10 @@
 library(tidyverse)
 library(pomp)
 library(doFuture)
-registerDoFuture(); plan(multisession)
-library(doRNG)
 options(
   dplyr.summarise.inform=FALSE,
   pomp_archive_dir="results"
-  )
+)
 
 library(tidyverse)
 data <- read_csv(
@@ -45,7 +43,7 @@ paramnames <- c(rp_names,ivp_names,fp_names)
 covar_index_t0 <- which(abs(covar@times-t0)<0.01)
 initial_births <- covar@table["B",covar_index_t0-0:5]
 names(initial_births) <- c("SB1_0","SB2_0",
-  "SB3_0","SB4_0","SB5_0","SB6_0") 
+  "SB3_0","SB4_0","SB5_0","SB6_0")
 fixed_params <- c(delta=1/60,K=K,initial_births)
 
 params_guess <- c(
@@ -56,54 +54,54 @@ params_guess <- c(
   fixed_params)
 
 rprocess <- Csnippet("
-double beta = exp(dot_product( (int) K, &xi1, &b1));
-double lambda = (beta * (IO+IB) / P + psi);
-double var_epsilon = pow(sigma_dem,2)/ lambda +  
-  pow(sigma_env,2);
-lambda *= (var_epsilon < 1.0e-6) ? 1 : 
-  rgamma(1/var_epsilon,var_epsilon);
-double p = exp(-(delta+lambda)/12);
-double q = (1-p)*lambda/(delta+lambda);
-SB1=B;
-SB2=SB1*p;
-SB3=SB2*p;
-SB4=SB3*p;
-SB5=SB4*p;
-SB6=SB5*p;
-SO=(SB6+SO)*p;
-IB=(SB1+SB2+SB3+SB4+SB5+SB6)*q;
-IO=SO*q;
+  double beta = exp(dot_product( (int) K, &xi1, &b1));
+  double lambda = (beta * (IO+IB) / P + psi);
+  double var_epsilon = pow(sigma_dem,2)/ lambda +
+    pow(sigma_env,2);
+  lambda *= (var_epsilon < 1.0e-6) ? 1 :
+    rgamma(1/var_epsilon,var_epsilon);
+  double p = exp(-(delta+lambda)/12);
+  double q = (1-p)*lambda/(delta+lambda);
+  SB1=B;
+  SB2=SB1*p;
+  SB3=SB2*p;
+  SB4=SB3*p;
+  SB5=SB4*p;
+  SB6=SB5*p;
+  SO=(SB6+SO)*p;
+  IB=(SB1+SB2+SB3+SB4+SB5+SB6)*q;
+  IO=SO*q;
 ")
 
 dmeasure <- Csnippet("
-double tol = 1.0e-25;
-double mean_cases = rho*IO;
-double sd_cases = sqrt(pow(tau*IO,2) + mean_cases);
-if(cases > 0.0){
-  lik = pnorm(cases+0.5,mean_cases,sd_cases,1,0)
-    - pnorm(cases-0.5,mean_cases,sd_cases,1,0) + tol; 
-} else{
-  lik = pnorm(cases+0.5,mean_cases,sd_cases,1,0) + tol;
-}
-if (give_log) lik = log(lik);")
+  double tol = 1.0e-25;
+  double mean_cases = rho*IO;
+  double sd_cases = sqrt(pow(tau*IO,2) + mean_cases);
+  if(cases > 0.0){
+    lik = pnorm(cases+0.5,mean_cases,sd_cases,1,0)
+      - pnorm(cases-0.5,mean_cases,sd_cases,1,0) + tol;
+  } else{
+    lik = pnorm(cases+0.5,mean_cases,sd_cases,1,0) + tol;
+  }
+  if (give_log) lik = log(lik);")
 rmeasure <- Csnippet("
-cases = rnorm(rho*IO, sqrt( pow(tau*IO,2) + rho*IO ) );
-if (cases > 0.0) {
-  cases = nearbyint(cases);
-} else {
-  cases = 0.0;
-}")
+  cases = rnorm(rho*IO, sqrt( pow(tau*IO,2) + rho*IO ) );
+  if (cases > 0.0) {
+    cases = nearbyint(cases);
+  } else {
+    cases = 0.0;
+  }")
 
 rinit <- Csnippet("
-SB1 = SB1_0;
-SB2 = SB2_0;
-SB3 = SB3_0;
-SB4 = SB4_0;
-SB5 = SB5_0;
-SB6 = SB6_0;
-IB = 0;
-IO = IO_0 * P;
-SO = SO_0 * P;
+  SB1 = SB1_0;
+  SB2 = SB2_0;
+  SB3 = SB3_0;
+  SB4 = SB4_0;
+  SB5 = SB5_0;
+  SB6 = SB6_0;
+  IB = 0;
+  IO = IO_0 * P;
+  SO = SO_0 * P;
 ")
 
 partrans <- parameter_trans(
@@ -140,25 +138,19 @@ Nmif <-        switch(run_level, 10, 100, 200)
 Nreps_eval <-  switch(run_level,  2,  10,  20)
 Nreps_local <- switch(run_level, 10,  20,  40)
 Nreps_global <-switch(run_level, 10,  20, 100)
-Nsim <-        switch(run_level, 50, 100, 500) 
+Nsim <-        switch(run_level, 50, 100, 500)
 
 ## library(doFuture)
-## registerDoFuture()
-## plan(multisession)
-## library(doRNG)
 
 if (file.exists("CLUSTER.R")) {
   source("CLUSTER.R")
 }
 
-cores <- nbrOfWorkers()
-bake(file="cores.rds",cores) -> cores
-
-stew(file="pf1.rda",{
-  registerDoRNG(3899882)
-  pf1 <- foreach(i=1:20,.packages="pomp",
-    .export=c("polio","Np")) %dopar%
-    pfilter(polio,Np=Np)
+stew(file="pf1.rda",seed=3899882,{
+  pf1 <- foreach(i=1:20,.combine=c,
+    .options.future=list(seed=TRUE)
+  ) %dofuture% pfilter(polio,Np=Np)
+  cores <- nbrOfWorkers()
 },info=TRUE,dependson=Np)
 L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
 
@@ -194,22 +186,21 @@ mif.rw.sd <- eval(substitute(rw_sd(
   IO_0=ivp(rwi),SO_0=ivp(rwi)),
   list(rwi=0.2,rwr=0.02)))
 
-exl <- c("polio","Np","Nmif","mif.rw.sd",
-  "Nreps_local","Nreps_eval")
-
-stew(file="mif.rda",{
-  m2 <- foreach(i=1:Nreps_local,
-    .packages="pomp",.combine=c,.export=exl) %dopar%
-  mif2(polio, Np=Np, Nmif=Nmif, rw.sd=mif.rw.sd,
-      cooling.fraction.50=0.5)
-  lik_m2 <- foreach(m=m2,.packages="pomp",.combine=rbind,
-    .export=exl) %dopar%
-    logmeanexp(replicate(Nreps_eval,
-      logLik(pfilter(m,Np=Np))),se=TRUE)
-},dependson=run_level)
-load(file="results/mif.rda")
-mif_time <- .system.time
-
+stew(file="mif.rda",seed=942098028,
+  dependson=run_level,{
+    m2 <- foreach(
+      i=1:Nreps_local,.combine=c,
+      .options.future=list(seed=TRUE)
+    ) %dofuture%
+      mif2(polio, Np=Np, Nmif=Nmif, rw.sd=mif.rw.sd,
+        cooling.fraction.50=0.5)
+    lik_m2 <- foreach(
+      m=m2,.combine=rbind,
+      .options.future=list(seed=TRUE)
+    ) %dofuture%
+      logmeanexp(replicate(Nreps_eval,
+        logLik(pfilter(m,Np=Np))),se=TRUE)
+  })
 
 coef(m2) |> melt() |> spread(name,value) |>
   select(-.id) |>
@@ -229,20 +220,21 @@ box <- rbind(
   SO_0=c(0,1), IO_0=c(0,0.01)
 )
 
-bake(file="box_eval1.rds",{
-  registerDoRNG(833102018)
-  foreach(i=1:Nreps_global,.packages="pomp",
-    .combine=c) %dopar%
-    mif2(m2[[1]],params=c(fixed_params,
-      apply(box,1,function(x)runif(1,x[1],x[2]))))
-},dependson=run_level) -> m3
-bake(file="box_eval2.rds",{
-  registerDoRNG(71449038)
-  foreach(m=m3,.packages="pomp",
-    .combine=rbind) %dopar%
+bake(file="box_eval1.rds",seed=833102018,
+  dependson=run_level,{
+    foreach(i=1:Nreps_global,.combine=c,
+      .options.future=list(seed=TRUE)) %dofuture%
+      mif2(m2[[1]],params=c(fixed_params,
+        apply(box,1,function(x)runif(1,x[1],x[2]))))
+  }) -> m3
+
+bake(file="box_eval2.rds",seed=71449038,
+  dependson=run_level,{
+  foreach(m=m3,.combine=rbind,
+    .options.future=list(seed=TRUE)) %dofuture%
     logmeanexp(replicate(Nreps_eval,
       logLik(pfilter(m,Np=Np))),se=TRUE)
-},dependson=run_level) -> lik_m3
+}) -> lik_m3
 
 coef(m3) |> melt() |> spread(name,value) |>
   select(-.id) |>
@@ -275,7 +267,7 @@ pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
 
 
 library(tidyverse)
-params |> 
+params |>
   filter(logLik>max(logLik)-20) |>
   select(-logLik,-logLik_se) |>
   gather(variable,value) |>
@@ -303,10 +295,10 @@ profile.rw.sd <- eval(substitute(rw_sd(
   IO_0=ivp(rwi),SO_0=ivp(rwi)),
   list(rwi=0.2,rwr=0.02)))
 
-bake(file="profile_rho.rds",{  
-  registerDoRNG(1888257101)
+stew(file="profile_rho.rda",seed=1888257101,{
+  cores <- nbrOfWorkers()
   foreach(start=iter(starts,"row"),.combine=rbind,
-    .packages=c("pomp","dplyr")) %dopar% {
+    .options.future=list(seed=TRUE)) %dofuture% {
       polio |> mif2(params=start,
         Np=Np,Nmif=ceiling(Nmif/2),
         cooling.fraction.50=0.5,
@@ -320,13 +312,13 @@ bake(file="profile_rho.rds",{
       ) |> logmeanexp(se=TRUE) -> ll
       mf |> coef() |> bind_rows() |>
         bind_cols(logLik=ll[1],logLik_se=ll[2])
-    }
-},dependson=run_level) -> m4
+    } -> m4
+},dependson=run_level)
 
-## bake(file="profile_rho.rds",{
-##   registerDoRNG(1888257101)
+## stew(file="profile_rho.rda",seed=1888257101,{
+##   cores <- nbrOfWorkers()
 ##   foreach(start=iter(starts,"row"),.combine=rbind,
-##     .packages=c("pomp","dplyr")) %dopar% {
+##     .options.future=list(seed=TRUE)) %dofuture% {
 ##       polio |> mif2(params=start,
 ##         Np=Np,Nmif=ceiling(Nmif/2),
 ##         cooling.fraction.50=0.5,
@@ -340,8 +332,8 @@ bake(file="profile_rho.rds",{
 ##       ) |> logmeanexp(se=TRUE) -> ll
 ##       mf |> coef() |> bind_rows() |>
 ##         bind_cols(logLik=ll[1],logLik_se=ll[2])
-##     }
-## },dependson=run_level) -> m4
+##     } -> m4
+## },dependson=run_level)
 
 
 

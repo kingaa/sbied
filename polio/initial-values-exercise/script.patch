@@ -5,15 +5,15 @@
   }")
   
   rinit <- Csnippet("
-! SB1 = SB1_0;
-! SB2 = SB2_0;
-! SB3 = SB3_0;
-! SB4 = SB4_0;
-! SB5 = SB5_0;
-! SB6 = SB6_0;
-! IB = 0;
-! IO = IO_0 * P;
-! SO = SO_0 * P;
+!   SB1 = SB1_0;
+!   SB2 = SB2_0;
+!   SB3 = SB3_0;
+!   SB4 = SB4_0;
+!   SB5 = SB5_0;
+!   SB6 = SB6_0;
+!   IB = 0;
+!   IO = IO_0 * P;
+!   SO = SO_0 * P;
   ")
   
   partrans <- parameter_trans(
