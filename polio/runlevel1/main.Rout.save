@@ -226,6 +226,7 @@ dbl (4): time, cases, births, pop
 +   ) %dofuture% pfilter(polio,Np=Np)
 +   cores <- nbrOfWorkers()
 + })
+NOTE: creating archive directory ‘results’.
 > L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
 > 
 > simulate(polio,nsim=Nsim,seed=1643079359,
@@ -447,4 +448,4 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 > 
 > proc.time()
    user  system elapsed 
-  4.733   2.578   3.276 
+ 22.808   3.950  55.967 

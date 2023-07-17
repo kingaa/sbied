@@ -491,7 +491,7 @@ fixed_params &lt;- coef(measSIR,c(&quot;N&quot;))</code></pre>
   mf |&gt; coef() |&gt; bind_rows() |&gt;
     bind_cols(loglik=ll[1],loglik.se=ll[2])
 } -&gt; results</code></pre>
-<p>This global search from 500 starts took 490 s on 250 cpus. We append the results to our database and have a look.</p>
+<p>This global search from 500 starts took 480 s on 250 cpus. We append the results to our database and have a look.</p>
 <pre class="r"><code>read_csv(&quot;fitall_params.csv&quot;) |&gt;
   bind_rows(results) |&gt;
   filter(is.finite(loglik)) |&gt;

@@ -96,47 +96,47 @@ and the time required for their computation on a linux cluster with
 <tr class="odd">
 <td style="text-align: left;">measles/results</td>
 <td style="text-align: right;">232</td>
-<td style="text-align: right;">221.8</td>
+<td style="text-align: right;">219.8</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mif/results</td>
 <td style="text-align: right;">2244</td>
-<td style="text-align: right;">69.1</td>
+<td style="text-align: right;">67.2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">polio/results</td>
 <td style="text-align: right;">41687</td>
-<td style="text-align: right;">65.0</td>
+<td style="text-align: right;">65.7</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">polio/starting-values-exercise/results</td>
 <td style="text-align: right;">41687</td>
-<td style="text-align: right;">64.3</td>
+<td style="text-align: right;">64.2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">polio/initial-values-exercise/results</td>
 <td style="text-align: right;">41635</td>
-<td style="text-align: right;">63.5</td>
+<td style="text-align: right;">64.2</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">pfilter/results</td>
-<td style="text-align: right;">142</td>
-<td style="text-align: right;">9.4</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">contacts/results</td>
 <td style="text-align: right;">206</td>
-<td style="text-align: right;">8.6</td>
+<td style="text-align: right;">13.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pfilter/results</td>
+<td style="text-align: right;">142</td>
+<td style="text-align: right;">13.4</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">polio/runlevel2/results</td>
 <td style="text-align: right;">3266</td>
-<td style="text-align: right;">4.2</td>
+<td style="text-align: right;">4.9</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">polio/runlevel1/results</td>
 <td style="text-align: right;">612</td>
-<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">0.9</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ebola/results</td>
@@ -151,7 +151,7 @@ with the polio lesson, in which large amounts of redundant information
 are stored.
 
 Full compilation, i.e., rebuilding the complete set of materials
-following deletion of all archives, requires about 522 min on a
+following deletion of all archives, requires about 529 min on a
 250-processor cluster. Full compilation regenerates the complete set of
 archives. A finishing compilation, i.e., rebuilding with all archives in
 place, but with the re-Making of all documents, requires about 12 min on
