@@ -1,6 +1,7 @@
 library(tidyverse)
 library(pomp)
 library(doFuture)
+stopifnot(packageVersion("pomp")>="5.3.1")
 options(
   dplyr.summarise.inform=FALSE,
   pomp_archive_dir="results"
@@ -140,18 +141,24 @@ Nreps_local <- switch(run_level, 10,  20,  40)
 Nreps_global <-switch(run_level, 10,  20, 100)
 Nsim <-        switch(run_level, 50, 100, 500)
 
-## library(doFuture)
+library(doFuture)
+library(iterators)
 
-if (file.exists("CLUSTER.R")) {
-  source("CLUSTER.R")
+par_init <- function (run_level) {
+  if (run_level >= 3 && file.exists("CLUSTER.R")) {
+    source("CLUSTER.R")
+  } else {
+    plan(multisession)
+  }
 }
 
 stew(file="pf1.rda",seed=3899882,{
+  par_init(run_level)
   pf1 <- foreach(i=1:20,.combine=c,
     .options.future=list(seed=TRUE)
   ) %dofuture% pfilter(polio,Np=Np)
   cores <- nbrOfWorkers()
-},info=TRUE,dependson=Np)
+})
 L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
 
 simulate(polio,nsim=Nsim,seed=1643079359,
@@ -186,21 +193,21 @@ mif.rw.sd <- eval(substitute(rw_sd(
   IO_0=ivp(rwi),SO_0=ivp(rwi)),
   list(rwi=0.2,rwr=0.02)))
 
-stew(file="mif.rda",seed=942098028,
-  dependson=run_level,{
-    m2 <- foreach(
-      i=1:Nreps_local,.combine=c,
-      .options.future=list(seed=TRUE)
-    ) %dofuture%
-      mif2(polio, Np=Np, Nmif=Nmif, rw.sd=mif.rw.sd,
-        cooling.fraction.50=0.5)
-    lik_m2 <- foreach(
-      m=m2,.combine=rbind,
-      .options.future=list(seed=TRUE)
-    ) %dofuture%
-      logmeanexp(replicate(Nreps_eval,
-        logLik(pfilter(m,Np=Np))),se=TRUE)
-  })
+stew(file="mif.rda",seed=942098028,{
+  par_init(run_level)
+  m2 <- foreach(
+    i=1:Nreps_local,.combine=c,
+    .options.future=list(seed=TRUE)
+  ) %dofuture%
+    mif2(polio, Np=Np, Nmif=Nmif, rw.sd=mif.rw.sd,
+      cooling.fraction.50=0.5)
+  lik_m2 <- foreach(
+    m=m2,.combine=rbind,
+    .options.future=list(seed=TRUE)
+  ) %dofuture%
+    logmeanexp(replicate(Nreps_eval,
+      logLik(pfilter(m,Np=Np))),se=TRUE)
+})
 
 coef(m2) |> melt() |> spread(name,value) |>
   select(-.id) |>
@@ -220,16 +227,16 @@ box <- rbind(
   SO_0=c(0,1), IO_0=c(0,0.01)
 )
 
-bake(file="box_eval1.rds",seed=833102018,
-  dependson=run_level,{
-    foreach(i=1:Nreps_global,.combine=c,
-      .options.future=list(seed=TRUE)) %dofuture%
-      mif2(m2[[1]],params=c(fixed_params,
-        apply(box,1,function(x)runif(1,x[1],x[2]))))
-  }) -> m3
+bake(file="box_eval1.rds",seed=833102018,{
+  par_init(run_level)
+  foreach(i=1:Nreps_global,.combine=c,
+    .options.future=list(seed=TRUE)) %dofuture%
+    mif2(m2[[1]],params=c(fixed_params,
+      apply(box,1,function(x)runif(1,x[1],x[2]))))
+}) -> m3
 
-bake(file="box_eval2.rds",seed=71449038,
-  dependson=run_level,{
+bake(file="box_eval2.rds",seed=71449038,{
+  par_init(run_level)
   foreach(m=m3,.combine=rbind,
     .options.future=list(seed=TRUE)) %dofuture%
     logmeanexp(replicate(Nreps_eval,
@@ -260,7 +267,7 @@ arma_fit$loglik-sum(log_y)
 
 params <- read_csv("params.csv")
 pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
-  data=subset(params,logLik>max(logLik)-20))
+  data=subset(params,logLik>max(logLik)-20),pch=16)
 
 
 
@@ -294,7 +301,7 @@ profile.rw.sd <- eval(substitute(rw_sd(
   list(rwi=0.2,rwr=0.02)))
 
 stew(file="profile_rho.rda",seed=1888257101,{
-  cores <- nbrOfWorkers()
+  par_init(run_level)
   foreach(start=iter(starts,"row"),.combine=rbind,
     .options.future=list(seed=TRUE)) %dofuture% {
       polio |> mif2(params=start,
@@ -311,10 +318,11 @@ stew(file="profile_rho.rda",seed=1888257101,{
       mf |> coef() |> bind_rows() |>
         bind_cols(logLik=ll[1],logLik_se=ll[2])
     } -> m4
-},dependson=run_level)
+  cores <- nbrOfWorkers()
+})
 
 ## stew(file="profile_rho.rda",seed=1888257101,{
-##   cores <- nbrOfWorkers()
+##   par_init(run_level)
 ##   foreach(start=iter(starts,"row"),.combine=rbind,
 ##     .options.future=list(seed=TRUE)) %dofuture% {
 ##       polio |> mif2(params=start,
@@ -331,7 +339,8 @@ stew(file="profile_rho.rda",seed=1888257101,{
 ##       mf |> coef() |> bind_rows() |>
 ##         bind_cols(logLik=ll[1],logLik_se=ll[2])
 ##     } -> m4
-## },dependson=run_level)
+##   cores <- nbrOfWorkers()
+## })
 
 
 
@@ -339,12 +348,3 @@ read_csv("params.csv") |>
   bind_rows(m4) |>
   arrange(-logLik) |>
   write_csv("params.csv",append=TRUE)
-
-
-
-plot(m3[r3$logLik>max(r3$logLik)-10])
-
-loglik_convergence <- do.call(cbind,
-  traces(m3[r3$logLik>max(r3$logLik)-10],"loglik"))
-matplot(loglik_convergence,type="l",lty=1,
-  ylim=max(loglik_convergence,na.rm=T)+c(-10,0))

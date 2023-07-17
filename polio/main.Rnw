@@ -12,6 +12,7 @@ source("../_includes/setup.R", local = knitr::knit_global())
 library(tidyverse)
 library(pomp)
 library(doFuture)
+stopifnot(packageVersion("pomp")>="5.3.1")
 options(
   dplyr.summarise.inform=FALSE,
   pomp_archive_dir="results"
@@ -621,29 +622,30 @@ options(
 
 \end{frame}
 
-\subsection*{Parallel computation of the likelihood}
-
 \begin{frame}[fragile]
+  \frametitle{Setting up parallelization}
 
-  \frametitle{Parallel set-up}
+  We will use \pkg{doFuture} to parallelize our computations.
+  At run-levels 1 and 2, it will be sufficient to use the multiple cores on a single machine, but at run-level 3, we will use an HPC cluster.
+  In the following, we use our own HPC cluster.
+  To run these codes on your own HPC cluster, you would need to edit the \texttt{CLUSTER.R} script suitably.
 
-  <<parallel-setup,eval=FALSE>>=
+  <<parallel-setup,eval=TRUE>>=
   library(doFuture)
-  @
+  library(iterators)
 
-  <<cluster_setup,include=FALSE,purl=TRUE,cache=FALSE>>=
-  if (file.exists("CLUSTER.R")) {
-    source("CLUSTER.R")
+  par_init <- function (run_level) {
+    if (run_level >= 3 && file.exists("CLUSTER.R")) {
+      source("CLUSTER.R")
+    } else {
+      plan(multisession)
+    }
   }
   @
 
-  \begin{itemize}
-  \item We ask {\Rlanguage} to access multiple processors, on a local machine or an HPC cluster.
-  \item Our task, like much statistical computing, is \myemph{embarrassingly parallel} so we can use a simple parallel for loop via \code{foreach()}
-  \end{itemize}
-
 \end{frame}
 
+\subsection*{Parallel computation of the likelihood}
 
 \begin{frame}[fragile]
 
@@ -651,11 +653,12 @@ options(
 
   <<pf1>>=
   stew(file="pf1.rda",seed=3899882,{
+    par_init(run_level)
     pf1 <- foreach(i=1:20,.combine=c,
       .options.future=list(seed=TRUE)
     ) %dofuture% pfilter(polio,Np=Np)
     cores <- nbrOfWorkers()
-  },info=TRUE,dependson=Np)
+  })
   L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
   @
 
@@ -845,21 +848,21 @@ options(
 \begin{frame}[fragile]
 
   <<mif>>=
-  stew(file="mif.rda",seed=942098028,
-    dependson=run_level,{
-      m2 <- foreach(
-        i=1:Nreps_local,.combine=c,
-        .options.future=list(seed=TRUE)
-      ) %dofuture%
-        mif2(polio, Np=Np, Nmif=Nmif, rw.sd=mif.rw.sd,
-          cooling.fraction.50=0.5)
-      lik_m2 <- foreach(
-        m=m2,.combine=rbind,
-        .options.future=list(seed=TRUE)
-      ) %dofuture%
-        logmeanexp(replicate(Nreps_eval,
-          logLik(pfilter(m,Np=Np))),se=TRUE)
-    })
+  stew(file="mif.rda",seed=942098028,{
+    par_init(run_level)
+    m2 <- foreach(
+      i=1:Nreps_local,.combine=c,
+      .options.future=list(seed=TRUE)
+    ) %dofuture%
+      mif2(polio, Np=Np, Nmif=Nmif, rw.sd=mif.rw.sd,
+        cooling.fraction.50=0.5)
+    lik_m2 <- foreach(
+      m=m2,.combine=rbind,
+      .options.future=list(seed=TRUE)
+    ) %dofuture%
+      logmeanexp(replicate(Nreps_eval,
+        logLik(pfilter(m,Np=Np))),se=TRUE)
+  })
   @
 
 \end{frame}
@@ -887,7 +890,7 @@ options(
 \begin{frame}[fragile]
   <<pairs,purl=FALSE>>=
   pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
-    data=subset(r2,logLik>max(logLik)-20))
+    data=subset(r2,logLik>max(logLik)-20),pch=16)
   @
 
 \end{frame}
@@ -935,16 +938,16 @@ options(
   We then carry out a search identical to the local one except for the starting parameter values. This can be succinctly coded by calling \code{mif2} on the previously constructed object, \code{m2[[1]]}, with a reset starting value:
 
   <<box_eval>>=
-  bake(file="box_eval1.rds",seed=833102018,
-    dependson=run_level,{
-      foreach(i=1:Nreps_global,.combine=c,
-        .options.future=list(seed=TRUE)) %dofuture%
-        mif2(m2[[1]],params=c(fixed_params,
-          apply(box,1,function(x)runif(1,x[1],x[2]))))
-    }) -> m3
-  
-  bake(file="box_eval2.rds",seed=71449038,
-    dependson=run_level,{
+  bake(file="box_eval1.rds",seed=833102018,{
+    par_init(run_level)
+    foreach(i=1:Nreps_global,.combine=c,
+      .options.future=list(seed=TRUE)) %dofuture%
+      mif2(m2[[1]],params=c(fixed_params,
+        apply(box,1,function(x)runif(1,x[1],x[2]))))
+  }) -> m3
+
+  bake(file="box_eval2.rds",seed=71449038,{
+    par_init(run_level)
     foreach(m=m3,.combine=rbind,
       .options.future=list(seed=TRUE)) %dofuture%
       logmeanexp(replicate(Nreps_eval,
@@ -983,7 +986,7 @@ options(
 
   <<pairs_global,purl=FALSE>>=
   pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
-    data=subset(r3,logLik>max(logLik)-20))
+    data=subset(r3,logLik>max(logLik)-20),pch=16)
   @
 
 \end{frame}
@@ -1043,7 +1046,7 @@ options(
   <<param_file,out.width="0.8\\linewidth">>=
   params <- read_csv("params.csv")
   pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
-    data=subset(params,logLik>max(logLik)-20))
+    data=subset(params,logLik>max(logLik)-20),pch=16)
   @
 
 \end{frame}
@@ -1143,7 +1146,7 @@ options(
 
   <<profile_rho,eval=T,echo=F>>=
   stew(file="profile_rho.rda",seed=1888257101,{
-    cores <- nbrOfWorkers()
+    par_init(run_level)
     foreach(start=iter(starts,"row"),.combine=rbind,
       .options.future=list(seed=TRUE)) %dofuture% {
         polio |> mif2(params=start,
@@ -1160,7 +1163,8 @@ options(
         mf |> coef() |> bind_rows() |>
           bind_cols(logLik=ll[1],logLik_se=ll[2])
       } -> m4
-  },dependson=run_level)
+    cores <- nbrOfWorkers()
+  })
   @
 
   \begin{itemize}
@@ -1187,7 +1191,7 @@ options(
   \vspace{-3mm}
 
   <<profile_rho_plot1,echo=FALSE,fig.width=6,fig.height=6,out.width="0.7\\linewidth",purl=FALSE>>=
-  pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,data=subset(m4,logLik>max(logLik)-10))
+  pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,data=subset(m4,logLik>max(logLik)-10),pch=16)
   @
 
   <<save_profile_rho,echo=FALSE>>=
@@ -1259,16 +1263,30 @@ options(
 
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[fragile,allowframebreaks]
 
-  <<mif_diagnostics_code,echo=TRUE,eval=FALSE,purl=FALSE>>=
-  plot(m3[r3$logLik>max(r3$logLik)-10])
+  <<mif_diagnostics1,echo=TRUE,eval=TRUE,purl=FALSE>>=
+  best <- m3[r3$logLik>max(r3$logLik)-10]
+
+  best |> as.data.frame() |> select(time,.L1,ess,cond.logLik) |>
+    pivot_longer(-c(.L1,time)) |>
+    ggplot(aes(x=time,y=value,color=factor(.L1)))+
+    geom_line()+
+    guides(color="none")+
+    facet_grid(name~.,scales="free_y")+
+    theme_bw()
   @
 
-  \vspace{-5mm}
+  <<mif_diagnostics2,echo=TRUE,eval=TRUE,purl=FALSE>>=
+  best |> traces() |> melt() |>
+    filter(!(name %in% fp_names)) -> best_tr
 
-  <<mif_diagnostics_plot,out.width="0.8\\linewidth",echo=FALSE>>=
-  <<mif_diagnostics_code>>
+  best_tr |>
+    ggplot(aes(x=iteration,y=value,color=factor(.L1)))+
+    geom_line()+
+    guides(color="none")+
+    facet_wrap(~name,scales="free_y")+
+    theme_bw()
   @
 
 \end{frame}
@@ -1287,13 +1305,18 @@ options(
 
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[fragile,allowframebreaks]
 
-  <<likelihood_convergence,out.width="0.8\\linewidth">>=
-  loglik_convergence <- do.call(cbind,
-    traces(m3[r3$logLik>max(r3$logLik)-10],"loglik"))
-  matplot(loglik_convergence,type="l",lty=1,
-    ylim=max(loglik_convergence,na.rm=T)+c(-10,0))
+  <<likelihood_convergence,out.width="0.8\\linewidth",purl=FALSE>>=
+  best_tr |> filter(name=="loglik") |>
+    filter(!is.na(value)) -> logLik_trace
+
+  logLik_trace |>
+    ggplot(aes(x=iteration,y=value,group=.L1))+
+    geom_line(alpha=0.15)+
+    lims(y=c(max(logLik_trace$value)-10,NA))+
+    labs(y="logLik")+
+    theme_bw()
   @
 
 \end{frame}

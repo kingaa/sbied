@@ -52,6 +52,7 @@ The following objects are masked from ‘package:purrr’:
     accumulate, when
 
 Loading required package: future
+> stopifnot(packageVersion("pomp")>="5.3.1")
 > options(
 +   dplyr.summarise.inform=FALSE,
 +   pomp_archive_dir="results"
@@ -207,773 +208,24 @@ dbl (4): time, cases, births, pop
 > Nreps_global <-switch(run_level, 10,  20, 100)
 > Nsim <-        switch(run_level, 50, 100, 500)
 > 
-> ## library(doFuture)
+> library(doFuture)
+> library(iterators)
 > 
-> if (file.exists("CLUSTER.R")) {
-+   source("CLUSTER.R")
+> par_init <- function (run_level) {
++   if (run_level >= 3 && file.exists("CLUSTER.R")) {
++     source("CLUSTER.R")
++   } else {
++     plan(multisession)
++   }
 + }
-Number of workers: 250
-Loading required namespace: Rmpi
-App launch reported: 11 (out of 11) daemons - 226 (out of 250) procs
-	250 slaves are spawned successfully. 0 failed.
-Updating node 1 of 250 ...
-- collecting session information
-Updating node 1 of 250 ... DONE
-Updating node 2 of 250 ...
-- collecting session information
-Updating node 2 of 250 ... DONE
-Updating node 3 of 250 ...
-- collecting session information
-Updating node 3 of 250 ... DONE
-Updating node 4 of 250 ...
-- collecting session information
-Updating node 4 of 250 ... DONE
-Updating node 5 of 250 ...
-- collecting session information
-Updating node 5 of 250 ... DONE
-Updating node 6 of 250 ...
-- collecting session information
-Updating node 6 of 250 ... DONE
-Updating node 7 of 250 ...
-- collecting session information
-Updating node 7 of 250 ... DONE
-Updating node 8 of 250 ...
-- collecting session information
-Updating node 8 of 250 ... DONE
-Updating node 9 of 250 ...
-- collecting session information
-Updating node 9 of 250 ... DONE
-Updating node 10 of 250 ...
-- collecting session information
-Updating node 10 of 250 ... DONE
-Updating node 11 of 250 ...
-- collecting session information
-Updating node 11 of 250 ... DONE
-Updating node 12 of 250 ...
-- collecting session information
-Updating node 12 of 250 ... DONE
-Updating node 13 of 250 ...
-- collecting session information
-Updating node 13 of 250 ... DONE
-Updating node 14 of 250 ...
-- collecting session information
-Updating node 14 of 250 ... DONE
-Updating node 15 of 250 ...
-- collecting session information
-Updating node 15 of 250 ... DONE
-Updating node 16 of 250 ...
-- collecting session information
-Updating node 16 of 250 ... DONE
-Updating node 17 of 250 ...
-- collecting session information
-Updating node 17 of 250 ... DONE
-Updating node 18 of 250 ...
-- collecting session information
-Updating node 18 of 250 ... DONE
-Updating node 19 of 250 ...
-- collecting session information
-Updating node 19 of 250 ... DONE
-Updating node 20 of 250 ...
-- collecting session information
-Updating node 20 of 250 ... DONE
-Updating node 21 of 250 ...
-- collecting session information
-Updating node 21 of 250 ... DONE
-Updating node 22 of 250 ...
-- collecting session information
-Updating node 22 of 250 ... DONE
-Updating node 23 of 250 ...
-- collecting session information
-Updating node 23 of 250 ... DONE
-Updating node 24 of 250 ...
-- collecting session information
-Updating node 24 of 250 ... DONE
-Updating node 25 of 250 ...
-- collecting session information
-Updating node 25 of 250 ... DONE
-Updating node 26 of 250 ...
-- collecting session information
-Updating node 26 of 250 ... DONE
-Updating node 27 of 250 ...
-- collecting session information
-Updating node 27 of 250 ... DONE
-Updating node 28 of 250 ...
-- collecting session information
-Updating node 28 of 250 ... DONE
-Updating node 29 of 250 ...
-- collecting session information
-Updating node 29 of 250 ... DONE
-Updating node 30 of 250 ...
-- collecting session information
-Updating node 30 of 250 ... DONE
-Updating node 31 of 250 ...
-- collecting session information
-Updating node 31 of 250 ... DONE
-Updating node 32 of 250 ...
-- collecting session information
-Updating node 32 of 250 ... DONE
-Updating node 33 of 250 ...
-- collecting session information
-Updating node 33 of 250 ... DONE
-Updating node 34 of 250 ...
-- collecting session information
-Updating node 34 of 250 ... DONE
-Updating node 35 of 250 ...
-- collecting session information
-Updating node 35 of 250 ... DONE
-Updating node 36 of 250 ...
-- collecting session information
-Updating node 36 of 250 ... DONE
-Updating node 37 of 250 ...
-- collecting session information
-Updating node 37 of 250 ... DONE
-Updating node 38 of 250 ...
-- collecting session information
-Updating node 38 of 250 ... DONE
-Updating node 39 of 250 ...
-- collecting session information
-Updating node 39 of 250 ... DONE
-Updating node 40 of 250 ...
-- collecting session information
-Updating node 40 of 250 ... DONE
-Updating node 41 of 250 ...
-- collecting session information
-Updating node 41 of 250 ... DONE
-Updating node 42 of 250 ...
-- collecting session information
-Updating node 42 of 250 ... DONE
-Updating node 43 of 250 ...
-- collecting session information
-Updating node 43 of 250 ... DONE
-Updating node 44 of 250 ...
-- collecting session information
-Updating node 44 of 250 ... DONE
-Updating node 45 of 250 ...
-- collecting session information
-Updating node 45 of 250 ... DONE
-Updating node 46 of 250 ...
-- collecting session information
-Updating node 46 of 250 ... DONE
-Updating node 47 of 250 ...
-- collecting session information
-Updating node 47 of 250 ... DONE
-Updating node 48 of 250 ...
-- collecting session information
-Updating node 48 of 250 ... DONE
-Updating node 49 of 250 ...
-- collecting session information
-Updating node 49 of 250 ... DONE
-Updating node 50 of 250 ...
-- collecting session information
-Updating node 50 of 250 ... DONE
-Updating node 51 of 250 ...
-- collecting session information
-Updating node 51 of 250 ... DONE
-Updating node 52 of 250 ...
-- collecting session information
-Updating node 52 of 250 ... DONE
-Updating node 53 of 250 ...
-- collecting session information
-Updating node 53 of 250 ... DONE
-Updating node 54 of 250 ...
-- collecting session information
-Updating node 54 of 250 ... DONE
-Updating node 55 of 250 ...
-- collecting session information
-Updating node 55 of 250 ... DONE
-Updating node 56 of 250 ...
-- collecting session information
-Updating node 56 of 250 ... DONE
-Updating node 57 of 250 ...
-- collecting session information
-Updating node 57 of 250 ... DONE
-Updating node 58 of 250 ...
-- collecting session information
-Updating node 58 of 250 ... DONE
-Updating node 59 of 250 ...
-- collecting session information
-Updating node 59 of 250 ... DONE
-Updating node 60 of 250 ...
-- collecting session information
-Updating node 60 of 250 ... DONE
-Updating node 61 of 250 ...
-- collecting session information
-Updating node 61 of 250 ... DONE
-Updating node 62 of 250 ...
-- collecting session information
-Updating node 62 of 250 ... DONE
-Updating node 63 of 250 ...
-- collecting session information
-Updating node 63 of 250 ... DONE
-Updating node 64 of 250 ...
-- collecting session information
-Updating node 64 of 250 ... DONE
-Updating node 65 of 250 ...
-- collecting session information
-Updating node 65 of 250 ... DONE
-Updating node 66 of 250 ...
-- collecting session information
-Updating node 66 of 250 ... DONE
-Updating node 67 of 250 ...
-- collecting session information
-Updating node 67 of 250 ... DONE
-Updating node 68 of 250 ...
-- collecting session information
-Updating node 68 of 250 ... DONE
-Updating node 69 of 250 ...
-- collecting session information
-Updating node 69 of 250 ... DONE
-Updating node 70 of 250 ...
-- collecting session information
-Updating node 70 of 250 ... DONE
-Updating node 71 of 250 ...
-- collecting session information
-Updating node 71 of 250 ... DONE
-Updating node 72 of 250 ...
-- collecting session information
-Updating node 72 of 250 ... DONE
-Updating node 73 of 250 ...
-- collecting session information
-Updating node 73 of 250 ... DONE
-Updating node 74 of 250 ...
-- collecting session information
-Updating node 74 of 250 ... DONE
-Updating node 75 of 250 ...
-- collecting session information
-Updating node 75 of 250 ... DONE
-Updating node 76 of 250 ...
-- collecting session information
-Updating node 76 of 250 ... DONE
-Updating node 77 of 250 ...
-- collecting session information
-Updating node 77 of 250 ... DONE
-Updating node 78 of 250 ...
-- collecting session information
-Updating node 78 of 250 ... DONE
-Updating node 79 of 250 ...
-- collecting session information
-Updating node 79 of 250 ... DONE
-Updating node 80 of 250 ...
-- collecting session information
-Updating node 80 of 250 ... DONE
-Updating node 81 of 250 ...
-- collecting session information
-Updating node 81 of 250 ... DONE
-Updating node 82 of 250 ...
-- collecting session information
-Updating node 82 of 250 ... DONE
-Updating node 83 of 250 ...
-- collecting session information
-Updating node 83 of 250 ... DONE
-Updating node 84 of 250 ...
-- collecting session information
-Updating node 84 of 250 ... DONE
-Updating node 85 of 250 ...
-- collecting session information
-Updating node 85 of 250 ... DONE
-Updating node 86 of 250 ...
-- collecting session information
-Updating node 86 of 250 ... DONE
-Updating node 87 of 250 ...
-- collecting session information
-Updating node 87 of 250 ... DONE
-Updating node 88 of 250 ...
-- collecting session information
-Updating node 88 of 250 ... DONE
-Updating node 89 of 250 ...
-- collecting session information
-Updating node 89 of 250 ... DONE
-Updating node 90 of 250 ...
-- collecting session information
-Updating node 90 of 250 ... DONE
-Updating node 91 of 250 ...
-- collecting session information
-Updating node 91 of 250 ... DONE
-Updating node 92 of 250 ...
-- collecting session information
-Updating node 92 of 250 ... DONE
-Updating node 93 of 250 ...
-- collecting session information
-Updating node 93 of 250 ... DONE
-Updating node 94 of 250 ...
-- collecting session information
-Updating node 94 of 250 ... DONE
-Updating node 95 of 250 ...
-- collecting session information
-Updating node 95 of 250 ... DONE
-Updating node 96 of 250 ...
-- collecting session information
-Updating node 96 of 250 ... DONE
-Updating node 97 of 250 ...
-- collecting session information
-Updating node 97 of 250 ... DONE
-Updating node 98 of 250 ...
-- collecting session information
-Updating node 98 of 250 ... DONE
-Updating node 99 of 250 ...
-- collecting session information
-Updating node 99 of 250 ... DONE
-Updating node 100 of 250 ...
-- collecting session information
-Updating node 100 of 250 ... DONE
-Updating node 101 of 250 ...
-- collecting session information
-Updating node 101 of 250 ... DONE
-Updating node 102 of 250 ...
-- collecting session information
-Updating node 102 of 250 ... DONE
-Updating node 103 of 250 ...
-- collecting session information
-Updating node 103 of 250 ... DONE
-Updating node 104 of 250 ...
-- collecting session information
-Updating node 104 of 250 ... DONE
-Updating node 105 of 250 ...
-- collecting session information
-Updating node 105 of 250 ... DONE
-Updating node 106 of 250 ...
-- collecting session information
-Updating node 106 of 250 ... DONE
-Updating node 107 of 250 ...
-- collecting session information
-Updating node 107 of 250 ... DONE
-Updating node 108 of 250 ...
-- collecting session information
-Updating node 108 of 250 ... DONE
-Updating node 109 of 250 ...
-- collecting session information
-Updating node 109 of 250 ... DONE
-Updating node 110 of 250 ...
-- collecting session information
-Updating node 110 of 250 ... DONE
-Updating node 111 of 250 ...
-- collecting session information
-Updating node 111 of 250 ... DONE
-Updating node 112 of 250 ...
-- collecting session information
-Updating node 112 of 250 ... DONE
-Updating node 113 of 250 ...
-- collecting session information
-Updating node 113 of 250 ... DONE
-Updating node 114 of 250 ...
-- collecting session information
-Updating node 114 of 250 ... DONE
-Updating node 115 of 250 ...
-- collecting session information
-Updating node 115 of 250 ... DONE
-Updating node 116 of 250 ...
-- collecting session information
-Updating node 116 of 250 ... DONE
-Updating node 117 of 250 ...
-- collecting session information
-Updating node 117 of 250 ... DONE
-Updating node 118 of 250 ...
-- collecting session information
-Updating node 118 of 250 ... DONE
-Updating node 119 of 250 ...
-- collecting session information
-Updating node 119 of 250 ... DONE
-Updating node 120 of 250 ...
-- collecting session information
-Updating node 120 of 250 ... DONE
-Updating node 121 of 250 ...
-- collecting session information
-Updating node 121 of 250 ... DONE
-Updating node 122 of 250 ...
-- collecting session information
-Updating node 122 of 250 ... DONE
-Updating node 123 of 250 ...
-- collecting session information
-Updating node 123 of 250 ... DONE
-Updating node 124 of 250 ...
-- collecting session information
-Updating node 124 of 250 ... DONE
-Updating node 125 of 250 ...
-- collecting session information
-Updating node 125 of 250 ... DONE
-Updating node 126 of 250 ...
-- collecting session information
-Updating node 126 of 250 ... DONE
-Updating node 127 of 250 ...
-- collecting session information
-Updating node 127 of 250 ... DONE
-Updating node 128 of 250 ...
-- collecting session information
-Updating node 128 of 250 ... DONE
-Updating node 129 of 250 ...
-- collecting session information
-Updating node 129 of 250 ... DONE
-Updating node 130 of 250 ...
-- collecting session information
-Updating node 130 of 250 ... DONE
-Updating node 131 of 250 ...
-- collecting session information
-Updating node 131 of 250 ... DONE
-Updating node 132 of 250 ...
-- collecting session information
-Updating node 132 of 250 ... DONE
-Updating node 133 of 250 ...
-- collecting session information
-Updating node 133 of 250 ... DONE
-Updating node 134 of 250 ...
-- collecting session information
-Updating node 134 of 250 ... DONE
-Updating node 135 of 250 ...
-- collecting session information
-Updating node 135 of 250 ... DONE
-Updating node 136 of 250 ...
-- collecting session information
-Updating node 136 of 250 ... DONE
-Updating node 137 of 250 ...
-- collecting session information
-Updating node 137 of 250 ... DONE
-Updating node 138 of 250 ...
-- collecting session information
-Updating node 138 of 250 ... DONE
-Updating node 139 of 250 ...
-- collecting session information
-Updating node 139 of 250 ... DONE
-Updating node 140 of 250 ...
-- collecting session information
-Updating node 140 of 250 ... DONE
-Updating node 141 of 250 ...
-- collecting session information
-Updating node 141 of 250 ... DONE
-Updating node 142 of 250 ...
-- collecting session information
-Updating node 142 of 250 ... DONE
-Updating node 143 of 250 ...
-- collecting session information
-Updating node 143 of 250 ... DONE
-Updating node 144 of 250 ...
-- collecting session information
-Updating node 144 of 250 ... DONE
-Updating node 145 of 250 ...
-- collecting session information
-Updating node 145 of 250 ... DONE
-Updating node 146 of 250 ...
-- collecting session information
-Updating node 146 of 250 ... DONE
-Updating node 147 of 250 ...
-- collecting session information
-Updating node 147 of 250 ... DONE
-Updating node 148 of 250 ...
-- collecting session information
-Updating node 148 of 250 ... DONE
-Updating node 149 of 250 ...
-- collecting session information
-Updating node 149 of 250 ... DONE
-Updating node 150 of 250 ...
-- collecting session information
-Updating node 150 of 250 ... DONE
-Updating node 151 of 250 ...
-- collecting session information
-Updating node 151 of 250 ... DONE
-Updating node 152 of 250 ...
-- collecting session information
-Updating node 152 of 250 ... DONE
-Updating node 153 of 250 ...
-- collecting session information
-Updating node 153 of 250 ... DONE
-Updating node 154 of 250 ...
-- collecting session information
-Updating node 154 of 250 ... DONE
-Updating node 155 of 250 ...
-- collecting session information
-Updating node 155 of 250 ... DONE
-Updating node 156 of 250 ...
-- collecting session information
-Updating node 156 of 250 ... DONE
-Updating node 157 of 250 ...
-- collecting session information
-Updating node 157 of 250 ... DONE
-Updating node 158 of 250 ...
-- collecting session information
-Updating node 158 of 250 ... DONE
-Updating node 159 of 250 ...
-- collecting session information
-Updating node 159 of 250 ... DONE
-Updating node 160 of 250 ...
-- collecting session information
-Updating node 160 of 250 ... DONE
-Updating node 161 of 250 ...
-- collecting session information
-Updating node 161 of 250 ... DONE
-Updating node 162 of 250 ...
-- collecting session information
-Updating node 162 of 250 ... DONE
-Updating node 163 of 250 ...
-- collecting session information
-Updating node 163 of 250 ... DONE
-Updating node 164 of 250 ...
-- collecting session information
-Updating node 164 of 250 ... DONE
-Updating node 165 of 250 ...
-- collecting session information
-Updating node 165 of 250 ... DONE
-Updating node 166 of 250 ...
-- collecting session information
-Updating node 166 of 250 ... DONE
-Updating node 167 of 250 ...
-- collecting session information
-Updating node 167 of 250 ... DONE
-Updating node 168 of 250 ...
-- collecting session information
-Updating node 168 of 250 ... DONE
-Updating node 169 of 250 ...
-- collecting session information
-Updating node 169 of 250 ... DONE
-Updating node 170 of 250 ...
-- collecting session information
-Updating node 170 of 250 ... DONE
-Updating node 171 of 250 ...
-- collecting session information
-Updating node 171 of 250 ... DONE
-Updating node 172 of 250 ...
-- collecting session information
-Updating node 172 of 250 ... DONE
-Updating node 173 of 250 ...
-- collecting session information
-Updating node 173 of 250 ... DONE
-Updating node 174 of 250 ...
-- collecting session information
-Updating node 174 of 250 ... DONE
-Updating node 175 of 250 ...
-- collecting session information
-Updating node 175 of 250 ... DONE
-Updating node 176 of 250 ...
-- collecting session information
-Updating node 176 of 250 ... DONE
-Updating node 177 of 250 ...
-- collecting session information
-Updating node 177 of 250 ... DONE
-Updating node 178 of 250 ...
-- collecting session information
-Updating node 178 of 250 ... DONE
-Updating node 179 of 250 ...
-- collecting session information
-Updating node 179 of 250 ... DONE
-Updating node 180 of 250 ...
-- collecting session information
-Updating node 180 of 250 ... DONE
-Updating node 181 of 250 ...
-- collecting session information
-Updating node 181 of 250 ... DONE
-Updating node 182 of 250 ...
-- collecting session information
-Updating node 182 of 250 ... DONE
-Updating node 183 of 250 ...
-- collecting session information
-Updating node 183 of 250 ... DONE
-Updating node 184 of 250 ...
-- collecting session information
-Updating node 184 of 250 ... DONE
-Updating node 185 of 250 ...
-- collecting session information
-Updating node 185 of 250 ... DONE
-Updating node 186 of 250 ...
-- collecting session information
-Updating node 186 of 250 ... DONE
-Updating node 187 of 250 ...
-- collecting session information
-Updating node 187 of 250 ... DONE
-Updating node 188 of 250 ...
-- collecting session information
-Updating node 188 of 250 ... DONE
-Updating node 189 of 250 ...
-- collecting session information
-Updating node 189 of 250 ... DONE
-Updating node 190 of 250 ...
-- collecting session information
-Updating node 190 of 250 ... DONE
-Updating node 191 of 250 ...
-- collecting session information
-Updating node 191 of 250 ... DONE
-Updating node 192 of 250 ...
-- collecting session information
-Updating node 192 of 250 ... DONE
-Updating node 193 of 250 ...
-- collecting session information
-Updating node 193 of 250 ... DONE
-Updating node 194 of 250 ...
-- collecting session information
-Updating node 194 of 250 ... DONE
-Updating node 195 of 250 ...
-- collecting session information
-Updating node 195 of 250 ... DONE
-Updating node 196 of 250 ...
-- collecting session information
-Updating node 196 of 250 ... DONE
-Updating node 197 of 250 ...
-- collecting session information
-Updating node 197 of 250 ... DONE
-Updating node 198 of 250 ...
-- collecting session information
-Updating node 198 of 250 ... DONE
-Updating node 199 of 250 ...
-- collecting session information
-Updating node 199 of 250 ... DONE
-Updating node 200 of 250 ...
-- collecting session information
-Updating node 200 of 250 ... DONE
-Updating node 201 of 250 ...
-- collecting session information
-Updating node 201 of 250 ... DONE
-Updating node 202 of 250 ...
-- collecting session information
-Updating node 202 of 250 ... DONE
-Updating node 203 of 250 ...
-- collecting session information
-Updating node 203 of 250 ... DONE
-Updating node 204 of 250 ...
-- collecting session information
-Updating node 204 of 250 ... DONE
-Updating node 205 of 250 ...
-- collecting session information
-Updating node 205 of 250 ... DONE
-Updating node 206 of 250 ...
-- collecting session information
-Updating node 206 of 250 ... DONE
-Updating node 207 of 250 ...
-- collecting session information
-Updating node 207 of 250 ... DONE
-Updating node 208 of 250 ...
-- collecting session information
-Updating node 208 of 250 ... DONE
-Updating node 209 of 250 ...
-- collecting session information
-Updating node 209 of 250 ... DONE
-Updating node 210 of 250 ...
-- collecting session information
-Updating node 210 of 250 ... DONE
-Updating node 211 of 250 ...
-- collecting session information
-Updating node 211 of 250 ... DONE
-Updating node 212 of 250 ...
-- collecting session information
-Updating node 212 of 250 ... DONE
-Updating node 213 of 250 ...
-- collecting session information
-Updating node 213 of 250 ... DONE
-Updating node 214 of 250 ...
-- collecting session information
-Updating node 214 of 250 ... DONE
-Updating node 215 of 250 ...
-- collecting session information
-Updating node 215 of 250 ... DONE
-Updating node 216 of 250 ...
-- collecting session information
-Updating node 216 of 250 ... DONE
-Updating node 217 of 250 ...
-- collecting session information
-Updating node 217 of 250 ... DONE
-Updating node 218 of 250 ...
-- collecting session information
-Updating node 218 of 250 ... DONE
-Updating node 219 of 250 ...
-- collecting session information
-Updating node 219 of 250 ... DONE
-Updating node 220 of 250 ...
-- collecting session information
-Updating node 220 of 250 ... DONE
-Updating node 221 of 250 ...
-- collecting session information
-Updating node 221 of 250 ... DONE
-Updating node 222 of 250 ...
-- collecting session information
-Updating node 222 of 250 ... DONE
-Updating node 223 of 250 ...
-- collecting session information
-Updating node 223 of 250 ... DONE
-Updating node 224 of 250 ...
-- collecting session information
-Updating node 224 of 250 ... DONE
-Updating node 225 of 250 ...
-- collecting session information
-Updating node 225 of 250 ... DONE
-Updating node 226 of 250 ...
-- collecting session information
-Updating node 226 of 250 ... DONE
-Updating node 227 of 250 ...
-- collecting session information
-Updating node 227 of 250 ... DONE
-Updating node 228 of 250 ...
-- collecting session information
-Updating node 228 of 250 ... DONE
-Updating node 229 of 250 ...
-- collecting session information
-Updating node 229 of 250 ... DONE
-Updating node 230 of 250 ...
-- collecting session information
-Updating node 230 of 250 ... DONE
-Updating node 231 of 250 ...
-- collecting session information
-Updating node 231 of 250 ... DONE
-Updating node 232 of 250 ...
-- collecting session information
-Updating node 232 of 250 ... DONE
-Updating node 233 of 250 ...
-- collecting session information
-Updating node 233 of 250 ... DONE
-Updating node 234 of 250 ...
-- collecting session information
-Updating node 234 of 250 ... DONE
-Updating node 235 of 250 ...
-- collecting session information
-Updating node 235 of 250 ... DONE
-Updating node 236 of 250 ...
-- collecting session information
-Updating node 236 of 250 ... DONE
-Updating node 237 of 250 ...
-- collecting session information
-Updating node 237 of 250 ... DONE
-Updating node 238 of 250 ...
-- collecting session information
-Updating node 238 of 250 ... DONE
-Updating node 239 of 250 ...
-- collecting session information
-Updating node 239 of 250 ... DONE
-Updating node 240 of 250 ...
-- collecting session information
-Updating node 240 of 250 ... DONE
-Updating node 241 of 250 ...
-- collecting session information
-Updating node 241 of 250 ... DONE
-Updating node 242 of 250 ...
-- collecting session information
-Updating node 242 of 250 ... DONE
-Updating node 243 of 250 ...
-- collecting session information
-Updating node 243 of 250 ... DONE
-Updating node 244 of 250 ...
-- collecting session information
-Updating node 244 of 250 ... DONE
-Updating node 245 of 250 ...
-- collecting session information
-Updating node 245 of 250 ... DONE
-Updating node 246 of 250 ...
-- collecting session information
-Updating node 246 of 250 ... DONE
-Updating node 247 of 250 ...
-- collecting session information
-Updating node 247 of 250 ... DONE
-Updating node 248 of 250 ...
-- collecting session information
-Updating node 248 of 250 ... DONE
-Updating node 249 of 250 ...
-- collecting session information
-Updating node 249 of 250 ... DONE
-Updating node 250 of 250 ...
-- collecting session information
-Updating node 250 of 250 ... DONE
 > 
 > stew(file="pf1.rda",seed=3899882,{
++   par_init(run_level)
 +   pf1 <- foreach(i=1:20,.combine=c,
 +     .options.future=list(seed=TRUE)
 +   ) %dofuture% pfilter(polio,Np=Np)
 +   cores <- nbrOfWorkers()
-+ },info=TRUE,dependson=Np)
-NOTE: creating archive directory ‘results’.
++ })
 > L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
 > 
 > simulate(polio,nsim=Nsim,seed=1643079359,
@@ -1010,21 +262,21 @@ attributes are not identical across measure variables; they will be dropped
 +   IO_0=ivp(rwi),SO_0=ivp(rwi)),
 +   list(rwi=0.2,rwr=0.02)))
 > 
-> stew(file="mif.rda",seed=942098028,
-+   dependson=run_level,{
-+     m2 <- foreach(
-+       i=1:Nreps_local,.combine=c,
-+       .options.future=list(seed=TRUE)
-+     ) %dofuture%
-+       mif2(polio, Np=Np, Nmif=Nmif, rw.sd=mif.rw.sd,
-+         cooling.fraction.50=0.5)
-+     lik_m2 <- foreach(
-+       m=m2,.combine=rbind,
-+       .options.future=list(seed=TRUE)
-+     ) %dofuture%
-+       logmeanexp(replicate(Nreps_eval,
-+         logLik(pfilter(m,Np=Np))),se=TRUE)
-+   })
+> stew(file="mif.rda",seed=942098028,{
++   par_init(run_level)
++   m2 <- foreach(
++     i=1:Nreps_local,.combine=c,
++     .options.future=list(seed=TRUE)
++   ) %dofuture%
++     mif2(polio, Np=Np, Nmif=Nmif, rw.sd=mif.rw.sd,
++       cooling.fraction.50=0.5)
++   lik_m2 <- foreach(
++     m=m2,.combine=rbind,
++     .options.future=list(seed=TRUE)
++   ) %dofuture%
++     logmeanexp(replicate(Nreps_eval,
++       logLik(pfilter(m,Np=Np))),se=TRUE)
++ })
 > 
 > coef(m2) |> melt() |> spread(name,value) |>
 +   select(-.id) |>
@@ -1046,16 +298,16 @@ attributes are not identical across measure variables; they will be dropped
 +   SO_0=c(0,1), IO_0=c(0,0.01)
 + )
 > 
-> bake(file="box_eval1.rds",seed=833102018,
-+   dependson=run_level,{
-+     foreach(i=1:Nreps_global,.combine=c,
-+       .options.future=list(seed=TRUE)) %dofuture%
-+       mif2(m2[[1]],params=c(fixed_params,
-+         apply(box,1,function(x)runif(1,x[1],x[2]))))
-+   }) -> m3
+> bake(file="box_eval1.rds",seed=833102018,{
++   par_init(run_level)
++   foreach(i=1:Nreps_global,.combine=c,
++     .options.future=list(seed=TRUE)) %dofuture%
++     mif2(m2[[1]],params=c(fixed_params,
++       apply(box,1,function(x)runif(1,x[1],x[2]))))
++ }) -> m3
 > 
-> bake(file="box_eval2.rds",seed=71449038,
-+   dependson=run_level,{
+> bake(file="box_eval2.rds",seed=71449038,{
++   par_init(run_level)
 +   foreach(m=m3,.combine=rbind,
 +     .options.future=list(seed=TRUE)) %dofuture%
 +     logmeanexp(replicate(Nreps_eval,
@@ -1104,7 +356,7 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 > pairs(~logLik+psi+rho+tau+sigma_dem+sigma_env,
-+   data=subset(params,logLik>max(logLik)-20))
++   data=subset(params,logLik>max(logLik)-20),pch=16)
 > 
 > 
 > 
@@ -1140,7 +392,7 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 +   list(rwi=0.2,rwr=0.02)))
 > 
 > stew(file="profile_rho.rda",seed=1888257101,{
-+   cores <- nbrOfWorkers()
++   par_init(run_level)
 +   foreach(start=iter(starts,"row"),.combine=rbind,
 +     .options.future=list(seed=TRUE)) %dofuture% {
 +       polio |> mif2(params=start,
@@ -1157,10 +409,11 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 +       mf |> coef() |> bind_rows() |>
 +         bind_cols(logLik=ll[1],logLik_se=ll[2])
 +     } -> m4
-+ },dependson=run_level)
++   cores <- nbrOfWorkers()
++ })
 > 
 > ## stew(file="profile_rho.rda",seed=1888257101,{
-> ##   cores <- nbrOfWorkers()
+> ##   par_init(run_level)
 > ##   foreach(start=iter(starts,"row"),.combine=rbind,
 > ##     .options.future=list(seed=TRUE)) %dofuture% {
 > ##       polio |> mif2(params=start,
@@ -1177,7 +430,8 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 > ##       mf |> coef() |> bind_rows() |>
 > ##         bind_cols(logLik=ll[1],logLik_se=ll[2])
 > ##     } -> m4
-> ## },dependson=run_level)
+> ##   cores <- nbrOfWorkers()
+> ## })
 > 
 > 
 > 
@@ -1193,15 +447,6 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 > 
-> 
-> 
-> plot(m3[r3$logLik>max(r3$logLik)-10])
-> 
-> loglik_convergence <- do.call(cbind,
-+   traces(m3[r3$logLik>max(r3$logLik)-10],"loglik"))
-> matplot(loglik_convergence,type="l",lty=1,
-+   ylim=max(loglik_convergence,na.rm=T)+c(-10,0))
-> 
 > proc.time()
-    user   system  elapsed 
-1543.789  584.620 3736.011 
+   user  system elapsed 
+  5.920   2.679   4.552 
