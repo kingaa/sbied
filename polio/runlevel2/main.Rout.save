@@ -7,6 +7,8 @@ R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
 
+  Natural language support but running in an English locale
+
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
 'citation()' on how to cite R or R packages in publications.
@@ -226,7 +228,6 @@ dbl (4): time, cases, births, pop
 +   ) %dofuture% pfilter(polio,Np=Np)
 +   cores <- nbrOfWorkers()
 + })
-NOTE: creating archive directory ‘results’.
 > L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
 > 
 > simulate(polio,nsim=Nsim,seed=1643079359,
@@ -448,4 +449,4 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 > 
 > proc.time()
    user  system elapsed 
- 51.653   5.654 299.324 
+  4.954  10.738   3.301 
