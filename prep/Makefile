@@ -4,3 +4,6 @@ include ../rules.mk
 
 advance.html: advance.md
 	pandoc $^ -o $@
+
+spam.sh: advance.html spam.R list.csv
+	$(REXE) spam.R

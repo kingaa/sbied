@@ -31,7 +31,7 @@ The course is fully subscribed and we are planning to fill the 2.5 days with bot
 
 The schedule is quite full, so it is important that you take a little time beforehand to prepare yourself and your laptop.
 
-**There are three important steps that you must take to prepare for the course.**
+**There are two things to do to prepare for the course.**
 
 1. Install or update **R**, **Rstudio**, the **pomp** package and its dependencies, and the necessary compilers, on your laptop.
    You will need to have at least version 4.2.0 of **R** and an up-to-date version of **Rstudio** installed on your computer.
@@ -51,10 +51,7 @@ It was frustrating for them, and frustrating too for the rest of the class when 
 Prepare your laptop, and follow the instructions to get help if you run into difficulties you cannot solve.
 </div>
 
-2. Go to [the syllabus](https://kingaa.github.io/sbied/syllabus.html) to see how the course will be structured, to view the schedule, and to get the assignments to be completed before the first session.
-**It is important that you read through the syllabus at your first opportunity, so you will have time to prepare.  Do not put this off until the last day!**
-
-3. If you are unfamiliar with **R**, work through the [**R** tutorial](https://kingaa.github.io/R_Tutorial/).
+2. If you are unfamiliar with **R**, work through the [**R** tutorial](https://kingaa.github.io/R_Tutorial/).
 
 There will be no course materials in hardcopy: all the course materials are [available online](https://kingaa.github.io/sbied/).
 
