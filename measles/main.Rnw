@@ -479,6 +479,91 @@ cat(txt[45:50],sep="\n")
 
 \end{frame}
 
+\section{Model diagnostics}
+
+\begin{frame}[fragile]{ARMA benchmark}
+  <<arma,echo=F,results=F>>=
+  log_y <- as.vector(log(obs(m1)+1))
+  arma_fit <- arima(log_y,order=c(2,0,2))
+  arma_fit$loglik-sum(log_y)
+  @
+  \begin{itemize}
+  \item Linear, Gaussian auto-regressive moving-average (ARMA) models provide a flexible non-mechanistic benchmark comparison.
+  \item We fit an ARMA(2,2) model to $\log(y_n^*+1)$ and correct the likelihood back to the untransformed data (see Lesson~6 for more details). This has $p=5$ parameters and a log-likelihood of $\ell=\Sexpr{myround(arma_fit$loglik-sum(log_y),1)}$ for London.
+\item The SEIR model has $\ell=\Sexpr{myround(mles$loglik[mles$town=="London"],1)}$ with $p=12$.
+\item  Minimizing the AIC, $2p-2\ell$, is equivalent to maximizing $\ell-p$.
+\item The aim of mechanistic modeling is not to beat benchmarks, but falling far behind can diagnose problems.
+\item ``Far'' means many log units: differences of log-likelihoods are invariant to the scale of measurement; ratios of log-likelihoods are not.
+  \end{itemize}
+
+\end{frame}
+
+<<arma_benchmark,echo=F,results=F>>=
+arma_benchmark <- function(po,order=c(2,0,2)){
+  x <- as.vector(obs(po))
+  fit <- arima(log(x + 1), order = order)
+  list(
+    logLik = logLik(fit) - sum(log(x+1)),
+    cond = dnorm(fit$resid,mean=0,sd=sqrt(fit$sigma2),log=T) - log(x+1)
+  )
+}
+@
+
+<<arma-cond-loglik,echo=F>>=
+benchmark <- arma_benchmark(m1)
+pf_reps <- bake("pfilter-reps.rds",{
+  library(foreach)
+  library(iterators)
+  library(future)
+  library(doFuture)
+  plan(multisession)
+  foreach(i=1:20,.options.future=list(seed=50505),.combine=cbind) %dofuture% {
+    cond_logLik(pfilter(m1,Np=2000,params=unlist(as.vector(mle[-(1:3)]))))
+  }
+})
+@
+
+\begin{frame}[fragile]{Log-likelihood anomalies}
+
+\begin{itemize}
+\item The benchmark and model log-likelihoods can both be decomposed as a sum of conditional log-likelihoods, $\ell(\theta)=\sum_{n=1}^N \ell_n(\theta)$ where $\ell_n(\theta)=\log f_{Y_n|Y_{1:n-1}}(y^*_n|y^*_{1:n-1};\theta)$.
+
+\item The {\bf anomaly} for the model at time $t_n$ is the difference between the model conditional log-likelihood and that of the benchmark.
+
+\item Anomalies can be used similarly to regression residuals: they can indicate points where the model fails; patterns can reveal scope for mode improvement.
+
+\item Conditional log-likelihoods are not scale-invariant, but anomalies are.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Anomaly plot for London}
+<<plot_anomalies,echo=F,out.width="4in",fig.width=7,fig.height=3>>=
+par(mai=c(0.8,0.8,0.1,0.1))
+anomaly <- apply(pf_reps,1,mean)-benchmark$cond
+plot(y=anomaly,x=time(m1),xlab="Date",ylab="Anomaly")
+@
+\begin{itemize}
+\item Here, the main anomalies are positive: the log-scale ARMA model is not good at explaining very low counts.
+\item Negative anomalies result if cases fail to drop when susceptibles should be depleted. These are not big anomalies.
+\item One major outlier was previously identified and ``cleaned.''
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Particle filter variance for London}
+<<plot_pf_var,echo=F,out.width="4in",fig.width=7,fig.height=3>>=
+par(mai=c(0.8,0.8,0.1,0.1))
+plot(apply(pf_reps,1,var),x=time(m1),xlab="Date",ylab="Variance")
+@
+\begin{itemize}
+\item The variance of the \code{pfilter} log-likelihood estimate is approximately the sum of the variances of the conditional log-likelihoods.
+\item Observations with high variance are numerically problematic.
+\item Here, none are larger than 1. We have 2000 particles here, which seems just enough, though more may be preferable.
+\end{itemize}
+\end{frame}
+
+
 \section{Findings}
 
 \begin{frame}[fragile]{Results from \citet{He2010}}
