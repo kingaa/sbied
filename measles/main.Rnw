@@ -512,8 +512,6 @@ arma_benchmark <- function(po,order=c(2,0,2)){
 <<arma-cond-loglik,echo=F>>=
 benchmark <- arma_benchmark(m1)
 pf_reps <- bake("pfilter-reps.rds",{
-  library(foreach)
-  library(iterators)
   library(future)
   library(doFuture)
   plan(multisession)
@@ -542,7 +540,7 @@ pf_reps <- bake("pfilter-reps.rds",{
 <<plot_anomalies,echo=F,out.width="4in",fig.width=7,fig.height=3>>=
 par(mai=c(0.8,0.8,0.1,0.1))
 anomaly <- apply(pf_reps,1,mean)-benchmark$cond
-plot(y=anomaly,x=time(m1),xlab="Date",ylab="Anomaly")
+plot(y=anomaly,x=time(m1),xlab="Date",ylab="Anomaly",type='h')
 @
 \begin{itemize}
 \item Here, the main anomalies are positive: the log-scale ARMA model is not good at explaining very low counts.
@@ -554,7 +552,7 @@ plot(y=anomaly,x=time(m1),xlab="Date",ylab="Anomaly")
 \begin{frame}[fragile]{Particle filter variance for London}
 <<plot_pf_var,echo=F,out.width="4in",fig.width=7,fig.height=3>>=
 par(mai=c(0.8,0.8,0.1,0.1))
-plot(apply(pf_reps,1,var),x=time(m1),xlab="Date",ylab="Variance")
+plot(apply(pf_reps,1,var),x=time(m1),xlab="Date",ylab="Variance",type='h')
 @
 \begin{itemize}
 \item The variance of the \code{pfilter} log-likelihood estimate is approximately the sum of the variances of the conditional log-likelihoods.
