@@ -26,7 +26,7 @@ a:hover, a:active {
 
 Dear Module 14 Participant:
 
-We are looking forward to seeing you online soon for our course on ***Simulation-based Inference for Epidemiological Dynamics***!
+We are looking forward to seeing you in Seattle soon for our course on ***Simulation-based Inference for Epidemiological Dynamics***!
 The course is fully subscribed and we are planning to fill the 2.5 days with both theoretical and practical material to help get you started using these exciting methods.
 
 The schedule is quite full, so it is important that you take a little time beforehand to prepare yourself and your laptop.
