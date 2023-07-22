@@ -16,7 +16,7 @@ library(pomp)
 rproc <- Csnippet("
   double beta, br, seas, foi, dw, births;
   double rate[6], trans[6];
-  
+
   // cohort effect
   if (fabs(t-floor(t)-251.0/365.0) < 0.5*dt)
     br = cohort*birthrate/dt + (1-cohort)*birthrate;
@@ -38,7 +38,7 @@ rproc <- Csnippet("
 
   // expected force of infection
   foi = beta*pow(I+iota,alpha)/pop;
-  
+
   // white noise (extrademographic stochasticity)
   dw = rgammawn(sigmaSE,dt);
 
@@ -51,7 +51,7 @@ rproc <- Csnippet("
 
   // Poisson births
   births = rpois(br*dt);
-  
+
   // transitions between classes
   reulermultinom(2, S, &rate[0], dt, &trans[0]);
   reulermultinom(2, E, &rate[2], dt, &trans[2]);
@@ -208,3 +208,40 @@ m1 |>
     paramnames=c("R0","mu","sigma","gamma","alpha","iota",
       "rho","sigmaSE","psi","cohort","amplitude",
       "S_0","E_0","I_0","R_0")) -> m1
+
+## ----arma----------------------------
+log_y <- as.vector(log(obs(m1)+1))
+arma_fit <- arima(log_y,order=c(2,0,2))
+arma_fit$loglik-sum(log_y)
+
+## ----arma_benchmark----------------------------
+arma_benchmark <- function(po,order=c(2,0,2)){
+  x <- as.vector(obs(po))
+  fit <- arima(log(x + 1), order = order)
+  list(
+    logLik = logLik(fit) - sum(log(x+1)),
+    cond = dnorm(fit$resid,mean=0,sd=sqrt(fit$sigma2),log=T) - log(x+1)
+  )
+}
+
+## ----arma-cond-loglik----------------------
+benchmark <- arma_benchmark(m1)
+pf_reps <- bake("pfilter-reps.rds",{
+  library(future)
+  library(doFuture)
+  plan(multisession)
+  foreach(i=1:20,.options.future=list(seed=50505),.combine=cbind) %dofuture% {
+    m1 |> pfilter(Np=2000,params=mle[-(1:3)]) |> cond_logLik()
+  }
+})
+
+## ----plot_anomalies------------------------------
+op <- par(mai=c(0.8,0.8,0.1,0.1))
+anomaly <- apply(pf_reps,1,mean)-benchmark$cond
+plot(y=anomaly,x=time(m1),xlab="Date",ylab="Anomaly",type='h')
+par(op)
+
+## ----plot_pf_var------------------------------
+op <- par(mai=c(0.8,0.8,0.1,0.1))
+plot(apply(pf_reps,1,var),x=time(m1),xlab="Date",ylab="Variance",type='h')
+par(op)

@@ -483,9 +483,6 @@ cat(txt[45:50],sep="\n")
 
 \begin{frame}[fragile]{ARMA benchmark}
   <<arma,echo=F,results=F>>=
-  log_y <- as.vector(log(obs(m1)+1))
-  arma_fit <- arima(log_y,order=c(2,0,2))
-  arma_fit$loglik-sum(log_y)
   @
   \begin{itemize}
   \item Linear, Gaussian auto-regressive moving-average (ARMA) models provide a flexible non-mechanistic benchmark comparison.
@@ -499,26 +496,9 @@ cat(txt[45:50],sep="\n")
 \end{frame}
 
 <<arma_benchmark,echo=F,results=F>>=
-arma_benchmark <- function(po,order=c(2,0,2)){
-  x <- as.vector(obs(po))
-  fit <- arima(log(x + 1), order = order)
-  list(
-    logLik = logLik(fit) - sum(log(x+1)),
-    cond = dnorm(fit$resid,mean=0,sd=sqrt(fit$sigma2),log=T) - log(x+1)
-  )
-}
 @
 
-<<arma-cond-loglik,echo=F>>=
-benchmark <- arma_benchmark(m1)
-pf_reps <- bake("pfilter-reps.rds",{
-  library(future)
-  library(doFuture)
-  plan(multisession)
-  foreach(i=1:20,.options.future=list(seed=50505),.combine=cbind) %dofuture% {
-    cond_logLik(pfilter(m1,Np=2000,params=unlist(as.vector(mle[-(1:3)]))))
-  }
-})
+<<arma-cond-loglik,echo=FALSE>>=
 @
 
 \begin{frame}[fragile]{Log-likelihood anomalies}
@@ -538,9 +518,6 @@ pf_reps <- bake("pfilter-reps.rds",{
 
 \begin{frame}[fragile]{Anomaly plot for London}
 <<plot_anomalies,echo=F,out.width="4in",fig.width=7,fig.height=3>>=
-par(mai=c(0.8,0.8,0.1,0.1))
-anomaly <- apply(pf_reps,1,mean)-benchmark$cond
-plot(y=anomaly,x=time(m1),xlab="Date",ylab="Anomaly",type='h')
 @
 \begin{itemize}
 \item Here, the main anomalies are positive: the log-scale ARMA model is not good at explaining very low counts.
@@ -551,8 +528,6 @@ plot(y=anomaly,x=time(m1),xlab="Date",ylab="Anomaly",type='h')
 
 \begin{frame}[fragile]{Particle filter variance for London}
 <<plot_pf_var,echo=F,out.width="4in",fig.width=7,fig.height=3>>=
-par(mai=c(0.8,0.8,0.1,0.1))
-plot(apply(pf_reps,1,var),x=time(m1),xlab="Date",ylab="Variance",type='h')
 @
 \begin{itemize}
 \item The variance of the \code{pfilter} log-likelihood estimate is approximately the sum of the variances of the conditional log-likelihoods.
