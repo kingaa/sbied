@@ -64,7 +64,7 @@ What is the log likelihood (to the nearest unit) of the Dacca cholera data for t
 <<ebolaModel,echo=TRUE,eval=FALSE>>=
 d <- dacca(deltaI=0.08)
 @
-with cholera mortality rate 8\% and other parameters fixed at the default values.
+with cholera mortality rate 8\% per year, and other parameters fixed at the default values.
  
 \begin{enumerate}[(A)]
 \item \label{A9a} -3764

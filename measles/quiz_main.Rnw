@@ -40,7 +40,7 @@ Two models are fitted to case counts on an epidemic. Model 1 is an SIR POMP mode
 
   Why not \ref{A3b}? Likelihood ratios have statistical meaning, which corresponds to differences of log likelihoods. The likelihood is a dimensional quantity, whereas the likelihood ratio is dimensionless. The units used correspond to a scientifically arbitrary additive constant to the log likelihood, which disappears after taking differences. 
 
-  Why not \ref{A3c}? If our only goal were to find a predictive model, then (C) could be a reasonable position. Usually, we want to find a model that also has interpretablestructure, leading to understanding of the system or estimating the effect of interventions. A simple regression model cannot do those things, even if it fits a bit better. If the mechanistic model fits much worse than simple alternatives, it is not providing a reasonable explanation of the data, suggesting that there may be important things missing from the model specification.
+  Why not \ref{A3c}? If our only goal were to find a predictive model, then (C) could be a reasonable position. Usually, we want to find a model that also has interpretable structure, leading to understanding of the system or estimating the effect of interventions. A simple regression model cannot do those things, even if it fits a bit better. If the mechanistic model fits much worse than simple alternatives, it is not providing a reasonable explanation of the data, suggesting that there may be important things missing from the model specification.
 
   Quite likely, with some persistence, a mechanistic specification will beat a simple off-the-shelf statistical model.
 \end{solution}

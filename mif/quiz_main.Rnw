@@ -40,10 +40,10 @@ When carrying out inference by iterated particle filtering, the likelihood incre
 
 
 \section{}
-People sometimes confuse likelihood profiles with likelihood slices. Suppose you read a figure which claims to construct a profile confidence interval for a parameter $\rho$ in a POMP model with four unknown parameters. Which of the following confirms that the plot is, or is not, a properly constructed profile confidence interval. The code producing the plot is available to you as an Rmarkdown file.
+People sometimes confuse likelihood profiles with likelihood slices. Suppose you read a figure which claims to construct a profile confidence interval for a parameter $\rho$ in a POMP model with four unknown parameters. Which of the following confirms that the plot is, or is not, a properly constructed profile confidence interval.
 \begin{enumerate}[(A)]
 \item \label{A7a} The CI is constructed by obtaining the interval of rho values whose log likelihood is within 1.92 of the maximum on a smoothed curve of likelihood values plotted against $\rho$.
-\item \label{A7b} The code involves evaluation of the likelihood but not maximization.
+\item \label{A7b} The code (made available to you by the authors as an Rmarkdown file) involves evaluation of the likelihood but not maximization.
 \item \label{A7c} The points along the $\rho$ axis are not equally spaced.
 \item \label{A7d} The smoothed line shown in the plot is close to quadratic.
 \item \label{A7e} \ref{A7a} and \ref{A7d} together.
