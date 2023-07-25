@@ -43,6 +43,7 @@ bake(file="like-slice.rds",{
     Beta=rep(seq(from=5,to=30,length=40),each=3),
     mu_IR=rep(seq(from=0.2,to=2,length=40),each=3)
   ) -> p
+  library(iterators)
   plan(multisession)
   foreach (
     theta=iter(p,"row"),

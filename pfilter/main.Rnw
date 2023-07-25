@@ -318,7 +318,6 @@ set.seed(1350254336)
 
   <<parallel-setup,eval=FALSE,purl=FALSE>>=
   library(foreach)
-  library(iterators)
   library(doFuture)
   plan(multisession)
   @
@@ -535,6 +534,7 @@ set.seed(1350254336)
   @
 
   <<like-slice2,eval=FALSE,purl=FALSE>>=
+  library(iterators)
   plan(multisession)
   foreach (
     theta=iter(p,"row"),
