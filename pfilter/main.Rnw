@@ -1,5 +1,9 @@
 \input{../_includes/header}
 
+\usepackage{tikz}
+\usetikzlibrary {arrows.meta} % for tikz stealth arrow style
+\usetikzlibrary{shapes.geometric} % for tikz diamond nodes, etc
+
 \def\CHAPTER{3}
 \title{Lesson \CHAPTER:\\Likelihood-based inference for POMP models}
 \author{Aaron A. King and Edward L. Ionides}
@@ -298,11 +302,36 @@ set.seed(1350254336)
   \framebreak
 
   \begin{itemize}
-  \item Key references on the particle filter include \citet{Kitagawa1987}, \citet{Arulampalam2002}, and the book by \citet{Doucet2001}.
-    Pseudocode for the above is provided by \citet{King2016}.
+  \item References on the particle filter include \citet{Kitagawa1987}, \citet{Arulampalam2002}, \citet{Doucet2001}, \citet{King2016}.
   \item It can be shown that the particle filter provides an unbiased estimate of the likelihood. This implies a consistent but biased estimate of the log likelihood.
   \end{itemize}
 
+\end{frame}
+
+\begin{frame}{A block diagram representation of a particle filter}
+
+\vspace{-2mm}
+\begin{center}
+\begin{tikzpicture}[
+  square/.style={rectangle, draw=black, minimum width=4.2cm, minimum height=0.7cm, rounded corners=.1cm,font=\ttfamily},
+  >/.style={shorten >=0.4mm}, % redefine arrow to stop short of node
+  >/.tip={Stealth[length=2.5mm,width=1.5mm]} % redefine arrow style
+]
+\tikzset{>={}}; % this is needed to implement the arrow redefinition
+  \node (initialize)   at (0,6)  [square] {initialize: rinit};
+  \node (predict)  at (0,4.5)  [square] {predict: rprocess};
+  \node (weight)  at (0,3)  [square] {weight: dmeasure};
+  \node (filter)  at (0,1.5)  [square] {filter: resample};
+  \node (N) at (5.5,3)  [draw,diamond,aspect=2.5] {\texttt{N observations}};
+  \node (Np) at (0,7.5)  [draw,diamond,aspect=2.5,color=red] {\texttt{Np particles}};
+  \draw[->] (initialize) -- (predict);
+  \draw[->] (predict) -- (weight);
+  \draw[->] (weight) -- (filter);
+  \draw[->] (filter.east) -| (N);
+  \draw[->] (N.north) |- (predict.east);
+  \draw[color=red, rounded corners, thick, dashed] (Np.east) -| (2.7,0.7) -- (-2.7,0.7) |- (Np.west);
+\end{tikzpicture}
+\end{center}
 \end{frame}
 
 \begin{frame}[fragile,allowframebreaks=0.8]

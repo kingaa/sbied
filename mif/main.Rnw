@@ -1,5 +1,9 @@
 \input{../_includes/header}
 
+\usepackage{tikz}
+\usetikzlibrary {arrows.meta} % for tikz stealth arrow style
+\usetikzlibrary{shapes.geometric} % for tikz diamond nodes, etc
+
 \def\CHAPTER{4}
 \title{Lesson \CHAPTER.\\Iterated filtering: principles and practice}
 \author{Aaron A. King and Edward L. Ionides}
@@ -170,6 +174,41 @@ set.seed(1350254336)
 
   In theory, this procedure converges toward the region of parameter space maximizing the maximum likelihood.  
   In practice, we can test this claim on examples.
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\resizebox{10cm}{!}{
+\begin{tikzpicture}[
+  square/.style={rectangle, draw=black, minimum width=4.2cm, minimum height=0.7cm, rounded corners=.1cm,font=\ttfamily},
+  >/.style={shorten >=0.4mm}, % redefine arrow to stop short of node
+  >/.tip={Stealth[length=2.5mm,width=1.5mm]} % redefine arrow style
+]
+  \tikzset{>={}}; % this is needed to implement the arrow redefinition
+  \node (ivp) at (0,6) [square,fill=blue!8]{perturb params};
+  \node (initialize)   at (0,4.8)  [square] {initialize: rinit};
+  \node (rp) at (0,3.6) [square,fill=blue!8]{perturb params};
+  \node (predict)  at (0,2.4)  [square] {predict: rprocess};
+  \node (weight)  at (0,1.2)  [square] {weight: dmeasure};
+  \node (filter)  at (0,0)  [square] {resample states};
+  \node (filterParams)  at (0,-1.2)  [square,fill=blue!8] {resample params};  
+  \node (N) at (5.5,1.2)  [draw,diamond,aspect=2] {\texttt{N observations}};
+  \node (Np) at (0,7.5)  [draw,diamond,aspect=2,color=red] {\texttt{Np particles}};
+  \node (Nmif) at (8,4.5)  [draw,diamond,aspect=2,fill=blue!8] {\texttt{Nmif iterations}};
+  \draw[->] (Nmif.north) |- (ivp.east);
+  \draw[->] (filterParams.south) -- (0,-2.3) -| (Nmif.south);
+  \draw[->] (ivp) -- (initialize);
+  \draw[->] (initialize) -- (rp);
+  \draw[->] (rp) -- (predict);
+  \draw[->] (predict) -- (weight);
+  \draw[->] (weight) -- (filter);
+  \draw[->] (filter) -- (filterParams);
+  \draw[->] (filterParams.east) -| (N);
+  \draw[->] (N.north) |- (rp.east);
+  \draw[color=red, rounded corners, thick, dashed] (Np.east) -| (2.9,-2) -- (-2.9,-2) |- (Np.west);
+\end{tikzpicture}
+}
+\end{center}
 \end{frame}
 
 \begin{frame}{IF2 algorithm pseudocode}
