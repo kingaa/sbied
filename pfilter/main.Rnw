@@ -91,7 +91,7 @@ set.seed(1350254336)
   \item The likelihood function is
     $$\lik(\theta) = f_{Y_{1:N}}(y^*_{1:N};\theta),$$
     the density function evaluated at the data.
-  \item It is often convenient to work with the log likelihood function,
+  \item It is often convenient to work with the log-likelihood function,
     $$\loglik(\theta)= \log \lik(\theta) = \log f_{Y_{1:N}}(y^*_{1:N};\theta).$$
   \end{itemize}
 \end{frame}
@@ -155,12 +155,12 @@ set.seed(1350254336)
 
 \begin{frame}{Special case: deterministic latent process}
   \begin{itemize}
-  \item When the latent process is non-random, the log likelihood for a POMP model closely resembles a nonlinear regression model.
-  \item In this case, we can write $X_{n}=x_n(\theta)$, and the log likelihood is
+  \item When the latent process is non-random, the log-likelihood for a POMP model closely resembles a nonlinear regression model.
+  \item In this case, we can write $X_{n}=x_n(\theta)$, and the log-likelihood is
     \begin{equation*}
       \loglik(\theta) = \sum_{n=1}^N \log f_{Y_n|X_n}\big(y_n^*| x_n(\theta); \theta\big).
     \end{equation*}
-  \item If we have a Gaussian measurement model, where $Y_n$ given $X_n=x_n(\theta)$ is conditionally normal with mean $\hat{y}_n\big(x_n(\theta)\big)$ and constant variance $\sigma^2$, then the log likelihood contains a sum of squares which is exactly the criterion that nonlinear least squares regression seeks to minimize.
+  \item If we have a Gaussian measurement model, where $Y_n$ given $X_n=x_n(\theta)$ is conditionally normal with mean $\hat{y}_n\big(x_n(\theta)\big)$ and constant variance $\sigma^2$, then the log-likelihood contains a sum of squares which is exactly the criterion that nonlinear least squares regression seeks to minimize.
   \item More details on deterministic latent process models are given as a \link{deterministic.html}{supplement}.
   \end{itemize}
 \end{frame}
@@ -294,7 +294,7 @@ set.seed(1350254336)
     $$\hat{\lik}_n(\theta)\approx\frac{1}{J}\,\sum_j\,f_{Y_n|X_n}(y^*_{n}|X_{n,j}^{P};\theta)$$
     since $X_{n,j}^{P}$ is approximately a draw from $f_{X_n|Y_{1:n-1}}(x_{n}|y^*_{1:n-1};\theta)$.
   \item We can iterate this procedure through the data, one step at a time, alternately simulating and resampling, until we reach $n=N$.
-  \item The full log likelihood then has approximation
+  \item The full log-likelihood then has approximation
     \begin{equation*}
       \loglik(\theta) = \log{{\lik}(\theta)} = \sum_n \log{{\lik}_n(\theta)} \approx \sum_n\log\hat{\lik}_n(\theta).
     \end{equation*}
@@ -303,7 +303,7 @@ set.seed(1350254336)
 
   \begin{itemize}
   \item References on the particle filter include \citet{Kitagawa1987}, \citet{Arulampalam2002}, \citet{Doucet2001}, \citet{King2016}.
-  \item It can be shown that the particle filter provides an unbiased estimate of the likelihood. This implies a consistent but biased estimate of the log likelihood.
+  \item It can be shown that the particle filter provides an unbiased estimate of the likelihood. This implies a consistent but biased estimate of the log-likelihood.
   \end{itemize}
 
 \end{frame}
@@ -451,7 +451,7 @@ set.seed(1350254336)
 \begin{frame}[allowframebreaks]{Fisher information}
   \begin{itemize}
   \item
-    A computationally quick approach when one has access to satisfactory numerical second derivatives of the log likelihood.
+    A computationally quick approach when one has access to satisfactory numerical second derivatives of the log-likelihood.
   \item
     The approximation is satisfactory only when $\hat\theta$ is well approximated by a normal distribution.
   \item
@@ -490,7 +490,7 @@ set.seed(1350254336)
   \item
     Let's consider the problem of obtaining a confidence interval for the first component of $\theta$. We'll write $$\theta=(\phi,\psi).$$
   \item
-    The \textbf{profile log likelihood function} of $\phi$ is defined to be
+    The \textbf{profile log-likelihood function} of $\phi$ is defined to be
     \begin{equation*}
       \profileloglik{{}}(\phi) = \max_{\psi}\loglik(\phi,\psi).
     \end{equation*}
@@ -505,7 +505,7 @@ set.seed(1350254336)
   \item
     This is known as a profile likelihood confidence interval. The cutoff $1.92$ is derived using \link{https://en.wikipedia.org/wiki/Likelihood-ratio_test\#Distribution:_Wilks.27s_theorem}{Wilks' theorem}, which we will discuss in more detail when we develop likelihood ratio tests.
   \item
-    Although the asymptotic justification of Wilks' theorem is the same limit that justifies the Fisher information standard errors, profile likelihood confidence intervals tend to work better than Fisher information confidence intervals when $N$ is not so large---particularly when the log likelihood function is not close to quadratic near its maximum.
+    Although the asymptotic justification of Wilks' theorem is the same limit that justifies the Fisher information standard errors, profile likelihood confidence intervals tend to work better than Fisher information confidence intervals when $N$ is not so large---particularly when the log-likelihood function is not close to quadratic near its maximum.
   \end{itemize}
 \end{frame}
 
@@ -648,11 +648,11 @@ set.seed(1350254336)
     labs(x=expression(beta),y=expression(mu[IR]))
   @
 
-  In the above, all points with log likelihoods less than 25 units below the maximum are shown in grey.
+  In the above, all points with log-likelihoods less than 25 units below the maximum are shown in grey.
 
   \begin{itemize}
   \item
-    Notice some features of the log likelihood surface, and its estimate from the particle filter, that can cause difficulties for numerical methods:
+    Notice some features of the log-likelihood surface, and its estimate from the particle filter, that can cause difficulties for numerical methods:
     \begin{enumerate}[(a)]
     \item
       The surface is wedge-shaped, so its curvature varies considerably.
@@ -684,9 +684,9 @@ set.seed(1350254336)
   \link{./expense.html}{Worked solution to the Exercise}
 \end{frame}
 
-\begin{frame}{\myexercise. Log likelihood estimation}
+\begin{frame}{\myexercise. log-likelihood estimation}
 
-  Here are some desiderata for a Monte Carlo log likelihood approximation:
+  Here are some desiderata for a Monte Carlo log-likelihood approximation:
 
   \begin{itemize}
   \item
@@ -728,7 +728,7 @@ set.seed(1350254336)
   \item
     Likelihood maximization is key to profile intervals, likelihood ratio tests and AIC as well as the computation of the MLE.
   \item
-    An initial approach to likelihood maximization might be to stick the particle filter log likelihood estimate into a standard numerical optimizer, such as the Nelder-Mead algorithm.
+    An initial approach to likelihood maximization might be to stick the particle filter log-likelihood estimate into a standard numerical optimizer, such as the Nelder-Mead algorithm.
   \item
     In practice this approach is unsatisfactory on all but the smallest POMP models. Standard numerical optimizers are not designed to maximize noisy and computationally expensive Monte Carlo functions.
   \item
@@ -766,7 +766,7 @@ set.seed(1350254336)
     defined via two nested parameter subspaces,
     $\Theta^{\langle 0\rangle}\subset \Theta^{\langle 1\rangle}$, with respective dimensions $D^{\langle 0\rangle}< D^{\langle 1\rangle}\le D$.
   \item
-    We consider the log likelihood maximized over each of the hypotheses,
+    We consider the log-likelihood maximized over each of the hypotheses,
     \begin{equation*}
       \begin{aligned}
         \ell^{\langle 0\rangle} &= \sup_{\theta\in \Theta^{\langle 0\rangle}} \ell(\theta), \\
@@ -784,7 +784,7 @@ set.seed(1350254336)
   \item
     The Wilks approximation can be used to construct a hypothesis test of the null hypothesis $H^{\langle 0\rangle}$ against the alternative $H^{\langle 1\rangle}$.
   \item
-    This is called a \textbf{likelihood ratio test} since a difference of log likelihoods corresponds to a ratio of likelihoods.
+    This is called a \textbf{likelihood ratio test} since a difference of log-likelihoods corresponds to a ratio of likelihoods.
   \item
     When the data are IID, $N\to\infty$, and the hypotheses satisfy suitable regularity conditions, this approximation can be derived mathematically and is known as \textbf{Wilks' theorem}.
   \item
@@ -795,7 +795,7 @@ set.seed(1350254336)
 \begin{frame}[allowframebreaks]{Wilks' theorem and profile likelihood}
   \begin{itemize}
   \item
-    Suppose we have an MLE, written $\hat\theta=(\hat\phi,\hat\psi)$, and a profile log likelihood for $\phi$, given by $\profileloglik{{}}(\phi)$.
+    Suppose we have an MLE, written $\hat\theta=(\hat\phi,\hat\psi)$, and a profile log-likelihood for $\phi$, given by $\profileloglik{{}}(\phi)$.
   \item
     Consider the likelihood ratio test for the nested hypotheses
     \begin{equation*}
@@ -832,7 +832,7 @@ set.seed(1350254336)
     \begin{equation*}
       \mathrm{AIC} = -2\,\loglik(\hat{\theta}) + 2\,D
     \end{equation*}
-    ``Minus twice the maximized log likelihood plus twice the number of parameters.''
+    ``Minus twice the maximized log-likelihood plus twice the number of parameters.''
   \item
     We are invited to select the model with the lowest AIC score.
   \item

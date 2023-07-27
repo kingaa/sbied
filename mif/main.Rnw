@@ -76,7 +76,7 @@ set.seed(1350254336)
 \begin{frame}[allowframebreaks=0.7]{Plug-and-play (also called simulation-based) methods}
   \begin{itemize}
   \item Inference methodology that calls \code{rprocess} but not \code{dprocess} is said to be \emph{plug-and-play}.
-    All popular modern Monte Carlo methods fall into this category. 
+    All popular modern Monte Carlo methods for POMP models are in this category. 
   \item ``Simulation-based'' is equivalent to ``plug-and-play''. 
   \item Historically, simulation-based meant simulating forward from initial conditions to the end of the time series. 
   \item However, particle filtering methods instead consider each observation interval sequentially.
@@ -317,7 +317,7 @@ set.seed(1350254336)
   
   \vspace{-5mm}
 
-  The above plot shows the data (\code{reports}), along with the \emph{effective sample size} (ESS) of the particle filter (\code{ess}) and the log likelihood of each observation conditional on the preceding ones (\code{cond.logLik}).
+  The above plot shows the data (\code{reports}), along with the \emph{effective sample size} (ESS) of the particle filter (\code{ess}) and the log-likelihood of each observation conditional on the preceding ones (\code{cond.logLik}).
 
   The ESS is the equivalent number of independent particles.
   In this case, the ESS appears to be everywhere adequate.

@@ -116,7 +116,7 @@ plot.color <- "black"
     \begin{enumerate}
     \item expresses our current understanding of measles dynamics
     \item includes a long list of mechanisms that have been proposed and demonstrated in the literature
-    \item cannot be fit by existing likelihood-based methods
+    \item cannot be fit by previous likelihood-based methods
     \end{enumerate}
   \item We examine data from large and small towns using the same model, something no existing methods have been able to do.
   \item We ask: does our perspective on this disease change when we expect the models to explain the data in detail?
@@ -249,7 +249,7 @@ plot.color <- "black"
   \item Codes that implement the model in \pkg{pomp} are to be found on \link{./codes.R}{the course website}.
   \item In those codes, we first load the needed packages and set the random seed, to allow reproducibility.
   \item Note that the codes make heavy use of the \pkg{ggplot2} plotting package and \pkg{tidyverse} methods.
-  \item In particular, we use the convenient \pkg{magrittr} pipe syntax, which is explained \link{https://kingaa.github.io/R_Tutorial/munging.html\#the-magrittr-syntax}{elsewhere}.
+  \item We also use the convenient R pipe syntax, \code{|>}.
   \end{itemize}
 \end{frame}
 

@@ -305,7 +305,7 @@ set.seed(2488820)
     where $\{B(t)\}$ is Brownian motion and so $dB/dt$ is Brownian noise.
   \item An Euler approximation $\tilde X(t)$ is
     \begin{equation*}
-      \tilde{X}\big( \,(k+1)\delta\,\big) = \tilde{X}( k\delta) + \delta\, h\big(\, \tilde{X}k\delta)\,\big) + \sigma \sqrt{\delta} \, Z_k
+      \tilde{X}\big( \,(k+1)\delta\,\big) = \tilde{X}( k\delta) + \delta\, h\big(\, \tilde{X}(k\delta)\,\big) + \sigma \sqrt{\delta} \, Z_k
     \end{equation*}
     where $Z_1,Z_2,\dots$ is a sequence of independent standard normal random variables, i.e.,  $Z_k\sim N[0,1]$.
   \item Although SDEs are often considered an advanced topic in probability, the Euler approximation doesn't demand much more than familiarity with the normal distribution.
