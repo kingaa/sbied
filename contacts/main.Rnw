@@ -474,7 +474,7 @@ library(doFuture)
   \bi
 
 \item We have a new consideration not found with \code{pomp} models.
-  Each unit has its own log likelihood arising from an independent Monte Carlo computation.
+  Each unit has its own log-likelihood arising from an independent Monte Carlo computation.
 
 \item The basic \code{pomp} approach remains valid:
 
@@ -519,7 +519,7 @@ library(doFuture)
 
 \item The \code{panel\_logmeanexp} averages separately for each unit before combining.
 
-\item Why does the latter typically give a higher log likelihood estimate with lower Monte Carlo uncertainty?
+\item Why does the latter typically give a higher log-likelihood estimate with lower Monte Carlo uncertainty?
 
 \item Either reason at a heuristic level or (optionally) develop a mathematical argument.
 

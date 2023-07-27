@@ -65,11 +65,11 @@ set.seed(2488820)
       R & recovered and/or removed  & C & reported cases
     \end{tabular}
   \item We suppose that each arrow has an associated rate, so here there is a rate $\mu_{SI}(t)$ at which individuals in $S$ transition to $I$, and $\mu_{IR}$ at which individuals in $I$ transition to $R$.
-  \item To account for demography (births/deaths/migration) we allow the possibility of a source and sink compartment, which is not usually represented on the flow diagram. We write $\mu_{{\small{\bullet}}S}$ for a rate of births into $S$, and denote mortality rates by $\mu_{S{\small\bullet}}$, $\mu_{I{\small\bullet}}$, $\mu_{R{\small\bullet}}$.
+  \item To account for demography (births/deaths/migration) we allow the possibility of a source and sink compartment, which is not usually represented on the flow diagram. We write $\mu_{BS}$ for a rate of births into $S$, and denote mortality rates by $\mu_{SD}$, $\mu_{ID}$, $\mu_{RD}$.
   \item The rates may be either constant or varying. In particular, for a simple SIR model, the recovery rate $\mu_{IR}$ is a constant but the infection rate has the time-varying form
     $$\mu_{SI}(t)=\beta \, I(t),$$
     with $\beta$ being the \myemph{transmission rate}. For the simplest SIR model, ignoring demography, we set
-    $$ \mu_{{\small{\bullet}}S}=\mu_{S{\small{\bullet}}}=\mu_{I{\small{\bullet}}}=\mu_{R{\small{\bullet}}}=0.$$
+    $$ \mu_{BS}=\mu_{SD}=\mu_{ID}=\mu_{RD}=0.$$
   \end{itemize}
 \end{frame}
 
@@ -82,7 +82,7 @@ set.seed(2488820)
   count the number of individuals who have transitioned from $S$ to $I$ by time $t$. We say that $N_{SI}(t)$ is a \myemph{counting process}.
   A similarly constructed process
   $$N_{IR}(t)$$
-  counts individuals transitioning from $I$ to $R$. To include demography, we could keep track of birth and death events by the counting processes $N_{{\small{\bullet}} S}(t)$, $N_{S{\small{\bullet}}}(t)$, $N_{I{\small{\bullet}}}(t)$, $N_{R{\small{\bullet}}}(t)$.
+  counts individuals transitioning from $I$ to $R$. To include demography, we could keep track of birth and death events by the counting processes $N_{BS}(t)$, $N_{SD}(t)$, $N_{ID}(t)$, $N_{RD}(t)$.
 
   \framebreak
 
@@ -307,7 +307,7 @@ set.seed(2488820)
     \begin{equation*}
       \tilde{X}\big( \,(k+1)\delta\,\big) = \tilde{X}( k\delta) + \delta\, h\big(\, \tilde{X}(k\delta)\,\big) + \sigma \sqrt{\delta} \, Z_k
     \end{equation*}
-    where $Z_1,Z_2,\dots$ is a sequence of independent standard normal random variables, i.e.,  $Z_k\sim N[0,1]$.
+    where $Z_1,Z_2,\dots$ are independent standard normal random variables, i.e.,  $Z_k\sim \dist{Normal}{0,1}$.
   \item Although SDEs are often considered an advanced topic in probability, the Euler approximation doesn't demand much more than familiarity with the normal distribution.
   \end{itemize}
 \end{frame}

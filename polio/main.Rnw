@@ -107,7 +107,7 @@ options(
 
   \item All that remains is to hypothesize what is a reasonable way to include covariates for your system, and to fit the resulting model.
 
-  \item Now we can evaluate and maximize the log likelihood, we can construct AIC or likelihood ratio tests to see if the covariate helps describe the data.
+  \item Now we can evaluate and maximize the log-likelihood, we can construct AIC or likelihood ratio tests to see if the covariate helps describe the data.
 
   \item This also lets us compare alternative ways the covariates might enter the process model and/or the measurement model.
 
@@ -664,7 +664,7 @@ options(
 
   \begin{itemize}
 
-  \item In  \Sexpr{myround(.system.time[3],1)} seconds (with \Sexpr{cores} cores) we obtain a log likelihood estimate of \Sexpr{myround(L1[1],2)} with a Monte Carlo standard error of \Sexpr{myround(L1[2],2)}.
+  \item In  \Sexpr{myround(.system.time[3],1)} seconds (with \Sexpr{cores} cores) we obtain a log-likelihood estimate of \Sexpr{myround(L1[1],2)} with a Monte Carlo standard error of \Sexpr{myround(L1[2],2)}.
 
   \item Here, we use \code{stew()} to \myemph{cache} the results of the computation.
   \end{itemize}
@@ -996,7 +996,7 @@ options(
   \frametitle{Benchmark likelihoods for non-mechanistic models}
 
   \begin{itemize}
-  \item To understand these global searches, many of which may correspond to parameter values having no meaningful scientific interpretation, it is helpful to put the log likelihoods in the context of some non-mechanistic benchmarks.
+  \item To understand these global searches, many of which may correspond to parameter values having no meaningful scientific interpretation, it is helpful to put the log-likelihoods in the context of some non-mechanistic benchmarks.
   \item The most basic statistical model for data is independent, identically distributed (IID). Picking a negative binomial model,
   \end{itemize}
 
@@ -1074,7 +1074,7 @@ options(
 
   \begin{itemize}
 
-  \item Reporting rates close to 1\% provide a small but clear advantage (several units of log likelihood) in explaining the data. For these reporting rates, depletion of susceptibles can help to explain the dynamics.
+  \item Reporting rates close to 1\% provide a small but clear advantage (several units of log-likelihood) in explaining the data. For these reporting rates, depletion of susceptibles can help to explain the dynamics.
 
   \end{itemize}
 
