@@ -38,8 +38,6 @@ A [Github Action](https://github.com/kingaa/sbied/actions) checks that these ins
 
 - index.md, index.html: Landing page
 - acknowledge.md, acknowledge.html: Acknowledgements
-- syllabus.md, syllabus.html: Course syllabus
-- welcome.md, welcome.html: Course introduction slides
 - subdirectories:
   - prep: Lesson 0, on preparing for the course
   - intro: Lesson 1

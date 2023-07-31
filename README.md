@@ -48,8 +48,6 @@ legacy platforms:
 
 -   index.md, index.html: Landing page
 -   acknowledge.md, acknowledge.html: Acknowledgements
--   syllabus.md, syllabus.html: Course syllabus
--   welcome.md, welcome.html: Course introduction slides
 -   subdirectories:
     -   prep: Lesson 0, on preparing for the course
     -   intro: Lesson 1
@@ -95,8 +93,8 @@ and the time required for their computation on a linux cluster with
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">measles/results</td>
-<td style="text-align: right;">232</td>
-<td style="text-align: right;">219.8</td>
+<td style="text-align: right;">340</td>
+<td style="text-align: right;">220.3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mif/results</td>
@@ -126,7 +124,7 @@ and the time required for their computation on a linux cluster with
 <tr class="odd">
 <td style="text-align: left;">pfilter/results</td>
 <td style="text-align: right;">142</td>
-<td style="text-align: right;">13.4</td>
+<td style="text-align: right;">13.3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">polio/runlevel2/results</td>
@@ -151,7 +149,7 @@ with the polio lesson, in which large amounts of redundant information
 are stored.
 
 Full compilation, i.e., rebuilding the complete set of materials
-following deletion of all archives, requires about 529 min on a
+following deletion of all archives, requires about 530 min on a
 250-processor cluster. Full compilation regenerates the complete set of
 archives. A finishing compilation, i.e., rebuilding with all archives in
 place, but with the re-Making of all documents, requires about 12 min on
