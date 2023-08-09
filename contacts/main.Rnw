@@ -293,7 +293,7 @@ library(doFuture)
 
 \item Here, we only have shared parameters. The heterogeneities between individuals are modeled as \myemph{random effects} with distribution determined by these shared parameters.
 
-\item Iterated filtering for POMP models was extended to PanelPOMPs by \citet{Breto2019}.
+\item Iterated filtering for POMP models was extended to PanelPOMPs by \citet{Breto2020}.
 
   \ei
 
@@ -487,7 +487,7 @@ library(doFuture)
 
   \bi
 
-\item Can we do better, using the independence of units? It turns out we can \citep{Breto2019}.
+\item Can we do better, using the independence of units? It turns out we can \citep{Breto2020}.
 
   \ei
 
@@ -559,7 +559,7 @@ library(doFuture)
 
   \bi
 
-\item The panel iterated filtering (PIF) algorithm of \citet{Breto2019} applies the IF2 algorithm to a POMP model constructed by concanenating the collection of panels.
+\item The panel iterated filtering (PIF) algorithm of \citet{Breto2020} applies the IF2 algorithm to a POMP model constructed by concanenating the collection of panels.
 
 \item PIF is implemented in \pkg{panelPomp} as the \code{mif2} method for class \code{panelPomp}.
 
