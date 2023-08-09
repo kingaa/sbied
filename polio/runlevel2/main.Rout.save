@@ -1,13 +1,11 @@
 
-R version 4.2.3 (2023-03-15) -- "Shortstop Beagle"
+R version 4.3.1 (2023-06-16) -- "Beagle Scouts"
 Copyright (C) 2023 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin17.0 (64-bit)
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
-
-  Natural language support but running in an English locale
 
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
@@ -228,6 +226,7 @@ dbl (4): time, cases, births, pop
 +   ) %dofuture% pfilter(polio,Np=Np)
 +   cores <- nbrOfWorkers()
 + })
+NOTE: creating archive directory ‘results’.
 > L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
 > 
 > simulate(polio,nsim=Nsim,seed=1643079359,
@@ -326,7 +325,7 @@ attributes are not identical across measure variables; they will be dropped
 Rows: 20 Columns: 23
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
-dbl (23): b1, b2, b3, b4, b5, b6, delta, IO_0, K, psi, rho, SB1_0, SB2_0, SB...
+dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -353,7 +352,7 @@ dbl (23): b1, b2, b3, b4, b5, b6, delta, IO_0, K, psi, rho, SB1_0, SB2_0, SB...
 Rows: 40 Columns: 23
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
-dbl (23): b1, b2, b3, b4, b5, b6, delta, IO_0, K, psi, rho, SB1_0, SB2_0, SB...
+dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -442,11 +441,11 @@ dbl (23): b1, b2, b3, b4, b5, b6, delta, IO_0, K, psi, rho, SB1_0, SB2_0, SB...
 Rows: 40 Columns: 23
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
-dbl (23): b1, b2, b3, b4, b5, b6, delta, IO_0, K, psi, rho, SB1_0, SB2_0, SB...
+dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 > 
 > proc.time()
    user  system elapsed 
-  4.015   0.675   9.721 
+ 50.237   5.326 293.848 
