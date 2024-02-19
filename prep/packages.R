@@ -1,5 +1,5 @@
 ## check to see that the version of R is sufficiently recent
-minRversion <- "4.2.0"
+minRversion <- "4.3.1"
 rv <- getRversion()
 if (rv < minRversion)
   stop("R version >= ",minRversion," is required",call.=FALSE)

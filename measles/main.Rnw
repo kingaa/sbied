@@ -1,4 +1,4 @@
-\input{../_includes/header}
+\input{header}
 
 \newcommand\CHAPTER{5}
 \title{Lesson \CHAPTER.\\Case study:\\Measles in large and small towns}
@@ -1130,11 +1130,11 @@ $r=\mathrm{cor}_{S}({\cdot},{N_{1950}})$ (Spearman rank correlation)
 
 \mode<presentation>{
   \begin{frame}[allowframebreaks=0.8]{References}
-    \bibliography{../sbied}
+    \bibliography{sbied}
   \end{frame}
 }
 \mode<article>{
-  \bibliography{../sbied}
+  \bibliography{sbied}
 }
 
 \begin{frame}{License, acknowledgments, and links}

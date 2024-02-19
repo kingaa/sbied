@@ -1,4 +1,4 @@
-\input{../_includes/header}
+\input{header}
 
 \usepackage{tikz}
 \usetikzlibrary {arrows.meta} % for tikz stealth arrow style
@@ -1289,11 +1289,11 @@ set.seed(1350254336)
 
 \mode<presentation>{
   \begin{frame}[allowframebreaks=0.8]{References}
-    \bibliography{../sbied}
+    \bibliography{sbied}
   \end{frame}
 }
 \mode<article>{
-  \bibliography{../sbied}
+  \bibliography{sbied}
 }
 
 \begin{frame}{License, acknowledgments, and links}

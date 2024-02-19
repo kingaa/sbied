@@ -1,4 +1,4 @@
-\input{../_includes/header}
+\input{header}
 
 \newcommand\CHAPTER{8}
 \title{Lesson {\CHAPTER}:\\Case study: Panel data on dynamic variation\\ in sexual contact rates}
@@ -667,11 +667,11 @@ library(doFuture)
 
 \mode<presentation>{
   \begin{frame}[allowframebreaks=0.8]{References}
-    \bibliography{../sbied}
+    \bibliography{sbied}
   \end{frame}
 }
 \mode<article>{
-  \bibliography{../sbied}
+  \bibliography{sbied}
 }
 
 \begin{frame}{License, acknowledgments, and links}

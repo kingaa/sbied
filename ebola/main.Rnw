@@ -1,4 +1,4 @@
-\input{../_includes/header}
+\input{header}
 
 \def\CHAPTER{7}
 \title{Lesson \CHAPTER:\\Case study: forecasting Ebola}
@@ -494,11 +494,11 @@ options(dplyr.summarise.inform=FALSE)
 
 \mode<presentation>{
   \begin{frame}[allowframebreaks=0.8]{References}
-    \bibliography{../sbied}
+    \bibliography{sbied}
   \end{frame}
 }
 \mode<article>{
-  \bibliography{../sbied}
+  \bibliography{sbied}
 }
 
 \begin{frame}{License, acknowledgments, and links}

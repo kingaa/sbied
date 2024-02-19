@@ -1,4 +1,4 @@
-\input{../_includes/header}
+\input{header}
 
 \mode<beamer>{\usetheme{AnnArbor}}
 \mode<beamer>{\setbeamertemplate{footline}}
@@ -271,11 +271,11 @@ source("../_includes/setup.R", local = knitr::knit_global())
 
 \mode<presentation>{
   \begin{frame}[allowframebreaks=0.8]{References}
-    \bibliography{../sbied}
+    \bibliography{sbied}
   \end{frame}
 }
 \mode<article>{
-  \bibliography{../sbied}
+  \bibliography{sbied}
 }
 
 \begin{frame}{License, acknowledgments, and links}

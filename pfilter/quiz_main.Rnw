@@ -1,7 +1,7 @@
-\input{../_includes/header}
+\input{header}
 \input{../_includes/quiz_header}
 
-\title{Quiz on Lesson 3}
+\title{Quiz}
 \begin{document}
 
 % knitr set up

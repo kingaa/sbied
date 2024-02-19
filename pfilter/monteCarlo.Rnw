@@ -1,5 +1,5 @@
 \documentclass[11pt,reqno,pdftex]{amsart}
-\input{../_includes/header.tex}
+\input{header}
 
 \title[Monte Carlo methods]{Monte Carlo methods}
 \author[A.~A.~King, E.~L.~Ionides]{Aaron~A.~King, Edward~L.~Ionides}
@@ -383,6 +383,6 @@ Then the following procedure simulates $X\!\sim\!f$:
 \end{exercise}
 
 \bibliographystyle{jss}
-\bibliography{../sbied}
+\bibliography{sbied}
 
 \end{document}

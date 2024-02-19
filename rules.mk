@@ -5,9 +5,17 @@ RBATCH = R CMD BATCH --no-save --no-restore
 PANDOC = pandoc -s -t html5+smart --mathjax
 PDFLATEX = pdflatex -halt-on-error -file-line-error -interaction batchmode
 ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+_TEXINPUTS := $(shell echo $$TEXINPUTS)
+_BSTINPUTS := $(shell echo $$BSTINPUTS)
+_BIBINPUTS := $(shell echo $$BIBINPUTS)
 
 slides.pdf handout.pdf notes.pdf: main.tex
 quiz.pdf quiz_soln.pdf: quiz_main.tex
+
+%.pdf: export BSTINPUTS=$(ROOT_DIR):$(_BSTINPUTS)
+%.pdf: export BIBINPUTS=$(ROOT_DIR):$(_BIBINPUTS)
+%.pdf: export TEXINPUTS=.:$(ROOT_DIR)/_includes/:$(_TEXINPUTS)
+%.pdf: export SOURCE_DATE_EPOCH=1693267200
 
 .INTERMEDIATE: main.tex slides.tex handout.tex notes.tex \
 quiz.tex quiz_soln.tex quiz_main.tex	
@@ -35,8 +43,6 @@ quiz.tex quiz_soln.tex quiz_main.tex
 
 %.tex: %.Rnw
 	$(REXE) -e "knitr::knit(\"$*.Rnw\",output=\"$*.tex\")"
-
-%.pdf: export BSTINPUTS=$(ROOT_DIR)
 
 %.pdf: %.tex
 	$(PDFLATEX) $*

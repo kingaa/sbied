@@ -1,4 +1,4 @@
-\input{../_includes/header}
+\input{header}
 
 \newcommand\CHAPTER{6}
 \title{Lesson 6:\\Case study: Polio}
@@ -1343,11 +1343,11 @@ options(
 
 \mode<presentation>{
   \begin{frame}[allowframebreaks=0.8]{References}
-    \bibliography{../sbied}
+    \bibliography{sbied}
   \end{frame}
 }
 \mode<article>{
-  \bibliography{../sbied}
+  \bibliography{sbied}
 }
 
 \begin{frame}{License, acknowledgments, and links}

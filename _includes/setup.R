@@ -1,5 +1,5 @@
-stopifnot(getRversion()>="4.2")
-stopifnot(packageVersion("pomp")>="5.2")
+stopifnot(getRversion()>="4.3")
+stopifnot(packageVersion("pomp")>="5.6")
 
 library(knitr)
 if (!exists("params")) params <- list()

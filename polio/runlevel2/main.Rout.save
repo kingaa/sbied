@@ -1,11 +1,13 @@
 
-R version 4.3.1 (2023-06-16) -- "Beagle Scouts"
+R version 4.3.2 (2023-10-31) -- "Eye Holes"
 Copyright (C) 2023 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
 
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
@@ -17,24 +19,16 @@ Type 'q()' to quit R.
 
 > library(tidyverse)
 ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.2     ✔ readr     2.1.4
-✔ forcats   1.0.0     ✔ stringr   1.5.0
-✔ ggplot2   3.4.2     ✔ tibble    3.2.1
-✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-✔ purrr     1.0.1     
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::filter() masks stats::filter()
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 > library(pomp)
-
-Welcome to pomp!
-
-As of version 4.6, no user-visible pomp function has a name that
-includes a dot ('.'). Function names have been changed to replace the
-dot with an underscore ('_'). For more information, see the pomp blog:
-https://kingaa.github.io/pomp/blog.html.
-
 
 Attaching package: ‘pomp’
 
@@ -226,7 +220,6 @@ dbl (4): time, cases, births, pop
 +   ) %dofuture% pfilter(polio,Np=Np)
 +   cores <- nbrOfWorkers()
 + })
-NOTE: creating archive directory ‘results’.
 > L1 <- logmeanexp(sapply(pf1,logLik),se=TRUE)
 > 
 > simulate(polio,nsim=Nsim,seed=1643079359,
@@ -325,7 +318,7 @@ attributes are not identical across measure variables; they will be dropped
 Rows: 20 Columns: 23
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
-dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
+dbl (23): b1, b2, b3, b4, b5, b6, delta, IO_0, K, psi, rho, SB1_0, SB2_0, SB...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -352,7 +345,7 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 Rows: 40 Columns: 23
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
-dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
+dbl (23): b1, b2, b3, b4, b5, b6, delta, IO_0, K, psi, rho, SB1_0, SB2_0, SB...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -441,11 +434,11 @@ dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
 Rows: 40 Columns: 23
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
-dbl (23): IO_0, K, SB1_0, SB2_0, SB3_0, SB4_0, SB5_0, SB6_0, SO_0, b1, b2, b...
+dbl (23): b1, b2, b3, b4, b5, b6, delta, IO_0, K, psi, rho, SB1_0, SB2_0, SB...
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 > 
 > proc.time()
    user  system elapsed 
- 50.237   5.326 293.848 
+  5.339  10.673   3.769 

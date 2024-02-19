@@ -1,4 +1,4 @@
-\input{../_includes/header}
+\input{header}
 \input{../_includes/quiz_header}
 
 \title{Quiz}
