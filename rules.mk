@@ -59,6 +59,7 @@ quiz.tex quiz_soln.tex quiz_main.tex
 .fresh: .clean
 	$(RM) *.bbl
 	$(RM) -r tmp
+	$(RM) -r .jekyll-cache _site
 
 clean: .clean
 

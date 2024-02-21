@@ -5,6 +5,11 @@ output:
   html_document:
     toc: yes
     toc_depth: 2
+    toc_float:
+      collapsed: TRUE
+      smooth_scroll: TRUE
+    highlight: haddock
+    number_sections: FALSE
     includes:
       after_body:
       - ../_includes/supp_bottom.html

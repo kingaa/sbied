@@ -16,6 +16,8 @@ params:
 
 -----------------------------------
 
+*For your convenience, the **R** codes for this document are `r xfun::embed_file("windows.R",text="provided in a script")` which you can download, edit, and run.*
+
 
 ```{r knitr-opts}
 #| include: false
@@ -122,8 +124,3 @@ foreach (
 
 The only difference between the code chunks is that, in the first, compilation is needed *inside* the parallel code block;
 In the second, the compilation is done *before* the parallelization, via the call to `pomp`.
-
------------------------------------
-	
-[**R codes for this document**](./windows.R)  
-

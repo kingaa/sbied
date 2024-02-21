@@ -362,6 +362,7 @@ pre code {
 
 
 <hr />
+<p><em>For your convenience, the <strong>R</strong> codes for this document are <a href="data:text/plain;base64,cGFyYW1zIDwtCmxpc3QocHJlZml4ID0gIndpbmRvd3MiKQoKc2V0LnNlZWQoMTM1MDI1NDMzNikKCm9wdGlvbnMocG9tcF9jZGlyPSIuL3RtcCIpCgpsaWJyYXJ5KHRpZHl2ZXJzZSkKbGlicmFyeShwb21wKQpsaWJyYXJ5KGRvRnV0dXJlKQoKc291cmNlKCJodHRwczovL2tpbmdhYS5naXRodWIuaW8vc2JpZWQvcGZpbHRlci9tb2RlbC5SIikKCnBsYW4obXVsdGlzZXNzaW9uKQpmb3JlYWNoICgKICBpPTE6NCwKICAuY29tYmluZT1jLAogIC5vcHRpb25zLmZ1dHVyZT1saXN0KHNlZWQ9VFJVRSkKKSAlZG9mdXR1cmUlIHsKICBtZWFzU0lSIHw+CiAgICBtaWYyKAogICAgICBOcD0xMDAwLCBObWlmPTUsCiAgICAgIGNvb2xpbmcuZnJhY3Rpb24uNTA9MC41LAogICAgICBydy5zZD1yd19zZChCZXRhPTAuMiwgcmhvPTAuMiwgZXRhPWl2cCgwLjIpKSwKIyMjIENvbXBpbGF0aW9uIGlzIHRyaWdnZXJlZCBoZXJlLCBieSB0aGUgY2FsbCB0byBgcGFyYW1ldGVyX3RyYW5zYC4KICAgICAgcGFydHJhbnM9cGFyYW1ldGVyX3RyYW5zKGxvZz0iQmV0YSIsbG9naXQ9YygicmhvIiwiZXRhIikpLAogICAgICBwYXJhbW5hbWVzPWMoIkJldGEiLCJyaG8iLCJldGEiKQogICAgKQp9IC0+IG1pZnNfbG9jYWwKCm1lYXNTSVIgfD4KICBwb21wKAojIyMgQ29tcGlsYXRpb24gaXMgdHJpZ2dlcmVkIGhlcmUsIG91dHNpZGUgdGhlIHBhcmFsbGVsIGJsb2NrLgogICAgcGFydHJhbnM9cGFyYW1ldGVyX3RyYW5zKGxvZz0iQmV0YSIsbG9naXQ9YygicmhvIiwiZXRhIikpLAogICAgcGFyYW1uYW1lcz1jKCJCZXRhIiwicmhvIiwiZXRhIikKICApIC0+IG1lYXNTSVIyCgpwbGFuKG11bHRpc2Vzc2lvbikKZm9yZWFjaCAoCiAgaT0xOjQsCiAgLmNvbWJpbmU9YywKICAub3B0aW9ucy5mdXR1cmU9bGlzdChzZWVkPVRSVUUpCikgJWRvZnV0dXJlJSB7CiMjIyBObyBjb21waWxhdGlvbiBpcyB0cmlnZ2VyZWQgaW5zaWRlIHRoZSBwYXJhbGxlbCBjb2RlIGJsb2NrLgogIG1lYXNTSVIyIHw+CiAgICBtaWYyKAogICAgICBOcD0xMDAwLCBObWlmPTUsCiAgICAgIGNvb2xpbmcuZnJhY3Rpb24uNTA9MC41LAogICAgICBydy5zZD1yd19zZChCZXRhPTAuMiwgcmhvPTAuMiwgZXRhPWl2cCgwLjIpKQogICAgKQp9IC0+IG1pZnNfbG9jYWwK" download="windows.R">provided in a script</a> which you can download, edit, and run.</em></p>
 <p>Some Windows users have reported trouble with the parallel codes used in several of the Lessons. Specifically, <strong>pomp</strong> codes that require compilation of C snippets trigger errors when executed in parallel on certain Windows machines.</p>
 <p>Calls that induce compilation include:</p>
 <ol style="list-style-type: decimal">
@@ -419,8 +420,6 @@ foreach (
     )
 } -&gt; mifs_local</code></pre>
 <p>The only difference between the code chunks is that, in the first, compilation is needed <em>inside</em> the parallel code block; In the second, the compilation is done <em>before</em> the parallelization, via the call to <code>pomp</code>.</p>
-<hr />
-<p><a href="./windows.R"><strong>R codes for this document</strong></a></p>
 
 <div style="padding-top: 1em; padding-bottom: 2em;">
 <hr width="100%">
