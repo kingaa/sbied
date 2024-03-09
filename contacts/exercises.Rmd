@@ -36,12 +36,12 @@ library(panelPomp)
 
 We can first check the list of help topics:
 
-```{r eval=F}
+```{r eval=FALSE}
 library(help=panelPomp)
 ```
 
 
-```{r echo=F}
+```{r echo=FALSE}
 xx <- library(help=panelPomp)
 cat(paste(c(xx$info[[2]],"\n"),collapse="\n"))
 ```
@@ -50,8 +50,8 @@ And then check out the promising ones:
 
 `?panelPomp_methods`
 
-```{css help_page_style,echo=FALSE}
-#help {
+```{css help_page_style,echo=FALSE,purl=FALSE}
+.help {
 	text-align: left;
 	border-width: 2px;
 	width: 90%;
@@ -62,22 +62,33 @@ And then check out the promising ones:
 	padding-bottom: 20px;
 }
 ```
-```{r help_page,cache=FALSE,include=FALSE,purl=FALSE}
-pgpth <- "help_page.html"
-tools::Rd2HTML(
-         utils:::.getHelpFile(help(panelPomp_methods,package="panelPomp")),
-         stylesheet="https://cran.r-project.org/R.css",
-         out=pgpth
-        )
+
+```{r cache=FALSE,include=FALSE,purl=FALSE}
+embed_help <- function (page, package) {
+  require(tools,quietly=TRUE)
+  require(base64enc,quietly=TRUE)
+  page <- as.character(page)
+  package <- as.character(package)
+  cmd <- bquote(help(.(page),package=.(package)))
+  pgpth <- tempfile()
+  tools::Rd2HTML(
+           eval(bquote(utils:::.getHelpFile(.(cmd)))),
+           stylesheet="https://cran.r-project.org/R.css",
+           out=pgpth
+         )
+  base64enc::base64encode(pgpth) -> dat
+  unlink(pgpth)
+  sprintf(r"{<iframe id="%s" class="help" src="data:text/html;base64,%s"></iframe>}",parse(text=page),dat)
+}
 ```
 
-<iframe id="help" src="`r pgpth`"></iframe>
+`r embed_help("panelPomp_methods","panelPomp")`
 
 --------------------------------
 
 ## Exercise 8.3
 
-```{r echo=F}
+```{r echo=FALSE}
 library(panelPomp)
 ```
 
@@ -96,7 +107,7 @@ class(unitobjects(pf)[[1]])
 
 ## Exercise 8.4
 
-```{r echo=F}
+```{r echo=FALSE}
 library(panelPomp)
 ```
 
