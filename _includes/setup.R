@@ -56,23 +56,5 @@ registerS3method(
   }
 )
 
-myround <- function (x, digits = 1) {
-  # adapted from the broman package
-  # solves the bug that round() kills significant trailing zeros
-  if (length(digits) > 1) {
-    digits <- digits[1]
-    warning("Using only digits[1]")
-  }
-  if (digits < 1) {
-    as.character(round(x,digits))
-  } else {
-    tmp <- sprintf(paste("%.", digits, "f", sep = ""), x)
-    zero <- paste0("0.", paste(rep("0", digits), collapse = ""))
-    tmp[tmp == paste0("-", zero)] <- zero
-    tmp
-  }
-}
-
-mysignif <- function (x, digits = 1) {
-  myround(x, digits - ceiling(log10(abs(x))))
-}
+myround <- prettyunits::pretty_round
+mysignif <- prettyunits::pretty_signif

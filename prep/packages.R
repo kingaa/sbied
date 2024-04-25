@@ -21,6 +21,7 @@ gtable
 knitr
 mvtnorm
 nloptr
+prettyunits
 scales
 subplex
 tidyverse

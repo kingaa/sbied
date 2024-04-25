@@ -402,8 +402,8 @@ ll &lt;- sapply(pf,logLik)
 logmeanexp(ll,se=TRUE)</code></pre>
 <pre><code>        est          se 
 -130.096408    2.731696 </code></pre>
-<p>This took 5.2 seconds.</p>
-<p>Since the time taken is approximately linear in <code>NP</code> and <code>NREPS</code>, we get a formula (for this machine) of <span class="math display">\[\mbox{Runtime}\approx \frac{ \mathrm{NP}}{10^{4}} \times \frac{\mathrm{NREPS}}{ 10} \times 5.2\mbox{sec}.\]</span></p>
+<p>This took 4.2 seconds.</p>
+<p>Since the time taken is approximately linear in <code>NP</code> and <code>NREPS</code>, we get a formula (for this machine) of <span class="math display">\[\mbox{Runtime}\approx \frac{ \mathrm{NP}}{10^{4}} \times \frac{\mathrm{NREPS}}{ 10} \times 4.2\mbox{sec}.\]</span></p>
 <p>We can use this formula to select <code>NP</code> and <code>NREPS</code> to give an appropriate runtime.</p>
 </div>
 <div id="effects-of-np-and-nreps-on-estimates" class="section level2">
@@ -482,7 +482,7 @@ foreach (p=iter(design,&quot;row&quot;),
         est
     }
 }
-&lt;bytecode: 0x556f4559fa30&gt;
+&lt;bytecode: 0x62f8f2370138&gt;
 &lt;environment: namespace:pomp&gt;</code></pre>
 <p>We see that <code>logmeanexp</code> constructs its standard errors via a <a href="https://en.wikipedia.org/wiki/Jackknife_resampling">jack-knife</a> calculation.</p>
 <p>The standard errors from this approach are reasonable when the distribution of the likelihoods is not too skewed. However, a largest likelihood many log units higher than the others corresponds to a highly skewed distribution on the untransformed scale. It is on this untransformed scale that combining likelihood estimates by averaging is justified by the unbiased property of the particle filter. This could therefore lead to unstable standard errors.</p>
@@ -505,7 +505,7 @@ abline(v=c(-2,2),col=&quot;red&quot;)</code></pre>
 <p>In particular, the left tail is long for the noisy likelihood estimates: when, by chance, you don’t observe a high likelihood value, you become over-confident that such values won’t happen.</p>
 <p>These results suggest that <code>logmeanexp</code> standard errors are reasonably reliable when the standard deviation of the individual log likelihood estimates is around one, but should be interpreted cautiously if that standard deviation is much larger.</p>
 <hr />
-<p>Produced in R version 4.3.2.</p>
+<p>Produced in R version 4.3.3.</p>
 <hr />
 </div>
 <div id="references" class="section level2 unnumbered">
