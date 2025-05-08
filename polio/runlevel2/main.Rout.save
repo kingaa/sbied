@@ -1,7 +1,7 @@
 
-R version 4.3.2 (2023-10-31) -- "Eye Holes"
-Copyright (C) 2023 The R Foundation for Statistical Computing
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 4.5.0 (2025-04-11) -- "How About a Twenty-Six"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -18,16 +18,6 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 > library(tidyverse)
-── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.4     ✔ readr     2.1.5
-✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.4.4     ✔ tibble    3.2.1
-✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-✔ purrr     1.0.2     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 > library(pomp)
 
 Attaching package: ‘pomp’
@@ -404,26 +394,26 @@ dbl (23): b1, b2, b3, b4, b5, b6, delta, IO_0, K, psi, rho, SB1_0, SB2_0, SB...
 +   cores <- nbrOfWorkers()
 + })
 > 
-> ## stew(file="profile_rho.rda",seed=1888257101,{
-> ##   par_init(run_level)
-> ##   foreach(start=iter(starts,"row"),.combine=rbind,
-> ##     .options.future=list(seed=TRUE)) %dofuture% {
-> ##       polio |> mif2(params=start,
-> ##         Np=Np,Nmif=ceiling(Nmif/2),
-> ##         cooling.fraction.50=0.5,
-> ##         rw.sd=profile.rw.sd
-> ##       ) |>
-> ##         mif2(Np=Np,Nmif=ceiling(Nmif/2),
-> ##           cooling.fraction.50=0.1
-> ##         ) -> mf
-> ##       replicate(Nreps_eval,
-> ##         mf |> pfilter(Np=Np) |> logLik()
-> ##       ) |> logmeanexp(se=TRUE) -> ll
-> ##       mf |> coef() |> bind_rows() |>
-> ##         bind_cols(logLik=ll[1],logLik_se=ll[2])
-> ##     } -> m4
-> ##   cores <- nbrOfWorkers()
-> ## })
+> # stew(file="profile_rho.rda",seed=1888257101,{
+> #   par_init(run_level)
+> #   foreach(start=iter(starts,"row"),.combine=rbind,
+> #     .options.future=list(seed=TRUE)) %dofuture% {
+> #       polio |> mif2(params=start,
+> #         Np=Np,Nmif=ceiling(Nmif/2),
+> #         cooling.fraction.50=0.5,
+> #         rw.sd=profile.rw.sd
+> #       ) |>
+> #         mif2(Np=Np,Nmif=ceiling(Nmif/2),
+> #           cooling.fraction.50=0.1
+> #         ) -> mf
+> #       replicate(Nreps_eval,
+> #         mf |> pfilter(Np=Np) |> logLik()
+> #       ) |> logmeanexp(se=TRUE) -> ll
+> #       mf |> coef() |> bind_rows() |>
+> #         bind_cols(logLik=ll[1],logLik_se=ll[2])
+> #     } -> m4
+> #   cores <- nbrOfWorkers()
+> # })
 > 
 > 
 > 
@@ -441,4 +431,4 @@ dbl (23): b1, b2, b3, b4, b5, b6, delta, IO_0, K, psi, rho, SB1_0, SB2_0, SB...
 > 
 > proc.time()
    user  system elapsed 
-  5.339  10.673   3.769 
+  1.624   0.294   1.876 

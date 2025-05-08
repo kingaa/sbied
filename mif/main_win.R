@@ -21,6 +21,7 @@ plan(multisession)
 
 
 
+<<pf1>>
 tic <- Sys.time()
 foreach(i=1:10,.combine=c,
   .options.future=list(seed=TRUE)

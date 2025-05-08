@@ -322,26 +322,26 @@ stew(file="profile_rho.rda",seed=1888257101,{
   cores <- nbrOfWorkers()
 })
 
-## stew(file="profile_rho.rda",seed=1888257101,{
-##   par_init(run_level)
-##   foreach(start=iter(starts,"row"),.combine=rbind,
-##     .options.future=list(seed=TRUE)) %dofuture% {
-##       polio |> mif2(params=start,
-##         Np=Np,Nmif=ceiling(Nmif/2),
-##         cooling.fraction.50=0.5,
-##         rw.sd=profile.rw.sd
-##       ) |>
-##         mif2(Np=Np,Nmif=ceiling(Nmif/2),
-##           cooling.fraction.50=0.1
-##         ) -> mf
-##       replicate(Nreps_eval,
-##         mf |> pfilter(Np=Np) |> logLik()
-##       ) |> logmeanexp(se=TRUE) -> ll
-##       mf |> coef() |> bind_rows() |>
-##         bind_cols(logLik=ll[1],logLik_se=ll[2])
-##     } -> m4
-##   cores <- nbrOfWorkers()
-## })
+# stew(file="profile_rho.rda",seed=1888257101,{
+#   par_init(run_level)
+#   foreach(start=iter(starts,"row"),.combine=rbind,
+#     .options.future=list(seed=TRUE)) %dofuture% {
+#       polio |> mif2(params=start,
+#         Np=Np,Nmif=ceiling(Nmif/2),
+#         cooling.fraction.50=0.5,
+#         rw.sd=profile.rw.sd
+#       ) |>
+#         mif2(Np=Np,Nmif=ceiling(Nmif/2),
+#           cooling.fraction.50=0.1
+#         ) -> mf
+#       replicate(Nreps_eval,
+#         mf |> pfilter(Np=Np) |> logLik()
+#       ) |> logmeanexp(se=TRUE) -> ll
+#       mf |> coef() |> bind_rows() |>
+#         bind_cols(logLik=ll[1],logLik_se=ll[2])
+#     } -> m4
+#   cores <- nbrOfWorkers()
+# })
 
 
 
