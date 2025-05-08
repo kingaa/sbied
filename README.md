@@ -1,5 +1,6 @@
-Simulation-based Inference for Epidemiological Dynamics<br>Course Materials
----------------------------------------------------------------------------
+## Simulation-based Inference for Epidemiological Dynamics<br>Course Materials
+
+[![DOI](https://zenodo.org/badge/39361090.svg)](https://doi.org/10.5281/zenodo.15364411)
 
 These are notes from a short course given by [Ed
 Ionides](https://ionides.github.io/) and [Aaron
@@ -112,7 +113,8 @@ and the time required for their computation on a linux cluster with
 <td style="text-align: right;">64.3</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">polio/starting-values-exercise/results</td>
+<td
+style="text-align: left;">polio/starting-values-exercise/results</td>
 <td style="text-align: right;">41687</td>
 <td style="text-align: right;">64.2</td>
 </tr>
@@ -159,7 +161,11 @@ a 64-cpu workstation.
 
 ### License
 
-![CC-BY-NC](https://i.creativecommons.org/l/by-nc/4.0/88x31.png)
+<figure>
+<img src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png"
+alt="CC-BY-NC" />
+<figcaption aria-hidden="true">CC-BY-NC</figcaption>
+</figure>
 
 This work is licensed under the [Creative Commons
 Attribution-NonCommercial 4.0 International License (CC BY-NC
