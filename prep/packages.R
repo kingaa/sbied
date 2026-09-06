@@ -15,12 +15,14 @@ deSolve
 foreach
 iterators
 doFuture
+doParallel
 doRNG
 gridExtra
 gtable
 knitr
 mvtnorm
 nloptr
+patchwork
 prettyunits
 scales
 subplex
